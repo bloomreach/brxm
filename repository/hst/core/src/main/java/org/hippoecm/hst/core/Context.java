@@ -55,6 +55,7 @@ public class Context extends AbstractMap {
     private final String requestURI; 
     private final String urlBasePath;
     private final String baseLocation;
+    private String contentBaseLocation;
     private String relativeLocation;
     private int index = -1;
 
@@ -349,6 +350,46 @@ public class Context extends AbstractMap {
     }
 
 
+    /** 
+     * Determine the real content base location from a possible virtual tree
+     * base location. 
+     */
+    String getContentBaseLocation() {
+        
+        // lazy
+        if (this.contentBaseLocation == null) {
+        
+            this.contentBaseLocation = baseLocation;
+        
+            try {
+                Item item = JCRConnector.getItem(this.session, this.baseLocation);
+                
+                if (item.isNode()) {
+                    Node node = (Node) item;
+        
+                    // if it is a virtual tree, determine the real content base location
+                    if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        if (node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                            
+                            Node contentBaseNode = session.getNodeByUUID(
+                                    node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+        
+                            this.contentBaseLocation = contentBaseNode.getPath();
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+    
+        return this.contentBaseLocation;
+    }
+
+    String getContextPath() {
+        return contextPath;
+    }
+
     private DocumentPathReplacer getPathReplacer() {
         
         // lazy
@@ -356,41 +397,10 @@ public class Context extends AbstractMap {
             
             // don't use the baseLocation as it might be a virtual tree and
             // internal links have links from the real content base location 
-            pathReplacer = new DocumentPathReplacer(this.contextPath, this.urlBasePath, 
-                    getContentBaseLocation());
+            pathReplacer = new DocumentPathReplacer(this);
         }
         
         return pathReplacer;
-    }
-
-    /** Determine the real content base location from a possible virtual tree
-     *  base location. */
-    private String getContentBaseLocation() {
-        
-        String contentBaseLocation = baseLocation;
-        
-        try {
-            Item item = JCRConnector.getItem(this.session, this.baseLocation);
-            
-            if (item.isNode()) {
-                Node node = (Node) item;
-
-                // if it is a virtual tree, determine the real content base location
-                if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    if (node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                        
-                        Node contentBaseNode = session.getNodeByUUID(
-                                node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
-    
-                        contentBaseLocation = contentBaseNode.getPath();
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            throw new IllegalStateException(e);
-        }
-
-        return contentBaseLocation;
     }
 
     private class EntrySet extends AbstractSet {

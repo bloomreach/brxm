@@ -67,8 +67,7 @@ public class IncludeTag extends TagSupport {
             Context newContext = new Context(context, path);
             request.setAttribute(contextName, newContext);
 
-            URLPathTranslator urlPathTranslator = new URLPathTranslator(request.getContextPath(), 
-                                    newContext.getURLBasePath(), newContext.getBaseLocation());
+            URLPathTranslator urlPathTranslator = new URLPathTranslator(request.getContextPath(), newContext);
             URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(newContext, urlPathTranslator, request, response);
             String mappedPage = responseWrapper.mapRepositoryDocument(newContext.getLocation(), urlMappingLocation);
             

@@ -40,19 +40,46 @@ public class URLPathTranslator {
 
     private static final Logger logger = LoggerFactory.getLogger(URLPathTranslator.class);
 
+    /** Original context path from request */
     private final String contextPath;
+    
+    /** Begin part of a valid URL */
     private final String urlBasePath;
-    private final String repositoryBaseLocation;
+    
+    /** The repository base location, possibly a virtual tree node, that a context usually points to  */
+    private final String baseLocation;
+
+    /** The actual repository content location, that the baseLocation references 
+     *  if it is a virutal node */
+    private final String contentBaseLocation;
 
     /**
      * Constructor.
      */
-    public URLPathTranslator(final String contextPath, final String urlBasePath, final String repositoryBaseLocation) {
+    public URLPathTranslator(final String contextPath, final Context context) {
+        this(contextPath, context.getURLBasePath(),
+                context.getBaseLocation(), context.getContentBaseLocation());
+    }
+
+    /**
+     * Constructor without a contentBaseLocation, used by BinariesServlet.
+     */
+    URLPathTranslator(final String contextPath, final String urlBasePath, 
+            final String baseLocation) {
+        this(contextPath, urlBasePath, baseLocation, baseLocation);
+    }
+
+    /**
+     * Constructor.
+     */
+    private URLPathTranslator(final String contextPath, final String urlBasePath, 
+            final String baseLocation, final String contentBaseLocation) {
         super();
 
         this.contextPath = contextPath;
         this.urlBasePath = urlBasePath;
-        this.repositoryBaseLocation = repositoryBaseLocation;
+        this.baseLocation = baseLocation;
+        this.contentBaseLocation = contentBaseLocation;
     }
 
     /**
@@ -78,8 +105,8 @@ public class URLPathTranslator {
         }
 
         // prepend repositoryBaseLocation if not present
-        if (!path.startsWith(this.repositoryBaseLocation)) {
-            path = this.repositoryBaseLocation + path;
+        if (!path.startsWith(this.baseLocation)) {
+            path = this.baseLocation + path;
         }
 
         logger.debug("url " + url + " to documentPath " + path);
@@ -113,9 +140,13 @@ public class URLPathTranslator {
 
         String url;
 
-        if (documentPath.startsWith(this.repositoryBaseLocation)) {
-            // replace repositoryBaseLocation by urlBasePath 
-            url = this.contextPath + this.urlBasePath + documentPath.substring(this.repositoryBaseLocation.length());
+        if (documentPath.startsWith(this.baseLocation)) {
+            // replace baseLocation by urlBasePath 
+            url = this.contextPath + this.urlBasePath + documentPath.substring(this.baseLocation.length());
+        } 
+        else if (documentPath.startsWith(this.contentBaseLocation)) {
+            // replace contentBaseLocation by urlBasePath 
+            url = this.contextPath + this.urlBasePath + documentPath.substring(this.contentBaseLocation.length());
         } 
         else {
 
@@ -129,7 +160,7 @@ public class URLPathTranslator {
             if (jcrSession != null) {
                 
                 // path to check must not start with "/" 
-                String checkPath = this.repositoryBaseLocation + absolutePath;
+                String checkPath = this.baseLocation + absolutePath;
                 while (checkPath.startsWith("/")) {
                     checkPath = checkPath.substring(1);
                 }
