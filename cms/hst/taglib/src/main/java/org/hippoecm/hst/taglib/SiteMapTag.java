@@ -308,7 +308,12 @@ public class SiteMapTag extends SimpleTagSupport {
         // lazy
         if (urlPathTranslator == null) {
             Context context = (Context) request.getAttribute(getContextName());
-            urlPathTranslator = new URLPathTranslator(request.getContextPath(), context);
+            
+            if (context == null) {
+                throw new IllegalStateException("No context found in request by name '" + getContextName() + "'.");
+            }
+            
+            urlPathTranslator = new URLPathTranslator(context);
         }
 
         return urlPathTranslator;

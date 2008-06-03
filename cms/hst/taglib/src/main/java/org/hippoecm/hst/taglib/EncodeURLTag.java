@@ -78,7 +78,7 @@ public class EncodeURLTag extends SimpleTagSupport {
                 
                 // lazy
                 if (urlPathTranslator == null) {
-                    urlPathTranslator = new URLPathTranslator(request.getContextPath(), context);
+                    urlPathTranslator = new URLPathTranslator(context);
                 }
 
                 encodedURL = urlPathTranslator.documentPathToURL(this.value);
