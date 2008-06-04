@@ -61,15 +61,11 @@ height: 85px;
 padding: 10px;
 }
 
-
-
 div div ul li.icolistsmall{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
 div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666}
 div.groupsico div ul li.icolistsmall { background-image: url("images/groups_ico_small.gif")}
 div.usersico div ul li.icolistsmall {background-image: url("images/users_ico_small.gif")}
 div.domainsico div ul li.icolistsmall { background-image: url("images/domain_ico_small.gif")}
-
-
 
 .panelcontainer{border: 1px solid white; background: white;}
 .panel h2{background: white url("images/pluginheaderback.gif") repeat-x;}
@@ -160,9 +156,10 @@ table.displaytable tr td{padding: 15px}
 }
 
 /* selected document in list */
-tr.selected {
+table tr.selected {
   background-color:#4b82c6;
 }
+table tr.selected td span, table tr.selected td span a{color: white}
 
 /* plugin boxes */
 .yui-layout-wrap .yui-layout-wrap{border: none}
