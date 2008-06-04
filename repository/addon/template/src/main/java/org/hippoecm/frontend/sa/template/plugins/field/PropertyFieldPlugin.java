@@ -15,17 +15,14 @@
  */
 package org.hippoecm.frontend.sa.template.plugins.field;
 
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
@@ -57,12 +54,8 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     protected AbstractProvider<JcrPropertyValueModel> newProvider(FieldDescriptor descriptor, TypeDescriptor type,
             JcrNodeModel nodeModel) {
         if (!descriptor.getPath().equals("*")) {
-            try {
-                Property property = nodeModel.getNode().getProperty(descriptor.getPath());
-                return new ValueTemplateProvider(descriptor, type, new JcrPropertyModel(property).getItemModel());
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
+            JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + descriptor.getPath());
+            return new ValueTemplateProvider(descriptor, type, itemModel);
         }
         return null;
     }
@@ -85,7 +78,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onRemoveItem(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || field.isMandatory()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || (field == null) || field.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -98,7 +91,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onMoveItemUp(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || !field.isOrdered()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || (field == null) || !field.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
@@ -110,7 +103,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     // privates
 
     protected Component createAddLink() {
-        if (TemplateConfig.EDIT_MODE.equals(mode) && (field.isMultiple() || (provider.size() == 0))) {
+        if (TemplateConfig.EDIT_MODE.equals(mode) && (field != null) && (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 
