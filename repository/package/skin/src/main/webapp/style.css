@@ -139,21 +139,24 @@ table tr td.docico{background: url("images/document_ico_big.gif") no-repeat cent
 
 a { color: #18a4e2 }
 
-.Tree {
+div.Tree {
 margin:0px;
 border: none;
-overflow: auto; 
-width: 222px;
-height: 477px;
 }
-.tree .wicket-tree{width: 222px; margin: 0px}
-.tree .wicket-tree .row a {color: black}
-.tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
-.tree .wicket-tree .row-selected a {}
-.tree .wicket-tree .row-selected { background: #f2f2f2; }
-.tree div.wicket-tree{border: none;}
 
-.tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+
+div.Tree div.wicket-tree{margin: 0px; height: 477px; width: 222px; overflow: auto;} 
+div.Tree div.wicket-tree div{overflow: visible}
+
+div.Tree .wicket-tree .row a {color: black}
+div.wicket-tree div.a_{width: auto;}
+div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
+div.Tree .wicket-tree .row-selected a {}
+div.Tree .wicket-tree .row-selected { background: #f2f2f2; }
+div.Tree div.wicket-tree{border: none;}
+
+
+div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
 
 
 
