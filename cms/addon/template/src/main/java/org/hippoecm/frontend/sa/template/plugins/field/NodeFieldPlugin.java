@@ -67,7 +67,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onRemoveItem(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || field.isMandatory()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || field == null || field.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -80,7 +80,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onMoveItemUp(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || !field.isOrdered()) {
+        if (!TemplateConfig.EDIT_MODE.equals(mode) || field == null || !field.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
@@ -90,7 +90,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     }
 
     protected Component createAddLink() {
-        if (TemplateConfig.EDIT_MODE.equals(mode) && (field.isMultiple() || (provider.size() == 0))) {
+        if (TemplateConfig.EDIT_MODE.equals(mode) && (field != null) &&  (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 
