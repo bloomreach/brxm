@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class provides FieldModel instances based on a template descriptor.
  */
+@Deprecated
 public class ItemProvider extends AbstractProvider<ItemModel> implements IDataProvider {
     private static final long serialVersionUID = 1L;
 

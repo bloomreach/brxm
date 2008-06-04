@@ -26,10 +26,10 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
+import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
 import org.hippoecm.frontend.sa.template.model.NodeTemplateProvider;
-import org.hippoecm.frontend.template.config.TemplateConfig;
 
 public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     private static final long serialVersionUID = 1L;
@@ -67,7 +67,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onRemoveItem(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || field == null || field.isMandatory()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || field.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -80,7 +80,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onMoveItemUp(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || field == null || !field.isOrdered()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
@@ -90,7 +90,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     }
 
     protected Component createAddLink() {
-        if (TemplateConfig.EDIT_MODE.equals(mode) && (field != null) &&  (field.isMultiple() || (provider.size() == 0))) {
+        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) &&  (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

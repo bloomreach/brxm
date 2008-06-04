@@ -108,6 +108,7 @@ public class PluginRepositoryConfig implements PluginConfig {
         return new Descriptor(node, pluginId, className);
     }
 
+    @Deprecated
     protected class Descriptor extends PluginDescriptor {
         private static final long serialVersionUID = 1L;
 

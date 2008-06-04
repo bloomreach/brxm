@@ -28,10 +28,10 @@ import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
+import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
 import org.hippoecm.frontend.sa.template.model.ValueTemplateProvider;
-import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onRemoveItem(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || (field == null) || field.isMandatory()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || field.isMandatory()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -91,7 +91,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onMoveItemUp(model, target);
             }
         };
-        if (!TemplateConfig.EDIT_MODE.equals(mode) || (field == null) || !field.isOrdered()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
@@ -103,7 +103,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
     // privates
 
     protected Component createAddLink() {
-        if (TemplateConfig.EDIT_MODE.equals(mode) && (field != null) && (field.isMultiple() || (provider.size() == 0))) {
+        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && (field.isMultiple() || (provider.size() == 0))) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 

@@ -29,6 +29,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class JcrTypeModel extends NodeModelWrapper {
     private static final long serialVersionUID = 1L;
 

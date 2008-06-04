@@ -38,6 +38,7 @@ import org.apache.wicket.IClusterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class TypeDescriptor implements IClusterable {
 
     private static final long serialVersionUID = 1L;

@@ -45,6 +45,7 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class RepositoryTypeConfig implements TypeConfig {
 
     private static final long serialVersionUID = 1L;
@@ -312,6 +313,7 @@ public class RepositoryTypeConfig implements TypeConfig {
         }
     }
 
+    @Deprecated
     protected class RepositoryTypeDescriptor extends TypeDescriptor {
         private static final long serialVersionUID = 1L;
 
@@ -358,6 +360,7 @@ public class RepositoryTypeConfig implements TypeConfig {
         }
     }
 
+    @Deprecated
     protected class RepositoryFieldDescriptor extends FieldDescriptor {
         private static final long serialVersionUID = 1L;
 

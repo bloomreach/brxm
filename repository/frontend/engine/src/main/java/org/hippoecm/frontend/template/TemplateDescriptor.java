@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
+@Deprecated
 public class TemplateDescriptor extends ItemDescriptor {
     private static final long serialVersionUID = 1L;
 

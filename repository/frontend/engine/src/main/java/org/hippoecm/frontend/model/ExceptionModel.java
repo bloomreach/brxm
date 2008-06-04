@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class ExceptionModel implements IPluginModel {
 
     private static final long serialVersionUID = 1L;
