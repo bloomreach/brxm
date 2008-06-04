@@ -18,6 +18,7 @@ package org.hippoecm.hst.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Session;
 import javax.servlet.Filter;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.jcr.JCRConnector;
+import org.hippoecm.hst.util.LocaleFactory;
 
 //import org.slf4j.LoggerFactory;
 //import org.slf4j.Logger;
@@ -40,12 +42,17 @@ import org.hippoecm.hst.jcr.JCRConnector;
 public class ContextFilter implements Filter {
 
     // private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
-
+    
+    private static final String KEY_LOCALE_FACTORY_CLASS = "locale.factory.class";
+    private static final String DEFAULT_LOCALE_FACTORY_CLASS = "org.hippoecm.hst.util.DefaultLocaleFactory";
+    
     private String attributeName = "context";
     String repositoryBaseLocation = "/";
 
     private String[] ignoreExtensions = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
     private final List<String> ignoreExtensionsList = new ArrayList<String>();
+    
+    private LocaleFactory localeFactory;
 
     /**
      * Constructor
@@ -112,6 +119,7 @@ public class ContextFilter implements Filter {
         Session jcrSession = JCRConnector.getJCRSession(req.getSession());
         Context context = createContext(jcrSession, req);
         req.setAttribute(attributeName, context);
+        context.setLocale(getLocale(req, attributeName));
 
         if (shouldCallFilterChain(context, req, res)) {
             filterChain.doFilter(req, res);
@@ -131,5 +139,31 @@ public class ContextFilter implements Filter {
      */
     Context createContext(Session jcrSession, HttpServletRequest request) {
         return new Context(jcrSession, request.getContextPath(), request.getRequestURI(), this.repositoryBaseLocation);
+    }
+
+    private Locale getLocale(HttpServletRequest request, String contextName) {
+        
+        if (localeFactory == null) {
+
+            // class name by configuration
+            String localeFactoryClassName = HSTConfiguration.get(request.getSession().getServletContext(), 
+                KEY_LOCALE_FACTORY_CLASS, false/*not required*/);
+            
+            // class name by default
+            if (localeFactoryClassName == null) {
+                localeFactoryClassName = DEFAULT_LOCALE_FACTORY_CLASS;
+            }
+            
+            // instantiate
+            try {
+                Class localeFactoryClass = Class.forName(localeFactoryClassName);
+                this.localeFactory = (LocaleFactory) localeFactoryClass.newInstance();
+            } 
+            catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
+        return localeFactory.getLocale(request, contextName);
     }
 }

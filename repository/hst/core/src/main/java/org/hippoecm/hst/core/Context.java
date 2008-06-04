@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -62,6 +63,8 @@ public class Context extends AbstractMap {
     private HippoQuery query;
     private List<String> arguments;
     private DocumentPathReplacer pathReplacer;
+
+    private Locale locale;
     
     public Context(final Session jcrSession, final String contextPath, 
             final String requestURI, final String baseLocation) {
@@ -144,6 +147,10 @@ public class Context extends AbstractMap {
         return requestURI;
     }
 
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+    
     public void setRelativeLocation(String relativeLocation) {
         
         if (relativeLocation.startsWith(baseLocation)) {
@@ -306,6 +313,8 @@ public class Context extends AbstractMap {
                                     result = new Long(node.getNodes().getSize());
                                 } else if (field.equals("index")) {
                                     result = new Integer(index);
+                                } else if (field.equals("locale")) {
+                                    result = getLocale();
                                 } else {
                                     logger.warn("context._" + field + " not defined");
                                     result = null;
@@ -401,6 +410,10 @@ public class Context extends AbstractMap {
         }
         
         return pathReplacer;
+    }
+
+    private Locale getLocale() {
+        return (locale != null) ? locale : Locale.getDefault();
     }
 
     private class EntrySet extends AbstractSet {
