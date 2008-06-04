@@ -19,6 +19,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
+/**
+ * @deprecated use org.hippoecm.frontend.sa.* instead
+ */
+@Deprecated
 public abstract class InfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
 

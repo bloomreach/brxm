@@ -29,6 +29,10 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
+ */
+@Deprecated
 public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
 

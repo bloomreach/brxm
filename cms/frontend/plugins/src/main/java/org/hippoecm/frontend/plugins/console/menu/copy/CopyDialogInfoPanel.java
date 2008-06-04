@@ -13,62 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.dialog.lookup;
+package org.hippoecm.frontend.plugins.console.menu.copy;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @deprecated use org.hippoecm.frontend.sa.* instead
- */
-@Deprecated
-class LookupDialogDefaultInfoPanel extends InfoPanel {
+class CopyDialogInfoPanel extends Panel {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(LookupDialogDefaultInfoPanel.class);
+    static final Logger log = LoggerFactory.getLogger(CopyDialogInfoPanel.class);
 
+    @SuppressWarnings("unused")
+    private String source;
+    @SuppressWarnings("unused")
     private String target;
 
-    LookupDialogDefaultInfoPanel(String id, JcrNodeModel model) {
+    CopyDialogInfoPanel(String id, JcrNodeModel model) {
         super(id, model);
         setOutputMarkupId(true);
 
         try {
-            add(new Label("source", model.getNode().getPath()));
+            source = model.getNode().getPath();
+            target = model.getNode().getPath();
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-
+        add(new Label("source", new PropertyModel(this, "source")));
         add(new Label("target", new PropertyModel(this, "target")));
     }
     
     @Override
-    public void update(AjaxRequestTarget target, JcrNodeModel model) {
+    public void onModelChanged() {
+        JcrNodeModel model = (JcrNodeModel)getModel();
         if (model != null) {
             try {
-                this.setTarget(model.getNode().getPath());
+                this.target = model.getNode().getPath();
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
         }
-        if (target != null) {
-            target.addComponent(this);
+        IRequestTarget requestTarget = RequestCycle.get().getRequestTarget();
+        if (AjaxRequestTarget.class.isAssignableFrom(requestTarget.getClass())) {
+            ((AjaxRequestTarget)requestTarget).addComponent(this);
         }
     }
-    
-  
-    protected String getTarget() {
-        return target;
-    }
-
-    protected void setTarget(String target) {
-        this.target = target;
-    }
-
 }
