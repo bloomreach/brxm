@@ -17,8 +17,10 @@ package org.hippoecm.frontend.plugins.console.menu;
 
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
+import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
 import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
@@ -28,7 +30,6 @@ import org.hippoecm.frontend.sa.dialog.AbstractDialog;
 import org.hippoecm.frontend.sa.dialog.DialogLink;
 import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IJcrService;
@@ -104,26 +105,24 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("rename-dialog", new Model("Rename Node"), dialogFactory, dialogService));
+          
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
 
-        //  
-        //  dialogFactory = new IDialogFactory() {
-        //      private static final long serialVersionUID = 1L;
-        //      public AbstractDialog createDialog(IDialogService service) {
-        //          return null;
-        //      }
-        //  };
-        //  add(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
-        //  
-        //  dialogFactory = new IDialogFactory() {
-        //      private static final long serialVersionUID = 1L;
-        //      public AbstractDialog createDialog(IDialogService service) {
-        //          return null;
-        //      }
-        //  };
-        //  add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
-        //  
-        //  
-        //  
+            public AbstractDialog createDialog(IDialogService service) {
+                return new MoveDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
+          
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
+                return new CopyDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
     }
 
     public void flushNodeModel(JcrNodeModel nodeModel) {

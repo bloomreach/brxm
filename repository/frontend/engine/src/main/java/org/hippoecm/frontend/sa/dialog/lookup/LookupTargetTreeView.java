@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.dialog.lookup;
+package org.hippoecm.frontend.sa.dialog.lookup;
 
 import javax.swing.tree.TreeNode;
 
@@ -22,10 +22,6 @@ import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.tree.JcrTree;
 
-/**
- * @deprecated use org.hippoecm.frontend.sa.* instead
- */
-@Deprecated
 class LookupTargetTreeView extends JcrTree {
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +37,7 @@ class LookupTargetTreeView extends JcrTree {
     protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode treeNode) {
         this.selectedNode = treeNode;
         AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
-        dialog.update(target, treeNodeModel.getNodeModel());
+        dialog.setModel(treeNodeModel.getNodeModel());
     }
 
     TreeNode getSelectedNode() {

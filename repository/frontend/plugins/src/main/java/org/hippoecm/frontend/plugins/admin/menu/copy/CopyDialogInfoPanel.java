@@ -26,6 +26,10 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead
+ */
+@Deprecated
 class CopyDialogInfoPanel extends InfoPanel {
     private static final long serialVersionUID = 1L;
 
