@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.frontend.template.TypeDescriptor;
 
+@Deprecated
 public class MixedTypeConfig implements TypeConfig {
     private static final long serialVersionUID = 1L;
 

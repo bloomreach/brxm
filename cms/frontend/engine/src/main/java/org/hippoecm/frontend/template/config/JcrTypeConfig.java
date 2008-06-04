@@ -37,6 +37,7 @@ import org.hippoecm.frontend.template.TypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class JcrTypeConfig implements TypeConfig {
     private static final long serialVersionUID = 1L;
 
@@ -55,6 +56,7 @@ public class JcrTypeConfig implements TypeConfig {
         return null;
     }
 
+    @Deprecated
     class JcrTypeDescriptor extends TypeDescriptor {
         private static final long serialVersionUID = 1L;
 
@@ -127,6 +129,7 @@ public class JcrTypeConfig implements TypeConfig {
         }
     }
 
+    @Deprecated
     class JcrFieldDescriptor extends FieldDescriptor {
         private static final long serialVersionUID = 1L;
 

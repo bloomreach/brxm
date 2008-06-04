@@ -19,6 +19,7 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.template.TemplateDescriptor;
 import org.hippoecm.frontend.template.TypeDescriptor;
 
+@Deprecated
 public interface TemplateConfig extends IClusterable {
 
     public final static String EDIT_MODE = "edit";

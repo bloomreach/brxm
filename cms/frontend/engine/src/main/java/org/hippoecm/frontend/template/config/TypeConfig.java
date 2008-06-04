@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.template.TypeDescriptor;
 
+@Deprecated
 public interface TypeConfig extends IClusterable {
 
     public TypeDescriptor getTypeDescriptor(String name);

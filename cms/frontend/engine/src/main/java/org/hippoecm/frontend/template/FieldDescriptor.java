@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 
+@Deprecated
 public class FieldDescriptor implements IClusterable, Cloneable {
     private static final long serialVersionUID = 1L;
 

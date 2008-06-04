@@ -33,6 +33,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class RepositoryTemplateConfig extends PluginRepositoryConfig implements TemplateConfig {
     private static final long serialVersionUID = 1L;
 
@@ -154,6 +155,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         return new Descriptor(node, pluginId, className);
     }
 
+    @Deprecated
     private class Descriptor extends PluginRepositoryConfig.Descriptor {
         private static final long serialVersionUID = 1L;
 
@@ -178,6 +180,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
+    @Deprecated
     private static class RepositoryItemDescriptor extends ItemDescriptor {
         private static final long serialVersionUID = 1L;
 
@@ -202,6 +205,7 @@ public class RepositoryTemplateConfig extends PluginRepositoryConfig implements 
         }
     }
 
+    @Deprecated
     private static class RepositoryTemplateDescriptor extends TemplateDescriptor {
         private static final long serialVersionUID = 1L;
 

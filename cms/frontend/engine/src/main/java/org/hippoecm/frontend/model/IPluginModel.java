@@ -19,8 +19,7 @@ import java.util.Map;
 
 import org.apache.wicket.model.IModel;
 
-// WARNING: this interface is still experimental and subject to change
-
+@Deprecated
 public interface IPluginModel extends IModel {
 
     public Map<String, Object> getMapRepresentation();

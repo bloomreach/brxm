@@ -20,7 +20,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
-import org.hippoecm.frontend.template.config.TemplateConfig;
+import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class ValueTemplatePlugin extends RenderPlugin {
 
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         String mode = config.getString("mode");
-        if (TemplateConfig.EDIT_MODE.equals(mode)) {
+        if (ITemplateEngine.EDIT_MODE.equals(mode)) {
             TextFieldWidget widget = new TextFieldWidget("value", valueModel);
             if (config.getString("size") != null) {
                 widget.setSize(config.getString("size"));

@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 
+@Deprecated
 public class ItemDescriptor implements IClusterable {
     private static final long serialVersionUID = 1L;
 

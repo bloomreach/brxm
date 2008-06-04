@@ -30,6 +30,7 @@ import org.hippoecm.frontend.template.config.TypeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class WildcardModel extends ItemModel {
     private static final long serialVersionUID = 1L;
 
