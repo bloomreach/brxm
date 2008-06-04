@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,17 @@
 - hst:pageType (string) = 'jsp' mandatory < 'jsp', 'jsf'
 - hst:pageFile (string) = 'index.jsp' mandatory 
 
-[hst:pagedef] > nt:base, hst:page
+[hst:pageDef] > nt:base, hst:page
 
-[hst:urlmapping] > nt:base
-- hst:nodetype (string) mandatory
-+ hst:displaypage (hst:pagedef) = hst:pagedef mandatory
+[hst:urlMapping] > nt:base
+- hst:nodeType (string) mandatory
++ hst:displayPage (hst:pagedef) = hst:pageDef mandatory
 
-[hst:urlmappingfolder] > nt:unstructured orderable
-+ * (hst:urlmapping) = hst:urlmapping
+[hst:urlMappingFolder] > nt:unstructured orderable
++ * (hst:urlMapping) = hst:urlMapping
+
+[hst:menuItem] mixin
+
+[hst:nonSiteMapItem] mixin
+
+[hst:childless] mixin

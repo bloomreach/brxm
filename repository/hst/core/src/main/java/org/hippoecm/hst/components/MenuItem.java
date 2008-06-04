@@ -46,20 +46,7 @@ public class MenuItem {
         
         this.level = level;
         try {
-            String label;
-            if (node.hasProperty(HSTNodeTypes.HST_LABEL)) {
-                label = node.getProperty(HSTNodeTypes.HST_LABEL).getString();
-            }
-            else {
-                
-                // capitalized node name as label  
-                label = node.getName().substring(0, 1).toUpperCase();
-                if (node.getName().length() > 1) {
-                    label += node.getName().substring(1);
-                }
-            }
-            
-            this.label = label;
+            this.label = getLabel(node);
             this.path = node.getPath();
         } 
         catch (RepositoryException re) {
@@ -67,6 +54,20 @@ public class MenuItem {
         }
         
         createMenuItems(node, excludedDocumentNames);
+    }
+
+    private String getLabel(Node node) throws RepositoryException {
+
+        if (node.hasProperty(HSTNodeTypes.HST_LABEL)) {
+            return node.getProperty(HSTNodeTypes.HST_LABEL).getString();
+        }
+            
+        // capitalized node name as label  
+        String label = node.getName().substring(0, 1).toUpperCase();
+        if (node.getName().length() > 1) {
+            label += node.getName().substring(1);
+        }
+        return label;
     }
 
     public List<MenuItem> getItems() {
@@ -112,53 +113,49 @@ public class MenuItem {
     private void createMenuItems(final Node node, final String[] excludedDocumentNames) {
         
         try {
-           
+            // creating menu sub items may be specifically turned off
+            if (node.isNodeType(HSTNodeTypes.HST_CHILDLESS)) {
+                return;
+            }
+          
             // loop the subnodes and create items from them if applicable
             NodeIterator subNodes =  node.getNodes();
             while (subNodes.hasNext()) {
                 
                 Node subNode = (Node) subNodes.next();
                 
-                // on level higher than 0, absence of the property means to  
-                // create one if it concerns a document handle or folder
-                if (!subNode.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
+                // on level higher than 0, always create an item, except  
+                // document excludes 
 
-                    // skip real documents as there are multiple variants
-                    if (subNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                // when a handle, get document and check excludes 
+                if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+
+                    if (!subNode.hasNode(subNode.getName())) {
                         continue;
                     }
                     
-                    // treat handle as document
-                    else if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-
-                        // hide document nodes by default names
-                        if (excludedDocumentNames != null) {
-                            boolean skip = false;
-                            int i = 0;
-                            while ((i < excludedDocumentNames.length) && !skip) {
-                                skip = excludedDocumentNames[i].trim().equals(subNode.getName());
-                                i++;
-                            }
-                            if (skip) {
-                                continue;
-                            }
-                        }    
-
-                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
-                    }
+                    Node documentNode = subNode.getNode(subNode.getName());
                     
-                    // folder
-                    else if (subNode.isNodeType(HippoNodeType.NT_UNSTRUCTURED)
-                          || subNode.isNodeType("nt:unstructured")) {
-                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
-                    }
+                    // hide document nodes by default names
+                    if (excludedDocumentNames != null) {
+                        boolean skip = false;
+                        int i = 0;
+                        while ((i < excludedDocumentNames.length) && !skip) {
+                            skip = excludedDocumentNames[i].trim().equals(documentNode.getName());
+                            i++;
+                        }
+                        if (skip) {
+                            continue;
+                        }
+                    }    
+
+                    menuItems.add(new MenuItem(documentNode, this.getLevel() + 1, excludedDocumentNames));
                 }
+                
+                // other nodes
                 else {
-                    // check flag
-                    if (subNode.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
-                        menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
-                    }
-               }
+                    menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
+                }
             }
         } 
         catch (RepositoryException re) {

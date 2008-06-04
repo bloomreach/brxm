@@ -31,18 +31,19 @@ public final class HSTNodeTypes {
     
     // Node mixin type
     public static final String NT_HST_PAGE = "hst:page";
-//    public static final String NT_HST_PAGEDEF = "hst:pagedef";
-//    public static final String NT_HST_URLMAPPING = "hst:urlmapping";
-//    public static final String NT_HST_URLMAPPINGFOLDER = "hst:urlmappingfolder";
+//    public static final String NT_HST_PAGEDEF = "hst:pageDef";
+//    public static final String NT_HST_URLMAPPING = "hst:urlMapping";
+//    public static final String NT_HST_URLMAPPINGFOLDER = "hst:urlMappingFolder";
+    public static final String HST_MENU_ITEM = "hst:menuItem";
+    public static final String HST_NON_SITE_MAP_ITEM = "hst:nonSiteMapItem";
+    public static final String HST_CHILDLESS = "hst:childless";
 
-    // Node names
-    public static final String HST_DISPLAYPAGE = "hst:displaypage";
+    // Node name
+    public static final String HST_DISPLAYPAGE = "hst:displayPage";
 
     // Node properties
-    public static final String HST_NODETYPE = "hst:nodetype";
+    public static final String HST_NODETYPE = "hst:nodeType";
 //    public static final String HST_PAGETYPE = "hst:pageType";
     public static final String HST_PAGEFILE = "hst:pageFile";
-    public static final String HST_SITE_ITEM = "hst:siteItem";
-    public static final String HST_SITE_ITEM_CHILDREN = "hst:siteItemChildren";
     public static final String HST_LABEL = "hst:label";
 }
