@@ -1,4 +1,4 @@
-<!--
+
   * Copyright 2007 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
@@ -12,39 +12,43 @@
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
--->
+
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:head>
-        <link rel="stylesheet" type="text/css" href="file:///C:/projects/hippo-ecm/package/war/src/main/webapp/skin/style.css"/>
-    </wicket:head>
     <wicket:panel>
-        
         <table class="panelhead">
             <tr>
-                <td>
-                    <a class="previous" href="#" wicket:id="older">older</a>
-                    
+                <td style="width: 40px;">
+                    <a class="previous" href="#" wicket:id="older">Older</a>
+                </td>
+                <td class="docico">
+                    &nbsp;
                 </td>
         <td class="gray">
                  <h3 class="documentlabel" wicket:id="document"></h3>
-            <div wicket:id="test">Version: </div><p class="versionlabel" wicket:id="version">456</p>
-                            <h4 style="clear: both">Created</h4>
-                            <p wicket:id="created"></p>
-                            <h4>Expired</h4>
-                            <p wicket:id="expired"></p>
-                            <h4>Tags</h4>
-            <p class="taglist" wicket:id="labeled"></p>
+            <table class="versiondetails">
+               <tr>
+                <td>Created: </td>
+                   <td wicket:id="created"></td>
+              </tr>
+                <tr>
+                    <td wicket:id="expired">Expired: </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Tags: </td>
+                    <td wicket:id="labeled"></td>
+                </tr>
+            </table>
         </td>
-            <td style="padding-left: 20px;">
-            
+            <td>
+                <div style="margin-bottom: 4px;">
+                <span wicket:id="test">Version: </span><span wicket:id="version">456</span>
+                </div>
                         <!-- <li><div wicket:id="compare">compare with other version</div></li> -->
-                       
                 <input type="submit" value="Restore this version" wicket:id="restore" />
-                        
-                
             </td>
-                <td>
-                    <a class="next" href="#" wicket:id="newer">newer</a>
+                <td style="width: 40px; text-align: right">
+                    <a class="next" href="#" wicket:id="newer">Newer</a>
                     
                 </td>
             </tr>
