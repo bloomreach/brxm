@@ -193,40 +193,71 @@
   <!-- end "Boolean" type -->
 
   <!-- "Date" type -->
-  <sv:node sv:name="Date">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
-    </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:nodetype">
+    <sv:node sv:name="Date">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
+            <sv:value>hippo:templatetype</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:node" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
 
-    <sv:node sv:name="hippo:template">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:template">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.DatePickerPlugin</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
+        <sv:node sv:name="hippo:nodetype">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:handle</sv:value>
+            </sv:property>
+            <sv:node sv:name="hippo:nodetype">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:nodetype</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:node" sv:type="Boolean">
+                    <sv:value>false</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
 
-  </sv:node>
+        <sv:node sv:name="hippo:template">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:handle</sv:value>
+            </sv:property>
+            
+            //Deprecated
+            <sv:node sv:name="hippo:template">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippo:template</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:renderer" sv:type="String">
+                    <sv:value>org.hippoecm.frontend.plugins.template.DatePickerPlugin</sv:value>
+                </sv:property>
+            </sv:node>
+            
+            <sv:node sv:name="hippo:template">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>frontend:plugincluster</sv:value>
+                </sv:property>
+                <sv:property sv:name="frontend:overrides" sv:type="String">
+                    <sv:value>wicket.id</sv:value>
+                    <sv:value>engine</sv:value>
+                </sv:property>
+                <sv:property sv:name="wicket.model" sv:type="String">
+                    <sv:value>{cluster}.model</sv:value>
+                </sv:property>
+                <sv:node sv:name="root">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>frontend:plugin</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="plugin.class" sv:type="String">
+                        <sv:value>org.hippoecm.frontend.sa.template.plugins.DatePickerPlugin</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="wicket.id" sv:type="String">
+                        <sv:value>cluster:wicket.id</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="wicket.model" sv:type="String">
+                        <sv:value>{cluster}.model</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="engine" sv:type="String">
+                        <sv:value>cluster:engine</sv:value>
+                    </sv:property>
+                </sv:node>
+            </sv:node>
+        </sv:node>
+    </sv:node>
   <!-- end "Date" type -->
 
   <!-- "Long" type -->
