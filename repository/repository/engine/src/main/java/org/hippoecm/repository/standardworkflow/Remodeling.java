@@ -48,18 +48,20 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.value.ReferenceValue;
+
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoNamespaceRegistry;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Remodeling {
     protected final static Logger log = LoggerFactory.getLogger(Remodeling.class);
