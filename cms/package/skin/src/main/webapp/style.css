@@ -96,7 +96,7 @@ div.slidercontrol a:hover{cursor: s-resize}
 
 h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px;}
 h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
-.preview {padding: 15px; height: 118px; overflow: scroll}
+.preview {padding: 15px; height: 156px; overflow: scroll}
 
 .gray{color: #666666} 
 .panelgray{background: #d2d2d2}
@@ -144,6 +144,7 @@ margin:0px;
 border: none;
 overflow: auto; 
 width: 222px;
+height: 477px;
 }
 .tree .wicket-tree{width: 222px; margin: 0px}
 .tree .wicket-tree .row a {color: black}
@@ -260,7 +261,7 @@ tr.even td { }
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
-.Doclist{ height: 253px; overflow: auto}
+.Doclist{ height: 215px; overflow: auto}
 
 .dataview{width: 100%}
 .dataview thead tr.navigation td { padding: 5px; }
