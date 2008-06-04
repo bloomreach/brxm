@@ -493,6 +493,10 @@
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
+        
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
 
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -799,6 +803,10 @@
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>          
 
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

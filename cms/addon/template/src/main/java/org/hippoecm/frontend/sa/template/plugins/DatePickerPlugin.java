@@ -13,40 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.sa.template.plugins;
 
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.template.model.TemplateModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.DateFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
-public class DatePickerPlugin extends Plugin {
+public class DatePickerPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DatePickerPlugin.class);
 
     private JcrPropertyValueModel valueModel;
 
-    public DatePickerPlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
+    public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
-        TemplateModel model = (TemplateModel) getPluginModel();
-        valueModel = model.getJcrPropertyValueModel();
-
+        valueModel = (JcrPropertyValueModel) getModel();
         add(new DateFieldWidget("value", valueModel));
-
         setOutputMarkupId(true);
     }
 
     @Override
     public void onDetach() {
         if (valueModel == null) {
-            log.error("ValueModel is null: " + getPluginModel().toString());
+            log.error("ValueModel is null: " + getModel().toString());
         } else {
             valueModel.detach();
         }
