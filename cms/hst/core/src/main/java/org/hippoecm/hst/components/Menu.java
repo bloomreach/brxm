@@ -27,7 +27,6 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.hst.jcr.JCRConnector;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,17 +110,9 @@ public class Menu {
                 
                 Node node = (Node) nodes.next();
           
-                // skip real documents as there are multiple variants
-                if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    continue;
-                }
-
-                // on level 0, absence of the property means not to create a 
-                // menu item, so only documents and folders with the flag up
-                if (node.hasProperty(HSTNodeTypes.HST_SITE_ITEM)) {
-                    if (node.getProperty(HSTNodeTypes.HST_SITE_ITEM).getBoolean()) {
-                        menuItems.add(new MenuItem(node, 0/*level*/, excludedDocumentNames));
-                    }
+                // on level 0, only add nodes with the flag up
+                if (node.isNodeType(HSTNodeTypes.HST_MENU_ITEM)) {
+                    menuItems.add(new MenuItem(node, 0/*level*/, excludedDocumentNames));
                 }
             }
         } 
