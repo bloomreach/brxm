@@ -15,12 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit.sa;
 
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     public EditPerspective(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -28,5 +35,20 @@ public class EditPerspective extends Perspective {
         for (String extension : new String[] { "editorPlugin", "workflowPlugin" }) {
             addExtensionPoint(extension);
         }
+
+        onModelChanged();
     }
+
+    @Override
+    public void onModelChanged() {
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        try {
+            if (nodeModel != null && nodeModel.getNode() != null) {
+                setTitle(nodeModel.getNode().getName());
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
 }

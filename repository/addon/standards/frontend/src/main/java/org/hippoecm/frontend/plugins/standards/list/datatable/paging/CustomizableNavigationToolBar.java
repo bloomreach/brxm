@@ -50,7 +50,8 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
                 .valueOf(table.getColumns().length))));
 
         PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, prefix, postfix);
-        pagingNavigator.getPagingNavigation().setViewSize(viewSize);
+        // FIXME: viewsize can be set after onBeforeRender, not yet here
+        // pagingNavigator.getPagingNavigation().setViewSize(viewSize);
         span.add(pagingNavigator);
         span.add(newNavigatorLabel("navigatorLabel", table));
     }

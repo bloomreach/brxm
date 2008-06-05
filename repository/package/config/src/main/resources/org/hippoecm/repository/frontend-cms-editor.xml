@@ -65,7 +65,7 @@
             <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.editor.EditorPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.sa.adapter.AdapterPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.editor</sv:value>
@@ -73,8 +73,14 @@
         <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>{cluster}.model</sv:value>
         </sv:property>
+        <sv:property sv:name="legacy.base" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel/editPerspective</sv:value>
+        </sv:property>
+        <sv:property sv:name="legacy.plugin" sv:type="String">
+            <sv:value>editor</sv:value>
+        </sv:property>
     </sv:node>
-
+    
     <sv:node sv:name="workflowListPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>

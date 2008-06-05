@@ -38,6 +38,7 @@ public class AdapterPlugin implements IPlugin, IViewService {
         rootConfig.put("legacy.base", config.getString("legacy.base"));
         rootConfig.put("legacy.plugin", config.getString("legacy.plugin"));
         rootConfig.put("wicket.id", config.getString("wicket.id"));
+        rootConfig.put("wicket.model", config.getString("wicket.model"));
 
         adapter = new Adapter();
         adapter.init(context, rootConfig);

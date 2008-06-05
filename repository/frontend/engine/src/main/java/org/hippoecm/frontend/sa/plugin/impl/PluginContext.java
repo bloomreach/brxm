@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.Home;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
@@ -58,24 +57,22 @@ public class PluginContext implements IPluginContext, IClusterable {
             }
             children.remove(this);
 
-            PluginManager mgr = getManager();
-            mgr.unregisterService(this, "clusters");
+            manager.unregisterService(this, "clusters");
         }
     }
 
-    private Home page;
     private String controlId;
     private IPluginConfig config;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
     private List<PluginControl> children;
     private boolean initializing = true;
-    private transient PluginManager manager = null;
+    private PluginManager manager;
 
-    public PluginContext(Home page, String controlId, IPluginConfig config) {
-        this.page = page;
+    public PluginContext(PluginManager manager, String controlId, IPluginConfig config) {
         this.controlId = controlId;
         this.config = config;
+        this.manager = manager;
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.listeners = new HashMap<String, List<IServiceTracker>>();
@@ -88,13 +85,12 @@ public class PluginContext implements IPluginContext, IClusterable {
 
         log.info("cluster " + this.controlId + " starting cluster");
 
-        PluginManager mgr = getManager();
-        mgr.registerService(control, "clusters");
-        String controlId = mgr.getReference(control).getServiceId();
+        manager.registerService(control, "clusters");
+        String controlId = manager.getReference(control).getServiceId();
 
         int i = 0;
         for (IPluginConfig config : cluster.getPlugins()) {
-            contexts[i++] = mgr.start(config, controlId);
+            contexts[i++] = manager.start(config, controlId);
         }
 
         log.info("cluster " + this.controlId + " started cluster " + controlId);
@@ -104,15 +100,15 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
-        return (T) getManager().getService(name, clazz);
+        return (T) manager.getService(name, clazz);
     }
 
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
-        return getManager().getServices(name, clazz);
+        return manager.getServices(name, clazz);
     }
 
     public <T extends IClusterable> IServiceReference<T> getReference(T service) {
-        return getManager().getReference(service);
+        return manager.getReference(service);
     }
 
     public void registerService(IClusterable service, String name) {
@@ -123,8 +119,8 @@ public class PluginContext implements IPluginContext, IClusterable {
             services.put(name, list);
         }
         list.add(service);
-        getManager().registerService(service, name);
-        getManager().registerService(service, controlId);
+        manager.registerService(service, name);
+        manager.registerService(service, controlId);
     }
 
     public void unregisterService(IClusterable service, String name) {
@@ -132,8 +128,8 @@ public class PluginContext implements IPluginContext, IClusterable {
         List<IClusterable> list = services.get(name);
         if (list != null) {
             list.remove(service);
-            getManager().unregisterService(service, controlId);
-            getManager().unregisterService(service, name);
+            manager.unregisterService(service, controlId);
+            manager.unregisterService(service, name);
         } else {
             log.warn("unregistering service that wasn't registered.");
         }
@@ -150,7 +146,7 @@ public class PluginContext implements IPluginContext, IClusterable {
         }
         list.add(listener);
         if (!initializing) {
-            getManager().registerTracker(listener, name);
+            manager.registerTracker(listener, name);
         }
     }
 
@@ -159,7 +155,7 @@ public class PluginContext implements IPluginContext, IClusterable {
         if (list != null) {
             list.remove(listener);
             if (!initializing) {
-                getManager().unregisterTracker(listener, name);
+                manager.unregisterTracker(listener, name);
             }
         }
     }
@@ -171,20 +167,12 @@ public class PluginContext implements IPluginContext, IClusterable {
         }
     }
 
-    private PluginManager getManager() {
-        if (manager == null) {
-            manager = page.getPluginManager();
-        }
-        return manager;
-    }
-
     void connect(IPlugin plugin) {
         if (initializing) {
-            PluginManager mgr = getManager();
             for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
                 List<IServiceTracker> list = entry.getValue();
                 for (IServiceTracker listener : list) {
-                    mgr.registerTracker(listener, entry.getKey());
+                    manager.registerTracker(listener, entry.getKey());
                 }
             }
             initializing = false;
@@ -194,11 +182,9 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     void stop() {
-        PluginManager mgr = getManager();
-
         for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
             for (IServiceTracker service : entry.getValue()) {
-                mgr.unregisterTracker(service, entry.getKey());
+                manager.unregisterTracker(service, entry.getKey());
             }
         }
         listeners = new HashMap<String, List<IServiceTracker>>();
@@ -206,8 +192,8 @@ public class PluginContext implements IPluginContext, IClusterable {
         for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
             for (IClusterable service : entry.getValue()) {
                 log.info("unregistering " + controlId + ", name " + entry.getKey());
-                mgr.unregisterService(service, controlId);
-                mgr.unregisterService(service, entry.getKey());
+                manager.unregisterService(service, controlId);
+                manager.unregisterService(service, entry.getKey());
             }
         }
         services = new HashMap<String, List<IClusterable>>();
