@@ -80,8 +80,14 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     @Override
     protected void ok() throws Exception {
         JcrNodeModel handle = model.getNodeModel();
-        while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+        while(handle != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
+        }
+        if(handle == null) {
+            handle = model.getNodeModel().getParentModel();
+            if(handle == null) {
+                handle = model.getNodeModel();
+            }
         }
         handle.getNode().save();
         execute();
