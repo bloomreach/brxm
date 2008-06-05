@@ -192,7 +192,7 @@ public class FolderTreeNode extends AbstractTreeNode {
                     }
                     result.add(node.getNode(path));
                 } catch (PathNotFoundException e) {
-                    log.error("shortcut path not found: " + e.getMessage());
+                    log.info("shortcut path not found: " + e.getMessage());
                 }
             }
         }
