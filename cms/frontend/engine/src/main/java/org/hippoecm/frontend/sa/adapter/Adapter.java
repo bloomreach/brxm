@@ -20,11 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.PluginModel;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
@@ -33,6 +35,8 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
+import org.hippoecm.frontend.sa.model.IModelListener;
+import org.hippoecm.frontend.sa.model.IModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.IRenderService;
@@ -51,7 +55,7 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
  * Needed for handling legacy plugins
  * remove when all legacy plugins have been ported to new services architecture  
  */
-public class Adapter extends Panel implements IRenderService {
+public class Adapter extends Panel implements IRenderService, IModelListener {
     private static final long serialVersionUID = 1L;
 
     private org.hippoecm.frontend.plugin.Plugin rootPlugin;
@@ -92,9 +96,22 @@ public class Adapter extends Panel implements IRenderService {
         PluginDescriptor descriptor = repoConfig.getPlugin(name);
         descriptor.setWicketId("legacyPlugin");
 
-        UserSession session = (UserSession) Session.get();
-        HippoNode rootNode = session.getRootNode();
-        JcrNodeModel rootModel = new JcrNodeModel(rootNode);
+        JcrNodeModel rootModel;
+        if (config.getString("wicket.model") != null) {
+            IModelService modelService = context.getService(config.getString("wicket.model"), IModelService.class);
+            if (modelService != null) {
+                rootModel = (JcrNodeModel) modelService.getModel();
+            } else {
+                UserSession session = (UserSession) Session.get();
+                HippoNode rootNode = session.getRootNode();
+                rootModel = new JcrNodeModel(rootNode);
+            }
+            context.registerService(this, config.getString("wicket.model"));
+        } else {
+            UserSession session = (UserSession) Session.get();
+            HippoNode rootNode = session.getRootNode();
+            rootModel = new JcrNodeModel(rootNode);
+        }
 
         final PluginDescriptor childDescriptor = descriptor;
         PluginDescriptor rootDescriptor = new PluginDescriptor("adapted", RootPlugin.class.getName()) {
@@ -128,19 +145,6 @@ public class Adapter extends Panel implements IRenderService {
     }
 
     @Override
-    public Component setModel(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) model;
-            org.hippoecm.frontend.plugin.Plugin plugin = (org.hippoecm.frontend.plugin.Plugin) rootPlugin
-                    .get("legacyPlugin");
-            Channel top = plugin.getTopChannel();
-            Notification notification = top.createNotification("select", nodeModel);
-            top.publish(notification);
-        }
-        return super.setModel(model);
-    }
-
-    @Override
     public String getId() {
         return wicketId;
     }
@@ -162,8 +166,13 @@ public class Adapter extends Panel implements IRenderService {
     }
 
     public void render(PluginRequestTarget target) {
-        // TODO Auto-generated method stub
-
+        if (findParent(Page.class) == null) {
+            Channel channel = rootPlugin.getBottomChannel();
+            PluginModel model = new PluginModel();
+            model.put("plugin", "invalid path");
+            Notification notification = channel.createNotification("focus", model);
+            channel.publish(notification);
+        }
     }
 
     public void unbind() {
@@ -175,4 +184,16 @@ public class Adapter extends Panel implements IRenderService {
     public String toString() {
         return "Adapter";
     }
+
+    public void updateModel(IModel model) {
+        if (model instanceof JcrNodeModel) {
+            JcrNodeModel nodeModel = (JcrNodeModel) model;
+            org.hippoecm.frontend.plugin.Plugin plugin = (org.hippoecm.frontend.plugin.Plugin) rootPlugin
+                    .get("legacyPlugin");
+            Channel top = plugin.getTopChannel();
+            Notification notification = top.createNotification("select", nodeModel);
+            top.publish(notification);
+        }
+    }
+
 }

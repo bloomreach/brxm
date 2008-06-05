@@ -106,6 +106,7 @@ public class PreviewFieldPlugin extends Plugin {
 
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+            ex.printStackTrace();
             PluginModel error = new PluginModel();
             error.put("error", ex.getMessage());
             PluginDescriptor plugin = new PluginDescriptor("template", ErrorPlugin.class.getName());

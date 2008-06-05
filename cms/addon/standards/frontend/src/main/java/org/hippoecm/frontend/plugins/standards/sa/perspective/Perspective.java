@@ -64,6 +64,10 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
         return title;
     }
 
+    protected void setTitle(String title) {
+        this.title = title;
+    }
+
     // IViewService
 
     public void view(IModel model) {

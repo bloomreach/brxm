@@ -396,7 +396,7 @@
             <sv:property sv:name="hippo:renderer" sv:type="String">
               <sv:value>org.hippoecm.frontend.plugins.template.editor.EditorPlugin</sv:value>
             </sv:property>
-            <sv:node sv:name="editworkflowsPlugin">
+            <!-- sv:node sv:name="editworkflowsPlugin">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:frontendplugin</sv:value>
               </sv:property>
@@ -412,7 +412,7 @@
                   <sv:value>modelling</sv:value>
                 </sv:property>
               </sv:node>
-            </sv:node>
+            </sv:node -->
           </sv:node>
 
         </sv:node>
