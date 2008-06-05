@@ -21,5 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface LocaleFactory {
 
+    /**
+     * Get or create a locale for a request.
+     *   
+     * @param request the servlet request
+     * @param contextName the name of the request attribute by which the current
+     *      {@link org.hippoecm.hst.core.Context} object can be found.
+     */
     Locale getLocale(HttpServletRequest request, String contextName);
 }

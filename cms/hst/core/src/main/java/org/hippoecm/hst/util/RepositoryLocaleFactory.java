@@ -27,14 +27,17 @@ import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.jcr.JCRConnector;
 
 /**
- * The default locale factory first tries to read the locale from the repository 
- * base location that the given context points to. If no property is read, a 
- * simple match is done of available locales' language against the start of the 
- * URL.  
+ * Locale factory that tries to read the locale from the repository base 
+ * location that the current context points to, by means of the property 
+ * hst:locale. 
+ *  
+ * If no match is found, the locale is set to Locale.ENGLISH.
+ * 
+ * It keeps the found locale in session.   
  */
-public class DefaultLocaleFactory implements LocaleFactory {
+public class RepositoryLocaleFactory implements LocaleFactory {
 
-    private static final String SESSION_KEY = "DefaultLocaleFactory.Locale";
+    private static final String SESSION_KEY = RepositoryLocaleFactory.class.getName() + ".locale";
     
     // javadoc from interface
     public Locale getLocale(HttpServletRequest request, String contextName) {
@@ -43,12 +46,12 @@ public class DefaultLocaleFactory implements LocaleFactory {
         
         if (locale == null) {
         
-            // first try to read from repository base location
+            // try to read from repository base location
             Context context = (Context) request.getAttribute(contextName);
             Session jcrSession = JCRConnector.getJCRSession(request.getSession());
             try {
                 Item item = JCRConnector.getItem(jcrSession, context.getBaseLocation());
-                
+
                 if (item.isNode()) {
                     Node node = (Node) item;
                     if (node.hasProperty(HSTNodeTypes.HST_LOCALE)) {
@@ -72,19 +75,7 @@ public class DefaultLocaleFactory implements LocaleFactory {
                 throw new IllegalStateException(re);
             }
             
-            // secondly do a simple match to the start of URL
-            if (locale == null) {
-                Locale[] locales = Locale.getAvailableLocales();
-                for (int i = 0; i < locales.length; i++) {
-                    
-                    if (context.getURLBasePath().startsWith("/" + locales[i].getLanguage())) {
-                        // create a new one to omit the country 
-                        locale = new Locale(locales[i].getLanguage());
-                    }
-                }
-            }
-            
-            // third is default
+             // default
             if (locale == null) {
                 locale = Locale.ENGLISH;
             }
