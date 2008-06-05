@@ -253,19 +253,19 @@
 
   <sv:node sv:name="defaultmapping">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:urlmappingfolder</sv:value>
+      <sv:value>hst:urlMappingFolder</sv:value>
     </sv:property>
 
     <sv:node sv:name="special">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:urlmapping</sv:value>
+        <sv:value>hst:urlMapping</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:nodetype" sv:type="String">
+      <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hstsample:sampleSpecialNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displaypage">
+      <sv:node sv:name="hst:displayPage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pagedef</sv:value>
+          <sv:value>hst:pageDef</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageType" sv:type="String">
           <sv:value>jsp</sv:value>
@@ -278,14 +278,14 @@
 
     <sv:node sv:name="plain">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:urlmapping</sv:value>
+        <sv:value>hst:urlMapping</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:nodetype" sv:type="String">
+      <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hstsample:samplePlainNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displaypage">
+      <sv:node sv:name="hst:displayPage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pagedef</sv:value>
+          <sv:value>hst:pageDef</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageType" sv:type="String">
           <sv:value>jsp</sv:value>
@@ -300,17 +300,17 @@
 <!--
   <sv:node sv:name="alternatemapping">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:urlmappingfolder</sv:value>
+      <sv:value>hst:urlMappingFolder</sv:value>
     </sv:property>
 
     <sv:node sv:name="exceptional">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:urlmapping</sv:value>
+        <sv:value>hst:urlMapping</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:nodetype" sv:type="String">
+      <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hst:sampleSpecialNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displaypage">
+      <sv:node sv:name="hst:displayPage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:pagedef</sv:value>
         </sv:property>
@@ -325,12 +325,12 @@
 
     <sv:node sv:name="any">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hst:urlmapping</sv:value>
+        <sv:value>hst:urlMapping</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:nodetype" sv:type="String">
+      <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hippo:document</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displaypage">
+      <sv:node sv:name="hst:displayPage">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:pagedef</sv:value>
         </sv:property>
