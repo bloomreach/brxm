@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.util.LocaleFactory;
+import org.hippoecm.hst.util.URLBasePathLocaleFactory;
 
 //import org.slf4j.LoggerFactory;
 //import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class ContextFilter implements Filter {
     // private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
     
     private static final String KEY_LOCALE_FACTORY_CLASS = "locale.factory.class";
-    private static final String DEFAULT_LOCALE_FACTORY_CLASS = "org.hippoecm.hst.util.DefaultLocaleFactory";
+    private static final Class DEFAULT_LOCALE_FACTORY_CLASS = URLBasePathLocaleFactory.class;
     
     private String attributeName = "context";
     String repositoryBaseLocation = "/";
@@ -149,14 +150,14 @@ public class ContextFilter implements Filter {
             String localeFactoryClassName = HSTConfiguration.get(request.getSession().getServletContext(), 
                 KEY_LOCALE_FACTORY_CLASS, false/*not required*/);
             
-            // class name by default
-            if (localeFactoryClassName == null) {
-                localeFactoryClassName = DEFAULT_LOCALE_FACTORY_CLASS;
-            }
-            
             // instantiate
             try {
-                Class localeFactoryClass = Class.forName(localeFactoryClassName);
+                Class localeFactoryClass = DEFAULT_LOCALE_FACTORY_CLASS;
+                
+                if (localeFactoryClassName != null) {
+                    localeFactoryClass = Class.forName(localeFactoryClassName);
+                }
+                
                 this.localeFactory = (LocaleFactory) localeFactoryClass.newInstance();
             } 
             catch (Exception e) {
