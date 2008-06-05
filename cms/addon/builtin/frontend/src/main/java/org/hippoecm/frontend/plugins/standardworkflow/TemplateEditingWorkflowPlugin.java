@@ -36,6 +36,7 @@ import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 

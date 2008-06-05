@@ -55,28 +55,33 @@ public class JcrConfigService implements IPluginConfigService {
                     } else {
                         mode = "edit";
                     }
-                    cluster = new JcrClusterConfig(new JcrNodeModel(getTemplateNode(type))) {
-                        private static final long serialVersionUID = 1L;
+                    Node templateNode = getTemplateNode(type);
+                    if (templateNode != null) {
+                        cluster = new JcrClusterConfig(new JcrNodeModel(templateNode)) {
+                            private static final long serialVersionUID = 1L;
 
-                        @Override
-                        public Object get(Object key) {
-                            if ("mode".equals(key)) {
-                                return mode;
+                            @Override
+                            public Object get(Object key) {
+                                if ("mode".equals(key)) {
+                                    return mode;
+                                }
+                                return super.get(key);
                             }
-                            return super.get(key);
-                        }
 
-                        @Override
-                        public Object put(Object key, Object value) {
-                            if ("mode".equals(key)) {
-                                log.warn("Illegal attempt to persist template mode");
-                                return null;
+                            @Override
+                            public Object put(Object key, Object value) {
+                                if ("mode".equals(key)) {
+                                    log.warn("Illegal attempt to persist template mode");
+                                    return null;
+                                }
+                                return super.put(key, value);
                             }
-                            return super.put(key, value);
-                        }
-                    };
+                        };
+                    } else {
+                        cluster = null;
+                    }
                 } else {
-                    cluster = getDefaultCluster();
+                    cluster = null;
                     log.warn("Unknown provider " + provider);
                 }
             } else if (model.getNode().hasNode(key)) {
@@ -95,6 +100,10 @@ public class JcrConfigService implements IPluginConfigService {
 
     public IClusterConfig getDefaultCluster() {
         return getPlugins(defaultKey);
+    }
+
+    public void detach() {
+        model.detach();
     }
 
     private Node getTemplateNode(String type) {

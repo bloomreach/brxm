@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.sa.Home;
 import org.hippoecm.frontend.sa.plugin.IPlugin;
 import org.hippoecm.frontend.sa.plugin.IServiceReference;
@@ -31,7 +32,7 @@ import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginManager implements IClusterable {
+public class PluginManager implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginManager.class);
@@ -72,6 +73,18 @@ public class PluginManager implements IClusterable {
         listeners = new HashMap<String, List<IServiceTracker>>();
         referenced = new HashMap<Integer, RefCount>();
         nextReferenceId = 0;
+    }
+
+    public void detach() {
+        for(Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+            for(IClusterable service : entry.getValue()) {
+                // FIXME: ugly!
+                // should all services be IDetachable?
+                if(service instanceof IDetachable) {
+                    ((IDetachable) service).detach();
+                }
+            }
+        }
     }
 
     public PluginContext start(IPluginConfig config, String controlId) {
@@ -120,7 +133,7 @@ public class PluginManager implements IClusterable {
             log.error("service name is null");
             return;
         } else {
-            log.info("registering " + service + " as " + name);
+            log.debug("registering " + service + " as " + name);
         }
 
         Map.Entry<Integer, RefCount> entry = internalGetReference(service);
@@ -142,7 +155,7 @@ public class PluginManager implements IClusterable {
             log.error("service name is null");
             return;
         } else {
-            log.info("unregistering " + service + " from " + name);
+            log.debug("unregistering " + service + " from " + name);
         }
 
         List<IClusterable> list = services.get(name);
@@ -166,7 +179,7 @@ public class PluginManager implements IClusterable {
             log.error("listener name is null");
             return;
         } else {
-            log.info("registering listener " + listener + " for " + name);
+            log.debug("registering listener " + listener + " for " + name);
         }
 
         List<IServiceTracker> list = listeners.get(name);
@@ -191,7 +204,7 @@ public class PluginManager implements IClusterable {
             log.error("listener name is null");
             return;
         } else {
-            log.info("unregistering listener " + listener + " for " + name);
+            log.debug("unregistering listener " + listener + " for " + name);
         }
 
         List<IServiceTracker> list = listeners.get(name);
@@ -258,4 +271,5 @@ public class PluginManager implements IClusterable {
         }
         return null;
     }
+
 }

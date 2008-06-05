@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.template;
+package org.hippoecm.frontend.sa.template.builder;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.impl.JcrClusterConfig;
 
-public interface ITemplateEngine extends IClusterable {
+public class PreviewClusterConfig extends JcrClusterConfig {
+    private static final long serialVersionUID = 1L;
 
-    String ENGINE = "engine";
+    private IPluginContext context;
 
-    String TEMPLATE = "template";
+    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node) {
+        super(node);
 
-    String MODE = "mode";
-
-    String EDIT_MODE = "edit";
-
-    TypeDescriptor getType(String type);
-
-    TypeDescriptor getType(IModel model);
-
-    IClusterConfig getTemplate(TypeDescriptor type, String mode);
+        this.context = context;
+    }
 
 }

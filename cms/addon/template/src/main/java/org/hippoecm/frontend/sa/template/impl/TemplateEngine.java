@@ -15,16 +15,14 @@
  */
 package org.hippoecm.frontend.sa.template.impl;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.sa.service.render.RenderService;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.ITypeStore;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
@@ -56,8 +54,20 @@ public class TemplateEngine implements ITemplateEngine {
     public TypeDescriptor getType(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
-                JcrNodeModel nodeModel = (JcrNodeModel) model;
-                return getType(nodeModel.getNode().getPrimaryNodeType().getName());
+                Node node = ((JcrNodeModel) model).getNode();
+                // prototype has primary type "nt:base"; look real type
+                // up by finding the containing templatetype.
+                if (node.isNodeType("hippo:remodel")) {
+                    Node parent = node.getParent();
+                    while (parent != null) {
+                        if (parent.isNodeType("hippo:templatetype")) {
+                            return getType(parent.getName());
+                        }
+                        parent = parent.getParent();
+                    }
+                    return null;
+                }
+                return getType(node.getPrimaryNodeType().getName());
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -70,16 +80,10 @@ public class TemplateEngine implements ITemplateEngine {
     public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
         IPluginConfigService configService = context.getService("service.plugin.config", IPluginConfigService.class);
         IClusterConfig cluster = configService.getPlugins("template/" + type.getName() + "/" + mode);
-        cluster.put(ITemplateEngine.ENGINE, serviceId);
+        if (cluster != null) {
+            cluster.put(ITemplateEngine.ENGINE, serviceId);
+        }
         return cluster;
-    }
-
-    public IPluginControl start(IClusterConfig template, IModel model) {
-        String modelId = template.getString(RenderService.MODEL_ID);
-        ModelService modelService = new ModelService(modelId, model);
-        modelService.init(context);
-
-        return context.start(template);
     }
 
 }

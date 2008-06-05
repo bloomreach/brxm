@@ -33,7 +33,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     private Map<String, String> variables;
     private List<String> overrides;
 
-    ClusterConfigDecorator(IClusterConfig upstream, String clusterId) {
+    public ClusterConfigDecorator(IClusterConfig upstream, String clusterId) {
         this.upstream = upstream;
         this.overrides = upstream.getOverrides();
 
@@ -66,6 +66,13 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 @Override
                 public Object put(Object key, Object value) {
                     return conf.put(key, value);
+                }
+
+                @Override
+                public void detach() {
+                    ClusterConfigDecorator.this.detach();
+                    conf.detach();
+                    super.detach();
                 }
             });
         }
@@ -104,6 +111,12 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     @Override
     public List<String> getOverrides() {
         return overrides;
+    }
+
+    @Override
+    public void detach() {
+        upstream.detach();
+        super.detach();
     }
 
     private String filter(String value) {

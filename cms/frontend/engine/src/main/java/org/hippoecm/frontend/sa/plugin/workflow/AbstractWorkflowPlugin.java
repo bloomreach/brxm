@@ -78,6 +78,11 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
         return super.getPluginContext();
     }
 
+    @Override
+    public IPluginConfig getPluginConfig() {
+        return super.getPluginConfig();
+    }
+
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
             Visibility visible, final WorkflowAction action) {
         add(new EmptyPanel(dialogName));

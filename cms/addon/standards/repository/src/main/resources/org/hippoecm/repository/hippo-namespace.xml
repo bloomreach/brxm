@@ -63,7 +63,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:field</sv:value>
@@ -78,7 +78,7 @@
             <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:field</sv:value>
@@ -190,6 +190,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
@@ -414,6 +415,7 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>f1d54514-1fbc-4f57-a227-a1164c820e85</sv:value>
           </sv:property>
+          
           <sv:node sv:name="hippo:template">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:template</sv:value>
@@ -488,6 +490,81 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
+      <sv:node sv:name="hippo:template">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugincluster</sv:value>
+        </sv:property>
+
+        <sv:property sv:name="frontend:overrides" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+          <sv:value>wicket.dialog</sv:value>
+          <sv:value>mode</sv:value>
+          <sv:value>engine</sv:value>
+        </sv:property>
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>cluster:wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+        </sv:node>
+        
+        <sv:node sv:name="preview">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.template.builder.PreviewPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="template" sv:type="String">
+            <sv:value>{cluster}.template</sv:value>
+          </sv:property>
+        </sv:node>
+        
+        <sv:node sv:name="list">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.sa.template.builder.TemplateListPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="templates" sv:type="String">
+            <sv:value>String</sv:value>
+            <sv:value>Html</sv:value>
+            <sv:value>Date</sv:value>
+          </sv:property>
+        </sv:node>
+        
+      </sv:node>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:template</sv:value>
@@ -587,7 +664,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:field</sv:value>
@@ -602,7 +679,7 @@
             <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:field</sv:value>
@@ -1867,13 +1944,13 @@
 
   </sv:node>
   <!-- end "Document" type -->
-  
+
   <!-- "Group" type -->
   <sv:node sv:name="hippo:group">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1882,7 +1959,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- description -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1900,7 +1977,7 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1913,11 +1990,11 @@
           <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:description" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -1929,7 +2006,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2004,8 +2081,8 @@
             </sv:property>
           </sv:node>
         </sv:node>
-        
-        
+
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2013,11 +2090,11 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
-        </sv:node>          
+        </sv:node>
       </sv:node>
     </sv:node>
-    
-  </sv:node>  
+
+  </sv:node>
   <!-- end "Group" type -->
 
   <!-- "User" type -->
@@ -2025,7 +2102,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2034,7 +2111,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- active -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2053,7 +2130,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-      
+
         <!-- password -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2072,7 +2149,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- firstname -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2088,7 +2165,7 @@
             <sv:value>hippo:firstname</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- lastname -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2104,7 +2181,7 @@
             <sv:value>hippo:lastname</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- email -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2122,7 +2199,7 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2137,21 +2214,22 @@
 <!--        <sv:property sv:name="hippo:password" sv:type="String">
           <sv:value></sv:value>
         </sv:property>
--->        <sv:property sv:name="hippo:password" sv:type="String">
-          <sv:value></sv:value>
+-->
+        <sv:property sv:name="hippo:password" sv:type="String">
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:firstname" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:lastname" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:email" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2204,7 +2282,7 @@
               <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.template.field.NodeNamePlugin</sv:value>
               </sv:property>
-              
+
               <sv:node sv:name="hippo:parameters">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:parameters</sv:value>
@@ -2303,7 +2381,7 @@
             </sv:node>
           </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2326,8 +2404,8 @@
             </sv:property>
           </sv:node>
         </sv:node>
-        
-        
+
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2335,19 +2413,19 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
-        </sv:node>          
+        </sv:node>
       </sv:node>
     </sv:node>
-    
+
   </sv:node>
   <!-- end "User" type -->
-  
+
   <!-- begin "facetrule" type-->
   <sv:node sv:name="hippo:facetrule">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2356,7 +2434,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- facet -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2429,10 +2507,10 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2444,7 +2522,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2452,7 +2530,7 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.template.item.ItemRowPlugin</sv:value>
           </sv:property>
-          
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2472,7 +2550,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-  
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2492,8 +2570,8 @@
               </sv:property>
             </sv:node>
           </sv:node>
-        </sv:node>  
-        
+        </sv:node>
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2501,7 +2579,7 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.template.item.ItemRowPlugin</sv:value>
           </sv:property>
-          
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2521,7 +2599,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-          
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2542,17 +2620,17 @@
             </sv:node>
           </sv:node>
         </sv:node>
-      </sv:node>  
+      </sv:node>
     </sv:node>
   </sv:node>
   <!-- end "authrole" type -->
-  
+
   <!-- begin "domainrule" type -->
   <sv:node sv:name="hippo:domainrule">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2561,7 +2639,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- facetrule -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2580,10 +2658,10 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2595,7 +2673,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2615,18 +2693,18 @@
             </sv:property>
           </sv:node>
         </sv:node>
-        
-      </sv:node>  
+
+      </sv:node>
     </sv:node>
-  </sv:node>  
+  </sv:node>
   <!-- end "domainrule" type -->
-  
+
   <!-- begin "authrole" type-->
   <sv:node sv:name="hippo:authrole">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2635,7 +2713,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- users -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2692,7 +2770,7 @@
         </sv:node>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2704,8 +2782,8 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
-        
+
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2725,7 +2803,7 @@
             </sv:property>
           </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2733,8 +2811,8 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.template.item.ItemRowPlugin</sv:value>
           </sv:property>
-          
-        
+
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2754,7 +2832,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-  
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -2774,20 +2852,20 @@
               </sv:property>
             </sv:node>
           </sv:node>
-        
+
         </sv:node>
-        
-      </sv:node>  
+
+      </sv:node>
     </sv:node>
   </sv:node>
   <!-- end "authrole" type -->
-  
+
   <!-- begin "Domain" type -->
   <sv:node sv:name="hippo:domain">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2796,7 +2874,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- authrole -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2815,7 +2893,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- domainrule -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2834,10 +2912,10 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
-    </sv:node>  
-    
+    </sv:node>
+
     <sv:node sv:name="hippo:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2851,7 +2929,7 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2863,7 +2941,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2885,7 +2963,7 @@
               <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.template.field.NodeNamePlugin</sv:value>
               </sv:property>
-              
+
               <sv:node sv:name="hippo:parameters">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:parameters</sv:value>
@@ -2935,11 +3013,11 @@
                 </sv:property>
               </sv:node>
             </sv:node>
-            
-          
+
+
           </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -2947,21 +3025,21 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
-        </sv:node>          
-        
-      </sv:node>  
+        </sv:node>
+
+      </sv:node>
     </sv:node>
-    
+
   </sv:node>
   <!-- end "Domain" type -->
-  
-  
+
+
   <!-- begin "role" type-->
   <sv:node sv:name="hippo:role">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -2970,7 +3048,7 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
-        
+
         <!-- jcrread -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2989,7 +3067,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- jcrwrite -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -3008,7 +3086,7 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
         <!-- jcrremove -->
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -3027,10 +3105,10 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -3042,7 +3120,7 @@
         <sv:property sv:name="hippo:renderer" sv:type="String">
           <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -3059,7 +3137,7 @@
             </sv:property>
           </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -3067,7 +3145,7 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.template.item.ItemRowPlugin</sv:value>
           </sv:property>
-          
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -3087,7 +3165,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-  
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -3107,7 +3185,7 @@
               </sv:property>
             </sv:node>
           </sv:node>
-  
+
           <sv:node sv:name="hippo:item">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:templateitem</sv:value>
@@ -3128,7 +3206,7 @@
             </sv:node>
           </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="hippo:item">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:templateitem</sv:value>
@@ -3136,9 +3214,9 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
-        </sv:node>          
-        
-      </sv:node>  
+        </sv:node>
+
+      </sv:node>
     </sv:node>
   </sv:node>
   <!-- end "role" type -->

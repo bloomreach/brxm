@@ -48,4 +48,5 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
     public List<String> getOverrides() {
         return overrides;
     }
+
 }

@@ -177,6 +177,13 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
         return parent;
     }
 
+    @Override
+    protected void onDetach() {
+        context.detach();
+        config.detach();
+        super.onDetach();
+    }
+    
     private static IModel getPluginModel(IPluginContext context, IPluginConfig properties) {
         String modelId = properties.getString(MODEL_ID);
         if (modelId != null) {
@@ -203,7 +210,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
         List<IRenderService> getChildren() {
             return list;
         }
-
+        
         @Override
         public void onServiceAdded(IRenderService service, String name) {
             service.bind(RenderService.this, extension);

@@ -40,6 +40,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.sa.Home;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
@@ -75,12 +76,12 @@ public class XinhaPlugin extends RenderPlugin {
 
         if ("edit".equals(mode)) {
             createEditor(config);
-        } else {
-            add(editor = new TextArea("editor", new Model("Viewing not yet supported")));
-        }
 
-        configuration = new Configuration(config);
-        context.registerService(configuration, Configuration.class.getName());
+            configuration = new Configuration(config);
+            context.registerService(configuration, Configuration.class.getName());
+        } else {
+            add(editor = new TextArea("value", new Model("Viewing not yet supported")));
+        }
     }
 
     public String getContent() {
@@ -93,9 +94,11 @@ public class XinhaPlugin extends RenderPlugin {
 
     @Override
     public void onBeforeRender() {
-        configuration.setName(editor.getMarkupId());
-        configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-        configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+        if (configuration != null) {
+            configuration.setName(editor.getMarkupId());
+            configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
+            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+        }
         super.onBeforeRender();
     }
 
@@ -215,6 +218,9 @@ public class XinhaPlugin extends RenderPlugin {
                     XinhaEditorBehavior.class);
             if (sharedBehavior == null) {
                 sharedBehavior = new XinhaEditorBehavior(context);
+                Page page = context.getService(Home.class.getName(), Home.class);
+                String serviceId = context.getReference(page).getServiceId();
+                context.registerService(sharedBehavior, serviceId);
                 context.registerService(sharedBehavior, XinhaEditorBehavior.class.getName());
             }
             return sharedBehavior.getHeaderContributorsPartly();

@@ -36,9 +36,12 @@ public class JavaConfigService implements IPluginConfigService {
     public IClusterConfig getPlugins(String key) {
         return builtinConfigs.get(key);
     }
-    
+
     public IClusterConfig getDefaultCluster() {
         return builtinConfigs.get("console");
+    }
+
+    public void detach() {
     }
 
     //privates

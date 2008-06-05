@@ -23,6 +23,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
 
+@Deprecated
 public class RemodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
