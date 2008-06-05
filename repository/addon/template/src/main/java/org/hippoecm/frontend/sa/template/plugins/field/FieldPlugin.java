@@ -17,6 +17,7 @@ package org.hippoecm.frontend.sa.template.plugins.field;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.Set;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
@@ -66,6 +68,14 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
     }
 
+    @Override
+    protected void onDetach() {
+        if (provider != null) {
+            provider.detach();
+        }
+        super.onDetach();
+    }
+
     protected void updateProvider() {
         ITemplateEngine engine = getTemplateEngine();
         if (engine != null) {
@@ -75,11 +85,13 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 field = type.getField(fieldName);
                 if (field != null) {
                     TypeDescriptor subType = engine.getType(field.getType());
-                    controller.stop();
                     provider = newProvider(field, subType, model);
-                    controller.start(provider);
+                    if (provider != null) {
+                        controller.stop();
+                        controller.start(provider);
+                    }
                 } else {
-                    log.warn("Unknown field {} in type {}", field, type.getName());
+                    log.warn("Unknown field {} in type {}", fieldName, type.getName());
                 }
             } else {
                 log.warn("Unable to obtain type descriptor for {}", model);
@@ -140,9 +152,11 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         private static final long serialVersionUID = 1L;
 
         private Map<C, IPluginControl> plugins;
+        private Map<C, ModelService> models;
 
         TemplateController() {
             plugins = new HashMap<C, IPluginControl>();
+            models = new HashMap<C, ModelService>();
         }
 
         void start(AbstractProvider<C> provider) {
@@ -155,14 +169,16 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         void update() {
             Set<C> current = Collections.unmodifiableSet(plugins.keySet());
             Iterator<C> iter = provider.iterator(0, provider.size());
+            Set<C> newModels = new HashSet<C>();
             while (iter.hasNext()) {
                 C model = iter.next();
                 if (!current.contains(model)) {
                     addModel(model);
                 }
+                newModels.add(model);
             }
             for (C model : current) {
-                if (!plugins.containsKey(model)) {
+                if (!newModels.contains(model)) {
                     removeModel(model);
                 }
             }
@@ -178,7 +194,14 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             ITemplateEngine engine = getTemplateEngine();
             IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
             FieldPlugin.this.configureTemplate(config, model);
-            IPluginControl plugin = engine.start(config, model);
+
+            String modelId = config.getString(RenderService.MODEL_ID);
+            ModelService modelService = new ModelService(modelId, model);
+            models.put(model, modelService);
+
+            IPluginContext context = getPluginContext();
+            modelService.init(context);
+            IPluginControl plugin = context.start(config);
             plugins.put(model, plugin);
         }
 
@@ -186,6 +209,10 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             IPluginControl plugin = plugins.remove(model);
             if (plugin != null) {
                 plugin.stopPlugin();
+            }
+            ModelService modelService = models.remove(model);
+            if (modelService != null) {
+                modelService.destroy();
             }
         }
     }

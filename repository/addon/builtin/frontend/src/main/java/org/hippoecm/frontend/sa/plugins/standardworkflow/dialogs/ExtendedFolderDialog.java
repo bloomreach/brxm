@@ -95,6 +95,7 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
                 .keySet())) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
             }

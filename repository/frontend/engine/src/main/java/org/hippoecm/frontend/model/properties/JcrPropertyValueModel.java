@@ -177,6 +177,7 @@ public class JcrPropertyValueModel extends Model {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+            .append("property", propertyModel.getItemModel().getPath())
             .append("index", index)
             .append("value", value)
             .toString();
@@ -191,12 +192,12 @@ public class JcrPropertyValueModel extends Model {
             return true;
         }
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) object;
-        return new EqualsBuilder().append(value, valueModel.value).append(index, valueModel.index).isEquals();
+        return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).append(index, valueModel.index).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(33, 113).append(value).append(index).toHashCode();
+        return new HashCodeBuilder(33, 113).append(propertyModel).append(index).toHashCode();
     }
 
     public void setIndex(int index) {

@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.sa.model.ModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IPluginControl;
 import org.hippoecm.frontend.sa.plugin.config.IClusterConfig;
@@ -44,6 +45,7 @@ public class EditorForm extends Form {
     private IPluginConfig config;
 
     private IPluginControl template;
+    private ModelService modelService;
     private ServiceTracker<IRenderService> fieldTracker;
     private List<IRenderService> fields;
     private TemplateEngine engine;
@@ -88,7 +90,7 @@ public class EditorForm extends Form {
         };
         context.registerTracker(fieldTracker, engineId + ".wicket.root");
 
-        template = createTemplate();
+        createTemplate();
     }
 
     public void destroy() {
@@ -96,6 +98,7 @@ public class EditorForm extends Form {
         context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
         if (template != null) {
             template.stopPlugin();
+            modelService.destroy();
         }
     }
 
@@ -104,8 +107,9 @@ public class EditorForm extends Form {
         super.onModelChanged();
         if (template != null) {
             template.stopPlugin();
+            modelService.destroy();
         }
-        template = createTemplate();
+        createTemplate();
     }
 
     public void render(PluginRequestTarget target) {
@@ -114,17 +118,20 @@ public class EditorForm extends Form {
         }
     }
 
-    protected IPluginControl createTemplate() {
+    protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
         TypeDescriptor type = engine.getType(model);
 
         if (type != null) {
             IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
-            clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
-            clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
-            return engine.start(clusterConfig, model);
-        } else {
-            return null;
+            if (clusterConfig != null) {
+                clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
+                clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
+                String modelId = clusterConfig.getString(RenderService.MODEL_ID);
+                modelService = new ModelService(modelId, model);
+                modelService.init(context);
+                template = context.start(clusterConfig);
+            }
         }
     }
 

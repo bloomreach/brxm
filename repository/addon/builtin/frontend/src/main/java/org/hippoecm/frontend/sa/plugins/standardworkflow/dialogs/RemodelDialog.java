@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
 
 import java.util.Map;
 
@@ -22,15 +22,16 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
+import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -39,15 +40,20 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class RemodelDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
-    public RemodelDialog(DialogWindow dialogWindow) {
-        super(dialogWindow, "Apply models");
-        if (dialogWindow.getNodeModel().getNode() == null) {
+    private IServiceReference<IJcrService> jcrServiceRef;
+
+    public RemodelDialog(RemodelWorkflowPlugin plugin, IDialogService dialogWindow,
+            IServiceReference<IJcrService> jcrService) {
+        super(plugin, dialogWindow, "Update content");
+
+        this.jcrServiceRef = jcrService;
+
+        if (plugin.getModel() == null || ((JcrNodeModel) plugin.getModel()).getNode() == null) {
             ok.setVisible(false);
         }
     }
@@ -56,7 +62,8 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         JcrSessionModel sessionModel = ((UserSession) Session.get()).getJcrSessionModel();
 
-        Node node = getDialogWindow().getNodeModel().getNode();
+        WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
+        Node node = wflModel.getNodeModel().getNode();
         String namespace = node.getName();
 
         CndSerializer serializer = new CndSerializer(sessionModel, namespace);
@@ -93,17 +100,11 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {
-                String[] nodes = workflow.remodel(cnd, update);
-//              for(int i = 0; i < nodes.length; i++) {
-//                  System.err.println("nodes[] " + i + ": " + nodes[i]);
-//              }
+                /* String[] nodes = */ workflow.remodel(cnd, update);
                 sessionModel.getSession().save();
-    
-                // flush the root node
-                Channel channel = getChannel();
-                Request request = channel.createRequest("flush", new JcrNodeModel(new JcrItemModel("/")));
-                channel.send(request);
-            } catch(RepositoryException ex) {
+
+                jcrServiceRef.getService().flush(new JcrNodeModel("/"));
+            } catch (RepositoryException ex) {
                 // log out; the session model will log in again.
                 // Sessions cache path resolver information, which is incorrect after remapping the prefix.
                 sessionModel.flush();

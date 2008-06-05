@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.sa.plugin.config;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 
-public interface IPluginConfigService extends IClusterable {
+public interface IPluginConfigService extends IDetachable {
     
     public IClusterConfig getDefaultCluster();
     

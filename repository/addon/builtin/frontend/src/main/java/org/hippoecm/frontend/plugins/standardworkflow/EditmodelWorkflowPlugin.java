@@ -23,6 +23,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.EditModelDialog;
 
+@Deprecated
 public class EditmodelWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 

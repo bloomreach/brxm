@@ -62,7 +62,15 @@ public class PluginConfigFactory implements IClusterable {
                 }
 
                 public IClusterConfig getPlugins(String key) {
-                    return new ClusterConfigDecorator(baseService.getPlugins(key), "config.cluster." + (count++));
+                    IClusterConfig upstream = baseService.getPlugins(key);
+                    if (upstream != null) {
+                        return new ClusterConfigDecorator(upstream, "config.cluster." + (count++));
+                    }
+                    return null;
+                }
+
+                public void detach() {
+                    baseService.detach();
                 }
             };
         } catch (RepositoryException e) {

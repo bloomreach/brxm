@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
 
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
+import org.hippoecm.frontend.sa.dialog.IDialogService;
+import org.hippoecm.frontend.sa.plugin.IServiceReference;
+import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class CreateTypeDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
@@ -35,8 +36,13 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private String name;
 
-    public CreateTypeDialog(DialogWindow dialogWindow) {
-        super(dialogWindow, "Create new type");
+    private IServiceReference<IJcrService> jcrServiceRef;
+
+    public CreateTypeDialog(AbstractWorkflowPlugin plugin, IDialogService dialogService,
+            IServiceReference<IJcrService> jcrService) {
+        super(plugin, dialogService, "Create new type");
+
+        this.jcrServiceRef = jcrService;
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
     }
@@ -46,12 +52,8 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         workflow.createType(name);
 
-        Channel channel = getChannel();
-        if (channel != null) {
-            Request request = channel.createRequest("flush", getDialogWindow().getNodeModel().getParentModel());
-            channel.send(request);
-        } else {
-            log.error("could not send flush message");
-        }
+        WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
+        IJcrService jcrService = jcrServiceRef.getService();
+        jcrService.flush(wflModel.getNodeModel());
     }
 }

@@ -43,6 +43,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     private PluginManager mgr;
     private IRenderService root;
+    private IPluginConfigService pluginConfigService;
     private List<IPluginContext> contexts;
 
     public Home() {
@@ -53,7 +54,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
-        IPluginConfigService pluginConfigService = configFactory.getPluginConfigService();
+        pluginConfigService = configFactory.getPluginConfigService();
         mgr.registerService(pluginConfigService, "service.plugin.config");
 
         // register JCR service to notify plugins of updates to the jcr tree
@@ -140,6 +141,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     @Override
     public void onDetach() {
+        mgr.detach();
         for (IPluginContext context : contexts) {
             context.detach();
         }
