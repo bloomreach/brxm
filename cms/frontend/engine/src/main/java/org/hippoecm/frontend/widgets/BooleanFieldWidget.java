@@ -15,7 +15,8 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.model.IModel;
 
 public class BooleanFieldWidget extends AjaxUpdatingWidget {
@@ -23,7 +24,13 @@ public class BooleanFieldWidget extends AjaxUpdatingWidget {
 
     public BooleanFieldWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new CheckBox("widget", this.getModel()));
+        addFormField(new AjaxCheckBox("widget", this.getModel()){
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                BooleanFieldWidget.this.onUpdate(target);
+            }
+        });
     }
-
 }
