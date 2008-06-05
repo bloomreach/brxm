@@ -20,10 +20,10 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.template.editor.EditorPlugin;
 
-public class ManagementPlugin extends Plugin {
+public class ManagementEditorPlugin extends EditorPlugin {
     private static final long serialVersionUID = 1L;
 
-    public ManagementPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+    public ManagementEditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 }
