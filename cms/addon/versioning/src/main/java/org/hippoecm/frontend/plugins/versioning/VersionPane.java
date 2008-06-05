@@ -140,7 +140,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-                            if (child.hasProperty("hippostd:state")&&child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -149,7 +149,7 @@ public class VersionPane extends RenderPlugin {
                         }
                     }
                 }
-                if (modelNode.isNodeType("hippostd:document")) {
+                if (modelNode.isNodeType("hippo:document")) {
                     documentComponent.setModel(new Model(modelNode.getName()));
                     versionComponent.setModel(new Model("current"));
                     subModel.setModel(new JcrNodeModel(modelNode));
@@ -173,7 +173,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-                            if (child.hasProperty("hippostd:state")&&child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -227,7 +227,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-                            if (child.hasProperty("hippostd:state")&&child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -300,7 +300,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-                            if (child.hasProperty("hippostd:state")&&child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
