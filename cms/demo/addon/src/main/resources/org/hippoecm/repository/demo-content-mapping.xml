@@ -24,6 +24,6 @@
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   sv:name="defaultmapping">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:urlmappingfolder</sv:value>
+    <sv:value>hst:urlMappingFolder</sv:value>
   </sv:property>
 </sv:node>

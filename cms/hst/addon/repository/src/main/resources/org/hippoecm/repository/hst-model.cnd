@@ -29,7 +29,7 @@
 
 [hst:urlMapping] > nt:base
 - hst:nodeType (string) mandatory
-+ hst:displayPage (hst:pagedef) = hst:pageDef mandatory
++ hst:displayPage (hst:pageDef) = hst:pageDef mandatory
 
 [hst:urlMappingFolder] > nt:unstructured orderable
 + * (hst:urlMapping) = hst:urlMapping
