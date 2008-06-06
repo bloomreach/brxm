@@ -43,12 +43,13 @@ import static org.junit.Assert.*;
 @RunWith(RemoteTest.class)
 @Suite.SuiteClasses({
   org.hippoecm.repository.TrivialServerTest.class,
+  org.hippoecm.repository.FacetedAuthorizationTest.class,
+  org.hippoecm.repository.RepositoryLoginTest.class,
   /*
   org.hippoecm.repository.CanonicalPathTest.class,
   org.hippoecm.repository.ConfigurationTest.class,
   org.hippoecm.repository.CopyNodeTest.class,
   org.hippoecm.repository.DerivedDataTest.class,
-  org.hippoecm.repository.FacetedAuthorizationTest.class,
   org.hippoecm.repository.FacetedNavigationAbstractTest.class,
   org.hippoecm.repository.FacetedNavigationChildNameTest.class,
   org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
@@ -69,7 +70,6 @@ import static org.junit.Assert.*;
   org.hippoecm.repository.HippoQueryTest.class,
   org.hippoecm.repository.PendingChangesTest.class,
   org.hippoecm.repository.PhysicalExportSystemViewTest.class,
-  org.hippoecm.repository.RepositoryLoginTest.class,
   org.hippoecm.repository.RepositoryRolesTest.class,
   org.hippoecm.repository.TransactionTest.class,
   org.hippoecm.repository.TrivialServerTest.class,
