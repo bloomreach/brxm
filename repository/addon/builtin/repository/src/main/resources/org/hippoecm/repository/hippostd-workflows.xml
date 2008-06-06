@@ -30,7 +30,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to create a namespace</sv:value>

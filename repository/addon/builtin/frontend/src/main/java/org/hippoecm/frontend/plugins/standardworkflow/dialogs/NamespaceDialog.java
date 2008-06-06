@@ -25,6 +25,7 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class NamespaceDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
