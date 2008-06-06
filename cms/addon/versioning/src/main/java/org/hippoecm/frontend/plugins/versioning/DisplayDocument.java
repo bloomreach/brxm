@@ -80,10 +80,14 @@ public class DisplayDocument extends RenderPlugin {
                         do {
                             String primaryType = ((Node)primaryItem).getProperty("jcr:frozenPrimaryType").getString();
                             NodeType nodeType = ((Node)primaryItem).getSession().getWorkspace().getNodeTypeManager().getNodeType(primaryType);
-                            if (((Node)primaryItem).hasProperty(nodeType.getPrimaryItemName()))
-                                primaryItem = ((Node)primaryItem).getProperty(nodeType.getPrimaryItemName());
-                            else
-                                primaryItem = ((Node)primaryItem).getNode(nodeType.getPrimaryItemName());
+                            if(nodeType.getPrimaryItemName() != null) {
+                                if (((Node)primaryItem).hasProperty(nodeType.getPrimaryItemName()))
+                                    primaryItem = ((Node)primaryItem).getProperty(nodeType.getPrimaryItemName());
+                                else
+                                    primaryItem = ((Node)primaryItem).getNode(nodeType.getPrimaryItemName());
+                            } else {
+                                content.setModel(new Model("selected item has no default content to display"));
+                            }
                         } while (primaryItem.isNode());
                         String data = ((Property)primaryItem).getString();
                         content.setModel(new Model(data));
