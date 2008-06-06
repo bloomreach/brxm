@@ -62,11 +62,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- FIXME: this should be up to the container, but the jetty plugin won't load it -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
       <version>${org.slf4j.version}</version>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -81,7 +82,6 @@
       <type>jar</type>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -90,7 +90,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.3</version>
+        <version>6.1.10</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>
@@ -99,7 +99,7 @@
             </connector>
           </connectors>
           <contextPath>/</contextPath>
-        </configuration>
+        </configuration>     
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
