@@ -232,6 +232,10 @@ right: -284px;
 top: 227px;
 width: 20%;
 }
+
+
+
+
 div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
 div#templateitemedit input{width: 140px;}
 a.editbutton{}
@@ -327,6 +331,8 @@ background: white;
 margin-top: 10px;
 } 
 
+
+
 .templatedetails{
 padding: 10px;
 height: 410px;
@@ -340,6 +346,10 @@ overflow: auto;
 .templatedetails div.fields table tr td{vertical-align: top}
 
 .templatedetails div.fields table tr td ul li ul li span a{display: none}
+
+.templatedetails .htmlarea td{padding: 0px;}
+.templatedetails div.fields table.htmlarea div{padding: 0px; margin: 0px}
+.templatedetails .htmlarea width{100%}
 
 div.usertitle{
 background:#C5C5C5 url(images/user_ico_big.gif) no-repeat scroll 3px 1px;
@@ -378,9 +388,10 @@ width:100px;
 }
 
 .target {
-  border: 1px solid red ! important;
-  background: #f2f2f2;
+  border: 1px solid #62C621 ! important;
+  background: white url("images/dropback.gif") no-repeat center 100px;
 }
+
 
 
 

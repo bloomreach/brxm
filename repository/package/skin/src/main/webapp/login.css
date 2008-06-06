@@ -1,8 +1,8 @@
 body {
     background: #223f5e url('images/back.gif') repeat-x; 
-    padding-top: 50px;
+    padding-top: 144px;
     text-align: center;
-    
+    width: 100%;
 }
 
 /* Login page styles */
@@ -28,8 +28,8 @@ div#login-header {
   margin-bottom: 5px;
 }
 
-div#login-input {
-  margin: 5px;
+div#login-input tr td {
+  padding: 4px;
   }
 
 div#login-submit {
@@ -37,47 +37,37 @@ div#login-submit {
   padding-left: 104px;
 }
 
+div#loginWrapper{text-align: center}
+
+div#loginWrapper input[type="submit"]{padding: 3px;}
+div#loginWrapper input[type="text"], div#loginWrapper input[type="password"] {padding: 2px}
+
+
+div#loginWrapper h2{margin-bottom: 60px; padding-left: 53px; font-size: 18px; font-weight: normal; color: #666666}
+div#loginWrapper h2 span{font-size: 12px; }
+div#loginWrapper h2 span{display: block}
+
+
 div#loginWrapper form {
-  text-align: left;
-  position: relative;
-  margin: 0px auto;
-  margin-top: 20px;
-  width:398px;
-  height: 172px ;
-  border:1px solid black;
-  background: url("images/loginback.gif") no-repeat;
-  padding-top: 60px;
-  padding-left: 106px
-
-
+background:transparent url(images/loginback.png) no-repeat scroll left top;
+height:230px;
+margin:0px auto;
+padding-left:23px;
+padding-top:50px;
+position:relative;
+text-align:left;
+width:254px;
 }
 
-div#loginWrapper form label { float: left; width: 90px; margin-right: 10px; color: white}
+div#loginWrapper form label {margin-right: 15px;}
 div#loginWrapper form label.label-right { float: right; width: 180px; margin-right:0px;}
 
 
-div#loginWrapper form input { 
-  margin-bottom: 5px; 
-  border:1px solid #999999;
-   padding: 5px;
-   font-size: 12px;
-  
- font-family: tahoma;
-}
 div#loginWrapper form select { 
   margin-bottom: 5px;
   border:1px solid #999999;
 }
 
-div#loginWrapper form input.blue_button {
-  
-  padding:3px 7px;
-  text-decoration:none;
-}
 
-div#loginWrapper form input.blue_button:hover {
-  background-color:#ffffff;
-  color:#000000;
-  cursor:pointer;
-}
+
 /* End login page styles */
