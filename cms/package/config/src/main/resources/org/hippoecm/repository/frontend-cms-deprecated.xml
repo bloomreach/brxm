@@ -196,7 +196,7 @@
                   <sv:value>hippo:frontendplugin</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:renderer" sv:type="String">
-                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
                 </sv:property>
                 <sv:node sv:name="hippo:parameters">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -224,7 +224,7 @@
                   <sv:value>hippo:frontendplugin</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:renderer" sv:type="String">
-                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
                 </sv:property>
                 <sv:node sv:name="hippo:parameters">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -252,7 +252,7 @@
                   <sv:value>hippo:frontendplugin</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:renderer" sv:type="String">
-                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
                 </sv:property>
                 <sv:node sv:name="hippo:parameters">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -274,7 +274,7 @@
                   <sv:value>hippo:frontendplugin</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:renderer" sv:type="String">
-                  <sv:value>org.hippoecm.frontend.plugins.cms.management.ListNodesPlugin</sv:value>
+                  <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
                 </sv:property>
                 <sv:node sv:name="hippo:parameters">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
