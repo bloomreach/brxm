@@ -144,7 +144,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        String nodePath = nodeModel.getItemModel().getPath();
+        String nodePath = nodeModel.getParentModel().getItemModel().getPath();
         String myPath = ((JcrNodeModel) getModel()).getItemModel().getPath();
         if (myPath.startsWith(nodePath)) {
             modelChanged();

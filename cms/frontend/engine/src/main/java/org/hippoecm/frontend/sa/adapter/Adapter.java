@@ -107,6 +107,9 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
             IModelService modelService = context.getService(config.getString("wicket.model"), IModelService.class);
             if (modelService != null) {
                 rootModel = (JcrNodeModel) modelService.getModel();
+                if (rootModel == null) {
+                    rootModel = new JcrNodeModel("/");
+                }
             } else {
                 UserSession session = (UserSession) Session.get();
                 HippoNode rootNode = session.getRootNode();
