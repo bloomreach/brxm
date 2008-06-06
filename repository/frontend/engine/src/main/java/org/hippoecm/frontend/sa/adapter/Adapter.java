@@ -35,10 +35,12 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
+import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.sa.model.IModelListener;
 import org.hippoecm.frontend.sa.model.IModelService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
@@ -55,7 +57,7 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
  * Needed for handling legacy plugins
  * remove when all legacy plugins have been ported to new services architecture  
  */
-public class Adapter extends Panel implements IRenderService, IModelListener {
+public class Adapter extends Panel implements IRenderService, IModelListener, IJcrNodeModelListener {
     private static final long serialVersionUID = 1L;
 
     private org.hippoecm.frontend.plugin.Plugin rootPlugin;
@@ -136,6 +138,8 @@ public class Adapter extends Panel implements IRenderService, IModelListener {
         rootPlugin.addChildren();
 
         context.registerService(this, config.getString("wicket.id"));
+
+        context.registerService(this, IJcrService.class.getName());
     }
 
     public void destroy() {
@@ -194,6 +198,12 @@ public class Adapter extends Panel implements IRenderService, IModelListener {
             Notification notification = top.createNotification("select", nodeModel);
             top.publish(notification);
         }
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        Channel top = rootPlugin.getBottomChannel();
+        Notification notification = top.createNotification("flush", nodeModel);
+        top.publish(notification);
     }
 
 }
