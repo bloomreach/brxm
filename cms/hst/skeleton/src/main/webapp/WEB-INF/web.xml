@@ -62,15 +62,6 @@
       <param-name>repositoryBaseLocation</param-name>
       <param-value>/preview</param-value>
     </init-param>
-    <init-param>
-      <description>
-        A list of extensions that the filter will not create context objects
-        for, if the URL ends with such an extension. 
-        Defaults to the given value so may be omitted. 
-      </description>
-      <param-name>skippedExtensions</param-name>
-      <param-value>ico,gif,jpg,jpeg,svg,png,css,js</param-value>
-    </init-param>
   </filter>
   
   <filter-mapping>
