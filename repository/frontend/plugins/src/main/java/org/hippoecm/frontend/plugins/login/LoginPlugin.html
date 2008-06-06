@@ -23,7 +23,9 @@
     <wicket:panel>
       <div id="loginWrapper">
          <div>
+            
             <form wicket:id="signInForm" name="signInForm">
+            <h2>Sign in<span>Hippo CMS 7 prototype</span></h2>
               
               <!--  <wicket:message key="key.key">Login</wicket:message>-->
               
@@ -32,11 +34,16 @@
                     <tr>
                         <td><label wicket:id="username-label">Username</label></td>
                             <td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
-                    </tr>
+                         </tr>
                 <tr>
                     <td><label wicket:id="password-label">Password</label></td>
                     <td><input wicket:id="password" type="password" value="password"/></td>
+                  
                 </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td style="text-align: right; padding-top: 4px;"><input type="submit" name="submit" wicket:id="submit" value="Sign in" /></td>
+                  </tr>
                 </table>
                 
 <!--                <label>Locale</label>
@@ -50,14 +57,13 @@
                 </div>            
                 
               </div>
-              <div id="login-submit">
 <!--                <div class="row">
                   <input wicket:id="rememberMe" id="rememberMe" type="checkbox" />
                   <label wicket:id="rememberMe-label" class="label-right">Always sign in automatically</label>
                 </div>
  -->                
-                <input type="submit" name="submit" wicket:id="submit" value="Sign in" class="blue_button"/>
-              </div>
+
+              
             </form>
           </div>
         </div>  
