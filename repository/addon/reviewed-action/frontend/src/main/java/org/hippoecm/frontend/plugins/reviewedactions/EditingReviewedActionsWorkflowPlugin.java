@@ -15,15 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.service.IFactoryService;
+import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -32,40 +29,42 @@ import org.slf4j.LoggerFactory;
 public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    static protected Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(EditingReviewedActionsWorkflowPlugin.class);
 
-    public EditingReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model,
-            Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
-
-        WorkflowAction saveAction = new WorkflowAction() {
+    public EditingReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        addWorkflowAction("save", "Save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                Request request = null;
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
-                if (channel != null) {
-                    request = channel.createRequest("close", new JcrNodeModel(model));
-                    channel.send(request);
-                }
-                return request;
+                close();
             }
-        };
-        addWorkflowAction("save", "Save", saveAction);
-        
-        WorkflowAction revertAction = new WorkflowAction() {
+        });
+        addWorkflowAction("revert", "Revert", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                Request request = null;
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.disposeEditableInstance();
-                if (channel != null) {
-                    request = channel.createRequest("close", new JcrNodeModel(model));
-                    channel.send(request);
-                }
-                return request;
+                close();
             }
-        };
-        addWorkflowAction("revert", "Revert", revertAction);
+        });
+    }
+
+    private void close() {
+        IPluginContext context = getPluginContext();
+        IViewService viewer = context.getService(getPluginConfig().getString(IViewService.VIEWER_ID),
+                IViewService.class);
+        if (viewer != null) {
+            String serviceId = context.getReference(viewer).getServiceId();
+            IFactoryService factory = context.getService(serviceId, IFactoryService.class);
+            if (factory != null) {
+                factory.delete(viewer);
+            }
+        } else {
+            log.warn("No editor service found");
+        }
     }
 }

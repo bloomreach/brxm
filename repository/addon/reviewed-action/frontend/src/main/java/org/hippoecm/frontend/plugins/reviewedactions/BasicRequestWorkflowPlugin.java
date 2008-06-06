@@ -15,28 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
-public class BasicRequestWorkflowPlugin extends AbstractRequestWorkflowPlugin {
+public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public BasicRequestWorkflowPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
-        
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", visible, new WorkflowAction() {
+    public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
+
+            public void execute(Workflow wf) throws Exception {
                 BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
                 workflow.cancelRequest();
-                return null;
             }
         });
     }

@@ -20,15 +20,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -40,22 +39,126 @@ import org.slf4j.LoggerFactory;
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    static protected Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    public FullReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model,
-            Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
+    @SuppressWarnings("unused")
+    private String caption = "unknown document";
+    private String stateSummary = "UNKNOWN";
 
+    public FullReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        add(new Label("caption", new PropertyModel(this, "caption")));
+
+        add(new Label("status", new PropertyModel(this, "stateSummary")));
+
+        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                Document docRef = workflow.obtainEditableInstance();
+                Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
+                IViewService editor = getPluginContext().getService(
+                        getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
+                if (editor != null) {
+                    editor.view(new JcrNodeModel(docNode));
+                } else {
+                    log.warn("No editor found to edit {}", docNode.getPath());
+                }
+            }
+        });
+
+        addWorkflowAction("requestPublication-dialog", "Request publication", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+            }
+        }, new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.requestPublication();
+            }
+        });
+
+        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+            }
+        }, new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.requestDepublication();
+            }
+        });
+
+        addWorkflowAction("requestDeletion-dialog", "Request delete", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+            }
+        }, new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.requestDeletion();
+            }
+        });
+
+        addWorkflowAction("publish-dialog", "Publish", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+
+            }
+        }, new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.publish();
+            }
+        });
+
+        addWorkflowAction("dePublish-dialog", "Unpublish", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+            }
+        }, new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.depublish();
+            }
+        });
+
+        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
+
+            public void execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.delete();
+            }
+        });
+
+        WorkflowsModel model = (WorkflowsModel) getModel();
         try {
-            add(new Label("caption", new JcrNodeModel(model).getNode().getName()));
-        } catch (RepositoryException ex) {
-            log.error("Could not obtain name of workflow document", ex);
-            add(new Label("caption", "unknown document"));
-        }
+            Node node = model.getNodeModel().getNode();
+            caption = node.getName();
 
-        String stateSummary = "UNKNOWN";
-        try {
-            Node node = ((WorkflowsModel) getModel()).getNodeModel().getNode();
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();)
                     node = iter.nextNode(); // FIXME: take the last one, the first should be good enough
@@ -65,87 +168,6 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
         }
-        add(new Label("status", stateSummary));
-
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                Document docRef = workflow.obtainEditableInstance();
-                Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                if (channel != null) {
-                    Request request = channel.createRequest("edit", new JcrNodeModel(docNode));
-                    return request;
-                } else {
-                    return null;
-                }
-            }
-        });
-
-        boolean requestPublication = !(stateSummary.equals("review") || stateSummary.equals("live"));
-        addWorkflowAction("requestPublication-dialog", "Request publication", requestPublication, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestPublication();
-                return null;
-            }
-        });
-        
-        boolean requestDepublication = !(stateSummary.equals("review") || stateSummary.equals("new"));
-        addWorkflowAction("requestDePublication-dialog", "Request unpublication", requestDepublication, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestDepublication();
-                return null;
-            }
-        });
-
-        boolean requestDeletion = !(stateSummary.equals("review") || stateSummary.equals("live"));
-        addWorkflowAction("requestDeletion-dialog", "Request deletion", requestDeletion, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestDeletion();
-                return null;
-            }
-        });
-
-        boolean publish = !(stateSummary.equals("review") || stateSummary.equals("live"));
-        addWorkflowAction("publish-dialog", "Publish", publish, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.publish();
-                return null;
-            }
-        });
-
-        boolean depublish = !(stateSummary.equals("review") || stateSummary.equals("new"));
-        addWorkflowAction("dePublish-dialog", "Unpublish", depublish, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.depublish();
-                return null;
-            }
-        });
-
-        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public Request execute(Channel channel, Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.delete();
-                return null;
-            }
-        });
     }
+
 }
