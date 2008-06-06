@@ -90,7 +90,6 @@ public class JcrTypeStore implements ITypeStore {
         try {
             String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
                     + HippoNodeType.HIPPO_NODETYPE;
-
             QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery(xpath, Query.XPATH);
             QueryResult result = query.execute();
@@ -163,13 +162,12 @@ public class JcrTypeStore implements ITypeStore {
             uri = nsReg.getURI("rep");
         }
 
-        String xpath = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE
-                + "/" + HippoNodeType.HIPPO_NODETYPE;
-
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery(xpath, Query.XPATH);
-        QueryResult result = query.execute();
-        NodeIterator iter = result.getNodes();
+        String path = "/"+HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE;
+        if(!session.itemExists(path) || !session.getItem(path).isNode()) {
+            return null;
+        }
+        NodeIterator iter = ((Node)session.getItem(path)).getNodes(HippoNodeType.HIPPO_NODETYPE);
+        
         Node current = null;
         while (iter.hasNext()) {
             Node node = iter.nextNode();
@@ -219,8 +217,9 @@ public class JcrTypeStore implements ITypeStore {
         RepositoryFieldDescriptor field;
         TypeDescriptor type;
         String prefix;
-
         Descriptor(Node typeNode, String prefix) {
+
+            System.out.println("......");
             try {
                 this.jcrPath = typeNode.getPath();
                 this.prefix = prefix;
