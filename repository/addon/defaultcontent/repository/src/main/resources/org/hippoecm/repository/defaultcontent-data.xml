@@ -54,7 +54,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:hardhandle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>39fdf263-91ef-4a5a-b996-d9d48d6bc7e8</sv:value>
@@ -127,7 +127,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:hardhandle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>4ea031f5-a168-44d2-8a87-1f983d89a9f0</sv:value>
@@ -185,7 +185,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:hardhandle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>31c2bb15-776a-4a55-a76f-6f06c5133ad3</sv:value>
@@ -245,7 +245,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:hardhandle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>fde601f4-306c-4388-8d41-9800a556d3a6</sv:value>
