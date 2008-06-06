@@ -158,8 +158,8 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     public void remove() throws VersionException, LockException, RepositoryException {
         if(isNode()) {
             DerivedDataEngine.removal((Node)this);
-            item.remove();
         }
+        item.remove();
     }
 
     public boolean equals(Object obj) {
