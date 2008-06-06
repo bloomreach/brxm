@@ -163,13 +163,12 @@ public class RepositoryTypeConfig implements TypeConfig {
             uri = nsReg.getURI("rep");
         }
 
-        String xpath = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE
-                + "/" + HippoNodeType.HIPPO_NODETYPE;
-
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery(xpath, Query.XPATH);
-        QueryResult result = query.execute();
-        NodeIterator iter = result.getNodes();
+        String path = "/"+HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE;
+        if(!session.itemExists(path) || !session.getItem(path).isNode()) {
+            return null;
+        }
+        NodeIterator iter = ((Node)session.getItem(path)).getNodes(HippoNodeType.HIPPO_NODETYPE);
+        
         Node current = null;
         while (iter.hasNext()) {
             Node node = iter.nextNode();
