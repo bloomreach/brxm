@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -32,14 +34,18 @@ public class EditorPlugin extends Plugin {
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        JcrNodeModel jcrModel = new JcrNodeModel(model);
-
-        form = new EditorForm("form", jcrModel, this);
-        add(form);
-
+        add(form = newForm());
         setOutputMarkupId(true);
     }
 
+    protected EditorForm newForm() {
+        JcrNodeModel jcrModel = new JcrNodeModel(getPluginModel());
+        EditorForm form = new EditorForm("form", jcrModel, this);
+        form.setMultiPart(true);
+        form.setMaxSize(Bytes.megabytes(5));
+        return form;
+    }
+    
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
