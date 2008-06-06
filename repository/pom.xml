@@ -71,7 +71,7 @@
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
     <org.apache.geronimo.specs.jta.version>1.1</org.apache.geronimo.specs.jta.version>
     <org.apache.derby.version>10.2.1.6</org.apache.derby.version>
-    <org.slf4j.version>1.4.0</org.slf4j.version>
+    <org.slf4j.version>1.4.3</org.slf4j.version>
     <poi.version>2.5.1-final-20040804</poi.version>
     <pdfbox.version>0.6.4</pdfbox.version>
     <org.textmining.version>0.4</org.textmining.version>
@@ -433,6 +433,12 @@
         <groupId>javax.jdo</groupId>
         <artifactId>jdo2-api</artifactId>
         <version>${javax.jdo2-api.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-jta</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
