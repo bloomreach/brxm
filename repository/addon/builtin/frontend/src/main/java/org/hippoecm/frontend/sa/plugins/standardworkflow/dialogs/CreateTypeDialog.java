@@ -54,6 +54,8 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
 
         WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
         IJcrService jcrService = jcrServiceRef.getService();
-        jcrService.flush(wflModel.getNodeModel());
+        if (jcrService != null) {
+            jcrService.flush(wflModel.getNodeModel());
+        }
     }
 }

@@ -45,15 +45,17 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrNodeModelComparator;
 import org.hippoecm.frontend.model.SortableDataAdapter;
+import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin {
+public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener {
 
     protected static final String LISTING_NODETYPE = "hippo:listing";
     protected static final String LISTINGPROPS_NODETYPE = "hippo:listingpropnode";
@@ -86,6 +88,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin {
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        // register for flush notifications
+        context.registerService(this, IJcrService.class.getName());
 
         compare = new HashMap<String, Comparator<? super JcrNodeModel>>();
         compare.put("name", new JcrNodeModelComparator("name"));
@@ -135,6 +140,15 @@ public abstract class AbstractListingPlugin extends RenderPlugin {
             log.error(e.getMessage());
         }
         setDataProvider(new ListDataProvider(entries));
+        redraw();
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        String nodePath = nodeModel.getItemModel().getPath();
+        String myPath = ((JcrNodeModel) getModel()).getItemModel().getPath();
+        if (myPath.startsWith(nodePath)) {
+            modelChanged();
+        }
     }
 
     // internals
