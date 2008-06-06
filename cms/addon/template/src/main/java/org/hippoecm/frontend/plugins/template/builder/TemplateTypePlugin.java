@@ -167,6 +167,13 @@ public class TemplateTypePlugin extends Plugin {
                 } finally {
                     typeVersion = new TypeDescriptor(typeConfig.getTypeDescriptor(typeName).getMapRepresentation());
                 }
+
+                TemplateModel model = (TemplateModel) getPluginModel();
+                Node typeNode = model.getJcrNodeModel().getNode();
+                if (typeNode != null) {
+                    replace(createTemplate(model.getJcrNodeModel()));
+                }
+                notification.getContext().addRefresh(this);
             }
         }
         super.receive(notification);

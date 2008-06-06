@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.PluginFactory;
 import org.hippoecm.frontend.plugin.PluginManager;
 import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.MessageContext;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.config.PluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
@@ -65,9 +66,12 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
     private IPluginConfig config;
     private IRenderService parent;
     private String wicketId;
+    private List<MessageContext> updates;
 
     public Adapter() {
         super("id");
+
+        updates = new LinkedList<MessageContext>();
     }
 
     public org.hippoecm.frontend.plugin.Plugin getRootPlugin() {
@@ -176,7 +180,12 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
             model.put("plugin", "invalid path");
             Notification notification = channel.createNotification("focus", model);
             channel.publish(notification);
+            updates.add(notification.getContext());
         }
+        for (MessageContext context : updates) {
+            context.apply(target);
+        }
+        updates = new LinkedList<MessageContext>();
     }
 
     public void unbind() {
@@ -201,9 +210,10 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        Channel top = rootPlugin.getBottomChannel();
-        Notification notification = top.createNotification("flush", nodeModel);
-        top.publish(notification);
+        Channel channel = rootPlugin.getBottomChannel();
+        Notification notification = channel.createNotification("flush", nodeModel);
+        channel.publish(notification);
+        updates.add(notification.getContext());
     }
 
 }
