@@ -2064,7 +2064,7 @@
             <sv:value>hippo:templateitem</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.GroupUsersListPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.groups.UsersListPlugin</sv:value>
           </sv:property>
           <sv:node sv:name="hippo:parameters">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -2395,7 +2395,7 @@
             <sv:value>hippo:templateitem</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.UserGroupsListPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin</sv:value>
           </sv:property>
           <sv:node sv:name="hippo:parameters">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
