@@ -109,7 +109,7 @@ public class URLPathTranslator {
             path = this.baseLocation + path;
         }
 
-        logger.debug("url " + url + " to documentPath " + path);
+ //       logger.debug("url " + url + " to documentPath " + path);
         return path;
     }
 
@@ -185,7 +185,7 @@ public class URLPathTranslator {
         // UTF-8 encoding
         url = urlEncode(url);
         
-        logger.debug("documentPath " + documentPath + " to url " + url);
+        // logger.debug("documentPath " + documentPath + " to url " + url);
         return url;
     }
     
