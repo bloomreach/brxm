@@ -15,101 +15,68 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.rmi.RemoteException;
-
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.sa.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
 
-    public BasicReviewedActionsWorkflowPlugin(PluginDescriptor pluginDescriptor, final IPluginModel model,
-            Plugin parentPlugin) {
-        super(pluginDescriptor, (WorkflowsModel) model, parentPlugin);
+    private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
+    public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                if (channel != null) {
-                    Request request = channel.createRequest("edit", new JcrNodeModel(docNode));
-                    return request;
+                IViewService viewer = getPluginContext().getService(
+                        getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
+                if (viewer != null) {
+                    viewer.view(new JcrNodeModel(docNode));
                 } else {
-                    return null;
+                    log.warn("No editor found to edit {}", docNode.getPath());
                 }
             }
         });
-        
         addWorkflowAction("requestPublication-dialog", "Request publication", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestPublication();
-                return null;
             }
         });
-        
         addWorkflowAction("requestDePublication-dialog", "Request unpublication", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDepublication();
-                return null;
             }
         });
-        
         addWorkflowAction("requestDeletion-dialog", "Request delete", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-            public Request execute(Channel channel, Workflow wf) throws Exception {
+
+            public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDeletion();
-                return null;
             }
         });
     }
 
-    @Override
-    public void receive(Notification notification) {
-        if ("save".equals(notification.getOperation())) {
-            try {
-                WorkflowsModel workflowModel = (WorkflowsModel) getPluginModel();
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) manager
-                        .getWorkflow(workflowModel.getWorkflowDescriptor());
-                workflow.commitEditableInstance();
-            } catch (RemoteException e) {
-                log.error(e.getMessage());
-            } catch (WorkflowException e) {
-                log.error(e.getMessage());
-            } catch (MappingException e) {
-                log.error(e.getMessage());
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        } else if ("close".equals(notification.getOperation())) {
-            // FIXME: possibly dispose editable instance?
-        }
-        super.receive(notification);
-    }
 }
