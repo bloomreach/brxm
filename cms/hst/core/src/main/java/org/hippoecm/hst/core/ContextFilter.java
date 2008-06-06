@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.util.LocaleFactory;
-import org.hippoecm.hst.util.URLBasePathLocaleFactory;
+import org.hippoecm.hst.util.RepositoryLocaleFactory;
 
 //import org.slf4j.LoggerFactory;
 //import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class ContextFilter implements Filter {
     // private static final Logger logger = LoggerFactory.getLogger(ContextFilter.class);
     
     private static final String KEY_LOCALE_FACTORY_CLASS = "locale.factory.class";
-    private static final Class DEFAULT_LOCALE_FACTORY_CLASS = URLBasePathLocaleFactory.class;
+    private static final Class DEFAULT_LOCALE_FACTORY_CLASS = RepositoryLocaleFactory.class;
     
     private String attributeName = "context";
     String repositoryBaseLocation = "/";
