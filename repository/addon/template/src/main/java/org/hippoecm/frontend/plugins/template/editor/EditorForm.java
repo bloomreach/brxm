@@ -50,11 +50,6 @@ public class EditorForm extends Form {
         super(wicketId, model);
 
         this.plugin = plugin;
-
-        setMultiPart(true);
-        // FIXME: make this configurable
-        setMaxSize(Bytes.megabytes(5));
-
         add(template = createTemplate());
     }
 
