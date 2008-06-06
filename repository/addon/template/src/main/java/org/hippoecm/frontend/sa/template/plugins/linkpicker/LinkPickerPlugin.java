@@ -37,6 +37,7 @@ import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//FIXME: porting this plugin hasn't been completed yet
 public class LinkPickerPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
