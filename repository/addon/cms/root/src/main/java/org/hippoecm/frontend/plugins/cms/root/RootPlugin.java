@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,42 +15,29 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.apache.wicket.behavior.HeaderContributor;
+import org.hippoecm.frontend.sa.dialog.DialogService;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.sa.service.render.RenderService;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.root.sa.RootPlugin instead
- */
-@Deprecated
-public class RootPlugin extends Plugin {
+public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public RootPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        for (String extension : new String[] { "logoutPlugin", "tabsPlugin" }) {
+            addExtensionPoint(extension);
+        }
+        DialogService dialogService = new DialogService();
+        dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
+        add(dialogService);
+        
+        if (config.getString(RenderService.SKIN_ID) != null) {
+            add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
+        }
     }
 
-    @Override
-    public void handle(Request request) {
-        if ("select".equals(request.getOperation()) || "logout".equals(request.getOperation())) {
-            Channel outgoing = getBottomChannel();
-            if (outgoing != null) {
-                outgoing.publish(outgoing.createNotification(request));
-            }
-            return;
-        }
-
-        if ("exception".equals(request.getOperation())) {
-            request.getContext().addRefresh(this);
-            Channel outgoing = getBottomChannel();
-            if (outgoing != null) {
-                outgoing.publish(outgoing.createNotification(request));
-            }
-            return;
-        }
-
-        super.handle(request);
-    }
 }
