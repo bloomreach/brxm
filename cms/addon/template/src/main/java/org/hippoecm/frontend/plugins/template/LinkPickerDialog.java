@@ -33,7 +33,7 @@ import org.hippoecm.frontend.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// SA port: please port me!
+@Deprecated
 public class LinkPickerDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
 

@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007 Hippo
+  * Copyright 2008 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,34 +15,41 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    
-    <span wicket:id="browserBreadcrumbPlugin" class="Breadcrumb">breadcrumb</span>
-    
-    
-    
+    <span wicket:id="breadcrumbPlugin" class="Breadcrumb">breadcrumb</span>
     <div class="panelcontainer" id="left">
-      <h2><span class="search">Search</span></h2>
-      <div class="panel nopadding"> 
+      <h2>
+        <span class="search">Search</span>
+      </h2>
+      <div class="panel nopadding">
         <div wicket:id="browserPlugin" class="Tree plugin">tree here</div>
-       </div>
-    </div>
-          
-    
-    <div class="panelcontainer" id="right">
-      <h2><span class="actions">Actions</span></h2>
-      <div class="panel">
-      <!--    <h2 class="actions">Actions</h2>-->
-      <div wicket:id="workflowsPlugin" class="Menu plugin">workflow here</div>
       </div>
     </div>
-
+    
+    <div class="panelcontainer" id="right">
+      <h2>
+        <span class="actions">Actions</span>
+      </h2>
+      <div class="panel">
+        <div wicket:id="workflowsPlugin" class="Menu plugin">workflow here</div>
+      </div>
+    </div>
     
     <div class="panelcontainer" id="center">
-      <h2><span class="documents">Documents</span></h2>
+      <h2>
+        <span class="documents">Documents</span>
+      </h2>
       <div class="panel nopadding">
-                               <div wicket:id="listPlugin" class="plugin Doclist">documents here</div>
-            </div>
+        <div wicket:id="listPlugin" class="plugin Doclist">documents here</div>
+      </div>
+      <div class="slidercontrol">
+        <a href="#">&nbsp;</a>
+      </div>
+      <div class="panel nopadding">
+        <div class="plugin versioning">
+          <div wicket:id="versionPlugin"> </div>
         </div>
-  
+      </div>
+    </div>
   </wicket:panel>
+  
 </html>

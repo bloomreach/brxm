@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,59 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.PluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
-public class BrowserPerspective extends Plugin {
+public class BrowserPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
-    public BrowserPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public BrowserPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        
+        addExtensionPoint("breadcrumbPlugin");
+        addExtensionPoint("browserPlugin");
+        addExtensionPoint("listPlugin");
+        addExtensionPoint("workflowsPlugin");
+        addExtensionPoint("versionPlugin");
     }
-
+    
     @Override
-    public void receive(Notification notification) {
-        if ("browse".equals(notification.getOperation())) {
-            Channel channel = getTopChannel();
-            if (channel != null) {
-                // FIXME: should the map be constructed by the PluginDescriptor?
-                PluginModel model = new PluginModel();
-                model.put("plugin", getPluginPath());
-                Request request = channel.createRequest("focus", model);
-                request.setContext(notification.getContext());
-                channel.send(request);
-            }
-
-            Channel outgoing = getBottomChannel();
-            if (outgoing != null) {
-                Notification selectNotice = outgoing.createNotification("select", notification.getModel());
-                selectNotice.setContext(notification.getContext());
-                outgoing.publish(selectNotice);
-            }
-            return;
-        }
-        super.receive(notification);
-    }
-
-    @Override
-    public void handle(Request request) {
-        String operation = request.getOperation();
-        if ("select".equals(operation) || "list".equals(operation)) {
-            Channel outgoing = getBottomChannel();
-            if (outgoing != null) {
-                outgoing.publish(outgoing.createNotification(request));
-            }
-            return;
-        }
-        super.handle(request);
+    public void view(IModel model) {
+        super.view(model);
+        focus(null);
     }
 }
