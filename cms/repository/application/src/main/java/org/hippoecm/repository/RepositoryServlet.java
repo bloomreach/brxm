@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -45,7 +42,12 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,25 +63,18 @@ import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 public class RepositoryServlet extends HttpServlet {
 
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
-
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-
     /** Parameter name of the binging address */
     public final static String REPOSITORY_BINDING_PARAM = "repository-address";
-
     /** Parameter name of the repository config file */
     public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
-
     /** Default binding address for server */
     public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/hipporepository";
-
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
-
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
-
     HippoRepository repository;
     String bindingAddress;
     String storageLocation;
@@ -138,8 +133,7 @@ public class RepositoryServlet extends HttpServlet {
         // try to parse the path
         storageLocation = config.getServletContext().getRealPath(storageLocation);
         if (storageLocation == null) {
-            throw new ServletException("Cannot determin repository location "
-                    + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
+            throw new ServletException("Cannot determin repository location " + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
         }
     }
 
@@ -177,17 +171,17 @@ public class RepositoryServlet extends HttpServlet {
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
             /* Start rmiregistry if not already started */
-            if(bindingAddress.startsWith("rmi://")) {
+            if (bindingAddress.startsWith("rmi://")) {
                 int port = Registry.REGISTRY_PORT;
                 try {
-                    if(bindingAddress.startsWith("rmi://localhost:")) {
+                    if (bindingAddress.startsWith("rmi://localhost:")) {
                         String portString = bindingAddress.substring("rmi://localhost:".length());
                         portString = portString.substring(0, portString.indexOf("/"));
                         port = Integer.parseInt(portString);
                     }
                     Registry registry = LocateRegistry.createRegistry(port);
-                    log.info("Started an RMI registry on port "+port);
-                } catch(RemoteException ex) {
+                    log.info("Started an RMI registry on port " + port);
+                } catch (RemoteException ex) {
                     log.info("RMI registry has already been started on port " + port);
                 }
             }
@@ -219,7 +213,7 @@ public class RepositoryServlet extends HttpServlet {
 
         String username = "admin", password = "admin";
         String authhead = req.getHeader("Authorization");
-        if(authhead != null) {
+        if (authhead != null) {
             String userpass = new String(new BASE64Decoder().decodeBuffer(authhead.substring(6)));
             username = userpass.substring(0, userpass.indexOf(":"));
             password = userpass.substring(userpass.indexOf(":") + 1);
@@ -229,8 +223,8 @@ public class RepositoryServlet extends HttpServlet {
              *   password = null;  a problem is that we don't have a password then
              * but this only works if we fully configured a security realm for this.
              */
-            if(req.getAuthType() != req.BASIC_AUTH) {
-                res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
+            if (req.getAuthType() != req.BASIC_AUTH) {
+                res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
                 return;
             } else {
@@ -239,17 +233,19 @@ public class RepositoryServlet extends HttpServlet {
         }
 
         String path = req.getRequestURI();
-        if (path.startsWith(req.getContextPath()))
+        if (path.startsWith(req.getContextPath())) {
             path = path.substring(req.getContextPath().length());
-        if (path.startsWith(req.getServletPath()))
+        }
+        if (path.startsWith(req.getServletPath())) {
             path = path.substring(req.getServletPath().length());
+        }
         res.setStatus(HttpServletResponse.SC_OK);
         res.setContentType("text/html");
         PrintWriter writer = res.getWriter();
 
         Session session = null;
         try {
-            if(username == null || username.equals("")) {
+            if (username == null || username.equals("")) {
                 session = repository.login();
             } else {
                 session = repository.login(username, (password != null ? password.toCharArray() : null));
@@ -297,8 +293,7 @@ public class RepositoryServlet extends HttpServlet {
                 pathEltName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(pathElt));
 
                 currentPath += "/" + StringEscapeUtils.escapeHtml(pathElt);
-                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
-                        + pathEltName + "</a>");
+                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/" + pathEltName + "</a>");
             }
             writer.println("</code>");
 
@@ -308,8 +303,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    <ul>");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/"
-                        + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/" + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
                 String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode) child).getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
@@ -334,8 +328,54 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
             writer.println("    </ul>");
+
+            String queryString = null;
+            if((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
+                queryString = URLDecoder.decode(queryString, "UTF-8");
+                writer.println("  <h3>Query executed</h3>");
+                writer.println("  <blockquote>");
+                writer.println(queryString);
+                writer.println("  </blockquote>");
+                writer.println("  <ol>");
+                QueryManager qmgr = session.getWorkspace().getQueryManager();
+                Query query = qmgr.createQuery(queryString, (req.getParameter("xpath") != null ? Query.XPATH : Query.SQL));
+                QueryResult result = query.execute();
+                for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+                    Node resultNode = iter.nextNode();
+                    writer.println("    <li>");
+                    if (resultNode != null) {
+                        writer.println(resultNode.getPath());
+                    }
+                }
+                writer.println("  </ol><hr><table>");
+                result = query.execute();
+                String[] columns = result.getColumnNames();
+                writer.println("  <tr>");
+                for(int i=0; i<columns.length; i++) {
+                    writer.print("    <th>");
+                    writer.print(columns[i]);
+                    writer.println("</th>");
+                }
+                writer.println("  </tr>");
+                for (RowIterator iter = result.getRows(); iter.hasNext();) {
+                    Row resultRow = iter.nextRow();
+                    writer.println("    <tr>");
+                    if (resultRow != null) {
+                        Value[] values = resultRow.getValues();
+                        if (values != null) {
+                            for (int i = 0; i < values.length; i++) {
+                                writer.print("    <td>");
+                                writer.print(values[i]!=null ? values[i].getString() : "");
+                                writer.println("</td>");
+                            }
+                        }
+                    }
+                    writer.println("</tr>");
+                }
+                writer.println("  </ol>");
+            }
         } catch (LoginException ex) {
-            res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
+            res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
             res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
         } catch (RepositoryException ex) {
             writer.println("<p>Error while accessing the repository, exception reads as follows:");
@@ -343,8 +383,9 @@ public class RepositoryServlet extends HttpServlet {
             ex.printStackTrace(writer);
             writer.println("</pre>");
         } finally {
-            if (session != null)
+            if (session != null) {
                 session.logout();
+            }
         }
         writer.println("</body></html>");
     }
