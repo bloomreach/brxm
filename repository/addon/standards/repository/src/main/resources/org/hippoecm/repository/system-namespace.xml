@@ -385,7 +385,7 @@
             <sv:value>underline</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
-            <sv:value>xp-blue</sv:value>
+            <sv:value>hippo-gray</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
