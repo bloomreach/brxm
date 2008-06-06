@@ -2090,6 +2090,14 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="css" sv:type="String">
+              <sv:value>templateactions</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
@@ -2413,6 +2421,14 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="css" sv:type="String">
+              <sv:value>templateactions</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
       </sv:node>
     </sv:node>
@@ -3025,6 +3041,14 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="css" sv:type="String">
+              <sv:value>templateactions</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
       </sv:node>
@@ -3214,6 +3238,14 @@
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
+          <sv:node sv:name="hippo:parameters">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:parameters</sv:value>
+            </sv:property>
+            <sv:property sv:name="css" sv:type="String">
+              <sv:value>templateactions</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
       </sv:node>

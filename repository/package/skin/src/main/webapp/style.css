@@ -80,7 +80,8 @@ div.domainsico div ul li.icolistsmall { background-image: url("images/domain_ico
 
 #right{width: 222px; float: right; min-height: 506px; max-height: 506px; overflow: auto}
 #center{margin-left: 228px; margin-right: 228px; min-height: 506px; position: relative;}
-#wideright{width: 787px; height: 351px; float: right; min-height: 506px; background: #d2d2d2;}
+#wideright{width: 787px; height: 351px; float: right; min-height: 506px; background: #f2f2f2;}
+#wideleft{width: 787px; height: 351px; float: left; min-height: 506px; background: #f2f2f2;}
 
 a.fauxbutton{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
 
@@ -99,7 +100,7 @@ h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
 .preview {padding: 15px; height: 156px; overflow: scroll}
 
 .gray{color: #666666} 
-.panelgray{background: #d2d2d2}
+.panelgray{background: #f2f2f2}
 
 .taglist li{display: inline; ccolor: #a2a2a2;}
 .versionlabel {font-size: 12px; color: #666666; padding: 5px; padding-left: 15px;}
@@ -108,7 +109,8 @@ a.previous{background: url("images/arrowleft.gif") no-repeat center left; paddin
 a.next{background: url("images/arrowright.gif") no-repeat center right; padding: 8px; padding-left: 0px}
 
 input[type="submit"] {
- font-size: 11px
+ font-size: 11px;
+ padding: 3px;
 }
 table.versiondetails{margin-top: -2px}
 table tr td table.versiondetails tr td{padding: 0px; color: #a2a2a2}
@@ -200,7 +202,6 @@ body.dialog table.dialogbuttons tr td.cancelbutton a:hover{background: #f1f1f1; 
 div#templateitemedit{background: red}
 div.fields table{width: 100%}
 div.fields table tr td table{width: auto}
-div.fields table tr td h3{font-size: 15px;}
 table.htmlarea tr td{padding: 0px; border: 1px solid #f1f1f1}
 
 span.templateactions{
@@ -238,20 +239,48 @@ width: 20%;
 
 div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
 div#templateitemedit input{width: 140px;}
-a.editbutton{}
-a.upbutton{display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;}
-a.downbutton{display: block; float: right; width: 10px; height: 10px;clear: right; margin-right: 3px; padding: 4px;}
-td.itemmovehandle{vertical-align: top; background: #f8f8f9 url("images/templateitemback.gif") no-repeat; width: 43px; position: relative;}
+
+a.editbutton{
+display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;
+text-indent: -9999px;
+background: url("images/edit_ico.png") no-repeat;
+position: top
+}
+a.upbutton{display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;
+background: url("images/up_ico.png") no-repeat}
+
+a.downbutton{display: block; float: right; width: 10px; height: 10px;clear: right; margin-right: 3px; padding: 4px;
+background: url("images/down_ico.png") no-repeat; margin-top: 30px;}
+
+
+td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; position: relative;}
 table.grid tr td.itemmovehandle {padding-top: 4px; padding-right: 0px;}
 
 a.addbutton{float: left: margin-left: 10px}
 
 /* editor stying */
-.Editor table tr td{border-bottom: 1px dotted #999999}
-.Editor table tr td .fields h3{margin-bottom: 5px;}
+.editor table tr td{border-bottom: 1px dotted #999999}
+.editor table tr td .fields h3{margin-bottom: 5px;}
 .editor div.panel{max-height: 700px; background: white;}
 .editor h2{display: none}
 
+div.editor{
+height:416px;
+max-height:500px;
+overflow:auto;
+padding:7px;
+width:772px;
+}
+div.editor div.fields{background: #e2e2e2; margin-bottom: 6px; padding: 4px;}
+div.fields{margin-bottom: 6px; padding: 4px}
+div.fields h3{background: #9D9D9D; padding: 4px; color: white; font-weight: bold; font-size: 11px; margin-bottom: 5px;}
+
+div.fields a.templateRemove{background: url("images/remove_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
+div.fields a.templateAdd{background: url("images/add_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
+div.fields a.templateUp{background: url("images/up_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
+div.fields a.templateUp{background: url("images/edit_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
+div.fields input[type="text"]{width: 100px;}
+div.fields table tr td{border-bottom: none; padding: 2px;}
 
 /* list views */
 table th, table td{font-size: 11px}
@@ -273,9 +302,12 @@ tr.odd td { padding: 5px; }
 .dataview{width: 100%}
 .dataview thead tr.navigation td { padding: 5px; }
 
+.dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
+.dataListPaging td div{margin-bottom: 5px}
+.dataListPaging td a{padding: 5px;}
+.dataListPaging td a:hover{background: #f2f2f2}
+.dataListPaging td span em, .dataListPaging td a em{font-style: normal}
 
-
-.navigatorLabel { font-size: 18px; color: #4a81c3 }
 .navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
 .navigator { color: grey }
 .navigator a { color: #18a4e2 }
@@ -342,7 +374,7 @@ overflow: auto;
 .userGroupsList h3{display: none}
 
 .templatedetails div.fields table tr td ul li h3{font-size: 11px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; background: #9d9d9d; display: block; color: white; padding-left:3px;}
-.templatedetails div.fields table tr td ul li{padding: 3px; background: #c5c5c5; margin-bottom: 6px;}
+.templatedetails div.fields table tr td ul li{padding: 3px; background: #CCCCCC; margin-bottom: 6px;}
 .templatedetails div.fields table tr td{vertical-align: top}
 
 .templatedetails div.fields table tr td ul li ul li span a{display: none}
@@ -351,14 +383,16 @@ overflow: auto;
 .templatedetails div.fields table.htmlarea div{padding: 0px; margin: 0px}
 .templatedetails .htmlarea width{100%}
 
-div.usertitle{
-background:#C5C5C5 url(images/user_ico_big.gif) no-repeat scroll 3px 1px;
+div.templatetitle, div.usertitle{
+background:#CCCCCC url(images/user_ico_big.png) no-repeat scroll 3px 1px;
 height:48px;
 margin:5px;
 padding:13px 5px 5px 60px;
 }
-div.usertitle h3{font-size: 20px; color: #666666; font-weight: normal}
-div.usertitle h4{font-size: 12px; color: #666666; font-weight: normal; padding-left:2px;}
+div.templatetitle{background:#CCCCCC url(images/document_ico_big.gif) no-repeat scroll 9px 15px;}
+
+div.templatetitle h3, div.usertitle h3{font-size: 20px; color: #666666; font-weight: normal}
+div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-weight: normal; padding-left:2px;}
 
 .templatedetails div.fields div div div {margin-bottom: 5px;}
 .templatedetails div.fields div div div div div div{border-bottom: none}
