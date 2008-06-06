@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
@@ -43,6 +44,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     private String title;
     private WorkflowsModel model;
     private IServiceReference<AbstractWorkflowPlugin> pluginRef;
+    private IServiceReference<IJcrService> jcrServiceRef;
 
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
         super(plugin.getPluginContext(), dialogWindow);
@@ -51,6 +53,9 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         this.title = title;
         this.model = (WorkflowsModel) plugin.getModel();
         this.pluginRef = context.getReference(plugin);
+
+        IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
+        jcrServiceRef = context.getReference(service);
 
         if (model.getNodeModel().getNode() == null) {
             ok.setVisible(false);
@@ -80,12 +85,12 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     @Override
     protected void ok() throws Exception {
         JcrNodeModel handle = model.getNodeModel();
-        while(handle != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+        while (handle != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParentModel();
         }
-        if(handle == null) {
+        if (handle == null) {
             handle = model.getNodeModel().getParentModel();
-            if(handle == null) {
+            if (handle == null) {
                 handle = model.getNodeModel();
             }
         }
@@ -93,6 +98,11 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         execute();
 
         ((UserSession) Session.get()).getJcrSession().refresh(true);
+
+        IJcrService jcrService = jcrServiceRef.getService();
+        if (jcrService != null) {
+            jcrService.flush(handle);
+        }
     }
 
     @Override

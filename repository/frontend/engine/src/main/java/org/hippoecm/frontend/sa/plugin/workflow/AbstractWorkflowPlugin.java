@@ -36,6 +36,7 @@ import org.hippoecm.frontend.sa.dialog.IDialogFactory;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -137,6 +138,13 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
                     }
 
                     action.execute(workflow);
+
+                    ((UserSession) Session.get()).getJcrSession().refresh(true);
+
+                    IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+                    if (jcrService != null) {
+                        jcrService.flush(handle);
+                    }
                 } catch (RepositoryException ex) {
                     log.error("Invalid data to save", ex);
                 } catch (Exception ex) {

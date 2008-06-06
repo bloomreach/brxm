@@ -24,5 +24,7 @@ public interface TemplateConfig extends IClusterable {
 
     public final static String EDIT_MODE = "edit";
 
+    public final static String VIEW_MODE = "view";
+
     public TemplateDescriptor getTemplate(TypeDescriptor type, String mode);
 }

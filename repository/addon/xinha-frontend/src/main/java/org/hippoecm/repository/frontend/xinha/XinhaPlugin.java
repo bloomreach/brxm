@@ -38,13 +38,16 @@ import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.template.config.TemplateConfig;
 import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -77,116 +80,123 @@ public class XinhaPlugin extends Plugin {
         TemplateModel model = (TemplateModel) getPluginModel();
         valueModel = model.getJcrPropertyValueModel();
 
-        editor = new TextArea("value", valueModel) {
-            private static final long serialVersionUID = 1L;
+        String mode = model.getTemplateDescriptor().getMode();
+        Fragment fragment = new Fragment("fragment", mode);
+        add(fragment);
+        if (TemplateConfig.EDIT_MODE.equals(mode)) {
+            editor = new TextArea("value", valueModel) {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onComponentTag(final ComponentTag tag) {
-                PluginDescriptor descriptor = getDescriptor();
-                StringBuilder sb = new StringBuilder();
-                ParameterValue value = descriptor.getParameter("width");
-                if (value != null) {
-                    sb.append("width: ");
-                    if (value.getStrings().size() > 0)
-                        sb.append(value.getStrings().get(0));
-                    sb.append(";");
+                @Override
+                protected void onComponentTag(final ComponentTag tag) {
+                    PluginDescriptor descriptor = getDescriptor();
+                    StringBuilder sb = new StringBuilder();
+                    ParameterValue value = descriptor.getParameter("width");
+                    if (value != null) {
+                        sb.append("width: ");
+                        if (value.getStrings().size() > 0)
+                            sb.append(value.getStrings().get(0));
+                        sb.append(";");
+                    }
+                    value = descriptor.getParameter("height");
+                    if (value != null) {
+                        sb.append("height: ");
+                        if (value.getStrings().size() > 0)
+                            sb.append(value.getStrings().get(0));
+                        sb.append(";");
+                    }
+                    if (sb.length() > 0) {
+                        tag.put("style", sb.toString());
+                    }
+                    super.onComponentTag(tag);
                 }
-                value = descriptor.getParameter("height");
-                if (value != null) {
-                    sb.append("height: ");
-                    if (value.getStrings().size() > 0)
-                        sb.append(value.getStrings().get(0));
-                    sb.append(";");
-                }
-                if (sb.length() > 0) {
-                    tag.put("style", sb.toString());
-                }
-                super.onComponentTag(tag);
-            }
-        };
+            };
 
-        postBehavior = new AbstractDefaultAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
+            postBehavior = new AbstractDefaultAjaxBehavior() {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void respond(AjaxRequestTarget target) {
-                RequestCycle requestCycle = RequestCycle.get();
-                boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
-                if (save) {
-                    editor.processInput();
-                    target.appendJavascript(XINHA_SAVED_FLAG);
-                }
-
-                String browse = requestCycle.getRequest().getParameter("browse");
-                if (browse != null) {
-
-                    if ("".equals(browse)) {
-                        browse = "/";
+                @Override
+                protected void respond(AjaxRequestTarget target) {
+                    RequestCycle requestCycle = RequestCycle.get();
+                    boolean save = Boolean.valueOf(requestCycle.getRequest().getParameter("save")).booleanValue();
+                    if (save) {
+                        editor.processInput();
+                        target.appendJavascript(XINHA_SAVED_FLAG);
                     }
 
-                    StringBuilder sb = new StringBuilder();
+                    String browse = requestCycle.getRequest().getParameter("browse");
+                    if (browse != null) {
 
-                    //custom browsing
-                    Node pluginNode = (Node) pluginModel.getObject();
-                    try {
-                        javax.jcr.Session session = pluginNode.getSession();
-                        Item item = session.getItem(browse);
-                        if (item.isNode()) {
-                            Node itemNode = (Node) item;
-                            NodeIterator iterator = itemNode.getNodes();
-                            while (iterator.hasNext()) {
-                                Node childNode = iterator.nextNode();
-                                Node canonicalNode = ((HippoNode) childNode).getCanonicalNode();
-                                if (canonicalNode != null && canonicalNode.isSame(childNode)
-                                        && !ignorePaths.contains(canonicalNode.getPath())) {
-                                    sb.append("{");
-                                    sb.append("title: '").append(childNode.getName()).append("'");
-                                    boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE);
-                                    sb.append(", clickable: ").append(isHandle);
-                                    sb.append(", url: '").append(childNode.getPath()).append("'");
-                                    if (childNode.getNodes().hasNext() && !isHandle) {
-                                        sb.append(", children: []");
-                                    }
-                                    sb.append("}");
-                                    if (iterator.hasNext()) {
-                                        sb.append(",");
+                        if ("".equals(browse)) {
+                            browse = "/";
+                        }
+
+                        StringBuilder sb = new StringBuilder();
+
+                        //custom browsing
+                        Node pluginNode = (Node) pluginModel.getObject();
+                        try {
+                            javax.jcr.Session session = pluginNode.getSession();
+                            Item item = session.getItem(browse);
+                            if (item.isNode()) {
+                                Node itemNode = (Node) item;
+                                NodeIterator iterator = itemNode.getNodes();
+                                while (iterator.hasNext()) {
+                                    Node childNode = iterator.nextNode();
+                                    Node canonicalNode = ((HippoNode) childNode).getCanonicalNode();
+                                    if (canonicalNode != null && canonicalNode.isSame(childNode)
+                                            && !ignorePaths.contains(canonicalNode.getPath())) {
+                                        sb.append("{");
+                                        sb.append("title: '").append(childNode.getName()).append("'");
+                                        boolean isHandle = childNode.isNodeType(HippoNodeType.NT_HANDLE);
+                                        sb.append(", clickable: ").append(isHandle);
+                                        sb.append(", url: '").append(childNode.getPath()).append("'");
+                                        if (childNode.getNodes().hasNext() && !isHandle) {
+                                            sb.append(", children: []");
+                                        }
+                                        sb.append("}");
+                                        if (iterator.hasNext()) {
+                                            sb.append(",");
+                                        }
                                     }
                                 }
                             }
+                        } catch (RepositoryException e) {
+                            log.error(e.getMessage());
                         }
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
+
+                        target.appendJavascript("[" + sb.toString() + "]");
+
                     }
+                }
+            };
 
-                    target.appendJavascript("[" + sb.toString() + "]");
+            editor.setOutputMarkupId(true);
+            editor.setVisible(true);
+            editor.add(postBehavior);
 
+            add(this.new XinhaHeaderContributor());
+            fragment.add(editor);
+
+            //on tab-switch a new configuration is created while an existing on is in the sharedBehaviour
+            //does provide a way to change configurations dynamically without implementing cache
+            configuration = new Configuration(pluginDescriptor.getParameters());
+
+            Page page = getPluginPage();
+            for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
+                IBehavior behavior = (IBehavior) iter.next();
+                if (behavior instanceof XinhaEditorBehavior) {
+                    sharedBehavior = (XinhaEditorBehavior) behavior;
+                    break;
                 }
             }
-        };
-
-        editor.setOutputMarkupId(true);
-        editor.setVisible(true);
-        editor.add(postBehavior);
-
-        add(this.new XinhaHeaderContributor());
-        add(editor);
-
-        //on tab-switch a new configuration is created while an existing on is in the sharedBehaviour
-        //does provide a way to change configurations dynamically without implementing cache
-        configuration = new Configuration(pluginDescriptor.getParameters());
-
-        Page page = getPluginPage();
-        for (Iterator iter = page.getBehaviors().iterator(); iter.hasNext();) {
-            IBehavior behavior = (IBehavior) iter.next();
-            if (behavior instanceof XinhaEditorBehavior) {
-                sharedBehavior = (XinhaEditorBehavior) behavior;
-                break;
+            if (sharedBehavior == null) {
+                sharedBehavior = new XinhaEditorBehavior(page);
             }
+            sharedBehavior.register(configuration);
+        } else {
+            fragment.add(new Label("value", valueModel));
         }
-        if (sharedBehavior == null) {
-            sharedBehavior = new XinhaEditorBehavior(page);
-        }
-        sharedBehavior.register(configuration);
     }
 
     public String getContent() {
@@ -199,9 +209,11 @@ public class XinhaPlugin extends Plugin {
 
     @Override
     public void onBeforeRender() {
-        configuration.setName(editor.getMarkupId());
-        configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-        configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+        if (configuration != null) {
+            configuration.setName(editor.getMarkupId());
+            configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
+            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+        }
         super.onBeforeRender();
     }
 
@@ -216,7 +228,7 @@ public class XinhaPlugin extends Plugin {
 
     @Override
     public void receive(Notification notification) {
-        if ("focus".equals(notification.getOperation())) {
+        if (editor != null && "focus".equals(notification.getOperation())) {
             String plugin = (String) notification.getModel().getMapRepresentation().get("plugin");
             if (!getPluginPath().startsWith(plugin)) {
                 // FIXME: add logic to clean up on the client (delete Xinha.config)
