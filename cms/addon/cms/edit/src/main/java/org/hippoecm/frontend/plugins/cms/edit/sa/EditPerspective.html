@@ -17,16 +17,19 @@
     <wicket:panel>
         <div class="panelcontainer" id="right">
             <h2><span class="actions">Actions</span></h2>
-            <div class="panel">
+            <div class="panel Menu">
                 <div wicket:id="workflowPlugin">workflow here</div>
             </div>
             <h2><span class="edititem">Edit Template Item</span></h2>
-            <div class="panel">
+            <div class="panel Menu">
             </div>
         </div>
-        <div style="margin-left: 0px;" class="editor panelcontainer" id="center">
-            <h2><span class="edit">Editor</span></h2>
-            <div wicket:id="editorPlugin"></div>
+        <div class="panelcontainer" id="wideleft">
+            <div class="templatetitle">
+                <h3>Edit Document</h3>
+                <h4>You can open multiple documents at the same time</h4>
+            </div>
+            <div class="editor" wicket:id="editorPlugin"></div>
         </div>
     </wicket:panel>
 </html>
