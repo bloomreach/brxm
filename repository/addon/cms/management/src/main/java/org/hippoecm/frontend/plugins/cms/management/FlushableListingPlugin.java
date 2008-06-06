@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.management;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
@@ -23,12 +24,12 @@ import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
 
-public abstract class QueryListPlugin extends AbstractListingPlugin {
+public abstract class FlushableListingPlugin extends AbstractListingPlugin {
     private static final long serialVersionUID = 1L;
 
-    private FlushableSortableDataProvider dataProvider;
+    private SortableDataProvider dataProvider;
 
-    public QueryListPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
+    public FlushableListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
     }
 
@@ -57,9 +58,9 @@ public abstract class QueryListPlugin extends AbstractListingPlugin {
     }
 
     protected void flushDataProvider() {
-        dataProvider.flush();
+        dataProvider.detach();
     }
 
-    protected abstract FlushableSortableDataProvider createDataProvider();
+    protected abstract SortableDataProvider createDataProvider();
 
 }
