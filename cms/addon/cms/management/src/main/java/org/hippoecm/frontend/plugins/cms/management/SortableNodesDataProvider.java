@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -25,16 +24,13 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrNodeModelComparator;
 
-public abstract class SortableNodesDataProvider extends SortableDataProvider implements FlushableSortableDataProvider {
+public abstract class SortableNodesDataProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
 
     private List<JcrNodeModel> nodes;
-    private boolean flush;
 
     public SortableNodesDataProvider(String defaultSort) {
         setSort(defaultSort, true);
-        nodes = new ArrayList<JcrNodeModel>();
-        flush = true;
     }
 
     public Iterator<JcrNodeModel> iterator(int first, int count) {
@@ -51,13 +47,10 @@ public abstract class SortableNodesDataProvider extends SortableDataProvider imp
     }
 
     protected List<JcrNodeModel> getNodes() {
-        if (flush) {
-            nodes.clear();
+        if (nodes == null) {
             nodes = createNodes();
             sortNodes();
-            flush = false;
         }
-
         return nodes;
     }
 
@@ -69,8 +62,8 @@ public abstract class SortableNodesDataProvider extends SortableDataProvider imp
         }
     }
 
-    public void flush() {
-        flush = true;
+    public void detach() {
+        nodes = null;
     }
 
     protected abstract List<JcrNodeModel> createNodes();

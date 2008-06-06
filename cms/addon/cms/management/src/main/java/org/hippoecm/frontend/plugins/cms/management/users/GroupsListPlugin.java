@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management;
+package org.hippoecm.frontend.plugins.cms.management.users;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -22,33 +24,36 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Channel;
 import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
+import org.hippoecm.frontend.plugins.cms.management.QueryDataProvider;
 import org.hippoecm.frontend.template.model.ItemModel;
 import org.hippoecm.frontend.yui.dragdrop.node.DropNodeBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserGroupsListPlugin extends QueryListPlugin {
+public class GroupsListPlugin extends FlushableListingPlugin {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(UserGroupsListPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(GroupsListPlugin.class);
 
     private String username;
 
-    //TODO: can I throw a repository exception here, or should I throw an invalid arg exception?
-    public UserGroupsListPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin)
-            throws RepositoryException {
+    public GroupsListPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
         String caption = pluginDescriptor.getParameter("caption").getStrings().get(0);
@@ -59,7 +64,7 @@ public class UserGroupsListPlugin extends QueryListPlugin {
     }
 
     @Override
-    protected FlushableSortableDataProvider createDataProvider() {
+    protected SortableDataProvider createDataProvider() {
         String query = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
         return new QueryDataProvider(query, "xpath", "name");
     }
@@ -78,7 +83,18 @@ public class UserGroupsListPlugin extends QueryListPlugin {
 
     @Override
     protected String getPluginUserPrefNodeName() {
-        return "USER-PREF-GROUPS-LIST";
+        return "USER-PREF-USER-GROUP-MEMBERS-LIST";
+    }
+
+    @Override
+    protected void modifyDefaultPrefNode(Node prefNode, Channel channel) throws ItemExistsException,
+            PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException,
+            ConstraintViolationException, RepositoryException, ValueFormatException {
+
+        Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
+        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
+        columns.add(getNodeColumn(new Model("Name"), "name", channel));
     }
 
     @Override
@@ -97,22 +113,11 @@ public class UserGroupsListPlugin extends QueryListPlugin {
                         if (groupNode.pendingChanges().hasNext()) {
                             groupNode.save();
                             flushDataProvider();
-                            notification.getContext().addRefresh(UserGroupsListPlugin.this);
+                            notification.getContext().addRefresh(GroupsListPlugin.this);
                         }
-                    } catch (ValueFormatException e) {
-                        e.printStackTrace();
-                    } catch (VersionException e) {
-                        e.printStackTrace();
-                    } catch (LockException e) {
-                        e.printStackTrace();
-                    } catch (ConstraintViolationException e) {
-                        e.printStackTrace();
-                    } catch (PathNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
                     } catch (RepositoryException e) {
-                        e.printStackTrace();
+                        log.error("An error occuirred while trying to add user[" + myUsername
+                                + "] to hippo:members property", e);
                     }
                 }
             }

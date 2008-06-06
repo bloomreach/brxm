@@ -15,15 +15,42 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.plugins.template.editor.EditorForm;
 import org.hippoecm.frontend.plugins.template.editor.EditorPlugin;
 
 public class ManagementEditorPlugin extends EditorPlugin {
     private static final long serialVersionUID = 1L;
 
+    private FeedbackPanel feedback;
+
     public ManagementEditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
+
+        add(feedback = new FeedbackPanel("feedback"));
+        feedback.setOutputMarkupId(true);
+    }
+
+    @Override
+    protected EditorForm newForm() {
+        //JcrNodeModel jcrModel = new JcrNodeModel(getPluginModel());
+        JcrNodeModel jcrModel = (JcrNodeModel) getModel();
+        EditorForm form = new EditorForm("form", jcrModel, this);
+        return form;
+    }
+
+    @Override
+    public void handle(Request request) {
+        if (request.getOperation().equals("feedback")) {
+            request.getContext().addRefresh(feedback);
+        } else {
+            super.handle(request);
+        }
     }
 }
