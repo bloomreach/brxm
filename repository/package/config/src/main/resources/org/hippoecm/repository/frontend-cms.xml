@@ -134,7 +134,7 @@
             <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.BrowserPerspective</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>service.tab</sv:value>
@@ -185,7 +185,7 @@
             <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.tree.FolderTreePlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>service.browse.tree</sv:value>
@@ -200,7 +200,7 @@
             <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.browse.sa.list.DocumentListingPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin</sv:value>
         </sv:property>
         <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>service.browse.list</sv:value>

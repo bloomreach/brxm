@@ -15,45 +15,35 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.sa.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.sa.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
 public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final long serialVersionUID = 1L;
 
     public static final String USER_PREF_NODENAME = "browseperspective-listingview";
 
-    public DocumentListingPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
+    public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+    }
+
+    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
+        setModel(model);
     }
 
     @Override
-    protected CustomizableDocumentListingDataTable getTable(IPluginModel listModel) {
-        List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
-        List<String> list = (List<String>) listModel.getMapRepresentation().get("entries");
-        if (list != null) {
-            for (String entry : list) {
-                entries.add(new JcrNodeModel(entry));
-            }
-        }
-        SortableDocumentsProvider documentsProvider = new SortableDocumentsProvider(entries);
-        CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable("table", columns,
-                documentsProvider, pageSize, false);
+    protected Component getTable(String wicketId, ISortableDataProvider provider) {
+        CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable(wicketId, columns,
+                provider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
         return dataTable;
@@ -65,8 +55,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, Channel channel) {
-        return new DocumentListingNodeColumn(model, propertyName, channel);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName) {
+        return new DocumentListingNodeColumn(model, propertyName, this);
     }
 
 }

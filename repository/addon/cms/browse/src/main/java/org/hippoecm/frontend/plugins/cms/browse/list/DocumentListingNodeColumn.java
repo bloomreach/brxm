@@ -17,25 +17,22 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugins.standards.list.NodeCell;
-import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
-
-/**
- * @deprecated use org.hippoecm.frontend.plugins.cms.browse.sa.* instead
- */
-@Deprecated
+import org.hippoecm.frontend.plugins.standards.sa.list.NodeCell;
+import org.hippoecm.frontend.plugins.standards.sa.list.NodeColumn;
 
 public class DocumentListingNodeColumn extends NodeColumn {
     private static final long serialVersionUID = 1L;
 
-    public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, Channel channel) {
-        super(displayModel, nodePropertyName, channel);
+    private DocumentListingPlugin plugin;
+    
+    public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, DocumentListingPlugin plugin) {
+        super(displayModel, nodePropertyName);
+        this.plugin = plugin;
     }
 
     @Override
     protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
-        return new DocumentListingNodeCell(componentId, (JcrNodeModel) model, channel, nodePropertyName);
+        return new DocumentListingNodeCell(componentId, (JcrNodeModel) model, nodePropertyName, plugin);
     }
 
 }

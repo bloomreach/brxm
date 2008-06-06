@@ -25,6 +25,7 @@ import org.hippoecm.frontend.dialog.lookup.InfoPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 class LinkPickerDialogInfoPanel extends InfoPanel {
     private static final long serialVersionUID = 1L;
 

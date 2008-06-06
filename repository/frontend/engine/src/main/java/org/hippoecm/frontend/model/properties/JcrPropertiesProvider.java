@@ -57,11 +57,11 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
                     it.skip(first);
                     for (int i = 0; i < count; i++) {
                         Property prop = it.nextProperty();
-                        boolean isPrimaryType = prop.getName().equals("jcr:primaryType");
-                        boolean isMixinTypes = prop.getName().equals("jcr:mixinTypes");
-                        if (!isPrimaryType && !isMixinTypes) {
+//                        boolean isPrimaryType = prop.getName().equals("jcr:primaryType");
+//                        boolean isMixinTypes = prop.getName().equals("jcr:mixinTypes");
+//                        if (!isPrimaryType && !isMixinTypes) {
                             list.add(prop);
-                        }
+//                        }
                     }
                 }
             }
@@ -85,8 +85,8 @@ public class JcrPropertiesProvider extends NodeModelWrapper implements IDataProv
                 PropertyIterator it = nodeModel.getNode().getProperties();
                 result = new Long(it.getSize()).intValue();
                 
-                result = result - 1; // For jcr:primaryType
-                result = nodeModel.getNode().hasProperty("jcr:mixinTypes") ? result -1 : result; 
+//                result = result - 1; // For jcr:primaryType
+//                result = nodeModel.getNode().hasProperty("jcr:mixinTypes") ? result -1 : result; 
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
