@@ -46,13 +46,14 @@ public class ContextFilter implements Filter {
     
     private static final String KEY_LOCALE_FACTORY_CLASS = "locale.factory.class";
     private static final Class DEFAULT_LOCALE_FACTORY_CLASS = RepositoryLocaleFactory.class;
+
+    private static final String KEY_IGNORE_EXTENSIONS = "filter.ignore.extensions";
+    private static final String[] DEFAULT_IGNORE_EXTENSIONS = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
     
     private String attributeName = "context";
     String repositoryBaseLocation = "/";
 
-    private String[] ignoreExtensions = new String[] { "ico", "gif", "jpg", "jpeg", "svg", "png", "css", "js" };
-    private final List<String> ignoreExtensionsList = new ArrayList<String>();
-    
+    private List<String> ignoreExtensions;
     private LocaleFactory localeFactory;
 
     /**
@@ -76,21 +77,6 @@ public class ContextFilter implements Filter {
         if (param != null && !param.trim().equals("")) {
             this.repositoryBaseLocation = param;
         }
-
-        // get ignoreExtensions
-        param = filterConfig.getInitParameter("ignoreExtensions");
-        if (param != null && !param.trim().equals("")) {
-            this.ignoreExtensions = param.split(",");
-        }
-
-        // convert extensions to list for easy 'contains' access
-        for (int i = 0; i < ignoreExtensions.length; i++) {
-            String extension = ignoreExtensions[i].trim();
-            if (!extension.startsWith(".")) {
-                extension = "." + extension;
-            }
-            ignoreExtensionsList.add(extension);
-        }
     }
 
     // from interface
@@ -110,7 +96,7 @@ public class ContextFilter implements Filter {
         if (servletPath.lastIndexOf(".") >= 0) {
             String extension = servletPath.substring(servletPath.lastIndexOf("."));
 
-            if (ignoreExtensionsList.contains(extension)) {
+            if (getIgnoreExtensions(req).contains(extension)) {
                 filterChain.doFilter(req, res);
                 return;
             }
@@ -142,8 +128,42 @@ public class ContextFilter implements Filter {
         return new Context(jcrSession, request.getContextPath(), request.getRequestURI(), this.repositoryBaseLocation);
     }
 
-    private Locale getLocale(HttpServletRequest request, String contextName) {
+    private List getIgnoreExtensions(HttpServletRequest request) {
         
+        // lazy
+        if (ignoreExtensions == null) {
+            
+            ignoreExtensions = new ArrayList<String>();
+
+            // by configuration
+            String configuration = HSTConfiguration.get(request.getSession().getServletContext(), 
+                    KEY_IGNORE_EXTENSIONS, false/*not required*/);
+            String[] ignoreExtensionsArray = null;
+            if (configuration != null) {
+                ignoreExtensionsArray = configuration.split(",");
+            }
+
+            // by default
+            if (ignoreExtensionsArray == null) {
+                ignoreExtensionsArray = DEFAULT_IGNORE_EXTENSIONS;
+            }
+            
+            // convert extensions to list for easy 'contains' access
+            for (int i = 0; i < ignoreExtensionsArray.length; i++) {
+                String extension = ignoreExtensionsArray[i].trim();
+                if (!extension.startsWith(".")) {
+                    extension = "." + extension;
+                }
+                ignoreExtensions.add(extension);
+            }
+        }
+
+        return ignoreExtensions;
+    }
+
+    private Locale getLocale(HttpServletRequest request, String contextName) {
+
+        // lazy
         if (localeFactory == null) {
 
             // class name by configuration
