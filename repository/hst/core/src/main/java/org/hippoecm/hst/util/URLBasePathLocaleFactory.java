@@ -31,19 +31,19 @@ import org.hippoecm.hst.core.Context;
  */
 public class URLBasePathLocaleFactory implements LocaleFactory {
 
-    private static final String SESSION_KEY = URLBasePathLocaleFactory.class.getName() + ".locale";
-    
     // javadoc from interface
     public Locale getLocale(HttpServletRequest request, String contextName) {
         
-        Locale locale = (Locale) request.getSession().getAttribute(SESSION_KEY + "." + contextName);
-        
+        // context will be there by argument
+        Context context = (Context) request.getAttribute(contextName);
+
+        // locales may be different per url base path 
+        String sessionKey = this.getClass().getName() + "." + context.getURLBasePath();
+
+        Locale locale = (Locale) request.getSession().getAttribute(sessionKey);
         if (locale == null) {
         
-            // first try to read from repository base location
-            Context context = (Context) request.getAttribute(contextName);
-            
-            // do a match against the start of URL
+            // do a match against the URL base path, i.the e. start of URL
             if (locale == null) {
                 Locale[] locales = Locale.getAvailableLocales();
                 for (int i = 0; i < locales.length; i++) {
@@ -63,7 +63,7 @@ public class URLBasePathLocaleFactory implements LocaleFactory {
             }
 
             // set in session
-            request.getSession().setAttribute(SESSION_KEY + "." + contextName, locale);
+            request.getSession().setAttribute(sessionKey, locale);
         }
         
         return locale;
