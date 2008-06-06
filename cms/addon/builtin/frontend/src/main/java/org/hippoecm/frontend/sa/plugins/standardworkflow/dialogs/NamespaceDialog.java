@@ -16,64 +16,53 @@
 package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
 
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.model.JcrItemModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.sa.dialog.IDialogService;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.IServiceReference;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderDialog extends AbstractWorkflowDialog {
+public class NamespaceDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
-    private transient static final Logger log = LoggerFactory.getLogger(PrototypeDialog.class);
+    @SuppressWarnings("unused")
+    private static final Logger log = LoggerFactory.getLogger(NamespaceDialog.class);
 
-    private String name;
+    @SuppressWarnings("unused")
+    private String prefix;
+
+    @SuppressWarnings("unused")
+    private String url;
+
     private IServiceReference<IJcrService> jcrServiceRef;
 
-    public FolderDialog(PrototypeWorkflowPlugin plugin, IDialogService dialogWindow) {
-        super(plugin, dialogWindow, "Add folder");
+    public NamespaceDialog(NamespaceWorkflowPlugin plugin, IDialogService dialogWindow) {
+        super(plugin, dialogWindow, "Create new namespace");
 
         IPluginContext context = plugin.getPluginContext();
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
 
-        WorkflowsModel model = (WorkflowsModel) plugin.getModel();
+        add(new TextFieldWidget("prefix", new PropertyModel(this, "prefix")));
 
-        name = "New folder";
-        if (model.getNodeModel().getNode() == null) {
-            ok.setEnabled(false);
-        }
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+        add(new TextFieldWidget("url", new PropertyModel(this, "url")));
     }
 
     @Override
     protected void execute() throws Exception {
-        PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
-        if (workflow != null) {
-            String path = workflow.addFolder(name);
-            JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+        RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
+        workflow.createNamespace(prefix, url);
 
-            IJcrService jcrService = jcrServiceRef.getService();
-            if (jcrService != null) {
-                jcrService.flush(nodeModel.getParentModel());
-            }
-
-            PrototypeWorkflowPlugin plugin = (PrototypeWorkflowPlugin) getPlugin();
-            plugin.select(nodeModel);
-        } else {
-            log.error("no workflow defined on model for selected node");
+        IJcrService jcrService = jcrServiceRef.getService();
+        if (jcrService != null) {
+            WorkflowsModel model = (WorkflowsModel) getPlugin().getModel();
+            jcrService.flush(model.getNodeModel().getParentModel());
         }
-    }
-
-    @Override
-    public void cancel() {
     }
 }

@@ -107,10 +107,18 @@ public class TemplateListPlugin extends Plugin {
                     public void onClick(AjaxRequestTarget target) {
                         addField(template);
 
-                        Channel channel = getTopChannel();
-                        Request request = channel.createRequest("flush", templateNodeModel);
-                        channel.send(request);
-                        request.getContext().apply(target);
+                        try {
+                            Node typeNode = templateNodeModel.getNode();
+                            while (!typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                                typeNode = typeNode.getParent();
+                            }
+                            Channel channel = getTopChannel();
+                            Request request = channel.createRequest("flush", new JcrNodeModel(typeNode));
+                            channel.send(request);
+                            request.getContext().apply(target);
+                        } catch(RepositoryException ex) {
+                            log.error(ex.getMessage());
+                        }
                     }
                 };
                 final String name = template.getTypeDescriptor().getName();

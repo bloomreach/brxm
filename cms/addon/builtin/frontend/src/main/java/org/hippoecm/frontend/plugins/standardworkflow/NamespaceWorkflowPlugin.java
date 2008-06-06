@@ -22,6 +22,7 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
 
+@Deprecated
 public class NamespaceWorkflowPlugin extends Plugin {
     private static final long serialVersionUID = 1L;
 
