@@ -19,13 +19,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.sa.dialog.AbstractDialog;
-import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.IServiceReference;
-import org.hippoecm.frontend.sa.service.ITitleDecorator;
+import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class NodeDialog extends AbstractDialog implements ITitleDecorator {

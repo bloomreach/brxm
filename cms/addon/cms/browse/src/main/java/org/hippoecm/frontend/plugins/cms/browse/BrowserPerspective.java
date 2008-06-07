@@ -16,9 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
 public class BrowserPerspective extends Perspective {
     private static final long serialVersionUID = 1L;

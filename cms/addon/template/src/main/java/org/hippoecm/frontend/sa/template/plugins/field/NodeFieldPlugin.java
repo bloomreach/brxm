@@ -22,14 +22,14 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IRenderService;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.template.FieldDescriptor;
 import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.hippoecm.frontend.sa.template.model.AbstractProvider;
 import org.hippoecm.frontend.sa.template.model.NodeTemplateProvider;
+import org.hippoecm.frontend.service.IRenderService;
 
 public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     private static final long serialVersionUID = 1L;
