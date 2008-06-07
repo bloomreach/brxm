@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.adapter;
+package org.hippoecm.frontend.legacy.adapter;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.adapter.Adapter;
+import org.hippoecm.frontend.legacy.adapter.Adapter;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;

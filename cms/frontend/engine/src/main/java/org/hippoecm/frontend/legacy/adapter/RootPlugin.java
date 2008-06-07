@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.adapter;
+package org.hippoecm.frontend.legacy.adapter;
 
 import org.hippoecm.frontend.legacy.LegacyPluginPage;
 import org.hippoecm.frontend.legacy.model.IPluginModel;
