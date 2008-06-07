@@ -21,8 +21,8 @@ import org.hippoecm.frontend.model.IPluginModel;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.cms.management.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.cms.management.list.datatable.CustomizableDocumentListingDataTable;
 
 public abstract class FlushableListingPlugin extends AbstractListingPlugin {
     private static final long serialVersionUID = 1L;
