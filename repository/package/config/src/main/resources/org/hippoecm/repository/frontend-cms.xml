@@ -53,7 +53,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.sa.tabs.TabsPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tabs</sv:value>

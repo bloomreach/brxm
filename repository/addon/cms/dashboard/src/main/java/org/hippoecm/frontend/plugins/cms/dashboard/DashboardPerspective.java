@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import org.hippoecm.frontend.plugins.standards.sa.perspective.Perspective;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.sa.plugin.IPluginContext;
 import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 

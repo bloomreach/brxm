@@ -41,10 +41,8 @@
   </scm>
 
   <modules>
-    <module>common</module>
     <module>frontend</module>
     <module>repository</module>
-    <module>test</module>
   </modules>
 
 </project>

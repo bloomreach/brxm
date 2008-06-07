@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.sa.list.NodeCell;
+import org.hippoecm.frontend.plugins.standards.list.NodeCell;
 
 public class DocumentListingNodeCell extends NodeCell {
     private static final long serialVersionUID = 1L;

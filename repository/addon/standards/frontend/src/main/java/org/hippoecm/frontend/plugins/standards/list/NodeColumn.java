@@ -19,21 +19,14 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColu
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
 
-/**
- * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
- */
-@Deprecated
 public class NodeColumn extends AbstractColumn {
     private static final long serialVersionUID = 1L;
 
-    protected Channel channel;
     private String nodePropertyName;
 
-    public NodeColumn(IModel displayModel, String nodePropertyName ,Channel channel) {
+    public NodeColumn(IModel displayModel, String nodePropertyName) {
         super(displayModel, nodePropertyName);
-        this.channel = channel;
         this.nodePropertyName = nodePropertyName;
     }
 
@@ -48,11 +41,7 @@ public class NodeColumn extends AbstractColumn {
      * @return NodeCell
      */
     protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
-        return new NodeCell(componentId, (JcrNodeModel)model, channel, nodePropertyName);
-    }
-
-    public Channel getChannel() {
-        return channel;
+        return new NodeCell(componentId, (JcrNodeModel)model, nodePropertyName);
     }
 
     public String getNodePropertyName() {

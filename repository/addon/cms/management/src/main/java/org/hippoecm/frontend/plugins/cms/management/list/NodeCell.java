@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.sa.list;
+package org.hippoecm.frontend.plugins.cms.management.list;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -29,25 +29,31 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.channel.Channel;
+import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
+ */
+@Deprecated
 public class NodeCell extends Panel {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeCell.class);
 
-    public NodeCell(String id, final JcrNodeModel model, String nodePropertyName) {
+    public NodeCell(String id, final JcrNodeModel model, final Channel channel, String nodePropertyName) {
         super(id, model);
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                onSelect(model, target);
+                sendChannelRequest(model, target, channel);
             }
         };
         addLabel(model, nodePropertyName, link);
@@ -55,9 +61,13 @@ public class NodeCell extends Panel {
     }
 
     /**
-     * Called when node is selected.
+     * Override this method if you want to send a different request
      */
-    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
+    protected void sendChannelRequest(JcrNodeModel model, AjaxRequestTarget target, Channel channel) {
+        // create a "select" request with the node path as a parameter
+        Request request = channel.createRequest("select", model);
+        channel.send(request);
+        request.getContext().apply(target);
     }
 
     /**

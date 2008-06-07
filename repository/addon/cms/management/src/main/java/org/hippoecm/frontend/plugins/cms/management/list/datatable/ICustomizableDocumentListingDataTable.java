@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.sa.list.datatable;
+package org.hippoecm.frontend.plugins.cms.management.list.datatable;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
+ */
+@Deprecated
 public interface ICustomizableDocumentListingDataTable {
 
     /**
@@ -62,5 +67,11 @@ public interface ICustomizableDocumentListingDataTable {
      *
      */
     public abstract void addBottomColumnHeaders();
+    
+    /**
+     * Selects the node/document to highlight in the list.
+     * @param    nodeModel    A {@link JcrNodeModel} representing a node in the list 
+     */
+    public void setSelectedNode(JcrNodeModel nodeModel);
 
 }

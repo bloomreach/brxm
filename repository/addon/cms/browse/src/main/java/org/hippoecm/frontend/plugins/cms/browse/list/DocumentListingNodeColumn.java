@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.sa.list.NodeCell;
-import org.hippoecm.frontend.plugins.standards.sa.list.NodeColumn;
+import org.hippoecm.frontend.plugins.standards.list.NodeCell;
+import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
 
 public class DocumentListingNodeColumn extends NodeColumn {
     private static final long serialVersionUID = 1L;
