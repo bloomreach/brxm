@@ -20,7 +20,7 @@ import javax.swing.tree.TreeNode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.tree.JcrTree;
+import org.hippoecm.frontend.widgets.JcrTree;
 
 /**
  * @deprecated use org.hippoecm.frontend.sa.* instead
