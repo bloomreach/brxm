@@ -16,9 +16,9 @@
 package org.hippoecm.frontend.sa.template.plugins;
 
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.DateFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

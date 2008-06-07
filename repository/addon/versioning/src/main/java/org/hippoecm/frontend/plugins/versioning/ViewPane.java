@@ -30,9 +30,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class ViewPane extends RenderPlugin {
     transient Logger log = LoggerFactory.getLogger(ViewPane.class);

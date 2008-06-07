@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class FolderTreeConfig implements IClusterable {

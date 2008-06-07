@@ -16,13 +16,13 @@
 package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
 
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.IServiceReference;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin;
-import org.hippoecm.frontend.sa.service.IJcrService;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;

@@ -18,10 +18,10 @@ package org.hippoecm.frontend.plugins.logout;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
-import org.hippoecm.frontend.sa.service.render.RenderService;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends RenderPlugin {

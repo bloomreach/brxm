@@ -16,17 +16,17 @@
 package org.hippoecm.frontend.sa.plugins.standardworkflow;
 
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.sa.dialog.AbstractDialog;
-import org.hippoecm.frontend.sa.dialog.DialogLink;
-import org.hippoecm.frontend.sa.dialog.IDialogFactory;
-import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.IServiceReference;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.CreateTypeDialog;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.RemodelDialog;
-import org.hippoecm.frontend.sa.service.IJcrService;
+import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

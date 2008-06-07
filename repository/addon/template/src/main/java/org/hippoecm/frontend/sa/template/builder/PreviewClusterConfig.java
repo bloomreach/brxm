@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.sa.template.builder;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.impl.JcrClusterConfig;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 
 public class PreviewClusterConfig extends JcrClusterConfig {
     private static final long serialVersionUID = 1L;

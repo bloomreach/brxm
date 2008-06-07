@@ -41,10 +41,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.model.ModelService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;

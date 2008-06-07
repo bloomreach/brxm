@@ -28,8 +28,8 @@ import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
-import org.hippoecm.frontend.sa.Home;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.plugin.IPluginContext;
 
 class XinhaEditorBehavior extends AbstractHeaderContributor {
     private static final long serialVersionUID = 1L;

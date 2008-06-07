@@ -26,7 +26,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.SessionClassLoader;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
 import org.hippoecm.repository.HippoRepository;

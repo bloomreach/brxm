@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.management.sa;
 
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
 public class ManagementPerspective extends Perspective {
     private static final long serialVersionUID = 1L;

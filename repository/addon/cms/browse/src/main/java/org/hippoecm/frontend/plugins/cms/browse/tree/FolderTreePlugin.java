@@ -19,14 +19,14 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.IJcrService;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

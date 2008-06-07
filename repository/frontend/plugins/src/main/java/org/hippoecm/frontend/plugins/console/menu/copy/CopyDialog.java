@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.console.menu.copy;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.sa.dialog.IDialogService;
-import org.hippoecm.frontend.sa.dialog.lookup.LookupDialog;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;

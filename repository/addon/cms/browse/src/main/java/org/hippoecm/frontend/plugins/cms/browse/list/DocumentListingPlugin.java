@@ -21,10 +21,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
 
 public class DocumentListingPlugin extends AbstractListingPlugin {
 

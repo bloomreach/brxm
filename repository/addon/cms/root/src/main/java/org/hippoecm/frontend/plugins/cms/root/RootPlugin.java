@@ -16,11 +16,11 @@
 package org.hippoecm.frontend.plugins.cms.root;
 
 import org.apache.wicket.behavior.HeaderContributor;
-import org.hippoecm.frontend.sa.dialog.DialogService;
-import org.hippoecm.frontend.sa.plugin.IPluginContext;
-import org.hippoecm.frontend.sa.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.service.render.RenderPlugin;
-import org.hippoecm.frontend.sa.service.render.RenderService;
+import org.hippoecm.frontend.dialog.DialogService;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
