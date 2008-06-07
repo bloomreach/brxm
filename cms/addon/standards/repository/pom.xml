@@ -46,11 +46,6 @@
       <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-common</artifactId>
-      <version>${parent.version}</version>
-    </dependency>
 
     <!-- test -->
     <dependency>

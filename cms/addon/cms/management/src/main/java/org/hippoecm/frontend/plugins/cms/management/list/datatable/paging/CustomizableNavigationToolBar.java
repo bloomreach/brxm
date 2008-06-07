@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable.paging;
+package org.hippoecm.frontend.plugins.cms.management.list.datatable.paging;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,6 +26,10 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.Model;
 
+/**
+ * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead
+ */
+@Deprecated
 public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;
