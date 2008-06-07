@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.PluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.channel.Request;
 
 /**
  * Panel representing the content panel for the first tab.

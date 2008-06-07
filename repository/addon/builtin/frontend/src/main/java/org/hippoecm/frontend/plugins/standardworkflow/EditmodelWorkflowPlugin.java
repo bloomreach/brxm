@@ -16,10 +16,10 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.dialog.DialogLink;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.EditModelDialog;
 

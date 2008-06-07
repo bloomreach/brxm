@@ -23,12 +23,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.INotificationListener;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.INotificationListener;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

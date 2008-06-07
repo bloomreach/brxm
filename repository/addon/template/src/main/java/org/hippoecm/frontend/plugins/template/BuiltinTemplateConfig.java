@@ -20,16 +20,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.parameters.ParameterValue;
+import org.hippoecm.frontend.legacy.template.FieldDescriptor;
+import org.hippoecm.frontend.legacy.template.ItemDescriptor;
+import org.hippoecm.frontend.legacy.template.TemplateDescriptor;
+import org.hippoecm.frontend.legacy.template.TypeDescriptor;
+import org.hippoecm.frontend.legacy.template.config.TemplateConfig;
+import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.frontend.plugins.template.field.NodeFieldPlugin;
 import org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin;
-import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.ItemDescriptor;
-import org.hippoecm.frontend.template.TemplateDescriptor;
-import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.TemplateConfig;
-import org.hippoecm.frontend.template.config.TypeConfig;
 
 public class BuiltinTemplateConfig implements TemplateConfig {
     private static final long serialVersionUID = 1L;

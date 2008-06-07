@@ -18,14 +18,14 @@ package org.hippoecm.frontend.plugins.template.resource;
 import java.io.IOException;
 
 import org.apache.wicket.markup.html.image.Image;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.template.model.ItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
-import org.hippoecm.frontend.template.model.ItemModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

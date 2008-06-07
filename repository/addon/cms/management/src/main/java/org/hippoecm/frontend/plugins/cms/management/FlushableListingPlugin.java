@@ -17,10 +17,10 @@ package org.hippoecm.frontend.plugins.cms.management;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.cms.management.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.list.datatable.CustomizableDocumentListingDataTable;
 

@@ -16,11 +16,11 @@
 package org.hippoecm.frontend.plugins.template;
 
 import org.apache.wicket.markup.repeater.Item;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.template.TemplateEngine;
-import org.hippoecm.frontend.template.model.ItemModel;
-import org.hippoecm.frontend.template.model.ItemProvider;
-import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.template.TemplateEngine;
+import org.hippoecm.frontend.legacy.template.model.ItemModel;
+import org.hippoecm.frontend.legacy.template.model.ItemProvider;
+import org.hippoecm.frontend.legacy.widgets.AbstractView;
 
 public class ItemView extends AbstractView {
     private static final long serialVersionUID = 1L;

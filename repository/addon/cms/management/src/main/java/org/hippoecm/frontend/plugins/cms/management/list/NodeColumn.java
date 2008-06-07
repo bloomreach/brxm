@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.cms.management.list;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
 
 /**
  * @deprecated use org.hippoecm.frontend.plugins.standards.sa.* instead

@@ -18,9 +18,9 @@ package org.hippoecm.frontend.plugins.standardworkflow.export;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.frontend.legacy.template.FieldDescriptor;
+import org.hippoecm.frontend.legacy.template.TypeDescriptor;
+import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 

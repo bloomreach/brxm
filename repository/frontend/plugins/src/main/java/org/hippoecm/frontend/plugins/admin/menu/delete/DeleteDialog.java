@@ -18,11 +18,11 @@ package org.hippoecm.frontend.plugins.admin.menu.delete;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.dialog.AbstractDialog;
+import org.hippoecm.frontend.legacy.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
 
 /**
  * @deprecated use org.hippoecm.frontend.plugins.console.menu.* instead

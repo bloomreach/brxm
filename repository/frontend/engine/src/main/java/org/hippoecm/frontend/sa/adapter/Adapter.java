@@ -25,17 +25,23 @@ import org.apache.wicket.Session;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.legacy.model.PluginModel;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.PluginFactory;
+import org.hippoecm.frontend.legacy.plugin.PluginManager;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.MessageContext;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.plugin.config.PluginConfig;
+import org.hippoecm.frontend.legacy.plugin.config.PluginConfigFactory;
+import org.hippoecm.frontend.legacy.plugin.config.PluginRepositoryConfig;
+import org.hippoecm.frontend.legacy.template.config.JcrTypeConfig;
+import org.hippoecm.frontend.legacy.template.config.MixedTypeConfig;
+import org.hippoecm.frontend.legacy.template.config.RepositoryTemplateConfig;
+import org.hippoecm.frontend.legacy.template.config.RepositoryTypeConfig;
+import org.hippoecm.frontend.legacy.template.config.TemplateConfig;
+import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.PluginModel;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.PluginFactory;
-import org.hippoecm.frontend.plugin.PluginManager;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.MessageContext;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.config.PluginConfig;
-import org.hippoecm.frontend.plugin.config.PluginConfigFactory;
-import org.hippoecm.frontend.plugin.config.PluginRepositoryConfig;
 import org.hippoecm.frontend.sa.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.sa.model.IModelListener;
 import org.hippoecm.frontend.sa.model.IModelService;
@@ -45,12 +51,6 @@ import org.hippoecm.frontend.sa.service.IJcrService;
 import org.hippoecm.frontend.sa.service.IRenderService;
 import org.hippoecm.frontend.sa.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.template.config.JcrTypeConfig;
-import org.hippoecm.frontend.template.config.MixedTypeConfig;
-import org.hippoecm.frontend.template.config.RepositoryTemplateConfig;
-import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
-import org.hippoecm.frontend.template.config.TemplateConfig;
-import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
@@ -61,7 +61,7 @@ import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 public class Adapter extends Panel implements IRenderService, IModelListener, IJcrNodeModelListener {
     private static final long serialVersionUID = 1L;
 
-    private org.hippoecm.frontend.plugin.Plugin rootPlugin;
+    private org.hippoecm.frontend.legacy.plugin.Plugin rootPlugin;
     private IPluginContext context;
     private IPluginConfig config;
     private IRenderService parent;
@@ -74,7 +74,7 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
         updates = new LinkedList<MessageContext>();
     }
 
-    public org.hippoecm.frontend.plugin.Plugin getRootPlugin() {
+    public org.hippoecm.frontend.legacy.plugin.Plugin getRootPlugin() {
         return rootPlugin;
     }
 
@@ -204,7 +204,7 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
     public void updateModel(IModel model) {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
-            org.hippoecm.frontend.plugin.Plugin plugin = (org.hippoecm.frontend.plugin.Plugin) rootPlugin
+            org.hippoecm.frontend.legacy.plugin.Plugin plugin = (org.hippoecm.frontend.legacy.plugin.Plugin) rootPlugin
                     .get("legacyPlugin");
             Channel top = plugin.getTopChannel();
             Notification notification = top.createNotification("select", nodeModel);

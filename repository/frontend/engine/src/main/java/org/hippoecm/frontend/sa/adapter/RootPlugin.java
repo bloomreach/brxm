@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.sa.adapter;
 
-import org.hippoecm.frontend.LegacyPluginPage;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.channel.Request;
+import org.hippoecm.frontend.legacy.LegacyPluginPage;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

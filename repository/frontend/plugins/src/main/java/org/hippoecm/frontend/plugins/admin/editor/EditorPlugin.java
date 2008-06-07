@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.admin.editor;
 
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
 
 /**
  * @deprecated Use org.hippoecm.frontend.plugins.console.editor.* instead
