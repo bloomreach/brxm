@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.template;
 
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.template.TemplateDescriptor;
+import org.hippoecm.frontend.legacy.template.model.ItemProvider;
+import org.hippoecm.frontend.legacy.template.model.TemplateModel;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.template.TemplateDescriptor;
-import org.hippoecm.frontend.template.model.ItemProvider;
-import org.hippoecm.frontend.template.model.TemplateModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
 //SA port: not necessary, ListViewPlugin does the same

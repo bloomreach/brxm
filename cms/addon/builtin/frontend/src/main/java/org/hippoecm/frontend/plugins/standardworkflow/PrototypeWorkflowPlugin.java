@@ -20,11 +20,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.dialog.DialogLink;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.FolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.PrototypeDialog;

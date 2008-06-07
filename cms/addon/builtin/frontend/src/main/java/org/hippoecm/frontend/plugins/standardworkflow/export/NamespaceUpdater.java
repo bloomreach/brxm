@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.TypeConfig;
+import org.hippoecm.frontend.legacy.template.TypeDescriptor;
+import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class NamespaceUpdater {

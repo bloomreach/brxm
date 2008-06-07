@@ -16,12 +16,12 @@
 package org.hippoecm.frontend.plugins.cms.management;
 
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Notification;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Notification;
-import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.plugins.template.editor.EditorForm;
 import org.hippoecm.frontend.plugins.template.editor.EditorPlugin;
 

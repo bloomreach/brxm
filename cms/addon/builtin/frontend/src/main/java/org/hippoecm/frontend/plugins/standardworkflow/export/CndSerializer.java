@@ -27,11 +27,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.legacy.template.FieldDescriptor;
+import org.hippoecm.frontend.legacy.template.TypeDescriptor;
+import org.hippoecm.frontend.legacy.template.config.RepositoryTypeConfig;
+import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.template.FieldDescriptor;
-import org.hippoecm.frontend.template.TypeDescriptor;
-import org.hippoecm.frontend.template.config.RepositoryTypeConfig;
-import org.hippoecm.frontend.template.config.TypeConfig;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

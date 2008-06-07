@@ -15,13 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.template.item;
 
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.template.ItemDescriptor;
+import org.hippoecm.frontend.legacy.template.model.ItemModel;
+import org.hippoecm.frontend.legacy.template.model.ItemProvider;
 import org.hippoecm.frontend.plugins.template.ItemView;
-import org.hippoecm.frontend.template.ItemDescriptor;
-import org.hippoecm.frontend.template.model.ItemModel;
-import org.hippoecm.frontend.template.model.ItemProvider;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ItemRowPlugin extends Plugin {

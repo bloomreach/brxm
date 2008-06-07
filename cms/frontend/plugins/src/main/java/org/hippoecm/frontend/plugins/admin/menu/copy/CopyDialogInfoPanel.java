@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.lookup.InfoPanel;
+import org.hippoecm.frontend.legacy.dialog.lookup.InfoPanel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;

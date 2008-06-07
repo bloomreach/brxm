@@ -16,12 +16,12 @@
 package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.dialog.AbstractWorkflowDialog;
+import org.hippoecm.frontend.legacy.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
 import org.slf4j.Logger;

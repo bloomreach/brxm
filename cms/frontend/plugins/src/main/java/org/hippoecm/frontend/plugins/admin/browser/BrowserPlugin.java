@@ -15,12 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.admin.browser;
 
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.tree.AbstractTreePlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.tree.AbstractTreePlugin;
 
 /**
  * @deprecated Use org.hippoecm.frontend.plugins.console.browser.BrowserPlugin instead

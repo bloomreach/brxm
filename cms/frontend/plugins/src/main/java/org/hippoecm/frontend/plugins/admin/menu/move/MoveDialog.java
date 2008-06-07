@@ -18,13 +18,13 @@ package org.hippoecm.frontend.plugins.admin.menu.move;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.dialog.lookup.LookupDialog;
+import org.hippoecm.frontend.legacy.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.dialog.lookup.LookupDialog;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

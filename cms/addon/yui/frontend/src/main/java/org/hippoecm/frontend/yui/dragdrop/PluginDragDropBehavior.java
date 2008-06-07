@@ -17,8 +17,8 @@ package org.hippoecm.frontend.yui.dragdrop;
 
 import java.util.List;
 
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 
 public abstract class PluginDragDropBehavior extends AbstractDragDropBehavior {
     private static final long serialVersionUID = 1L;

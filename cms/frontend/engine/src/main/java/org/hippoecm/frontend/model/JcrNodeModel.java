@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.repository.api.HippoNode;
 
 public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {

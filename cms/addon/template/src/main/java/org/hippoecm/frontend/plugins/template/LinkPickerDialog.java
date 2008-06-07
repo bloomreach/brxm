@@ -22,14 +22,14 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.dialog.DialogWindow;
-import org.hippoecm.frontend.dialog.lookup.InfoPanel;
-import org.hippoecm.frontend.dialog.lookup.LookupDialog;
+import org.hippoecm.frontend.legacy.dialog.DialogWindow;
+import org.hippoecm.frontend.legacy.dialog.lookup.InfoPanel;
+import org.hippoecm.frontend.legacy.dialog.lookup.LookupDialog;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

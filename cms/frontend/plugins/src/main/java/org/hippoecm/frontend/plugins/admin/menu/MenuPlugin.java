@@ -16,13 +16,13 @@
 package org.hippoecm.frontend.plugins.admin.menu;
 
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.model.IPluginModel;
+import org.hippoecm.frontend.legacy.dialog.DialogLink;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.ChannelFactory;
 import org.hippoecm.frontend.plugins.admin.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.admin.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.admin.menu.export.ExportDialog;

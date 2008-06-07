@@ -20,15 +20,15 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.model.PluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugin.channel.Channel;
-import org.hippoecm.frontend.plugin.channel.Request;
-import org.hippoecm.frontend.template.ItemDescriptor;
-import org.hippoecm.frontend.template.TemplateEngine;
-import org.hippoecm.frontend.template.model.ItemModel;
+import org.hippoecm.frontend.legacy.model.IPluginModel;
+import org.hippoecm.frontend.legacy.model.PluginModel;
+import org.hippoecm.frontend.legacy.plugin.Plugin;
+import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
+import org.hippoecm.frontend.legacy.plugin.channel.Channel;
+import org.hippoecm.frontend.legacy.plugin.channel.Request;
+import org.hippoecm.frontend.legacy.template.ItemDescriptor;
+import org.hippoecm.frontend.legacy.template.TemplateEngine;
+import org.hippoecm.frontend.legacy.template.model.ItemModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class PreviewItemPlugin extends Plugin {
