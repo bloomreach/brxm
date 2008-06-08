@@ -47,6 +47,10 @@ public class PluginFactory implements IClusterable {
         } else {
             try {
                 ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
+                if (loader == null) {
+                    log.warn("Unable to retrieve repository classloader, falling back to default classloader.");
+                    loader = getClass().getClassLoader();
+                }
                 Class clazz = Class.forName(className, true, loader);
                 Class[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
                 Constructor constructor = clazz.getConstructor(formalArgs);
@@ -56,11 +60,9 @@ public class PluginFactory implements IClusterable {
                 message = e.getTargetException().getClass().getName() + ": "
                         + e.getTargetException().getMessage();
                 log.error(e.getMessage());
-                e.printStackTrace();
             } catch (Exception e) {
                 message = e.getClass().getName() + ": " + e.getMessage();
                 log.error(e.getMessage());
-                e.printStackTrace();
             }
         }
         if (plugin == null && message != null) {

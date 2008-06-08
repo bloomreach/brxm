@@ -40,7 +40,7 @@ public class JcrConfigService implements IPluginConfigService {
         this.defaultKey = defaultKey;
     }
 
-    public IClusterConfig getPlugins(String key) {
+    public IClusterConfig getCluster(String key) {
         IClusterConfig cluster;
         try {
             if (key.indexOf('/') > 0) {
@@ -99,7 +99,7 @@ public class JcrConfigService implements IPluginConfigService {
     }
 
     public IClusterConfig getDefaultCluster() {
-        return getPlugins(defaultKey);
+        return getCluster(defaultKey);
     }
 
     public void detach() {
