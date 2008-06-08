@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.property;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -98,16 +99,20 @@ public class PropertyDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-
+        Node node = nodeModel.getNode();
+        
         Value jcrValue = getJcrValue();
         if (isMultiple.booleanValue()) {
             if (jcrValue == null || value.equals("")) {
                 jcrValue = new StringValue("...");
             }
-            nodeModel.getNode().setProperty(name, new Value[] { jcrValue });
+            node.setProperty(name, new Value[] { jcrValue });
         } else {
-            nodeModel.getNode().setProperty(name, jcrValue);
+            node.setProperty(name, jcrValue);
         }
+        
+        JcrNodeModel newNodeModel = new JcrNodeModel(node);
+        plugin.setModel(newNodeModel);
     }
 
     @Override
