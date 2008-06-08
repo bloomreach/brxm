@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugin.config.impl.JavaConfigService;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IJcrService;
@@ -59,13 +58,6 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         // register JCR service to notify plugins of updates to the jcr tree
         mgr.registerService(new JcrService(mgr), IJcrService.class.getName());
 
-        IClusterConfig pluginCluster;
-        if (sessionModel.getCredentials().equals(Main.DEFAULT_CREDENTIALS)) {
-            pluginCluster = new JavaConfigService().getPlugins("login");
-        } else {
-            pluginCluster = pluginConfigService.getDefaultCluster();
-        }
-
         mgr.registerService(this, Home.class.getName());
         String serviceId = mgr.getReference(this).getServiceId();
         ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
@@ -83,6 +75,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         };
         mgr.registerTracker(tracker, serviceId);
 
+        IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         List<IPluginConfig> configs = pluginCluster.getPlugins();
         contexts = new ArrayList<IPluginContext>(configs.size());
         for (IPluginConfig plugin : configs) {

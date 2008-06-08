@@ -21,5 +21,5 @@ public interface IPluginConfigService extends IDetachable {
     
     public IClusterConfig getDefaultCluster();
     
-    public IClusterConfig getPlugins(String key);
+    public IClusterConfig getCluster(String key);
 }

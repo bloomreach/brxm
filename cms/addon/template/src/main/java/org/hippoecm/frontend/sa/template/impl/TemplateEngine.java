@@ -79,7 +79,7 @@ public class TemplateEngine implements ITemplateEngine {
 
     public IClusterConfig getTemplate(TypeDescriptor type, String mode) {
         IPluginConfigService configService = context.getService("service.plugin.config", IPluginConfigService.class);
-        IClusterConfig cluster = configService.getPlugins("template/" + type.getName() + "/" + mode);
+        IClusterConfig cluster = configService.getCluster("template/" + type.getName() + "/" + mode);
         if (cluster != null) {
             cluster.put(ITemplateEngine.ENGINE, serviceId);
         }

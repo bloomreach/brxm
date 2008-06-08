@@ -22,23 +22,26 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
-public class JavaConfigService implements IPluginConfigService {
+class JavaConfigService implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
 
     private Map<String, IClusterConfig> builtinConfigs;
 
-    public JavaConfigService() {
+    private String defaultCluster;
+    
+    JavaConfigService(String defaultCluster) {
+        this.defaultCluster = defaultCluster;
         builtinConfigs = new HashMap<String, IClusterConfig>();
         builtinConfigs.put("login", initLogin());
         builtinConfigs.put("console", initConsole());
     }
 
-    public IClusterConfig getPlugins(String key) {
+    public IClusterConfig getCluster(String key) {
         return builtinConfigs.get(key);
     }
 
     public IClusterConfig getDefaultCluster() {
-        return builtinConfigs.get("console");
+        return builtinConfigs.get(defaultCluster);
     }
 
     public void detach() {

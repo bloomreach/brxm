@@ -82,7 +82,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IClusterable {
         if (!editors.containsKey(model)) {
             IPluginConfigService pluginConfigService = context.getService("service.plugin.config",
                     IPluginConfigService.class);
-            IClusterConfig clusterConfig = pluginConfigService.getPlugins(config.getString(CLUSTER));
+            IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString(CLUSTER));
             String viewerId = clusterConfig.getString(VIEWER_ID);
 
             clusterConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
