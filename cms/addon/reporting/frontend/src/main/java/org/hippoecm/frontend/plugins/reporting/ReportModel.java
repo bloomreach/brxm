@@ -21,7 +21,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.session.UserSession;
@@ -29,7 +28,7 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReportModel extends NodeModelWrapper implements IDataProvider, IPluginModel {
+public class ReportModel extends NodeModelWrapper implements IDataProvider {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ReportModel.class);
