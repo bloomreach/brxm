@@ -22,6 +22,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
@@ -56,7 +58,16 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         mgr.registerService(pluginConfigService, "service.plugin.config");
 
         // register JCR service to notify plugins of updates to the jcr tree
-        mgr.registerService(new JcrService(mgr), IJcrService.class.getName());
+        IJcrService jcrService = new IJcrService() {
+            public void flush(JcrNodeModel model) {
+                List<IJcrNodeModelListener> listeners = mgr.getServices(IJcrService.class.getName(),
+                        IJcrNodeModelListener.class);
+                for (IJcrNodeModelListener listener : listeners) {
+                    listener.onFlush(model);
+                }
+            }
+        };
+        mgr.registerService(jcrService, IJcrService.class.getName());
 
         mgr.registerService(this, Home.class.getName());
         String serviceId = mgr.getReference(this).getServiceId();
