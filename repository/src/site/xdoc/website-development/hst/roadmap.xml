@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>Hippo Site Toolkit Roadmap</title>
+    </properties>
+    <body>
+      <section name="Hippo Site Toolkit Development Roadmap">
+        <p>This section describes the general development roadmap of the Hippo Site Toolkit for 
+           HippoECM. This roadmap is an outline of the functionality and the components that will
+           be released in future versions of the HST. <br>
+           The development will focus on a flexible and extendible toolkit with which developers
+           can create websites with content from HippoECM.
+           
+           The HST should be a joy to work with when you build a site with the
+           repository :-). This roadmap is a general list of components and functionalities that 
+           will end up in future releases. Any feedback on these issues is more than welcome</p>
+        
+        <subsection name="Content to URL Mapping">          
+          <p>To display repository content by the view techology (jsp, jsf) a flexible
+          mapping is required. Initially this mapping will be configured in a static resource like
+          an xml file or by Spring. In a later version this might end up in the repository.
+          in a later release </p>
+        </subsection>  
+        
+        <subsection name="Templating">          
+          <p>Templating can be very useful in sites that unlock repository content and to
+          speed up development. For this purpose the HST will have functionality to add 
+          templates of proven templating frameworks to the repository and to maintain them `
+          with the cms. The frameworks will include:</p>
+           <ul>
+            <li>freemarker</li>
+            <li>tiles</li>
+            <li>velocity</li>
+          </ul>
+        </subsection> 
+        
+        <subsection name="Caching">          
+          <p>For a good performance the HST will have support for caching.</p>           
+        </subsection> 
+        
+        <subsection name="JSP Tags">          
+          <p>The HST will provide a number of useful tags. These can be divided in core tags,
+          giving the tools to retrieve and write content to the repository and tags that facility
+          more extensive functionality. 
+         </p>
+          <h4>core tags</h4>
+           <ul>
+            <li>Tags for retrieving and writing repository content</li>
+            <li>A tag for retrieving faceted content</li>
+            <li>Support for dictionaries</li>
+            <li>A tag that provides context state (the current document, repository connection etc.)</li>
+          </ul>
+          <h4>other tags</h4>
+           <ul>
+            <li>A tag for paginated content</li>
+            <li>A Poll Tag</li>
+            <li>A tag for RSS Feeds</li>
+            <li>A tag for follow-ups/comments on documents</li>
+            <li></li>
+            <li>..and many more</li>
+          </ul>
+        </subsection> 
+      </section>
+    </body>
+</document>
