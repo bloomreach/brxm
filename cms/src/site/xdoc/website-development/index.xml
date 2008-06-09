@@ -33,7 +33,7 @@
           for easy website development. 
         </p>
 
-       <subsection name="Hippo Site Toolkit">
+       <subsection name="Using Hippo Site Toolkit">
           <p>
             For the purpose of fast site development, Hippo has developed the Hippo Site Toolkit, 
             or the HST for short, targeted at JSP frontends. It features: </p>
@@ -50,6 +50,15 @@
          <p>See <a href="hst/configuration.html">HST configuration</a> on how to set up and configure the HST.</p>
          <p>See <a href="hst/configuration-example.html">configuration example</a> for an example web.xml.</p>
         </subsection>
+
+        <subsection name="Running the sample HST site">
+            <p>The show the possiblities of the HST in practice, a complete JSP site has been 
+              made available for download. It is in fact the currently running 
+              <a href="http://www.onehippo.com" target="_blank">onehippo.com</a> website.  
+              To run it, you also need a combined CMS 7 / Repository 2
+               with initial content in it.</p> 
+             <p>On how to run the example site, <a href="hst/running-sample-site.html">see here</a>.</p>
+        </subsection>  
       </section>
 
     </body>

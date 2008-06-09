@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="Running the sample HST site">
+        <p>The show the possiblities of the HST in practice, a complete JSP site has been 
+          made available for download. It is in fact the currently running 
+          <a href="http://www.onehippo.com" target="_blank">onehippo.com</a> website.  
+          To run it, you also need a combined CMS 7 / Repository 2
+          with initial content in it. </p>
+        
+        <subsection name="Download and run Repository 2 / CMS 7.">
+          <h4>Download</h4>
+          <p>Download the <a href="/onehippo-ecm.war">onehippo.com ECM as a war</a>.</p>
+          <h4>Run</h4>
+          <p>Deploy the war in your favorite web server, like Tomcat or JBoss.  
+            <a href="/run-hippo-ecm/index.html">See here</a> for more information on
+            deploying the ECM.</p>
+        </subsection>  
+        
+        <subsection name="Download and run the HST site.">
+          <h4>Download</h4>
+          <p>Download the <a href="/onehippo-site.war">onehippo.com site as war</a>.</p>
+          <h4>Running</h4>
+          <p>Deploy the war in your favorite web server. The current distribution assumes that
+            some components are provided </p> 
+          <h4>Running on Tomcat</h4>
+          <p>If you are running the site in Tomcat, make sure the following components
+            are available in the Tomcat installation:</p>
+          <ul>
+            <li><strong>javax.transaction</strong>: Tomcat out-of-the-box lacks javax.transaction
+              package, however the HST depends on it. The package may be installed for example 
+              in Tomcats <code>shared/lib</code> directory. An example of such a package is 
+              Genronimo's <code>geronimo-spec-jta-1.0.1B-rc2.jar</code>, which may be obtained under 
+              through the <a href="http://geronimo.apache.org">Apache Geronimo project</a> as with Maven 2 groupID <code>geronimo-spec</code> 
+              and artifactId <code>geronimo-spec-jta</code></li>
+            <li><strong>Standard core and formatting taglibs</strong>: the example site uses 
+              two standard taglibs, core (<code>c:</code>) and formatting (<code>fmt:</code>).
+              These taglibs should be provided by the container and may be obtained
+              through hte <a href="http://jakarta.apache.org/taglibs/"> Apache Jakarta project</a>.
+              Version should be 1.1.2 or higher.</li>
+          </ul>
+        </subsection>  
+      </section>
+    </body>
+</document>
