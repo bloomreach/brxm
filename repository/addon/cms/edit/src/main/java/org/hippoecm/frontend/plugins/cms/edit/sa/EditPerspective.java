@@ -21,6 +21,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,8 @@ public class EditPerspective extends Perspective {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
+
+    private boolean firstRender = true;
 
     public EditPerspective(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -37,6 +40,15 @@ public class EditPerspective extends Perspective {
         }
 
         onModelChanged();
+    }
+
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (firstRender) {
+            focus(null);
+            firstRender = false;
+        }
+        super.render(target);
     }
 
     @Override
