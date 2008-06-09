@@ -216,6 +216,7 @@ position:absolute;
 float:right;
 right:0px;
 top:117px;
+width: 212px;
 }
 span.templateactions ul{padding: 12px;}
 div.templateeditor h3{font-size: 14px;}
@@ -361,10 +362,9 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 }
 
 ul.highlight li {
-  background: #eee;
-  background: #ddd;
-  background: #ffffcc;
+  background: #4A84C8;
 }
+ul.highlight li a span{color: white}
 
 .userGroupsList{
 height: 158px;
