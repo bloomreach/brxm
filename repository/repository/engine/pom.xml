@@ -137,14 +137,6 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>javax.enterprise.deploy</groupId>
-      <artifactId>deployment-api</artifactId>
-      <scope>test</scope>
-      <version>[1.2,)</version>
-    </dependency>
-    -->
   </dependencies>
 
   <build>
