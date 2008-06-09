@@ -24,73 +24,113 @@
   <body>
     <section name="Frontend Plugin Communication">
       <p>
-        Each frontend plugin in itself is an independent GUI component.  All frontend plugins together however
-        form a complete application. Within such an application context, plugins are no longer independent, and
-        need to communicate with each other.  One plugin might cause an event, on which certain other plugins
-        might react (by performing whatever action).  Yet other plugins may stay unaffected.
+        Each frontend plugin in itself is an independent component.  All
+        frontend plugins together however form a complete application.  Within
+        such an application context, plugins are no longer independent, and
+        need to communicate with each other.  One plugin might cause an event,
+        on which certain other plugins might react (by performing whatever
+        action).  Yet other plugins may stay unaffected.
       </p>
 
-      <subsection name="Models">
+      <subsection name="Sharing Models">
         <p>
-          In an application, plugins can share a model and send messages when this model changes.  Control of the
-          model is effectively assigned to the plugin that handles the requests that are related to it.  Some of
-          the models are:
+          A very simple communication mechanism is provided in the form of
+          sharing models between plugins.  When one plugin provides an
+          IModelService (a Perspective will do this for you), others can
+          use it to obtain their IModel and to receive "model change"
+          notifications.
         </p>
-
-        <ul>
-          <li>
-            <p>
-              "The selected node": a JcrNodeModel that identifies a node in the repository.  Many plugins use a
-              model of this type, e.g. in the browser or editor perspective.  In the CMS configuration, these
-              perspectives handle requests to change this selection.
-            </p>
-          </li>
-          <li>
-            <p>
-              "The selected tab": one of the tabs that is managed by the TabsPlugin.  The TabsPlugin updates this
-              model when one of the perspectives requests focus.
-            </p>
-          </li>
-          <li>
-            <p>
-              "The JCR cache": a JcrTreeModel that reflects the hierarchy of nodes in the repository in the frontend.
-              As this model changes when nodes are added or removed, the cached hierarchy is flushed and re-read.
-            </p>
-          </li>
-        </ul>
+        <p>
+          The straightforward way to use this mechanism is to subclass the
+          RenderPlugin and override the onModelChanged() method.  Whenever
+          the model changes in one of the other plugins, it will be invoked.
+          If the plugin needs to be redrawn in response to the model update,
+          call redraw().
+        </p>
+        <p>
+          This occurs for example when the page contains a BrowserPlugin.  When
+          a node is selected on the (JCR) tree, other plugins are notified.
+          This mechanism is e.g. used to show workflow plugins for nodes
+          that have a workflow.
+        </p>
       </subsection>
 
-      <subsection name="Messages">
+      <subsection name="Other Communication Patterns">
         <p>
-          Each plugin has two channels, one connecting it to its parent plugin ("incoming") and one connecting it
-          to its children ("outgoing").  Plugins effectively act as filters on the message streams.  There are
+          More advanced interactions between plugins can be achieved by
+          registering services and/or trackers.  Any object that implements
+          IClusterable can be registered as a service.  A number of patterns
+          have emerged in the use of this basic premise.
+        </p>
+        <subsubsection name="Whiteboard Pattern">
+          <p>
+            In the whiteboard pattern, the basic principle of "don't call us,
+            we'll call you" is applied to a client/server situation.  When
+            several clients need to be notified, they don't register themselves
+            directly with the server.  Instead, they register a listener
+            service with the plugin context.  When the clients must be
+            notified, the server retrieves the list of listeners and notifies
+            them.
+          </p>
+          <p>
+            This pattern is actually used by the model sharing implementation.
+            Each plugin that wants to be notified of model changes registers
+            an IModelListener.  The ModelService uses these listener services
+            whenever a model changes.
+          </p>
+        </subsubsection>
+        <subsubsection name="Decorator Pattern">
+          <p>
+            Sometimes it is desirable to extend services with extra
+            interfaces.  An example is the ITitleDecorator; it is used by the
+            Perspective to provide a title to display for the tabbed panel.
+          </p>
+        </subsubsection>
+      </subsection>
+
+      <subsection name="Dialogs">
+        <p>
+        </p>
+      </subsection>
+
+      <subsection name="Legacy Architecture">
+        <p>
+          Each plugin has two channels, one connecting it to its parent plugin
+          ("incoming") and one connecting it to its children ("outgoing").
+          Plugins effectively act as filters on the message streams.  There are
           two kinds of messages:
         </p>
 
         <ul>
           <li>
             <p>
-              <em>Requests</em>: When a plugin wishes to change a model that is shared with other plugins, it must
-              send a request to its parent plugin.  If the parent does not control the model, it should forward the
-              request further up the hierarchy.
+              <em>Requests</em>: When a plugin wishes to change a model that is
+              shared with other plugins, it must send a request to its parent
+              plugin.  If the parent does not control the model, it should
+              forward the request further up the hierarchy.
             </p>
           </li>
           <li>
             <p>
-              <em>Notifications</em>: these messages are received through the channel that connects a plugin with its
-              parent.  They are sent when a model changes and the plugin should update its copy of the model.  The
-              message should be forwarded to the children of the plugin, so that they can take action as well.
+              <em>Notifications</em>: these messages are received through the
+              channel that connects a plugin with its parent.  They are sent
+              when a model changes and the plugin should update its copy of the
+              model.  The message should be forwarded to the children of the
+              plugin, so that they can take action as well.
             </p>
           </li>
         </ul>
 
         <p>
-          Each message consists of an operation and a model.  The operation is a String such as "select", the
-          model is of type IPluginModel.  The model is weakly typed, i.e. all accessible objects are of type
-          java.*, but should contain sufficient information to reconstruct the object upon which the operation
-          should be (request) or has been (notification) applied.  There is one plugin in the hierarchy that
-          handles the request and will send notifications if necessary.  A plugin nested deeply in the hierarchy
-          can thus request a change in an ancestor plugin, but it is up to the ancestor (configuration) how it
+          Each message consists of an operation and a model.  The operation is
+          a String such as "select", the model is of type IPluginModel.  The
+          model is weakly typed, i.e. all accessible objects are of type
+          java.*, but should contain sufficient information to reconstruct the
+          object upon which the operation should be (request) or has been
+          (notification) applied.  There is one plugin in the hierarchy that
+          handles the request and will send notifications if necessary.  A
+          plugin nested deeply in the hierarchy can thus request a change in an
+          ancestor plugin, but it is up to the ancestor (configuration) how it
           interprets the request and whether it even accepts it.
         </p>
 
@@ -109,32 +149,38 @@
 
       <subsection name="Ajax">
         <p>
-          To support Ajax updates of the page, each message has a MessageContext.  Plugins can request a
-          redrawing by adding themselves to this context when processing a message.  Wicket entry points for
-          (e.g. onClick) that send requests or notifications should apply the AjaxRequestTarget to this context.
-          When a new message is created in response to another message, the original context should be attached
+          To support Ajax updates of the page, each message has a
+          MessageContext.  Plugins can request a redrawing by adding themselves
+          to this context when processing a message.  Wicket entry points for
+          (e.g. onClick) that send requests or notifications should apply the
+          AjaxRequestTarget to this context.  When a new message is created in
+          response to another message, the original context should be attached
           to the new message.
         </p>
 
         <p>
-          When a plugin should be re-rendered as a result of receiving a message, it adds itself to the
-          context.  The plugin may be invisible at the time of reception, but this may change later as 
-          messages cascade through the plugin configuration.  A plugin should therefore always add itself when
-          its visual representation would change, were it visible.
+          When a plugin should be re-rendered as a result of receiving a
+          message, it adds itself to the context.  The plugin may be invisible
+          at the time of reception, but this may change later as messages
+          cascade through the plugin configuration.  A plugin should therefore
+          always add itself when its visual representation would change, were
+          it visible.
         </p>
       </subsection>
 
       <subsection name="Filter Plugin">
         <p>
-          To separate the control over a model from any visual components, the FilterPlugin has been created.
-          This non-visual plugin can be configured to handle requests in a trivial manner.  A request is
+          To separate the control over a model from any visual components, the
+          FilterPlugin has been created.  This non-visual plugin can be
+          configured to handle requests in a trivial manner.  A request is
           converted into a notification with the same operation and model.
         </p>
       </subsection>
 
       <subsection name="Example">
         <p>
-          As an example, here is how to send a request from a Wicket entry point:
+          As an example, here is how to send a request from a Wicket entry
+          point:
         </p>
         <source>
 <![CDATA[public void onClick(AjaxRequestTarget target) {
