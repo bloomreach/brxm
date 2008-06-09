@@ -83,7 +83,8 @@ div.domainsico div ul li.icolistsmall { background-image: url("images/domain_ico
 #wideright{width: 787px; height: 351px; float: right; min-height: 506px; background: #f2f2f2;}
 #wideleft{width: 787px; height: 351px; float: left; min-height: 506px; background: #f2f2f2;}
 
-a.fauxbutton{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
+span.fauxbutton span{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
+span.fauxbutton input {width: 140px; border:1px solid #000; margin: 5px; margin-top:3px;}
 
 .scrolllist{overflow: auto; height: 80px; padding: 2px; background-color: white}
 
@@ -355,6 +356,12 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
   border: 1px solid #000;
 }
 
+ul.highlight li {
+  background: #eee;
+  background: #ddd;
+  background: #ffffcc;
+}
+
 .userGroupsList{
 height: 158px;
 overflow:auto;
@@ -405,6 +412,10 @@ right:26px;
 top:58px;
 }
 
+.templateactions {
+  width:240px;
+}
+
 .templatedetails .templateactions a {
 background: transparent url("images/fauxbutton.gif") no-repeat scroll 0%;
 color:black;
@@ -415,6 +426,11 @@ margin-left:10px;
 padding-top:4px;
 text-align:center;
 width:100px;
+}
+
+.templateactions a:hover {
+  cursor:pointer;
+  cursor:hand;
 }
 
 .inactiveNode {
