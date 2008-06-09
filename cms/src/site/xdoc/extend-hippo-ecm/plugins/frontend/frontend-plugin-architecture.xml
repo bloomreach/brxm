@@ -27,25 +27,30 @@
     <section name="Frontend Plugin Architecture">
 
       <p>
-        Hippo ECM provides an <a href="http://wicket.apache.org">Apache Wicket</a> based
-        plugin architecture to facilitate a customizable GUI. All standard GUI components are written
-        as plugins. The Hippo CMS application offers a default configuration for these plugins.
-        Customizing Hippo CMS comes down to extending the standards plugins, and/or writing your own,
-        and configuring them to form your own custom application.
+        Hippo ECM provides a plugin architecture to facilitate a customizable
+        GUI.  The visual rendering is based on <a
+        href="http://wicket.apache.org">Apache Wicket</a>.  All standard GUI
+        components are written as plugins. The Hippo CMS application offers a
+        default configuration for these plugins.  Customizing Hippo CMS comes
+        down to editing this configuration, extending it with extra plugins 
+        from <a href="http://forge.hippo-ecm.org/">the forge</a> or writing
+        your own.
       </p>
 
       <subsection name="Customization by configuration">
 
         <p>
-          Frontend plugins extend the Wicket component model.  Wicket HTML fragments
-          can contain references to plugins that are not added explicitly in the Java code. Instead,
-          these references are resolved by the configuration in the repository.
+          Frontend plugins can extend the Wicket component model.  Wicket HTML
+          fragments can contain references to plugins that are not added
+          explicitly in the Java code. Instead, these references are resolved
+          by the configuration in the repository.
         </p>
 
         <p>
-          Example: suppose we have an ordinary Wicket panel called RootPanel, which contains three child
-          panels: a ListPanel, a TreePanel and a SimplePanel. The child panels would need to be added
-          explicitly in code, for example in the constructor or RootPanel:
+          Example: suppose we have an ordinary Wicket panel called RootPanel,
+          which contains three child panels: a ListPanel, a TreePanel and a
+          SimplePanel. The child panels would need to be added explicitly in
+          code, for example in the constructor or RootPanel:
         </p>
 <source>
 class RootPanel extends Panel {
@@ -59,97 +64,121 @@ class RootPanel extends Panel {
 }
 </source>
         <p>
-          This means that replacing SimplePanel with e.g. AdvancedPanel implies recompilation
-          of the code. Frontend plugins however need not be added explicitly in code, so if we make
-          our RootPanel a RootPlugin, its constructor can remain empty:
+          This means that replacing SimplePanel with e.g. AdvancedPanel implies
+          recompilation of the code.  The Wicket component hierarchy is fixed
+          in the code.  Frontend plugins however need not be added explicitly
+          in code, so if we make our RootPanel a RootPlugin, the wiring of the
+          component hierarchy is postponed to runtime:
         </p>
 <source>
-class RootPlugin extends Plugin {
+class RootPlugin extends RenderPlugin {
 
-  public RootPlugin() {
+  public RootPlugin(IPluginContext context, IPluginConfig config) {
+    super(context, config);
 
+    addExtensionPoint("list");
+    addExtensionPoint("tree");
+    addExtensionPoint("custom");
   }
 
 }
 </source>
         <p>
-          The child plugins are added instead through configuration:
+          The child plugins are added instead through (pseudo-) configuration:
         </p>
         <ul>
           <li>
             root:
             <ul>
-              <li>class = org.example.RootPlugin</li>
-              <li>children = {list, tree, custom}</li>
+              <li>class: org.example.RootPlugin</li>
+              <li>id: service.root</li>
+              <li>extensions = {
+                    list: services.list,
+                    tree: services.tree,
+                    custom: services.custom
+                  }</li>
             </ul>
           </li>
           <li>
             list:
             <ul>
-              <li>class = org.example.ListPlugin</li>
-              <li>children = {}</li>
+              <li>class: org.example.ListPlugin</li>
+              <li>id: services.list</li>
             </ul>
           </li>
           <li>
             tree:
             <ul>
-              <li>class = org.example.TreePlugin</li>
-              <li>children = {}</li>
+              <li>class: org.example.TreePlugin</li>
+              <li>id: services.tree</li>
             </ul>
           </li>
           <li>
             custom:
             <ul>
-              <li>class = org.example.SimplePlugin</li>
-              <li>children = {}</li>
+              <li>class: org.example.SimplePlugin</li>
+              <li>id: services.custom</li>
             </ul>
           </li>
         </ul>
         <p>
-          Changing the SimplePlugin to an AdvancedPlugin now only involves changing the configuration.
-          No recompilation is needed.
+          Changing the SimplePlugin to an AdvancedPlugin now only involves
+          changing the configuration.  No recompilation is needed.
         </p>
         <p>
-          This configuration is stored in the repository in nodes of (primary) type <b>hippo:frontendplugin</b>.
-          The property <b>hippo:renderer</b> determines what Java class is instantiated.
+          This configuration is stored in the repository in nodes of (primary)
+          type <b>frontend:plugin</b>.  The property <b>plugin.class</b>
+          determines what Java class is instantiated.
         </p>
       </subsection>
 
       <subsection name="Applications">
         <p>
-          Web applications that are completely configured from the repository consist of one page,
-          "Home". Each application's plugin configuration is stored in the repository under
-          <b>/hippo:configuration/hippo:frontend</b>. The example below shows two
-          application configurations ("foo" and "bar").
+          Web applications that are completely configured from the repository
+          consist of one page, "Home".  Applications consist of a configured
+          collection of plugins, a plugin cluster.  The configuration is stored
+          in the repository under <b>/hippo:configuration/hippo:frontend</b>.
+          The example below shows two application configurations ("foo" and
+          "bar").
         </p>
 <source>
 [repository root]
 `-- hippo:configuration
     `-- hippo:frontend
-        |-- foo [hippo:page]
-        `-- bar [hippo:page]
+        |-- foo [frontend:plugincluster]
+        `-- bar [frontend:plugincluster]
 </source>
       </subsection>
 
       <subsection name="Plugins">
         <p>
-          The Home page in each application always has a root plugin that is loaded when Wicket tries
-          to render it. This plugin must be a subclass of org.hippoecm.frontend.plugin.Plugin,
-          itself a Wicket Panel. An example:
+          Each application has a plugin that registers an IRenderService under
+          the name "service.root".  The Home page in each application always
+          has a root plugin that is loaded when Wicket tries to render it.
+          This plugin must implement IRenderService, a feat most easily
+          accomplished by extending the RenderPlugin class.  This plugin
+          registers itself as the service, and also provides itself as the
+          Wicket component to wire into the hierarchy.
         </p>
 <source>
-public class RootPlugin extends Plugin {
+public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    public RootPlugin(PluginDescriptor pluginDescriptor, JcrNodeModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public RootPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        addExtensionPoint("extension");
     }
 
 }
 </source>
         <p>
-          When the class is instantiated, the children of the repository node are instantiated
-          themselves as Plugins and added as Wicket components.
+          When the class is instantiated, it registers itself as the "service.root"
+          render service (when configured correctly).  It listens for other
+          (render) services that register under the service name that
+          "extension" is an alias for.  When such a service registers, it is added
+          to the component hierarchy.  If no such service exists, an empty panel
+          is shown.
         </p>
 
         <p>
@@ -161,41 +190,107 @@ public class RootPlugin extends Plugin {
 &lt;html xmlns:wicket="http://wicket.apache.org/"&gt;
     &lt;wicket:panel&gt;
       &lt;p&gt;
-        &lt;div wicket:id="subPlugin">[sub plugin will be rendered here]&lt;/div&gt;
+        &lt;div wicket:id="extension">[sub plugin will be rendered here]&lt;/div&gt;
       &lt;/p&gt;
     &lt;/wicket:panel&gt;
 &lt;/html>
 </source>
         <p>
-          then the repository structure that will generate the correct component hierarchy is:
+          then the repository structure that will generate the correct
+          component hierarchy is:
         </p>
 <source>
 [repository root]
 `-- configuration
     `-- frontend
-        `-- application [hippo:page]
-            `-- RootPlugin [hippo:frontendplugin]
-                `-- subPlugin [hippo:frontendplugin]
+        `-- application [frontend:plugincluster]
+            |-- RootPlugin [frontend:plugin]
+            |   + plugin.class : org.example.RootPlugin
+            |   + wicket.id : service.root
+            |   + extension : service.extension
+            `-- subPlugin [frontend:plugin]
+                + plugin.class : org.example.subPlugin
+                + wicket.id : service.extension
 </source>
         <p>
-          Both hippo:frontendplugin nodes, RootPlugin and subPlugin, need to have a property
-          <b>hippo:renderer</b>, which contains the full class name of the plugin.
+          Both frontend:plugin nodes, RootPlugin and subPlugin, need to have a
+          property <b>plugin.class</b>, which contains the full class name of
+          the plugin.  
         </p>
       </subsection>
 
-      <subsection name="JcrNodeModel">
+      <subsection name="Plugin Context">
         <p>
-          Plugins are aware of the JCR context for the page and are
-          <a href="frontend-plugin-communication.html">notified when it changes</a>. This occurs
-          for example when the page contains a BrowserPlugin. When a node is selected on the (JCR) tree,
-          other plugins are notified. This mechanism is e.g. used to show the workflow plugin for nodes that
-          have a workflow.
+          As can be seen from the constructor signature, a plugin receives a
+          plugin context when it is instantiated.  This context can be used to
+          interact with the framework.  The following things can be achieved
+          in this way:
+        </p>
+        <dt>Start a new cluster</dt>
+        <dd>
+          New plugins can be started by providing a cluster configuration.  The
+          cluster is under the control of the plugin that started it.  When the
+          original plugin is stopped, for example, the cluster will be stopped
+          as well.
+        </dd>
+        <dt>Retrieve/register/unregister a service</dt>
+        <dd>
+          Any object that implements IClusterable can be registered as a
+          service.  It will receive a unique service ID that can be used to
+          register "decorator" interfaces, construct a naming scope or to 
+          retrieve the service when the plugin context is not available.
+        </dd>
+        <dt>Register/unregister a service tracker</dt>
+        <dd>
+          It is possible to be notified when a service is registered under a
+          particular name by registering a service tracker.  This is useful
+          when services may come and go in an unpredictable manner and should
+          be used whenever references to services are stored outside of the
+          stack.
+        </dd>
+        <p>
+          Because this is a fairly abstract model, it is recommended to use
+          base classes that handle the interaction with the framework.
         </p>
         <p>
-          A plugin's model is a JcrNodeModel, which is an IModel representing a node in the
-          JCR repository. Internally a plugin can have its own model wrapping the JcrNodeModel
-          (the class NodeModelWrapper can be extended for this purpose).
+          The plugin context is private to the plugin.  I.e. a plugin can use
+          it, but should not hand out references to other plugins.  The context
+          handles the lifecycle of services and trackers.  When a plugin is
+          stopped these are unregistered so there is no need for plugins to 
+          do this.
         </p>
+      </subsection>
+
+      <subsection name="Dynamic Services">
+        <p>
+          It is sometimes desirable to dynamically instantiate plugins to
+          extend the application in response to a user action.  For example,
+          the workflow plugin starts and stops clusters of plugins that show
+          lists of available actions for a document.
+        </p>
+        <p>
+          Because the starting and stopping of a consumed service is under
+          the control of a different plugin, in general no assumptions can
+          be made about its availability.  There are three safe ways of 
+          consuming services:
+        </p>
+        <ul>
+          <li>
+            Use IPluginContext.getService(name, clazz) to get the service
+            whenever it is needed.  No references should be stored in
+            objects.
+          </li>
+          <li>
+            Register a service tracker when storing references is necessary.
+            When the tracker is notified of a service's disappearance, the
+            reference should be discarded.
+          </li>
+          <li>
+            Store an IPluginReference and use it to get to the service
+            whenever it is needed.  This is necessary in dialogs, where the
+            plugin context is not available.
+          </li>
+        </ul>
       </subsection>
 
     </section>
