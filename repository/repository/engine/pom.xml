@@ -180,6 +180,20 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <additionalBuildcommands>
+            <buildCommand>
+              <name>org.jpox.ide.eclipse.enhancerbuilder</name>
+            </buildCommand>
+          </additionalBuildcommands>  
+          <additionalProjectnatures>
+            <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
