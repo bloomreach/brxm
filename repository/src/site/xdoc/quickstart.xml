@@ -37,7 +37,10 @@ are detailed in X, but have been pre-configured with a number of modules and
 settings, such to give you a quick overview of the product, without having to
 laborious tasks to first enter content, etcetera.
 
-<subsection name="Quick">
+Hippo-ECM is a web-based application, and therefor is intended to run inside a servlet or application container.  These containers accept pre-built applications in the form of a WAR or EAR archive package, and provide basic functions to Hippo-ECM and management of your application.
+To get you quickly started, first determin the platform you which to use to run Hippo ECM.  Then;
+
+<subsection name="Download">
 
 Download either the WAR or EAR package.  For deployment in Tomcat or Jetty,
 use the WAR package. The EARs less configuration and can grow with your needs
@@ -53,11 +56,15 @@ are snapshots of the current build.
       </ul>
   </blockquote>
 
-Then follow the guidelines for the platform you are using:
+</subsection>
+<subsection name="Deploy the application in the container">
+Now follow the guidelines for the platform you are using:
 
-  Deploy WAR in Tomcat
-  Deploy WAR in Jetty
-  Deploy EAR or WAR in glassfish
+<ul>
+  <li><a href="/quickstart-tomcat.html">Deploy WAR in Tomcat</a></li>
+  <li><a href="/quickstart-jetty.html">Deploy WAR in Jetty</a></li>
+  <li><a href="/run-hippo-ecm/deploying-the-wars.xml">Deploy EAR or WAR in glassfish</a></li>
+</ul>
 
 It should be possible to deploy these downloads in other servlet or
 application containers.  Select the closest resembling container above and

@@ -50,6 +50,10 @@
             <a href="workflow/index.html">Workflow</a>
             - Define and automate business rules for your documents
           </li>
+          <li>
+            <a href="versioning.html">Versioning</a>
+            - Keep track of historic versions of your documents
+          </li>
         </ul>
       </section>
     </body>

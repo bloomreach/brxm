@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title></title>
+    </properties>
+    <body>
+        <section name="Versioning">
+
+<subsection name="Introduction">
+
+<p>
+Document in your system are most likely to change over time.  They get edited,
+published, re-edited, removed, etcetera.  Versioning is the ability of the CMS
+to keep track of the changes over time.
+</p>
+
+<p>
+Certain events may trigger a copy of the then current document to be make.
+This copy is read-only and stored in a different section.  Addtional
+information, such as the date the copy was made helps keeping a timeline of
+the document over time.  These copies over time are called "versions" of the
+document.
+</p>
+
+</subsection>
+
+<subsection name="Creating versions">
+
+<p>
+Versioning is a core functionality of the repository.  It is by default
+available, there is no configuration to be modified, nor does it need to be
+enabled for documents.  This does however not mean that versioning is
+automatic.  The event on which a version must be created of a document is not
+a core function.
+</p>
+
+<p>
+It is upto the logic of the custom workflow to determin whether or not a
+version has to be created of a document.  The reviewed-actions workflow plugin
+has the following logic at this time: whenever a document is published a
+version of that document variant (i.e. the published document) is created.
+Depublication also involves the versioning to indicate no version of the
+published document available.
+</p>
+
+<blockquote>
+Expert:<br/>
+<p>
+Version storage much be enabled for versions of a document to be stored.  This
+is enabled by default.  This does nowever imply that even though versioning is
+not used at all, some information is stored in the version storage.  If you
+have a custom deployment, your version storage might be removed.  When
+versioning does not seem to work, it needs to be verified.
+</p><p>
+Disabling the version storage is a practise to avoid the additional storage
+overhead of versioning.  The reason for disabling the version storage is that
+it is always used, even if no actual versions are stored.  So if an deployment
+wants to avoid the storage overhead, and does not require document versioning,
+the versioning can be disabled
+</p>
+</blockquote>
+
+</subsection>
+
+<subsection name="User perspective">
+
+<p>
+Users are normally not directly confronted with versioning.  Creating versions
+is automatic as defined by workflow steps.  So, for instance, as a side effect
+of the reviewed-actions workflow, when publishing a document, a version of the
+document is created.  This is transparent, and not unnoticable for users.
+</p>
+
+<p>
+Whether or not to create a version, needs to be part of the business model,
+thus part of the workflow.
+</p>
+
+<h3>Browsing history of a document</h3>
+
+<p>
+Where the user is confronted with versioning, is if the user wants to view the
+previous versions of a document.
+</p>
+
+<p>
+The CMS can display a preview of the document while browsing.  When a
+previewable document is selected in the document listing (middle pane) the cms
+can display the content.  You will see the following:
+</p>
+
+<center><img src="../images/versioning-pane.gif" alt="Versioning display screenshot"/></center>
+
+<p>
+Initially the current version is show.  With the "Older" link you can browse
+back into previous versions of the document, or back again towards the most
+current version using the "Newer" link.
+</p>
+
+<p>
+When browsing like this, the content of the document of previous times is
+displayed in the preview area.  Above it, in the grayscaled bar, information
+about the version is shown.  The name of the article is shown (which is
+constant over all versions, only the current name is shown, renaming or moving
+a document is not part of the document history of the document itself but --if
+available-- part of the document in which a document is embedded).
+</p>
+
+<p>
+Furthermore a version number is indicated, which counts from 1, the first
+version of a document created towards the most current document, which does
+not have a version number yet.  It will show the date and time, when a
+historic version of the document was created and until when that version of
+the document was the most current document.
+</p>
+
+<p>
+Note that this is not the same as when the next current document was created,
+as it may be that there was no current document in the document history.
+</p>
+
+<p>
+This happens for the reviewed-actions workflow.  Upon publication of a
+document a version of the then current published document is created.  However
+if the document is depublished, there is no longer a published version of the
+document.  The ability of the Hippo ECM suite is to be able to deal with this
+and indicate that in that point in history there is no version.  This
+superceerds plain versioning in JCR.  Hippo does however use plain versioning,
+so other clients not using plain JCR are able to use the same functionality,
+albeit with less user intuitiveness.
+</p>
+
+<h3>Restoring a previous version of a document</h3>
+
+<p>
+Finally the "Restore" button allows the user to replace the current document
+with the content of a historic document.  Note that this does not mean that
+the historic version of the document becomes the current version of the
+document.  Only the content is restored, and the existing history of the
+document is kept intact.
+</p>
+
+<p>
+The Restore button is always available, but users which do not have full
+rights to modify the document may not be able to restore the document this
+way.  The workflow should in this case allow the user to request a restore
+(this is not yet available as part of the reviewed actions workflow).
+</p>
+
+</subsection>
+
+<subsection name="Version workflow configuration and interface for custom workflows">
+
+<p>
+All packaged products of Hippo ECM have at this time versioning
+pre-configured.  Versioning is a core function of the repository and not a
+seperate plugin.  Versioning needs however be part of a workflow
+configuration, in order for custom workflows to decide when a version of a
+document needs to be checked in (i.e. created).
+</p>
+
+</subsection>
+
+</section>
+
+    </body>
+</document>
