@@ -70,8 +70,7 @@
             to the Hippo ECM frontend application.
           </p>
 <source>
-<![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -116,61 +115,58 @@
     </plugins>    
   </build>
 
-</project>
-]]>
+</project>]]>
 </source>
         </subsection>
 
         <subsection name="HelloWorldPlugin.java">
           <p>
-            Our HelloWorldPlugin class extends the Plugin class. In the constructor we
-            add a static label.
+            Our HelloWorldPlugin class extends the Plugin class. In the
+            constructor we add a static label.
           </p>
 <source>
-<![CDATA[
-package org.example.helloworld;
+<![CDATA[package org.example.helloworld;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.model.IPluginModel;
-import org.hippoecm.frontend.plugin.Plugin;
-import org.hippoecm.frontend.plugin.PluginDescriptor;
+import org.hippoecm.frontend.plugin.iPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class HelloWorldPlugin extends Plugin {
+public class HelloWorldPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
-    public HelloWorldPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
-        super(descriptor, model, parentPlugin);
+    public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new Label("label", "Hello World!"));
     }
 
-}
-]]>
+}]]>
 </source>
         </subsection>
 
         <subsection name="HelloWorldPlugin.html">
           <p>
-            Just like any other Wicket component, a Plugin needs an HTML page defining its presentation.
-            For our HelloWorldPlugin this could look like this:
+            Just like any other Wicket component, a Plugin needs an HTML page
+            defining its presentation.  For our HelloWorldPlugin this could
+            look like this:
           </p>
 <source>
-<![CDATA[
-<html xmlns:wicket="http://wicket.apache.org/">
+<![CDATA[<html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
 
     <div wicket:id="label">text goes here</div>
 
   </wicket:panel>
-</html>
-]]>
+</html>]]>
 </source>
         </subsection>
 
-      <subsection name="Building the plugin JAR">
-        <p>
-          Now build the JAR for the plugin and install it in your local Maven repository
-          using the following Maven command:
-        </p>
+        <subsection name="Building the plugin JAR">
+          <p>
+            Now build the JAR for the plugin and install it in your local Maven repository
+            using the following Maven command:
+          </p>
 <source>
 mvn install
 </source>
@@ -198,8 +194,7 @@ hippo-ecm
             application (<b>package/war/pom.xml</b>).
           </p>
           <source>
-<![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -223,8 +218,7 @@ hippo-ecm
 
   ...
 
-</project>
-]]>
+</project>]]>
           </source>
       </subsection>
 
@@ -239,26 +233,30 @@ mvn jetty:run-war
         <p>
           You should now be able to approach the Console application with your web browser
           on <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
-          Login with username "admin" and password "admin". The full CMS is accessible at <a href="http://localhost:8080/">http://localhost:8080/</a>, using the same account. 
+          Login with username "admin" and password "admin". The full CMS is accessible at
+          <a href="http://localhost:8080/">http://localhost:8080/</a>, using the same account. 
         </p>
       </subsection>
 
       <subsection name="Configuring to application to use the plugin">
         <p>
-          All it takes to see our plugin in all its glory is to replace one of the
-          standard plugins in the plugin configuration with our own, using the Console interface. To do this, navigate to
-          <b>/hippo:configuration/hippo:frontend/hippo:cms/rootPlugin/tabsPlugin/panel/dashboardPerspective/todoPlugin</b>
-          in the tree, and click on the contentPlugin node. The properties of the contentPlugin node
-          are displayed on the right side of the page.
-          Now change the class name
-          in the hippo:renderer property of this node to org.example.helloworld.HelloWorldPlugin.
+          All it takes to see our plugin in all its glory is to replace one of
+          the standard plugins in the plugin configuration with our own, using
+          the Console interface. To do this, navigate to the
+          <b>/hippo:configuration/hippo:frontend/cms/listPlugin</b> node.  The
+          properties of the listPlugin node are displayed on the right side of
+          the page.  Change the class name in the <code>plugin.class</code>
+          property of this node to
+          <code>org.example.helloworld.HelloWorldPlugin</code>.
         </p>
-        <img src="../images/configure-hello-world-plugin.jpg" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
+        <img src="../images/configure-hello-world-plugin.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
         <p>
-          Now login with a different browser on <a href="http://localhost:8080/">http://localhost:8080/</a>, and admire your work!
-          The Hello World plugin should be visible on the right hand side of the Dashboard tab (since you replaced the TodoPlugin with your HelloWorld plugin).
+          Now login to <a href="http://localhost:8080/">http://localhost:8080/</a>,
+          and admire your work!  The Hello World plugin should be visible in
+          the center of the Browse tab (since you replaced the ListPlugin with
+          your HelloWorld plugin).
         </p>
-        <img src="../images/hello-world-plugin.jpg" alt="Hello World screenshot"  style="border:1px solid grey;"/>
+        <img src="../images/hello-world-plugin.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
         <br/>
       </subsection>
 
@@ -282,36 +280,31 @@ mvn jetty:run-war
       </p>      
 
 <source>
-<![CDATA[
-    public HelloWorldPlugin(PluginDescriptor descriptor, IPluginModel model, Plugin parentPlugin) {
-        super(descriptor, new JcrNodeModel(model), parentPlugin);
+<![CDATA[public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
         add(new Label("label", new PropertyModel(this, "model.node.name")));
-    }
-]]>
+    }]]>
 </source>
 
       <p>
-        To let the plugin update its model and view once a different node has been
-        selected in the tree, we need to override the receive() method of Plugin:
+        To let the plugin update its model and view once a different node has
+        been selected in the tree, we need to override the onModelChanged()
+        method of Plugin:
       </p>
 
 <source>
-<![CDATA[
-    @Override
-    public void receive(Notification notification) {
-        if ("select".equals(notification.getOperation())) {
-            setPluginModel(new JcrNodeModel(notification.getModel()));
-            notification.getContext().addRefresh(this);
-        }
-        super.receive(notification);
-    }
-]]>
+<![CDATA[@Override
+    public void onModelChanged() {
+        redraw();
+    }]]>
 </source>
 
       <p>
-        Now rebuild your plugin project as described above, and restart the frontend application.
-        Follow the same procedure as before to test your plugin.
-        The Hello World plugin should now display the name of the node selected in the tree.
+        Now rebuild your plugin project as described above, and restart the
+        frontend application.  Follow the same procedure as before to test your
+        plugin.  The Hello World plugin should now display the name of the node
+        selected in the tree.
       </p>
 
     </section>
