@@ -37,6 +37,14 @@
           <ul>
             <li>
               <p>
+                <b><a href="quickstart.html">Quickstart guide</a></b>
+              </p>
+              <p>
+                Information on the quickest way to give Hippo ECM a spin.
+              </p>
+            </li>
+            <li>
+              <p>
                 <b><a href="run-hippo-ecm/index.html">Run Hippo ECM</a></b>
               </p>
               <p>
