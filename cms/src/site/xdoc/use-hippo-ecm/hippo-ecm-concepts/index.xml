@@ -19,29 +19,20 @@
 -->
 <document>
     <properties>
-        <title>Using Hippo ECM</title>
+        <title>Hippo ECM Concepts</title>
     </properties>
     <body>
-      <section name="Using Hippo ECM">
-
-        <p>
-          Hippo ECM provides a number of functionalities "out of the box". This section
-          describes how to make use of those functionalities.
-        </p>
-        <p>
-          Hippo Repository is built on top of
-          <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
-          Hippo Repository adds extra functionality to the default Jackrabbit distribution while
-          keeping full compliance with JCR 1.0
-          <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
-          The main added features are virtual nodes based on facets (metadata), access management, authorization and workflow.
-        </p>
-        <p>
-          Combining facet selects and facet searches gives you an enormeous flexibility in exposing your 
-          data in endless possible ways. Every user could have her own desirable view of the data, obviously
-          automatically combined with their access rules!
-        </p>
+      <section name="Hippo ECM Concepts">
+        
         <ul>
+          <li>
+            <a href="navigating.html">Navigating content</a>
+            - Browse the content with any jsr browser / webdav browser
+          </li>
+          <li>
+            <a href="searching.html">Searching content</a>
+            - Search content
+          </li>
           <li>
             <a href="facets/facetsearch.html">Facet search</a>
             - Browse your content through multiple navigation paths based
@@ -52,8 +43,8 @@
             - Browse your content through a filter based on metadata (e.g. language)
           </li>
           <li>
-            <a href="workflow/index.html">Workflow</a>
-            - Define and automate business rules for your documents
+            <a href="contentmodel/index.html">Content modelling</a>
+            - Model your (possibly unstructured) documents in multiple views
           </li>
         </ul>
       </section>
