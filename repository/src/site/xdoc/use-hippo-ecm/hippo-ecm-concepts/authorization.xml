@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Faceted Authorization</title>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>
+                Faceted authorization works by assigning a role to a user or group for a domain. The role defines 
+                <strong>what</strong> a user can do, the user or group defines <strong>who</strong> have the role and 
+                the domain defines <strong>where</strong> in the repository the role applies. In short: <strong>who</strong>
+                can do <strong>what where</strong>.
+            </p>
+        </section>
+
+        <section name="Defining a domain">
+            <p>   
+                A Domain consists of a set of <strong>DomainRules</strong> and every DomainRule consists of a set of 
+                <strong>FacetRules</strong>. Together these rules define a subset of the nodes in the repository. A 
+                domain structure will be something like:
+            </p>
+            <source>
+ mydomain
+ |-- donmainrule 1
+ |   |-- facetrule A
+ |   `-- facetrule B
+ `-- domainrule 2
+     `-- facetrule C
+            </source>
+            <p>
+                A <strong>FacetRule</strong> matches a facet to a specific value. For example a facet called "category" 
+                with value "news" would define a set of nodes which all have the facet (property) category with 
+                value "news". This relation can also be negated in which case is would define a set of nodes which 
+                all have the facet category with a value <strong>not equal</strong> to "news".
+            </p>
+            <p>
+                A node belongs to a domain when it matches <strong>one or more</strong> of the DomainRules. For a node to 
+                match a DomainRule it must match <strong>all</strong> the FacetRules in the DomainRule. For example in the structure
+                above nodes <strong>only</strong> match domainrule 1 when the node matches facetrule A <strong>and</strong> facetrule B
+                and node will belong to mydomain when it matches domainrule 1 or domainrule 2 or both. In short:
+            </p>
+            <source>
+mydomain = (facetrule A AND facetrule B) OR facetrule C
+            </source>
+            <!-- TODO: add specials
+            <p>
+                Specials types:<br/>
+            *, __role__, __user__, __group__
+            nodetype
+            jcr:primaryType
+            </p>
+            -->
+            <p>
+                For the exact configuration in the repository see the 
+                <a href="../../run-hippo-ecm/configuration/nodes/domains.html">domain</a>node reference.
+            </p>
+        </section>
+        <section name="Assigning roles">
+            <p>
+                A domain can have multiple <strong>AuthRoles</strong> which define <strong>who</strong> can do 
+                <strong>what</strong> in the domain. Each AuthRole assignes one role to one or more users and groups. 
+                To give a user multiple roles for a single domain mutliple AuthRoles must be created, for each role one.
+            </p>
+            <source>
+ mydomain
+ |-- authrole 1
+ |-- authrole 2
+ |-- donmainrule 1
+ |   `-- ...
+            </source>
+            <p>
+                For the exact configuration in the repository see the 
+                <a href="../../run-hippo-ecm/configuration/nodes/domains.html">domain</a>, 
+                <a href="../../run-hippo-ecm/configuration/nodes/roles.html">role</a>,  
+                <a href="../../run-hippo-ecm/configuration/nodes/users.html">user</a> and 
+                <a href="../../run-hippo-ecm/configuration/nodes/groups.html">group</a> node references.
+            </p>
+        </section>
+    </body>
+</document>
