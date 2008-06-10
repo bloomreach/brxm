@@ -136,10 +136,10 @@ class RootPlugin extends RenderPlugin {
         <p>
           Web applications that are completely configured from the repository
           consist of one page, "Home".  Applications consist of a configured
-          collection of plugins, a plugin cluster.  The configuration is stored
-          in the repository under <b>/hippo:configuration/hippo:frontend</b>.
-          The example below shows two application configurations ("foo" and
-          "bar").
+          collection of plugins, a <em>plugin cluster</em>.  The configuration
+          is stored in the repository under
+          <b>/hippo:configuration/hippo:frontend</b>.  The example below shows
+          two application configurations ("foo" and "bar").
         </p>
 <source>
 [repository root]
@@ -148,21 +148,18 @@ class RootPlugin extends RenderPlugin {
         |-- foo [frontend:plugincluster]
         `-- bar [frontend:plugincluster]
 </source>
-      </subsection>
-
-      <subsection name="Plugins">
         <p>
           Each application has a plugin that registers an IRenderService under
-          the name "service.root".  The Home page in each application always
-          has a root plugin that is loaded when Wicket tries to render it.
-          This plugin must implement IRenderService, a feat most easily
-          accomplished by extending the RenderPlugin class.  This plugin
-          registers itself as the service, and also provides itself as the
-          Wicket component to wire into the hierarchy.
+          the name "service.root".  The Home page in each application adds the
+          service's Wicket component (see IRenderService.getComponent()) to
+          itself when this service registers.  The plugin must implement
+          IRenderService, a feat most easily accomplished by extending the
+          RenderPlugin class.  This plugin registers itself as the service, and
+          also provides itself as the Wicket component to wire into the
+          hierarchy.
         </p>
 <source>
 public class RootPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -173,14 +170,13 @@ public class RootPlugin extends RenderPlugin {
 }
 </source>
         <p>
-          When the class is instantiated, it registers itself as the "service.root"
-          render service (when configured correctly).  It listens for other
-          (render) services that register under the service name that
-          "extension" is an alias for.  When such a service registers, it is added
-          to the component hierarchy.  If no such service exists, an empty panel
-          is shown.
+          When the plugin is instantiated, it registers itself as the
+          "service.root" render service (when configured correctly).  It
+          listens for other (render) services that register under the service
+          name that "extension" is an alias for.  When such a service
+          registers, it is added to the component hierarchy.  If no such
+          service exists, an empty panel is shown.
         </p>
-
         <p>
           The plugins that are configured in the repository node structure must therefore
           correspond to missing Wicket components in the HTML for RootPlugin.  For example,
@@ -226,28 +222,30 @@ public class RootPlugin extends RenderPlugin {
           interact with the framework.  The following things can be achieved
           in this way:
         </p>
-        <dt>Start a new cluster</dt>
-        <dd>
-          New plugins can be started by providing a cluster configuration.  The
-          cluster is under the control of the plugin that started it.  When the
-          original plugin is stopped, for example, the cluster will be stopped
-          as well.
-        </dd>
-        <dt>Retrieve/register/unregister a service</dt>
-        <dd>
-          Any object that implements IClusterable can be registered as a
-          service.  It will receive a unique service ID that can be used to
+        <dl>
+          <dt>Start a new cluster</dt>
+          <dd>
+            New plugins can be started by providing a cluster configuration.  The
+            cluster is under the control of the plugin that started it.  When the
+            original plugin is stopped, for example, the cluster will be stopped
+            as well.
+          </dd>
+          <dt>Retrieve/register/unregister a service</dt>
+          <dd>
+            Any object that implements IClusterable can be registered as a
+            service.  It will receive a unique service ID that can be used to
           register "decorator" interfaces, construct a naming scope or to 
-          retrieve the service when the plugin context is not available.
-        </dd>
-        <dt>Register/unregister a service tracker</dt>
-        <dd>
-          It is possible to be notified when a service is registered under a
-          particular name by registering a service tracker.  This is useful
-          when services may come and go in an unpredictable manner and should
-          be used whenever references to services are stored outside of the
-          stack.
-        </dd>
+            retrieve the service when the plugin context is not available.
+          </dd>
+          <dt>Register/unregister a service tracker</dt>
+          <dd>
+            It is possible to be notified when a service is registered under a
+            particular name by registering a service tracker.  This is useful
+            when services may come and go in an unpredictable manner and should
+            be used whenever references to services are stored outside of the
+            stack.
+          </dd>
+        </dl>
         <p>
           Because this is a fairly abstract model, it is recommended to use
           base classes that handle the interaction with the framework.
@@ -281,14 +279,16 @@ public class RootPlugin extends RenderPlugin {
             objects.
           </li>
           <li>
-            Register a service tracker when storing references is necessary.
+            Register a service tracker if storing references is necessary.
             When the tracker is notified of a service's disappearance, the
             reference should be discarded.
           </li>
           <li>
-            Store an IPluginReference and use it to get to the service
+            Store an IServiceReference and use it to get to the service
             whenever it is needed.  This is necessary in dialogs, where the
-            plugin context is not available.
+            plugin context is not directly available.  One can of course
+            store an IServiceReference to the plugin if it is registered as
+            a service itself, as in the case of RenderPlugin subclasses.
           </li>
         </ul>
       </subsection>
