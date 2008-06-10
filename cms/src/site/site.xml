@@ -61,7 +61,8 @@
             <item name="Authentication" href="/run-hippo-ecm/configuration/repository/authentication.html"/>
           </item>
           <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/nodes/index.html" collapse="true">
-            <item name="Users and groups" href="/run-hippo-ecm/configuration/nodes/users-and-groups.html"/>
+            <item name="Users" href="/run-hippo-ecm/configuration/nodes/users.html"/>
+            <item name="Groups" href="/run-hippo-ecm/configuration/nodes/groups.html"/>
             <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow.html"/>
           </item>
         </item>
