@@ -52,7 +52,7 @@
 
       <item name="Quickstart" href="/quickstart.html" collapse="false" inherit="top"/>
       
-      <item name="Running Hippo ECM" href="/run-hippo-ecm/index.html" collapse="false" inherit="top">
+      <item name="Run Hippo ECM" href="/run-hippo-ecm/index.html" collapse="true">
         <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
         <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
         <item name="Bootstrapping the Repository" href="/run-hippo-ecm/repository-bootstrap.html"/>
@@ -71,7 +71,7 @@
         </item>
       </item>
 
-      <item name="Using Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
+      <item name="Use Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
         <item name="Hippo ECM concepts" href="/use-hippo-ecm/hippo-ecm-concepts/index.html" collapse="true">
           <item name="Facet Search" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetsearch.html" collapse="true"/>
           <item name="Facet Select" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetselect.html" collapse="true"/>
@@ -85,13 +85,7 @@
         </item>
       </item>
 
-      <item name="Extending Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
-        <item name="Building Hippo ECM" href="/extend-hippo-ecm/building/index.html" collapse="true">
-          <item name="Project Structure" href="/extend-hippo-ecm/building/project-structure.html"/>
-          <item name="Building with Maven" href="/extend-hippo-ecm/building/maven.html"/>
-          <item name="Building with Eclipse" href="/extend-hippo-ecm/building/eclipse.html"/>
-          <item name="Building with Netbeans" href="/extend-hippo-ecm/building/netbeans.html"/>
-        </item>
+      <item name="Extend Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
             <item name="Workflow" href="/extend-hippo-ecm/plugins/repository/workflow.html"/>
@@ -103,10 +97,16 @@
           </item>
         </item>
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
+        <item name="Integrating Hippo ECM" href="/extend-hippo-ecm/integrate-hippo-ecm/index.html" collapse="true">
+          <item name="Example" href="/extend-hippo-ecm/integrate-hippo-ecm/example.html"/>
+        </item>        
       </item>
-
-      <item name="Integrating Hippo ECM" href="/integrate-hippo-ecm/index.html" collapse="true">
-        <item name="Example" href="/integrate-hippo-ecm/example.html"/>
+      
+      <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
+        <item name="Project Structure" href="/building/project-structure.html"/>
+        <item name="Building with Maven" href="/building/maven.html"/>
+        <item name="Building with Eclipse" href="/building/eclipse.html"/>
+        <item name="Building with Netbeans" href="/building/netbeans.html"/>
       </item>
 
     </menu>
