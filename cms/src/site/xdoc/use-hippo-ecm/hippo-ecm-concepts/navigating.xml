@@ -17,13 +17,26 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-  <document>
-      <properties>
-          <title>Navigating Content</title>
-      </properties>
-      <body>
-          <section name="Navigating Content">
-              
-          </section>
-      </body>
-  </document>
+<document>
+    <properties>
+        <title>Navigating Content</title>
+    </properties>
+    <body>
+        <section name="Navigating Content">
+            <p> 
+                Hippo Repository is a fully jsr-170 compliant repository built
+                on top of <a href="http://jackrabbit.apache.org/">Apache
+                Jackrabbit</a>. The content in Hippo Repository has some hierarchical
+                structure (=Jackrabbit), which you can browse with any JCR browser (or with any
+                WebDAV client in the future, see <a href="../roadmap.html">roadmap</a>). Hippo CMS/DMS is an
+                example of such a browser. 
+             </p>
+             <p> 
+                Browsing the content as it is stored hierarchically is out-of-the-box Jackrabbit
+                functionality. Hippo Repository adds to this physical hierachical structure 
+                as many views you want to add, exposing all these views jsr-170 compliant! Facetted
+                navigation is an example of out-of-the-box view on the physical data. 
+             </p>
+        </section>
+    </body>
+</document>
