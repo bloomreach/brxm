@@ -19,7 +19,7 @@
 -->
 <document>
   <properties>
-    <title>Configuration nodes</title>
+    <title>Configuration Nodes Reference</title>
   </properties>
   <body>
     <section name="Configuration nodes">
@@ -31,9 +31,18 @@
         </p>
 
         <ul>
-          <li>
-            <a href="workflow.html">Workflow</a>
-          </li>
+          <li><a href="users.html">Users</a></li>
+          <li><a href="groups.html">Groups</a></li>
+          <li>Roles</li>
+          <li>Domains</li>
+          <li><a href="workflow.html">Workflow</a></li>
+          <li>Derivatives</li>
+          <li>Initialize</li>
+          <li>Frontend</li>
+          <li>Queries</li>
+          <li>Logging</li>
+          <li>Queries</li>
+          <li>Documents</li>
         </ul>
         
     </section>

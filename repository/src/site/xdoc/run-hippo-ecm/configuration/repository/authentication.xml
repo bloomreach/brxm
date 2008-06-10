@@ -19,7 +19,7 @@
 -->
 <document>
     <properties>
-        <title>The Repository Login Module</title>  
+        <title>Authentication with The Repository Login Module</title>  
     </properties>
     <body>
         <section name="Repository based authentication">
@@ -36,8 +36,7 @@
             <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>.
         </p>
         <p>
-            For more information on how the users and groups are stored see the <a href="../nodes/users-and-groups.html">Users and Groups
-            Nodes</a> configuration section.
+            For more information on how the users and groups are stored see the <a href="../nodes/users.html">Users</a> and <a href="../nodes/users.html">Groups</a> nodes configuration section.
         </p>
         </section>
     </body>
