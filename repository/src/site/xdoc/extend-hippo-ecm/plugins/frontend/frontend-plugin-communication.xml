@@ -53,6 +53,21 @@
           This mechanism is e.g. used to show workflow plugins for nodes
           that have a workflow.
         </p>
+        <source>
+<![CDATA[public class ExamplePlugin extends RenderPlugin {
+
+  public ExamplePlugin(IPluginContext context, IPluginConfig config) {
+    super(context, config);
+  }
+
+  @Override
+  public void onModelChanged() {
+    // repaint the plugin when the model has changed.
+    redraw();
+  }
+
+}]]>
+        </source>
       </subsection>
 
       <subsection name="Other Communication Patterns">
@@ -62,161 +77,222 @@
           IClusterable can be registered as a service.  A number of patterns
           have emerged in the use of this basic premise.
         </p>
-        <subsubsection name="Whiteboard Pattern">
-          <p>
-            In the whiteboard pattern, the basic principle of "don't call us,
-            we'll call you" is applied to a client/server situation.  When
-            several clients need to be notified, they don't register themselves
-            directly with the server.  Instead, they register a listener
-            service with the plugin context.  When the clients must be
-            notified, the server retrieves the list of listeners and notifies
-            them.
-          </p>
-          <p>
-            This pattern is actually used by the model sharing implementation.
-            Each plugin that wants to be notified of model changes registers
-            an IModelListener.  The ModelService uses these listener services
-            whenever a model changes.
-          </p>
-        </subsubsection>
-        <subsubsection name="Decorator Pattern">
-          <p>
-            Sometimes it is desirable to extend services with extra
-            interfaces.  An example is the ITitleDecorator; it is used by the
-            Perspective to provide a title to display for the tabbed panel.
-          </p>
-        </subsubsection>
-      </subsection>
-
-      <subsection name="Dialogs">
-        <p>
-        </p>
-      </subsection>
-
-      <subsection name="Legacy Architecture">
-        <p>
-          Each plugin has two channels, one connecting it to its parent plugin
-          ("incoming") and one connecting it to its children ("outgoing").
-          Plugins effectively act as filters on the message streams.  There are
-          two kinds of messages:
-        </p>
-
-        <ul>
-          <li>
+        <dl>
+          <dt>Whiteboard Pattern</dt>
+          <dd>
             <p>
-              <em>Requests</em>: When a plugin wishes to change a model that is
-              shared with other plugins, it must send a request to its parent
-              plugin.  If the parent does not control the model, it should
-              forward the request further up the hierarchy.
+              In the whiteboard pattern, the basic principle of "don't call us,
+              we'll call you" is applied to a client/server situation.  When
+              several clients need to be notified, they don't register themselves
+              directly with the server.  Instead, they register a listener
+              service with the plugin context.  When the clients must be
+              notified, the server retrieves the list of listeners and notifies
+              them.
             </p>
-          </li>
-          <li>
             <p>
-              <em>Notifications</em>: these messages are received through the
-              channel that connects a plugin with its parent.  They are sent
-              when a model changes and the plugin should update its copy of the
-              model.  The message should be forwarded to the children of the
-              plugin, so that they can take action as well.
+              This pattern is actually used by the model sharing implementation.
+              Each plugin that wants to be notified of model changes registers
+              an IModelListener.  The ModelService uses these listener services
+              whenever a model changes.
             </p>
-          </li>
-        </ul>
-
-        <p>
-          Each message consists of an operation and a model.  The operation is
-          a String such as "select", the model is of type IPluginModel.  The
-          model is weakly typed, i.e. all accessible objects are of type
-          java.*, but should contain sufficient information to reconstruct the
-          object upon which the operation should be (request) or has been
-          (notification) applied.  There is one plugin in the hierarchy that
-          handles the request and will send notifications if necessary.  A
-          plugin nested deeply in the hierarchy can thus request a change in an
-          ancestor plugin, but it is up to the ancestor (configuration) how it
-          interprets the request and whether it even accepts it.
-        </p>
-
-        <p>
-          The following messages are currently used:
-        </p>
-
-        <ul>
-          <li><p>edit: the associated node should be opened in an editor</p></li>
-          <li><p>browse: the node should be shown in a browser</p></li>
-          <li><p>select: the associated node should be selected</p></li>
-          <li><p>flush: caches of JCR nodes under the node in the message should be flushed</p></li>
-          <li><p>focus: the associated plugin should receive focus</p></li>
-        </ul>
+          </dd>
+          <dt>Decorator Pattern</dt>
+          <dd>
+            <p>
+              Sometimes it is desirable to extend services with extra
+              interfaces.  An example is the ITitleDecorator; it is used by the
+              Perspective to provide a title to display for the tabbed panel.
+            </p>
+          </dd>
+        </dl>
       </subsection>
 
-      <subsection name="Ajax">
+      <subsection name="Available Services">
         <p>
-          To support Ajax updates of the page, each message has a
-          MessageContext.  Plugins can request a redrawing by adding themselves
-          to this context when processing a message.  Wicket entry points for
-          (e.g. onClick) that send requests or notifications should apply the
-          AjaxRequestTarget to this context.  When a new message is created in
-          response to another message, the original context should be attached
-          to the new message.
+          Some common services are provided by the framework and can be
+          retrieved under well-known names.
         </p>
+        <dl>
+          <dt>IDialogService</dt>
+          <dd>
+            This service gives plugins, even those without any visual parts,
+            the possibility to display modal dialogs.  It can be found under
+            the name IDialogService.class.getName() [FIXME: wishful thinking!].
+            Showing a dialog is therefore as simple as:
+            <source>
+<![CDATA[    IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+    dialogService.show(new ExampleDialog(context, flagService));]]>
+            </source>
+          </dd>
+          <dt>IJcrService</dt>
+          <dd>
+            <p>
+              Plugins that use the JCR repository need to refresh their models
+              and may need to update their visual representation as a result of
+              changes made in other plugins.  The cooperation that is required
+              between these plugins is mediated by the global IJcrService
+              service.
+            </p>
+            <p>
+              When a plugin makes changes to the repository, it can notify
+              other plugins by calling the flush() operation on the IJcrService:
+            </p>
+            <source>
+<![CDATA[public class JcrExamplePlugin extends RenderPlugin {
 
-        <p>
-          When a plugin should be re-rendered as a result of receiving a
-          message, it adds itself to the context.  The plugin may be invisible
-          at the time of reception, but this may change later as messages
-          cascade through the plugin configuration.  A plugin should therefore
-          always add itself when its visual representation would change, were
-          it visible.
-        </p>
-      </subsection>
+  public JcrExamplePlugin(final IPluginContext context, IPluginConfig config) {
+    super(context, config);
 
-      <subsection name="Filter Plugin">
-        <p>
-          To separate the control over a model from any visual components, the
-          FilterPlugin has been created.  This non-visual plugin can be
-          configured to handle requests in a trivial manner.  A request is
-          converted into a notification with the same operation and model.
-        </p>
-      </subsection>
+    add(new AjaxLink("clickme") {
 
-      <subsection name="Example">
-        <p>
-          As an example, here is how to send a request from a Wicket entry
-          point:
-        </p>
-        <source>
-<![CDATA[public void onClick(AjaxRequestTarget target) {
-    // Create a request to select the model for this plugin
-    PluginDescriptor descriptor = getDescriptor();
-    Channel incoming = descriptor.getIncoming();
-    Request request = incoming.createRequest("select", getPluginModel());
-    incoming.send(request);
-
-    // Render plugins that have been updated
-    MessageContext context = request.getContext();
-    context.apply(target);
-}]]>
-        </source>
-        <p>
-          To handle notifications, the receive method should be overridden:
-        </p>
-        <source>
-<![CDATA[public void receive(Notification notification) {
-    if ("select".equals(notification.getOperation())) {
-        // Create a new JcrNodeModel
-        JcrNodeModel model = new JcrNodeModel(notification.getModel());
-
-        // Select the new model if it differs from the current one
-        if (!model.equals(getPluginModel())) {
-            setPluginModel(model);
-
-            // rerender the plugin
-            notification.getContext().addRefresh(this);
+      public void onClick(AjaxRequestTarget target) {
+        JcrNodeModel nodeModel = new JcrNodeModel("/mycontent/clicknode");
+        try {
+          // set a property
+          Node node = nodeModel.getNode();
+          node.setProperty("clicked", true);
+          node.save();
+        } catch (RepositoryException ex) {
+          // add some error logging here, please
         }
-    }
 
-    // forward the notification to children
-    super.receive(notification);
+        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+        if (jcrService != null) {
+          jcrService.flush(nodeModel);
+        }
+    });
+  }
+
+}]]>
+            </source>
+            <p>
+              Plugins that want to be notified of these events, need to
+              implement the IJcrNodeModelListener interface and register
+              themselves.  This is an example of the <em>Whiteboard
+              Pattern</em>, where listeners can register independent of the
+              availability of the jcr service itself.  (I know, this service is
+              always available, please use your imagination here)
+            </p>
+            <source>
+<![CDATA[public class JcrListenerPlugin extends RenderPlugin implements IJcrNodeModelListener {
+
+  private IModel model;
+
+  public JcrListenerPlugin(final IPluginContext context, IPluginConfig config) {
+    super(context, config);
+
+    // register self to receive jcr flush notifications
+    context.registerService(this, IJcrService.class.getName());
+
+    // add a label that displays the state of the node
+    model = new IModel("not clicked");
+    add(new Label("label", model));
+    update();
+  }
+
+  public void onFlush(JcrNodeModel nodeModel) {
+    // update the label if the flushed node is the one
+    // we're interested in or one of its ancestors.
+    if ("/mycontent/clicknode".startsWith(nodeModel.getItemModel().getPath())) {
+      update();
+      redraw();
+    }
+  }
+
+  private void update() {
+    JcrNodeModel nodeModel = new JcrNodeModel("/mycontent/clicknode");
+    try {
+      Node node = nodeModel.getNode();
+      if (node.getProperty("clicked").getBoolean()) {
+        model.setObject("clicked");
+      }
+    } catch (RepositoryException ex) {
+      // log error
+    }
+  }
+
+}]]>
+            </source>
+          </dd>
+        </dl>
+      </subsection>
+
+      <subsection name="Dialogs / Page Serialization">
+        <p>
+          Wicket has a serialization mechanism that necessitates careful design
+          when multiple Page instances are involved.  When Wicket serializes
+          the object graph, different pages are written out to different pagemaps.
+          This imposes constraints on the object graphs that have to be taken into
+          account when dealing with multiple pages.
+        </p>
+        <p>
+          This issue is not specific to the plugin architecture, in fact every
+          Wicket application needs to address this problem in one way or the
+          other.  The plugin architecture does offer a solution when the
+          objects involved are services.
+        </p>
+        <p>
+          Since dialogs are separate pages, I'll use one to illustrate the
+          point.  The dialog uses a service that changes its state when a link
+          is clicked.
+        </p>
+        <source>
+<![CDATA[public class ExampleDialog extends WebPage {
+
+  private IServiceReference<IFlagService> serviceRef;
+
+  public ExampleDialog(IPluginContext context, IFlagService service) {
+    serviceRef = context.getReference(service);
+
+    add(new AjaxLink("hello") {
+
+      public void onClick(AjaxRequestTarget target) {
+        IFlagService flagService = serviceRef.getService();
+
+        if (flagService != null) {
+          flagService.setFlag(true);
+        }
+      }
+    });
+  }
+
 }]]>
         </source>
+        <p>
+          The naive implementation would have made the service argument final,
+          skipping the IServiceReference intermediary.  Comparing the two
+          approaches in the order of events:
+        </p>
+        <dl>
+          <dt>Main page is serialized</dt>
+          <dd>
+            When the request that created the dialog is completed, the main page
+            (the one creating the dialog) is serialized.  During this process,
+            Wicket will encounter a reference to the service and will write it out
+            to the pagemap.
+          </dd>
+          <dt>Dialog receives request</dt>
+          <dd>
+            <p>Assuming that the user clicks the "hello" link, the dialog will receive
+            a request that is handled by the onClick() method.  The service will be
+            invoked.  In the two scenarios:</p>
+            <ul>
+              <li>
+                in the naive implementation, the original (service) object will
+                be used.  Changes that are made as a result of the setFlag()
+                call are persisted in the dialog pagemap, but will be invisible
+                to the main page.  This is NOT GOOD<sup>TM</sup>.
+              </li>
+              <li>
+                in the shown example, the IServiceReference implementation does
+                not store a direct reference to the service.  Instead it
+                deserializes the original page when getService() is invoked and
+                looks up the service.  At the end of the request, the original
+                (updated) page is serialized again.  SUCCES!
+              </li>
+            </ul>
+          </dd>
+        </dl>
       </subsection>
 
     </section>
