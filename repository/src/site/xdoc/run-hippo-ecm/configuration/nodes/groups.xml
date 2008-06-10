@@ -41,6 +41,9 @@
 &lt;/sv:node&gt;
 </source>
             <p>
+                The name of the node is used as the group name.
+            </p>
+            <p>
                 The groups configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
             </p>
         </section>

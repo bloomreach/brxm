@@ -33,7 +33,7 @@
         <ul>
           <li><a href="users.html">Users</a></li>
           <li><a href="groups.html">Groups</a></li>
-          <li>Roles</li>
+          <li><a href="roles.html">Roles</a></li>
           <li>Domains</li>
           <li><a href="workflow.html">Workflow</a></li>
           <li>Derivatives</li>
