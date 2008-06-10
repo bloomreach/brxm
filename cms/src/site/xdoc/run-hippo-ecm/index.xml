@@ -42,6 +42,10 @@
             - How to get your initial data in
           </li>
           <li>
+            <a href="installing-plugins.html">Installing plugins from the forge</a>
+            - How to install plugins that are available on the Hippo forge
+          </li>
+          <li>
             <a href="configuration/index.html">Configuration</a>
             - What you can configure, and how
           </li>
