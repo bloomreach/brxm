@@ -311,7 +311,7 @@
               <li><b>Console</b> for viewing the console output when running</li>              
             </ul> 
           </subsection>
-          <subsection name="Progress">
+          <subsection name="Progress view">
             <p>
               This is a nice little view showing everything eclipse is doing in the background and it's worth
               keeping an eye on it. It definitely pays off waiting until the view shows no activity before doing
@@ -332,9 +332,10 @@
               <li>Presto! that looks a lot better don't you think?</li>
             </ul>
             <p>
-              As explained in the <a href=" project-structure.html">Project structure</a> documentation there
-              are four different types of projects: Jar, War, Ear and Pom. Because Pom projects are not Java projects it is not possible
-              to have them in the Package explorer view, also the 'Create eclipse projects' steps above didn't create eclipse projects for them. 
+              Please note that as explained in the <a href=" project-structure.html">Project structure</a> documentation there
+              are four different types of projects: Jar, War, Ear and Pom. The 'Create eclipse projects' steps
+              above doesn't create eclipse projects for Pom projects and therefore they won't show up as
+              projects in the Package explorer.
             </p>
           </subsection>
           <subsection name="Navigator view">
@@ -352,8 +353,8 @@
           </subsection>
           <subsection name="Synchronize view">
             <p>
-              Synchronizing with SVN is done by synchronizing the toplevel resource project in the Navigator view
-              NOT by synchronizing the Java projects in the Package explorer. This is important because the Package
+              Synchronizing with SVN should be done by synchronizing the toplevel resource project in the Navigator view
+              and NOT by synchronizing the Java projects in the Package explorer. This is important because the Package
               explorer doesn't show everything (only java projects and not Pom projects).
             </p>
               <ul>
@@ -364,6 +365,68 @@
                 <li>Refresh (F5)</li>
                 <li>right click -> Team -> Synchronize with repository</li>
             </ul>
+            <p>
+              It is worth the effort to take your time and evaluate all incoming changes in the
+              synchronize view before actually updating your source tree. For one it gives an
+              excellent view on what's going on outside your own backyard but most importantly it
+              gives you insight into you when your eclipse project definitions become invalid.
+              This happens every time a dependency in one of the pom files changes.
+            </p>
+            <p>
+              If this happens you have a choice: either regenerate the eclipse project files using the 
+              procedure above or manually fixing the eclipse projects (right-click, properties, 
+              Java build path etc.) Here are some rough guidelines for what to do in case you decide
+              to fix your projects manually:
+            </p>
+            <ul>
+              <li>
+                <b>Subproject added:</b>
+                <ol>
+                  <li>Open console</li>
+                  <li>cd to new project directory</li>
+                  <li>run mvn eclipse:eclipse</li>
+                  <li>run eclipse import wizard, select new project directory</li>
+                  <li>manually fix other projects that depend on the new project</li>
+                </ol>
+              </li>
+              <li>
+                <b>Subproject deleted:</b>
+                <ol>
+                  <li>Delete corresponding Java project project in the package explorer</li>
+                  <li>Manually fix other projects that used to depend on the deleted project</li>
+                </ol>
+              </li>
+              <li>
+                <b>Internal dependency changed:</b>
+                <ol>
+                  <li>Manually fix the eclipse projects</li>
+                </ol>                
+              </li>
+              <li>
+                <b>External dependency removed:</b>
+                <ol>
+                  <li>Manually fix the eclipse projects</li>
+                </ol>                
+              </li>              
+              <li>
+                <b>External dependency added or changed:</b>
+                <ol>
+                  <li>Open a console</li>
+                  <li>cd to project root</li>
+                  <li>run mvn install (this will download the new dependency)</li>
+                  <li>Manually add or change dependency to eclipse project.</li>
+                </ol>                
+              </li>
+            </ul>
+            <p>
+              Manual fixing might seem like a lot more work than just regenerating
+              but that is not always the case. If you decide to do a full regeneration
+              you should start with deleting ALL eclipse projects (don't delete contents)
+              and start from scratch at the top of this page.
+            
+              In general it makes a huge difference if you understand
+              the type of incoming change that you are applying to your project.
+            </p>
           </subsection>
         </section>
     </body>
