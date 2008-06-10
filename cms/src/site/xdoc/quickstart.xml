@@ -61,9 +61,9 @@ are snapshots of the current build.
 Now follow the guidelines for the platform you are using:
 
 <ul>
-  <li><a href="/quickstart-tomcat.html">Deploy WAR in Tomcat</a></li>
-  <li><a href="/quickstart-jetty.html">Deploy WAR in Jetty</a></li>
-  <li><a href="/run-hippo-ecm/deploying-the-wars.xml">Deploy EAR or WAR in glassfish</a></li>
+  <li><a href="quickstart-tomcat.html">Deploy WAR in Tomcat</a></li>
+  <li><a href="quickstart-jetty.html">Deploy WAR in Jetty</a></li>
+  <li><a href="run-hippo-ecm/deploying-the-wars.html">Deploy EAR or WAR in glassfish</a></li>
 </ul>
 
 It should be possible to deploy these downloads in other servlet or
