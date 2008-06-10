@@ -43,6 +43,10 @@
             - Browse your content through a filter based on metadata (e.g. language)
           </li>
           <li>
+            <a href="authorization.html">Faceted Authorization</a>
+            - Configure who is allowed to do what on which nodes
+          </li>
+          <li>
             <a href="contentmodel/index.html">Content modelling</a>
             - Model your (possibly unstructured) documents in multiple views
           </li>
