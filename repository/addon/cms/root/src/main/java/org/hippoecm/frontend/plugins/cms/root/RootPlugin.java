@@ -21,6 +21,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.yui.ajax.AjaxIndicatorBehavior;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -38,6 +39,8 @@ public class RootPlugin extends RenderPlugin {
         if (config.getString(RenderService.SKIN_ID) != null) {
             add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
         }
+        
+        add(new AjaxIndicatorBehavior());
     }
 
 }
