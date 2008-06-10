@@ -181,7 +181,7 @@
           <li>
             <b>hippo:docbase</b>
             <br/>
-            The absolute path (start with /) of the physical folder whose contents will be used to generate the
+            The UUID of the physical folder whose contents will be used to generate the
             virtual folder. You might choose to have faceted navigation on a subset of the hierarchical physical tree
           </li>
           <li>

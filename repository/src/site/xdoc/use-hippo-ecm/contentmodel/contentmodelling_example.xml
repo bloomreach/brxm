@@ -50,7 +50,7 @@ jcr:primaryType: hippo:facetselect
 hippo:facets: {language,state}  
 hippo:values: {nl,published}
 hippo:modes:  {select,select}
-hippo:docbase: /content-myproject   (path implementation will be replaced by UUID in due time)
+hippo:docbase: <code>UUID of {/content-myproject}</code>
                   </source>
                   
               </subsection>
@@ -102,7 +102,7 @@ content-myproject
 hippo:facets: {}        
 hippo:values: {}
 hippo:modes:  {}
-hippo:docbase: /content-myproject/pages/home
+hippo:docbase: UUID of {/content-myproject/pages/home}
                   </source>
                   <p>
                       Since facets are empty, this facet select works as an mirror 
@@ -114,7 +114,7 @@ hippo:docbase: /content-myproject/pages/home
 hippo:facets: {}        
 hippo:values: {}
 hippo:modes:  {}
-hippo:docbase: /content-myproject/pages/about
+hippo:docbase: UUID of {/content-myproject/pages/about}
                   </source>
               </subsection>
               <subsection name="STEP 3">
@@ -156,7 +156,7 @@ content-myproject
                   <source>
 hippo:facets: {language,state}  
 hippo:values: {nl,unpublished}
-hippo:docbase: /content-myproject
+hippo:docbase: UUID of {/content-myproject/pages/about}
                   </source>
                   <p>
                       the content (virtual tree) below <code>preview</code> looks like:
