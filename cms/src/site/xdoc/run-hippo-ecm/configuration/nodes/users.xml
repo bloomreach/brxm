@@ -39,6 +39,9 @@
 &lt;/sv:node&gt;
 </source>
             <p>
+                The name of the node is used as the username.
+            </p>
+            <p>
                 The password can be stored in plain text or with a hash. A hash has the following form:
             </p>
             <pre><code>$&lt;hash alogrith&gt;$&lt;salt&gt;$&lt;hash&gt;</code></pre>
