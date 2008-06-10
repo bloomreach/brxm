@@ -2,28 +2,55 @@
 <!DOCTYPE document PUBLIC
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
-<!--
-  Copyright 2007 Hippo
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-<document>
+  <!--
+    Copyright 2007 Hippo
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+  <document>
     <properties>
-        <title>Hippo ECM Concepts</title>
+      <title>Using Hippo ECM</title>
     </properties>
     <body>
-      <section name="Hippo ECM Concepts">
-
+      <section name="Using Hippo ECM">
+        
+        <p>
+          Hippo ECM provides a number of functionalities "out of the box". This section
+          describes how to make use of those functionalities.
+        </p>
+        <p>
+          Hippo Repository is built on top of
+          <a href="http://jackrabbit.apache.org/" title="Apache Jackrabbit">Apache Jackrabbit</a>.
+          Hippo Repository adds extra functionality to the default Jackrabbit distribution while
+          keeping full compliance with JCR 1.0
+          <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>.
+          The main added features are virtual nodes based on facets (metadata), access management, authorization and workflow.
+        </p>
+        <p>
+          Combining facet selects and facet searches gives you an enormeous flexibility in exposing your 
+          data in endless possible ways. Every user could have her own desirable view of the data, obviously
+          automatically combined with their access rules!
+        </p>
+        <ul>
+          <li>
+            <a href="hippo-ecm-concepts/index.html">Hippo ECM Concepts</a>
+            - Navigating / Searching / Modelling
+          </li>
+          <li>
+            <a href="workflow/index.html">Workflow</a>
+            - Define and automate business rules for your documents
+          </li>
+        </ul>
       </section>
     </body>
-</document>
+  </document>
