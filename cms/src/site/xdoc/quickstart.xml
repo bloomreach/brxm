@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Quickstart guide</title>
+    </properties>
+    <body>
+        <section name="Quickstart guide">
+
+The quickest way to get started is to obtain one of the pre-built packages.
+Even when adding additional functionalities to Hippo ECM, you normally don't
+need to rebuild Hippo-ECM.  This because more functionality can be added by
+simply adding the JARs containing the add-ons to the already packaged product,
+or uploading them into the running packaged product.  There is therefor no
+need to rebuild from all the sources, one of the two pre-built package can
+always be customized.
+
+The quickstart packages are the same packages as the core packaged products
+are detailed in X, but have been pre-configured with a number of modules and
+settings, such to give you a quick overview of the product, without having to
+laborious tasks to first enter content, etcetera.
+
+<subsection name="Quick">
+
+Download either the WAR or EAR package.  For deployment in Tomcat or Jetty,
+use the WAR package. The EARs less configuration and can grow with your needs
+(see discussion in X), but require an application container to run in.
+
+Notice: note that Hippo ECM has not been released.  The following downloads
+are snapshots of the current build.
+
+  <blockquote>
+      <ul>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-war/2.01.00-SNAPSHOT/hippo-ecm-package-war-2.01.00-2008-000000-1.war">quickstart war package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-ear/2.01.00-SNAPSHOT/hippo-ecm-package-ear-2.01.00-2008-000000-1.ear">quickstart ear package</a></li>
+      </ul>
+  </blockquote>
+
+Then follow the guidelines for the platform you are using:
+
+  Deploy WAR in Tomcat
+  Deploy WAR in Jetty
+  Deploy EAR or WAR in glassfish
+
+It should be possible to deploy these downloads in other servlet or
+application containers.  Select the closest resembling container above and
+repoduce the steps adapted for your other container if your container is not
+listed above.
+
+</subsection>
+ 
+ </section>
+ 
+    </body>
+</document>
