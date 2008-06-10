@@ -22,25 +22,47 @@
         <title>Developing with Eclipse</title>
     </properties>
     <body>
-        <section name="Developing with Eclipse"/>
-        <section name="Prepare">
-            <ol>
-                <li>
-                    <p> Follow all steps documented on the <a href="maven.html">Building with
-                        Maven</a> page. Don't continue with the instructions on this page before you
-                        have seen a running application. </p>
-                </li>
-                <li>
-                    <p> Download and install <a href="http://www.eclipse.org/">Eclipse</a> version
-                        >= 3.2 </p>
-                </li>
-                <li>
-                    <p>
-                        <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
-                            Download and install</a> Jetty version >= 6.0 </p>
-                </li>
-            </ol>
+        <section name="Developing with Eclipse">
+          <p>
+            This chapter is meant as a guide for setting up and managing a debugging environment 
+            for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
+            run and debug every aspect of Hippo ECM from within Eclipse. 
+          </p>
+          <div style="border:1px solid black; padding:1em;">
+            NOTE: Hippo ECM is a very complex project with many subprojects, this means that
+            setting up and managing it in Eclipse is a non-trivial task and very error-prone. If not 
+            done correctly this can become a very frustrating experience where most of the time you 
+            are waiting on eclipse and chasing rabbits. The steps and best practices
+            outlined below will enable you to avoid this frustration, if follow them closely
+            you will find that debugging Hippo ECM can actually be quite easy.
+          </div>
+          <p></p>
         </section>
+        
+        <section name="Prepare">
+          <p> Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
+           Don't continue with the instructions on this page before you have seen a running application using just Maven.</p>               
+          
+          <p> Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.2</p>
+          
+          <p> <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
+            Download and install</a> Jetty version >= 6.0 </p>           
+          
+          <p> Start Eclipse for the first time, it is strongly advised to start with
+            a clean workspace. </p>
+        
+          <div style="border:1px solid black; padding:1em;">
+            NOTE: Do NOT to use the Eclipse SVN plugin for the initial checkout of the source tree, use a command line SVN client.
+          </div>
+          <p></p>
+          <div style="border:1px solid black; padding:1em;">
+            NOTE: The checked out project directory should NOT be inside your Eclipse workspace directory.
+            For the rest of this chapter ~/hippo-ecm is the directory where the sources
+            are checked out and ~/workspace is the Eclipse workspace directory.
+          </div>
+          <p></p>
+        </section>
+        
         <section name="Install and configure eclipse plugins">
             <subsection name="Subversion">
                 <ol>
@@ -121,34 +143,21 @@
                 </ol>
             </subsection>
         </section>
+        
         <section name="Create eclipse projects, part one">
-            <div style="border:1px solid black; padding:1em;"> WARNING: Make sure that there is no
+            <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
                 .project file in the toplevel (hippo-ecm) directory before proceding. If there is
                 one the eclipse import projects wizard will fail. </div>
+            <p></p>
             <p> Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven
                     eclipse plugin</a> to generate eclipse project files: </p>
             <source> 
 ~/> cd hippo-ecm 
+~/hippo-ecm> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:configure-workspace
 ~/hippo-ecm> mvn clean
 ~/hippo-ecm> mvn eclipse:eclipse
             </source>
             <ol>
-                <li>
-                    <p> Start eclipse, the workspace directory can be any directory EXCEPT the
-                        directory under which you have checked out the source (~/hippo-ecm in the
-                        example). It is strongly advised to start with a clean workspace.</p>
-                </li>
-                <li>
-                    <p>Define eclipse classpath variable: eclipse preferences dialog -&gt; Java
-                        -&gt; Build Path -&gt; Classpath variables</p>
-                </li>
-                <li>
-                    <p>Press 'New'</p>
-                </li>
-                <li>
-                    <p>Name=M2_REPO, value=&lt;path-to-maven-repository&gt; (eg.
-                        /home/&lt;yourname&gt;/.m2/repository on UNIX)</p>
-                </li>
                 <li>
                     <p>Run the import project wizard: File -&gt; Import -&gt; General
                         -&gt; Existing Projects into Workspace</p>
@@ -170,6 +179,7 @@
                 </li>
             </ol>
         </section>
+
         <section name="Create eclipse projects, part two">
             <p> The <a href="maven.html">maven build</a> uses the <a
                     href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html"
@@ -252,21 +262,6 @@
                 </ol>
             </subsection>
         </section>
-        <section name="Create eclipse projects, part three">
-            <subsection name="JPOX enhanced projects">
-                <p> Projects that provide document types (currently hippoecm-api, hippoecm-repository-engine and
-                    hippo-ecm-addon-reviewed-action-repository) must be enhanced by the JPOX plugin.
-                    Open the 'Package explorer' view and for each of these projects: </p>
-                <ol>
-                    <li>
-                        <p>Right-click the project -&gt; JPOX -&gt; Add JPOX Support</p>
-                    </li>
-                    <li>
-                        <p>Right-click again -&gt; JPOX -&gt; Enable Auto-Enhancement</p>
-                    </li>
-                </ol>
-            </subsection>
-        </section>
             
         <section name="Run">
             <p>
@@ -297,9 +292,79 @@
             <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
                 'display in favorites menu'</p>            
             <p> You can now run and debug the application within Eclipse: Run the Jetty launcher,
-            open your browser and go to localhost:8080 </p>
+            open your browser and go to http://localhost:8080 </p>
+        </section>
+        
+        <section name="Best practices">
+          Now that you have Hippo ECM up&amp;running from within Eclipse it might be a good idea
+          to adopt some best practices that will make your life a lot easier.
+          
+          <subsection name="Customize your Eclipse perspective">
+            <p>
+              Use 'Window -> show view' to open at least the following views:
+            </p>
+            <ul>
+              <li><b>Package explorer</b> for browsing java projects</li>
+              <li><b>Navigator</b> for browsing the entire Hippo ECM project</li>
+              <li><b>Progress</b> for viewing what Eclipse is doing in the background</li>
+              <li><b>Synchronize</b> for synchronizing with the SVN repository</li>
+              <li><b>Console</b> for viewing the console output when running</li>              
+            </ul> 
+          </subsection>
+          <subsection name="Progress">
+            <p>
+              This is a nice little view showing everything eclipse is doing in the background and it's worth
+              keeping an eye on it. It definitely pays off waiting until the view shows no activity before doing
+              anything big like synchronizing, running etc. Be patient, give eclipse some time to do it's thing,
+              after all it does the same as the maven build and that takes minutes to complete! 
+            </p>
+          </subsection>
+          <subsection name="Package explorer view">            
+            <p>
+              Now you will have an intimidating number of projects in your Package explorer view most
+              of which you will probably not be interested in. Therefore the first thing you'll need to do
+              is reduce the number of visible projects using Eclipse 'working sets'.
+            </p>
+            <ul>
+              <li>Select the 'Package explorer' view.</li>
+              <li>Window -> Working sets -> Edit -> New -> Java -> Next -> Choose a name + select some projects you are interested in.</li>
+              <li>Press the Package explorer menu button (the little triangle in the upper right corner) and select your working set.</li>
+              <li>Presto! that looks a lot better don't you think?</li>
+            </ul>
+            <p>
+              As explained in the <a href=" project-structure.html">Project structure</a> documentation there
+              are four different types of projects: Jar, War, Ear and Pom. Because Pom projects are not Java projects it is not possible
+              to have them in the Package explorer view, also the 'Create eclipse projects' steps above didn't create eclipse projects for them. 
+            </p>
+          </subsection>
+          <subsection name="Navigator view">
+            <p>
+              For the Navigator view you'll also need to create and select a working set. This working set should contain only one project, the 
+              toplevel hippo-ecm project.
+            </p>
+              <ul>
+              <li>Select the 'Navigator' view.</li>
+              <li>File -> New -> Project -> General project, uncheck 'default location', browse to project
+               root directory (~/hippo-ecm), give it a name (hippo-ecm) -> Finished</li>
+              <li>Define a new working set of type 'resource' containing ONLY this project and select it as the
+               working set for the 'Navigator' view.</li>
+            </ul>
+          </subsection>
+          <subsection name="Synchronize view">
+            <p>
+              Synchronizing with SVN is done by synchronizing the toplevel resource project in the Navigator view
+              NOT by synchronizing the Java projects in the Package explorer. This is important because the Package
+              explorer doesn't show everything (only java projects and not Pom projects).
+            </p>
+              <ul>
+                <li>Select the 'Synchronize' view.</li>
+                <li>Press the Synchronize view menu button (the little triangle in the upper right corner)
+                 and press 'Remove current synchronization'.</li>
+                <li>Select the 'Navigator' view and select the project root folder.</li>
+                <li>Refresh (F5)</li>
+                <li>right click -> Team -> Synchronize with repository</li>
+            </ul>
+          </subsection>
         </section>
     </body>
 </document>
-
-
