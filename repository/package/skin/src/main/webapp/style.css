@@ -446,6 +446,10 @@ width:100px;
   background: white url("images/dropback.gif") no-repeat center 100px;
 }
 
-
+span.wicket-ajax-indicator {
+  position:absolute;
+  top:30px;
+  left: 980px;
+}
 
 
