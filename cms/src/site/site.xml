@@ -50,6 +50,8 @@
 
     <menu name="ECM Documentation">
 
+      <item name="Quickstart" href="/quickstart.html" collapse="false" inherit="top"/>
+      
       <item name="Running Hippo ECM" href="/run-hippo-ecm/index.html" collapse="false" inherit="top">
         <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
         <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
@@ -77,10 +79,8 @@
             <item name="Content Modelling" href="/use-hippo-ecm/hippo-ecm-concepts/contentmodel/contentmodelling_example.html" collapse="true"/>
           </item>
         </item>
-        <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true">
-        </item>
-        <item name="Derived Data" href="/use-hippo-ecm/deriveddata/index.html" collapse="true">
-        </item>
+        <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true"/>
+        <item name="Derived Data" href="/use-hippo-ecm/deriveddata/index.html" collapse="true"/>
       </item>
 
       <item name="Extending Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
