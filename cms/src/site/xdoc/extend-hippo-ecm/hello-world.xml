@@ -128,7 +128,7 @@
 <![CDATA[package org.example.helloworld;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.plugin.iPluginContext;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -280,7 +280,7 @@ mvn jetty:run-war
       </p>      
 
 <source>
-<![CDATA[public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
+<![CDATA[    public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new Label("label", new PropertyModel(this, "model.node.name")));
@@ -294,7 +294,7 @@ mvn jetty:run-war
       </p>
 
 <source>
-<![CDATA[@Override
+<![CDATA[    @Override
     public void onModelChanged() {
         redraw();
     }]]>
