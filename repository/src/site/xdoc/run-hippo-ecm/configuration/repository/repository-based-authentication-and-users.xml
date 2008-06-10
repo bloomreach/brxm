@@ -19,63 +19,26 @@
 -->
 <document>
     <properties>
-        <title>Repository Based Authentication and Users</title>
+        <title>The Repository Login Module</title>  
     </properties>
     <body>
         <section name="Repository based authentication">
-            The repository can be configured to store the users as nodes inside the repository itself.
-            To achieve this the RepositoryLoginModule is configured in
-            <a href="repository.html"><code>repository.xml</code></a> in the Security section.
+        <p>
+            The repository stores the users and groups as nodes inside the repository itself.
+            The RepositoryLoginModule is configured in
+            <a href="repository.html"><code>repository.xml</code></a> in the Security section and is enabled be default.
+<source>
+&lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/&gt;
+</source>
+        </p>
+        <p>
             The authentication module is based on
             <a href="http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html" title="Sun JAAS">JAAS</a>.
-            By default this moduled is enabled.
-<source>
-&lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
-    &lt;!-- default values:
-        &lt;param name="anonymousId" value="anonymous"/&gt;
-        &lt;param name="debug" value="false"/&gt;
-        &lt;param name="maxCacheTimeMilliSec" value="10000"/&gt;
-    --&gt;
-&lt;/LoginModule&gt;
-</source>
-            The defaults as shown in the comments can be simply overwritten by setting the
-            parameters. The parameters are:
-            <table>
-                <tr><td>anonymousId</td><td>The id given to a user in a non authenticated session.</td></tr>
-                <tr><td>debug</td><td>Enable or disable debug info.</td></tr>
-                <tr><td>maxCacheTimeMilliSec</td><td>Time in miliseconds between user credential cache purges.</td></tr>
-            </table>
-        </section>
-
-        <section name="Configure users for the RepositoryLoginModule">
-            <p>
-                The users are stored in the repository as childeren of the node
-                <code>/hippo:configuration/hippo:users</code>.
-                A user node has the following configuration:
-            </p>
-<source>
-&lt;sv:node sv:name="demo"&gt;
-    &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
-        &lt;sv:value&gt;hippo:user&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-    &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;
-        &lt;sv:value&gt;demo&lt;/sv:value&gt;
-    &lt;/sv:property&gt;
-&lt;/sv:node&gt;
-</source>
-          <p>
-              The password can be stored in plain text or with a hash. A hash has the following form:
-          </p>
-          <pre><code>$&lt;hash alogrith&gt;$&lt;salt&gt;$&lt;hash&gt;</code></pre>
-          <p>
-              For example the password "admin" could result in the following hash:
-          </p>
-          <pre><code>$SHA-256$HIlytXwnqSU=$NqCi2sJoM4qAwQ8136GYueUVA/TSyidpAI3Evn+y/hc=</code></pre>
-          <p>
-              The hashing alogrithm can be any alogrith supported by MessageDigest like MD5, SHA-1 and SHA-256. The
-              password utility class "PasswordHelper" can be used to generate hashes with the static method
-              PasswordHelper.getHash(String password).
-          </p>
+        </p>
+        <p>
+            For more information on how the users and groups are stored see the <a href="../nodes/users-and-groups.html">Users and Groups
+            Nodes</a> configuration section.
+        </p>
         </section>
     </body>
 </document>
