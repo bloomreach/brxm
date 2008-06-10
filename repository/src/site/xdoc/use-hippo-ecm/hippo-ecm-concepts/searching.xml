@@ -23,7 +23,33 @@
       </properties>
       <body>
           <section name="Searching Content">
-              
+              <p>
+                  Jackrabbit has the jsr-170 XPATH subset and SQL subset imlementation out-of-the-box 
+                  (plus some extra XPATH features). Hippo Repository adds facet search, and its own stored
+                  parameterized searches (see below). Also Hippo Repository accounts for authorization 
+                  directly in the search (beside the normal access control) making the search really efficient,
+                  even for users who have read access for only few documents.
+              </p>
+              <subsection name="How to search in Hippo Repository">
+                  <p>
+                  Programmatically you can search by writing for example an XPATH expression, and 
+                  let the QueryManager execute this query. For example how to find all documents
+                  about 'Java Content Repository'.
+                  </p>
+                  <source>
+                      String xpath = "//*[jcr:contains(.,'Java Content Repository')]";
+                      QueryManager qmgr = session.getWorkspace().getQueryManager();
+                      Query query = qmgr.createQuery(xpath, Query.XPATH);
+                      QueryResult res = query.execute();
+                  </source>
+                  <p>
+                  <b>We don't want to know this actually, do we?</b> If you want to know more about
+                     this, see <a target="_new" href="http://jcp.org/aboutJava/communityprocess/final/jsr170/index.html">jsr-170</a>
+                  </p>
+              </subsection>
+              <subsection name="Hippo CMS makes it easier for you">
+                  
+              </subsection>
           </section>
       </body>
   </document>
