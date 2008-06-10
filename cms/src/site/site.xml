@@ -87,6 +87,13 @@
         </item>
       </item>
 
+      <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
+        <item name="Project Structure" href="/building/project-structure.html"/>
+        <item name="Building with Maven" href="/building/maven.html"/>
+        <item name="Building with Eclipse" href="/building/eclipse.html"/>
+        <item name="Building with Netbeans" href="/building/netbeans.html"/>
+      </item>
+      
       <item name="Extend Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
@@ -104,13 +111,6 @@
         </item>        
       </item>
       
-      <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
-        <item name="Project Structure" href="/building/project-structure.html"/>
-        <item name="Building with Maven" href="/building/maven.html"/>
-        <item name="Building with Eclipse" href="/building/eclipse.html"/>
-        <item name="Building with Netbeans" href="/building/netbeans.html"/>
-      </item>
-
     </menu>
 
     <menu name="Website development">
