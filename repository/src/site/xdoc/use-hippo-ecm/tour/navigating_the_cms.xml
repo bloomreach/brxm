@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+  <!--
+      Copyright 2007 Hippo
+      
+      Licensed under the Apache License, Version 2.0 (the  "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+      
+      http://www.apache.org/licenses/LICENSE-2.0
+      
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS"
+      BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+  -->
+  <document>
+      <properties>
+          <title>Grand tour: Navigating the CMS</title>
+      </properties>
+      <body>
+          <section name="Navigating the user interface">
+              <p>
+                  The CMS user interface is navigatable by clicking on the tabs in the top of the UI. 
+                  Some of these tabs are static, like Dashboard, Browse and Management, which means they will
+                  always be visible (if the user has the appropiate rights of course) and cannot be closed by the user.
+                  <img src="../../../images/tour/nav1.jpg" alt="Dashboard tab selected"/><br/>
+                  <em>Listing 1: Dashboard tab selected</em>
+                  <br/>
+                  <img src="../../../images/tour/nav2.jpg" alt="Browse tab selected"/>
+                  <em>Listing 2: Browse tab selected</em>
+                  <br/>
+                  <br/>                  
+                  Other tabs, like a document being edited, are dynamic which means they will only load if the user triggers
+                  an action (like 'Edit document') and can be closed again. This gives users the freedom to edit more than one document at a time.
+                  <img src="../../../images/tour/nav3.jpg" alt="Document 'myarticle' selected"/><br/>
+                  <em>Listing 3: Document 'myarticle' is being edited</em>
+                  <br/>
+                  <img src="../../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
+                  <em>Listing 4: Document 'myarticle' and 'yourArticle' are being edited, 'yourArticle' tab currently in focus</em>
+                  <br/>
+                  
+              </p>
+          </section>
+          
+          <section name="Navigating the repository">
+              By selectting the Browse tab, user are presented with a basic file browser interface 
+              consisting of three panes.<br/>
+              The left pane displays a tree-view on the repository, showing only 'folder' like nodes. Upon selecting a 'folder' in the tree, the middle pane 
+              will display all 'folders' and hippo:handles that belong to the selected 'folder' in a sortable list.<br/>
+              By selecting a node in either the left or middle pane results in a list of actions that can be executed upon that node, in the right pane. 
+              <img src="../../../images/tour/nav_browse.jpg" alt="Browse"/>                
+              
+          </section>
+          
+      </body>
+  </document>
