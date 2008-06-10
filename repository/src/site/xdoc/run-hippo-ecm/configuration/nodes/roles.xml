@@ -30,6 +30,22 @@
                 "READ", "WRITE" and "REMOVE". The roles are also used for assigning workflows to users 
                 and groups.
             </p>
+            <p>
+                The roles are referenced by the <a href="domains.html">domains auth roles</a> and can be assigned to 
+                <a href="workflows.html">workflows</a>.
+                <!-- TODO: add read more link to authorizaion and workflow "concepts" -->
+            </p>
+        </section>
+        <section name="Structure">
+<source>
+hippo:configuration
+`-- hippo:roles
+    |-- editor
+    `-- myrole
+ </source>
+        </section>
+        <section name="Nodes">
+            <subsection name="hippo:role">
 <source>
 &lt;sv:node sv:name="myrole"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
@@ -46,13 +62,21 @@
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
+            <table>
+                <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>node name</td><td>String</td><td>yes</td><td>the name of the role</td></tr>
+                <tr><td>hippo:jcrread</td><td>Boolean</td><td>yes</td><td>grant JCR "READ" to the role</td></tr>
+                <tr><td>hippo:jcrwrite</td><td>Boolean</td><td>yes</td><td>grant JCR "WRITE" to the role</td></tr>
+                <tr><td>nahippo:jcrremove</td><td>Boolean</td><td>yes</td><td>grant JCR "REMOVE" to the role</td></tr>
+            </table>
             <p>
-                The name of the node is used as the role name.
+                he name of the node is used as the role name.
             </p>
             <p>
                 The boolean properties hippo:jcrread, hippo:jcrwrite and hippo:jcrremove can be set to assign the JCR 
                 "READ", "WRITE" and "REMOVE" properties to a rol.
             </p>
+            </subsection>
         </section>
     </body>
 </document>

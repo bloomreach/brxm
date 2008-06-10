@@ -28,22 +28,49 @@
                 <code>/hippo:configuration/hippo:users</code>.
                 A user node has the following configuration:
             </p>
+            <p>
+                The users configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
+            </p>
+        </section>
+        <section name="Structure">
 <source>
-&lt;sv:node sv:name="demo"&gt;
+hippo:configuration
+`-- hippo:users
+    |-- admin
+    `-- myuser
+ </source>
+        </section>
+        <section name="Nodes">
+            <subsection name="hippo:user">
+<source>
+&lt;sv:node sv:name="myuser"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
         &lt;sv:value&gt;hippo:user&lt;/sv:value&gt;
     &lt;/sv:property&gt;
     &lt;sv:property sv:name="hippo:password" sv:type="String"&gt;
-        &lt;sv:value&gt;demo&lt;/sv:value&gt;
+        &lt;sv:value&gt;supersecret&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hippo:active" sv:type="Boolean"&gt;
+        &lt;sv:value&gt;true&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hippo:firstname" sv:type="String"&gt;
+        &lt;sv:value&gt;John&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hippo:lastname" sv:type="String"&gt;
+        &lt;sv:value&gt;Doe&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hippo:email" sv:type="String"&gt;
+        &lt;sv:value&gt;johndoe@hippoecm.org&lt;/sv:value&gt;
     &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
-            <p>
-                The name of the node is used as the username.
-            </p>
-            <p>
-                The password can be stored in plain text or with a hash. A hash has the following form:
-            </p>
+            <table>
+                <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>node name</td><td>String</td><td>yes</td><td>The username</td></tr>
+                <tr><td>hippo:active</td><td>Boolean</td><td>yes</td><td>Can be used to (temporary) disable the user.A user
+                MUST have <code>hippo:active</code> set to true to be able to login.</td></tr>
+                <tr><td>hippo:password</td><td>String</td><td>yes</td><td>
+                The <code>hippo:password</code> can be stored in plain text or with a hash. A hash has the following form:
             <pre><code>$&lt;hash alogrith&gt;$&lt;salt&gt;$&lt;hash&gt;</code></pre>
             <p>
                 For example the password "admin" could result in the following hash:
@@ -54,9 +81,12 @@
                 password utility class "PasswordHelper" can be used to generate hashes with the static method
                 PasswordHelper.getHash(String password).
             </p>
-            <p>
-                The users configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
-            </p>
+            </td></tr>
+                <tr><td>hippo:firstname</td><td>String</td><td>no</td><td>user's first name</td></tr>
+                <tr><td>hippo:lastname</td><td>String</td><td>no</td><td>user's last name</td></tr>
+                <tr><td>hippo:email</td><td>String</td><td>no</td><td>user's email</td></tr>
+            </table>
+            </subsection>
         </section>
     </body>
 </document>

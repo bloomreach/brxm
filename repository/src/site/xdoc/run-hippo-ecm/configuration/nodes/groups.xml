@@ -29,6 +29,20 @@
                 stored in the nulti valued property <code>hippo:members</code>
                 A groups node has the following configuration:
             </p>
+            <p>
+                The groups configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
+            </p>
+        </section>
+        <section name="Structure">
+<source>
+hippo:configuration
+`-- hippo:groups
+    |-- admin
+    `-- mygroup
+ </source>
+        </section>
+        <section name="Nodes">
+            <subsection name="hippo:group">
 <source>
 &lt;sv:node sv:name="mygroup"&gt;
     &lt;sv:property sv:name="jcr:primaryType" sv:type="Name"&gt;
@@ -38,14 +52,19 @@
         &lt;sv:value&gt;demo&lt;/sv:value&gt;
         &lt;sv:value&gt;user1&lt;/sv:value&gt;
     &lt;/sv:property&gt;
+    &lt;sv:property sv:name="hippo:description" sv:type="String"&gt;
+        &lt;sv:value&gt;My Own Group&lt;/sv:value&gt;
+    &lt;/sv:property&gt;
 &lt;/sv:node&gt;
 </source>
-            <p>
-                The name of the node is used as the group name.
-            </p>
-            <p>
-                The groups configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
-            </p>
+            <table>
+                <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                <tr><td>node name</td><td>String</td><td>yes</td><td>the group name</td></tr>
+                <tr><td>hippo:members</td><td>String</td><td>yes</td><td>the username of the user that is member of 
+                the group. Multiple hippo:members can be set with each containing one username.</td></tr>
+                <tr><td>hippo:description</td><td>String</td><td>no</td><td>A description of the group</td></tr>
+            </table>
+            </subsection>
         </section>
     </body>
 </document>
