@@ -58,9 +58,10 @@
           <item name="Repository" href="/run-hippo-ecm/configuration/repository/index.html" collapse="true">
             <item name="Workspace" href="/run-hippo-ecm/configuration/repository/workspace.html"/>
             <item name="Search Index" href="/run-hippo-ecm/configuration/repository/searchindex.html"/>
-            <item name="Authentication and Users" href="/run-hippo-ecm/configuration/repository/repository-based-authentication-and-users.html"/>
+            <item name="Authentication" href="/run-hippo-ecm/configuration/repository/authentication.html"/>
           </item>
           <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/nodes/index.html" collapse="true">
+            <item name="Users and groups" href="/run-hippo-ecm/configuration/nodes/users-and-groups.html"/>
             <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow.html"/>
           </item>
         </item>
