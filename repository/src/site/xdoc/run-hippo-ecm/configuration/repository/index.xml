@@ -117,11 +117,11 @@
 </source>
                 <p>
                     SimpleAccessManager is the Hippo Repository default access manager implementation, and 
-                    <a href="repository-based-authentication-and-users.html">RepositoryLoginModule</a>
+                    <a href="authentication.html">RepositoryLoginModule</a>
                     the default login implementation.
                 </p>
                 <p>
-                    See <a href="repository-based-authentication-and-users.html">Authentication and Users</a>
+                    See <a href="authentication.html">Authentication and Users</a>
                     for more information.
                 </p>
             </subsection>
