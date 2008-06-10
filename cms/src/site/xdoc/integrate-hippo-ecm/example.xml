@@ -145,7 +145,7 @@ mvn exec:java
                 <li>
                   Select this node and add the following properties:
                     <ol>
-                        <li>hippo:docbase :  <code>/dropbox</code> </li>
+                        <li>hippo:docbase :  <code>the UUID of the folder you want as content for facet search</code> </li>
                         <li>hippo:facets : <code>mimeType</code> (multi-value)</li>
                         <li>hippo:queryname : <code>anything you want..just a name</code></li>
                     </ol>
