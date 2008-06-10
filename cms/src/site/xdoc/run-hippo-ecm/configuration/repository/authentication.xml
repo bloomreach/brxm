@@ -26,7 +26,7 @@
         <p>
             The repository stores the users and groups as nodes inside the repository itself.
             The RepositoryLoginModule is configured in
-            <a href="repository.html"><code>repository.xml</code></a> in the Security section and is enabled be default.
+            <a href="index.html#Security element"><code>repository.xml</code></a> in the Security section and is enabled be default.
 <source>
 &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/&gt;
 </source>
