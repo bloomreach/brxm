@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Hippo ECM Grand tour</title>
+    </properties>
+<body>
+
+<section name="Hippo ECM tour">
+  <subsection name="Hippo CMS7">
+    <p>
+      Hippo CMS7 is our frontend application. It is built on top of Hippo Repository and implemented with Apache Wicket.
+      We've created a grand tour to show you the key concepts you need to know to start using the CMS.
+    </p>
+    <ul>
+      <li>
+        <a href="logging_in.html">Logging in</a>
+      </li>  
+      <li>
+        <a href="dashboard.html">The dashboard</a>
+      </li>  
+      <li>
+        <a href="navigating_the_cms.html">Navigating the CMS</a>
+      </li>  
+      <li>
+        <a href="editing_a_document.html">Editing a document</a>
+      </li>  
+      <li>
+        <a href="creating_a_document_type_and_template.html">Creating a document type and template</a>
+      </li>  
+      <li>
+        <a href="managing_users_and_groups.html">Managing users and groups</a>
+      </li>  
+      <li>
+        <a href="workflow.html">Workflow</a>
+      </li>  
+      <li>
+        <a href="versioning.html">Versioning</a>
+      </li>  
+      <li>
+        <a href="working_with_authorizations.html">Working with authorizations</a>
+      </li>  
+    </ul>   
+  </subsection>
+</section>
+
+</body>
+</document>
