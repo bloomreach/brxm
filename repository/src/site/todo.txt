@@ -83,7 +83,8 @@ Monday
 
 
 
-
+Building the docs:
+mvn -N site
 
 
 
