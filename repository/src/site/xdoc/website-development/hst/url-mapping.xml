@@ -126,7 +126,7 @@
           
           or
           
-  <c:set var="newsURL" value="${context._path}" />					
+  <c:set var="newsURL" value="${context._path}" />
   <c:set var="newsHref" 
          value="<%= response.encodeURL((String) pageContext.getAttribute("newsURL")) %>" />
   <a href="${newsHref}">Link to /news</a>
