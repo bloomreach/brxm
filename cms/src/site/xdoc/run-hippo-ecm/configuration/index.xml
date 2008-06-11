@@ -40,6 +40,10 @@
             <a href="nodes/index.html">Configuration nodes</a>
             - Configuration nodes inside the repository
           </li>
+          <li>
+            <a href="console.html">Console application</a>
+            - A simple GUI application that can be used to edit the configuration
+          </li>
         </ul>
 
       </section>

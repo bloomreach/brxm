@@ -70,6 +70,7 @@
             <item name="Domains" href="/run-hippo-ecm/configuration/nodes/domains.html"/>
             <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow.html"/>
           </item>
+          <item name="Console" href="/run-hippo-ecm/configuration/console.html"/>
         </item>
       </item>
 
