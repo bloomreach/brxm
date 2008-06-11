@@ -30,7 +30,7 @@ and if the user has the appropiate rights this list will contain an
 action called 'Edit'. (listing 1)
       </p>
       <p>
-        <img src="../../../images/tour/edit1.jpg" alt="Select a document to see the 'edit' action."/><br/>
+        <img src="../../images/tour/edit1.jpg" alt="Select a document to see the 'edit' action."/><br/>
         <em>Listing 1: The document named 'yourArticle' is selected and it's actions are loaded.</em>
       </p>
       <p>
@@ -40,7 +40,7 @@ can save his changes by clicking 'Save' in the Actions pane. The changes
 will be persisted and the tab will be closed.
       </p>
       <p>
-        <img src="../../../images/tour/edit2.jpg" alt="Editing a document" /><br/>
+        <img src="../../images/tour/edit2.jpg" alt="Editing a document" /><br/>
         <em>
             Listing 2: A document named 'yourArticle' is currently being edited. The 
             introduction field shows a rich-text editor widget. 

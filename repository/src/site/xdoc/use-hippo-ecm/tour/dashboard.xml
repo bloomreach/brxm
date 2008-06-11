@@ -30,7 +30,7 @@ Here you will find two lists, the 'History' and the 'Task' list.
           <li>The 'History' list provides a view into all recent repository activity</li>
           <li>The 'Task' list informs the user which documents are awaiting a workflow action, like 'Request for publication' or 'Request for deletion'</li>
         </ul> 
-        <img src="../../../images/tour/dashboard.jpg" alt="Navigating the CMS: the dashboard"/>
+        <img src="../../images/tour/dashboard.jpg" alt="Navigating the CMS: the dashboard"/>
         <br/>
       </p>
       <p align="center">

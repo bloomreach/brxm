@@ -36,10 +36,10 @@ Some perspectives are static, like the dashboard (listing 1) or the browse
 the user has the appropiate rights) and cannot be closed. 
       </subsection>    
       <p>
-        <img src="../../../images/tour/nav1.png" alt="Dashboard tab selected"/><br/>
+        <img src="../../images/tour/nav1.png" alt="Dashboard tab selected"/><br/>
         <em>Listing 1: Dashboard tab selected</em>
         <br/><br/>
-        <img src="../../../images/tour/nav2.png" alt="Browse tab selected"/><br/>
+        <img src="../../images/tour/nav2.png" alt="Browse tab selected"/><br/>
         <em>Listing 2: Browse tab selected</em>
       </p>
       <subsection name="Dynamic perspectives">
@@ -48,7 +48,7 @@ are created on-the-fly and can be closed again. This gives users the freedom
 to have multiple documents open simultaneously (listing 3). 
       </subsection>
       <p>
-        <img src="../../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
+        <img src="../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
         <em>Listing 3: Document 'myarticle' and 'yourArticle' are being edited, 
             'yourArticle' is currently in focus</em>
       </p>
@@ -68,7 +68,7 @@ executed upon them. These actions are displayed in the right pane and
 will be (re)loaded every time a user clicks on a document or folder 
 in either the left or middle pane. 
       </subsection>                
-      <img src="../../../images/tour/nav_browse.jpg" alt="Browse"/>
+      <img src="../../images/tour/nav_browse.jpg" alt="Browse"/>
       <p align="center">
         <a href="dashboard.html">&lt;- Previous: The dashboard</a>&#160;&#160;&#160;&#160;&#160;<a href="editing_a_document.html">Next: Editing a document -></a>
       </p>

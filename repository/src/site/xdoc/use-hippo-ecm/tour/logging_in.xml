@@ -39,7 +39,7 @@ the following users:
               <li>author; username=author, password=author</li>
               <li>editor; username=editor, password=editor</li>
           </ul>
-          <img src="../../../images/tour/login.jpg" alt="Logging in"/>
+          <img src="../../images/tour/login.jpg" alt="Logging in"/>
         </p>
       </subsection>
       <p>
