@@ -89,7 +89,7 @@
         <item name="Roadmap" href="/use-hippo-ecm/roadmap.html" collapse="true">
         </item>
         <item name="Usage tour" collapse="true" href="/use-hippo-ecm/tour/index.html">
-          <item name="Loging in" href="/use-hippo-ecm/tour/logging_in.html"/>
+          <item name="Logging in" href="/use-hippo-ecm/tour/logging_in.html"/>
           <item name="The dashboard" href="/use-hippo-ecm/tour/dashboard.html"/>
           <item name="Navigating the CMS" href="/use-hippo-ecm/tour/navigating_the_cms.html"/>
           <item name="Editing a document" href="/use-hippo-ecm/tour/editing_a_document.html"/>
