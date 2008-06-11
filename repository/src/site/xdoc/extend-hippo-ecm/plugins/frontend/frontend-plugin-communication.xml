@@ -70,6 +70,94 @@
         </source>
       </subsection>
 
+      <subsection name="Dialogs / Page Serialization">
+        <p>
+          Wicket has a serialization mechanism that necessitates careful design
+          when multiple Page instances are involved.  When Wicket serializes
+          the object graph, different pages are written out to different pagemaps.
+          This imposes constraints on the object graphs that have to be taken into
+          account when dealing with multiple pages.
+        </p>
+        <p>
+          This issue is not specific to the plugin architecture, in fact every
+          Wicket application needs to address this problem in one way or the
+          other.  The plugin architecture does offer a solution when the
+          objects involved are services.
+        </p>
+        <p>
+          Since dialogs are separate pages, I'll use one to illustrate the
+          point.  The dialog uses a service that changes its state when a link
+          is clicked.
+        </p>
+        <source>
+<![CDATA[public class ExampleDialog extends WebPage {
+
+  private IServiceReference<IFlagService> serviceRef;
+
+  public ExampleDialog(IPluginContext context, IFlagService service) {
+    serviceRef = context.getReference(service);
+
+    add(new AjaxLink("hello") {
+
+      public void onClick(AjaxRequestTarget target) {
+        IFlagService flagService = serviceRef.getService();
+
+        if (flagService != null) {
+          flagService.setFlag(true);
+        }
+      }
+    });
+  }
+
+}]]>
+        </source>
+        <p>
+          The naive implementation would have made the service argument final,
+          skipping the IServiceReference intermediary.  Comparing the two
+          approaches in the order of events:
+        </p>
+        <dl>
+          <dt>Main page is serialized</dt>
+          <dd>
+            When the request that created the dialog is completed, the main page
+            (the one creating the dialog) is serialized.  During this process,
+            Wicket will encounter a reference to the service and will write it out
+            to the pagemap.
+          </dd>
+          <dt>Dialog receives request</dt>
+          <dd>
+            <p>Assuming that the user clicks the "hello" link, the dialog will receive
+            a request that is handled by the onClick() method.  The service will be
+            invoked.  In the two scenarios:</p>
+            <ul>
+              <li>
+                in the naive implementation, the original (service) object will
+                be used.  Changes that are made as a result of the setFlag()
+                call are persisted in the dialog pagemap, but will be invisible
+                to the main page.  This is NOT GOOD<sup>TM</sup>.
+              </li>
+              <li>
+                in the shown example, the IServiceReference implementation does
+                not store a direct reference to the service.  Instead it
+                deserializes the original page when getService() is invoked and
+                looks up the service.  At the end of the request, the original
+                (updated) page is serialized again.  SUCCES!
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </subsection>
+
+    </section>
+
+    <section name="Advanced - Subject to Change">
+      <p>
+        This section describes some of the patterns that are used in the
+        implementation of the CMS.  Beware that when you use this information
+        to create plugins that integrate with the CMS, compatibility with
+        future releases is not guaranteed.
+      </p>
+
       <subsection name="Other Communication Patterns">
         <p>
           More advanced interactions between plugins can be achieved by
@@ -229,84 +317,6 @@
               uses a separate ModelService, configured by the plugin that
               instantiates editors.
             </p>
-          </dd>
-        </dl>
-      </subsection>
-
-      <subsection name="Dialogs / Page Serialization">
-        <p>
-          Wicket has a serialization mechanism that necessitates careful design
-          when multiple Page instances are involved.  When Wicket serializes
-          the object graph, different pages are written out to different pagemaps.
-          This imposes constraints on the object graphs that have to be taken into
-          account when dealing with multiple pages.
-        </p>
-        <p>
-          This issue is not specific to the plugin architecture, in fact every
-          Wicket application needs to address this problem in one way or the
-          other.  The plugin architecture does offer a solution when the
-          objects involved are services.
-        </p>
-        <p>
-          Since dialogs are separate pages, I'll use one to illustrate the
-          point.  The dialog uses a service that changes its state when a link
-          is clicked.
-        </p>
-        <source>
-<![CDATA[public class ExampleDialog extends WebPage {
-
-  private IServiceReference<IFlagService> serviceRef;
-
-  public ExampleDialog(IPluginContext context, IFlagService service) {
-    serviceRef = context.getReference(service);
-
-    add(new AjaxLink("hello") {
-
-      public void onClick(AjaxRequestTarget target) {
-        IFlagService flagService = serviceRef.getService();
-
-        if (flagService != null) {
-          flagService.setFlag(true);
-        }
-      }
-    });
-  }
-
-}]]>
-        </source>
-        <p>
-          The naive implementation would have made the service argument final,
-          skipping the IServiceReference intermediary.  Comparing the two
-          approaches in the order of events:
-        </p>
-        <dl>
-          <dt>Main page is serialized</dt>
-          <dd>
-            When the request that created the dialog is completed, the main page
-            (the one creating the dialog) is serialized.  During this process,
-            Wicket will encounter a reference to the service and will write it out
-            to the pagemap.
-          </dd>
-          <dt>Dialog receives request</dt>
-          <dd>
-            <p>Assuming that the user clicks the "hello" link, the dialog will receive
-            a request that is handled by the onClick() method.  The service will be
-            invoked.  In the two scenarios:</p>
-            <ul>
-              <li>
-                in the naive implementation, the original (service) object will
-                be used.  Changes that are made as a result of the setFlag()
-                call are persisted in the dialog pagemap, but will be invisible
-                to the main page.  This is NOT GOOD<sup>TM</sup>.
-              </li>
-              <li>
-                in the shown example, the IServiceReference implementation does
-                not store a direct reference to the service.  Instead it
-                deserializes the original page when getService() is invoked and
-                looks up the service.  At the end of the request, the original
-                (updated) page is serialized again.  SUCCES!
-              </li>
-            </ul>
           </dd>
         </dl>
       </subsection>
