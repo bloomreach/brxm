@@ -75,6 +75,8 @@
 
       <item name="Use Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
         <item name="Hippo ECM concepts" href="/use-hippo-ecm/hippo-ecm-concepts/index.html" collapse="true">
+          <item name="Navigating" href="/use-hippo-ecm/hippo-ecm-concepts/navigating.html" collapse="true"/>
+          <item name="Searching" href="/use-hippo-ecm/hippo-ecm-concepts/searching.html" collapse="true"/>
           <item name="Facet Search" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetsearch.html" collapse="true"/>
           <item name="Facet Select" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetselect.html" collapse="true"/>
           <item name="Authorization" href="/use-hippo-ecm/hippo-ecm-concepts/authorization.html" collapse="true"/>

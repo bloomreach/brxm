@@ -19,10 +19,10 @@
   -->
   <document>
       <properties>
-          <title>Searching Content</title>
+          <title>Searching</title>
       </properties>
       <body>
-          <section name="Searching Content">
+          <section name="Searching">
               <p>
                   Jackrabbit has the jsr-170 XPATH subset and SQL subset imlementation out-of-the-box 
                   (plus some extra XPATH features). Hippo Repository adds facet search, and its own stored
