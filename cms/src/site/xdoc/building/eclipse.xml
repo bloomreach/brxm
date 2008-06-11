@@ -263,25 +263,6 @@
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/CustomLinker/ CustomLinker
                          </source>
                     </li>
-                    <li>
-                        <p>
-                            <b>Windows - Symbolic Links</b>
-                        </p>
-                        <p>
-                          Although it is not possible to create symbolic links with the tools that
-                          are provided by default by Windows, they do exist.  One of the Microsoft
-                          supplied tools for this is <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.  With this tool, the symbolic links can be created as:
-                        </p>
-                        <source>
-C:\hippo-ecm> cd package\war\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> junction skin ..\..\..\..\skin\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\xinha\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
-C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
-C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
-C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
-                        </source>
-                    </li>
                 </ul>
             </subsection>
             <subsection name="Dependencies">
@@ -348,5 +329,29 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
                 of org.hippoecm.frontend.Home, run the Jetty launcher in debug mode,
                 open your browser and go to http://localhost:8080 </p>
         </section>        
+
+        <section name="Advanced">
+          <subsection name="Windows - Symbolic Links">
+            <p>
+              Developing files that are copied can be painful, but luckily an
+              alternative is available.  This is the recommended approach when
+              developing a <a href="../extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html">skin</a>.
+            </p>
+            <p>
+              Although it is not possible to create symbolic links with the tools that
+              are provided by default by Windows, they do exist.  One of the Microsoft
+              supplied tools for this is <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.  With this tool, the symbolic links can be created as:
+            </p>
+            <source>
+C:\hippo-ecm> cd package\war\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> junction skin ..\..\..\..\skin\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\xinha\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
+C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
+            </source>
+          </subsection>
+        </section>
     </body>
 </document>
