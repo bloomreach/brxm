@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+  <!--
+    Copyright 2007 Hippo
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>Eclipse tips&amp;tricks</title>
+  </properties>
+  <body>
+    <section name="Eclipse tips &amp; tricks"> When you have finished <a href="eclipse.html">Setting up eclipse</a>
+      you'll be able to run and debug Hippo ECM from within Eclipse. However Hippo ECM is a very active project
+      with many updates every day. Keeping up to date with the latest developments means regularly synchronizing
+      with the latest version on the trunk and incorporating changes into your local source tree. The Eclipse
+      SVN integration offers excellent tools for doing this that can really be of help if used consiously.
+      <br/><br/>
+      <div style="border:1px solid black; padding:1em;">
+      Note that Eclipse does all bookeeping itself and doesn't expect a parallel build system that does exactly
+      the same thing next to it. Bizarre things can happen if you use Maven and Eclipse at the same time and
+      it is not recommended to do so. Once everything has been set up you should use Maven only to download
+      dependencies (using <b>mvn dependency:resolve</b>) and to generate eclipse project files (using 
+      <b>mvn eclipse:eclipse</b>). Do not use any maven command that actually writes something in the target
+      directory. If you absolutely need to do so, first disable automatic building in Eclipse. And don't forget
+      to refresh all projects after reenabling it again.
+      </div> 
+      <subsection name="Customize your Eclipse perspective">
+        <p> Use 'Window -> show view' to open at least the following views: </p>
+        <ul>
+          <li><b>Package explorer</b> for browsing java projects</li>
+          <li><b>Navigator</b> for browsing the entire Hippo ECM project</li>
+          <li><b>Progress</b> for viewing what Eclipse is doing in the background</li>
+          <li><b>Synchronize</b> for synchronizing with the SVN repository</li>
+          <li><b>Console</b> for viewing the console output when running</li>
+        </ul>
+      </subsection>
+      <subsection name="Progress view">
+        <p> This is a nice little view showing everything eclipse is doing in the background and
+          it's worth keeping an eye on it. It definitely pays off waiting until the view shows no
+          activity before doing anything big like synchronizing, running etc. Be patient, give
+          eclipse some time to do it's thing, after all it does the same as the maven build and that
+          takes minutes to complete! </p>
+      </subsection>
+      <subsection name="Package explorer view">
+        <p> By now you will have an intimidating number of projects in your Eclipse workspace
+          most of which you will probably not be interested in. Therefore the first thing you'll
+          need to do is reduce the number of visible projects using Eclipse 'working sets'. </p>
+        <ul>
+          <li>Select the 'Package explorer' view.</li>
+          <li>Window -> Working sets -> Edit -> New -> Java -> Next -> Choose a name + select some
+            projects you are interested in.</li>
+          <li>Press the Package explorer menu button (the little triangle in the upper right corner)
+            and select your working set.</li>
+        </ul>
+        <p> Please note that as explained in the <a href=" project-structure.html">Project
+          structure</a> documentation there are four different types of projects: Jar, War, Ear and
+          Pom. The 'Create eclipse projects' steps above don't create eclipse projects for Pom
+          projects and therefore they won't show up as projects in the Package explorer. </p>
+      </subsection>
+      <subsection name="Navigator view">
+        <p> For the Navigator view you'll also need to create and select a working set. This working
+          set should contain only one project, the toplevel hippo-ecm project. </p>
+        <ul>
+          <li>Select the 'Navigator' view.</li>
+          <li>File -> New -> Project -> General project, uncheck 'default location', browse to
+            project root directory (~/hippo-ecm), give it a name (hippo-ecm) -> Finished</li>
+          <li>Define a new working set of type 'resource' containing ONLY this project and select it
+            as the working set for the 'Navigator' view.</li>
+        </ul>
+      </subsection>
+      <subsection name="Synchronize view">
+        <p> Synchronizing with SVN should be done by synchronizing the toplevel resource project in
+          the Navigator view and NOT by synchronizing the Java projects in the Package explorer.
+          This is important because the Package explorer doesn't show everything (only java projects
+          and not Pom projects). </p>
+        <ul>
+          <li>Select the 'Synchronize' view.</li>
+          <li>Press the Synchronize view menu button (the little triangle in the upper right corner)
+            and press 'Remove current synchronization'.</li>
+          <li>Select the 'Navigator' view and select the project root folder.</li>
+          <li>Refresh (F5)</li>
+          <li>right click -> Team -> Synchronize with repository</li>
+        </ul>
+        <p> It is worth the effort to take your time and evaluate the incoming changes in the
+          synchronize view before actually updating your source tree. For one it gives an excellent
+          view on what's going on outside your own backyard but more importantly it gives you
+          insight into when and how your eclipse project definitions become invalid. This happens every
+          time a dependency in one of the pom files changes. 
+          <br/><br/>
+          Tip: play around with the controls the synchronize view offers under the menu button (the
+          little triangle in the upper right corner): 'mode' and 'presentation', they can really help
+          in grasping what's going on.
+          <br/><br/>
+          When a dependency change happens you have a choice: either regenerate the eclipse project files
+          or manually fix the involved eclipse projects (right-click, properties, Java build path etc.). If it's
+          a complex change involving lots of modules it's easier to regenerate, but sometimes changes are
+          simple and can easily be fixed by hand if you understand what's going on. 
+          <br/><br/>
+          Here are some rough guidelines for what to do in case you decide to fix your projects manually:
+        </p>
+        <ul>
+          <li>
+            <b>Subproject added:</b>
+            <ol>
+              <li>Open console</li>
+              <li>cd to new project directory</li>
+              <li>run <b>mvn eclipse:eclipse</b></li>
+              <li>run eclipse import wizard, select new project directory</li>
+              <li>manually fix other projects that depend on the new project</li>
+            </ol>
+          </li>
+          <li>
+            <b>Subproject deleted:</b>
+            <ol>
+              <li>Delete corresponding Java project project in the package explorer</li>
+              <li>Manually fix other projects that used to depend on the deleted project</li>
+            </ol>
+          </li>
+          <li>
+            <b>Internal dependency changed:</b>
+            <ol>
+              <li>Manually fix the eclipse projects</li>
+            </ol>
+          </li>
+          <li>
+            <b>External dependency removed:</b>
+            <ol>
+              <li>Manually fix the eclipse projects</li>
+            </ol>
+          </li>
+          <li>
+            <b>External dependency added or changed:</b>
+            <ol>
+              <li>Open a console</li>
+              <li>cd to project directory</li>
+              <li>run <b>mvn dependency:resolve</b> (this will download the new dependency)</li>
+              <li>Manually fix the eclipse project.</li>
+            </ol>
+          </li>
+        </ul>
+        <p> Manual fixing might seem like a lot more work than just regenerating but that is not
+          always the case. If you decide to do a full regeneration you should start with deleting
+          ALL eclipse projects (don't delete contents) and finish with fixing the generated eclipse
+          projects as described on the  <a href="eclipse.html">Setting up eclipse</a> page.</p> 
+          <br/><br/>
+      </subsection>
+    </section>
+  </body>
+</document>
