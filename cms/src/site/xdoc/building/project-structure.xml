@@ -28,7 +28,7 @@
         Hippo ECM is a <a href="http://maven.apache.org/">Maven 2</a> project consisting of
         <a href="http://maven.apache.org/guides/getting-started/index.html#How_do_I_build_more_than_one_project_at_once">
         multiple modules</a> which are hierarchically organized as shown below, each module produces exactly one
-        artifact (file). Modules come in three flavors, depending on the type of artifact they create.
+        artifact (file). Modules come in four flavors, depending on the type of artifact they create.
       </p>
       <ol>
         <li>
@@ -38,10 +38,16 @@
         </li>
         <li>
           <p>
-            <b>WAR</b> projects create an application (a war file) that can be deployed
-            in an application server (tomcat, glassfish, weblogic etc.).
+            <b>WAR</b> projects create a web application (a war file) that can be deployed
+            in a servlet server (tomcat, jetty etc.).
           </p>
         </li>
+        <li>
+          <p>
+            <b>EAR</b> projects create an enterprise application (an ear file) that can be deployed
+            in an application server (glassfish, weblogic etc.).
+          </p>
+        </li>        
         <li>
           <p>
             <b>POM</b> projects act as 'glue' for binding together other projects,
@@ -60,6 +66,22 @@ Module                       Type      ArtifactId
 ------------------------------------------------------------------------
 hippo-ecm                    Pom       hippo-ecm
 |-- addon                    Pom       hippo-ecm-addon
+|   |-- builtin              Pom       hippo-ecm-addon-builtin
+|   |   |-- common           Jar       hippo-ecm-addon-builtin-common
+|   |   |-- frontend         Jar       hippo-ecm-addon-builtin-frontend
+|   |   |-- repository       Jar       hippo-ecm-addon-builtin-repository
+|   |   `-- test             Jar       hippo-ecm-addon-builtin-test
+|   |-- cms                  Pom       hippo-ecm-addon-cms
+|   |   |-- browse           Jar       hippo-ecm-addon-cms-browse
+|   |   |-- dashboard        Jar       hippo-ecm-addon-cms-dashboard
+|   |   |-- edit             Jar       hippo-ecm-addon-cms-edit
+|   |   |-- management       Jar       hippo-ecm-addon-cms-management
+|   |   `-- root             Jar       hippo-ecm-addon-cms-root
+|   |-- defaultcontent       Pom       hippo-ecm-addon-defaultcontent
+|   |   `-- repository       Jar       hippo-ecm-addon-defaultcontent-repository
+|   |-- reporting            Pom       hippo-ecm-addon-reporting
+|   |   |-- frontend         Jar       hippo-ecm-addon-reporting-frontend
+|   |   `-- repository       Jar       hippo-ecm-addon-reporting-repository
 |   |-- reviewed-action      Pom       hippo-ecm-addon-reviewed-action
 |   |   |-- common           Jar       hippo-ecm-addon-reviewed-action-common
 |   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
@@ -67,14 +89,35 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
 |   |-- standards            Pom       hippo-ecm-addon-standards
 |   |   |-- frontend         Jar       hippo-ecm-addon-standards-frontend
-|   |   `-- test             Jar       hippo-ecm-addon-standards-test
+|   |   `-- repository       Jar       hippo-ecm-addon-standards-test
+|   |-- template             Jar       hippo-ecm-addon-template
+|   |-- versioning           Jar       hippo-ecm-addon-versioning
 |   |-- xinha                War       hippo-ecm-addon-xinha
-|   `-- xinha-frontend       War       hippo-ecm-addon-xinha-frontend
+|   |-- xinha-frontend       Jar       hippo-ecm-addon-xinha-frontend
+|   `-- yui                  Pom       hippo-ecm-addon-yui
+|       `-- frontend         Jar       hippo-ecm-addon-yui-frontend
 |-- api                      Jar       hippo-ecm-api
+|-- archetypes               Pom       hippo-ecm-archetypes
+|   `-- addon                Archetype hippo-ecm-archetypes-addon
+|-- demo                     Pom       hippo-ecm-demo
+|   |-- addon                Jar       hippo-ecm-demo-config
+|   |-- all                  War       hippo-ecm-demo-skin
+|   |-- site                 War       hippo-ecm-demo-test        
+|   `-- skin                 War       hippo-ecm-demo-ear
 |-- frontend                 Pom       hippo-ecm-frontend
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
 |   `-- plugins              Jar       hippo-ecm-frontend-plugins
+|-- hst                      Pom       hippo-ecm-hst
+|   |-- addon                Pom       hippo-ecm-hst-addon
+|   |   `-- repository       Jar       hippo-ecm-hst-addon-repository
+|   |-- core                 Jar       hippo-ecm-hst-core
+|   |-- sample               Pom       hippo-ecm-hst-sample
+|   |   |-- content          Jar       hippo-ecm-hst-sample-content
+|   |   `-- site             War       hippo-ecm-hst-sample-site
+|   |-- skeleton             War       hippo-ecm-hst-skeleton
+|   `-- taglib               Jar       hippo-ecm-hst-taglib
+|-- maven-skin               Jar       hippo-ecm-maven-skin
 |-- package                  Pom       hippo-ecm-package
 |   |-- config               Jar       hippo-ecm-package-config
 |   |-- skin                 War       hippo-ecm-package-skin
@@ -83,21 +126,108 @@ hippo-ecm                    Pom       hippo-ecm
 |   `-- war                  War       hippo-ecm-package-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
+|   |-- connector            Jar       hippo-ecm-repository-connector
 |   `-- application          War       hippo-ecm-repository-application
 `-- tools                    Pom       hippo-ecm-tools
     |-- migration            Jar       hippo-ecm-tools-migration
+    |-- dropbox              Jar       hippo-ecm-tools-dropbox
     `-- testutils            Jar       hippo-ecm-tools-testutils
       </source>
     </section>
-
-    <section name="API">
+    
+    <section name="Why so many projects?">
       <p>
-        Hippo ECM specific extensions to the JCR API.
+        The large number of projects is a direct consequence of the fact that Hippo ECM
+        has been designed from the ground up for customizability and extendability as described in the  
+        <a href="../extend-hippo-ecm/plugins/index.html">plugin</a> documentation. Hippo ECM consists
+        of two tiny engines, one for the repository and one for the CMS user interface, that in themselves don't
+        implement much functionality. All 'userland' functionality is implemented by plugins that are loaded by
+        the engines. 
       </p>
-      <source>
-|-- api                      Jar
-      </source>
     </section>
+
+    <section name="Addon">
+      <p>
+        Plugins are bundled in so called addons which are simple Jar projects under the 'addon'
+        directory.
+      </p> 
+      <ul>
+        <li><b>builtin</b> is a workflow addon, it differs from other workflow addons in the fact that
+          the server-side implementation is 'built in' the repository itself instead of in a separate Jar.
+          Note that these builtin workflows are very low-level and should not be accessed directly from
+          the frontend. They should only be called from other workflow plugins as part of a chain of workflow steps.
+        </li>
+        <li><b>cms</b> is a bundling of all frontend addons that together make up the main functional blocks
+         of the default CMS. Each tab (perspective) in the CMS user interface has it's own addon. Because of this
+         setup adding, changing or removing a tab is entirely done by adding, changing or removing the Jar implementing
+         the tab to/from the classpath and changing the frontend configuration in the repository.</li>
+        <li><b>defaultcontent</b> is a repository addon containing some simple sample content meant
+         for demonstration purposes</li>
+        <li><b>reporting</b> is a repository addon together with a frontend addon which together
+        implement reporting functionality for the CMS. Examples of usage of this addon are the activity
+        and todo views on the cms-dashboard</li>
+        <li><b>reviewed-action</b> is a workflow addon, it implements all logic
+        concerning the (un)publication of documents. It is a bundling of a
+        repository addon implementing the workflow business logic
+        with a frontend addon bundling some frontend plugins for user interaction
+        and a common addon for the interface between the two.
+        </li>        
+        <li><b>standards</b> contains standard stuff that other addons may use or extend. It's repository
+        addon defines low level standard types and it's frontend addon contains common frontend plugins that
+        are reused in other addons.</li>
+        <li><b>template</b> is a frontend addon that implements the document template editor</li>
+        <li><b>versioning</b> is a frontend addon that contains some plugins for interacting with document versioning
+        implemented by the repository</li>
+        <li><b>xinha and xinha-frontend</b> are frontend addons that together make up the Xinha HTML editor</li>
+        <li><b>yui</b> is a frontend addon implementing Drag&amp;Drop functionality.</li>
+      </ul>
+    </section>
+    
+    <section name="Dependencies between addons">
+      <p>
+        Because addons are ordinary java projects built with Maven it is extremely easy to add any inter-addon
+        dependency you like. If left unchecked this can easily lead to spaghetti where all addons depend on each
+        other. When this happens the whole idea of splitting functionality between addons becomes obsolete and we
+        might as well put all plugins into one big addon, or better yet into the engines themselves and reduce the
+        number of projects drastically. Obviously this will also kill all customizability and extendability.
+        <br/><br/>
+        On the other hand completely forbidding inter-addon dependencies is also not an option because some addons
+        implement functionality used by other addons. Therefore it is important to keep these dependencies to a minimum
+        and stick to some simple guidelines:
+        <br/><br/>
+        Repository addons are easy: they should NEVER depend on each other via a java dependency.
+        Even in the case of one workflow calling another this is not done by a direct Java call, but via 'workflow chaining'
+        which is core repository functionality. Repository addons can be seen as pure self-contained black boxes.
+        <br/><br/>
+        This is not the case for frontend addons: For example the drag&amp;drop functionality implemented by addon-yui
+        is meant to be used by other addons. Therefore it is a good idea to split the frontend addons in two categories:
+        <b>'semi-finished'</b> and <b>'finished'</b> 
+      </p>
+      <ul>
+        <li>
+          <b>'semi-finished'</b> frontend addons don't contain 'end plugins' used in an application, they only contain
+          classes that can be used or extended by other 'finished' addons. Examples are:
+          <ul>
+            <li>addon-yui-frontend</li>
+            <li>addon-xinha(-frontend)</li>
+            <li>addon-standards-frontend</li>
+            <li>addon-reporting-frontend</li>
+          </ul>
+        </li>
+        <li>
+          <b>'finished'</b> frontend addons only contain 'end plugins' that are used in an application. Examples are:
+          <ul>
+            <li>all addon-cms-* addons</li>
+            <li>addon-reviewed-action-frontend</li>
+            <li>addon-versioning</li>
+          </ul>          
+        </li>
+      </ul>
+      <p>
+        As a rule of thumb: you may always make a dependency to a 'semi-finished' addon but NEVER to a 'finished' addon.
+      </p>  
+    </section>
+    
 
     <section name="Repository">
       <p>
@@ -127,38 +257,6 @@ hippo-ecm                    Pom       hippo-ecm
       </source>
     </section>
 
-    <section name="Addons">
-      <p>
-        All customization is done through the use of <a href="../plugins/index.html">addons</a>.
-        Core addons are implemented by the projects under the addon project.
-      </p>
-      <p>
-        A default available add-on is the reviewed-actions workflow which
-        is a bundling of a repository plugin implementing the workflow logic
-        with a frontend plugin implementing a GUI for user interaction
-        and a common plugin for the interface between the two.
-        Part of the addon is also a test project that acts as a placeholder
-        for integration tests on the addon (plugged in a running repository
-        and/or frontend server)
-      </p>
-      <p>
-        Hippo CMS 7 is implemented as an assembly of add-ons, the addon projects can be found
-        under the 'addon' directory.
-      </p>
-      <source>
-|-- addon                    Pom       hippo-ecm-addon
-|   |-- reviewed-action      Pom       hippo-ecm-addon-reviewed-action
-|   |   |-- common           Jar       hippo-ecm-addon-reviewed-action-common
-|   |   |-- frontend         Jar       hippo-ecm-addon-reviewed-action-frontend
-|   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
-|   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
-|   |-- standards            Pom       hippo-ecm-addon-standards
-|   |   |-- frontend         Jar       hippo-ecm-addon-standards-frontend
-|   |   |-- common           Jar       hippo-ecm-addon-standards-common
-|   |   |-- repository       Jar       hippo-ecm-addon-standards-repository
-|   |-- xinha                War       hippo-ecm-addon-xinha
-      </source>
-    </section>
 
     <section name="Package">
       <p>
@@ -185,7 +283,17 @@ hippo-ecm                    Pom       hippo-ecm
 |   `-- migration            Jar        hippo-ecm-tools-migration
       </source>
     </section>
-
+    
+    
+    <section name="API">
+      <p>
+        Hippo ECM specific extensions to the JCR API.
+      </p>
+      <source>
+        |-- api                      Jar
+      </source>
+    </section>
+    
   </body>
 </document>
 

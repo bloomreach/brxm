@@ -54,10 +54,7 @@
             integrates extremely nice with the Maven build, no mimicking and no weird workarounds.
             The downside is that, precicely because it directly depends on the Maven build,
             seeing the effects of code changes can take longer than in Eclipse. 
-<!--            <br/><br/>
-            It pays off to take some time to understand the <a href="project-structure.html">
-            Hippo ECM project structure</a> before going on. It's a shame that it's so difficult  
--->          </p>
+          </p>
         </section>
         
         <section name="Prepare">
@@ -87,6 +84,16 @@
             <source>
 ~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:configure-workspace
             </source>
+          </subsection>
+          
+          <subsection name="Tune your Eclipse memory settings">
+            <p>
+              Add some memory flags to the eclipse -vmargs startup argument.
+            </p>
+            <ul>
+              <li>Set the heap size to at least 512M by adding something like -Xms512m -Xmx512m</li>
+              <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>              
+            </ul> 
           </subsection>
           
           <p> Start Eclipse, it is strongly advised to start with a clean workspace. Use the eclipse
@@ -215,45 +222,47 @@
         </section>
 
         <section name="Create eclipse projects, part two">
-            <p> The <a href="maven.html">maven build</a> uses the <a
-                    href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html"
-                    >WAR overlay</a> principle which unfortunately isn't fully supported by the
-                maven eclipse plugin. Therefore you need to manually fix the eclipse projects before
-                you can proceed. </p>
+            <p> 
+              The <a href="maven.html">maven build</a> extensively uses 
+              <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlays</a>
+              which unfortunately aren't fully supported by the maven eclipse plugin. Therefore you need to manually
+              fix the eclipse projects before you can proceed. 
+            </p>
             <subsection name="Resources">
-                <ul>
-                    <li>
-                        <p>
-                            <b>Windows</b>
-                        </p>
-                        <ol>
-                            <li>
-                                <p>Inside package/war/src/main/webapp, create a directory skin.</p>
-                            </li>
-                            <li>
-                                <p>Copy all files in package/skin/src/main/webapp to
-                                    package/war/src/main/webapp/skin.</p>
-                            </li>
-                            <li>
-                                <p>Inside package/war/src/main/webapp, create a directory xinha.</p>
-                            </li>
-                            <li>
-                                <p>Copy all files in addon/xinha/src/main/webapp to
-                                    package/war/src/main/webapp/xinha.</p>
-                            </li>
-                            <li>
-                                <p>Copy all folders in addon/xinha/webResources/xinha/plugins to addon/xinha/src/main/webapp/xinha/plugins</p>
-                            </li>
-
-                        </ol>
-                        <p> These steps have to be repeated after each change in
-                            hippo-ecm-package-skin or hippo-ecm-addon-xinha. </p>
-                    </li>
-                    <li>
-                        <p>
-                            <b>Unix</b>
-                        </p>
-                        <source> 
+              <p>
+                The maven build overlays the skin and xinha plugins over the final package-war by copying
+                the skin and xinha files to the package/war/src/main/webapp directory. Manually copying
+                these files in order to fix the package-war project for eclipse can be very painful because
+                it needs to be done every time when a skin or xinha file changes. A much better way is to
+                use symbolic links.   
+              </p>
+              <ul>
+                <li>
+                  <p>
+                    <b>Windows</b>
+                  </p>
+                  <p>
+                    Although it is not possible to create symbolic links with the tools that
+                    are provided by default by Windows, they do exist.  One of the Microsoft
+                    supplied tools for this is 
+                    <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.  
+                    With this tool, the symbolic links can be created as:
+                  </p>
+                  <source>
+C:\hippo-ecm> cd package\war\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> junction skin ..\..\..\..\skin\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\..\xinha\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
+C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
+                  </source>
+                </li>
+                <li>
+                  <p>
+                    <b>Unix</b>
+                  </p>
+                  <source> 
  ~/> cd hippo-ecm/package/war/src/main/webapp
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../skin/src/main/webapp/ skin
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
@@ -268,11 +277,10 @@
             <subsection name="Dependencies">
                 <ol>
                     <li>
-                        <p>Select project hippo-ecm-package-war</p>
+                      <p>Right-click the hippo-ecm-package-war project in the package explorer</p>
                     </li>
                     <li>
-                        <p>In the configuration panel (Project -&gt; Properties), select 'Java
-                            Build Path'</p>
+                        <p>Select 'Java Build Path'</p>
                     </li>
                     <li>
                         <p>Under tab 'Projects', add hippo-ecm-repository-application</p>
@@ -280,20 +288,22 @@
                 </ol>
             </subsection>
             <subsection name="Test resource folders">
-                <p>
-                    The maven-eclipse-plugin creates source folders for test resources.  These
-                    can interfere with the initialization of the repository, so they should be removed
-                    from the classpath.  This applies to the projects hippo-ecm-frontend-plugin and
-                    hippo-ecm-repository-engine:
-                </p>
-                <ol>
-                    <li>
-                        <p>Select the "Source" tab under "Java build path" in the project properties</p>
-                    </li>
-                    <li>
-                      <p>Remove the &lt;project&gt;/src/test/resources folder</p>
-                    </li>
-                </ol>
+              <p>
+                The maven-eclipse-plugin creates source folders for test resources.  These
+                can interfere with the initialization of the repository, so they should be removed
+                from the classpath.
+              </p>
+              <ol>
+                <li>
+                  <p>Right-click the hippo-ecm-repository-engine project in the package explorer.</p>
+                </li>
+                <li>
+                  <p>Select 'Java Build Path'</p>
+                </li>
+                <li>
+                  <p>Under tab 'Source', remove the &lt;project&gt;/src/test/resources folder</p>
+                </li>
+              </ol>
             </subsection>
         </section>
             
@@ -328,30 +338,9 @@
             <p> You can now debug the application within Eclipse: Set a breakpoint in the constructor
                 of org.hippoecm.frontend.Home, run the Jetty launcher in debug mode,
                 open your browser and go to http://localhost:8080 </p>
-        </section>        
-
-        <section name="Advanced">
-          <subsection name="Windows - Symbolic Links">
-            <p>
-              Developing files that are copied can be painful, but luckily an
-              alternative is available.  This is the recommended approach when
-              developing a <a href="../extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html">skin</a>.
-            </p>
-            <p>
-              Although it is not possible to create symbolic links with the tools that
-              are provided by default by Windows, they do exist.  One of the Microsoft
-              supplied tools for this is <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.  With this tool, the symbolic links can be created as:
-            </p>
-            <source>
-C:\hippo-ecm> cd package\war\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> junction skin ..\..\..\..\skin\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\xinha\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
-C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
-C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
-C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
-            </source>
-          </subsection>
+                
+          <p>Now you are ready to check out some Eclipse
+          <a href="eclipse-tips.html">tips&amp;tricks</a></p>
         </section>
     </body>
 </document>
