@@ -49,6 +49,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -152,7 +153,7 @@ public class VersionPane extends RenderPlugin {
                     }
                 }
                 if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    documentComponent.setModel(new Model(modelNode.getName()));
+                    documentComponent.setModel(new Model(ISO9075Helper.decodeLocalName(modelNode.getName())));
                     versionComponent.setModel(new Model("current"));
                     subModel.setModel(new JcrNodeModel(modelNode));
                     createdComponent.setModel(new Model(""));
