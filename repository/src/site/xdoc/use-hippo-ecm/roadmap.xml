@@ -31,11 +31,32 @@
               </p>
               </subsection>
               <subsection name="Search Query GUI in CMS">
-              <p> 
-                  Creating searches won't need XPATH or SQL skills, but will be created through
-                  a CMS GUI in which you click together some search criteria, including preview of
-                  the results. 
-              </p>
+                  <p> 
+                      Creating searches won't need XPATH or SQL skills, but will be created through
+                      a CMS GUI in which you click together some search criteria, including preview of
+                      the results. 
+                  </p>
+              </subsection>
+              
+              <subsection name="GUI for creating a facetted navigation">
+                  <p> 
+                      Currently, when creating a facetted navigation, you have to provide a
+                      UUID from the physical node that indicates the 'root' of the content, and
+                      add facets, like [hippo:author, hippo:year, hippo:location]. 
+                      <br/>
+                      Instead of having to <code>know</code> all properties, a GUI helping you
+                      where you can drag drop the properties you want facetted navigation on will
+                      be provided in short notice.
+                  </p>
+              </subsection>
+              <subsection name="GUI for creating a facet select">
+                  Just like for facetted navigation, you need to <code>know</code> some 
+                  properties that are on nodes to build a proper facet select. For example,
+                  when you only want published documents, you need to add a 'hippostd:state' to the 
+                  hippo:facets property and add 'published' to the hippo:values property. 
+                  <br/>
+                  Obviously, instead of typing, a graphical view show you available properties and 
+                  possible values will be added as a default Hippo CMS plugin.
               </subsection>
           </section>
       </body>
