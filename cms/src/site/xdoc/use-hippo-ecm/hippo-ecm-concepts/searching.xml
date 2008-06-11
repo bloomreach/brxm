@@ -37,10 +37,10 @@
                   about 'Java Content Repository'.
                   </p>
                   <source>
-                      String xpath = "//*[jcr:contains(.,'Java Content Repository')]";
-                      QueryManager qmgr = session.getWorkspace().getQueryManager();
-                      Query query = qmgr.createQuery(xpath, Query.XPATH);
-                      QueryResult res = query.execute();
+String xpath = "//*[jcr:contains(.,'Java Content Repository')]";
+QueryManager qmgr = session.getWorkspace().getQueryManager();
+Query query = qmgr.createQuery(xpath, Query.XPATH);
+QueryResult res = query.execute();
                   </source>
                   <p>
                   <b>We don't want to know this actually, do we?</b> If you want to know more about
@@ -48,8 +48,31 @@
                   </p>
               </subsection>
               <subsection name="Hippo CMS makes it easier for you">
-                  
+                  <p>
+                  A default template plugin in Hippo CMS is the hippo query template plugin. This plugin
+                  enables you to store a search in the repository. You can for example store a query in your
+                  document that says: 'do here a query/search that show the last 3 news items'. 
+                  Currently, the plugin lets you type an Xpath or SQL statement and gives you feedback wether 
+                the statement is valid. Obviously, and this is in the <a href="../roadmap.html">roadmap</a>, we will
+                provide a GUI to enable you creating searches without having to know the Xpath syntax. 
+                  </p>
               </subsection>
+            <subsection name="How to use a stored search/query">
+              <p>
+                A frontend can execute a query node to get the actual search result. The 
+                <a href="/website-development/index.html">Hippo Site Toolkit</a> automatically
+                detects a search node, executes the search and let you navigate through the result set. 
+              </p>
+            </subsection>
+            <subsection name="Parameterized searches">
+              <p>
+                As explained you can store a search in Hippo Repository. But, obviously, perhaps you 
+                want to reuse the same search but only tune a parameter, like the number of results you want.
+                Therefor, we support parameterized queries. This means that at some place in the query, a '$' can 
+                be placed, which is substituted by a value during execution. See <a href="/website-development/index.html">Hippo Site Toolkit</a> 
+                on how you can use this. 
+              </p>
+            </subsection>
           </section>
       </body>
   </document>
