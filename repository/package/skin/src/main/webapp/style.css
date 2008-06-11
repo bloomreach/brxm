@@ -45,16 +45,6 @@ input[type="submit"] {
 h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px;}
 h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
 
-th {
-  text-align:left;
-  background: url('images/filelistHeaderback.gif') repeat-x; 
-  padding: 4px;
-  padding-top: 2px;
-}
-tr.even td, tr.odd td { padding: 5px; }
-tr.even td{background-color: #f7f7f7}
-tr.odd td { padding: 5px; }
-
 ul.highlight li,
 ul.highlight li a span,
 ul.hightlight li, 
@@ -72,6 +62,7 @@ padding-top: 3px;
 color: black; 
 margin-bottom: 5px; 
 margin-left: 5px;
+cursor: pointer;
 }
 
 span.fauxbutton input {width: 140px; border:1px solid #000; margin: 5px; margin-top:3px;}
@@ -86,6 +77,11 @@ margin:5px;
 padding: 10px;
 padding-left: 60px;
 }
+
+div.templatetitle h3, div.usertitle h3{font-size: 20px; color: #666666; font-weight: normal}
+div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-weight: normal; padding-left:2px;}
+
+
 
 /* Tabsplugin */
 /* ================================================ */
@@ -207,6 +203,8 @@ div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666}
 div.groupsico div ul li.icolistsmall { background-image: url("images/ico/groups_ico_small.png")}
 div.usersico div ul li.icolistsmall {background-image: url("images/ico/users_ico_small.png")}
 div.domainsico div ul li.icolistsmall { background-image: url("images/ic/domain_ico_small.png")}
+
+table.users_ico_table tr td{background-image: url("images/ico/users_ico_small.gif")}
 
 .iconsSmall a{display: block; padding: 2px; background-repeat: no-repeat; text-indent: -9999px; width: 16px; height: 16px;}
 .iconsBig a{display: block; padding: 2px; background-repeat: no-repeat;}
@@ -352,6 +350,14 @@ width: 181px;
 padding-top: 35px;
 }
 span.templateactions ul li a span{padding-left: 0px}
+
+.templatedetails{
+padding: 4px;
+height: 410px;
+height: 80%;
+overflow: auto;
+}
+
 /* temp icon hack */
 li.string a{background-image:url("images/ico/page_white_gear.png")}
 li.html a{background-image:url("images/ico/page_white_gear.png")}
@@ -371,21 +377,36 @@ td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; positio
 
 .editor table tr td{vertical-align: top;}
 
-div.fields{background: #e2e2e2; margin-bottom: 6px; padding: 4px;}
-div.fields{margin-bottom: 6px; padding: 4px}
-div.fields h3{background: #9D9D9D; padding: 4px; color: white; font-weight: bold; font-size: 11px; margin-bottom: 5px;}
+div.fields h3{
+background: url("images/fieldHeadBack.png") repeat-x; 
+padding: 4px;
+color: white;
+font-weight: bold;
+font-size: 11px;
+margin-bottom: 5px;
+}
+
+
 div.fields input[type="text"]{width: 100px;}
-div.fields table tr td{border-bottom: none; padding: 2px;}
+span.actionspanel ul li{background: none}
 div.fields table{width: 100%}
-div.fields table tr td table{width: auto}
-table.htmlarea tr td{padding: 0px; border: 1px solid #f1f1f1; vertical-align: top;}
 
 /* Xinha */
 /* ================================================ */
-table.htmlarea tr td{border: 1px solid #d7d7d7}
+table.htmlarea tr td{border: none}
 table.htmlarea tr td table tr td{border: none}
-table.htmlarea tr td select{margin-top: 4px;}
+table.htmlarea tr td select{margin-top: 0px;}
+table.htmlarea tr td{padding: 0px; vertical-align: top;}
 
+div.fields div.toolbar div, div.toolbar div {
+margin-bottom:0px;
+padding:0px;
+margin: 0px;
+}
+
+body .htmlarea .toolbar select, body .htmlarea .toolbar select:hover, body .htmlarea .toolbar select:active{
+top: 1px;
+}
 
 .htmlarea .toolbar {
   background-color:#f2f0e4;
@@ -471,11 +492,23 @@ padding:0px;
 
 /* Table datalists */
 /* ================================================ */
+
+.dataview{width: 100%; background: white}
+table.dataview th a {color: #666666;}
+.dataview tr td{padding: 5px;}
+.dataview th {
+  text-align:left;
+  background: url('images/filelistHeaderback.gif') repeat-x; 
+  padding: 4px;
+  padding-top: 2px;
+}
+
+tr.even td{background-color: #f7f7f7}
+tr.odd td { padding: 5px; }
+
 .Doclist table tr td a{color: black}
 .Doclist{ height: 215px; overflow: auto}
 
-.dataview thead tr.navigation td { padding: 5px; }
-.dataview{width: 100%}
 
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
 .dataListPaging td div{margin-bottom: 5px}
@@ -507,13 +540,6 @@ background: white;
 margin-top: 10px;
 } 
 
-.templatedetails{
-padding: 4px;
-height: 410px;
-height: 80%;
-overflow: auto;
-}
-
 /* User Management */
 /* ================================================ */
 
@@ -527,20 +553,7 @@ overflow: auto;
 
 .userGroupsList h3{display: none}
 
-.templatedetails div.fields table tr td ul li h3{font-size: 11px; font-weight: bold; padding-top: 2px; padding-bottom: 2px; background: #9d9d9d; display: block; color: white; padding-left:3px;}
-.templatedetails div.fields table tr td ul li{padding: 3px; background: #CCCCCC; margin-bottom: 6px;}
-.templatedetails div.fields table tr td{vertical-align: top}
-
-.templatedetails div.fields table tr td ul li ul li span a{display: none}
-
-.templatedetails .htmlarea td{padding: 0px;}
-.templatedetails div.fields table.htmlarea div{padding: 0px; margin: 0px}
-.templatedetails .htmlarea width{100%}
-
-div.templatetitle h3, div.usertitle h3{font-size: 20px; color: #666666; font-weight: normal}
-div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-weight: normal; padding-left:2px;}
-
-.templatedetails div.fields input{width: 120px;} 
+.templatedetails div.fields input{width: 100px;} 
 
 .templatedetails div.templateactions {
 position: absolute;
@@ -563,6 +576,8 @@ padding-top:4px;
 text-align:center;
 width:100px;
 }
+
+div.templateactions div{margin-bottom: 0px; padding: 0px} 
 
 .templateactions a:hover {
   cursor:pointer;
