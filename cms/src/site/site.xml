@@ -93,6 +93,11 @@
           <item name="The dashboard" href="/use-hippo-ecm/tour/dashboard.html"/>
           <item name="Navigating the CMS" href="/use-hippo-ecm/tour/navigating_the_cms.html"/>
           <item name="Editing a document" href="/use-hippo-ecm/tour/editing_a_document.html"/>
+          <item name="Creating a document type and template" href="/use-hippo-ecm/tour/creating_a_document_type_and_template.html"/>
+          <item name="Managing users and groups" href="/use-hippo-ecm/tour/managing_users_and_groups.html"/>
+          <item name="Workflow" href="/use-hippo-ecm/tour/workflow.html"/>
+          <item name="Versioning" href="/use-hippo-ecm/tour/versioning.html"/>
+          <item name="Working with authorizations" href="/use-hippo-ecm/tour/working_with_authorizations.html"/>
         </item>
       </item>
 

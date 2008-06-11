@@ -18,21 +18,39 @@
     limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Grand tour: Editing a document</title>
-    </properties>
-    <body>
-        <section name="Editing a document">
-            <p>
-                To edit a document, users must first locate and select it using the Browse tab. A list of actions 
-                will then be displayed in the Actions pane and if the user has the appropiate rights this list will contain
-                an action called 'Edit'.
-                <img src="../../../images/tour/edit1.jpg" alt="Select a document to see the 'edit' action."/>
-                
-                <br/><br/>
-                Clicking on the 'Edit' action will instantiate a new Editing-tab and open the document in our document Editor.
-                <img src="../../../images/tour/edit2.jpg" alt="Editing a document" />                
-            </p>
-        </section>
-    </body>
+  <properties>
+    <title>Usage tour: Editing a document</title>
+  </properties>
+  <body>
+    <section name="Editing a document">
+      <p>
+To edit a document, users must first locate and select it in the
+Browse perspective. A list of actions will be displayed in the Actions pane  
+and if the user has the appropiate rights this list will contain an 
+action called 'Edit'. (listing 1)
+      </p>
+      <p>
+        <img src="../../../images/tour/edit1.jpg" alt="Select a document to see the 'edit' action."/><br/>
+        <em>Listing 1: The document named 'yourArticle' is selected and it's actions are loaded.</em>
+      </p>
+      <p>
+Clicking the 'Edit' link will open the document in a new editor perspective 
+and the user can start editing (listing 2). When the user has finished editing he 
+can save his changes by clicking 'Save' in the Actions pane. The changes
+will be persisted and the tab will be closed.
+      </p>
+      <p>
+        <img src="../../../images/tour/edit2.jpg" alt="Editing a document" /><br/>
+        <em>
+            Listing 2: A document named 'yourArticle' is currently being edited. The 
+            introduction field shows a rich-text editor widget. 
+        </em>
+      </p>
+        <br/><br/><br/>
+      <p align="center">
+          <a href="navigating_the_cms.html">&lt;- Previous: Navigating the CMS</a>&#160;&#160;&#160;&#160;&#160;<a href="creating_a_document_type_and_template.html">Next: Creating a document type and template -></a>
+      </p>
+      <br/><br/>        
+    </section>
+  </body>
 </document>

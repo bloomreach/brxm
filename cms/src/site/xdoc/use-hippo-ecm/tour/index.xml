@@ -18,48 +18,45 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Hippo ECM Grand tour</title>
-    </properties>
-<body>
-
-<section name="Hippo ECM tour">
-  <subsection name="Hippo CMS7">
-    <p>
-      Hippo CMS7 is our frontend application. It is built on top of Hippo Repository and implemented with Apache Wicket.
-      We've created a grand tour to show you the key concepts you need to know to start using the CMS.
-    </p>
-    <ul>
-      <li>
-        <a href="logging_in.html">Logging in</a>
-      </li>  
-      <li>
-        <a href="dashboard.html">The dashboard</a>
-      </li>  
-      <li>
-        <a href="navigating_the_cms.html">Navigating the CMS</a>
-      </li>  
-      <li>
-        <a href="editing_a_document.html">Editing a document</a>
-      </li>  
-      <li>
-        <a href="creating_a_document_type_and_template.html">Creating a document type and template</a>
-      </li>  
-      <li>
-        <a href="managing_users_and_groups.html">Managing users and groups</a>
-      </li>  
-      <li>
-        <a href="workflow.html">Workflow</a>
-      </li>  
-      <li>
-        <a href="versioning.html">Versioning</a>
-      </li>  
-      <li>
-        <a href="working_with_authorizations.html">Working with authorizations</a>
-      </li>  
-    </ul>   
-  </subsection>
-</section>
-
-</body>
+  <properties>
+      <title>Usage ECM Usage tour</title>
+  </properties>
+  <body>
+    <section name="Hippo ECM tour">
+      <subsection name="Hippo CMS7">
+        <p>
+          This tour is created as a quick intro into the usage of the key concepts of Hippo CMS7.
+        </p>
+        <ul>
+          <li>
+            <a href="logging_in.html">Logging in</a>
+          </li>  
+          <li>
+            <a href="dashboard.html">The dashboard</a>
+          </li>  
+          <li>
+            <a href="navigating_the_cms.html">Navigating the CMS</a>
+          </li>  
+          <li>
+            <a href="editing_a_document.html">Editing a document</a>
+          </li>  
+          <li>
+            <a href="creating_a_document_type_and_template.html">Creating a document type and template</a>
+          </li>  
+          <li>
+            <a href="managing_users_and_groups.html">Managing users and groups</a>
+          </li>  
+          <li>
+            <a href="workflow.html">Workflow</a>
+          </li>  
+          <li>
+            <a href="versioning.html">Versioning</a>
+          </li>  
+          <li>
+            <a href="working_with_authorizations.html">Working with authorizations</a>
+          </li>  
+        </ul>   
+      </subsection>
+    </section>
+  </body>
 </document>
