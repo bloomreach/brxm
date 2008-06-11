@@ -40,6 +40,11 @@
           </li>
           <li>
             <a href="eclipse.html">Building with Eclipse</a>
+            <ul>
+              <li>
+                <a href="eclipse-tips.html">Eclipse best practices</a>
+              </li>
+            </ul>
           </li>
           <li>
             <a href="netbeans.html">Building with Netbeans</a>
