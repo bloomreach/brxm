@@ -19,22 +19,13 @@
   -->
 <document>
   <properties>
-      <title>Usage tour: The dashboard</title>
+    <title>Usage tour: Versioning</title>
   </properties>
   <body>
-    <section name="The dashboard">
-      <p>
-Once you've logged in successfully you will be presented with the dashboard.<br/>
-Here you will find two lists, the 'History' and the 'Task' list. 
-        <ul>
-          <li>The 'History' list provides a view into all recent repository activity</li>
-          <li>The 'Task' list informs the user which documents are awaiting a workflow action, like 'Request for publication' or 'Request for deletion'</li>
-        </ul> 
-        <img src="../../../images/tour/dashboard.jpg" alt="Navigating the CMS: the dashboard"/>
-        <br/>
-      </p>
+    <section name="Versioning">
+      Todo:
       <p align="center">
-        <a href="logging_in.html">&lt;- Previous: Logging in</a>&#160;&#160;&#160;&#160;&#160;<a href="navigating_the_cms.html">Next: Navigating the CMS -></a>
+        <a href="workflow.html">&lt;- Previous: Workflow</a>&#160;&#160;&#160;&#160;&#160;<a href="working_with_authorizations.html">Next: Working with authorizations -></a>
       </p>
     </section>
   </body>

@@ -19,22 +19,13 @@
   -->
 <document>
   <properties>
-      <title>Usage tour: The dashboard</title>
+      <title>Usage tour: Creating a document type and template</title>
   </properties>
   <body>
-    <section name="The dashboard">
-      <p>
-Once you've logged in successfully you will be presented with the dashboard.<br/>
-Here you will find two lists, the 'History' and the 'Task' list. 
-        <ul>
-          <li>The 'History' list provides a view into all recent repository activity</li>
-          <li>The 'Task' list informs the user which documents are awaiting a workflow action, like 'Request for publication' or 'Request for deletion'</li>
-        </ul> 
-        <img src="../../../images/tour/dashboard.jpg" alt="Navigating the CMS: the dashboard"/>
-        <br/>
-      </p>
+    <section name="Creating a document type and template">
+      Todo:
       <p align="center">
-        <a href="logging_in.html">&lt;- Previous: Logging in</a>&#160;&#160;&#160;&#160;&#160;<a href="navigating_the_cms.html">Next: Navigating the CMS -></a>
+        <a href="editing_a_document.html">&lt;- Previous: Editing a document</a>&#160;&#160;&#160;&#160;&#160;<a href="managing_users_and_groups.html">Next: Managing users and groups -></a>
       </p>
     </section>
   </body>

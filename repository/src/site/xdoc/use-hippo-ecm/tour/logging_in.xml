@@ -17,34 +17,34 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-  <document>
-      <properties>
-          <title>Grand tour: Logging in</title>
-      </properties>
-      <body>
-          <section name="Logging in">
-              <p>
-                  To start using the CMS you first have to login. A successfull login will grant you with a valid JcrSession, 
-                  allowing the frontend-application to load the frontend configuration from repository and instantiate the 
-                  Wicket component hierarchy.   
-              </p>
-              <subsection name="Log in">
-                  <p>
-                      Point your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>. You will be presented with a login dialog.<br/>
-                      By default you can login as one of the following users:
-                      <ul>
-                          <li>admin; username=admin, password=admin</li>
-                          <li>author; username=author, password=author</li>
-                          <li>editor; username=editor, password=editor</li>
-                      </ul>
-                      
-                      <img src="../../../images/tour/login.jpg" alt="Logging in"/>
-                  </p>
-                  <p>
-                  </p>
-              </subsection>
-              
-          </section>
-          
-      </body>
-  </document>
+<document>
+  <properties>
+      <title>Usage tour: Logging in</title>
+  </properties>
+  <body>
+    <section name="Logging in">
+      <p>
+To start using the CMS you first have to login. A successfull login will grant 
+you with a valid JcrSession, allowing the frontend application to load the 
+- user/group specific - frontend configuration from repository and create the Wicket 
+<a href="http://cwiki.apache.org/WICKET/component-hierarchy.html">component hierarchy</a>.   
+      </p>
+      <subsection name="Log in">
+        <p>
+Point your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>. 
+You will be presented with a login dialog.<br/> By default you can login as one of 
+the following users:
+          <ul>
+              <li>admin; username=admin, password=admin</li>
+              <li>author; username=author, password=author</li>
+              <li>editor; username=editor, password=editor</li>
+          </ul>
+          <img src="../../../images/tour/login.jpg" alt="Logging in"/>
+        </p>
+      </subsection>
+      <p>
+        <a href="dashboard.html" align="right">Next: The dashboard -></a>
+      </p>
+    </section>
+  </body>
+</document>

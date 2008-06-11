@@ -17,44 +17,61 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-  <document>
-      <properties>
-          <title>Grand tour: Navigating the CMS</title>
-      </properties>
-      <body>
-          <section name="Navigating the user interface">
-              <p>
-                  The CMS user interface is navigatable by clicking on the tabs in the top of the UI. 
-                  Some of these tabs are static, like Dashboard, Browse and Management, which means they will
-                  always be visible (if the user has the appropiate rights of course) and cannot be closed by the user.
-                  <img src="../../../images/tour/nav1.jpg" alt="Dashboard tab selected"/><br/>
-                  <em>Listing 1: Dashboard tab selected</em>
-                  <br/>
-                  <img src="../../../images/tour/nav2.jpg" alt="Browse tab selected"/>
-                  <em>Listing 2: Browse tab selected</em>
-                  <br/>
-                  <br/>                  
-                  Other tabs, like a document being edited, are dynamic which means they will only load if the user triggers
-                  an action (like 'Edit document') and can be closed again. This gives users the freedom to edit more than one document at a time.
-                  <img src="../../../images/tour/nav3.jpg" alt="Document 'myarticle' selected"/><br/>
-                  <em>Listing 3: Document 'myarticle' is being edited</em>
-                  <br/>
-                  <img src="../../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
-                  <em>Listing 4: Document 'myarticle' and 'yourArticle' are being edited, 'yourArticle' tab currently in focus</em>
-                  <br/>
-                  
-              </p>
-          </section>
-          
-          <section name="Navigating the repository">
-              By selectting the Browse tab, user are presented with a basic file browser interface 
-              consisting of three panes.<br/>
-              The left pane displays a tree-view on the repository, showing only 'folder' like nodes. Upon selecting a 'folder' in the tree, the middle pane 
-              will display all 'folders' and hippo:handles that belong to the selected 'folder' in a sortable list.<br/>
-              By selecting a node in either the left or middle pane results in a list of actions that can be executed upon that node, in the right pane. 
-              <img src="../../../images/tour/nav_browse.jpg" alt="Browse"/>                
-              
-          </section>
-          
-      </body>
-  </document>
+<document>
+  <properties>
+      <title>Usage tour: Navigating the CMS</title>
+  </properties>
+  <body>
+    <section name="Navigating the CMS">
+      <p>
+Hippo CMS7 has a tabbed user interface. These tabs allow the user to switch 
+between different perspectives that all have their own state. Some actions, 
+like for example clicking on a document link in the dashboard perspective, 
+will automatically open up the browse perspective and highlight the 
+corresponding document in its current location.<br/>
+      </p>
+      <subsection name="Static perspectives">
+Some perspectives are static, like the dashboard (listing 1) or the browse 
+(listing 2) perspective, which means they will always be visible (assuming 
+the user has the appropiate rights) and cannot be closed. 
+      </subsection>    
+      <p>
+        <img src="../../../images/tour/nav1.png" alt="Dashboard tab selected"/><br/>
+        <em>Listing 1: Dashboard tab selected</em>
+        <br/><br/>
+        <img src="../../../images/tour/nav2.png" alt="Browse tab selected"/><br/>
+        <em>Listing 2: Browse tab selected</em>
+      </p>
+      <subsection name="Dynamic perspectives">
+Other perspectives, like the document editor, are dynamic which means they 
+are created on-the-fly and can be closed again. This gives users the freedom
+to have multiple documents open simultaneously (listing 3). 
+      </subsection>
+      <p>
+        <img src="../../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
+        <em>Listing 3: Document 'myarticle' and 'yourArticle' are being edited, 
+            'yourArticle' is currently in focus</em>
+      </p>
+    </section>
+    <section name="Navigating the repository">
+      <p>
+By selectting the Browse tab, the user is presented with a basic file 
+browser interface consisting of three panes.<br/>
+The left pane displays a tree-view on the repository, showing the folders 
+the user is allowed to see. Upon clicking a folder in the tree-view,   
+all folders and documents that belong to the selected folder will be 
+displayed as a sortable/pageable list in the middle pane.<br/>
+      </p>
+      <subsection name="Actions">
+Documents and folders all have a list of (workflow)actions that can be 
+executed upon them. These actions are displayed in the right pane and 
+will be (re)loaded every time a user clicks on a document or folder 
+in either the left or middle pane. 
+      </subsection>                
+      <img src="../../../images/tour/nav_browse.jpg" alt="Browse"/>
+      <p align="center">
+        <a href="dashboard.html">&lt;- Previous: The dashboard</a>&#160;&#160;&#160;&#160;&#160;<a href="editing_a_document.html">Next: Editing a document -></a>
+      </p>
+    </section>
+  </body>
+</document>
