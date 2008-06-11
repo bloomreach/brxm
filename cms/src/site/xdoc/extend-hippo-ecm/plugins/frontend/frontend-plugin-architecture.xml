@@ -215,6 +215,15 @@ public class RootPlugin extends RenderPlugin {
         </p>
       </subsection>
 
+    </section>
+
+    <section name="Advanced - Subject to Change">
+      <p>
+        This section gives some more detail on the core architecture.  This
+        information is, however, preliminary as the architecture is still very
+        young.
+      </p>
+
       <subsection name="Plugin Configuration">
         <p>
           Each plugin has its own configuration that provides an indirection
