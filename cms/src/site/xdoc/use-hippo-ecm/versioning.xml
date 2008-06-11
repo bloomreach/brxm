@@ -34,8 +34,8 @@ to keep track of the changes over time.
 
 <p>
 Certain events may trigger a copy of the then current document to be make.
-This copy is read-only and stored in a different section.  Addtional
-information, such as the date the copy was made helps keeping a timeline of
+This copy is read-only and stored in a different section.  Additional
+information, such as the date the copy was made helps keeping a time-line of
 the document over time.  These copies over time are called "versions" of the
 document.
 </p>
@@ -53,30 +53,13 @@ a core function.
 </p>
 
 <p>
-It is upto the logic of the custom workflow to determin whether or not a
-version has to be created of a document.  The reviewed-actions workflow plugin
+It is up to the logic of the custom workflow to determine whether or not a
+version has to be created of a document.  The reviewed-actions workflow plug-in
 has the following logic at this time: whenever a document is published a
 version of that document variant (i.e. the published document) is created.
 Depublication also involves the versioning to indicate no version of the
 published document available.
 </p>
-
-<blockquote>
-Expert:<br/>
-<p>
-Version storage much be enabled for versions of a document to be stored.  This
-is enabled by default.  This does nowever imply that even though versioning is
-not used at all, some information is stored in the version storage.  If you
-have a custom deployment, your version storage might be removed.  When
-versioning does not seem to work, it needs to be verified.
-</p><p>
-Disabling the version storage is a practise to avoid the additional storage
-overhead of versioning.  The reason for disabling the version storage is that
-it is always used, even if no actual versions are stored.  So if an deployment
-wants to avoid the storage overhead, and does not require document versioning,
-the versioning can be disabled
-</p>
-</blockquote>
 
 </subsection>
 
@@ -84,9 +67,9 @@ the versioning can be disabled
 
 <p>
 Users are normally not directly confronted with versioning.  Creating versions
-is automatic as defined by workflow steps.  So, for instance, as a side effect
-of the reviewed-actions workflow, when publishing a document, a version of the
-document is created.  This is transparent, and not unnoticable for users.
+is automatic as defined by workflow steps.  For instance, as a side effect
+of the reviewed-actions workflow when publishing a document, a version of the
+document is created.  This is transparent, and not unnoticeable for users.
 </p>
 
 <p>
@@ -94,7 +77,7 @@ Whether or not to create a version, needs to be part of the business model,
 thus part of the workflow.
 </p>
 
-<h3>Browsing history of a document</h3>
+<h4>Browsing history of a document</h4>
 
 <p>
 Where the user is confronted with versioning, is if the user wants to view the
@@ -103,7 +86,7 @@ previous versions of a document.
 
 <p>
 The CMS can display a preview of the document while browsing.  When a
-previewable document is selected in the document listing (middle pane) the cms
+previewable document is selected in the document listing (middle pane) the CMS
 can display the content.  You will see the following:
 </p>
 
@@ -117,7 +100,7 @@ current version using the "Newer" link.
 
 <p>
 When browsing like this, the content of the document of previous times is
-displayed in the preview area.  Above it, in the grayscaled bar, information
+displayed in the preview area.  Above it, in the gray scaled bar, information
 about the version is shown.  The name of the article is shown (which is
 constant over all versions, only the current name is shown, renaming or moving
 a document is not part of the document history of the document itself but --if
@@ -143,12 +126,12 @@ document a version of the then current published document is created.  However
 if the document is depublished, there is no longer a published version of the
 document.  The ability of the Hippo ECM suite is to be able to deal with this
 and indicate that in that point in history there is no version.  This
-superceerds plain versioning in JCR.  Hippo does however use plain versioning,
+supersedes plain versioning in JCR.  Hippo does however use plain versioning,
 so other clients not using plain JCR are able to use the same functionality,
 albeit with less user intuitiveness.
 </p>
 
-<h3>Restoring a previous version of a document</h3>
+<h4>Restoring a previous version of a document</h4>
 
 <p>
 Finally the "Restore" button allows the user to replace the current document
@@ -167,14 +150,133 @@ way.  The workflow should in this case allow the user to request a restore
 
 </subsection>
 
-<subsection name="Version workflow configuration and interface for custom workflows">
+</section>
+
+<section name="Developer perspective">
+
+<subsection name="Versioning invocation as part of a workflow step">
 
 <p>
-All packaged products of Hippo ECM have at this time versioning
-pre-configured.  Versioning is a core function of the repository and not a
-seperate plugin.  Versioning needs however be part of a workflow
-configuration, in order for custom workflows to decide when a version of a
-document needs to be checked in (i.e. created).
+Although the JCR interface for versioning can be used, the main usage
+interface for versioning is part of a workflow step.  It is the logic of
+(custom) workflows to determine when a version of a document must be checked
+in.  Workflows are written as plain Java code, as explained in X.  When such a
+custom workflow is invoked it may indicate that a version must be created of a
+document by in its turn invoking the internal workflow for versioning.  This
+versioning workflow is a built-in workflow that has no direct representation
+in a CMS front-end, but is meant to be used from within another workflow.
+</p>
+
+<p>
+Suppose you have the following workflow implementation that marks a document
+as "verified":
+</p>
+
+<source>
+  public class VerifyWorkflowImpl extends WorkflowImpl implements VerifyWorkflow {
+    VerifyableDocument theDocument;
+    public void verified() {
+      theDocument.verified = true;
+    }
+  }
+</source>
+
+<p>
+Which comes with the interface for remote access and the implementation of the
+document, similar as described in X.<br/>
+Then you can modify this workflow to invoke the workflow to create a version
+upon verification as such:
+</p>
+
+<source>
+  import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+  public class VerifyWorkflowImpl extends WorkflowImpl implements VerifyWorkflow {
+    VerifyableDocument theDocument;
+    public void verified() {
+      theDocument.verified = true;
+      VersionWorkflow workflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning");
+      workflow.version(); // this commits the current document as a version
+    }
+  }
+</source>
+
+<p>
+This shows the ability for workflow steps to invoke other workflows.  This
+chaining of workflow steps, although looking very similar to plain method
+calls, is slightly different.  Instead of invoking the workflow step directly,
+it schedules the called workflow to be executed directly after the current
+workflow and within the same transaction.  This means that it is not possible
+to use the return values.
+</p>
+
+<p>
+The versioning workflow is available on any document (it is based upon the JCR
+type hippo:document) in the category "versioning".
+</p>
+
+<p>
+The API of the versioning workflow is available in the Javadocs.
+</p>
+
+<p>
+All packaged products of Hippo ECM have at this time versioning workflow
+pre-configured in the category "versioning".  Versioning is a core function of
+the repository and not a separate plug-in.  Versioning is however part of a
+workflow configuration, in order for custom workflows to decide when a version
+of a document needs to be checked in (i.e. created).  The following
+</p>
+
+<source>
+[repository root]
+`-- hippo:configuration
+    `-- hippo:workflow
+        `-- versioning [hippo:workflowcategory]
+            |-- version [hippo:workflow]
+            |   + hippo:display = Versioning workflow
+            |   + hippo:classname = org.hippoecm.repository.api.Document
+            |   + hippo:workflow = org.hippoecm.repository.standardworkflow.VersionWorkflowImpl
+            |   + hippo:nodetype = hippo:document
+            |   `-- hippo:types [hippo:types]
+            |       `-- org.hippoecm.repository.api.Document [hippo:type]
+            |           + hippo:classname = org.hippoecm.repository.api.Document
+            |           + hippo:display = Document
+            |           + hippo:nodetype = hippo:document
+            `-- revert [hippo:workflow]
+                + hippo:display = Versioning workflow
+                + hippo:classname = org.hippoecm.repository.api.Document
+                + hippo:workflow = org.hippoecm.repository.standardworkflow.VersionWorkflowImpl
+                + hippo:nodetype = nt:frozenNode
+                `-- hippo:types [hippo:types]
+                    `-- org.hippoecm.repository.api.Document [hippo:type]
+                        + hippo:classname = org.hippoecm.repository.api.Document
+                        + hippo:display = Document
+                        + hippo:nodetype = hippo:document
+</source>
+
+<p>
+Note that this definition is already present, this description is for
+informational purposes.
+</p>
+
+</subsection>
+
+<subsection name="Expert information">
+
+<p>
+Version storage much be enabled for versions of a document to be stored.  This
+is enabled by default.  This does however imply that even though versioning is
+not used at all, some information is stored in the version storage.  If you
+have a custom deployment, your version storage might be removed.  When
+versioning does not seem to work, it needs to be verified if the version storage
+is present and active.
+</p>
+
+<p>
+Disabling the version storage is a practice to avoid the additional storage
+overhead of versioning.  The reason for disabling the version storage is that
+it is always used, even if no actual versions are stored.  So if an deployment
+wants to avoid the storage overhead, and does not require document versioning,
+the versioning can be disabled.
 </p>
 
 </subsection>
