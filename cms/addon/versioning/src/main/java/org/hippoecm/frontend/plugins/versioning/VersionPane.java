@@ -47,6 +47,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -136,10 +137,11 @@ public class VersionPane extends RenderPlugin {
         if (model!=null) {
             try {
                 Node modelNode = model.getNode();
-                if (model.getNode().isNodeType("hippo:handle")) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
+                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
+			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -149,7 +151,7 @@ public class VersionPane extends RenderPlugin {
                         }
                     }
                 }
-                if (modelNode.isNodeType("hippo:document")) {
+                if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     documentComponent.setModel(new Model(modelNode.getName()));
                     versionComponent.setModel(new Model("current"));
                     subModel.setModel(new JcrNodeModel(modelNode));
@@ -169,10 +171,11 @@ public class VersionPane extends RenderPlugin {
             int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue() : -1);
             Node modelNode = model.getNode();
             try {
-                if (model.getNode().isNodeType("hippo:handle")) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
+                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
+			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -223,10 +226,11 @@ public class VersionPane extends RenderPlugin {
             int currentVersion = (currentVersionObj instanceof Integer ? ((Integer)currentVersionObj).intValue() : -1);
             Node modelNode = model.getNode();
             try {
-                if (model.getNode().isNodeType("hippo:handle")) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
+                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
+			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -296,10 +300,11 @@ public class VersionPane extends RenderPlugin {
         if (model!=null) {
             Node modelNode = model.getNode();
             try {
-                if (model.getNode().isNodeType("hippo:handle")) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
+                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
+			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;

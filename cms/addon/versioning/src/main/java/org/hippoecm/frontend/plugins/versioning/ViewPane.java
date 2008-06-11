@@ -33,6 +33,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViewPane extends RenderPlugin {
     transient Logger log = LoggerFactory.getLogger(ViewPane.class);
@@ -69,7 +70,7 @@ public class ViewPane extends RenderPlugin {
         if (model != null) {
             try {
                 Node modelNode = model.getNode();
-                if (model.getNode().isNodeType("hippo:handle")) {
+                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
@@ -78,7 +79,8 @@ public class ViewPane extends RenderPlugin {
                         }
                     }
                 }
-                if (modelNode.isNodeType("hippo:document")) {
+		// FIXME: this has knowledge of hippostd, which is not fundamentally wrong, but could be cleaner
+                if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT) && !modelNode.isNodeType("hippostd:folder")) {
                     get("content").setVisible(true);
                     get("alternate").setVisible(false);
                     redraw();
