@@ -19,277 +19,31 @@ caption,th { text-align : left; }
 div.clearer {clear: both;}
 .floatleft{float: left}
  /* firefox fix for left right movement when scrollbar is enabled */
-html { min-height: 100%; margin-bottom: 0.01em; }
+ html { min-height: 100%; margin-bottom: 0.01em; } 
 /* ======================================== */
   
-body {
-  font-family: tahoma, arial,sans-serif,helvetica;
-  font-size: 11px;
-  background: #223f5e url('images/back.gif') repeat-x;
-  padding: 2px;
- /* maximum viewspace for IE 7 users running a screen resolution of 1024x768 with file menu, one extra toolbar and status bar enabled */
-  width: 1020px;
-  height: 586px;
+
+/* Global elements styles */
+/* ================================================ */
+
+body {background: #4a84c8 url('images/back.gif') repeat-x; padding: 2px;}
+
+/* default font settings */
+body, table tr td, table tr th{
+font-family: tahoma, arial,sans-serif,helvetica;
+font-size: 11px;
+vertical-align: top;
 }
 
-html, body{
-margin: 0;
-padding: 0;
-border: 0;
-height: 100%;
-overflow: hidden;
-position: relative;	
-}
-
-/* temp */
-.versioning{
- 
-}
-
-.Menu {padding: 10px}
-
-/* zouten met de breadcrumbs */
-span.Breadcrumb{display: none}
-
-/* logout plugin */
-div.logout { margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px}
-div.logout span.name{font-size: 22px}
-div.logout div a { color: white; font-weight: bold }
-
-#header{
-height: 85px;
-padding: 10px;
-}
-
-div div ul li.icolistsmall{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
-div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666}
-div.groupsico div ul li.icolistsmall { background-image: url("images/groups_ico_small.gif")}
-div.usersico div ul li.icolistsmall {background-image: url("images/users_ico_small.gif")}
-div.domainsico div ul li.icolistsmall { background-image: url("images/domain_ico_small.gif")}
-
-.panelcontainer{border: 1px solid white; background: white;}
-.panel h2{background: white url("images/pluginheaderback.gif") repeat-x;}
-.panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/pluginheaderback.gif") repeat-x;}
-.panel{padding-top: 5px; position: relative;}
-.nopadding{padding: 0px}
-
-
-#left{width: 222px; float: left; min-height: 506px; max-height: 506px; }
-#lefthalf{width: 504px; float: left; min-height: 506px; max-height: 506px; overflow: auto;}
-#righthalf{width: 504px; float: right; min-height: 506px; max-height: 506px; overflow: auto}
-
-#right{width: 222px; float: right; min-height: 506px; max-height: 506px; overflow: auto}
-#center{margin-left: 228px; margin-right: 228px; min-height: 506px; position: relative;}
-#wideright{width: 787px; height: 351px; float: right; min-height: 506px; background: #f2f2f2;}
-#wideleft{width: 787px; height: 351px; float: left; min-height: 506px; background: #f2f2f2;}
-
-.fauxbutton span{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;
-cursor:pointer;
-cursor:hand;
- }
-.fauxbutton a{background: url("images/fauxbutton.gif") center center; display: block; width: 100px; height: 18px; text-align: center; padding-top: 3px; color: black; margin-bottom: 5px; margin-left: 5px;}
-span.fauxbutton input {width: 140px; border:1px solid #000; margin: 5px; margin-top:3px;}
-.scrolllist{overflow: auto; height: 80px; padding: 2px; background-color: white}
-
-.panelhead{background: #f2f2f2; width: 100%; height: 70px;}
-.panelhead td{padding: 5px;}
-
-div.slidercontrol a {background: url("images/sliderback.gif") repeat-x; height: 6px; width: 100%; text-align: center; display: block}
-div.slidercontrol a:hover{cursor: s-resize}
-
-
-
-h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px;}
-h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
-.preview {padding: 15px; height: 156px; overflow: scroll}
-
-.gray{color: #666666} 
-.panelgray{background: #f2f2f2}
-
-.taglist li{display: inline; ccolor: #a2a2a2;}
-.versionlabel {font-size: 12px; color: #666666; padding: 5px; padding-left: 15px;}
-
-a.previous{background: url("images/arrowleft.gif") no-repeat center left; padding: 8px; padding-right: 0px;}
-a.next{background: url("images/arrowright.gif") no-repeat center right; padding: 8px; padding-left: 0px}
+a { color: #18a4e2 }
 
 input[type="submit"] {
  font-size: 11px;
  padding: 3px;
 }
-table.versiondetails{margin-top: -2px}
-table tr td table.versiondetails tr td{padding: 0px; color: #a2a2a2}
 
-table tr td.docico{background: url("images/document_ico_big.gif") no-repeat center center; width: 40px}
-
-
-.yui-layout-unit #left{width: auto; float: none; min-height: auto;}
-.yui-layout-unit #right{width: auto; float: none; min-height: auto;}
-.yui-layout-unit #center{margin-left: auto; margin-right: auto; min-height: auto; max-height: auto;}
-.yui-layout-unit .panelcontainer h2{display: none}
-#center .panelcontainer h2{display: none}
-
-.tabsplugin {position: absolute; top: 50px; left: 5px; padding-top: 30px;}
-#refresh{z-index: 10}
-.yui-layout-hd h2 span, .panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: center right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
-
-.yui-layout-hd h2 span.actions, .panelcontainer h2 span.actions{background-image: url("images/boxheadingactions.gif")}
-.yui-layout-hd h2 span.search, .panelcontainer h2 span.search{background-image: url("images/boxheadingsearch.gif")}
-.yui-layout-hd h2 span.history, .panelcontainer h2 span.history{background-image: url("images/boxheadinghistory.gif")}
-.yui-layout-hd h2 span.documents, .panelcontainer h2 span.documents{background-image: url("images/boxheadingdocuments.gif")}
-.yui-layout-hd h2 span.edit, .panelcontainer h2 span.edit{background-image: url("images/boxheadingedit.gif")}
-.yui-layout-hd h2 span.task, .panelcontainer h2 span.task{background-image: url("images/boxheadingtask.gif")}
-.yui-layout-hd h2 span.edititem, .panelcontainer h2 span.edititem{background-image: url("images/edititem.gif")}
-.yui-layout-hd h2 span.previewlabel, .panelcontainer h2 span.previewlabel{background-image: url("images/preview.gif")}
-.yui-layout-hd h2 span.userman, .panelcontainer h2 span.userman{background-image: url("images/userman.gif")}
-
-
-a { color: #18a4e2 }
-
-div.Tree {
-margin:0px;
-border: none;
-}
-
-
-div.Tree div.wicket-tree{margin: 0px; height: 477px; width: 222px; overflow: auto;} 
-div.Tree div.wicket-tree div{overflow: visible}
-
-div.Tree .wicket-tree .row a {color: black}
-div.wicket-tree div.a_{width: auto;}
-div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
-div.Tree .wicket-tree .row-selected a {}
-div.Tree .wicket-tree .row-selected { background: #f2f2f2; }
-div.Tree div.wicket-tree{border: none;}
-
-
-div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
-
-
-
-
-/* common */
-table tr td{font-size: 11px}
-table.displaytable tr td{padding: 15px}
-/* selected variant */
-.selected {
- /* background-color:#4b82c6; */
-}
-.selected a {
-  color:#ffffff;
-}
-
-/* selected document in list */
-table tr.selected {
-  background-color:#4b82c6;
-}
-table tr.selected td span, table tr.selected td span a{color: white}
-
-/* plugin boxes */
-.yui-layout-wrap .yui-layout-wrap{border: none}
-.yui-layout-unit-center .yui-layout-wrap, .yui-layout-unit-left .yui-layout-hd, .yui-layout-unit-right .yui-layout-hd, div.plugintitle {background: white url("images/pluginheaderback.gif") repeat-x; vertical-align: top; height: 29px; border: 1px solid white}
-.yui-layout .yui-layout-scroll div.yui-layout-bd {background-color:white}
-
-
-div div div div b{display: none; color: white;}
-
-/* dialog window */
-body.dialog{background: none; font-size: 14px; padding: 10px; text-align: right;}
-body.dialog table.dialogbuttons{height: 100%; width: 100%}
-body.dialog table.dialogbuttons tr td{vertical-align: top; text-align: right; }
-body.dialog table.dialogbuttons tr td{padding: 15px;}
-body.dialog table.dialogbuttons tr td.okbutton a{padding: 5px;border: 1px solid #333333; display: block; text-align: center; width: 100px;}
-body.dialog table.dialogbuttons tr td.cancelbutton a{padding: 5px;border: 1px solid #333333; display: block; text-align: center; width: 100px;}
-body.dialog table.dialogbuttons tr td.okbutton a:hover{background: #f1f1f1; color: #666666; width: 100px}
-body.dialog table.dialogbuttons tr td.cancelbutton a:hover{background: #f1f1f1; color: #666666; width: 100px;}
-
-/* template editor */
-div#templateitemedit{background: red}
-div.fields table{width: 100%}
-div.fields table tr td table{width: auto}
-table.htmlarea tr td{padding: 0px; border: 1px solid #f1f1f1}
-
-span.templateactions{
-background:none repeat scroll 0%;
-display:block;
-float:right;
-position:absolute;
-float:right;
-right:0px;
-top:117px;
-width: 212px;
-}
-span.templateactions ul{padding: 12px;}
-div.templateeditor h3{font-size: 14px;}
-
-div.fields div div div div div div{border-bottom: 1px dotted #f1f1f1}
-.templateeditor{
-margin:5px;
-overflow:auto;
-max-height: 475px;
-background: #d2d2d2;
-}
-table.htmlarea tr td{border: 1px solid #d7d7d7}
-table.htmlarea tr td table tr td{border: none}
-table.htmlarea tr td select{margin-top: 4px;}
-
-div#templateitemedit{
-background: none;
-position: absolute;
-right: 8px;
-top: 227px;
-width: 20%;
-}
-
-
-
-
-div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
-div#templateitemedit input{width: 140px;}
-
-a.editbutton{
-display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;
-text-indent: -9999px;
-background: url("images/edit_ico.png") no-repeat;
-position: top
-}
-a.upbutton{display: block; float: right; width: 10px; height: 10px; margin-right: 3px; padding: 4px;
-background: url("images/up_ico.png") no-repeat}
-
-a.downbutton{display: block; float: right; width: 10px; height: 10px;clear: right; margin-right: 3px; padding: 4px;
-background: url("images/down_ico.png") no-repeat; margin-top: 30px;}
-
-
-td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; position: relative;}
-table.grid tr td.itemmovehandle {padding-top: 4px; padding-right: 0px;}
-
-a.addbutton{float: left: margin-left: 10px}
-
-/* editor stying */
-.editor table tr td{border-bottom: 1px dotted #999999}
-.editor table tr td .fields h3{margin-bottom: 5px;}
-.editor div.panel{max-height: 700px; background: white;}
-.editor h2{display: none}
-
-div.editor{
-height:416px;
-max-height:500px;
-overflow:auto;
-padding:7px;
-width:772px;
-}
-div.editor div.fields{background: #e2e2e2; margin-bottom: 6px; padding: 4px;}
-div.fields{margin-bottom: 6px; padding: 4px}
-div.fields h3{background: #9D9D9D; padding: 4px; color: white; font-weight: bold; font-size: 11px; margin-bottom: 5px;}
-
-div.fields a.templateRemove{background: url("images/remove_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
-div.fields a.templateAdd{background: url("images/add_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
-div.fields a.templateUp{background: url("images/up_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
-div.fields a.templateUp{background: url("images/edit_ico.png") no-repeat center center; display: block; width: 17px; height: 17px; text-indent: -9999px;}
-div.fields input[type="text"]{width: 100px;}
-div.fields table tr td{border-bottom: none; padding: 2px;}
-
-/* list views */
-table th, table td{font-size: 11px}
+h3.documentlabel{font-size: 18px; font-weight: normal; color: #666666; margin-right: 15px;}
+h4{font-weight: normal; color: #a2a2a2; float: left; margin-right: 5px;}
 
 th {
   text-align:left;
@@ -298,27 +52,45 @@ th {
   padding-top: 2px;
 }
 tr.even td, tr.odd td { padding: 5px; }
-tr.even {background-color: #f7f7f7}
-tr.even td { }
+tr.even td{background-color: #f7f7f7}
 tr.odd td { padding: 5px; }
 
-.Doclist table tr td a{color: black}
-.Doclist{ height: 215px; overflow: auto}
+ul.highlight li,
+ul.highlight li a span,
+ul.hightlight li, 
+table tr.selected td, 
+.hightlight a { background: #c0d1ea; color: white;}
 
-.dataview{width: 100%}
-.dataview thead tr.navigation td { padding: 5px; }
+/* temp fake input submit button */
+.fauxbutton span, .fauxbutton a{
+background: url("images/fauxbutton.gif") center center; 
+display: block; 
+width: 100px; 
+height: 18px; 
+text-align: center; 
+padding-top: 3px; 
+color: black; 
+margin-bottom: 5px; 
+margin-left: 5px;
+}
 
-.dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
-.dataListPaging td div{margin-bottom: 5px}
-.dataListPaging td a{padding: 5px;}
-.dataListPaging td a:hover{background: #f2f2f2}
-.dataListPaging td span em, .dataListPaging td a em{font-style: normal}
+span.fauxbutton input {width: 140px; border:1px solid #000; margin: 5px; margin-top:3px;}
 
-.navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
-.navigator { color: grey }
-.navigator a { color: #18a4e2 }
+/* General page head */
+div.pageTitle, div.templatetitle, div.usertitle{
+background-color: #e2e2e2;
+background-repeat: no-repeat;
+background-position: 7px center;
+height:48px;
+margin:5px;
+padding: 10px;
+padding-left: 60px;
+}
 
-/* Main Tab Navigation */
+/* Tabsplugin */
+/* ================================================ */
+.tabsplugin {position: absolute; top: 50px; left: 5px; padding-top: 30px; height: 128%; width: 80%;}
+
 ul.tabs{display: block; position: absolute; top: 0px; left: 15px; width: 800px}
 
 ul.tabs li {
@@ -340,13 +112,379 @@ ul.tabs a {
   float: left; 
  }
 
-ul.tabs li a{background-position: 6px 4px; background-repeat: no-repeat; font-size: 11px; padding: 8px 5px 8px 34px; background-image: url('images/edit.gif')}
+ul.tabs li a{background-position: 6px 4px; background-repeat: no-repeat; font-size: 11px; padding: 8px 5px 8px 34px; background-image: url('images/tabs/edit.png')}
 ul.tabs li.selected { background:url('images/tabactive.gif') no-repeat bottom left}
-ul.tabs li.tab0 a { background-image: url('images/home.gif')}
-ul.tabs li.tab1 a { background-image: url('images/browse.gif')}
+ul.tabs li.tab0 a { background-image: url('images/tabs/home.png')}
+ul.tabs li.tab1 a { background-image: url('images/tabs/browse.png')}
+ul.tabs li.tab2 a { background-image: url('images/tabs/management.png')}
 
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/closetab.gif') no-repeat center center; padding: 7px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
+
+
+/* Preview panel */
+/* ================================================ */
+.preview {padding: 0px; height: 33%; overflow: auto; border: 1px solid black; margin: 11px;}
+
+
+/* progress */
+/* ================================================ */
+span.wicket-ajax-indicator{position: absolute; top: 20px; left: 100px; display: block; visiblity: visible}
+
+/* Logout */
+/* ================================================ */
+div.logout { margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px}
+div.logout span.name{font-size: 22px}
+div.logout div a { color: white; font-weight: bold }
+
+
+/* Main Positioning and Panels */
+/* ================================================ */
+#header{
+height: 85px;
+padding: 10px;
+}
+
+.panelcontainer{border: 1px solid white; background: white url("images/panelBack.png") repeat-x 0px 29px;}
+.panel{padding-top: 5px; position: relative;}
+.panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/panelHeadBack.png") repeat-x;}
+.nopadding{padding: 0px}
+
+#left{width: 222px; float: left; height: 66%;}
+#lefthalf{width: 50%; float: left; height: 66%; overflow: auto;}
+#righthalf{width: 49%; float: right; height: 66%; overflow: auto}
+
+#right{width: 222px; float: right; height: 66%; overflow: auto}
+#center{margin-left: 228px; margin-right: 228px; height: 66%; position: relative;}
+#wideright{width: 787px; width: 70%; float: left; height: 66%; margin-left: 5px; background: white;}
+#wideleft{width: 787px; width: 70%; float: left; height: 66%; margin-right: 5px; background: white}
+
+.scrolllist{overflow: auto; height: 80px; padding: 2px; background-color: white}
+
+.panelhead{background: #f2f2f2; width: 100%; height: 70px;}
+.panelhead td{padding: 5px;}
+
+div.slidercontrol a {background: url("images/sliderback.gif") repeat-x; height: 6px; width: 100%; text-align: center; display: block}
+div.slidercontrol a:hover{cursor: s-resize}
+
+/* windows explorer like actions panels */
+.actionspanel{
+background: url("images/actionspanelback.gif") no-repeat top left;
+padding: 10px;
+padding-top: 7px;
+padding-bottom: 2px;
+margin-bottom: 15px;
+}
+
+div.iconactions{padding: 10px;}
+div.iconactions h3{margin-bottom: 16px; color: white}
+.actionspanel ul li{margin-bottom: 10px}
+.actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #333333}
+.actionspanel ul li span span{display: inline; padding: 0px;}
+.actionspanel ul li span a{display: inline; padding: 0px;}
+.actionspanel ul li a:hover{text-decoration: underline; color: #666666;}
+
+
+/* Panel Headings */
+/* ================================================ */
+.panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: center right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
+
+.panelcontainer h2 span.actions{background-image: url("images/headings/actions.png")}
+.panelcontainer h2 span.search{background-image: url("images/headings/browse.png")}
+.panelcontainer h2 span.history{background-image: url("images/headings/history.png")}
+.panelcontainer h2 span.documents{background-image: url("images/headings/documents.png")}
+.panelcontainer h2 span.edit{background-image: url("images/headings/edit.png")}
+.panelcontainer h2 span.task{background-image: url("images/headings/tasks.png")}
+.panelcontainer h2 span.edititem{background-image: url("images/headings/edittempateitem.png")}
+.panelcontainer h2 span.previewlabel{background-image: url("images/headings/preview.png")}
+.panelcontainer h2 span.userman{background-image: url("images/headings/usermanagement.png")}
+
+
+/* Global Icon Management */
+/* ================================================ */
+div div ul li.icolistsmall{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
+div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666}
+div.groupsico div ul li.icolistsmall { background-image: url("images/ico/groups_ico_small.png")}
+div.usersico div ul li.icolistsmall {background-image: url("images/ico/users_ico_small.png")}
+div.domainsico div ul li.icolistsmall { background-image: url("images/ic/domain_ico_small.png")}
+
+.iconsSmall a{display: block; padding: 2px; background-repeat: no-repeat; text-indent: -9999px; width: 16px; height: 16px;}
+.iconsBig a{display: block; padding: 2px; background-repeat: no-repeat;}
+
+.document_big_ico{background-image:url("images/ico/document_ico_big.gif")}
+.users_big_ico{background-image:url("images/ico/users_ico_big.png")}
+.groups_big_ico{background-image:url("images/ico/groups_ico_big.png")}
+
+
+.edit_ico{background-image:url("images/ico/page_white_edit.png")}
+.delete_ico{background-image:url("images/ico/page_white_delete.png")}
+.add_ico{background-image:url("images/ico/add.png")}
+.remove_ico{background-image:url("images/ico/delete.png")}
+
+.up_ico{background-image:url("images/ico/arrow_up.png")}
+.down_ico{background-image:url("images/ico/arrow_down.png")}
+
+.revert_ico{background-image:url("images/ico/page_white_delete.png")}
+.save_ico{background-image:url("images/ico/page_save.png")}
+
+.templateitemup_ico{background-image:url("images/ico/arrow_up.png")}
+.templateitemdown_ico{background-image:url("images/ico/arrow_down.png")}
+
+.reqdelete_ico{background-image:url("images/ico/page_white_delete.png")}
+.reqpublish_ico{background-image:url("images/ico/page_white_gear.png")}
+.reqdepublish_ico{background-image:url("images/ico/world_delete.png")}
+.publish_ico{background-image:url("images/ico/world_add.png")}
+.depublish_ico{background-image:url("images/ico/world_delete.png")}
+
+.reqcancel{background-image:url("images/ico/page_white_gear.png")}
+.reqaccept{background-image:url("images/ico/thumb_up.png")}
+.reqreject{background-image:url("images/ico/thumb_down.png")}
+
+.adddocument_ico{background-image:url("images/ico/page_white_add.png")}
+.addfolder_ico{background-image:url("images/ico/folder_add.png")}
+.addextended_ico{background-image:url("images/ico/folder_brick.png")}
+
+.copymodelrequest_ico{background-image:url("images/ico/page_white_copy.png")}
+.editmodel_ico{background-image:url("images/ico/page_white_edit.png")}
+.copymodelrequest_ico{background-image:url("images/ico/page_white_copy.png")}
+.createnamespace_ico{background-image:url("images/ico/page_white_add.png")}
+.modelreq_ico{background-image:url("images/ico/page_white_gear.png")}
+.createtyperequest_ico{background-image:url("images/ico/page_white_add.png")}
+
+
+/* Wicket standard Dialog overwrite */
+/* ================================================ */
+body div.wicket-modal div.w_blue div.w_top, body div.wicket-modal div.w_blue div.w_bottom, body div.wicket-modal div.w_blue div.w_topLeft, body div.wicket-modal div.w_blue div.w_topRight, body div.wicket-modal div.w_blue div.w_bottomRight, body div.wicket-modal div.w_blue div.w_bottomLeft, body div.wicket-modal div.w_blue a.w_close{
+background-image: url(images/wicketframe-hippo.png);
+}
+body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue div.w_right {
+background-image:url(images/wicketframe2-hippo.png);
+}
+body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue div.w_right {
+background: white;
+}
+body div.wicket-modal div.w_caption{
+background: white url("images/panelHeadBack.png") repeat-x;
+padding: 7px;
+height: 15px;
+}
+body div.wicket-modal div.w_right_1{margin-left: 0px;}
+body div.wicket-modal div.w_content_1{margin-right: 0px;}
+body div.wicket-modal div.w_content_3{border: none} 
+
+body.dialog .fauxbutton a{float: right; margin-left: 15px;} 
+body div.wicket-modal span.w_captionText{
+display: block;
+height: 15px;
+width:350px;
+color: white;
+}
+body.dialog{background: white; text-align: right; padding: 15px;}
+body.dialog div.dialogButtons{padding-top: 50px}
+
+/* Breadcrumbs */
+/* ================================================ */
+.Breadcrumb{
+left:238px;
+position:absolute;
+top:39px;
+z-index:100;
+color: #f2f2f2;
+}
+
+/* Workflow */
+/* ================================================ */
+span.documentStatus{font-weight: normal; padding-left: 3px;}
+
+
+
+/* Paging */
+/* ================================================ */
+a.previous{background: url("images/arrowleft.gif") no-repeat center left; padding: 8px; padding-right: 0px;}
+a.next{background: url("images/arrowright.gif") no-repeat center right; padding: 8px; padding-left: 0px}
+
+
+/* Versioning */
+/* ================================================ */
+table.versiondetails{margin-top: -2px}
+table tr td table.versiondetails tr td{padding: 0px; color: #a2a2a2}
+
+.taglist li{display: inline; ccolor: #a2a2a2;}
+.versionlabel {font-size: 12px; color: #666666; padding: 5px; padding-left: 15px;}
+
+table.panelhead tr td{vertical-align: middle}
+table.panelhead tr td.document_big_ico {background-repeat: no-repeat; background-position: center center; width: 40px}
+
+
+/* Tree */
+/* ================================================ */
+div.Tree {
+margin:0px;
+border: none;
+margin-top: 2px;
+}
+
+div.Tree div.wicket-tree{margin: 0px; height: 477px; width: 222px; overflow: auto;} 
+div.Tree div.wicket-tree div{overflow: visible}
+
+div.Tree .wicket-tree .row a {color: black}
+div.wicket-tree div.a_{width: auto;}
+div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
+div.Tree .wicket-tree .row-selected a {}
+div.Tree .wicket-tree .row-selected { background: #f2f2f2; }
+div.Tree div.wicket-tree{border: none;}
+div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+
+
+/* Template Editor */
+/* ================================================ */
+
+div.editor{
+height: 85%;
+max-height:500px;
+overflow:auto;
+padding:7px;
+}
+
+span.templateactions{
+display:block;
+width: 181px;
+padding-top: 35px;
+}
+span.templateactions ul li a span{padding-left: 0px}
+/* temp icon hack */
+li.string a{background-image:url("images/ico/page_white_gear.png")}
+li.html a{background-image:url("images/ico/page_white_gear.png")}
+li.boolean a{background-image:url("images/ico/page_white_gear.png")}
+li.date a{background-image:url("images/ico/page_white_gear.png")}
+li.hippo_image a{background-image:url("images/ico/page_white_gear.png")}
+li.hippo_query a{background-image:url("images/ico/page_white_gear.png")}
+li.hippo_facetselect a{background-image:url("images/ico/page_white_gear.png")}
+
+/* edit template item */
+div#templateitemedit{background: none;width: 200px;}
+div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
+div#templateitemedit input{width: 140px;}
+
+/* template model edit */
+td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; position: relative;}
+
+.editor table tr td{vertical-align: top;}
+
+div.fields{background: #e2e2e2; margin-bottom: 6px; padding: 4px;}
+div.fields{margin-bottom: 6px; padding: 4px}
+div.fields h3{background: #9D9D9D; padding: 4px; color: white; font-weight: bold; font-size: 11px; margin-bottom: 5px;}
+div.fields input[type="text"]{width: 100px;}
+div.fields table tr td{border-bottom: none; padding: 2px;}
+div.fields table{width: 100%}
+div.fields table tr td table{width: auto}
+table.htmlarea tr td{padding: 0px; border: 1px solid #f1f1f1; vertical-align: top;}
+
+/* Xinha */
+/* ================================================ */
+table.htmlarea tr td{border: 1px solid #d7d7d7}
+table.htmlarea tr td table tr td{border: none}
+table.htmlarea tr td select{margin-top: 4px;}
+
+
+.htmlarea .toolbar {
+  background-color:#f2f0e4;
+  background-image:url(back.png);
+  background-repeat:repeat-y;
+}
+.htmlarea table.toolbarRow {
+  margin-top:2px;
+  margin-bottom:2px;
+  background-image:url(button-background.png);
+  height:22px;
+}
+.htmlarea .toolbar .button {
+  width:20px;
+  height:20px;
+  padding:1px;
+  border:none;
+  background-image:url(button-background.png);
+}
+.buttonImageContainer {
+  position:relative;
+  left:1px;
+  top:1px;
+}
+.htmlarea .toolbar .separator {
+  margin:0;
+  background-image:url(separator.png);
+  width:7px;
+  height:20px;
+  padding:0;
+}
+.separator {
+  border:none;
+}
+.htmlarea .toolbar a.button:hover {
+  border:1px solid #335500;
+  padding:0;
+  background-image:url(hover.png);
+}
+.htmlarea .toolbar .button.buttonPressed
+{
+  border:1px solid #335500;
+  padding:0;
+  background-image:url(selected.png);
+}
+.htmlarea .statusBar {
+  padding:0;
+  height:20px;
+  background-image:url(button-background.png);
+  background-repeat:repeat-x;
+  background-color:#f2f0e4;
+  color:ButtonText;
+  font:11px helvetica,arial,sans-serif;
+}
+.htmlarea .statusBar .statusBarTree {
+  display:block;
+  margin:3px;
+}
+.htmlarea .statusBar .statusBarTree a {
+  padding:2px 5px;
+  color:#00f;
+  text-decoration:none;
+}
+.htmlarea .panel h1 {
+  background-image:url(button-background.png);
+  background-repeat:repeat-x;
+  background-color:#f2f0e4;
+}
+.dialog {
+  background-color:#f2f0e4;
+}
+.dialog .title {
+  background-image: url(button-background.png);
+}  
+.dialog button{
+  background-image: url(button-background.png);
+}
+
+div.fields table.htmlarea tr td, .htmlarea div.toolbar {
+padding:0px;
+}
+
+
+/* Table datalists */
+/* ================================================ */
+.Doclist table tr td a{color: black}
+.Doclist{ height: 215px; overflow: auto}
+
+.dataview thead tr.navigation td { padding: 5px; }
+.dataview{width: 100%}
+
+.dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
+.dataListPaging td div{margin-bottom: 5px}
+.dataListPaging td a{padding: 5px;}
+.dataListPaging td a:hover{background: #f2f2f2}
+.dataListPaging td span em, .dataListPaging td a em{font-style: normal}
+
+.navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
+.navigator { color: grey }
 
 .addNodeWidget {
   margin-bottom: 4px;
@@ -361,11 +499,6 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
   border: 1px solid #000;
 }
 
-ul.highlight li {
-  background: #4A84C8;
-}
-ul.highlight li a span{color: white}
-
 .userGroupsList{
 height: 158px;
 overflow:auto;
@@ -374,13 +507,23 @@ background: white;
 margin-top: 10px;
 } 
 
-
-
 .templatedetails{
-padding: 10px;
+padding: 4px;
 height: 410px;
+height: 80%;
 overflow: auto;
 }
+
+/* User Management */
+/* ================================================ */
+
+.iconListSmall li{margin-bottom: 2px;}
+.iconListSmall li a{background-repeat: no-repeat; display: block; padding: 2px; padding-left: 18px; color: #666666}
+
+.users_list_ico li a{background-image:url("images/ico/users_ico_small.gif")}
+.groups_list_ico li a{background-image:url("images/ico/groups_ico_small.gif")}
+.domains_list_ico li a{background-image:url("images/ico/domain_ico_small.gif")}
+.roles_list_ico li a{background-image:url("images/ico/roles_ico_small.gif")}
 
 .userGroupsList h3{display: none}
 
@@ -394,25 +537,14 @@ overflow: auto;
 .templatedetails div.fields table.htmlarea div{padding: 0px; margin: 0px}
 .templatedetails .htmlarea width{100%}
 
-div.templatetitle, div.usertitle{
-background:#CCCCCC url(images/user_ico_big.png) no-repeat scroll 3px 1px;
-height:48px;
-margin:5px;
-padding:13px 5px 5px 60px;
-}
-div.templatetitle{background:#CCCCCC url(images/document_ico_big.gif) no-repeat scroll 9px 15px;}
-
 div.templatetitle h3, div.usertitle h3{font-size: 20px; color: #666666; font-weight: normal}
 div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-weight: normal; padding-left:2px;}
 
-.templatedetails div.fields div div div {margin-bottom: 5px;}
-.templatedetails div.fields div div div div div div{border-bottom: none}
 .templatedetails div.fields input{width: 120px;} 
-
 
 .templatedetails div.templateactions {
 position: absolute;
-right:26px;
+left: 520px;
 top:58px;
 }
 
@@ -443,13 +575,5 @@ width:100px;
 
 .target {
   border: 1px solid #62C621 ! important;
-  background: white url("images/dropback.gif") no-repeat center 100px;
+  background: white url("images/dropback.gif") no-repeat center 40px;
 }
-
-span.wicket-ajax-indicator {
-  position:absolute;
-  top:30px;
-  left: 980px;
-}
-
-

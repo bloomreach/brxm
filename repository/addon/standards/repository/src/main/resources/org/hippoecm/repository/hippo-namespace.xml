@@ -232,7 +232,7 @@
               </sv:property>
               <sv:node sv:name="hippo:parameters">
                 <sv:property sv:name="css" sv:type="String">
-                  <sv:value>templateactions</sv:value>
+                  <sv:value>templateactions actionspanel</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:parameters</sv:value>
