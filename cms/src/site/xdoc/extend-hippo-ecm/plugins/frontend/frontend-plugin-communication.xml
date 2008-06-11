@@ -214,6 +214,22 @@
 }]]>
             </source>
           </dd>
+          <dt>IPluginConfigService</dt>
+          <dd>
+            <p>
+              The IPluginConfigService makes configurations of clusters of
+              plugins available.  It can be found under the name
+              IPluginConfigService.class.getName() .  It can be used to
+              dynamically instantiate clusters of plugins.
+            </p>
+            <p>
+              As an example, consider the case of multiple editors in the CMS.
+              Each editor has its own set of plugin instances and its own
+              (node) model.  To satisfy this last requirement, each editor
+              uses a separate ModelService, configured by the plugin that
+              instantiates editors.
+            </p>
+          </dd>
         </dl>
       </subsection>
 
