@@ -73,6 +73,14 @@ QueryResult res = query.execute();
                 on how you can use this. 
               </p>
             </subsection>
+            <subsection name="Roadmap">
+              Since we do not want to force developers into having to know how to write an Xpath or SQL statement
+              for searching the repository, Hippo CMS will provide a graphical interface giving you the 
+              possibility to 'drag/drop and click' to create a search node. At the moment of this writing, 
+              still writing an Xpath or SQL statement is needed. 
+              <a target="_new" href="http://jcp.org/aboutJava/communityprocess/final/jsr170/index.html">jsr-170</a> has
+              some good examples. 
+            </subsection>
           </section>
       </body>
   </document>
