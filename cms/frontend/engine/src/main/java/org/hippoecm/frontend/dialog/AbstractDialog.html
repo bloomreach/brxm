@@ -14,18 +14,19 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+    <link href="skin/style.css" type="text/css" rel="stylesheet">  
+  </wicket:head>
   <body class="dialog">
     <wicket:child />
     <strong><span wicket:id="exception"></span></strong>
-        <table class="dialogbuttons" width="50%">
-      <tr>
-        <td class="okbutton">
-          <a wicket:id="ok">OK</a>
-        </td>
-        <td class="cancelbutton">
+    <div class="dialogButtons">
+          <span class="fauxbutton">
           <a wicket:id="cancel">Cancel</a>
-        </td>
-      </tr>
-    </table>
+          </span>
+    <span class="fauxbutton">
+      <a wicket:id="ok">OK</a>
+    </span>
+    </div>
   </body>
 </html>

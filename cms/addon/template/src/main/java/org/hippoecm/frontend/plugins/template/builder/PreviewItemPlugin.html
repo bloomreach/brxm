@@ -18,16 +18,18 @@
      <table class="displaytable">
       <tbody>
         <tr>
-          <td class="itemmovehandle">
-            <a class="upbutton" wicket:id="up">&nbsp;</a>
-            <a class="downbutton" wicket:id="down">&nbsp;</a>
-            <a class="editbutton" wicket:id="edit">Edit</a>
-          </td>
+          <td class="itemmovehandle iconsSmall">
+            <div style="float: right">
+            <a class="up_ico" wicket:id="up">&nbsp;</a>
+            <a class="down_ico" wicket:id="down">&nbsp;</a>
+            </div>
+            <a class="edit_ico" wicket:id="edit">Edit</a>
+         </td>
           <td style="position: relative">
           <div wicket:id="item">[ item goes here ]</div>
           </td>
-          <td style="width: 10%; text-align: right">
-            <a wicket:id="remove">Remove Item</a>
+          <td class="iconsSmall" style="width: 10%; text-align: right">
+            <a class="remove_ico" wicket:id="remove">&nbsp;</a>
           </td>
         </tr>
       </tbody>

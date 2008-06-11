@@ -15,35 +15,42 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <strong>
-      <span wicket:id="caption"/>
-    </strong> (<span wicket:id="status"/>) <br/><br/>
+   <div class="actionspanel">
+      <h3><span wicket:id="caption"/><span class="documentStatus" wicket:id="status"/></h3>
     <ul>
       <li>
-        <a wicket:id="edit-dialog">Edit</a>
+        <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
       </li>
     </ul>
+    </div>
+    <div class="actionspanel">
+    <h3>Request</h3>
     <ul>
       <li>
-        <a wicket:id="requestPublication-dialog">Request publication</a>
+        <a class="reqpublish_ico" wicket:id="requestPublication-dialog">Request publication</a>
       </li>
       <li>
-        <a wicket:id="requestDePublication-dialog">Request depublication</a>
+        <a class="reqdepublish_ico" wicket:id="requestDePublication-dialog">Request depublication</a>
       </li>
       <li>
-        <a wicket:id="requestDeletion-dialog">Request deletion</a>
+        <a  class="reqdelete_ico" wicket:id="requestDeletion-dialog">Request deletion</a>
       </li>
     </ul>
-    <ul>
+    </div>
+    <div class="actionspanel">
+      <h3>Publishing</h3>
+      <ul>
       <li>
-        <a wicket:id="publish-dialog">Publish</a>
+        <a class="publish_ico" wicket:id="publish-dialog">Publish</a>
       </li>
       <li>
-        <a wicket:id="dePublish-dialog">Depublish</a>
+        <a class="depublish_ico" wicket:id="dePublish-dialog">Depublish</a>
       </li>
       <li>
-        <a wicket:id="delete-dialog">Delete</a>
+        <a  class="delete_ico" wicket:id="delete-dialog">Delete</a>
       </li>
     </ul>
+    
+    </div>
   </wicket:panel>
 </html>

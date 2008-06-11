@@ -15,23 +15,27 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <strong>Workflow</strong>
-    <br/>
+    <div class="actionspanel">
+    <h3>Actions</h3>
     <ul>
       <li>
-        <a wicket:id="edit-dialog">Edit</a>
+        <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
       </li>
     </ul>
+    </div>
+    <div class="actionspanel">
+      <h3>Send Request</h3>
     <ul>
       <li>
-        <a wicket:id="requestPublication-dialog">Request publication</a>
+        <a class="reqpublish_ico" wicket:id="requestPublication-dialog">Request publication</a>
       </li>
       <li>
-        <a wicket:id="requestDePublication-dialog">Request depublication</a>
+        <a class="reqdepublish_ico" wicket:id="requestDePublication-dialog">Request depublication</a>
       </li>
       <li>
-        <a wicket:id="requestDeletion-dialog">Request Deletion</a>
+        <a class="reqdelete_ico" wicket:id="requestDeletion-dialog">Request Deletion</a>
       </li>
     </ul>
+    </div>
   </wicket:panel>
 </html>

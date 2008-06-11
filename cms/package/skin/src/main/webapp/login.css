@@ -40,7 +40,7 @@ div#login-submit {
 div#loginWrapper{text-align: center}
 
 div#loginWrapper input[type="submit"]{padding: 3px;}
-div#loginWrapper input[type="text"], div#loginWrapper input[type="password"] {padding: 2px; width: 120px;}
+div#loginWrapper input[type="text"], div#loginWrapper input[type="password"] {padding: 2px}
 
 
 div#loginWrapper h2{margin-bottom: 60px; padding-left: 53px; font-size: 18px; font-weight: normal; color: #666666}
@@ -50,13 +50,13 @@ div#loginWrapper h2 span{display: block}
 
 div#loginWrapper form {
 background:transparent url(images/loginback.png) no-repeat scroll left top;
-height:230px;
+height:280px;
 margin:0px auto;
 padding-left:23px;
 padding-top:50px;
 position:relative;
 text-align:left;
-width:254px;
+width:280px;
 }
 
 div#loginWrapper form label {margin-right: 15px;}
