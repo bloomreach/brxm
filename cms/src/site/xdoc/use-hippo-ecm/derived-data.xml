@@ -31,7 +31,7 @@
 Derived data is the concept where additional information for a document
 generated, based upon the information of the document itself.
 For example, if you store some (binary) content in a document, you can add a
-property to the document that indicate the size of the content stored.
+property to the document that indicates the size of the content stored.
 </p>
 
 <p>
@@ -39,15 +39,15 @@ In principal, this is utterly useless and even somewhat dangerous.  This
 because one can simply use a function that computes the size of the document
 on the fly.  So when retrieving the document, there is no fundamental reason
 that retrieving the property with the size is better than just calling the
-function which computes the size of the content.  The same when querying for a
-document, a query might as well be written as <code>SELECT * FROM documents
+function which computes the size of the content.  The same yields for querying,
+a query might as well be written as <code>SELECT * FROM documents
 WHERE length(content) > 0</code>.
 </p>
 
 <p>
 The danger lies that when modifying the content, you can forget to modify the
 property size to reflect the different size of the content.  Now the content
-are the size property are inconsistent, which is generally considered a bigger
+and the size property are inconsistent, which is generally considered a bigger
 problem than just forgetting the data all together!
 </p>
 
@@ -55,11 +55,11 @@ problem than just forgetting the data all together!
 There are however technical reasons why such functionality is still needed.
 For one, the compute function might be very expensive, and since this function
 could be executed a lot of times, especially in a query over all documents.
-Another, even more pressing need for this function is that the query languages
+Another, even more pressing need for this functionality is that the query languages
 available do not allow you to express all kind of realistic queries.  For
 example, a XPATH query does not allow you to query for a document which
-contains two properties, lets call them <code>a</code> and <code>b</code>
-which are equal.  Naively this could be written down as
+contains two properties, lets call them <code>a</code> and <code>b</code>,
+and where these two properties are equal.  Naively this could be written down as
 <code>//*[@a=@b]</code> but this yields no results even though logically there
 would be.  Certain other queries are possible but have huge performance impacts.
 These are deliberate deficiencies in the query languages XPATH and JCR-SQL,
@@ -128,7 +128,7 @@ We will outline how to define, configure and use derived data based on a
 simple example to compute Pythagorean theorem.
 </p>
 
-<h3>Defining the data for which to compute properties</h3>
+<h4>Defining the data for which to compute properties</h4>
 
 <p>
 We define a document type that is a core shape definition:
@@ -156,7 +156,7 @@ using the procedure of derived data we must extend from the hippo:derived
 mixin node type.
 </p>
 
-<h3>Configuring the repository to compute derived properties for this data</h3>
+<h4>Configuring the repository to compute derived properties for this data</h4>
 
 <p>
 Now we need to configure in the repository how to compute the derived property
@@ -166,19 +166,21 @@ property we can enter the following JCR definition
 </p>
 
 <source>
-[deriveddefinition]
-hippo:nodetype = sample:triangle
-hippo:classname = sample.PythagoreanTheorem
-hippo:serialver = 1
-hippo:accessed
-  hippo:relativepropertyreference
-    a
-      hippo:relPath sample:a
-    b
-      hippo:relPath sample:b
-hippo:derived
-    c
-      hippo:relPath sample:c
+[repository root]
+`-- hippo:configuration
+    `-- hippo:derivatives [hippo:derivativesfolder]
+        `-- pythagorean [hippo:deriveddefinition]
+            + hippo:nodetype = sample:triangle
+            + hippo:classname = sample.PythagoreanTheorem
+            + hippo:serialver = 1
+            |-- hippo:accessed [hippo:propertyreferences]
+            |   |-- a [hippo:relativepropertyreference]
+            |   |   + hippo:relPath = sample:a
+            |   `-- b [hippo:relativepropertyreference]
+            |       + hippo:relPath = sample:b
+            `-- hippo:derived [hippo:propertyreferences]
+                `-- c [hippo:relativepropertyreference]
+                    + hippo:relPath = sample:c
 </source>
 
 <p>
@@ -223,7 +225,7 @@ The hippo:relPath may indicate any property below the document for which
 properties are computed.  It may not contain references to other documents.
 </p>
 
-<h3>Supplying the method that computes the derived property</h3>
+<h4>Supplying the method that computes the derived property</h4>
 
 <p>
 The configuration indicates which class should be used to compute the data.
@@ -236,13 +238,13 @@ requirement that this is a pure function.
 <source>
 package sample;
 import org.hippoecm.repository.ext.DerivedDataFunction;
-static import java.lang.Math;
+
 public static class PythagoreanTheorem extends DerivedDataFunction {
     static final long serialVersionUID = 1;
     public Map&lt;String,Value[]&gt; compute(Map&lt;String,Value[]&gt; parameters) {
       double a = parameters.get("a")[0].getDouble();
       double b = parameters.get("b")[0].getDouble();
-      double c = sqrt(a * a + b * b);
+      double c = Math.sqrt(a * a + b * b);
       parameters.put("c", new Value[] { getValueFactory().createValue(c) });
       return parameters;
     }
@@ -254,12 +256,6 @@ This class can be packages in a normal plug-in.  Upon any change the properties
 will be computed.  Current limitations give however one exception, imported
 data is not recomputed and must be already correct.
 </p>
-
-<!--
-In the above example we showed that we can compute property c of the type
-sample:triangle where a and b where also properties of the nodetype
-sample:triangle.  It is not a requirement that the compute method is
--->
 
 </subsection>
 
