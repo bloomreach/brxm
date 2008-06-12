@@ -34,6 +34,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -372,6 +373,26 @@ public class RepositoryServlet extends HttpServlet {
                     }
                     writer.println("</tr>");
                 }
+                writer.println("  </ol>");
+            }
+            if((queryString = req.getParameter("uuid")) != null) {
+                queryString = URLDecoder.decode(queryString, "UTF-8");
+                writer.println("  <h3>Get node by UUID</h3>");
+                writer.println("  <blockquote>");
+                writer.println("UUID = " + queryString);
+                writer.println("  </blockquote>");
+                writer.println("  <ol>");
+                writer.println("    <li>");
+                try {
+                Node n = session.getNodeByUUID(queryString);
+                writer.println("Found node: " + n.getPath());
+                } catch (ItemNotFoundException e) {
+                    writer.println("No node found for uuid " + queryString);
+                } catch (RepositoryException e) {
+                    writer.println(e.getMessage());
+                }
+                writer.println("  </ol><hr><table>");
+                
                 writer.println("  </ol>");
             }
         } catch (LoginException ex) {
