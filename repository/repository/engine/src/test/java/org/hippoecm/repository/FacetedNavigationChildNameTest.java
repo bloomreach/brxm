@@ -40,7 +40,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
             if (!session.getRootNode().hasNode("test"))
                 session.getRootNode().addNode("test", "nt:unstructured");
             if (!session.getRootNode().getNode("test").hasNode("documents"))
-                session.getRootNode().getNode("test").addNode("documents", "hippo:folder");
+                session.getRootNode().getNode("test").addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
             node = session.getRootNode().getNode("test/documents");
             //String encodeMe = "yadida";
             Node docNode = node.addNode(simple, "hippo:testdocument");

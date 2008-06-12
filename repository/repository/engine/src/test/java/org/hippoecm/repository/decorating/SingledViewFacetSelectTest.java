@@ -35,7 +35,7 @@ public class SingledViewFacetSelectTest  extends TestCase {
         "/test/documents",                                                   "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles",                                          "nt:unstructured",
-        "/test/documents/articles/foo",                                      "hippo:folder",
+        "/test/documents/articles/foo",                                      "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/foo/brave-new-world",                      "hippo:handle",
         "/test/documents/articles/foo/brave-new-world/brave-new-world",      "hippo:testdocument",

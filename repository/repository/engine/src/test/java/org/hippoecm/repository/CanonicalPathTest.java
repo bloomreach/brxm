@@ -67,7 +67,8 @@ public class CanonicalPathTest extends TestCase {
     }
 
     private void createContent() throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException, NoSuchNodeTypeException, ValueFormatException {
-        Node node = session.getRootNode().getNode("test").addNode("content","hippo:folder");
+        Node node = session.getRootNode().getNode("test").addNode("content","nt:unstructured");
+	node.addMixin("mix:referenceable");
         Node mynode = node.addNode("nodes").addNode("mynode","hippo:testdocument");
         mynode.addMixin("hippo:harddocument");
         mynode.setProperty("x", "foo");

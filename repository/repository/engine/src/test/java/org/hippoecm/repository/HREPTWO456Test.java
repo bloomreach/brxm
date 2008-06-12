@@ -54,7 +54,8 @@ public class HREPTWO456Test extends TestCase {
     }
 
     public void testIssue() throws RepositoryException {
-        Node node = session.getRootNode().addNode("test","hippo:folder");
+        Node node = session.getRootNode().addNode("test","nt:unstructured");
+	node.addMixin("mix:referenceable");
         node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
