@@ -139,160 +139,150 @@ hippo-ecm                    Pom       hippo-ecm
       <p>
         The large number of projects is a direct consequence of the fact that Hippo ECM
         has been designed from the ground up for customizability and extendability as described in the  
-        <a href="../extend-hippo-ecm/plugins/index.html">plugin</a> documentation. Hippo ECM consists
-        of two tiny engines, one for the repository and one for the CMS user interface, that in themselves don't
-        implement much functionality. All 'userland' functionality is implemented by plugins that are loaded by
-        the engines. 
+        <a href="../extend-hippo-ecm/plugins/index.html">plugin</a> documentation. The repository and frontend
+        engines that make up the core of Hippo ECM don't implement much functionality themselves. All 'userland'
+        functionality is implemented by plugins that are loaded by the engines. See the chapter on
+        <a href="../run-hippo-ecm/repository-bootstrap.html">Bootstrapping the repository</a> for
+        further information about this subject. 
       </p>
     </section>
 
     <section name="Addon">
-      <p>
-        Plugins are bundled in so called addons which are simple Jar projects under the 'addon'
-        directory.
-      </p> 
+      <p> Plugins are bundled in so called addons which are simple Jar projects under the 'addon'
+        directory. </p>
       <ul>
-        <li><b>builtin</b> is a workflow addon, it differs from other workflow addons in the fact that
-          the server-side implementation is 'built in' the repository itself instead of in a separate Jar.
-          Note that these builtin workflows are very low-level and should not be accessed directly from
-          the frontend. They should only be called from other workflow plugins as part of a chain of workflow steps.
-        </li>
-        <li><b>cms</b> is a bundling of all frontend addons that together make up the main functional blocks
-         of the default CMS. Each tab (perspective) in the CMS user interface has it's own addon. Because of this
-         setup adding, changing or removing a tab is entirely done by adding, changing or removing the Jar implementing
-         the tab to/from the classpath and changing the frontend configuration in the repository.</li>
+        <li><b>cms</b> is a bundling of all frontend addons that together make up the main
+          functional blocks of the default CMS. Each tab (perspective) in the CMS user interface has
+          it's own addon.</li>
+
         <li><b>defaultcontent</b> is a repository addon containing some simple sample content meant
-         for demonstration purposes</li>
-        <li><b>reporting</b> is a repository addon together with a frontend addon which together
-        implement reporting functionality for the CMS. Examples of usage of this addon are the activity
-        and todo views on the cms-dashboard</li>
-        <li><b>reviewed-action</b> is a workflow addon, it implements all logic
-        concerning the (un)publication of documents. It is a bundling of a
-        repository addon implementing the workflow business logic
-        with a frontend addon bundling some frontend plugins for user interaction
-        and a common addon for the interface between the two.
-        </li>        
-        <li><b>standards</b> contains standard stuff that other addons may use or extend. It's repository
-        addon defines low level standard types and it's frontend addon contains common frontend plugins that
-        are reused in other addons.</li>
+          for demonstration purposes</li>
+
+        <li><b>reporting</b> is a bundling of a repository addon and a frontend addon which together
+          implement reporting functionality for the CMS. Usage examples of this addon are the
+          activity and todo views on the cms-dashboard</li>
+
+        <li><b>reviewed-action</b> is a <a href="../about-hippo-ecm/architecture.html#Workflow API">
+          workflow</a> addon, it implements all business and GUI logic around document lifecycle:
+          reviewing, (un)publishing etc. It is a bundling of three addons and a test project: a repository
+          addon implementing the business logic, a frontend addon bundling some frontend plugins for user
+          interaction and a common addon for the interface between the two. </li>
+
+        <li><b>builtin</b> is also a workflow
+          addon, it differs from other workflow addons in the fact that the server-side
+          implementation is implemented by the repository engine itself instead of in a separate Jar
+          like with a normal addon. Note that these builtin workflow steps are very generic and
+          low-level and should not be accessed directly. They should only be called indirectly from
+          other workflow plugins as part of a chain of workflow steps.</li>
+
+        <li><b>standards-frontend</b> contains a collection of shared frontend plugins. For
+          instance, all cms-* addons contain a Perspective plugin (BrowsePerspective,
+          EditPerspective, ...), so it makes sense to have a common baseclass in standards-frontend.</li>
+
+        <li><b>standards-repository</b> defines commonly used datastructures like template
+          definitions for standard types</li>
+
         <li><b>template</b> is a frontend addon that implements the document template editor</li>
-        <li><b>versioning</b> is a frontend addon that contains some plugins for interacting with document versioning
-        implemented by the repository</li>
-        <li><b>xinha and xinha-frontend</b> are frontend addons that together make up the Xinha HTML editor</li>
-        <li><b>yui</b> is a frontend addon implementing Drag&amp;Drop functionality.</li>
+
+        <li><b>versioning</b> is a frontend addon that contains plugins for interacting with
+          document versioning implemented by the repository</li>
+
+        <li><b>xinha and xinha-frontend</b> are frontend addons that together make up the Xinha HTML
+          editor.</li>
+
+        <li><b>yui</b> is a frontend addon implementing Drag&amp;Drop functionality and other
+          javascript magic.</li>
       </ul>
+      <subsection name="Dependencies between addons">
+        <p> Because addons are ordinary java projects built with Maven it is extremely easy to add
+          any inter-addon Java dependency that may seem nessessary. If left unchecked this can easily
+          lead to a situation where all addons depend on each other. When this happens the whole idea of
+          splitting functionality between addons becomes obsolete and we might as well put all
+          plugins into one big addon, or better yet into the engines themselves and reduce the
+          number of projects drastically. Obviously this will also kill all customizability and
+          extendability. <br/><br/> On the other hand completely forbidding all inter-addon
+          dependencies goes to far because it prohibits code reuse. A middle way is to keep these
+          dependencies to a minimum and stick to some simple guidelines: </p>
+        <ol>
+          <li>Repository addons should NEVER directly depend on each other via a Java dependency.
+            Even in the case of one workflow calling another this is not done by a direct Java call,
+            but via 'workflow chaining' which is core repository functionality.</li>
+
+          <li>As a general rule a dependency 'via the repository' is preferred (by far) over a
+            direct Java dependency. Examples of this kind of dependency are the displaying of
+            Xinha editors by the template editor and the use of the reporting addon by the 
+            cms dashboard.</li>
+
+          <li>If there's no other way frontend addons MAY directly depend on each other: Examples are
+            the yui-frontend addon that contains wicket behaviours that perform all kinds of javascript
+            magic that many application plugins would very much like to use, and the standards-frontend addon
+            which acts as a parking place for oftenly used, shared frontend code that doesn't really belong
+            in the frontend engine itself.</li>
+        </ol>
+        <p> To make a long story short: Currently there are very few Java dependencies between addons
+          and we're planning to keep it that way. </p>
+      </subsection>
+      
+      <subsection name="Finding your way">
+        <p>
+          In order to help you find your way some simple naming conventions
+          are used:
+        </p>
+        <ul>
+          <li>The maven artifactId matches the project directory layout</li>
+          <li>Wicket frontend classes in frontend plugin addon-foo-bar are in package org.hippoecm.frontend.plugins.foo.bar</li>
+        </ul>
+      </subsection>
     </section>
-    
-    <section name="Dependencies between addons">
-      <p>
-        Because addons are ordinary java projects built with Maven it is extremely easy to add any inter-addon
-        dependency you like. If left unchecked this can easily lead to spaghetti where all addons depend on each
-        other. When this happens the whole idea of splitting functionality between addons becomes obsolete and we
-        might as well put all plugins into one big addon, or better yet into the engines themselves and reduce the
-        number of projects drastically. Obviously this will also kill all customizability and extendability.
-        <br/><br/>
-        On the other hand completely forbidding inter-addon dependencies is also not an option because some addons
-        implement functionality used by other addons. Therefore it is important to keep these dependencies to a minimum
-        and stick to some simple guidelines:
-        <br/><br/>
-        Repository addons are easy: they should NEVER depend on each other via a java dependency.
-        Even in the case of one workflow calling another this is not done by a direct Java call, but via 'workflow chaining'
-        which is core repository functionality. Repository addons can be seen as pure self-contained black boxes.
-        <br/><br/>
-        This is not the case for frontend addons: For example the drag&amp;drop functionality implemented by addon-yui
-        is meant to be used by other addons. Therefore it is a good idea to split the frontend addons in two categories:
-        <b>'semi-finished'</b> and <b>'finished'</b> 
-      </p>
-      <ul>
-        <li>
-          <b>'semi-finished'</b> frontend addons don't contain 'end plugins' used in an application, they only contain
-          classes that can be used or extended by other 'finished' addons. Examples are:
-          <ul>
-            <li>addon-yui-frontend</li>
-            <li>addon-xinha(-frontend)</li>
-            <li>addon-standards-frontend</li>
-            <li>addon-reporting-frontend</li>
-          </ul>
-        </li>
-        <li>
-          <b>'finished'</b> frontend addons only contain 'end plugins' that are used in an application. Examples are:
-          <ul>
-            <li>all addon-cms-* addons</li>
-            <li>addon-reviewed-action-frontend</li>
-            <li>addon-versioning</li>
-          </ul>          
-        </li>
-      </ul>
-      <p>
-        As a rule of thumb: you may always make a dependency to a 'semi-finished' addon but NEVER to a 'finished' addon.
-      </p>  
-    </section>
-    
+
 
     <section name="Repository">
-      <p>
-        The repository is implemented by the projects bound by the repository project.
+      <p>        
       </p>
-      <source>
-|-- repository               Pom
-|   |-- engine               Jar       Repository core
-|   `-- application          War       Minimal repository application, all other repository application projects are
-                                       <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a> of this project.
-      </source>
+      <ul>
+        <li><b>engine</b> </li>
+        <li><b>connector</b></li>
+        <li><b>application</b> </li>        
+      </ul> 
     </section>
 
     <section name="Frontend">
       <p>
-        The <a href="../plugins/frontend/frontend-plugin-architecture.html">
-        frontend plugin architecture</a> is implemented by the
-        projects bound by the frontend project.
       </p>
-      <source>
-|-- frontend                 Pom
-|   |-- engine               Jar       Frontend core
-|   |-- plugins              Jar       core plugins for a minimal GUI
-    `-- application          War       Minimal frontend application, all other frontend application projects are
-                                       <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">'WAR overlays'</a> of this project.
-                                       It is configured to start an embedded repository.
-      </source>
+      <ul>
+        <li><b>engine</b></li>
+        <li><b>plugins</b></li>
+        <li><b>application</b></li>        
+      </ul> 
     </section>
 
 
     <section name="Package">
       <p>
-        Application project assembling Hippo CMS 7.
       </p>
-      <source>
-|-- package                  Pom       hippo-ecm-package
-|   |-- config               Jar       hippo-ecm-package-config
-|   |-- skin                 War       hippo-ecm-package-skin
-|   |-- test                 Jar       hippo-ecm-package-test        
-|   |-- ear                  Ear       hippo-ecm-package-ear
-|   `-- war                  War       hippo-ecm-package-war
-      </source>
+    </section>
+
+    <section name="Hst">
+      <p>
+      </p>
+    </section>
+    
+    <section name="Archetypes">
+      <p>
+      </p>
     </section>
 
     <section name="Tools">
       <p>
-        The <b>tools</b> directory contains a collection of tools surrounding
-        Hippo ECM.
       </p>
-      <source>
-|-- tools                    Pom        hippo-ecm-tools
-|   |-- testutils            Jar        hippo-ecm-tools-testutils
-|   `-- migration            Jar        hippo-ecm-tools-migration
-      </source>
     </section>
     
     
-    <section name="API">
+    <section name="Api">
       <p>
-        Hippo ECM specific extensions to the JCR API.
       </p>
-      <source>
-        |-- api                      Jar
-      </source>
     </section>
+
     
   </body>
 </document>
