@@ -103,6 +103,8 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
+    
+    <!-- Versioning addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-versioning</artifactId>
@@ -110,13 +112,7 @@
       <type>jar</type>
     </dependency>
 
-    <!-- Reusable components -->
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-standards-repository</artifactId>
-      <version>${parent.version}</version>
-      <type>jar</type>
-    </dependency>
+    <!-- Reusable frontend components -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
