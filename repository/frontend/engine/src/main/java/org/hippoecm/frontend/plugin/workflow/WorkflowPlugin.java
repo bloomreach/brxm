@@ -23,8 +23,9 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
@@ -35,13 +36,14 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
+public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
@@ -53,6 +55,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
     private IPluginConfig config;
     private String[] categories;
     private String factoryId;
+    private JcrNodeModel model;
     private Map<String, IPluginControl> workflows;
     private Map<String, ModelService> models;
     private int wflCount;
@@ -61,6 +64,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
         this.context = context;
         this.config = config;
 
+        model = new JcrNodeModel("/");
         workflows = new HashMap<String, IPluginControl>();
         models = new HashMap<String, ModelService>();
         wflCount = 0;
@@ -83,25 +87,27 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
         } else {
             log.warn("");
         }
+
+        context.registerService(this, IJcrService.class.getName());
     }
 
     // implement IModelListener
 
-    public void updateModel(IModel model) {
-        JcrNodeModel nodeModel = (JcrNodeModel) model;
+    public void updateModel(IModel imodel) {
         closeWorkflows();
-        if(nodeModel == null || nodeModel.getNode() == null) {
+        if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
             return;
         }
+        model = (JcrNodeModel) imodel;
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {
                 cats.add(category);
             }
-            WorkflowsModel workflowsModel = new WorkflowsModel(nodeModel, cats);
+            WorkflowsModel workflowsModel = new WorkflowsModel(model, cats);
             if (log.isDebugEnabled()) {
                 try {
-                    log.debug("obtained workflows on " + nodeModel.getNode().getPath() + " counted "
+                    log.debug("obtained workflows on " + model.getNode().getPath() + " counted "
                             + workflowsModel.size() + " unique renderers");
                 } catch (RepositoryException ex) {
                     log.debug("debug message failed ", ex);
@@ -176,4 +182,13 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
         models = new HashMap<String, ModelService>();
     }
 
+    public void onFlush(JcrNodeModel nodeModel) {
+        if (model.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+            updateModel(model);
+        }
+    }
+
+    public void detach() {
+        model.detach();
+    }
 }
