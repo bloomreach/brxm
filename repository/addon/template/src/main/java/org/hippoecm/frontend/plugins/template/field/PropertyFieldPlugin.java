@@ -129,7 +129,7 @@ public class PropertyFieldPlugin extends Plugin {
                 }
             };
         } else {
-            return new Label("add", "");
+            return new Label("add").setVisible(false);
         }
     }
 }

@@ -100,7 +100,9 @@ public class ItemEditorPlugin extends Plugin {
 
     @Override
     public void onDetach() {
-        typeModel.detach();
+        if (typeModel != null) {
+            typeModel.detach();
+        }
         super.onDetach();
     }
 
