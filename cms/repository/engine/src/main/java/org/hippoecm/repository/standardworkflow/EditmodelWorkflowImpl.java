@@ -82,13 +82,19 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
         target = ((HippoSession) rootSession).copy(target, path);
 
         // clean up
-        Node current = getVersion(target, HippoNodeType.HIPPO_NODETYPE, "current");
-        if (current != null) {
-            current.remove();
-        }
-        current = getVersion(target, HippoNodeType.HIPPO_PROTOTYPE, "current");
-        if (current != null) {
-            current.remove();
+        for (String sub : new String[] { HippoNodeType.HIPPO_NODETYPE, HippoNodeType.HIPPO_PROTOTYPE }) {
+            Node current = getVersion(target, sub, "current");
+            Node draft = getVersion(target, sub, "draft");
+            if (current != null) {
+                if (draft != null) {
+                    current.remove();
+                } else {
+                    if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        current.addMixin(HippoNodeType.NT_REMODEL);
+                    }
+                    current.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
+                }
+            }
         }
 
         target.getParent().save();
