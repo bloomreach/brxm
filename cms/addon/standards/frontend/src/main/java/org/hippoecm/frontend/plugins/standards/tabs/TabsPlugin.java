@@ -27,6 +27,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.PluginRequestTarget;
@@ -125,10 +126,12 @@ public class TabsPlugin extends RenderPlugin {
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.select(true);
-        /*        IFactoryService factory = tabbie.factoryTracker.getService();
-         if (factory != null) {
-         factory.delete(tabbie.renderer);
-         } */
+    }
+
+    void onClose(Tab tabbie, AjaxRequestTarget target) {
+        IServiceReference<IRenderService> reference = getPluginContext().getReference(tabbie.renderer);
+        IFactoryService factory = getPluginContext().getService(reference.getServiceId(), IFactoryService.class);
+        factory.delete(tabbie.renderer);
     }
 
     private Tab findTabbie(IRenderService service) {
@@ -192,6 +195,15 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         // package internals
+
+        boolean canClose() {
+            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
+            IFactoryService factory = getPluginContext().getService(reference.getServiceId(), IFactoryService.class);
+            if (factory != null) {
+                return true;
+            }
+            return false;
+        }
 
         void select(boolean force) {
             if (force || tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
