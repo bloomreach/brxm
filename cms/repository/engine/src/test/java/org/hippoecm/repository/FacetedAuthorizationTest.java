@@ -15,6 +15,12 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -24,16 +30,13 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.apache.log4j.Logger;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.PortableInterceptor.USER_EXCEPTION;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import sun.security.action.GetLongAction;
 
 
 public class FacetedAuthorizationTest extends TestCase {
@@ -130,7 +133,7 @@ public class FacetedAuthorizationTest extends TestCase {
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
-        fr.setProperty(HippoNodeType.HIPPO_FACET, HippoNodeType.HIPPO_TYPE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "canread");
         fr.setProperty(HippoNodeType.HIPPO_TYPE, "String");
         
@@ -165,7 +168,7 @@ public class FacetedAuthorizationTest extends TestCase {
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrall");
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
-        fr.setProperty(HippoNodeType.HIPPO_FACET, HippoNodeType.HIPPO_TYPE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "canwrite");
         fr.setProperty(HippoNodeType.HIPPO_TYPE, "String");
 
@@ -173,36 +176,36 @@ public class FacetedAuthorizationTest extends TestCase {
         testData = session.getRootNode().addNode(TEST_DATA_NODE);
         testData.addMixin("mix:referenceable");
         
-        testData.addNode("readdoc0",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canread");
-        testData.addNode("writedoc0", "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canwrite");
-        testData.addNode("nothing0",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "nothing");
+        testData.addNode("readdoc0",  "hippo:ntunstructured").setProperty("authtest", "canread");
+        testData.addNode("writedoc0", "hippo:ntunstructured").setProperty("authtest", "canwrite");
+        testData.addNode("nothing0",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("readdoc0").addMixin("hippo:harddocument");
         testData.getNode("writedoc0").addMixin("hippo:harddocument");
         testData.getNode("nothing0").addMixin("hippo:harddocument");
         
-        testData.getNode("readdoc0").addNode("subread",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canread");
-        testData.getNode("readdoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canwrite");
-        testData.getNode("readdoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "nothing");
+        testData.getNode("readdoc0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
+        testData.getNode("readdoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
+        testData.getNode("readdoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("readdoc0/subread").addMixin("hippo:harddocument");
         testData.getNode("readdoc0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("readdoc0/subnothing").addMixin("hippo:harddocument");
         
-        testData.getNode("writedoc0").addNode("subread",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canread");
-        testData.getNode("writedoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canwrite");
-        testData.getNode("writedoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "nothing");
+        testData.getNode("writedoc0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
+        testData.getNode("writedoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
+        testData.getNode("writedoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("writedoc0/subread").addMixin("hippo:harddocument");
         testData.getNode("writedoc0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("writedoc0/subnothing").addMixin("hippo:harddocument");
  
-        testData.getNode("nothing0").addNode("subread",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canread");
-        testData.getNode("nothing0").addNode("subwrite",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canwrite");
-        testData.getNode("nothing0").addNode("subnothing",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "nothing");
+        testData.getNode("nothing0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
+        testData.getNode("nothing0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
+        testData.getNode("nothing0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("nothing0/subread").addMixin("hippo:harddocument");
         testData.getNode("nothing0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("nothing0/subnothing").addMixin("hippo:harddocument");
         
         // expander test data
-        testData.addNode("expanders",  "hippo:ntunstructured").setProperty(HippoNodeType.HIPPO_TYPE, "canread");
+        testData.addNode("expanders",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.getNode("expanders").addMixin("hippo:harddocument");
 
         testData.getNode("expanders").addNode("usertest",  "hippo:ntunstructured").setProperty("user", TEST_USER_ID);
@@ -228,13 +231,13 @@ public class FacetedAuthorizationTest extends TestCase {
         Node node = testNav.addNode("search", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "search");
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { HippoNodeType.HIPPO_TYPE });
+        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "authtest" });
 
         // select without namespace
         node = testNav.addNode("select", HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { HippoNodeType.HIPPO_TYPE });
+        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "authtest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "canread" });
         
         // expose data to user session
@@ -348,7 +351,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         try {
             node = testData.getNode("writedoc0");
-            node.setProperty(HippoNodeType.HIPPO_TYPE, "nope");
+            node.setProperty("authtest", "nope");
             userSession.save();
             fail("Shouldn't be allowed to change node to non-writeable.");
         } catch (AccessDeniedException e) {
@@ -431,7 +434,7 @@ public class FacetedAuthorizationTest extends TestCase {
         Node node;
         try {
             node = testData.getNode("readdoc0");
-            node.getProperty(HippoNodeType.HIPPO_TYPE).remove();
+            node.getProperty("authtest").remove();
             userSession.save();
             fail("Shouldn't be allowed to remove property from node.");
         } catch (AccessDeniedException e) {
@@ -469,6 +472,65 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
+    @Test
+    public void testSelfExclusionNotAllowed() throws RepositoryException {
+        Node node;
+        try {
+            node = testData.getNode("writedoc0");            
+            node.setProperty("authtest", "none");
+            userSession.save();
+            fail("Shouldn't be allowed to exclude yourself from reading.");
+        } catch (AccessDeniedException e) {
+            // expected
+            userSession.refresh(false);
+        }
+        try {
+            node = testData.getNode("writedoc0");            
+            node.setProperty("authtest", "read");
+            userSession.save();
+            fail("Shouldn't be allowed to exclude yourself from writing.");
+        } catch (AccessDeniedException e) {
+            // expected
+            userSession.refresh(false);
+        }
+        
+        
+        try {
+            node = testData.getNode("writedoc0");
+            node.addNode("mynode1", "hippo:ntunstructured").setProperty("authtest", "none");
+            userSession.save();
+            
+            // JackRabbit swallows the AccessDeniedException, so check manually for node
+            try {
+                userSession.refresh(false);
+                testData.getNode("writedoc0/mynode1");
+            } catch (PathNotFoundException e) {
+                // expected
+            }
+            //fail("Shouldn't be allowed to add node you can't read.");
+        } catch (AccessDeniedException e) {
+            // expected
+            userSession.refresh(false);
+        }
+        try {
+            node = testData.getNode("writedoc0");
+            node.addNode("mynode2", "hippo:ntunstructured").setProperty("authtest", "read");
+            userSession.save();
+
+            // JackRabbit swallows the AccessDeniedException, so check manually for node
+            try {
+                userSession.refresh(false);
+                testData.getNode("writedoc0/mynode2");
+            } catch (PathNotFoundException e) {
+                // expected
+            }
+            //fail("Shouldn't be allowed to add node you can't write.");
+        } catch (AccessDeniedException e) {
+            // expected
+            userSession.refresh(false);
+        }
+    }
+    
     @Test
     public void testFacetSearch() throws RepositoryException {
         //Utilities.dump(testNav);
