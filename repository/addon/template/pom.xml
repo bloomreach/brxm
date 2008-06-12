@@ -56,6 +56,11 @@
       <artifactId>hippo-ecm-addon-builtin-common</artifactId>
       <version>${parent.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-builtin-frontend</artifactId>
+      <version>${parent.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.export;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.legacy.template.FieldDescriptor;
-import org.hippoecm.frontend.legacy.template.TypeDescriptor;
-import org.hippoecm.frontend.legacy.template.config.TypeConfig;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
@@ -30,7 +30,7 @@ public class TypeConversion extends TypeUpdate implements Serializable {
 
     private Map<FieldIdentifier, FieldIdentifier> fields;
 
-    public TypeConversion(TypeConfig currentConfig, TypeConfig draftConfig, TypeDescriptor current, TypeDescriptor draft) {
+    public TypeConversion(ITypeStore currentConfig, ITypeStore draftConfig, TypeDescriptor current, TypeDescriptor draft) {
         if (draft != null) {
             newName = draft.getName();
         } else {

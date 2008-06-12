@@ -65,9 +65,6 @@ public class FolderDialog extends AbstractWorkflowDialog {
             if (jcrService != null) {
                 jcrService.flush(nodeModel.getParentModel());
             }
-
-            PrototypeWorkflowPlugin plugin = (PrototypeWorkflowPlugin) getPlugin();
-            plugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");
         }

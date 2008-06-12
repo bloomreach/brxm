@@ -24,14 +24,14 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.legacy.template.config.RepositoryTypeConfig;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
-import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.export.CndSerializer;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.export.NamespaceUpdater;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -71,8 +71,8 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         String cnd = serializer.getOutput();
         System.out.println(cnd);
 
-        NamespaceUpdater updater = new NamespaceUpdater(new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT),
-                new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT));
+        NamespaceUpdater updater = new NamespaceUpdater(new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT),
+                new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT));
         Map<String, TypeUpdate> update = updater.getUpdate(namespace);
         for (Map.Entry<String, TypeUpdate> entry : update.entrySet()) {
             Node typeNode = node.getNode(entry.getKey());

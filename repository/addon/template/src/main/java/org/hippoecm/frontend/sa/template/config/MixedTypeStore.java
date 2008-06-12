@@ -18,8 +18,8 @@ package org.hippoecm.frontend.sa.template.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.sa.template.ITypeStore;
-import org.hippoecm.frontend.sa.template.TypeDescriptor;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
 
 public class MixedTypeStore implements ITypeStore {
     private static final long serialVersionUID = 1L;

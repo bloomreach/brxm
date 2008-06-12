@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.template;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
 
-import java.util.List;
+public interface INamespaceResolver {
 
-import org.apache.wicket.IClusterable;
-
-public interface ITypeStore extends IClusterable {
-
-    TypeDescriptor getTypeDescriptor(String name);
-
-    List<TypeDescriptor> getTypes(String namespace);
+    String resolvePrefix(String prefix);
 }

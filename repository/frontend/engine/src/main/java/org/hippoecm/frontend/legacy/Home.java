@@ -35,7 +35,6 @@ import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 /**
  * @deprecated Needed for handling legacy plugins, use org.hippoecm.frontend.sa.Home instead.
@@ -55,7 +54,7 @@ public class Home extends LegacyPluginPage {
         UserSession session = getValidUserSession();
         HippoNode rootNode = session.getRootNode();
 
-        TypeConfig repoTypeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT);
+        TypeConfig repoTypeConfig = new RepositoryTypeConfig("current");
         TypeConfig jcrTypeConfig = new JcrTypeConfig();
         List<TypeConfig> configs = new LinkedList<TypeConfig>();
         configs.add(repoTypeConfig);

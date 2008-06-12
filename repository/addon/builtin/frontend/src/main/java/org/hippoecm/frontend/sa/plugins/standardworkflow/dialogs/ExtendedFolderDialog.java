@@ -28,20 +28,16 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.PropertyModel;
-
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrItemModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExtendedFolderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
@@ -115,10 +111,7 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
                 log.error("unknown folder type " + folderType);
                 return;
             }
-            String path = workflow.addFolder(name, type);
-            JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-            PrototypeWorkflowPlugin plugin = (PrototypeWorkflowPlugin) getPlugin();
-            plugin.select(nodeModel);
+            /* String path = */ workflow.addFolder(name, type);
         } else {
             log.error("no workflow defined on model for selected node");
         }

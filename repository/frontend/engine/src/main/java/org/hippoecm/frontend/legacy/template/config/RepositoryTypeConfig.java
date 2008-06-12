@@ -41,7 +41,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +98,7 @@ public class RepositoryTypeConfig implements TypeConfig {
                 Node pluginNode = iter.nextNode();
                 Descriptor descriptor = new Descriptor(pluginNode, namespace);
                 TypeDescriptor typeDescriptor = descriptor.type;
-                if (isVersion(pluginNode, RemodelWorkflow.VERSION_CURRENT)) {
+                if (isVersion(pluginNode, "current")) {
                     currentTypes.put(typeDescriptor.getName(), typeDescriptor);
                 }
                 if (isVersion(pluginNode, version)) {
@@ -128,7 +127,7 @@ public class RepositoryTypeConfig implements TypeConfig {
     }
 
     private boolean useOldType() {
-        return (RemodelWorkflow.VERSION_OLD.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version));
+        return ("old".equals(version) || "error".equals(version));
     }
 
     private boolean isVersion(Node pluginNode, String version) throws RepositoryException {
@@ -136,7 +135,7 @@ public class RepositoryTypeConfig implements TypeConfig {
             if (pluginNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals(version)) {
                 return true;
             }
-        } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
+        } else if ("current".equals(version)) {
             return true;
         }
         return false;
@@ -182,17 +181,17 @@ public class RepositoryTypeConfig implements TypeConfig {
                     } else {
                         return node;
                     }
-                } else if (RemodelWorkflow.VERSION_CURRENT.equals(state)) {
+                } else if ("current".equals(state)) {
                     current = node;
                 }
-            } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
+            } else if ("current".equals(version)) {
                 return node;
             } else {
                 current = node;
             }
         }
 
-        if (RemodelWorkflow.VERSION_DRAFT.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version)) {
+        if ("draft".equals(version) || "error".equals(version)) {
             return current;
         }
         return null;
@@ -241,8 +240,8 @@ public class RepositoryTypeConfig implements TypeConfig {
                     String path = null;
                     if (typeNode.hasProperty(HippoNodeType.HIPPO_PATH)) {
                         path = typeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
-                        if (RemodelWorkflow.VERSION_DRAFT.equals(version)
-                                || RemodelWorkflow.VERSION_ERROR.equals(version)) {
+                        if ("draft".equals(version)
+                                || "error".equals(version)) {
                             // convert path
                             if (path.indexOf(':') > 0) {
                                 path = prefix + path.substring(path.indexOf(':'));
