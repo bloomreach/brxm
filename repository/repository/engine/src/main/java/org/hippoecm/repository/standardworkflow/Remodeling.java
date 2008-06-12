@@ -437,10 +437,22 @@ public class Remodeling {
         // update references
         if (source.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             PropertyIterator propIter = source.getReferences();
+            ReferenceValue origValue = ReferenceValue.valueOf(source.getUUID());
+            ReferenceValue newValue = new ReferenceValue(target);
             while (propIter.hasNext()) {
                 Property property = propIter.nextProperty();
                 if (!property.getDefinition().isProtected()) {
-                    property.setValue(new ReferenceValue(target));
+                    if (property.getDefinition().isMultiple()) {
+                        Value[] values = property.getValues();
+                        for (int i = 0; i < values.length; i++) {
+                            if (values[i].equals(origValue)) {
+                                values[i] = newValue;
+                            }
+                        }
+                        property.setValue(values);
+                    } else {
+                        property.setValue(new ReferenceValue(target));
+                    }
                 } else {
                     log.warn("Unable to update protected reference");
                 }
@@ -606,14 +618,16 @@ public class Remodeling {
         int newNamespaceVersion = Integer.parseInt(oldNamespaceURI.substring(pos + 1));
         ++newNamespaceVersion;
         String newNamespaceURI = oldNamespaceURI.substring(0, pos + 1) + newNamespaceVersion;
-        String newPrefix = prefix + "_" + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
-        String oldPrefix = prefix + "_" + oldNamespaceURI.substring(oldNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+        String newPrefix = prefix + "_"
+                + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+        String oldPrefix = prefix + "_"
+                + oldNamespaceURI.substring(oldNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
 
         // push new node type definition such that it will be loaded
         try {
             nsreg.open();
             nsreg.registerNamespace(newPrefix, newNamespaceURI);
-            
+
             CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd), prefix);
             List ntdList = cndReader.getNodeTypeDefs();
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
@@ -622,10 +636,9 @@ public class Remodeling {
             for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
                 NodeTypeDef ntd = (NodeTypeDef) iter.next();
 
-                /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
+                /* EffectiveNodeType effnt = */ntreg.registerNodeType(ntd);
             }
 
-            
             Remodeling remodel = new Remodeling(userSession, newPrefix, oldNamespaceURI, updates);
             remodel.traverse(userSession.getRootNode(), false, userSession.getRootNode());
             remodel.updateTypes();
