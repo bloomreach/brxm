@@ -22,6 +22,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.ISO9075Helper;
 
 public class BreadcrumbPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -41,7 +42,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         IModel model = getModel();
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeNodel = (JcrNodeModel)model;
-            breadcrumb = nodeNodel.getItemModel().getPath();
+            breadcrumb = ISO9075Helper.decodeLocalName(nodeNodel.getItemModel().getPath());
         }
     }
 }
