@@ -16,6 +16,7 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +31,6 @@ import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
@@ -48,20 +48,22 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
+import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.value.ReferenceValue;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoNamespaceRegistry;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Remodeling {
     protected final static Logger log = LoggerFactory.getLogger(Remodeling.class);
@@ -182,7 +184,7 @@ public class Remodeling {
     }
 
     private String getNewName(String name) {
-        if (name.startsWith(oldPrefix)) {
+        if (name.startsWith(oldPrefix + ":")) {
             return prefix + name.substring(oldPrefix.length());
         } else {
             return name;
@@ -561,7 +563,7 @@ public class Remodeling {
                         traverse(child, true, newChild);
                         child.remove(); // iter.remove();
                         changes.add(newChild);
-                    } else if (child.getName().startsWith(oldPrefix)) {
+                    } else if (child.getName().startsWith(oldPrefix + ":")) {
                         toRename.addLast(child);
                     } else {
                         traverse(child, false, child);
@@ -604,66 +606,43 @@ public class Remodeling {
         int newNamespaceVersion = Integer.parseInt(oldNamespaceURI.substring(pos + 1));
         ++newNamespaceVersion;
         String newNamespaceURI = oldNamespaceURI.substring(0, pos + 1) + newNamespaceVersion;
+        String newPrefix = prefix + "_" + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+        String oldPrefix = prefix + "_" + oldNamespaceURI.substring(oldNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
 
         // push new node type definition such that it will be loaded
         try {
             nsreg.open();
+            nsreg.registerNamespace(newPrefix, newNamespaceURI);
+            
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd), prefix);
+            List ntdList = cndReader.getNodeTypeDefs();
+            NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
+            NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
 
-            Node base = userSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(
-                    HippoNodeType.INITIALIZE_PATH);
-            Node node;
-            if (base.hasNode(prefix)) {
-                node = base.getNode(prefix);
-            } else {
-                node = base.addNode(prefix, HippoNodeType.NT_INITIALIZEITEM);
+            for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
+                NodeTypeDef ntd = (NodeTypeDef) iter.next();
+
+                /* EffectiveNodeType effnt = */ ntreg.registerNodeType(ntd);
             }
-            node.setProperty(HippoNodeType.HIPPO_NAMESPACE, newNamespaceURI);
-            node.setProperty(HippoNodeType.HIPPO_NODETYPES, cnd);
-            userSession.save();
 
-            // wait for node types to be reloaded
-            userSession.refresh(true);
-            while (base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPES)
-                    || base.getNode(prefix).hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                }
-                userSession.refresh(true);
-            }
-        } catch (ConstraintViolationException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (LockException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (ValueFormatException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (VersionException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        } catch (PathNotFoundException ex) {
-            throw new RepositoryException("Hippo repository configuration not in order");
-        }
-
-        try {
-            Remodeling remodel = new Remodeling(userSession, prefix, oldNamespaceURI, updates);
+            
+            Remodeling remodel = new Remodeling(userSession, newPrefix, oldNamespaceURI, updates);
             remodel.traverse(userSession.getRootNode(), false, userSession.getRootNode());
             remodel.updateTypes();
-            nsreg.commit(prefix);
+            nsreg.commit(newPrefix);
+
+            nsreg.externalRemap(prefix, oldPrefix, oldNamespaceURI);
+            nsreg.externalRemap(newPrefix, prefix, newNamespaceURI);
+
             nsreg.close();
             return remodel;
         } catch (Exception ex) {
             userSession.refresh(false);
-            nsreg.unregisterNamespace(prefix);
+            nsreg.unregisterNamespace(newPrefix);
             nsreg.close();
-            String oldPrefix = nsreg.getPrefix(oldNamespaceURI);
-            nsreg.externalRemap(oldPrefix, prefix, oldNamespaceURI);
-            if (ex instanceof NamespaceException) {
-                throw (NamespaceException) ex;
-            } else if (ex instanceof RepositoryException) {
-                throw (RepositoryException) ex;
-            } else {
-                throw (RuntimeException) ex;
-            }
+            ex.printStackTrace();
         }
+        return null;
     }
 
     public static void convert(Node node, String prefix, Map<String, TypeUpdate> renames) throws NamespaceException,

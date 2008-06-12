@@ -53,7 +53,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         this.jcrServiceRef = jcrService;
 
-        if (plugin.getModel() == null || ((JcrNodeModel) plugin.getModel()).getNode() == null) {
+        if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
     }
@@ -92,16 +92,16 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         sessionModel.getSession().save();
 
-        // log out; the session model will log in again.
-        // Sessions cache path resolver information, which is incorrect after remapping the prefix.
-        sessionModel.flush();
-
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {
-                /* String[] nodes = */ workflow.remodel(cnd, update);
+                /* String[] nodes = */workflow.remodel(cnd, update);
                 sessionModel.getSession().save();
+
+                // log out; the session model will log in again.
+                // Sessions cache path resolver information, which is incorrect after remapping the prefix.
+                sessionModel.flush();
 
                 jcrServiceRef.getService().flush(new JcrNodeModel("/"));
             } catch (RepositoryException ex) {

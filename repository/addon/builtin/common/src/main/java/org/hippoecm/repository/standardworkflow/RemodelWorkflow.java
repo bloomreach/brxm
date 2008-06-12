@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -66,7 +67,8 @@ public interface RemodelWorkflow extends Workflow {
         abstract public Map<FieldIdentifier, FieldIdentifier> getRenames();
     }
 
-    public class FieldIdentifier {
+    public class FieldIdentifier implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         public String path;
 
