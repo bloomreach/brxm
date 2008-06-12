@@ -18,11 +18,7 @@ package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
@@ -40,14 +36,8 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private String url;
 
-    private IServiceReference<IJcrService> jcrServiceRef;
-
     public NamespaceDialog(NamespaceWorkflowPlugin plugin, IDialogService dialogWindow) {
         super(plugin, dialogWindow, "Create new namespace");
-
-        IPluginContext context = plugin.getPluginContext();
-        IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
-        jcrServiceRef = context.getReference(service);
 
         add(new TextFieldWidget("prefix", new PropertyModel(this, "prefix")));
 
@@ -58,11 +48,5 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
         workflow.createNamespace(prefix, url);
-
-        IJcrService jcrService = jcrServiceRef.getService();
-        if (jcrService != null) {
-            WorkflowsModel model = (WorkflowsModel) getPlugin().getModel();
-            jcrService.flush(model.getNodeModel().getParentModel());
-        }
     }
 }
