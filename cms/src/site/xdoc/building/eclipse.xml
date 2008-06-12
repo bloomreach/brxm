@@ -31,16 +31,16 @@
             most exiting version of Hippo ECM: The trunk!
           </p>
           <div style="border:1px solid black; padding:1em;">
-            NOTE: Hippo ECM is a very complex project with many subprojects, setting up and managing
-            it in Eclipse is a non-trivial task and very error-prone. If not 
+            NOTE: Hippo ECM is a large project with many subprojects, setting up and managing
+            it in Eclipse is a non-trivial task and can be very error-prone. If not 
             done correctly this can become a very frustrating experience where most of the time you 
             are waiting on eclipse and chasing rabbits. The steps and best practices
-            outlined here will (hopefully) enable you to avoid this frustration, if follow them
+            outlined here will enable you to avoid this frustration, if follow them
             you will find that developing Hippo ECM with Eclipse can actually be very easy.
           </div>
           <br/>
           <p>
-            Please note that most of the sometimes bizarre loopholes you are going to jump through when
+            Please note that most of the loopholes you are going to jump through when
             following these steps are workarounds for difficulties due to the fact that Maven
             is our leading buildsystem and not Eclipse.  Setting up Eclipse for Hippo ECM means
             mimicking the Maven build inside Eclipse: for each step the Maven build does to to create
@@ -110,7 +110,7 @@
                     </li>
                 </ol>
                 <p>
-                    In the 'Select features to install' step ONLY select the following two features:
+                    In the 'Select features to install' step only select the following two features:
                 </p>                                    
                 <ol>
                     <li>
@@ -155,10 +155,14 @@
                       <p>Update URL='http://www.jpox.org/downloads/eclipse-update/'</p>
                     </li>
                 </ol>
-                <p>In the eclipse preferences dialog:</p>
+                <p>
+                  In the 'Select features to install' step only select 'JPOX Eclipse Plugin'
+                  <br/><br/>
+                  In the eclipse preferences dialog:
+                </p>
                 <ol>
                     <li>
-                        <p>Select JPOX Eclipse Plugin -&gt; General</p>
+                        <p>Select JPOX</p>
                     </li>
                     <li>
                         <p>Uncheck 'Use project classpath when running tools'</p>
@@ -174,7 +178,7 @@
                         </ul>
                     </li>
                     <li>
-                        <p>Select JPOX Eclipse Plugin -&gt; Enhancer and make sure the 'Class Enhancer' is set to BCEL</p>
+                        <p>Select JPOX -&gt; Enhancer and enter 'BCEL' in the the 'Class Enhancer' field.</p>
                     </li>
                 </ol>
             </subsection>
@@ -251,7 +255,7 @@
                   <source>
 C:\hippo-ecm> cd package\war\src\main\webapp
 C:\hippo-ecm\package\war\src\main\webapp> junction skin ..\..\..\..\skin\src\main\webapp
-C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\..\xinha\src\main\webapp
+C:\hippo-ecm\package\war\src\main\webapp> junction xinha ..\..\..\..\..\addon\xinha\src\main\webapp
 C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
 C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
@@ -266,7 +270,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
  ~/> cd hippo-ecm/package/war/src/main/webapp
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../skin/src/main/webapp/ skin
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
- ~/hippo-ecm/package/war/src/main/webapp> cd -
+ ~/hippo-ecm/package/war/src/main/webapp> cd ../../../../..
  ~/> cd hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/AutoSave/ AutoSave
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/CustomLinker/ CustomLinker
