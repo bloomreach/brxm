@@ -35,7 +35,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
 
     private static String[] contents = new String[] {
         "/test",                                                             "nt:unstructured",
-        "/test/documents",                                                   "hippo:folder",
+        "/test/documents",                                                   "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/pages",                                             "nt:unstructured",
         "/test/documents/pages/index",                                       "hippo:handle",

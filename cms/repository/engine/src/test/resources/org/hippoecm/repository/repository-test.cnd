@@ -38,6 +38,3 @@
 
 [hippo:baddocument] > hippo:document, mix:referenceable
 - hippo:x (String)
-
-// The following type is DEPRECATED from start
-[hippo:folder] > nt:unstructured, mix:referenceable

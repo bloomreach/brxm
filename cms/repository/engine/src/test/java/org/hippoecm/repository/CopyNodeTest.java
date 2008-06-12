@@ -39,7 +39,8 @@ public class CopyNodeTest extends TestCase {
 
     @Test
     public void testVirtualTreeCopy() throws RepositoryException {
-        Node node, root = session.getRootNode().addNode("test","hippo:folder");
+        Node node, root = session.getRootNode().addNode("test","nt:unstructured");
+	root.addMixin("mix:referenceable");
         node = root.addNode("documents");
         node = node.addNode("document","hippo:testdocument");
         node.addMixin("hippo:harddocument");

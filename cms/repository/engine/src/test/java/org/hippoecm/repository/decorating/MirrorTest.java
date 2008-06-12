@@ -41,7 +41,8 @@ public class MirrorTest extends TestCase {
     private final static String SVN_ID = "$Id$";
 
     private static String[] contents = new String[] {
-        "/documents", "hippo:folder",
+        "/documents", "nt:unstructured",
+	"jcr:mixinTypes", "mix:referenceable",
         "niet", "hier",
         "/navigation", "nt:unstructured",
         "/navigation/mirror", "hippo:mirror",

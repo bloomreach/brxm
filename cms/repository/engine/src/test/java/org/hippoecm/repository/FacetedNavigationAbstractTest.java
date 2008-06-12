@@ -85,7 +85,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         Node node = session.getRootNode().getNode("test");
 
         if (!node.hasNode("documents")) {
-            node.addNode("documents", "hippo:folder");
+            node.addNode("documents", "nt:unstructured").addMixin("mix:referenceable");
         }
         if (!node.hasNode("navigation")) {
             node.addNode("navigation");

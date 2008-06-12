@@ -56,7 +56,8 @@ public class HREPTWO475Test extends TestCase {
     public void testIssue() throws RepositoryException {
         Node node, child, root = session.getRootNode().addNode("test");
 
-        node = root.addNode("docs","hippo:folder");
+        node = root.addNode("docs","nt:unstructured");
+	node.addMixin("mix:referenceable");
         node = node.addNode("doc1",HippoNodeType.NT_HANDLE);
         child = node.addNode("doc1","hippo:testdocument");
         child.addMixin("hippo:harddocument");
