@@ -88,14 +88,12 @@ hippo-ecm                    Pom       hippo-ecm
 |   |   |-- repository       Jar       hippo-ecm-addon-reviewed-action-repository
 |   |   `-- test             Jar       hippo-ecm-addon-reviewed-action-test
 |   |-- standards            Pom       hippo-ecm-addon-standards
-|   |   |-- frontend         Jar       hippo-ecm-addon-standards-frontend
-|   |   `-- repository       Jar       hippo-ecm-addon-standards-test
+|   |   `-- frontend         Jar       hippo-ecm-addon-standards-frontend
 |   |-- template             Jar       hippo-ecm-addon-template
 |   |-- versioning           Jar       hippo-ecm-addon-versioning
 |   |-- xinha                War       hippo-ecm-addon-xinha
 |   |-- xinha-frontend       Jar       hippo-ecm-addon-xinha-frontend
 |   `-- yui                  Pom       hippo-ecm-addon-yui
-|       `-- frontend         Jar       hippo-ecm-addon-yui-frontend
 |-- api                      Jar       hippo-ecm-api
 |-- archetypes               Pom       hippo-ecm-archetypes
 |   `-- addon                Archetype hippo-ecm-archetypes-addon
@@ -178,9 +176,6 @@ hippo-ecm                    Pom       hippo-ecm
         <li><b>standards-frontend</b> contains a collection of shared frontend plugins. For
           instance, all cms-* addons contain a Perspective plugin (BrowsePerspective,
           EditPerspective, ...), so it makes sense to have a common baseclass in standards-frontend.</li>
-
-        <li><b>standards-repository</b> defines commonly used datastructures like template
-          definitions for standard types</li>
 
         <li><b>template</b> is a frontend addon that implements the document template editor</li>
 
