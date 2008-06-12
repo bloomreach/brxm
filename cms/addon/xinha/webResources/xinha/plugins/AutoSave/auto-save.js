@@ -97,18 +97,35 @@ AutoSave.prototype.setUnChanged = function() {
 
 AutoSave.prototype.save =  function() {
     var self = this;
+    // verify editors existence
     var form = this.editor._textArea.form;
     form.onsubmit();
     var callbackUrl = this.editor.config.callbackUrl + "&save=true";
     var myId = this.editor._textArea.getAttribute("id");
     
-    var postFunc = function(responseText) {
-      if(responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
-        self.initial_html = self.editor.getInnerHTML();
-        self.changed = false;
-      }  
+  function callBack()
+  {
+    if ( req.readyState == 4 )
+    {
+      if ( req.status == 200 || req.status == 0 )
+      {
+        if(req.responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
+          self.initial_html = self.editor.getInnerHTML();
+          self.changed = false;
+        }
+      } else {
+        alert('Failed to save content');
+      }
     }
+  }
+
     //TODO: use Xinha form serialize method instead of Wicket's
-    var doCall = Xinha._postback(callbackUrl, wicketSerialize(Wicket.$(myId)), postFunc);
+    
+    req = Wicket.Ajax.getTransport();
+
+    req.onreadystatechange = callBack;
+    req.open('POST', callbackUrl, true);
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'+(Xinha._postback_send_charset ? '; charset=UTF-8' : ''));
+    req.send(wicketSerialize(Wicket.$(myId)));
 }
 

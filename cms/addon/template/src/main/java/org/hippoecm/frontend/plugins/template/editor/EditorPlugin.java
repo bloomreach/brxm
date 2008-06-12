@@ -34,7 +34,12 @@ public class EditorPlugin extends Plugin {
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        add(form = newForm());
+        JcrNodeModel nodeModel = new JcrNodeModel(model);
+        if (nodeModel.getItemModel().exists()) {
+            add(form = newForm());
+        } else {
+            add(new Form("form"));
+        }
         setOutputMarkupId(true);
     }
 
@@ -45,16 +50,37 @@ public class EditorPlugin extends Plugin {
         form.setMaxSize(Bytes.megabytes(5));
         return form;
     }
-    
+
     @Override
     public void receive(Notification notification) {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
             if (!nodeModel.equals(new JcrNodeModel(getPluginModel()))) {
-                form.destroy();
-                replace(form = new EditorForm("form", nodeModel, this));
-                notification.getContext().addRefresh(this);
+                if (form != null) {
+                    form.destroy();
+                    form = null;
+                }
                 setPluginModel(nodeModel);
+                if (nodeModel.getItemModel().exists()) {
+                    form = newForm();
+                    replace(form);
+                } else {
+                    replace(new Form("form"));
+                }
+                notification.getContext().addRefresh(this);
+            }
+        } else if ("flush".equals(notification.getOperation())) {
+            if (form != null) {
+                form.destroy();
+                form = null;
+            }
+            JcrNodeModel model = new JcrNodeModel(getPluginModel());
+            if (model.getItemModel().exists()) {
+                form = newForm();
+                replace(form);
+                notification.getContext().addRefresh(this);
+            } else {
+                replace(new Form("form"));
             }
         }
         super.receive(notification);
