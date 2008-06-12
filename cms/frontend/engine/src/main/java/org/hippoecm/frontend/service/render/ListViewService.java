@@ -19,7 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
@@ -36,6 +39,27 @@ public class ListViewService extends RenderService {
 
     public static final String ITEM = "item";
 
+    private static class RenderServiceModel extends Model {
+        private static final long serialVersionUID = 1L;
+
+        RenderServiceModel(IRenderService service) {
+            super(service);
+        }
+
+        @Override
+        public int hashCode() {
+            return getObject().hashCode() * 19;
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that != null && that instanceof RenderServiceModel) {
+                return ((RenderServiceModel) that).getObject() == getObject();
+            }
+            return false;
+        }
+    }
+
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
 
@@ -43,7 +67,16 @@ public class ListViewService extends RenderService {
         super(context, properties);
         services = new LinkedList<IRenderService>();
 
-        final AbstractView view = new AbstractView("view", new ListDataProvider(services)) {
+        final IDataProvider provider = new ListDataProvider(services) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public IModel model(Object object) {
+                return new RenderServiceModel((IRenderService) object);
+            }
+        };
+
+        final AbstractView view = new AbstractView("view", provider) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -51,13 +84,16 @@ public class ListViewService extends RenderService {
                 IRenderService renderer = (IRenderService) item.getModelObject();
                 renderer.bind(ListViewService.this, "item");
                 item.add(renderer.getComponent());
+                log.info("\nBound " + renderer.getComponent().getPath() + "\n");
                 ListViewService.this.onAddRenderService(item, renderer);
             }
 
             @Override
             protected void destroyItem(Item item) {
+                // FIXME: this assumes that the IRenderService is the Component itself
                 IRenderService renderer = (IRenderService) item.get("item");
                 ListViewService.this.onRemoveRenderService(item, renderer);
+                log.info("\nUNBinding " + renderer.getComponent().getPath() + "\n");
                 renderer.unbind();
             }
         };
