@@ -134,7 +134,7 @@ public class NodeFieldPlugin extends Plugin {
                 }
             };
         } else {
-            return new Label("add", "");
+            return new Label("add").setVisible(false);
         }
     }
 }

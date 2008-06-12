@@ -72,7 +72,7 @@ public class ValueView extends AbstractView {
                 }
             });
         } else {
-            item.add(new Label("remove", ""));
+            item.add(new Label("remove").setVisible(false));
         }
     }
 

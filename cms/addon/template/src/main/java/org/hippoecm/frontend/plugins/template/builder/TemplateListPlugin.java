@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.template.builder;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +31,9 @@ import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.frontend.legacy.plugin.Plugin;
@@ -61,6 +64,27 @@ public class TemplateListPlugin extends Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
+    private static class TemplateItemModel extends Model {
+        private static final long serialVersionUID = 1L;
+
+        TemplateItemModel(Serializable template) {
+            super(template);
+        }
+
+        @Override
+        public int hashCode() {
+            return getObject().hashCode() * 23;
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that != null && that instanceof IModel) {
+                return getObject() == ((IModel) that).getObject();
+            }
+            return false;
+        }
+    }
+
     private JcrTypeModel typeModel;
     private JcrNodeModel templateNodeModel;
 
@@ -88,14 +112,24 @@ public class TemplateListPlugin extends Plugin {
             TypeConfig defaultTypeConfig = engine.getTypeConfig();
             for (String type : templateValue.getStrings()) {
                 TypeDescriptor typeDescriptor = defaultTypeConfig.getTypeDescriptor(type);
-                TemplateDescriptor template = templateConfig.getTemplate(typeDescriptor, itemModel.getDescriptor().getMode());
+                TemplateDescriptor template = templateConfig.getTemplate(typeDescriptor, itemModel.getDescriptor()
+                        .getMode());
                 if (template != null) {
                     templateList.add(template);
                 }
             }
         }
 
-        AbstractView templates = new AbstractView("templates", new ListDataProvider(templateList), this) {
+        final IDataProvider provider = new ListDataProvider(templateList) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public IModel model(Object object) {
+                return new TemplateItemModel((Serializable) object);
+            }
+        };
+
+        AbstractView templates = new AbstractView("templates", provider, this) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(Item item) {
@@ -116,7 +150,7 @@ public class TemplateListPlugin extends Plugin {
                             Request request = channel.createRequest("flush", new JcrNodeModel(typeNode));
                             channel.send(request);
                             request.getContext().apply(target);
-                        } catch(RepositoryException ex) {
+                        } catch (RepositoryException ex) {
                             log.error(ex.getMessage());
                         }
                     }
