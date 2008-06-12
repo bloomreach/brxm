@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.template.config;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.types;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,9 +36,6 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.sa.template.FieldDescriptor;
-import org.hippoecm.frontend.sa.template.ITypeStore;
-import org.hippoecm.frontend.sa.template.TypeDescriptor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;

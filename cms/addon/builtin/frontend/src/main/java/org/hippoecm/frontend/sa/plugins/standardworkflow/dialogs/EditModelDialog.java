@@ -27,7 +27,6 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.sa.plugins.standardworkflow.EditmodelWorkflowPlugin;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
@@ -58,11 +57,8 @@ public class EditModelDialog extends AbstractWorkflowDialog {
                 JcrItemModel itemModel = new JcrItemModel(node);
                 if (path != null) {
                     IPluginContext context = getPlugin().getPluginContext();
-
-                    IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                    jcrService.flush(new JcrNodeModel(itemModel));
-
                     IPluginConfig config = getPlugin().getPluginConfig();
+
                     IViewService viewService = context.getService(config.getString(IViewService.VIEWER_ID),
                             IViewService.class);
                     viewService.view(new JcrNodeModel(itemModel));

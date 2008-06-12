@@ -27,8 +27,8 @@ import javax.jcr.Value;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.sa.template.FieldDescriptor;
-import org.hippoecm.frontend.sa.template.TypeDescriptor;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

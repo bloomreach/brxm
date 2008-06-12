@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.export;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,14 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.legacy.template.FieldDescriptor;
-import org.hippoecm.frontend.legacy.template.TypeDescriptor;
-import org.hippoecm.frontend.legacy.template.config.RepositoryTypeConfig;
-import org.hippoecm.frontend.legacy.template.config.TypeConfig;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,16 +43,16 @@ public class CndSerializer implements IClusterable {
     private JcrSessionModel jcrSession;
     private HashMap<String, String> namespaces;
     private LinkedHashSet<TypeDescriptor> types;
-    private TypeConfig currentConfig;
-    private TypeConfig draftConfig;
+    private ITypeStore currentConfig;
+    private ITypeStore draftConfig;
 
-    public CndSerializer(JcrSessionModel session, String namespace) {
-        this.jcrSession = session;
+    public CndSerializer(JcrSessionModel sessionModel, String namespace) {
+        jcrSession = sessionModel;
         namespaces = new HashMap<String, String>();
         types = new LinkedHashSet<TypeDescriptor>();
 
-        currentConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT);
-        draftConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_DRAFT);
+        currentConfig = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
+        draftConfig = new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT);
 
         List<TypeDescriptor> list = draftConfig.getTypes(namespace);
         for (TypeDescriptor descriptor : list) {
@@ -85,13 +84,12 @@ public class CndSerializer implements IClusterable {
     }
 
     public void addNamespace(String prefix) {
-        try {
-            Session session = jcrSession.getSession();
-            if (!namespaces.containsKey(prefix)) {
-                namespaces.put(prefix, session.getNamespaceURI(prefix));
+        if (!namespaces.containsKey(prefix)) {
+            try {
+                namespaces.put(prefix, jcrSession.getSession().getNamespaceURI(prefix));
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
     }
 
@@ -226,6 +224,7 @@ public class CndSerializer implements IClusterable {
         }
         return sub;
     }
+
     private void sortTypes() {
         types = new SortContext(types).sort();
     }

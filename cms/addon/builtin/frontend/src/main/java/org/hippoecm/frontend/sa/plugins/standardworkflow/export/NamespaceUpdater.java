@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.export;
+package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hippoecm.frontend.legacy.template.TypeDescriptor;
-import org.hippoecm.frontend.legacy.template.config.TypeConfig;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class NamespaceUpdater {
 
-    private TypeConfig currentConfig;
-    private TypeConfig draftConfig;
+    private ITypeStore currentConfig;
+    private ITypeStore draftConfig;
 
-    public NamespaceUpdater(TypeConfig current, TypeConfig draft) {
+    public NamespaceUpdater(ITypeStore current, ITypeStore draft) {
         currentConfig = current;
         draftConfig = draft;
     }

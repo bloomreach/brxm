@@ -52,7 +52,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 /**
  * Needed for handling legacy plugins
@@ -82,7 +81,7 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
         this.context = context;
         this.config = config;
 
-        TypeConfig repoTypeConfig = new RepositoryTypeConfig(RemodelWorkflow.VERSION_CURRENT);
+        TypeConfig repoTypeConfig = new RepositoryTypeConfig("current");
         TypeConfig jcrTypeConfig = new JcrTypeConfig();
         List<TypeConfig> configs = new LinkedList<TypeConfig>();
         configs.add(repoTypeConfig);
