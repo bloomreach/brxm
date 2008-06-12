@@ -73,6 +73,8 @@ public class FolderTreeConfig implements IClusterable {
     }
 
     public boolean isNodeTypeIgnored(NodeType nt) {
+        if(nt.isNodeType("hippostd:folder"))
+            return false;
         for (String type : ignoreNodesBelowType) {
             if (nt.isNodeType(type)) {
                 return true;

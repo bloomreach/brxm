@@ -79,8 +79,8 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         JcrNodeModel selectedNode = (JcrNodeModel) getModel();
         if (selectedNode != null
                 && model instanceof JcrNodeModel
-                && (selectedNode.equals((JcrNodeModel) model) || selectedNode.getParentModel().equals(
-                        (JcrNodeModel) model))) {
+                && (selectedNode.equals((JcrNodeModel) model) || (selectedNode.getParentModel()!=null && selectedNode.getParentModel().equals(
+                        (JcrNodeModel) model)))) {
             item.add(new AttributeAppender("class", new Model("selected"), " "));
         }
 

@@ -20,6 +20,7 @@ import javax.jcr.Session;
 
 public interface WorkflowContext {
     public Document getDocument(String category, String identifier) throws RepositoryException;
+    public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
     public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException,
                                                                            RepositoryException;
     public String getUsername();

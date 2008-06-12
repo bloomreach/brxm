@@ -30,6 +30,9 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * @deprecated
+ */
 public class EditmodelWorkflowImpl implements EditmodelWorkflow {
     private static final long serialVersionUID = 1L;
 

@@ -37,5 +37,12 @@
 [hippostd:resource] > hippo:document, hippostd:languageable
 + hippostd:content (nt:resource) = nt:resource primary mandatory
 
+
+// FIXME: these types need reviewing:
 [hippostd:folder] > hippo:document
+- hippostd:foldertype (string) multiple copy
 + * = hippostd:folder
+
+[hippostd:templatequery] > nt:query
+- hippostd:icon (string)
++ hippostd:templates = nt:unstructured

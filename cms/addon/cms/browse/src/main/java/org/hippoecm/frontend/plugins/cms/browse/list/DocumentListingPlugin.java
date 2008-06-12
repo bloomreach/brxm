@@ -37,7 +37,16 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
     }
 
     protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
-        setModel(model);
+        try {
+            if(model.getNode().getParent() != null) {
+                setModel(model);
+                return;
+            }
+        } catch(javax.jcr.AccessDeniedException ex) {
+        } catch(javax.jcr.ItemNotFoundException ex) {
+        } catch(javax.jcr.RepositoryException ex) {
+        }
+        setModel(new JcrNodeModel((javax.jcr.Node)null));
     }
 
     @Override

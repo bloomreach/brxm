@@ -72,12 +72,14 @@
 - hippo:docbase (string) mandatory
 + * (hippo:document) multiple
 
+//FIXME: should not be there, we already have nt:resource
 [hippo:resource]
 - jcr:encoding (string)
 - jcr:mimeType (string) mandatory
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
 
+// FIXME: content model has no need to know of any hippo:image type
 [hippo:image] > hippo:resource
 
 // FIXME ought to be: [hippo:facetselect] > hippo:reference
@@ -146,11 +148,6 @@
 - hippo:viewsize (long) = '10' mandatory autocreated 
 + * (hippo:listingpropnode) = hippo:listingpropnode  
 
-
-
-//////////////////////////////////////////////////
-///////// Users, groups and authorizaion /////////
-//////////////////////////////////////////////////
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:active (boolean) = true mandatory autocreated
@@ -199,8 +196,6 @@
 [hippo:domainfolder] > nt:base
 + * (hippo:domain) = hippo:domain
 
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
 
 [hippo:parameters] > nt:base 
 - * (boolean)
@@ -299,9 +294,6 @@
 - hippo:uuid (string) mandatory
 - hippo:paths (String) multiple mandatory
 
-// The following type is DEPRECATED from start
-[hippo:folder] > nt:unstructured, mix:referenceable
-
 [hippo:logconfig] > nt:base
 - hippo:logenabled (boolean) = 'true' mandatory autocreated
 - hippo:logpath (String) = '/hippo:log'  mandatory autocreated
@@ -322,8 +314,11 @@
 + * (hippo:logfolder) = hippo:logfolder
 + * (hippo:logitem) = hippo:logitem
 
-[hippo:queryfolder] > nt:base
+[hippo:basequeryfolder] > nt:unstructured // FIXME
 + * (nt:query) = hippo:query
+
+[hippo:queryfolder] > hippo:basequeryfolder
++ * (nt:query, hippo:basequeryfolder)
 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
@@ -338,4 +333,4 @@
 + hippo:frontend (hippo:application) = hippo:application
 + hippo:frontend_deprecated (hippo:application) = hippo:application
 + hippo:logging (hippo:logconfig) = hippo:logconfig
-+ hippo:queries (hippo:queryfolder) = hippo:queryfolder mandatory autocreated
++ hippo:queries (hippo:basequeryfolder) = hippo:queryfolder mandatory autocreated

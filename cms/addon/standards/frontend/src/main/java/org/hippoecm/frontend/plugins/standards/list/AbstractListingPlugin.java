@@ -124,9 +124,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         Node node = (Node) model.getNode();
         try {
             while (node != null) {
-                if (!node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType(HippoNodeType.NT_HANDLE)
+                if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder")) && !node.isNodeType(HippoNodeType.NT_HANDLE)
                         && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
-                        && !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                        && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
                     NodeIterator childNodesIterator = node.getNodes();
                     while (childNodesIterator.hasNext()) {
                         entries.add(new JcrNodeModel(childNodesIterator.nextNode()));

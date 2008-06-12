@@ -90,6 +90,9 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IClusterable {
     public void updateModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         closeWorkflows();
+        if(nodeModel == null || nodeModel.getNode() == null) {
+            return;
+        }
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {

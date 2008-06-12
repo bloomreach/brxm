@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -61,10 +62,22 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
     public void initialize() throws RepositoryException {
         workflows = new TreeMap<Entry, Vector<WorkflowDescriptor>>(new Comparator<Entry>() {
             public int compare(Entry o1, Entry o2) {
+                if(o1 == null)
+                    if(o2 == null)
+                        return 0;
+                    else
+                        return -1;
+                else if(o2 == null)
+                    return 1;
                 return o1.name.compareTo(o2.name);
             }
 
             public boolean equals(Entry o1, Entry o2) {
+                if(o1 == null || o2 == null)
+                    if(o1 == null && o2 == null)
+                        return true;
+                    else
+                        return false;
                 return o1.name.equals(o2.name);
             }
         });
@@ -87,7 +100,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if (workflowDescriptor != null) {
+                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null) {
                             if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
                                 workflows
                                         .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
@@ -95,7 +108,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                         }
                     }
                 }
-            } else if (handle.isNodeType("hippo:prototyped") || handle.isNodeType("hippo:templatetype")
+            } else if (handle.isNodeType("hippo:prototyped") || handle.isNodeType("hippo:templatetype") || handle.isNodeType("rep:root")
                     || handle.isNodeType("hippo:namespace") || handle.isNodeType("hippo:namespacefolder")
                     || handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
