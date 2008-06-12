@@ -40,7 +40,7 @@ import org.hippoecm.frontend.legacy.plugin.channel.Channel;
 import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.yui.dragdrop.node.DragNodeBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.node.DragNodeBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

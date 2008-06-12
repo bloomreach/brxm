@@ -41,7 +41,7 @@ import org.hippoecm.frontend.legacy.template.model.ItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.QueryDataProvider;
-import org.hippoecm.frontend.yui.dragdrop.node.DropNodeBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.node.DropNodeBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -49,7 +49,7 @@
 
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-yui-frontend</artifactId>
+      <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>${parent.version}</version>
     </dependency>
     

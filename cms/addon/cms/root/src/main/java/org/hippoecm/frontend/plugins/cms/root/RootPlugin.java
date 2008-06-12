@@ -19,9 +19,9 @@ import org.apache.wicket.behavior.HeaderContributor;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.yui.ajax.AjaxIndicatorBehavior;
 
 public class RootPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
