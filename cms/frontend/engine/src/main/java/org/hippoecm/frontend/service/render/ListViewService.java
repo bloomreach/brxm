@@ -84,7 +84,6 @@ public class ListViewService extends RenderService {
                 IRenderService renderer = (IRenderService) item.getModelObject();
                 renderer.bind(ListViewService.this, "item");
                 item.add(renderer.getComponent());
-                log.info("\nBound " + renderer.getComponent().getPath() + "\n");
                 ListViewService.this.onAddRenderService(item, renderer);
             }
 
@@ -93,7 +92,6 @@ public class ListViewService extends RenderService {
                 // FIXME: this assumes that the IRenderService is the Component itself
                 IRenderService renderer = (IRenderService) item.get("item");
                 ListViewService.this.onRemoveRenderService(item, renderer);
-                log.info("\nUNBinding " + renderer.getComponent().getPath() + "\n");
                 renderer.unbind();
             }
         };
