@@ -105,7 +105,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);
             result.add(subfolder);
-
         }
         return result;
     }

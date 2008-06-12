@@ -25,6 +25,9 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * @deprecated
+ */
 public interface RemodelWorkflow extends Workflow {
 
     final public static String VERSION_DRAFT = "draft";

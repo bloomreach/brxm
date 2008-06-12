@@ -136,11 +136,12 @@ public class CmsJcrTree extends JcrTree {
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
-                if (!isRootNode) {
+                // FIXME: there is now workflow on the root node, as we require adding nodes directly under the root
+                //if (!isRootNode) {
                     getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
                     onNodeLinkClicked(target, node);
                     updateTree(target);
-                }
+                //}
             }
 
         });

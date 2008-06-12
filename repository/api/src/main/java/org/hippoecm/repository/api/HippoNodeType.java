@@ -40,6 +40,7 @@ public interface HippoNodeType {
     final public static String ROLES_PATH = "hippo:roles";
     final public static String USERS_PATH = "hippo:users";
     final public static String WORKFLOWS_PATH = "hippo:workflows";
+    final public static String QUERIES_PATH = "hippo:queries";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
