@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.template.editor;
 
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.frontend.legacy.plugin.Plugin;
@@ -34,17 +33,15 @@ public class EditorPlugin extends Plugin {
     public EditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
         super(pluginDescriptor, model, parentPlugin);
 
-        JcrNodeModel nodeModel = new JcrNodeModel(model);
-        if (nodeModel.getItemModel().exists()) {
-            add(form = newForm());
-        } else {
-            add(new Form("form"));
-        }
+        add(form = newForm());
         setOutputMarkupId(true);
     }
 
     protected EditorForm newForm() {
         JcrNodeModel jcrModel = new JcrNodeModel(getPluginModel());
+        if (!jcrModel.getItemModel().exists()) {
+            jcrModel = new JcrNodeModel("/");
+        }
         EditorForm form = new EditorForm("form", jcrModel, this);
         form.setMultiPart(true);
         form.setMaxSize(Bytes.megabytes(5));
@@ -56,32 +53,16 @@ public class EditorPlugin extends Plugin {
         if ("select".equals(notification.getOperation())) {
             JcrNodeModel nodeModel = new JcrNodeModel(notification.getModel());
             if (!nodeModel.equals(new JcrNodeModel(getPluginModel()))) {
-                if (form != null) {
-                    form.destroy();
-                    form = null;
-                }
                 setPluginModel(nodeModel);
-                if (nodeModel.getItemModel().exists()) {
-                    form = newForm();
-                    replace(form);
-                } else {
-                    replace(new Form("form"));
-                }
-                notification.getContext().addRefresh(this);
-            }
-        } else if ("flush".equals(notification.getOperation())) {
-            if (form != null) {
-                form.destroy();
-                form = null;
-            }
-            JcrNodeModel model = new JcrNodeModel(getPluginModel());
-            if (model.getItemModel().exists()) {
                 form = newForm();
                 replace(form);
                 notification.getContext().addRefresh(this);
-            } else {
-                replace(new Form("form"));
             }
+        } else if ("flush".equals(notification.getOperation())) {
+            JcrNodeModel model = new JcrNodeModel(getPluginModel());
+            form = newForm();
+            replace(form);
+            notification.getContext().addRefresh(this);
         }
         super.receive(notification);
     }
