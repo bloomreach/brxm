@@ -31,6 +31,7 @@ import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -157,7 +158,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
             Node node = model.getNodeModel().getNode();
-            caption = node.getName();
+            caption = ISO9075Helper.decodeLocalName(node.getName());
 
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();)
