@@ -32,6 +32,7 @@ import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +175,7 @@ public class TabsPlugin extends RenderPlugin {
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
             ITitleDecorator decorator = getPluginContext().getService(reference.getServiceId(), ITitleDecorator.class);
             if (decorator != null) {
-                String fulltitle = decorator.getTitle();
+                String fulltitle = ISO9075Helper.decodeLocalName(decorator.getTitle());
                 int length = fulltitle.length();
                 String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
                 length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
