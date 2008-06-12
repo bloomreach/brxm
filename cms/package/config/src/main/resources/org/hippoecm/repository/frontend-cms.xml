@@ -342,7 +342,7 @@
       <sv:value>service.management.node</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>Management</sv:value>
+      <sv:value>Users</sv:value>
     </sv:property>
     <sv:property sv:name="legacyManagement" sv:type="String">
       <sv:value>service.management.legacy</sv:value>

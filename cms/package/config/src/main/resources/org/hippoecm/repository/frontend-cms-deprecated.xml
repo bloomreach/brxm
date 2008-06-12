@@ -164,7 +164,7 @@
               <sv:value>drop</sv:value>
             </sv:property>
             <sv:property sv:name="title" sv:type="String">
-              <sv:value>Management</sv:value>
+              <sv:value>Users</sv:value>
             </sv:property>
           </sv:node>
           <sv:node sv:name="panel">
