@@ -304,7 +304,7 @@
 
 [hippo:logconfig] > nt:base
 - hippo:logenabled (boolean) = 'true' mandatory autocreated
-- hippo:logpath (String) = '/log'  mandatory autocreated
+- hippo:logpath (String) = '/hippo:log'  mandatory autocreated
 - hippo:logappender (String) = 'rolling' mandatory autocreated < 'rolling', 'folding'
 - hippo:logmaxsize (Long) = '100' mandatory autocreated 
 
