@@ -18,75 +18,47 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Welcome</title>
-    </properties>
-    <body>
-      <section name="Hippo ECM, 100% Open Source Enterprise Content Management.">
-        <p>
-          Hippo is targeted at medium to large organizations managing content for multi-channel distribution
-          like web sites, intranet and print. It facilitates an open and flexible way of using your information
-          by following internationally accepted open standards.<br/><br/>
-          <b>Hippo differentiates itself from other ECM and CMS systems by its clean separation of content storage, management and presentation.</b>
-        </p>
+  <properties>
+    <title>Welcome</title>
+  </properties>
+  <body>
+    <section name="Hippo ECM, 100% Open Source Enterprise Content Management.">
+      <p> Hippo is targeted at medium to large organizations managing content for multi-channel
+        distribution like web sites, intranet and print. It facilitates an open and flexible way of
+        using your information by following internationally accepted open standards.<br/><br/>
+        <b>Hippo differentiates itself from other ECM and CMS systems by its clean separation of
+          content storage, management and presentation.</b>
+      </p>
 
-        <!-- [TODO] requires new infographic 
+      <!-- [TODO] requires new infographic 
         <img src="images/old-infographic.jpg" alt="Clean separation of content storage, management and presentation"/>
         -->
-        
-        <subsection name="Learning about Hippo ECM">
-          <p>
-            This site is separated into the following sections, depending on how you'd like to use Hippo ECM:
-          </p>
-          <ul>
-            <li>
-              <p>
-                <b><a href="quickstart.html">Quickstart guide</a></b>
-              </p>
-              <p>
-                The quickest way to give Hippo ECM a spin.
-              </p>
-            </li>
-            <li>
-              <p>
-                <b><a href="run-hippo-ecm/index.html">Run it</a></b>
-              </p>
-              <p>
-                How to properly configure a standard Hippo ECM and run it.
-              </p>
-            </li>
-            <li>
-              <p>
-                <b><a href="use-hippo-ecm/index.html">Use it</a></b>
-              </p>
-              <p>
-                Working with Hippo ECM.
-              </p>
-            </li>
-            <li>
-              <p>
-                <b><a href="extend-hippo-ecm/index.html">Build it</a></b>
-              </p>
-              <p>
-                Build Hippo ECM from scratch. Maven, Eclipse, Netbeans.
-              </p>
-            </li>
-            <li>
-              <p>
-                <b><a href="extend-hippo-ecm/index.html">Extend it</a></b>
-              </p>
-              <p>
-                Information for developers of Hippo ECM add-ons.
-              </p>
-            </li>
-            <li>
-              <p>
-                <b><a href="extend-hippo-ecm/integrate-hippo-ecm/index.html">Integrate it with something else</a></b>
-              </p>
-              <p>
-                Integrating Hippo ECM in an existing environment.
-              </p>
-            </li>
+
+      <subsection name="Learning about Hippo ECM">
+        <p> This site is separated into the following sections, depending on how you'd like to use
+          Hippo ECM: </p>
+        <table>
+          <tr>
+            <td>
+              <a href="quickstart.html"><img alt="quickstart" src="images/frontpage/quickstart.png" /></a>
+            </td>
+            <td>
+              <a href="run-hippo-ecm/index.html"><img alt="run" src="images/frontpage/run.png" /></a>
+            </td>
+            <td>
+              <a href="use-hippo-ecm/index.html"><img alt="use" src="images/frontpage/use.png" /></a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="extend-hippo-ecm/index.html"><img alt="build" src="images/frontpage/build.png" /></a>
+            </td>
+            <td>
+              <a href="extend-hippo-ecm/index.html"><img alt="extend" src="images/frontpage/extend.png" /></a>
+            </td>
+            <td>
+              <a href="extend-hippo-ecm/integrate-hippo-ecm/index.html"><img alt="integrate" src="images/frontpage/integrate.png" /></a>
+            </td>
             <!--<li>
               <p>
                 <b>Develop Hippo ECM</b>
@@ -95,34 +67,28 @@
                 Information for Hippo ECM core developers.
               </p>
             </li>-->
-          </ul>
-        </subsection>
+          </tr>
+        </table>
+      </subsection>
+      <subsection name="How to get support">
+        <p> Support for Hippo ECM is available in a variety of different forms. </p>
 
-        <subsection name="How to get support">
-          <p>
-            Support for Hippo ECM is available in a variety of different forms.
-          </p>
+        <p> To get started, search the documentation, the <a
+            href="http://wiki.hippo.nl/display/HIPPOECM/">wiki</a>, <a
+            href="http://issues.hippo.nl/browse/HREPTWO">issue tracker</a>, or the <a
+            href="http://lists.hippo.nl/pipermail/hipporepos-dev/">mailing list archives</a> to see
+          if the problem has been solved or reported before. </p>
 
-          <p>
-            To get started, search the documentation, the <a href="http://wiki.hippo.nl/display/HIPPOECM/">wiki</a>,
-            <a href="http://issues.hippo.nl/browse/HREPTWO">issue tracker</a>,
-            or the <a href="http://lists.hippo.nl/pipermail/hipporepos-dev/">mailing list archives</a>
-            to see if the problem has been solved or reported before.
-          </p>
+        <p> If the problem has not been reported before, the recommended way to get help is to
+          subscribe to the <a href="mail-lists.html">Hippo ECM mailing list</a>. Many other users
+          and Hippo ECM developers will answer your questions there, and the answer will be archived
+          for others in the future. </p>
 
-          <p>
-            If the problem has not been reported before, the recommended way to get help is to subscribe to the
-            <a href="mail-lists.html">Hippo ECM mailing list</a>. Many other users and Hippo ECM developers
-            will answer your questions there, and the answer will be archived for others in the future.
-          </p>
+        <p> Commercial support is provided by <a href="http://www.hippo.nl">Hippo</a>. </p>
+      </subsection>
 
-          <p>
-            Commercial support is provided by <a href="http://www.hippo.nl">Hippo</a>.
-          </p>
-        </subsection>
-
-      </section>
+    </section>
 
 
-    </body>
+  </body>
 </document>
