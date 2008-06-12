@@ -19,7 +19,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -47,8 +46,6 @@ public class CurrentActivityPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
-    //describes all valid JCR paths except '/'
-    static final Pattern jcrPath = Pattern.compile("(/[\\w\\s]+)+(\\[\\d+\\])?");
     static DateFormat df;
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
@@ -131,9 +128,10 @@ public class CurrentActivityPlugin extends RenderPlugin {
                             }
                         }
                     } else {
-                        //Try if the workflow step returned a path String
-                        if (jcrPath.matcher(targetVariant).matches()) {
+                        try {
                             targetVariantExists = session.itemExists(targetVariant);
+                        } catch (RepositoryException e) {
+                            targetVariantExists = false;
                         }
                     }
                 }
@@ -155,6 +153,9 @@ public class CurrentActivityPlugin extends RenderPlugin {
                     String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
                     if (session.itemExists(handle)) {
                         item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "docpath", handle));
+                        return;
+                    } else {
+                        item.add(new Label("docpath", sourceVariant));
                         return;
                     }
                 }
