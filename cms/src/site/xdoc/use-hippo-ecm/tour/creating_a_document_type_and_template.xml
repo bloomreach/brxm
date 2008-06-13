@@ -23,10 +23,72 @@
   </properties>
   <body>
     <section name="Creating a document type and template">
-      Todo:
+
+      <p>
+        It is possible to create your own document types.  Using the workflow
+        steps that are used, we'll create one.
+      </p>
+
+      <subsection name="Create a Namespace">
+        <p>
+          Select the Browse tab and navigate to "document types".  Click the
+          "create namespace" link and enter a prefix and a URL.
+        </p>
+        <img src="../../images/tour/create-namespace.png" alt="create namespace" />
+        <p>
+          The URL defines a globally unique address.  It is not resolved, i.e.
+          it is not necessary that opening the link in a browser will show
+          anything.  The best practice is to pick a domain under your control.
+        </p>
+      </subsection>
+
+      <subsection name="Create a new Type">
+        <p>
+          Select the example namespace and follow the "Create new type" link.
+          Enter a name for the type that you're about to create.
+        </p>
+        <img src="../../images/tour/create-type.png" alt="create type" />
+      </subsection>
+
+      <subsection name="Edit Model">
+        <p>
+          It is now possible to customize the type.  Select the newly created
+          type and click "edit model" under the Actions.  Initially no fields
+          are present, but you can add those in the editor.
+          <ul>
+            <li>Click "String" to add a string property to the document model</li>
+            <li>Click the edit icon next to the String field that appears</li>
+            <li>Change the path to "example:title"</li>
+            <li>Change the Caption to "Title"</li>
+            <li>Press "save"</li>
+            <li>Click "Html" and the edit icon</li>
+          </ul>
+        </p>
+        <img src="../../images/tour/edit-model.png" alt="edit model" />
+      </subsection>
+
+      <subsection name="Update Content">
+        <p>
+          The edited model can not be used yet.  At the moment it is only known
+          to the CMS, but no node type has actually been defined yet.  So it is
+          not yet possible to create new documents of this type.  Bear with me,
+          you'll soon be able to do this.
+        </p>
+        <p>
+          Save the model and go back to the Browse tab.  Select the namespace
+          that you created (say, "example").  There is an "Update content" link
+          under the list of available actions.
+        </p>
+        <img src="../../images/tour/update-content.png" alt="edit model" />
+        <p>
+          You're now able to create folders that can contain the new type.
+        </p>
+      </subsection>
+
       <p align="center">
         <a href="editing_a_document.html">&lt;- Previous: Editing a document</a>&#160;&#160;&#160;&#160;&#160;<a href="managing_users_and_groups.html">Next: Managing users and groups -></a>
       </p>
+
     </section>
   </body>
 </document>

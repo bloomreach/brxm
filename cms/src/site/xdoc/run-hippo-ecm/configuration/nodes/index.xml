@@ -38,8 +38,7 @@
           <li><a href="workflow.html">Workflow</a></li>
           <li>Derivatives</li>
           <li>Initialize</li>
-          <li>Frontend</li>
-          <li>Queries</li>
+          <li><a href="frontend.html">Frontend</a></li>
           <li>Logging</li>
           <li>Queries</li>
           <li>Documents</li>
