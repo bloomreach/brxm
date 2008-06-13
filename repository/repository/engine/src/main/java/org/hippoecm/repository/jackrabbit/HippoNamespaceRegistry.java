@@ -21,6 +21,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.lock.LockException;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.fs.FileSystem;
@@ -41,15 +42,15 @@ public class HippoNamespaceRegistry extends NamespaceRegistryImpl {
         super(nsRegStore);
     }
 
-    public void open() {
+    public synchronized void open() throws LockException {
         if (!open) {
             open = true;
         } else {
-            log.warn("Registry was already opened for temporary changes");
+            throw new LockException("Registry was already opened for temporary changes");
         }
     }
 
-    public void close() {
+    public synchronized void close() {
         if (open) {
             open = false;
         } else {
