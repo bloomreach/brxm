@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.yui.ajax;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
@@ -45,7 +47,14 @@ public class AjaxIndicatorBehavior extends AbstractHeaderContributor {
     @Override
     public void bind(Component component) {
 
-        final WicketAjaxIndicatorAppender ajaxIndicator = new WicketAjaxIndicatorAppender();
+        final WicketAjaxIndicatorAppender ajaxIndicator = new WicketAjaxIndicatorAppender() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected CharSequence getIndicatorUrl() {
+                return RequestCycle.get().urlFor(new ResourceReference(AjaxIndicatorBehavior.class, "ajax-loader.gif"));
+            }
+        };
         component.add(ajaxIndicator);
         component.add(TextTemplateHeaderContributor.forJavaScript(AjaxIndicatorBehavior.class,
                 "init_ajax_indicator.js", new AbstractReadOnlyModel() {
