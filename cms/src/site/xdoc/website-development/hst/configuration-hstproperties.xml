@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="HST Configuration in hst.properties">
+         <p>Usually the main configuration file is <code>/WEB-INF/hst.properties</code>.
+             It is set up as context parameter in the web.xml file, see
+             <a href="configuration-webxml.html">here</a>. Configuration properties
+             are documentated within the file. This is the default configuration file: 
+             </p>
+        <source><![CDATA[# ------------------------------------------------------------------------------
+#
+# Hippo Site Toolkit Main Configuration
+#
+# ------------------------------------------------------------------------------
+# Repository Configuration.
+#
+# The address of the repository and the user name and password
+# to use for the repository login. All required.
+repository.address=rmi://localhost:1099/hipporepository
+#repository.address=WEB-INF/storage
+repository.user.name=admin
+repository.password=admin
+
+# The location in the repository where to find URL mappings based on 
+# document type. Required only if url mapping is used. 
+# Defaults to '/urlmapping'.
+# repository.urlmapping.location=
+
+# Comma separated list of extensions that filters will not create context 
+# objects for, if the URL ends with such an extension. 
+# Not required, defaults to ico,gif,jpg,jpeg,svg,png,css,js. 
+# filter.ignore.extensions=
+
+# The full qualified class name of the factory class implementation of
+# org.hippoecm.hst.util.LocaleFactory.
+# Not required, defaults to org.hippoecm.hst.util.RepositoryLocaleFactory that
+# reads the locale from the repository location of the current context.
+# Another implementation is org.hippoecm.hst.util.URLBasePathLocaleFactory that
+# creates a locale from the URL base path of the current context.
+# locale.factory.class=
+
+# ------------------------------------------------------------------------------
+# General Tags Configuration
+#
+# The format string by which document properties of type 'Date' are presented. 
+# Not required, defaults to 'MM/dd/yyyy'.
+# tags.format.date=
+
+# ------------------------------------------------------------------------------
+# ContentTag
+#
+# Name by which the ContentTag gets it's context object from request.
+# Not required, defaults to 'context'.
+# contenttag.context.name=
+
+# ------------------------------------------------------------------------------
+# ContextTag
+#
+# Name by which the ContextTag gets it's context object from request.
+# Not required, defaults to 'context'.
+# contexttag.context.name=
+
+# ------------------------------------------------------------------------------
+# IncludeTag
+#
+# Name by which the IncludeTag gets it's context object from request.
+# Not required, defaults to 'context'.
+# includetag.context.name=
+
+# ------------------------------------------------------------------------------
+# DocumentsTag, NewsTag, EventsTag and ArticlesTag
+#
+# The above tags are configured similarly, having each a different prefix, 
+# which is the tagname in lowercase, e.g. 'documentstag'. The  defaults of the 
+# tags are given at the end of this section.
+
+# <tagname>.context.name=
+# Name by which the tag gets it's context object from request or page context.
+# Not required, defaults to 'context', overridden by tag attribute 'context'.
+
+# <tagname>.location=
+# The location relative to the context, pointing to the repository document  
+# location applicable. Not required, defaults are given below, is overridden 
+# by tag attribute 'location'.
+
+# <tagname>.max.documents=
+# The maximum number of documents to be shown.
+# Not required, defaults to 5, is overridden by tag attribute 'maxDocuments'.
+
+# <tagname>.document.properties=
+# Comma separated list of properties that are shown from the repository  
+# documents. Not required, defaults are given below.
+
+# <tagname>.document.property.types=link,date,string
+# Comma separated list of property types that are applicable for the above 
+# properties. This list needs to be of the same length as the properties list.
+# Not required, defaults to the values given below.
+# - the 'link' type will output an <a href> around the property (string) value,
+#   where the link will be a reversely mapped URL. Only to be used when the 
+#   standard URL mapping functionality is used!     
+# - the 'date' type will require the given property to be a Date and will   
+#   output it based on the <tagname>.format.date configuration.
+# - the 'string' type will output the property as string.    
+
+# <tagname>.document.exclude.names=index
+# Comma separated list of names of documents that are excluded from the list. 
+# Not required, defaults to all documents named 'index'.
+
+# <tagname>.document.viewfile 
+# Location of a custom jsp file that is used for outputting documents, thereby 
+# overriding the default output based on the property list given above.   
+# Not required, no default.
+
+
+# Defaults for the DocumentsTag
+# documentstag.location=/documents
+# documentstag.document.properties=defaultcontent:title,defaultcontent:date,defaultcontent:introduction
+# documentstag.document.property.types=string,date,string
+
+# Defaults for the NewsTag
+# newstag.location=/news
+# newstag.document.properties=defaultcontent:title,defaultcontent:date,defaultcontent:introduction
+# newstag.document.property.types=link,date,string
+
+# Defaults for the EventsTag
+# eventstag.location=/events
+# eventstag.document.properties=defaultcontent:title,defaultcontent:date,defaultcontent:introduction
+# eventstag.document.property.types=link,date,string
+
+# Defaults for the ArticlesTag
+# articlestag.location=/articles
+# articlestag.document.properties=defaultcontent:title,defaultcontent:introduction
+# articletag.document.property.types=link,string
+
+# ------------------------------------------------------------------------------
+# MenuTag
+
+# Name by which the tag gets it's context object from request or page context.
+# Not required, defaults to 'context', overridden by tag attribute 'context'.
+# menutag.context.name=
+
+# The location absolute from context or relative to the context location, 
+# pointing to the repository location from which to generate a menu.  
+# Not required, defaults to "/", is overridden by tag attribute 'location'.
+# menutag.location=
+
+# Comma separated list of names of documents that are excluded from the menu by 
+# default, i.e. if a flag is not specifically set on the document. 
+# Not required, defaults to all documents named 'index'.
+# menutag.document.exclude.names=index
+
+# Location of a custom jsp file that is used for outputting the menu, thereby 
+# overriding the default output. The view file may be specified per instance 
+# with a postfix that is equal to the tag attribute 'id'.    
+# Not required, no default.
+# menutag.viewfile(.<id>)=
+
+# ------------------------------------------------------------------------------
+# SiteMapTag
+
+# Name by which the tag gets it's context object from request or page context.
+# Not required, defaults to 'context', overridden by tag attribute 'context'.
+# sitemaptag.context.name=
+
+# The location absolute from context or relative to the context location, 
+# pointing to the repository location from which to generate a site map.  
+# Not required, defaults to "/", is overridden by tag attribute 'location'.
+# sitemaptag.location=
+
+# Comma separated list of names of documents that are excluded from the site map  
+# by default, i.e. if a flag is not specifically set on the document. 
+# Not required, defaults to all documents named 'index'.
+# sitemaptag.document.exclude.names=index
+
+# Comma separated list of properties that are tried to determine site map item  
+# labels for documents. Not required, by default the document node name is 
+# taken. 
+# sitemaptag.document.label.properties=
+
+# Location of a custom jsp file that is used for outputting the site map, 
+# thereby overriding the default output. The view file may be specified per  
+# instance with a postfix that is equal to the tag attribute 'id'.    
+# Not required, no default.
+# sitemaptag.viewfile(.<id>)=
+
+# ------------------------------------------------------------------------------]]></source>
+            
+      </section>
+
+    </body>
+</document>

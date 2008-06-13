@@ -25,40 +25,40 @@
       <section name="Website Development">
         <p>
           After having set up your ECM, you may very well want to publish the contents
-          of the repository by means of a website. This means that your website has to connect to
-          the repository. As the repository is Java Content Repository (JCR) compliant,
-          Java clients using this standard can communicate with the repository, see <a href="jcr.html">JCR Interface</a>.
-          Besides that, Hippo has developed a library on top of the JCR layer
-          that is called the <code>Hippo Site Toolkit</code>, which is targeted at JSP clients,
-          for easy website development.
+          of the repository by means of a website. This means that your website has to connect to 
+          the repository. As the repository is Java Content Repository (JCR) compliant, 
+          Java clients using this standard can communicate with the repository, see <a href="jcr.html">JCR Interface</a>. 
+          Besides that, Hippo has developed a library on top of the JCR layer 
+          that is called the <code>Hippo Site Toolkit</code>, which is targeted at JSP clients, 
+          for easy website development. 
         </p>
 
        <subsection name="Using Hippo Site Toolkit">
           <p>
-            For the purpose of fast site development, Hippo has developed the Hippo Site Toolkit,
+            For the purpose of fast site development, Hippo has developed the Hippo Site Toolkit, 
             or the HST for short, targeted at JSP frontends. It features: </p>
           <ul>
-            <li>An expression language to retrieve repository content, using JSP 2.0's standard JSTL
+            <li>An expression language to retrieve repository content, using JSP 2.0's standard JSTL 
               Expression Language (<a href="http://java.sun.com/j2ee/1.4/docs/tutorial/doc/JSPIntro7.html" target="_blank">see here</a>).
-              On how to use it, <a href="hst/el-index.html">see here</a>.</li>
-            <li>A servlet for serving binaries like images, <a href="hst/binaries.html">see here</a>.</li>
-            <li>The possibility to use URL mapping, i.e. use the URL to locate content and
-              subsequently find it's view page, <a href="hst/url-mapping.html">see here</a>.</li>
-            <li>A jsp tag library for higher level repository access functionality, <a href="hst/jsp-taglib.html">see here</a>.</li>
+              On how to use it, <a href="hst/el-index.html">see here</a>.</li>  
+            <li>A servlet for serving binaries like images, <a href="hst/binaries.html">see here</a>.</li>  
+            <li>The possibility to use URL mapping, i.e. use the URL to locate content and 
+              subsequently find it's view page, <a href="hst/url-mapping.html">see here</a>.</li>  
+            <li>A jsp tag library for higher level repository access functionality, <a href="hst/jsp-taglib.html">see here</a>.</li>  
           </ul>
-         <p>See <a href="hst/include.html">including the HST</a> on how to include the HST in your application.</p>
+         <p>See <a href="hst/getting.html">getting the HST packages</a> on how to include the HST in your application.</p>
          <p>See <a href="hst/configuration.html">HST configuration</a> on how to set up and configure the HST.</p>
          <p>See <a href="hst/configuration-example.html">configuration example</a> for an example web.xml.</p>
         </subsection>
 
-        <subsection name="Running the sample HST site">
-            <p>The show the possiblities of the HST in practice, a complete JSP site has been
-              made available for download. It is in fact the currently running
-              <a href="http://www.onehippo.com" target="_blank">onehippo.com</a> website.
+        <subsection name="Running the HST example site">
+            <p>The show the possiblities of the HST in practice, a complete JSP site has been 
+              made available for download. It is in fact the currently running 
+              <a href="http://www.onehippo.com" target="_blank">onehippo.com</a> website.  
               To run it, you also need a combined CMS 7 / Repository 2
-               with initial content in it.</p>
+               with initial content in it.</p> 
              <p>On how to run the example site, <a href="hst/running-sample-site.html">see here</a>.</p>
-        </subsection>
+        </subsection>  
       </section>
 
     </body>
