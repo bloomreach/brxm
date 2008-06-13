@@ -14,19 +14,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-reports" 
+<sv:node sv:name="cms-reports"
     xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-    xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
     xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
-    
+
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="currentActivityReport">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>reporting:report</sv:value>
@@ -71,7 +71,7 @@
             </sv:property>
         </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="todoReport">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>reporting:report</sv:value>

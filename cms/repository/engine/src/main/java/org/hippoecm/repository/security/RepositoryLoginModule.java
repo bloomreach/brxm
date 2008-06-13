@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security;
 
@@ -58,20 +58,20 @@ public class RepositoryLoginModule implements LoginModule {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     // initial state
     private Subject subject;
     private CallbackHandler callbackHandler;
     @SuppressWarnings("unused")
     private Map<String, ?> sharedState;
-    
+
     @SuppressWarnings("unused")
     private Map<String, ?> options;
 
     // configurable JAAS options
     @SuppressWarnings("unused")
     private boolean debug = false;
-    
+
     private boolean tryFirstPass = false;
     private boolean useFirstPass = false;
     private boolean storePass = false;
@@ -87,15 +87,15 @@ public class RepositoryLoginModule implements LoginModule {
     private AAContext groupContext;
     private AAContext domainContext;
     private AAContext roleContext;
-    
+
     private GroupManager groupManager = new RepositoryGroupManager();
-    
+
     // the rootSession
     private Session rootSession;
 
     // the user
     private User user = new RepositoryUser();
-    
+
     /**
      * Get Logger
      */
@@ -153,7 +153,7 @@ public class RepositoryLoginModule implements LoginModule {
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
             }
-            
+
             // set the Contexts
             createContexts();
 
@@ -161,23 +161,23 @@ public class RepositoryLoginModule implements LoginModule {
             Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
             if (attr != null && attr instanceof Subject) {
                 Subject impersonator = (Subject) attr;
-                
+
                 // anonymous cannot impersonate
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
                     log.info("Denied Anymous impersonating as {}", creds.getUserID());
                     return false;
                 }
-                
+
                 // check for valid user
                 if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
                     log.info("Denied unknown user impersonating as {}", creds.getUserID());
                     return false;
                 }
-                
+
                 Principal iup = (Principal) impersonator.getPrincipals(UserPrincipal.class).iterator().next();
                 String impersonarorId = iup.getName();
                 // TODO: check somehow if the user is allowed to imporsonate
-                
+
                 log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
                 setUserPrincipals(creds.getUserID());
                 setGroupPrincipals(creds.getUserID());
@@ -269,7 +269,7 @@ public class RepositoryLoginModule implements LoginModule {
         domainContext = new RepositoryAAContext(rootSession, domainsPath);
         roleContext = new RepositoryAAContext(rootSession, rolesPath);
     }
-    
+
     /**
      * Authenticate the user against the cache or the repository
      * @param session A privileged session which can read usernames and passwords
@@ -291,7 +291,7 @@ public class RepositoryLoginModule implements LoginModule {
                 log.debug("Empty username or password not allowed.");
                 return false;
             }
-            
+
             // check the password
             user.init(userContext, userId);
             return user.checkPassword(password) && user.isActive();
@@ -301,7 +301,7 @@ public class RepositoryLoginModule implements LoginModule {
             return false;
         }
     }
-    
+
     private void setUserPrincipals(String userId) {
         if (userId == null) {
             return;
@@ -311,7 +311,7 @@ public class RepositoryLoginModule implements LoginModule {
         log.debug("Adding principal: {}", userPrincipal);
         principals.add(userPrincipal);
     }
-    
+
     private void setGroupPrincipals(String userId) {
         try {
             groupManager.init(groupContext);
@@ -333,7 +333,7 @@ public class RepositoryLoginModule implements LoginModule {
     private void setFacetAuthPrincipals(String userId) {
         Domains domains = new Domains();
         domains.init(domainContext);
-        
+
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();
         userDomains.addAll(domains.getDomainsForUser(userId));
@@ -342,10 +342,10 @@ public class RepositoryLoginModule implements LoginModule {
                 userDomains.addAll(domains.getDomainsForGroup(principal.getName()));
             }
         }
-        
+
         // Add facet auth principals
         for (Domain domain : userDomains) {
-            
+
             // get roles for a user for a domain
             log.debug("User {} has domain {}", userId, domain.getName());
             Set<String> roles = new HashSet<String>();
@@ -355,7 +355,7 @@ public class RepositoryLoginModule implements LoginModule {
                     roles.addAll(domain.getRolesForGroup(principal.getName()));
                 }
             }
-            
+
             // merge permissions for the roles for a domain
             int perms = 0;
             for (String roleId : roles) {
@@ -369,7 +369,7 @@ public class RepositoryLoginModule implements LoginModule {
                 }
             }
             log.trace("User {} has perms {} for domain {} ", new Object[]{userId, perms, domain});
-            
+
             // create and add facet auth principal
             FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, perms);
             principals.add(fap);

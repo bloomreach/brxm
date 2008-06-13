@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.query.lucene;
 
@@ -45,6 +45,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
@@ -81,7 +83,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         // index the jackrabbit way
         Document doc = super.createDoc();
         // plus index our facet specifics
-        
+
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
             Name propName = (Name) it.next();
@@ -146,10 +148,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 break;
             case PropertyType.NAME:
                 if (name.equals(NameConstants.JCR_PRIMARYTYPE)){
-                    indexNodeTypeNameFacet(doc,ServicingFieldNames.HIPPO_PRIMARYTYPE ,value.getQName());  
+                    indexNodeTypeNameFacet(doc,ServicingFieldNames.HIPPO_PRIMARYTYPE ,value.getQName());
                 }
                 else if(name.equals(NameConstants.JCR_MIXINTYPES)) {
-                    indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE ,value.getQName()); 
+                    indexNodeTypeNameFacet(doc, ServicingFieldNames.HIPPO_MIXINTYPE ,value.getQName());
                 }
                 break;
             default:
@@ -179,9 +181,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
             // will never happen
         }
     }
-    
+
     private void indexPath(Document doc, InternalValue[] values, Name name) {
-       
+
         // index each level of the path for searching
         for (int i = 0; i < values.length; i++) {
             InternalValue value = values[i];
@@ -193,7 +195,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                         Field.TermVector.NO));
             }
         }
-        
+
         // make lexical sorting on depth possible. Max depth = 999;
         String depth = String.valueOf(values.length);
         depth="000".substring(depth.length()).concat(depth);

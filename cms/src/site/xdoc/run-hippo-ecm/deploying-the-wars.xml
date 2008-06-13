@@ -38,7 +38,7 @@ http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package/2.01.00-SNA
 
             <subsection name="Application Server">
                 <p>
-                  Start and configure your Application Server.  The procedure to start and configure 
+                  Start and configure your Application Server.  The procedure to start and configure
                   depends on your application server environment.
                 </p>
             </subsection>

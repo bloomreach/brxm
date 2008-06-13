@@ -59,7 +59,7 @@
       <sv:value>/hippo:configuration/hippo:groups</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--Domains configuration -->
   <sv:node sv:name="domain-defaultwrite">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -75,7 +75,7 @@
       <sv:value>/hippo:configuration/hippo:domains</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="domain-defaultread">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

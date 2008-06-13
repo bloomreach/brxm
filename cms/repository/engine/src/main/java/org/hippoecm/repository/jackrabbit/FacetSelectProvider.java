@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.jackrabbit;
 
@@ -31,14 +31,17 @@ import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
 
 public class FacetSelectProvider extends HippoVirtualProvider
 {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     ViewVirtualProvider subNodesProvider;
     Name docbaseName;
     Name facetsName;
     Name valuesName;
     Name modesName;
     Name handleName;
-    Name requestName;    
-    
+    Name requestName;
+
     FacetSelectProvider() {
         super();
     }
@@ -50,7 +53,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
         valuesName = resolveName(HippoNodeType.HIPPO_VALUES);
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
-        handleName = resolveName(HippoNodeType.NT_HANDLE);        
+        handleName = resolveName(HippoNodeType.NT_HANDLE);
         requestName = resolveName(HippoNodeType.NT_REQUEST);
     }
 
@@ -73,12 +76,12 @@ public class FacetSelectProvider extends HippoVirtualProvider
         if(dereference != null) {
             boolean singledView = false;
             Map<Name,String> view = new HashMap<Name,String>();
-            
+
             /*
              * If state.getParentId() instanceof ViewNodeId, we know for sure we are dealing with
              * a facetselect below a facetselect. We need to take into account the view of the parent select.
              * In principle, a state of type HippoNodeId always has a parent. To be sure, check for null
-             */  
+             */
             if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
                ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
                if(viewNodeId.view != null) {
@@ -86,7 +89,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                }
                singledView = viewNodeId.singledView;
             }
-            
+
             if(newFacets.length != newValues.length || newFacets.length != newModes.length) {
                 throw new RepositoryException("Malformed definition of faceted selection: all must be of same length.");
             }
@@ -101,24 +104,24 @@ public class FacetSelectProvider extends HippoVirtualProvider
                     view.remove(resolveName(newFacets[i]));
                 }
             }
-            
+
             boolean isHandle =  dereference.getNodeTypeName().equals(handleName);
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(subNodesProvider.match(view, entry.getId())) {
                     /*
-                     * below we check on the entry's nodestate wether the node type is hippo:request, 
+                     * below we check on the entry's nodestate wether the node type is hippo:request,
                      * because we do not show these nodes in the facetselects in mode single.
                      * Since match() already populates the nodestates of the child entries, this won't impose
                      * extra performance hit
-                     */ 
+                     */
                     if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
                         continue;
                     } else {
                         NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(),
                                                                                entry.getName(),view, singledView);
                         state.addChildNodeEntry(entry.getName(), childNodeId);
-                        if(isHandle && singledView) {    
+                        if(isHandle && singledView) {
                            // stop after first match because single hippo document view
                            break;
                         }
@@ -126,7 +129,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 }
             }
         }
-        
+
         return state;
     }
 

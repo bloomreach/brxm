@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security.principals;
 
@@ -32,34 +32,34 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /**
      * Serial verion id
      */
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * The name representing the domain
      */
     private final String name;
-    
+
     /**
      * The set of domain rules for the domain
      * @see DomainRule
      */
     private final Set<DomainRule> rules;
-    
+
     /**
-     * The set of roles of the user for the domain 
+     * The set of roles of the user for the domain
      */
     private final Set<String> roles;
-    
+
     /**
      * The JCR permissions of the user for the domain
      */
     private final int permissions;
 
-    
+
     /**
      * Creates a <code>UserPrincipal</code> with the given name.
      *
@@ -89,7 +89,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         this.permissions = permissions;
     }
 
-  
+
 
 
     //------------------------------------------------------------< Principal >
@@ -123,12 +123,12 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     public int getPermissions() {
         return permissions;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     /**
      * String for pretty printing and generating the hashcode
      * @param facet

@@ -35,7 +35,7 @@
             <param-value>org.hippoecm.frontend.Main</param-value>
         </init-param>
     </servlet>
-    
+
     <!--Builtin console-->
     <servlet>
         <servlet-name>Console</servlet-name>
@@ -58,8 +58,8 @@
     <servlet-mapping>
         <servlet-name>Console</servlet-name>
         <url-pattern>/console/*</url-pattern>
-    </servlet-mapping>    
-    
+    </servlet-mapping>
+
     <!-- Timeout in minutes -->
     <session-config>
         <session-timeout>60</session-timeout>

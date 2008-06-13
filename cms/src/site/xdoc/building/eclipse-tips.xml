@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
   <!--
     Copyright 2007 Hippo
-    
+
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS"
     BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,11 @@
       Note that Eclipse does all bookeeping itself and doesn't expect a parallel build system that does exactly
       the same thing next to it. Bizarre things can happen if you use Maven and Eclipse at the same time and
       it is not recommended to do so. Once everything has been set up you should use Maven only to download
-      dependencies (using <b>mvn dependency:resolve</b>) and to generate eclipse project files (using 
+      dependencies (using <b>mvn dependency:resolve</b>) and to generate eclipse project files (using
       <b>mvn eclipse:eclipse</b>). Do not use any maven command that actually writes something in the target
       directory. If you absolutely need to do so, first disable automatic building in Eclipse. And don't forget
       to refresh all projects after reenabling it again.
-      </div> 
+      </div>
       <subsection name="Customize your Eclipse perspective">
         <p> Use 'Window -> show view' to open at least the following views: </p>
         <ul>
@@ -98,7 +98,7 @@
           synchronize view before actually updating your source tree. For one it gives an excellent
           view on what's going on outside your own backyard but more importantly it gives you
           insight into when and how your eclipse project definitions become invalid. This happens every
-          time a dependency in one of the pom files changes. 
+          time a dependency in one of the pom files changes.
           <br/><br/>
           Tip: play around with the controls the synchronize view offers under the menu button (the
           little triangle in the upper right corner): 'mode' and 'presentation', they can really help
@@ -107,7 +107,7 @@
           When a dependency change happens you have a choice: either regenerate the eclipse project files
           or manually fix the involved eclipse projects (right-click, properties, Java build path etc.). If it's
           a complex change involving lots of modules it's easier to regenerate, but sometimes changes are
-          simple and can easily be fixed by hand if you understand what's going on. 
+          simple and can easily be fixed by hand if you understand what's going on.
           <br/><br/>
           Here are some rough guidelines for what to do in case you decide to fix your projects manually:
         </p>
@@ -154,7 +154,7 @@
         <p> Manual fixing might seem like a lot more work than just regenerating but that is not
           always the case. If you decide to do a full regeneration you should start with deleting
           ALL eclipse projects (don't delete contents) and finish with fixing the generated eclipse
-          projects as described on the  <a href="eclipse.html">Setting up eclipse</a> page.</p> 
+          projects as described on the  <a href="eclipse.html">Setting up eclipse</a> page.</p>
           <br/><br/>
       </subsection>
     </section>

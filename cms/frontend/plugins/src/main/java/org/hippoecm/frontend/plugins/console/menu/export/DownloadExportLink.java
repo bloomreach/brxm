@@ -1,17 +1,17 @@
 /*
- * Copyright 2008 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.console.menu.export;
 
@@ -36,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DownloadExportLink extends Link {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(DownloadExportLink.class);
@@ -53,7 +56,7 @@ public class DownloadExportLink extends Link {
 
     private class JcrExportRequestTarget implements IRequestTarget {
         private static final long serialVersionUID = 1L;
-        
+
         private File tempFile;
         private FileInputStream fis;
         private Node node;
@@ -68,7 +71,7 @@ public class DownloadExportLink extends Link {
         public void respond(RequestCycle requestCycle) {
 
             final Application app = Application.get();
-            
+
             // Determine encoding
             final String encoding = app.getRequestCycleSettings().getResponseRequestEncoding();
 
@@ -76,7 +79,7 @@ public class DownloadExportLink extends Link {
             final WebResponse response = (WebResponse)requestCycle.getResponse();
             response.setCharacterEncoding(encoding);
             response.setContentType("text/xml; charset=" + encoding);
-            
+
             // Make sure it is not cached by a client
             response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
             response.setHeader("Cache-Control", "no-cache, must-revalidate");

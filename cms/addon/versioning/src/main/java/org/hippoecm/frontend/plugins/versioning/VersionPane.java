@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.versioning;
 
@@ -58,6 +58,9 @@ import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class VersionPane extends RenderPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     transient Logger log = LoggerFactory.getLogger(VersionPane.class);
     Label documentComponent;
     Label versionComponent;
@@ -142,7 +145,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -176,7 +179,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -231,7 +234,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
@@ -305,7 +308,7 @@ public class VersionPane extends RenderPlugin {
                     for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
-			    // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                             if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;

@@ -52,7 +52,7 @@
       <artifactId>hippo-ecm-addon-sample-common</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>javax.jdo</groupId>
       <artifactId>jdo2-api</artifactId>

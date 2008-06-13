@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific lang governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository;
 
@@ -44,6 +44,8 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final String FACETSELECTNODE = "facetselect";
     private static final String FACETSEARCHNODE = "facetsearch";
@@ -132,7 +134,7 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         private Result result;
         private boolean noMoreNodes = false;
         private Set<String> noNodesBelowName;
-        
+
         public ContentHandlerImpl(Result result, String[] noNodesBelowName) {
             this.result = result;
             this.noNodesBelowName = new HashSet<String>();
@@ -147,7 +149,7 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
         public void endDocument() throws SAXException {
         }
 
-        
+
 
         public void endPrefixMapping(String prefix) throws SAXException {
 
@@ -179,7 +181,7 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
                 noMoreNodes = false;
             }
         }
-        
+
         public void startElement(String uri, String localName, String name, Attributes atts) throws SAXException {
             String ns = Name.NS_SV_URI;
             if(noMoreNodes && ns.equals(uri) && "node".equals(localName)) {
@@ -187,7 +189,7 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
             }
             if(ns.equals(uri) && "node".equals(localName) && noNodesBelowName.contains(atts.getValue(ns, "name"))){
                 noMoreNodes = true;
-            } 
+            }
             if (HippoNodeType.HIPPO_UUID.equals(atts.getValue(ns, "name"))) {
                 /*
                  * a hippo uuid indicates virtual node: the export did export virtual nodes,
@@ -212,11 +214,11 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
 
     private void printSystemView(String path) throws Exception{
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        this.session.exportSystemView(path, out, true, false);  
+        this.session.exportSystemView(path, out, true, false);
         String export = prettyPrint(out.toByteArray());
         System.out.println(export);
     }
-    
+
     private String prettyPrint(byte[] bytes) throws Exception {
         Source source = new StreamSource(new ByteArrayInputStream(bytes));
         DOMResult result = new DOMResult();

@@ -23,71 +23,71 @@
     </properties>
     <body>
       <section name="URL mapping">
-        
+
         <subsection name="What is it?">
           <p>
             In regular jsp site development, the browser goes to a jsp by means of the URL and
-            the page retrieves the repository content and presents it. The HST's URL mapping functionality 
+            the page retrieves the repository content and presents it. The HST's URL mapping functionality
             reverses this process: the URL describes the location of the repository content and
             the content determines it's view. </p>
-          <p>For example, a <i>content URL</i> showing a news item would look like 
+          <p>For example, a <i>content URL</i> showing a news item would look like
             <code>/myapp/news/new-version-released</code>, whereas a <i>page URL</i> with parameters would look like
-            <code>/myapp/news/newsItem.jsp?item=1</code>.</p>  
-          <p>Having content URL instead of page URL has the benefits of being <i>readable</i> and 
+            <code>/myapp/news/newsItem.jsp?item=1</code>.</p>
+          <p>Having content URL instead of page URL has the benefits of being <i>readable</i> and
               <i>bookmarkable</i>.</p>
         </subsection>
 
         <subsection name="How does it work?">
-          <p>To use the URL mapping functionality, install web.xml filters with the name 
+          <p>To use the URL mapping functionality, install web.xml filters with the name
             <code>org.hippoecm.hst.URLMappingContextFilter</code>.</p>
-            
+
            <p>This filter will go look for jsp files based on the URL. It will do that
-              first by direct node to page mapping and after that by document type mapping. 
-             For the latter the configuration parameter <code>repository.urlmapping.location</code>, 
-             defaulting to <code>/urlmapping</code>, indicates the location in the repository 
+              first by direct node to page mapping and after that by document type mapping.
+             For the latter the configuration parameter <code>repository.urlmapping.location</code>,
+             defaulting to <code>/urlmapping</code>, indicates the location in the repository
              where document type mapping is set up.</p>
-               
+
            <h4>1. Finding the repository node by URL</h4>
-           <p>The incoming URL is translated to a repository location (a.k.a. path) 
-             by replacing the first part, matching init parameter <code>urlBasePath</code>, with the 
-             init parameter <code>repositoryBaseLocation</code> (if present). The resulting path 
+           <p>The incoming URL is translated to a repository location (a.k.a. path)
+             by replacing the first part, matching init parameter <code>urlBasePath</code>, with the
+             init parameter <code>repositoryBaseLocation</code> (if present). The resulting path
              should match an existing repository node.</p>
-                   
+
            <h4>2. Direct node to page mapping</h4>
-          <p>If the found node has a property <code>hst:pageFile</code>, the value of 
+          <p>If the found node has a property <code>hst:pageFile</code>, the value of
               that property is the page that is forwarded to.</p>
 
-          <p>A more sophisticated way is via a so-call mixin-type. If the found node has 
-            a mixin-type <code>hst:page</code> set, the properties <code>hst:pageFile</code> 
-            and <code>hst:pageType</code> should be present as well, as they are obligatorily 
-            bound to the property <code>hst:page</code>. The value of the property <code>hst:pageFile</code> 
+          <p>A more sophisticated way is via a so-call mixin-type. If the found node has
+            a mixin-type <code>hst:page</code> set, the properties <code>hst:pageFile</code>
+            and <code>hst:pageType</code> should be present as well, as they are obligatorily
+            bound to the property <code>hst:page</code>. The value of the property <code>hst:pageFile</code>
             is the page that is forwarded to.</p>
-          
+
           <h4>3. Document type mapping</h4>
-          <p>If no <code>hst:page</code> mixin type is set on the node, all nodes in the location 
+          <p>If no <code>hst:page</code> mixin type is set on the node, all nodes in the location
             as described by <code>repository.urlmapping.location</code> are iterated. The property
-            <code>hst:nodetype</code> of those subnodes are read: if the value of that property 
+            <code>hst:nodetype</code> of those subnodes are read: if the value of that property
             matches the type of the current document, a mapping node is found.</p>
-           
-          <p>Then, to get the actual mapped jsp file, if the mapping node has a property 
+
+          <p>Then, to get the actual mapped jsp file, if the mapping node has a property
             <code>hst:pageFile</code>, the value of that property is the page that is forwarded to.</p>
-             
+
            <p>Again (see 2), a more sophisticated way is via the mixin-type. If the mapping node has
-             a subnode by the fixed name of <code>hst:displaypage</code>, which is marked as 
-             <code>hst:page</code>, that subnode should have a property <code>hst:pageFile</code>, 
+             a subnode by the fixed name of <code>hst:displaypage</code>, which is marked as
+             <code>hst:page</code>, that subnode should have a property <code>hst:pageFile</code>,
              representing the page that is forwarded to.</p>
 
           <h4>4. Going up the document tree</h4>
           <p>If both direct node mapping as document type mapping has failed based on the
             node as described by the URL, the node's parent is taken and both methods are
             tried again against this parent.</p>
-            
+
           <h4>An example repository structure for URL mapping</h4>
           <source><![CDATA[  /preview/content/news
                        [hst:pageFile=/news.jsp]
   /preview/content/news/new-version-released
                                             [jcr:primaryType=hippo:newsItem]
-                                            
+
   /urlMapping/newsItemMapping
                              [hst:nodetype=hippo:newsItem]
                              [hst:pageFile=/newsItem.jsp]]]></source>
@@ -98,7 +98,7 @@
                        [hst:pageFile=/news.jsp]
   /preview/content/news/new-version-released
                                             [jcr:primaryType=hippo:newsItem]
-                                            
+
   /urlMapping/newsItemMapping
                              [hst:nodetype=hippo:newsItem]
   /urlMapping/newsItemMapping/hst:displaypage
@@ -113,30 +113,30 @@
         <subsection name="Reverse URL encoding">
           <h4>URL's for links in jsp</h4>
           <p>When using URL mapping, links that point to repository content should be rewritten
-            by the application as they would not be valid. For instance, an application generated 
-            menu should have <code>a href</code> links that are reversed, i.e. the repository locations 
+            by the application as they would not be valid. For instance, an application generated
+            menu should have <code>a href</code> links that are reversed, i.e. the repository locations
             should have been translated to valid URL's, that will be translated again to repository locations
             when the link is actually used. </p>
-          <p>There are three ways to create valid links in jsp; one is to do it manually using the 
-            <code>_urlBasePath</code> property of the context, the second is to use the response's 
+          <p>There are three ways to create valid links in jsp; one is to do it manually using the
+            <code>_urlBasePath</code> property of the context, the second is to use the response's
             <b>encodeURL</b> method in scriptlet, the third is to use the tag <code>&lt;hst:encodeURL&gt;</code>.</p>
           <source><![CDATA[  ${context} points to /preview/content/news/
-          
+
   <a href="/<contextPath>${context._urlBasePath}/${context._name}">Link to /news</a>
-          
+
           or
-          
+
   <c:set var="newsURL" value="${context._path}" />
-  <c:set var="newsHref" 
+  <c:set var="newsHref"
          value="<%= response.encodeURL((String) pageContext.getAttribute("newsURL")) %>" />
   <a href="${newsHref}">Link to /news</a>
-            
+
           or
-  
+
   <a href="<hst:encodeURL value="${context._path}"/>">Link to /news</a>]]></source>
           <h4>URL's in document content</h4>
           <p>The HST automatically supports the rewriting of document links in the content of
-            other documents. </p>                        
+            other documents. </p>
         </subsection>
 
       </section>

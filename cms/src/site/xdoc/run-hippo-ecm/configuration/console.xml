@@ -26,7 +26,7 @@
 
         <p>
           The console application provides a simple interface to browse
-          the repository and edit its contents.  Most of the configuration 
+          the repository and edit its contents.  Most of the configuration
           is accessible this way, see the
           <a href="nodes/index.html">Configuration Nodes</a> page for more
           details on what can be found where.
@@ -39,7 +39,7 @@
         <img src="../../images/console.png" alt="the console" />
 
         <p>
-          The application is based on the concept of "the selected node".  This is 
+          The application is based on the concept of "the selected node".  This is
           the JCR node that is selected in the tree.  The main panel shows
           properties and node type information and allows you to edit those.
           The menu operations are also based on this node:

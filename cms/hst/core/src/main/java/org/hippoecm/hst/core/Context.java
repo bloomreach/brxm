@@ -1,17 +1,17 @@
 /*
- * Copyright 2007-2008 Hippo.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.hst.core;
 
@@ -48,12 +48,14 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoNode;
 
 public class Context extends AbstractMap {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final Logger logger = LoggerFactory.getLogger(Context.class);
 
     private final Session session;
     private final String contextPath;
-    private final String requestURI; 
+    private final String requestURI;
     private final String urlBasePath;
     private final String baseLocation;
     private String contentBaseLocation;
@@ -65,15 +67,15 @@ public class Context extends AbstractMap {
     private DocumentPathReplacer pathReplacer;
 
     private Locale locale;
-    
-    public Context(final Session jcrSession, final String contextPath, 
+
+    public Context(final Session jcrSession, final String contextPath,
             final String requestURI, final String baseLocation) {
         // create with urlBasePath same as baseLocation
         this(jcrSession, contextPath, requestURI, baseLocation, baseLocation);
     }
 
-    public Context(final Session jcrSession, final String contextPath, 
-            final String requestURI, final String urlBasePath, 
+    public Context(final Session jcrSession, final String contextPath,
+            final String requestURI, final String urlBasePath,
             final String baseLocation) {
         this.session = jcrSession;
         this.contextPath = contextPath;
@@ -86,10 +88,10 @@ public class Context extends AbstractMap {
     public Context(Context parent, String relativePath) {
         this(parent, relativePath, -1);
     }
-    
+
     private Context(Context parent, String relativeLocation, int index) {
-        this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation); 
-        
+        this(parent.session, parent.contextPath, parent.requestURI, parent.urlBasePath, parent.baseLocation);
+
         if (relativeLocation.startsWith("/")) {
             setRelativeLocation(relativeLocation);
         } else if (parent.relativeLocation.endsWith("/")) {
@@ -111,37 +113,37 @@ public class Context extends AbstractMap {
      * Get the total location of the current context.
      */
     public String getLocation() {
-        
+
         if (relativeLocation == null) {
             return baseLocation;
         }
-        
+
         if (relativeLocation.startsWith("/")) {
             return baseLocation + relativeLocation;
         } else {
             return baseLocation + "/" + relativeLocation;
-        }   
+        }
     }
 
     /**
-     * Get the begin part of the URL path, on which the currently active filter 
+     * Get the begin part of the URL path, on which the currently active filter
      * matches.
      */
     public String getURLBasePath() {
         return urlBasePath;
     }
 
-    /** 
+    /**
      * Get the base location that is the location a.k.a. path in the repository
-     * where the current context points to and is in normal configuration the  
-     * base location of a virtual tree. 
+     * where the current context points to and is in normal configuration the
+     * base location of a virtual tree.
      */
     public String getBaseLocation() {
         return baseLocation;
     }
 
     /**
-     * Get the original requestURI, before any redirection or forwarding. 
+     * Get the original requestURI, before any redirection or forwarding.
      */
     public String getRequestURI() {
         return requestURI;
@@ -150,14 +152,14 @@ public class Context extends AbstractMap {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     public void setRelativeLocation(String relativeLocation) {
-        
+
         if (relativeLocation.startsWith(baseLocation)) {
             this.relativeLocation = relativeLocation.substring(baseLocation.length());
         } else {
             this.relativeLocation = relativeLocation;
-        }   
+        }
     }
 
     public boolean exists() {
@@ -281,13 +283,13 @@ public class Context extends AbstractMap {
                     if (item == null) {
                         logger.debug("No item found at path "+requestedPath);
                         result = null;
-                    } 
+                    }
                     else if (item.isNode()) {
                         Node node = (Node) item;
                         if (node.isNodeType("nt:query")) {
                             HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
                             result = new Context(this, requestedQuery, new LinkedList());
-                        } 
+                        }
                         else {
                             if (field.startsWith("_")) {
                                 field = field.substring(1);
@@ -298,14 +300,14 @@ public class Context extends AbstractMap {
                                 } else if (field.equals("urlBasePath")) {
                                     result = this.urlBasePath;
                                 } else if (field.equals("parent")) {
-                                    
+
                                     if (node.getParent() == null) {
                                         return null;
                                     }
 
                                     Context context = new Context(this.session, this.contextPath, this.urlBasePath, this.baseLocation);
                                     context.setRelativeLocation(node.getParent().getPath());
-                                    
+
                                     result = context;
                                 } else if (field.equals("location")) {
                                     result = ((HippoNode)node).getCanonicalNode().getPath();
@@ -319,12 +321,12 @@ public class Context extends AbstractMap {
                                     logger.warn("context._" + field + " not defined");
                                     result = null;
                                 }
-                            } 
+                            }
                             else {
                                 result = new Context(this, node.getPath());
-                            }    
+                            }
                         }
-                    } 
+                    }
                     else {
                         Property property = (Property) item;
                         switch(property.getType()) {
@@ -354,35 +356,35 @@ public class Context extends AbstractMap {
                 result = null;
             }
         }
- 
+
         return result;
     }
 
 
-    /** 
+    /**
      * Determine the real content base location from a possible virtual tree
-     * base location. 
+     * base location.
      */
     String getContentBaseLocation() {
-        
+
         // lazy
         if (this.contentBaseLocation == null) {
-        
+
             this.contentBaseLocation = baseLocation;
-        
+
             try {
                 Item item = JCRConnector.getItem(this.session, this.baseLocation);
-                
+
                 if (item.isNode()) {
                     Node node = (Node) item;
-        
+
                     // if it is a virtual tree, determine the real content base location
                     if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         if (node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                            
+
                             Node contentBaseNode = session.getNodeByUUID(
                                     node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
-        
+
                             this.contentBaseLocation = contentBaseNode.getPath();
                         }
                     }
@@ -391,7 +393,7 @@ public class Context extends AbstractMap {
                 throw new IllegalStateException(e);
             }
         }
-    
+
         return this.contentBaseLocation;
     }
 
@@ -400,15 +402,15 @@ public class Context extends AbstractMap {
     }
 
     private DocumentPathReplacer getPathReplacer() {
-        
+
         // lazy
         if (pathReplacer == null) {
-            
+
             // don't use the baseLocation as it might be a virtual tree and
-            // internal links have links from the real content base location 
+            // internal links have links from the real content base location
             pathReplacer = new DocumentPathReplacer(this);
         }
-        
+
         return pathReplacer;
     }
 

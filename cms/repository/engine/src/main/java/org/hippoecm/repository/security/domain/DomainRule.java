@@ -1,17 +1,17 @@
 /*
- * Copyright 2008 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security.domain;
 
@@ -29,7 +29,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 /**
  * A DomainRule holds a set of {@link FacetRule}s that define a subset of the domain.
  * The FacetRules must be merged together with ANDs.
- * 
+ *
  * In JCR:
  * - DomainRule
  * +-- FacetRule1
@@ -37,12 +37,12 @@ import org.hippoecm.repository.api.HippoNodeType;
  * +-- FacetRule3
  */
 public class DomainRule implements Serializable {
-    
+
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /**
      * Serial version id
      */
@@ -52,14 +52,14 @@ public class DomainRule implements Serializable {
      * The set of facet rules that define the domain rule
      */
     private Set<FacetRule> facetRules = new HashSet<FacetRule>();
-    
+
 
     /**
      * The hash code
      */
     private transient int hash;
-   
-    
+
+
     /**
      * Instantiate the domain rule with the given configuration node
      * @param node the node folding the domain rule configuration
@@ -69,7 +69,7 @@ public class DomainRule implements Serializable {
         if (node == null) {
             throw new IllegalArgumentException("FacetRule node cannot be null");
         }
-        
+
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
@@ -100,7 +100,7 @@ public class DomainRule implements Serializable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         Set<FacetRule> fr = getFacetRules();
-        
+
         sb.append("DomainRule: ");
         sb.append("\r\n");
         for (FacetRule rule : fr) {

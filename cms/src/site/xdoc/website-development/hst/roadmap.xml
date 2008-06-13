@@ -23,40 +23,40 @@
     </properties>
     <body>
       <section name="Hippo Site Toolkit Development Roadmap">
-        <p>This section describes the general development roadmap of the Hippo Site Toolkit for 
+        <p>This section describes the general development roadmap of the Hippo Site Toolkit for
            HippoECM. This roadmap is an outline of the functionality and the components that will
-           be released in future versions of the HST. 
+           be released in future versions of the HST.
            The development will focus on a flexible and extendible toolkit with which developers
            can create websites with content from HippoECM.
-           
+
            The HST should be a joy to work with when you build a site with the
-           repository :-). This roadmap is a general list of components and functionalities that 
+           repository :-). This roadmap is a general list of components and functionalities that
            will end up in future releases. Any feedback on these issues is more than welcome</p>
-        
-        <subsection name="Content to URL Mapping">          
+
+        <subsection name="Content to URL Mapping">
           <p>To display repository content by the view techology (jsp, jsf) a flexible
           mapping is required. Initially this mapping will be configured in a static resource like
           an xml resource or by Spring. In a later version this might end up in the repository.
           </p>
-        </subsection>  
-        
-        <subsection name="Templating">          
+        </subsection>
+
+        <subsection name="Templating">
           <p>Templating can be very useful in sites that unlock repository content and to
-          speed up development. For this purpose the HST will have functionality to add 
-          templates of proven templating frameworks to the repository and to maintain them 
+          speed up development. For this purpose the HST will have functionality to add
+          templates of proven templating frameworks to the repository and to maintain them
           with the cms. Among the possible templating frameworks are Tiles, Freemarker and Velocity.
           </p>
-        </subsection> 
-        
-        <!--  <subsection name="Caching">          
-          <p>It is needless to sat that the HST needs to perform properly and this will be kept in mind 
+        </subsection>
+
+        <!--  <subsection name="Caching">
+          <p>It is needless to sat that the HST needs to perform properly and this will be kept in mind
           during the development process. To reduce unnecessary template rendering and data transport with the
-          repository caching might be a useful technique. 
-          </p>    
+          repository caching might be a useful technique.
+          </p>
         </subsection> -->
-        
-        <subsection name="Components">          
-          <p>A huge focus in the development of the HST is on its component library. One has to 
+
+        <subsection name="Components">
+          <p>A huge focus in the development of the HST is on its component library. One has to
           think of components with basic functionality like retrieving content from and writing data to the repository and of
           higher level components like components for displaying paginated repository content, the generation
           of content as rss feeds, dictionary support, forum functionality, sitemaps and sitemenu's, polls and many more.
@@ -65,13 +65,13 @@
           component stack and we encourage the contribution of these components to Onehippo's forge.
           </p>
           <p>
-          Together with the content modelling features of Hippo ECM this results in a powerful framework to create sites 
-          that expose repository content in a structural manner with rich component based functionality in an efficient way.          
+          Together with the content modelling features of Hippo ECM this results in a powerful framework to create sites
+          that expose repository content in a structural manner with rich component based functionality in an efficient way.
           </p>
            <p>
             The initial choosen technology for the HST is JSP and tag libraries.
           </p>
-        </subsection> 
+        </subsection>
       </section>
     </body>
 </document>

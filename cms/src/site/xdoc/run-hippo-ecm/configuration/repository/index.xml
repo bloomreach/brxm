@@ -87,7 +87,7 @@
                 See the <a href="http://jackrabbit.apache.org/doc/config.html">Jackrabbit documentation</a>
                 for more information.
             </p>
-            
+
             <subsection name="FileSystem element">
                 <p>
                     The virtual file system used by the repository to persist global state such as
@@ -98,7 +98,7 @@
                     for more information.
                 </p>
             </subsection>
-            
+
             <subsection name="Security element">
                 <p>
                     The Security element specifies the name of the app-entry
@@ -116,7 +116,7 @@
 &lt;/Security&gt;
 </source>
                 <p>
-                    SimpleAccessManager is the Hippo Repository default access manager implementation, and 
+                    SimpleAccessManager is the Hippo Repository default access manager implementation, and
                     <a href="authentication.html">RepositoryLoginModule</a>
                     the default login implementation.
                 </p>
@@ -125,7 +125,7 @@
                     for more information.
                 </p>
             </subsection>
-            
+
             <subsection name="Workspaces element">
                 <p>
                     Configures the location of the workspaces root directory and the name of the default workspace.
@@ -136,7 +136,7 @@
             </subsection>
             <subsection name="Workspace element">
                 <p>
-                    The Workspace element is used as a template for separate workspace configuration files created 
+                    The Workspace element is used as a template for separate workspace configuration files created
                     for each new workspace.
                 </p>
                 <p>

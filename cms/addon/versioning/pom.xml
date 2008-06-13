@@ -70,8 +70,8 @@
     <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
-	<filtering>false</filtering>
-	<directory>${basedir}/src/main/java</directory>
+    <filtering>false</filtering>
+    <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
           <include>**/*.css</include>

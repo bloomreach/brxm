@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.query.lucene;
 
@@ -50,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AuthorizationQuery {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The logger instance for this class
@@ -90,7 +92,7 @@ public class AuthorizationQuery {
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
-            // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE 
+            // TODO test for facetAuthPrincipal wether 'read' is bit is set to 1 in ROLE
             FacetAuthPrincipal facetAuthPrincipal = facetAuthsIt.next();
             Iterator<DomainRule> domainRulesIt = facetAuthPrincipal.getRules().iterator();
 
@@ -137,11 +139,11 @@ public class AuthorizationQuery {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else {
-                            // * in combination with unequal should never return a hit (though should not be possible 
+                            // * in combination with unequal should never return a hit (though should not be possible
                             // to exist anyway )
                             return QueryHelper.getNoHitsQuery();
                         }
-                    } 
+                    }
                     else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_USER)) {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(internalFieldName, session.getUserID()));

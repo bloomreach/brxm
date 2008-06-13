@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository;
 
@@ -40,10 +40,10 @@ import sun.security.action.GetLongAction;
 
 
 public class FacetedAuthorizationTest extends TestCase {
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     Node hipDocDomain;
     Node readDomain;
     Node writeDomain;
@@ -51,21 +51,21 @@ public class FacetedAuthorizationTest extends TestCase {
 
     Node testData;
     Node testNav;
-    
-    Session userSession; 
-    
+
+    Session userSession;
+
     // nodes that have to be cleaned up
     private static final String DOMAIN_DOC_NODE = "hippodocument";
     private static final String DOMAIN_READ_NODE = "readme";
     private static final String DOMAIN_WRITE_NODE= "writeme";
     private static final String TEST_DATA_NODE = "testdata";
     private static final String TEST_NAVIGATION_NODE = "navigation";
-    
+
     private static final String TEST_USER_ID = "testuser";
     private static final String TEST_USER_PASS = "password";
     private static final String TEST_GROUP_ID = "testgroup";
-    
-    
+
+
     public void cleanup() throws RepositoryException  {
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
@@ -95,22 +95,22 @@ public class FacetedAuthorizationTest extends TestCase {
         }
         session.save();
     }
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+
         cleanup();
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
-        
-        
+
+
         // create test user
         testUser = users.addNode(TEST_USER_ID, HippoNodeType.NT_USER);
         testUser.setProperty(HippoNodeType.HIPPO_PASSWORD, TEST_USER_PASS);
-        
+
         // create test group with member test
         Node testGroup = groups.addNode(TEST_GROUP_ID, HippoNodeType.NT_GROUP);
         testGroup.setProperty(HippoNodeType.HIPPO_MEMBERS, new String[] { TEST_USER_ID });
@@ -136,7 +136,7 @@ public class FacetedAuthorizationTest extends TestCase {
         fr.setProperty(HippoNodeType.HIPPO_FACET, "authtest");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "canread");
         fr.setProperty(HippoNodeType.HIPPO_TYPE, "String");
-        
+
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "jcrread");
@@ -160,7 +160,7 @@ public class FacetedAuthorizationTest extends TestCase {
         fr.setProperty(HippoNodeType.HIPPO_FACET, "role");
         fr.setProperty(HippoNodeType.HIPPO_VALUE, "__role__");
         fr.setProperty(HippoNodeType.HIPPO_TYPE, "String");
-        
+
         // create write domain
         writeDomain = domains.addNode(DOMAIN_WRITE_NODE, HippoNodeType.NT_DOMAIN);
         ar = writeDomain.addNode("hippo:authrole", HippoNodeType.NT_AUTHROLE);
@@ -175,35 +175,35 @@ public class FacetedAuthorizationTest extends TestCase {
         // create test data
         testData = session.getRootNode().addNode(TEST_DATA_NODE);
         testData.addMixin("mix:referenceable");
-        
+
         testData.addNode("readdoc0",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.addNode("writedoc0", "hippo:ntunstructured").setProperty("authtest", "canwrite");
         testData.addNode("nothing0",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("readdoc0").addMixin("hippo:harddocument");
         testData.getNode("writedoc0").addMixin("hippo:harddocument");
         testData.getNode("nothing0").addMixin("hippo:harddocument");
-        
+
         testData.getNode("readdoc0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.getNode("readdoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
         testData.getNode("readdoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("readdoc0/subread").addMixin("hippo:harddocument");
         testData.getNode("readdoc0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("readdoc0/subnothing").addMixin("hippo:harddocument");
-        
+
         testData.getNode("writedoc0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.getNode("writedoc0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
         testData.getNode("writedoc0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("writedoc0/subread").addMixin("hippo:harddocument");
         testData.getNode("writedoc0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("writedoc0/subnothing").addMixin("hippo:harddocument");
- 
+
         testData.getNode("nothing0").addNode("subread",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.getNode("nothing0").addNode("subwrite",  "hippo:ntunstructured").setProperty("authtest", "canwrite");
         testData.getNode("nothing0").addNode("subnothing",  "hippo:ntunstructured").setProperty("authtest", "nothing");
         testData.getNode("nothing0/subread").addMixin("hippo:harddocument");
         testData.getNode("nothing0/subwrite").addMixin("hippo:harddocument");
         testData.getNode("nothing0/subnothing").addMixin("hippo:harddocument");
-        
+
         // expander test data
         testData.addNode("expanders",  "hippo:ntunstructured").setProperty("authtest", "canread");
         testData.getNode("expanders").addMixin("hippo:harddocument");
@@ -226,7 +226,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         // create test nagivation
         testNav = session.getRootNode().addNode(TEST_NAVIGATION_NODE);
-        
+
         // search without namespace
         Node node = testNav.addNode("search", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "search");
@@ -239,7 +239,7 @@ public class FacetedAuthorizationTest extends TestCase {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getUUID());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "authtest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "canread" });
-        
+
         // expose data to user session
         session.save();
 
@@ -254,7 +254,7 @@ public class FacetedAuthorizationTest extends TestCase {
         cleanup();
         super.tearDown();
     }
-    
+
     @Test
     public void testCannotReadConfiguration() throws RepositoryException {
         try {
@@ -274,7 +274,7 @@ public class FacetedAuthorizationTest extends TestCase {
         assertTrue(testData.hasNode("expanders/grouptest"));
         assertTrue(testData.hasNode("expanders/roletest"));
     }
-    
+
     @Test
     public void testReadsNotAllowed() throws RepositoryException {
         assertFalse(testData.hasNode("nothing0"));
@@ -289,12 +289,12 @@ public class FacetedAuthorizationTest extends TestCase {
         assertTrue(testData.hasNode("readdoc0/subwrite"));
         assertTrue(testData.hasNode("writedoc0/subread"));
         assertTrue(testData.hasNode("writedoc0/subwrite"));
-        
+
         // the iterator only sees 4 nodes, but they are directly accessible
         assertTrue(testData.hasNode("nothing0/subread"));
         assertTrue(testData.hasNode("nothing0/subwrite"));
     }
-    
+
     @Test
     public void testSubReadsNotAllowed() throws RepositoryException {
         assertFalse(testData.hasNode("readdoc0/subnothing"));
@@ -313,7 +313,7 @@ public class FacetedAuthorizationTest extends TestCase {
         node.addNode("newnode", "hippo:ntunstructured");
         userSession.save();
     }
-    
+
     @Test
     public void testSubWritesAllowed() throws RepositoryException {
         Node node;
@@ -382,7 +382,7 @@ public class FacetedAuthorizationTest extends TestCase {
             // expected
             userSession.refresh(false);
         }
-        
+
         // TODO: make a descission what to do in these cases
 //        try {
 //            // should this be allowed? currently not; write needs read on parent
@@ -429,7 +429,7 @@ public class FacetedAuthorizationTest extends TestCase {
             fail("Should be allowed to delete node.");
         }
     }
-    
+
     public void testDeletesNotAllowed() throws RepositoryException {
         Node node;
         try {
@@ -476,7 +476,7 @@ public class FacetedAuthorizationTest extends TestCase {
     public void testSelfExclusionNotAllowed() throws RepositoryException {
         Node node;
         try {
-            node = testData.getNode("writedoc0");            
+            node = testData.getNode("writedoc0");
             node.setProperty("authtest", "none");
             userSession.save();
             fail("Shouldn't be allowed to exclude yourself from reading.");
@@ -485,7 +485,7 @@ public class FacetedAuthorizationTest extends TestCase {
             userSession.refresh(false);
         }
         try {
-            node = testData.getNode("writedoc0");            
+            node = testData.getNode("writedoc0");
             node.setProperty("authtest", "read");
             userSession.save();
             fail("Shouldn't be allowed to exclude yourself from writing.");
@@ -493,13 +493,13 @@ public class FacetedAuthorizationTest extends TestCase {
             // expected
             userSession.refresh(false);
         }
-        
-        
+
+
         try {
             node = testData.getNode("writedoc0");
             node.addNode("mynode1", "hippo:ntunstructured").setProperty("authtest", "none");
             userSession.save();
-            
+
             // JackRabbit swallows the AccessDeniedException, so check manually for node
             try {
                 userSession.refresh(false);
@@ -530,7 +530,7 @@ public class FacetedAuthorizationTest extends TestCase {
             userSession.refresh(false);
         }
     }
-    
+
     @Test
     public void testFacetSearch() throws RepositoryException {
         //Utilities.dump(testNav);
@@ -550,7 +550,7 @@ public class FacetedAuthorizationTest extends TestCase {
         NodeIterator iter = navNode.getNodes();
         assertEquals(2L, iter.getSize());
     }
-    
+
     @Test
     public void testQueryXPath() throws RepositoryException {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();

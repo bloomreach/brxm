@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
@@ -43,6 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CurrentActivityPlugin extends RenderPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
@@ -101,7 +104,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
 
                 // Best effort algoritm to create a 'browse' link to a document.
 
-                // The path to the document variant that was used as input for a Workflow step.    
+                // The path to the document variant that was used as input for a Workflow step.
                 String sourceVariant = null;
                 boolean sourceVariantExists = false;
                 if (node.hasProperty("hippo:eventDocument")) {
@@ -118,7 +121,7 @@ public class CurrentActivityPlugin extends RenderPlugin {
                     targetVariant = node.getProperty("hippo:eventReturnValue").getValue().getString();
                     String uuid = StringUtils.substringBetween(targetVariant, "[uuid=", "]");
                     if (uuid != null && !uuid.equals("")) {
-                        //The Workflow step has returned a Document instance, look up the 
+                        //The Workflow step has returned a Document instance, look up the
                         //document it refers to.
                         String path = uuid2Path(uuid);
                         if (path != null && !path.equals("")) {

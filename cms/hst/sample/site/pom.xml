@@ -54,7 +54,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- hst taglib -->
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
@@ -68,7 +68,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Following dependencies are only needed when running embedded repository -->
     <!--
     <dependency>

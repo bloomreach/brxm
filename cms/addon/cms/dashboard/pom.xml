@@ -50,7 +50,7 @@
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>${parent.version}</version>
-    </dependency>      
+    </dependency>
   </dependencies>
 
   <build>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.model.properties;
 
@@ -40,6 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrPropertyValueModel extends Model {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
@@ -72,18 +75,18 @@ public class JcrPropertyValueModel extends Model {
     public JcrPropertyModel getJcrPropertymodel() {
         return propertyModel;
     }
-    
+
     public Value getValue() {
         load();
         return value;
     }
-    
+
     public void setValue(Value value)
     {
         load();
 
         this.value = value;
-        
+
         try {
             Property prop = propertyModel.getProperty();
             if (prop.getDefinition().isMultiple()) {
@@ -105,7 +108,7 @@ public class JcrPropertyValueModel extends Model {
         }
     }
 
-    
+
 
     @Override
     public Object getObject() {
@@ -119,13 +122,13 @@ public class JcrPropertyValueModel extends Model {
         }
         return null;
     }
-    
+
     @Override
     public void setObject(final Serializable object)
     {
         load();
         try {
-            String string = object == null ? "" : object.toString(); 
+            String string = object == null ? "" : object.toString();
             switch (type) {
             case PropertyType.BOOLEAN:
                 value = BooleanValue.valueOf(string);

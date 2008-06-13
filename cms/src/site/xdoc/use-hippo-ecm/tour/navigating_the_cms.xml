@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
   <!--
       Copyright 2007 Hippo
-      
+
       Licensed under the Apache License, Version 2.0 (the  "License");
       you may not use this file except in compliance with the License.
       You may obtain a copy of the License at
-      
+
       http://www.apache.org/licenses/LICENSE-2.0
-      
+
       Unless required by applicable law or agreed to in writing, software
       distributed under the License is distributed on an "AS IS"
       BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,17 +24,17 @@
   <body>
     <section name="Navigating the CMS">
       <p>
-Hippo CMS7 has a tabbed user interface. These tabs allow the user to switch 
-between different perspectives that all have their own state. Some actions, 
-like for example clicking on a document link in the dashboard perspective, 
-will automatically open up the browse perspective and highlight the 
+Hippo CMS7 has a tabbed user interface. These tabs allow the user to switch
+between different perspectives that all have their own state. Some actions,
+like for example clicking on a document link in the dashboard perspective,
+will automatically open up the browse perspective and highlight the
 corresponding document in its current location.<br/>
       </p>
       <subsection name="Static perspectives">
-Some perspectives are static, like the dashboard (listing 1) or the browse 
-(listing 2) perspective, which means they will always be visible (assuming 
-the user has the appropiate rights) and cannot be closed. 
-      </subsection>    
+Some perspectives are static, like the dashboard (listing 1) or the browse
+(listing 2) perspective, which means they will always be visible (assuming
+the user has the appropiate rights) and cannot be closed.
+      </subsection>
       <p>
         <img src="../../images/tour/nav1.png" alt="Dashboard tab selected"/><br/>
         <em>Listing 1: Dashboard tab selected</em>
@@ -43,31 +43,31 @@ the user has the appropiate rights) and cannot be closed.
         <em>Listing 2: Browse tab selected</em>
       </p>
       <subsection name="Dynamic perspectives">
-Other perspectives, like the document editor, are dynamic which means they 
+Other perspectives, like the document editor, are dynamic which means they
 are created on-the-fly and can be closed again. This gives users the freedom
-to have multiple documents open simultaneously (listing 3). 
+to have multiple documents open simultaneously (listing 3).
       </subsection>
       <p>
         <img src="../../images/tour/nav4.jpg" alt="Document 'yourArticle' selected"/><br/>
-        <em>Listing 3: Document 'myarticle' and 'yourArticle' are being edited, 
+        <em>Listing 3: Document 'myarticle' and 'yourArticle' are being edited,
             'yourArticle' is currently in focus</em>
       </p>
     </section>
     <section name="Navigating the repository">
       <p>
-By selectting the Browse tab, the user is presented with a basic file 
+By selectting the Browse tab, the user is presented with a basic file
 browser interface consisting of three panes.<br/>
-The left pane displays a tree-view on the repository, showing the folders 
-the user is allowed to see. Upon clicking a folder in the tree-view,   
-all folders and documents that belong to the selected folder will be 
+The left pane displays a tree-view on the repository, showing the folders
+the user is allowed to see. Upon clicking a folder in the tree-view,
+all folders and documents that belong to the selected folder will be
 displayed as a sortable/pageable list in the middle pane.<br/>
       </p>
       <subsection name="Actions">
-Documents and folders all have a list of (workflow)actions that can be 
-executed upon them. These actions are displayed in the right pane and 
-will be (re)loaded every time a user clicks on a document or folder 
-in either the left or middle pane. 
-      </subsection>                
+Documents and folders all have a list of (workflow)actions that can be
+executed upon them. These actions are displayed in the right pane and
+will be (re)loaded every time a user clicks on a document or folder
+in either the left or middle pane.
+      </subsection>
       <img src="../../images/tour/nav_browse.jpg" alt="Browse"/>
       <p align="center">
         <a href="dashboard.html">&lt;- Previous: The dashboard</a>&#160;&#160;&#160;&#160;&#160;<a href="editing_a_document.html">Next: Editing a document -></a>

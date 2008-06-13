@@ -32,7 +32,7 @@
         href="http://wicket.apache.org">Apache Wicket</a>.  All standard GUI
         components are written as plugins. The Hippo CMS application offers a
         default configuration for these plugins.  Customizing Hippo CMS comes
-        down to editing this configuration, extending it with extra plugins 
+        down to editing this configuration, extending it with extra plugins
         from <a href="http://forge.hippo-ecm.org/">the forge</a> or writing
         your own.
       </p>
@@ -211,7 +211,7 @@ public class RootPlugin extends RenderPlugin {
         <p>
           Both frontend:plugin nodes, RootPlugin and subPlugin, need to have a
           property <b>plugin.class</b>, which contains the full class name of
-          the plugin.  
+          the plugin.
         </p>
       </subsection>
 
@@ -227,7 +227,7 @@ public class RootPlugin extends RenderPlugin {
       <subsection name="Plugin Configuration">
         <p>
           Each plugin has its own configuration that provides an indirection
-          layer, used to translate plugin specific names 
+          layer, used to translate plugin specific names
           into application/cluster-wide names.  So when a plugin wants to
           know under what name it can find the model service, it looks up the
           value for the "wicket.model" key.  This value might be something like
@@ -256,7 +256,7 @@ public class RootPlugin extends RenderPlugin {
           <dd>
             Any object that implements IClusterable can be registered as a
             service.  It will receive a unique service ID that can be used to
-          register "decorator" interfaces, construct a naming scope or to 
+          register "decorator" interfaces, construct a naming scope or to
             retrieve the service when the plugin context is not available.
           </dd>
           <dt>Register/unregister a service tracker</dt>
@@ -276,7 +276,7 @@ public class RootPlugin extends RenderPlugin {
           The plugin context is private to the plugin.  I.e. a plugin can use
           it, but should not hand out references to other plugins.  The context
           handles the lifecycle of services and trackers.  When a plugin is
-          stopped these are unregistered so there is no need for plugins to 
+          stopped these are unregistered so there is no need for plugins to
           do this.
         </p>
       </subsection>
@@ -291,7 +291,7 @@ public class RootPlugin extends RenderPlugin {
         <p>
           Because the starting and stopping of a consumed service is under
           the control of a different plugin, in general no assumptions can
-          be made about its availability.  There are three safe ways of 
+          be made about its availability.  There are three safe ways of
           consuming services:
         </p>
         <ul>

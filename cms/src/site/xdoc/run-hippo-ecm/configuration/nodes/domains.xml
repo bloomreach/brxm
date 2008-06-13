@@ -25,10 +25,10 @@
         <section name="Domains Configuration">
             <p>
                 Domains define a subset of nodes from the repository and which users or groups
-                have which role on the nodes in the domain. The domain are stored in the repository 
-                as childeren of the node <code>/hippo:configuration/hippo:domains</code>. The domain 
+                have which role on the nodes in the domain. The domain are stored in the repository
+                as childeren of the node <code>/hippo:configuration/hippo:domains</code>. The domain
                 rule nodes and facet rule subnodes define the subset of nodes from the repository. The
-                auth role nodes define who can do what in the domain. 
+                auth role nodes define who can do what in the domain.
             </p>
                 <!-- TODO: add read more link to authorizaion and workflow "concepts" -->
         </section>
@@ -63,7 +63,7 @@ hippo:configuration
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>the domain name</td></tr>
             </table>
-            
+
             <p>
                 The <code>hippo:domain</code> can hold multiple <code>hippo:domainrule</code> and <code>hippo:authrole</code> nodes.
             </p>
@@ -80,7 +80,7 @@ hippo:configuration
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>hippo:domainrule</td></tr>
             </table>
-            
+
             <p>
                 The <code>hippo:domainrule</code> can hold multiple <code>hippo:facetrule</code> nodes.
             </p>
@@ -108,11 +108,11 @@ hippo:configuration
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>hippo:facetrule</td></tr>
-                <tr><td>hippo:facet</td><td>String</td><td>yes</td><td>The name of the facet to match. A special value of 
-                <code>nodetype</code> can be set to check if a node if of a type, either it's primary type, an inherited type or 
+                <tr><td>hippo:facet</td><td>String</td><td>yes</td><td>The name of the facet to match. A special value of
+                <code>nodetype</code> can be set to check if a node if of a type, either it's primary type, an inherited type or
                 a mixin type.</td></tr>
-                <tr><td>hippo:value</td><td>String</td><td>yes</td><td>The value of the facet to match. Four special values can be 
-                used: 
+                <tr><td>hippo:value</td><td>String</td><td>yes</td><td>The value of the facet to match. Four special values can be
+                used:
                     <ul>
                         <li>* : match everything</li>
                         <li>__role__ : match the users role (for the domain)</li>
@@ -120,7 +120,7 @@ hippo:configuration
                         <li>__group__ : match any of the user's groups</li>
                     </ul>
                 </td></tr>
-                <tr><td>hippo:type</td><td>String</td><td>yes</td><td>The property type of the facet. Must be either 
+                <tr><td>hippo:type</td><td>String</td><td>yes</td><td>The property type of the facet. Must be either
                 String or Name.</td></tr>
                 <tr><td>hippo:equals</td><td>Boolean</td><td>yes</td><td>Whether the value must match or must <strong>not</strong>
                 match. If a not match (false) is set the facet must exist on the node.</td></tr>

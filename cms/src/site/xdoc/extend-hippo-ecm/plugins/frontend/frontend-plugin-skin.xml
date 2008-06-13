@@ -90,13 +90,13 @@
             primary style file in use, but there are others for specific screens, such as
             the login screen.
           </dd>
-    
+
           <dt>Icons</dt>
           <dd>
             Icons in use are placed in the <code>images</code> directory.  Just put any
             different icons in your own project when you want them different.
           </dd>
-    
+
           <dt>Alternate HTML files</dt>
           <dd>
             Web pages as served back to a browsing client are not single HTML files in the
@@ -148,7 +148,7 @@
       </p>
 
       <p>
-        Within the skin project, the location of this HTML fragment should be 
+        Within the skin project, the location of this HTML fragment should be
         <code>src/main/webapp/org/hippoecm/frontend/plugins/admin/breadcrumb/BreadCrumbPlugin.html</code>
         resulting in the final WAR project as file
         <code>org/hippoecm/frontend/plugins/admin/breadcrumb/BreadCrumbPlugin.html</code>.
@@ -203,7 +203,7 @@
         If you use an EAR target, this means simply replacing the
         <code>hippo-ecm-cms-skin.war</code> by another skin WAR target.  If you use
         a merged WAR target, then you need to rebuild the end WAR with a different
-        artifact dependency in the pom.xml.  Replace the dependency to the 
+        artifact dependency in the pom.xml.  Replace the dependency to the
         <code>hippo-ecm-cms-skin</code> artifact by your own skin artifact.
       </p>
 

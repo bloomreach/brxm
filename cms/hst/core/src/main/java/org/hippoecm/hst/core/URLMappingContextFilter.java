@@ -1,17 +1,17 @@
 /*
- * Copyright 2008 Hippo.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.hst.core;
 
@@ -28,10 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Filter that creates a context available for expression language and that  
- * supports url mapping.  
+ * Filter that creates a context available for expression language and that
+ * supports url mapping.
  */
 public class URLMappingContextFilter extends ContextFilter {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static final String ENCODING_SCHEME = "UTF-8";
 
@@ -69,7 +71,7 @@ public class URLMappingContextFilter extends ContextFilter {
             throws ServletException, IOException {
 
         storeSessionAttributes(request.getSession());
-        
+
         // start URL mapping
         String relativeURL = request.getRequestURI();
 
@@ -82,7 +84,7 @@ public class URLMappingContextFilter extends ContextFilter {
         // URL decode
         relativeURL = URLDecoder.decode(relativeURL, ENCODING_SCHEME);
 
-        // remove contextPath before setting the relative location as the context has 
+        // remove contextPath before setting the relative location as the context has
         // no idea of that part of the path
         if (relativeURL.startsWith(request.getContextPath())) {
             relativeURL = relativeURL.substring(request.getContextPath().length());
@@ -91,13 +93,13 @@ public class URLMappingContextFilter extends ContextFilter {
         URLPathTranslator urlPathTranslator = new URLPathTranslator(context);
         String documentPath = urlPathTranslator.urlToDocumentPath(relativeURL);
 
-        // set translated location 
+        // set translated location
         context.setRelativeLocation(documentPath);
 
         try {
-            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context, 
+            URLMappingResponseWrapper responseWrapper = new URLMappingResponseWrapper(context,
                     urlPathTranslator, request, response);
-            String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(), 
+            String mappedPage = responseWrapper.mapRepositoryDocument(context.getLocation(),
                     getURLMappingLocation(request));
 
             // mapping allowed to fail, use-case is a /images url with this filter in root
@@ -118,7 +120,7 @@ public class URLMappingContextFilter extends ContextFilter {
         } catch (RepositoryException re) {
             throw new ServletException(re);
         }
-        
+
         return true;
     }
 
@@ -132,11 +134,11 @@ public class URLMappingContextFilter extends ContextFilter {
 
         // lazy
         if (this.urlMappingLocation == null) {
-        
+
             // by configuration
-            String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(), 
+            String urlMappingLocation = HSTConfiguration.get(request.getSession().getServletContext(),
                 HSTConfiguration.KEY_REPOSITORY_URLMAPPING_LOCATION, false/*not required*/);
-            
+
             // by default
             if (urlMappingLocation == null) {
                 urlMappingLocation = DEFAULT_URL_MAPPING_LOCATION;
@@ -147,12 +149,12 @@ public class URLMappingContextFilter extends ContextFilter {
 
         return this.urlMappingLocation;
     }
-    
+
     /*
      * Save some data in session for use by other objects, e.g. BinariesServlet;
-     * don't do it lazily as the user might switch filters, e.g. from 'live' to 
+     * don't do it lazily as the user might switch filters, e.g. from 'live' to
      * 'preview' in one session
-     */   
+     */
     void storeSessionAttributes(HttpSession session) {
         session.setAttribute(REPOSITORY_BASE_LOCATION, this.repositoryBaseLocation);
         session.setAttribute(URL_BASE_PATH, this.urlBasePath);

@@ -222,7 +222,7 @@
         <role>Java Developer</role>
       </roles>
       <timezone>+1</timezone>
-    </developer>  
+    </developer>
   </developers>
 
   <mailingLists>
@@ -494,7 +494,7 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
-		</exclusions>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>commons-httpclient</groupId>

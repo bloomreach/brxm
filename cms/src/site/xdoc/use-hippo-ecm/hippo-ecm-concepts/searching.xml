@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
   <!--
       Copyright 2007 Hippo
-      
+
       Licensed under the Apache License, Version 2.0 (the  "License");
       you may not use this file except in compliance with the License.
       You may obtain a copy of the License at
-      
+
       http://www.apache.org/licenses/LICENSE-2.0
-      
+
       Unless required by applicable law or agreed to in writing, software
       distributed under the License is distributed on an "AS IS"
       BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,15 +24,15 @@
       <body>
           <section name="Searching">
               <p>
-                  Jackrabbit has the jsr-170 XPATH subset and SQL subset imlementation out-of-the-box 
+                  Jackrabbit has the jsr-170 XPATH subset and SQL subset imlementation out-of-the-box
                   (plus some extra XPATH features). Hippo Repository adds facet search, and its own stored
-                  parameterized searches (see below). Also Hippo Repository accounts for authorization 
+                  parameterized searches (see below). Also Hippo Repository accounts for authorization
                   directly in the search (beside the normal access control) making the search really efficient,
                   even for users who have read access for only few documents.
               </p>
               <subsection name="How to search in Hippo Repository">
                   <p>
-                  Programmatically you can search by writing for example an XPATH expression, and 
+                  Programmatically you can search by writing for example an XPATH expression, and
                   let the QueryManager execute this query. For example how to find all documents
                   about 'Java Content Repository'.
                   </p>
@@ -51,35 +51,35 @@ QueryResult res = query.execute();
                   <p>
                   A default template plugin in Hippo CMS is the hippo query template plugin. This plugin
                   enables you to store a search in the repository. You can for example store a query in your
-                  document that says: 'do here a query/search that show the last 3 news items'. 
-                  Currently, the plugin lets you type an Xpath or SQL statement and gives you feedback wether 
+                  document that says: 'do here a query/search that show the last 3 news items'.
+                  Currently, the plugin lets you type an Xpath or SQL statement and gives you feedback wether
                 the statement is valid. Obviously, and this is in the <a href="../roadmap.html">roadmap</a>, we will
-                provide a GUI to enable you creating searches without having to know the Xpath syntax. 
+                provide a GUI to enable you creating searches without having to know the Xpath syntax.
                   </p>
               </subsection>
             <subsection name="How to use a stored search/query">
               <p>
-                A frontend can execute a query node to get the actual search result. The 
+                A frontend can execute a query node to get the actual search result. The
                 <a href="/website-development/index.html">Hippo Site Toolkit</a> automatically
-                detects a search node, executes the search and let you navigate through the result set. 
+                detects a search node, executes the search and let you navigate through the result set.
               </p>
             </subsection>
             <subsection name="Parameterized searches">
               <p>
-                As explained you can store a search in Hippo Repository. But, obviously, perhaps you 
+                As explained you can store a search in Hippo Repository. But, obviously, perhaps you
                 want to reuse the same search but only tune a parameter, like the number of results you want.
-                Therefor, we support parameterized queries. This means that at some place in the query, a '$' can 
-                be placed, which is substituted by a value during execution. See <a href="/website-development/index.html">Hippo Site Toolkit</a> 
-                on how you can use this. 
+                Therefor, we support parameterized queries. This means that at some place in the query, a '$' can
+                be placed, which is substituted by a value during execution. See <a href="/website-development/index.html">Hippo Site Toolkit</a>
+                on how you can use this.
               </p>
             </subsection>
             <subsection name="Roadmap">
               Since we do not want to force developers into having to know how to write an Xpath or SQL statement
-              for searching the repository, Hippo CMS will provide a graphical interface giving you the 
-              possibility to 'drag/drop and click' to create a search node. At the moment of this writing, 
-              still writing an Xpath or SQL statement is needed. 
+              for searching the repository, Hippo CMS will provide a graphical interface giving you the
+              possibility to 'drag/drop and click' to create a search node. At the moment of this writing,
+              still writing an Xpath or SQL statement is needed.
               <a target="_new" href="http://jcp.org/aboutJava/communityprocess/final/jsr170/index.html">jsr-170</a> has
-              some good examples. 
+              some good examples.
             </subsection>
           </section>
       </body>

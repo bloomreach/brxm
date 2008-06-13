@@ -53,7 +53,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Default application skin (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -75,7 +75,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- Hippo ECM application configuration -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -83,7 +83,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Builtin workflow plugins -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -103,7 +103,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Versioning addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -119,7 +119,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Reviewed actions workflow -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -139,7 +139,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Template editor -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -147,7 +147,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Reporting addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -161,7 +161,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- CMS 7 addons-->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -193,7 +193,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- default content addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -215,7 +215,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-      
+
   </dependencies>
 
   <build>

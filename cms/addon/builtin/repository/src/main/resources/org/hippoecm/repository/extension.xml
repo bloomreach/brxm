@@ -27,7 +27,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
-  
+
   <!-- Hippo standard nodetypes -->
   <sv:node sv:name="hippostd">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -43,7 +43,7 @@
       <sv:value>hippostd.cnd</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!-- Hippo namespace folder -->
   <sv:node sv:name="namespaces">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -59,7 +59,7 @@
       <sv:value>/</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!-- Hippo standard namespace -->
   <sv:node sv:name="hippostd-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -91,7 +91,7 @@
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!--Template editing workflows-->
   <sv:node sv:name="remodel-workflows">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -107,7 +107,7 @@
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <!-- Hippo standard templates -->
   <sv:node sv:name="hippostd-queries">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -30,32 +30,32 @@
         <ul>
           <li>
             <a href="logging_in.html">Logging in</a>
-          </li>  
+          </li>
           <li>
             <a href="dashboard.html">The dashboard</a>
-          </li>  
+          </li>
           <li>
             <a href="navigating_the_cms.html">Navigating the CMS</a>
-          </li>  
+          </li>
           <li>
             <a href="editing_a_document.html">Editing a document</a>
-          </li>  
+          </li>
           <li>
             <a href="creating_a_document_type_and_template.html">Creating a document type and template</a>
-          </li>  
+          </li>
           <li>
             <a href="managing_users_and_groups.html">Managing users and groups</a>
-          </li>  
+          </li>
           <li>
             <a href="workflow.html">Workflow</a>
-          </li>  
+          </li>
           <li>
             <a href="versioning.html">Versioning</a>
-          </li>  
+          </li>
           <li>
             <a href="working_with_authorizations.html">Working with authorizations</a>
-          </li>  
-        </ul>   
+          </li>
+        </ul>
       </subsection>
     </section>
   </body>

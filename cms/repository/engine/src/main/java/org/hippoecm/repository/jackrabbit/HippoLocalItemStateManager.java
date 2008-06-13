@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.jackrabbit;
 
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException; 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.jcr.ReferentialIntegrityException;
@@ -55,6 +55,9 @@ import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 
 class HippoLocalItemStateManager extends XAItemStateManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
 
     /** Mask pattern indicating a regular, non-virtual JCR item
@@ -275,7 +278,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         } else if(state == null && id instanceof HippoNodeId) {
             edit();
             NodeState nodeState = ((HippoNodeId)id).populate();
-            
+
             virtualNodes.put((HippoNodeId)id, nodeState);
             store(nodeState);
 
@@ -391,7 +394,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 }
             }
         }
-        
+
         void repopulate() {
             for(Iterator iter = virtualStates.iterator(); iter.hasNext(); ) {
                 ItemState state = (ItemState) iter.next();

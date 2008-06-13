@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
-  
+
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <display-name>Sample website</display-name>
@@ -35,12 +35,12 @@
   <filter>
     <filter-name>previewContext</filter-name>
     <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
-    <!-- to omit URL mapping functionality use:  
-      <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class> 
+    <!-- to omit URL mapping functionality use:
+      <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class>
     -->
     <init-param>
       <description>
-        The name of the context object created in the request scope. 
+        The name of the context object created in the request scope.
         Defaults to 'context'.
       </description>
       <param-name>attributeName</param-name>
@@ -48,34 +48,34 @@
     </init-param>
     <init-param>
       <description>
-        The part of the url this filter matches to, so must match 
+        The part of the url this filter matches to, so must match
         the actual url-pattern of the filter-mapping below.
-      </description>      
+      </description>
       <param-name>urlBasePath</param-name>
       <param-value>/preview</param-value>
     </init-param>
     <init-param>
       <description>
-        The repository base path to bind the context to. 
+        The repository base path to bind the context to.
         Defaults to the same value as urlBasePath.
-      </description>      
+      </description>
       <param-name>repositoryBaseLocation</param-name>
       <param-value>/preview</param-value>
     </init-param>
   </filter>
-  
+
   <filter-mapping>
     <filter-name>previewContext</filter-name>
     <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
-  
+
   <!-- Installation of a servlet serving binaries from repository. -->
   <servlet>
     <servlet-name>BinariesServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
   </servlet>
-  
+
   <servlet-mapping>
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
@@ -85,11 +85,11 @@
   <session-config>
     <session-timeout>1</session-timeout>
   </session-config>
-  
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
+
   <error-page>
     <exception-type>javax.servlet.ServletException</exception-type>
     <location>/error.jsp</location>

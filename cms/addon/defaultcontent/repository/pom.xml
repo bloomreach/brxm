@@ -40,8 +40,6 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/sample/repository</url>
   </scm>
 
-
-  
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>

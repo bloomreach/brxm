@@ -130,9 +130,9 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-	  <excludes>
-	    <exclude>**/ClassLoaderTest.java</exclude>
-	  </excludes>
+      <excludes>
+        <exclude>**/ClassLoaderTest.java</exclude>
+      </excludes>
         </configuration>
       </plugin>
     </plugins>

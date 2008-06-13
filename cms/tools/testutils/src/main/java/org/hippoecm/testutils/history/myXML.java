@@ -112,6 +112,9 @@ import java.util.Vector;
  * @version 1.1.0
  */
 public class myXML implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private final boolean debug = false;

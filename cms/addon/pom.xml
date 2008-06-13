@@ -50,7 +50,7 @@
     <module>xinha-frontend</module>
     <module>yui</module>
     <module>cms</module>
-    <module>sample</module>    
+    <module>sample</module>
     <module>defaultcontent</module>
     <module>versioning</module>
   </modules>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2007-2008 Hippo.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.hst.jcr;
 
@@ -38,6 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JCRConnector {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
@@ -50,8 +53,8 @@ public class JCRConnector {
                 result = wrapper.jcrSession;
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
-                
-                ServletContext sc = httpSession.getServletContext(); 
+
+                ServletContext sc = httpSession.getServletContext();
                 wrapper = new SessionWrapper(HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS),
                                              HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME),
                                              HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_PASSWORD));
@@ -66,7 +69,7 @@ public class JCRConnector {
         }
         return result;
     }
-    
+
     public static Item getItem(Session session, String path) throws RepositoryException {
 
         Node node = session.getRootNode();
@@ -75,7 +78,7 @@ public class JCRConnector {
         while (path.startsWith("/")) {
             path = path.substring(1);
         }
-        
+
         // loop all path elements and interpret them
         String[] pathElts = path.split("/");
         for (int pathIdx = 0; pathIdx < pathElts.length && node != null; pathIdx++) {
@@ -86,7 +89,7 @@ public class JCRConnector {
             // determine if this (last) part of the path is a property or argument
             // with [] notation
             Map<String, String> conditions = null;
-            if (relPath.contains("[") && relPath.endsWith("]") 
+            if (relPath.contains("[") && relPath.endsWith("]")
                     && !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
                 conditions = new TreeMap<String, String>();
                 int beginIndex = relPath.indexOf("[") + 1;
@@ -110,17 +113,17 @@ public class JCRConnector {
 
             // current path element is doesn't have [] notation
             if (conditions == null || conditions.size() == 0) {
-                
+
                 // a property with . notation
-                if (pathIdx + 1 == pathElts.length && 
+                if (pathIdx + 1 == pathElts.length &&
                         !relPath.contains("[") && node.hasProperty(relPath)) {
                     try {
                         return node.getProperty(relPath);
                     } catch (PathNotFoundException ex) {
                         return null;
                     }
-                } 
-                
+                }
+
                 // a subnode
                 else if (node.hasNode(relPath)) {
                     try {
@@ -130,10 +133,10 @@ public class JCRConnector {
                     }
                 } else {
                     return null;
-                }    
-            } 
+                }
+            }
 
-            // current path element is a property or argument: loop nodes and stop if the condition are ok  
+            // current path element is a property or argument: loop nodes and stop if the condition are ok
             else {
                 for (NodeIterator iter = node.getNodes(relPath); iter.hasNext();) {
                     node = iter.nextNode();
@@ -162,7 +165,7 @@ public class JCRConnector {
                     // node found
                     if (node != null) {
                         break;
-                    }    
+                    }
                 }
             }
         }
@@ -174,7 +177,7 @@ public class JCRConnector {
         Session jcrSession;
         long lastRefreshed;
 
-        SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {              
+        SessionWrapper(String location, String username, String password) throws LoginException, RepositoryException {
         logger.info("connecting to repository at " + location + " as " + username);
 
             HippoRepositoryFactory.setDefaultRepository(location);

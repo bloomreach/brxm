@@ -24,16 +24,16 @@
     <body>
         <section name="Developing with Eclipse">
           <p>
-            This chapter is meant as a guide for setting up and managing a debugging environment 
+            This chapter is meant as a guide for setting up and managing a debugging environment
             for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
             run and debug every aspect of Hippo ECM from within Eclipse. As a follow up you might look\
-            into some <a href="eclipse-tips.html">Eclipse tips&amp;tricks</a> for how to keep up with the 
+            into some <a href="eclipse-tips.html">Eclipse tips&amp;tricks</a> for how to keep up with the
             most exiting version of Hippo ECM: The trunk!
           </p>
           <div style="border:1px solid black; padding:1em;">
             NOTE: Hippo ECM is a large project with many subprojects, setting up and managing
-            it in Eclipse is a non-trivial task and can be very error-prone. If not 
-            done correctly this can become a very frustrating experience where most of the time you 
+            it in Eclipse is a non-trivial task and can be very error-prone. If not
+            done correctly this can become a very frustrating experience where most of the time you
             are waiting on eclipse and chasing rabbits. The steps and best practices
             outlined here will enable you to avoid this frustration, if follow them
             you will find that developing Hippo ECM with Eclipse can actually be very easy.
@@ -53,15 +53,15 @@
             through all this you might consider looking into <a href="netbeans.html">NetBeans</a> which
             integrates extremely nice with the Maven build, no mimicking and no weird workarounds.
             The downside is that, precicely because it directly depends on the Maven build,
-            seeing the effects of code changes can take longer than in Eclipse. 
+            seeing the effects of code changes can take longer than in Eclipse.
           </p>
         </section>
-        
+
         <section name="Prepare">
           <p> Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
            Don't continue with the instructions on this page before you have seen a running application
-           using just Maven.</p>               
-                    
+           using just Maven.</p>
+
           <div style="border:1px solid black; padding:1em;">
             <p>NOTE: Do not do the initial checkout of the source tree from within Eclipse, use the command
             line SVN client.</p>
@@ -70,36 +70,36 @@
             are checked out and ~/workspace is the Eclipse workspace directory.</p>
           </div>
           <p></p>
-          
+
           <p> <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
-            Download and install</a> Jetty version >= 6.0 </p>          
+            Download and install</a> Jetty version >= 6.0 </p>
         </section>
-        
+
         <section name="Install and configure eclipse plugins">
           <p> Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.2</p>
-          
-          <subsection name="Maven">  
+
+          <subsection name="Maven">
             <p>Integrate with the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">
             Maven eclipse plugin </a> by opening a command shell and running:</p>
             <source>
 ~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:configure-workspace
             </source>
           </subsection>
-          
+
           <subsection name="Tune your Eclipse memory settings">
             <p>
               Add some memory flags to the eclipse -vmargs startup argument.
             </p>
             <ul>
               <li>Set the heap size to at least 512M by adding something like -Xms512m -Xmx512m</li>
-              <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>              
-            </ul> 
+              <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>
+            </ul>
           </subsection>
-          
+
           <p> Start Eclipse, it is strongly advised to start with a clean workspace. Use the eclipse
-          update manager (Help -> Software Updates -> Find and Install) to install the following eclipse plugins: 
+          update manager (Help -> Software Updates -> Find and Install) to install the following eclipse plugins:
           </p>
-          
+
             <subsection name="Subversion">
                 <ol>
                     <li>
@@ -111,7 +111,7 @@
                 </ol>
                 <p>
                     In the 'Select features to install' step only select the following two features:
-                </p>                                    
+                </p>
                 <ol>
                     <li>
                         Subversive SVN Team Provider Plugin -> SVN Team Provider &lt;version number&gt;
@@ -183,7 +183,7 @@
                 </ol>
             </subsection>
         </section>
-        
+
         <section name="Create eclipse projects, part one">
             <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
                 .project file in the toplevel (hippo-ecm) directory before proceding. If there is
@@ -191,16 +191,16 @@
             <p></p>
             <p> Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven
                     eclipse plugin</a> to generate eclipse project files: </p>
-            <source> 
-~/> cd hippo-ecm 
+            <source>
+~/> cd hippo-ecm
 ~/hippo-ecm> mvn clean
 ~/hippo-ecm> mvn [-o] eclipse:eclipse
             </source>
           <p>
             The first time you run this command it will take extremely long, do it right before lunch
-            kind of long. This is in part because it will attempt to download everything including sources 
+            kind of long. This is in part because it will attempt to download everything including sources
             and javadocs. On later runs you could add a -o (offline) flag to prevent downloading the sources,
-            this makes it a lot faster.  
+            this makes it a lot faster.
           </p>
             <ol>
                 <li>
@@ -226,11 +226,11 @@
         </section>
 
         <section name="Create eclipse projects, part two">
-            <p> 
-              The <a href="maven.html">maven build</a> extensively uses 
+            <p>
+              The <a href="maven.html">maven build</a> extensively uses
               <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlays</a>
               which unfortunately aren't fully supported by the maven eclipse plugin. Therefore you need to manually
-              fix the eclipse projects before you can proceed. 
+              fix the eclipse projects before you can proceed.
             </p>
             <subsection name="Resources">
               <p>
@@ -238,7 +238,7 @@
                 the skin and xinha files to the package/war/src/main/webapp directory. Manually copying
                 these files in order to fix the package-war project for eclipse can be very painful because
                 it needs to be done every time when a skin or xinha file changes. A much better way is to
-                use symbolic links.   
+                use symbolic links.
               </p>
               <ul>
                 <li>
@@ -248,8 +248,8 @@
                   <p>
                     Although it is not possible to create symbolic links with the tools that
                     are provided by default by Windows, they do exist.  One of the Microsoft
-                    supplied tools for this is 
-                    <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.  
+                    supplied tools for this is
+                    <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.
                     With this tool, the symbolic links can be created as:
                   </p>
                   <source>
@@ -266,7 +266,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
                   <p>
                     <b>Unix</b>
                   </p>
-                  <source> 
+                  <source>
  ~/> cd hippo-ecm/package/war/src/main/webapp
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../skin/src/main/webapp/ skin
  ~/hippo-ecm/package/war/src/main/webapp> ln -s ../../../../../addon/xinha/src/main/webapp/ xinha
@@ -310,7 +310,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
               </ol>
             </subsection>
         </section>
-            
+
         <section name="Run">
             <p>
                 <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty
@@ -334,15 +334,15 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
                 </li>
             </ul>
             <p>Select the 'Arguments' tab and add to 'VM Arguments':</p>
-            <source> 
+            <source>
 -Dorg.mortbay.util.FileResource.checkAliases=False
             </source>
             <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
-                'display in favorites menu'</p>            
+                'display in favorites menu'</p>
             <p> You can now debug the application within Eclipse: Set a breakpoint in the constructor
                 of org.hippoecm.frontend.Home, run the Jetty launcher in debug mode,
                 open your browser and go to http://localhost:8080 </p>
-                
+
           <p>Now you are ready to check out some Eclipse
           <a href="eclipse-tips.html">tips&amp;tricks</a></p>
         </section>

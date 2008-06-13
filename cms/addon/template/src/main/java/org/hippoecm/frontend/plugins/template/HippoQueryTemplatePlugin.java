@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.template;
 
@@ -45,37 +45,40 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// SA port: port me! 
-// used in template list (i.e. could be added to template) 
+// SA port: port me!
+// used in template list (i.e. could be added to template)
 public class HippoQueryTemplatePlugin extends Plugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
-   
+
     static final Logger log = LoggerFactory.getLogger(HippoQueryTemplatePlugin.class);
 
     private JcrNodeModel jcrNodeModel;
-    private String language;    
+    private String language;
     private String statement;
     private String incorrectquery = "";
     private Label incorrectqueryLabel;
-    
+
     public HippoQueryTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
         super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
 
         TemplateModel model = (TemplateModel) getPluginModel();
-        
+
         jcrNodeModel = model.getJcrNodeModel();
         Node queryNode = jcrNodeModel.getNode();
         try {
-            
+
             //if(!queryNode.isNodeType(JcrConstants.NT_QUERY))
-            
+
             if(!queryNode.hasProperty("jcr:language")){
                 queryNode.setProperty("jcr:language", "xpath");
             }
             if(!queryNode.hasProperty("jcr:statement")){
                 queryNode.setProperty("jcr:statement", "//*");
             }
-            
+
             QueryManager qrm = queryNode.getSession().getWorkspace().getQueryManager();
             try {
                Query query = qrm.getQuery(queryNode);
@@ -87,10 +90,10 @@ public class HippoQueryTemplatePlugin extends Plugin {
                 statement = "//*";
                 queryNode.setProperty("jcr:statement", "//*");
                 queryNode.setProperty("jcr:language", "xpath");
-            } 
+            }
 
-            
-            add(new TextFieldWidget("language", new PropertyModel(this, "language")){ 
+
+            add(new TextFieldWidget("language", new PropertyModel(this, "language")){
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -98,19 +101,19 @@ public class HippoQueryTemplatePlugin extends Plugin {
                     storeQueryAsNode(target);
                 }
             });
-            
+
             add(new TextFieldWidget("statement", new PropertyModel(this, "statement")){
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     storeQueryAsNode(target);
-                } 
+                }
             });
             incorrectqueryLabel = new Label("incorrectquery",new PropertyModel(this, "incorrectquery"));
             incorrectqueryLabel.setOutputMarkupId(true);
             add(incorrectqueryLabel);
-            
+
         } catch (ValueFormatException e) {
             log.error(e.getMessage());
         } catch (PathNotFoundException e) {
@@ -118,43 +121,43 @@ public class HippoQueryTemplatePlugin extends Plugin {
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        
+
         setOutputMarkupId(true);
     }
-    
+
     private void storeQueryAsNode(AjaxRequestTarget target) {
         Node queryNode = jcrNodeModel.getNode();
-        
+
         try {
             Node parentNode = queryNode.getParent();
             String nodeName = queryNode.getName();
-            
+
             Session session = queryNode.getSession();
-            
+
             QueryManager qrm = session.getWorkspace().getQueryManager();
             if(statement == null) {
                 throw new InvalidQueryException("statement is not allowed to be empty");
             }
-            
+
             if(language == null) {
                 throw new InvalidQueryException("supported languages are 'xpath' and 'sql'");
             }
             language = language.toLowerCase();
-            
+
             Query query = qrm.createQuery(statement, language);
 
             /*
              * you cannot directly use storeAsNode again for with the same path, because
              * that result in an item exists exception. The only way is to keep the property
              * values in memory, remove the node, and store is again
-             */ 
+             */
             queryNode.remove();
             jcrNodeModel.detach();
             query.storeAsNode(parentNode.getPath()+"/"+nodeName);
-            
+
             incorrectquery = "";
             target.addComponent(incorrectqueryLabel);
-            
+
         } catch (InvalidQueryException e) {
             logAndInform(target,e);
         } catch (ValueFormatException e) {
@@ -168,7 +171,7 @@ public class HippoQueryTemplatePlugin extends Plugin {
         } catch (RepositoryException e) {
             logAndInform(target,e);
         }
-        
+
     }
 
     private void logAndInform(AjaxRequestTarget target, Exception e) {

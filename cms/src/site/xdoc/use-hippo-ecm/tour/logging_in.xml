@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
   <!--
       Copyright 2007 Hippo
-      
+
       Licensed under the Apache License, Version 2.0 (the  "License");
       you may not use this file except in compliance with the License.
       You may obtain a copy of the License at
-      
+
       http://www.apache.org/licenses/LICENSE-2.0
-      
+
       Unless required by applicable law or agreed to in writing, software
       distributed under the License is distributed on an "AS IS"
       BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,15 +24,15 @@
   <body>
     <section name="Logging in">
       <p>
-To start using the CMS you first have to login. A successfull login will grant 
-you with a valid JcrSession, allowing the frontend application to load the 
-- user/group specific - frontend configuration from repository and create the Wicket 
-<a href="http://cwiki.apache.org/WICKET/component-hierarchy.html">component hierarchy</a>.   
+To start using the CMS you first have to login. A successfull login will grant
+you with a valid JcrSession, allowing the frontend application to load the
+- user/group specific - frontend configuration from repository and create the Wicket
+<a href="http://cwiki.apache.org/WICKET/component-hierarchy.html">component hierarchy</a>.
       </p>
       <subsection name="Log in">
         <p>
-Point your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>. 
-You will be presented with a login dialog.<br/> By default you can login as one of 
+Point your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>.
+You will be presented with a login dialog.<br/> By default you can login as one of
 the following users:
           <ul>
               <li>admin; username=admin, password=admin</li>

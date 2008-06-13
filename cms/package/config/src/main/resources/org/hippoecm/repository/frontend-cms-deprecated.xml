@@ -14,17 +14,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="hippo:cms" 
+<sv:node sv:name="hippo:cms"
   xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" 
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
   xmlns:jcr="http://www.jcp.org/jcr/1.0"
-  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" 
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0"
   xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0">
 
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:page</sv:value>
-  </sv:property>  
+  </sv:property>
   <sv:property sv:name="hippo:style" sv:type="String">
     <sv:value>skin/style.css</sv:value>
   </sv:property>
@@ -144,9 +144,9 @@
                 <sv:value>f2e7cb32-081a-4679-8bed-0fec3ef9a132</sv:value>
               </sv:property>
             </sv:node>
-          </sv:node>           
+          </sv:node>
         </sv:node>
-        
+
         <sv:node sv:name="managementFilter">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:frontendplugin</sv:value>
@@ -181,7 +181,7 @@
               <sv:property sv:name="hippo:renderer" sv:type="String">
                 <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPlugin</sv:value>
               </sv:property>
-              
+
               <sv:node sv:name="editor">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:frontendplugin</sv:value>
@@ -189,8 +189,8 @@
                 <sv:property sv:name="hippo:renderer" sv:type="String">
                   <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementEditorPlugin</sv:value>
                 </sv:property>
-              </sv:node>  
-              
+              </sv:node>
+
               <sv:node sv:name="listUsersPlugin">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                   <sv:value>hippo:frontendplugin</sv:value>
@@ -217,7 +217,7 @@
                   <sv:property sv:name="dd-groups-overwrite" sv:type="Boolean">
                     <sv:value>true</sv:value>
                   </sv:property>
-                </sv:node>  
+                </sv:node>
               </sv:node>
               <sv:node sv:name="listGroupsPlugin">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -245,7 +245,7 @@
                   <sv:property sv:name="dd-groups-overwrite" sv:type="Boolean">
                     <sv:value>true</sv:value>
                   </sv:property>
-                </sv:node>  
+                </sv:node>
               </sv:node>
               <sv:node sv:name="listDomainsPlugin">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -267,7 +267,7 @@
                   <sv:property sv:name="nodeType" sv:type="String">
                     <sv:value>hippo:domain</sv:value>
                   </sv:property>
-                </sv:node>  
+                </sv:node>
               </sv:node>
               <sv:node sv:name="listRolesPlugin">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -289,9 +289,9 @@
                   <sv:property sv:name="nodeType" sv:type="String">
                     <sv:value>hippo:role</sv:value>
                   </sv:property>
-                </sv:node>  
+                </sv:node>
               </sv:node>
-            </sv:node>  
+            </sv:node>
           </sv:node>
         </sv:node>
 

@@ -165,9 +165,9 @@
             <configuration>
               <forkMode>always</forkMode>
               <workingDirectory>${project.build.directory}</workingDirectory>
-	      <excludes>
-	        <exclude>**/*SeleniumTest.java</exclude>
-	      </excludes>
+          <excludes>
+            <exclude>**/*SeleniumTest.java</exclude>
+          </excludes>
               <systemProperties>
                 <property>
                   <name>product</name>
