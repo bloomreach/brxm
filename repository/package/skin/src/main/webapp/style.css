@@ -205,9 +205,10 @@ div.iconactions h3{margin-bottom: 16px; color: white}
 /* ================================================ */
 #welcomepanel{
 margin-bottom: 8px;
+height: 200px;
 }
 #welcomepanel table{width: 100%; margin-bottom: 15px}
-#welcomepanel table tr td{width: 33%; height: 70px; padding-left: 78px; padding-top: 28px; background-position: 15px 15px; background-repeat: no-repeat}
+#welcomepanel table tr td{display: none; width: 33%; height: 70px; padding-left: 78px; padding-top: 28px; background-position: 15px 15px; background-repeat: no-repeat}
 #welcomepanel table tr td a{font-size: 18px; color: #999999}
 #welcomepanel table tr td a:hover{text-decoration: underline}
 /* Global Icon Management */
@@ -526,7 +527,7 @@ tr.even td{background-color: #f7f7f7}
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
-.Doclist{ height: 215px; overflow: auto}
+.Doclist{ height: 45%; overflow: auto}
 
 
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
