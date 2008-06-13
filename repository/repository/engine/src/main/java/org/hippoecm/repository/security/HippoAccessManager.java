@@ -608,7 +608,7 @@ public class HippoAccessManager implements AccessManager {
 
             return isGranted;
         } catch (NoSuchItemStateException e) {
-            log.error("tem not found in hierarchy: " + id, e);
+            log.warn("Item not found in hierarchy: " + id + " : " + e.getMessage());
             throw new ItemNotFoundException("Item not found in hierarchy: " + id);
         } catch (ItemStateException e) {
             log.error("ItemSate exception for id: " + id, e);
