@@ -19,10 +19,10 @@
 -->
 <document>
     <properties>
-        <title>Developing with Eclipse</title>
+        <title>Building with Eclipse</title>
     </properties>
     <body>
-        <section name="Developing with Eclipse">
+      <section name="Building with Eclipse">
           <p>
             This chapter is meant as a guide for setting up and managing a debugging environment
             for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
@@ -43,8 +43,8 @@
             Please note that most of the loopholes you are going to jump through when
             following these steps are workarounds for difficulties due to the fact that Maven
             is our leading buildsystem and not Eclipse.  Setting up Eclipse for Hippo ECM means
-            mimicking the Maven build inside Eclipse: for each step the Maven build does to to create
-            the Hippo ECM artefacts (Ear, War and Jar files) a corresponding step for Eclipse should be set
+            mimicking the Maven build inside Eclipse: for each step the Maven build does create
+            the Hippo ECM artefacts (Ear, War and Jar files), a corresponding step for Eclipse should be set
             up. The upside is that, precicely because eclipse has it's own build system, the effects of code changes
             can be seen very rapidly. Simple code changes can even be done on a running application and
             don't need a restart.
@@ -165,7 +165,7 @@
                         <p>Select JPOX</p>
                     </li>
                     <li>
-                        <p>Uncheck 'Use project classpath when running tools'</p>
+                        <p>Uncheck 'Use project classpath when running tools' (some versions have it below submenu 'JPOX -> General')</p>
                     </li>
                     <li>
                         <p>Add the following jars to the classpath: You can find these jars in your
