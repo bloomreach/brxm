@@ -28,7 +28,7 @@
 - hippostd:stateSummary (string) mandatory // protected
 
 [hippostd:publishable] mixin
-- hippostd:state (string) mandatory copy < 'draft', 'unpublished', 'published', 'stale'
+- hippostd:state (string) = 'draft' mandatory copy < 'draft', 'unpublished', 'published', 'stale'
 - hippostd:username (string) copy
 
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
