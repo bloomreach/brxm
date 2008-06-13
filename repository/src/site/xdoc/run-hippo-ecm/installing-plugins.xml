@@ -55,7 +55,7 @@ commons-lang-2.1.jar
 hippo-ecm-addon-builtin-common-2.01.00-SNAPSHOT.jar
  [ ... ]
 xml-apis-1.3.03.jar
-~/hippo-ear/> 
+~/hippo-ear/>
           </source>
           Add the JAR to the folder where you unzipped the EAR and rezip it.
           <source>
@@ -88,7 +88,7 @@ xinha/
 commons-collections-3.1.jar
  [ ... ]
 xml-apis-1.3.03.jar
-~/hippo-war/> 
+~/hippo-war/>
           </source>
           Add the JAR to the WEB-INF/lib folder and rezip the WAR.
           <source>

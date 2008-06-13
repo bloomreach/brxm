@@ -36,7 +36,7 @@
             <param-value>org.hippoecm.frontend.Main</param-value>
         </init-param>
     </filter>
-    
+
     <!--Builtin console-->
     <filter>
         <filter-name>Console</filter-name>
@@ -50,17 +50,17 @@
             <param-value>builtin</param-value>
         </init-param>
     </filter>
-    
+
     <filter-mapping>
         <filter-name>CMS</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+
     <filter-mapping>
         <filter-name>Console</filter-name>
         <url-pattern>/console/*</url-pattern>
-    </filter-mapping>  
-    
+    </filter-mapping>
+
     <!-- Repository -->
     <servlet>
         <servlet-name>Repository</servlet-name>

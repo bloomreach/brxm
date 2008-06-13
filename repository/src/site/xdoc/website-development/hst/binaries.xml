@@ -25,16 +25,16 @@
       <section name="Serving binaries with the BinariesServlet">
         <p>
           The HST contains a servlet for serving binaries, e.g. a gif image or a pdf document.
-          The servlet should be installed in your web.xml, 
+          The servlet should be installed in your web.xml,
           see <a href="configuration.html#BinariesServlet">configuration</a>.
         </p>
-        
+
         <subsection name="How does it work?">
           <p>
-             All data in Hippo Repository is stored as property of a certain node. 
+             All data in Hippo Repository is stored as property of a certain node.
              The BinariesServlet will look for a node in the repository based on the url it gets.
              If the application uses the <a href="url-mapping.html">URL mapping</a>functionality,
-             it will transform the incoming url to a path in the repository, if not it will just use 
+             it will transform the incoming url to a path in the repository, if not it will just use
              the incoming url directly as repository path. Then, the repository node found by the servlet
             should have the following two properties: <code>jcr:mimeType</code> and <code>jcr:data</code>.
           </p>
@@ -48,15 +48,15 @@
             <p>It is common use to access the BinariesServlet in the <code>src</code> attribute of
               a <code>img</code> tag, or in the <code>href</code> attribute of the <code>a</code> tag.</p>
             <p>The path to the binary node in the repository should be easily obtained using the
-              expression language's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>). 
+              expression language's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>).
               In the following example <code>hippo:small_image</code> is a subnode of the current context:</p>
           <source><![CDATA[  web.xml setup: BinariesServlet has url-pattern /binaries/*
-          
+
   <c:if test="${context['hippo:small_image'] != null}">
       <img src="/<contextpath>/binaries${context['hippo:small_image']._path}"/>
   </c:if>]]></source>
         </subsection>
-        
+
       </section>
 
     </body>

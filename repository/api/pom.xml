@@ -80,7 +80,7 @@
               <buildCommand>
                 <name>org.jpox.ide.eclipse.enhancerbuilder</name>
               </buildCommand>
-            </additionalBuildcommands>  
+            </additionalBuildcommands>
             <additionalProjectnatures>
               <projectnature>org.jpox.ide.eclipse.projectnature</projectnature>
             </additionalProjectnatures>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2008 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security.domain;
 
@@ -71,7 +71,7 @@ public class Domains {
 
     //------------------------< Public Methods >--------------------------//
     /**
-     * Initialize all domains from the node in the repository. On initialization 
+     * Initialize all domains from the node in the repository. On initialization
      * all domains are initialized from the JCR configuration.
      * @param node the node holding the configuration
      * @throws RepositoryException
@@ -97,7 +97,7 @@ public class Domains {
     }
 
     /**
-     * Get the set domains that a user has a role inas defined 
+     * Get the set domains that a user has a role inas defined
      * in one of the AuthRoles of the domain
      * @param userId the id of the user
      * @return the set with domains
@@ -120,7 +120,7 @@ public class Domains {
     }
 
     /**
-     * Get the set domains that a group has a role in as defined 
+     * Get the set domains that a group has a role in as defined
      * in one of the AuthRoles of the domain
      * @param userId the id of the user
      * @return the set with domains

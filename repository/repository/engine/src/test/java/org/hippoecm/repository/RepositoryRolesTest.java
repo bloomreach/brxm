@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.repository;
 
 import java.io.IOException;
@@ -19,6 +34,8 @@ import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.hippoecm.repository.decorating.SessionDecorator;
 
 public class RepositoryRolesTest extends TestCase {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private HippoRepository server;
     private Session serverSession;
@@ -38,12 +55,12 @@ public class RepositoryRolesTest extends TestCase {
 
     private static final String TESTGROUP_MEMBER = "group1";
     private static final String TESTGROUP_NOTMEMBER = "group2";
-    
+
 
     private static final String TESTROLE_USER = "userrole";
     private static final String TESTROLE_GROUP1 = "group1role";
     private static final String TESTROLE_GROUP2 = "group2role";
-    
+
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -63,33 +80,33 @@ public class RepositoryRolesTest extends TestCase {
         testrole = roles.addNode(TESTROLE_USER, HippoNodeType.NT_ROLE);
         testrole = roles.addNode(TESTROLE_GROUP1, HippoNodeType.NT_ROLE);
         testrole = roles.addNode(TESTROLE_GROUP2, HippoNodeType.NT_ROLE);
-        
+
         // create test user
         users = serverSession.getRootNode().getNode(USERS_PATH);
         Node testuser = users.addNode(TESTUSER_ID, HippoNodeType.NT_USER);
         testuser.setProperty("hippo:password", TESTUSER_PASS);
         testuser.setProperty(HippoNodeType.HIPPO_ROLES, new String[]{TESTROLE_USER});
-        
+
         // create test groups
         groups = serverSession.getRootNode().getNode(GROUPS_PATH);
         Node testgroup;
         testgroup = groups.addNode(TESTGROUP_MEMBER, HippoNodeType.NT_GROUP);
         testgroup.setProperty(HippoNodeType.HIPPO_MEMBERS, new String[]{TESTUSER_ID});
         testgroup.setProperty(HippoNodeType.HIPPO_ROLES, new String[]{TESTROLE_GROUP1});
-        
+
         testgroup = groups.addNode(TESTGROUP_NOTMEMBER, HippoNodeType.NT_GROUP);
         testgroup.setProperty(HippoNodeType.HIPPO_MEMBERS, new String[]{SYSTEMUSER_ID});
         testgroup.setProperty(HippoNodeType.HIPPO_ROLES, new String[]{TESTROLE_GROUP2});
-        
-        
-        // assign roles to user and groups
-        
 
-        
-        
+
+        // assign roles to user and groups
+
+
+
+
         serverSession.save();
     }
-    
+
     public void tearDown() throws RepositoryException {
         if (users != null) {
             users.remove();
@@ -105,14 +122,14 @@ public class RepositoryRolesTest extends TestCase {
             server.close();
         }
     }
-    
+
     private Set<Principal> getPrincipals() throws RepositoryException {
         Set<Principal> principals = new HashSet<Principal>();
         XASessionImpl userSession = (XASessionImpl) SessionDecorator.unwrap(server.login(TESTUSER_ID, TESTUSER_PASS.toCharArray()));
         principals = userSession.getUserPrincipals();
         return principals;
     }
-    
+
     public void testUserPrincipal() throws RepositoryException {
         boolean hasPrincipal = false;
         for (Principal p : getPrincipals()) {
@@ -125,7 +142,7 @@ public class RepositoryRolesTest extends TestCase {
         }
         assertTrue(hasPrincipal);
     }
-    
+
     public void testUserRole() throws RepositoryException {
         boolean hasPrincipal = false;
         for (Principal p : getPrincipals()) {
@@ -138,7 +155,7 @@ public class RepositoryRolesTest extends TestCase {
         }
         assertTrue(hasPrincipal);
     }
-    
+
     public void testGroupRole() throws RepositoryException {
         boolean hasPrincipal = false;
         for (Principal p : getPrincipals()) {

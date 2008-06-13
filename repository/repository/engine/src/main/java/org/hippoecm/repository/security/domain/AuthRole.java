@@ -1,17 +1,17 @@
 /*
- * Copyright 2008 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security.domain;
 
@@ -26,7 +26,7 @@ import javax.jcr.Value;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
- * A auth role defines which users and groups have a specific role 
+ * A auth role defines which users and groups have a specific role
  * in a domain. The roles are defined a in {@link Role}
  */
 public class AuthRole {
@@ -34,18 +34,18 @@ public class AuthRole {
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /**
      * The role id
      * @see Role
      */
     private final String role;
-    
+
     /**
      * A set holding the group ids belonging to the auth role
      */
     private Set<String> groups = new HashSet<String>();
-    
+
     /**
      * A set holding the user ids belonging to the auth role
      */
@@ -56,7 +56,7 @@ public class AuthRole {
      */
     private transient int hash;
 
-    
+
     /**
      * Initialize the auth role from the configuration node. The initialization
      * does not check if roles, users and group do actually exist.
@@ -68,20 +68,20 @@ public class AuthRole {
             throw new IllegalArgumentException("AuthRole node cannot be null");
         }
         role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
-        if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {            
+        if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {
             Value[] values = node.getProperty(HippoNodeType.HIPPO_USERS).getValues();
             for (Value value : values) {
                 users.add(value.getString());
             }
         }
-        if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {            
+        if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {
             Value[] values = node.getProperty(HippoNodeType.HIPPO_GROUPS).getValues();
             for (Value value : values) {
                 groups.add(value.getString());
             }
         }
     }
-    
+
     /**
      * Check if a user with the given user id has the role
      * @param userId the id of the user
@@ -99,7 +99,7 @@ public class AuthRole {
     public boolean hasGroup(String groupId) {
         return groups.contains(groupId);
     }
-    
+
     /**
      * Get the role id belonging to the role
      * @return the role id

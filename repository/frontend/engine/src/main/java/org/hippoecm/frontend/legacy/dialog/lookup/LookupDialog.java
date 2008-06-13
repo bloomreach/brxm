@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.legacy.dialog.lookup;
 
@@ -31,18 +31,21 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public abstract class LookupDialog extends AbstractDialog {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LookupDialog.class);
 
     private LookupTargetTreeView tree;
     private InfoPanel infoPanel;
- 
+
     protected LookupDialog(String title, AbstractTreeNode root, DialogWindow dialogWindow) {
         super(dialogWindow);
-        
+
         dialogWindow.setTitle(title);
-        
+
         JcrTreeModel treeModel = new JcrTreeModel(root);
         tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(root);
@@ -51,8 +54,8 @@ public abstract class LookupDialog extends AbstractDialog {
     }
 
     /**
-     * Override this method to have a custom InfoPanel. 
-     * Make sure when you override this method, you end with 
+     * Override this method to have a custom InfoPanel.
+     * Make sure when you override this method, you end with
      * super.setInfoPanel(infoPanel);
      * @param dialogWindow
      */
@@ -65,11 +68,11 @@ public abstract class LookupDialog extends AbstractDialog {
         }
         return infoPanel;
     }
-    
+
     protected void setInfoPanel(InfoPanel infoPanel) {
         this.infoPanel = infoPanel;
     }
-    
+
     protected InfoPanel getInfoPanel() {
         return infoPanel;
     }
@@ -83,7 +86,7 @@ public abstract class LookupDialog extends AbstractDialog {
         ok.setEnabled(isValidType(model));
         target.addComponent(ok);
     }
-    
+
     protected boolean isValidType(JcrNodeModel targetNodeModel){
         return true;
     }

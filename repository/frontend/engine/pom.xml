@@ -109,7 +109,7 @@
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
         </includes>
-      </resource>      
+      </resource>
     </resources>
     <testResources>
       <testResource>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security;
 
@@ -65,20 +65,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HippoAccessManager based on facet authorization. A subject (user) 
- * has a set of {@link FacetAuth}s which hold the domain configuration 
- * as defined by a set of {@link DomainRule}s, the roles the subject has 
+ * HippoAccessManager based on facet authorization. A subject (user)
+ * has a set of {@link FacetAuth}s which hold the domain configuration
+ * as defined by a set of {@link DomainRule}s, the roles the subject has
  * for the domain and the JCR permissions the subject has for the domain.
- * 
- * For checking if a subject has specific permissions on a item (property), the permissions 
+ *
+ * For checking if a subject has specific permissions on a item (property), the permissions
  * of the subject on the parent node are checked.
- * 
- * The HippoAccessManager also checks if the node is part of a hippo:document in 
- * which case the hippo:document is also checked for permissions when the subject 
- * does not have the correct permissions on the node itself. If the subject does 
- * have the correct permissions on the hippo:document the permissions on the node 
+ *
+ * The HippoAccessManager also checks if the node is part of a hippo:document in
+ * which case the hippo:document is also checked for permissions when the subject
+ * does not have the correct permissions on the node itself. If the subject does
+ * have the correct permissions on the hippo:document the permissions on the node
  * are granted.
- * 
+ *
  * TODO: Remove the 'special' checks for the workflow.
  */
 public class HippoAccessManager implements AccessManager {
@@ -118,7 +118,7 @@ public class HippoAccessManager implements AccessManager {
     public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
 
     /**
-     * Name of hippo:docucment, needed for document model checking 
+     * Name of hippo:docucment, needed for document model checking
      */
     private Name hippoDoc;
 
@@ -175,8 +175,8 @@ public class HippoAccessManager implements AccessManager {
     private String userId;
 
     private List<String> groupIds = new ArrayList<String>();
-    private List<String> currentDomainRoleIds = new ArrayList<String>(); 
-    
+    private List<String> currentDomainRoleIds = new ArrayList<String>();
+
     /**
      * The logger
      */
@@ -192,7 +192,7 @@ public class HippoAccessManager implements AccessManager {
         isSystem = false;
 
         // create names from node types
-        // TODO: get the names from somewhere else. The access manager doesn't have 
+        // TODO: get the names from somewhere else. The access manager doesn't have
         // access to the nodetype registry, so the namespace conversion is hard coded.
     }
 
@@ -226,12 +226,12 @@ public class HippoAccessManager implements AccessManager {
         } else {
             userId = "";
         }
-        
+
         // prefetch groupId's
         for (GroupPrincipal gp : subject.getPrincipals(GroupPrincipal.class)) {
             groupIds.add(gp.getName());
         }
-        
+
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
@@ -239,7 +239,7 @@ public class HippoAccessManager implements AccessManager {
         hippoHandle = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_HANDLE);
         hippoFacetSearch = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSEARCH);
         hippoFacetSelect = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSELECT);
-        
+
         // we're done
         initialized = true;
     }
@@ -333,7 +333,7 @@ public class HippoAccessManager implements AccessManager {
         }
         return false;
     }
-    
+
     private NodeState getWorkflowNode(NodeState nodeState) {
         if (log.isTraceEnabled()) {
             log.trace("Fetching workflow node from node: " + nodeState.getId());
@@ -373,9 +373,9 @@ public class HippoAccessManager implements AccessManager {
 
 
     /**
-     * Check wheter the node can be accessed with the requested permissins based on the 
-     * FacetAuths of the subject. The method first checks if the jcr permissions of the 
-     * FacetAuth match the requested principals. If so, a check is done to check if the 
+     * Check wheter the node can be accessed with the requested permissins based on the
+     * FacetAuths of the subject. The method first checks if the jcr permissions of the
+     * FacetAuth match the requested principals. If so, a check is done to check if the
      * Node is in de Domain of the FacetAuth.
      * @param nodeState the state of the node to check
      * @param permissions the (bitset) of the permissions
@@ -424,7 +424,7 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Check if a node is in the domain of the facet auth principal by looping of all the 
+     * Check if a node is in the domain of the facet auth principal by looping of all the
      * domain rules. Foreach domain all the facet rules are checked.
      * @param nodeState the state of the node to check
      * @param fap the facet auth principal to check
@@ -438,7 +438,7 @@ public class HippoAccessManager implements AccessManager {
 
         currentDomainRoleIds.clear();
         currentDomainRoleIds.addAll(fap.getRoles());
-        
+
         // check is node matches ONE of the domain rules
         for (DomainRule domainRule : fap.getRules()) {
 
@@ -617,7 +617,7 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Try to get a state from the item manager by first checking the normal states, 
+     * Try to get a state from the item manager by first checking the normal states,
      * then checking the transient states and last checking the attic state.
      * @param id the item id
      * @return the item state
@@ -639,10 +639,10 @@ public class HippoAccessManager implements AccessManager {
         }
         throw new NoSuchItemStateException("Item state not found in normal, transient or attic: " + id);
     }
-    
+
     /**
-     * Get the NodeState of the parent from the nodeState in a transient and attic 
-     * safe manner. 
+     * Get the NodeState of the parent from the nodeState in a transient and attic
+     * safe manner.
      * @param nodeState
      * @return the parent nodestate
      * @throws NoSuchItemStateException when the state cannot be found
@@ -699,15 +699,15 @@ public class HippoAccessManager implements AccessManager {
         return buf.toString();
     }
 
-    /** 
+    /**
      * Helper function to check if a nodeState is of a node type or a
      * instance of the node type (sub class)
      * TODO: Very expensive function, probably needs some caching
-     * 
+     *
      * @param nodeState the node to check
      * @param nodeTypeName the node type name
      * @return boolean
-     * @throws NoSuchNodeTypeException 
+     * @throws NoSuchNodeTypeException
      */
     private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
         try {
@@ -720,7 +720,7 @@ public class HippoAccessManager implements AccessManager {
                 }
                 return true;
             }
-            
+
             // get iterator over all types
             NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
             NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
@@ -736,8 +736,8 @@ public class HippoAccessManager implements AccessManager {
                     for (NodeType type : superTypes) {
                         if (type.getName().equals(nodeType)){
                             return true;
-                        }   
-                    } 
+                        }
+                    }
                 }
             }
         } catch (NamespaceException e) {
@@ -753,7 +753,7 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Check if a node matches the current FacetRule based on a 
+     * Check if a node matches the current FacetRule based on a
      * check on the properties of the node.
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
@@ -787,7 +787,7 @@ public class HippoAccessManager implements AccessManager {
 
                 if (iVal.getType() == PropertyType.STRING) {
                     log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
-                    
+
                     // expander matches
                     if (FacetAuthHelper.EXPANDER_USER.equals(rule.getValue())) {
                         if (isUser && userId.equals(iVal.getString())) {
@@ -807,14 +807,14 @@ public class HippoAccessManager implements AccessManager {
                             break;
                         }
                     }
-                    
+
                     if (iVal.getString().equals(rule.getValue())) {
                         match = true;
                         break;
                     }
                 } else if (iVal.getType() == PropertyType.NAME) {
                     log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
-                    
+
                     if (iVal.getQName().equals(rule.getValueName())) {
                         match = true;
                         break;
@@ -891,7 +891,7 @@ public class HippoAccessManager implements AccessManager {
      */
     private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException,
             NoSuchNodeTypeException {
-        
+
         if (log.isTraceEnabled()) {
             log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName()
                     + " for being part of a document model.");

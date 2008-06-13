@@ -15,12 +15,12 @@
   limitations under the License.
 -->
 <sv:node  sv:name="hippo:initialize"
-    xmlns:hippo="http://www.hippoecm.org/nt/1.0"    
-    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-    xmlns:jcr="http://www.jcp.org/jcr/1.0" 
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0">
-    
+
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:initializefolder</sv:value>
     </sv:property>

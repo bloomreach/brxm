@@ -121,7 +121,7 @@ mvn exec:java
                 <img src="../images/dropbox-running.jpg" alt=""/>
                 <br/><br/>
                 All content from your dropbox folder is now stored in Hippo Repository. You can explore
-                the contents through the provided user interface. 
+                the contents through the provided user interface.
                 </p>
                 <p>
                     The DropBoxExt creates by default a facet node for you, to let you browse through
@@ -130,8 +130,8 @@ mvn exec:java
                 </p>
 
             </subsection>
-            
-            
+
+
             <subsection name="Applying Your Own Hippo Facets">
                 Prerequisite: <a href="../use-hippo-ecm/facets/index.html">knowlegde of facets</a>
                 <br/>
@@ -162,7 +162,7 @@ mvn exec:java
                 </p>
             </subsection>
             <subsection name="Try out yourself">
-                Check out the MP3Box.java which works similar to the Dropbox yourself! 
+                Check out the MP3Box.java which works similar to the Dropbox yourself!
             </subsection>
         </section>
     </body>

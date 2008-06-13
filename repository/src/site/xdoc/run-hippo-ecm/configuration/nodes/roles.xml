@@ -25,13 +25,13 @@
         <section name="Roles Configuration">
             <p>
                 The roles are stored in the repository as childeren of the node
-                <code>/hippo:configuration/hippo:roles</code>. The roles define which JCR 
-                permissions each role has. The following JCR permissions exist in the repository: 
-                "READ", "WRITE" and "REMOVE". The roles are also used for assigning workflows to users 
+                <code>/hippo:configuration/hippo:roles</code>. The roles define which JCR
+                permissions each role has. The following JCR permissions exist in the repository:
+                "READ", "WRITE" and "REMOVE". The roles are also used for assigning workflows to users
                 and groups.
             </p>
             <p>
-                The roles are referenced by the <a href="domains.html">domains auth roles</a> and can be assigned to 
+                The roles are referenced by the <a href="domains.html">domains auth roles</a> and can be assigned to
                 <a href="workflows.html">workflows</a>.
                 <!-- TODO: add read more link to authorizaion and workflow "concepts" -->
             </p>
@@ -73,7 +73,7 @@ hippo:configuration
                 he name of the node is used as the role name.
             </p>
             <p>
-                The boolean properties hippo:jcrread, hippo:jcrwrite and hippo:jcrremove can be set to assign the JCR 
+                The boolean properties hippo:jcrread, hippo:jcrwrite and hippo:jcrremove can be set to assign the JCR
                 "READ", "WRITE" and "REMOVE" properties to a rol.
             </p>
             </subsection>

@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo (www.hippo.nl)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.tools.migration;
 
@@ -46,6 +46,8 @@ import org.hippoecm.tools.migration.webdav.WebdavHelper;
  * Contains the main process loop which loops over all WebDAV nodes.
  */
 public class Webdav2JCRMigrator implements Plugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     // ---------------------------------------------------- Constants
     private static final String JCR_RMI_HOST = "jcr.rmi.host";
@@ -109,7 +111,7 @@ public class Webdav2JCRMigrator implements Plugin {
         if(pluginConfig.getValue(VERBOSE_CONFIG).equals("true")) {
             verbose = true;
         }
-         
+
         // rmi connection
         rmiHost = pluginConfig.getValue(JCR_RMI_HOST);
         rmiPort = pluginConfig.getValue(JCR_RMI_PORT);
@@ -165,14 +167,14 @@ public class Webdav2JCRMigrator implements Plugin {
 
             // setup converter
             documentConverter.setup(pluginConfig, session, httpClient);
-            
+
             // test and create target path
             JCRHelper.checkAndCreatePath(session, jcrPath, documentConverter);
 
             // webdav
             createHttpClient(config);
 
-            
+
 
         } catch (RepositoryException e) {
             throw new RuntimeException(e);
@@ -195,12 +197,12 @@ public class Webdav2JCRMigrator implements Plugin {
             path.append(documentConverter.nameTranslate(t.nextToken()));
         }
         jcrParentPath = path.toString();
-        
-        
+
+
         if (documentConverter.skipJcrPath(jcrParentPath + "/" + nodeName)) {
             return;
         }
-        
+
         try {
             javax.jcr.Node parent = null;
             try {
@@ -208,7 +210,7 @@ public class Webdav2JCRMigrator implements Plugin {
             } catch (PathNotFoundException e) {
                 parent = JCRHelper.checkAndCreatePath(session, jcrParentPath, documentConverter);
             }
-            
+
             if (!webdavNode.isCollection()) {
                 // Add content property
                 try {
@@ -242,7 +244,7 @@ public class Webdav2JCRMigrator implements Plugin {
                     System.out.println("total time convert : \t" + (timeSpendConverting)/1000 + " sec \t" + (int)(100*(timeSpendConverting+0.1)/totalTime) + "%");
                 }
             }
-            
+
         } catch (PathNotFoundException e) {
             System.err.println("");
             System.err.println("JCR Path does not exist: " + e.getMessage());

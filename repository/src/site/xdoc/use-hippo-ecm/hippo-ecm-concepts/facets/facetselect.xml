@@ -27,29 +27,29 @@
         <i><b>Note:</b> Faceted selection and faceted reference are used intertwined and refer to the exact same thing.</i>
       </p>
       <p>
-        The easiest way to understand <code>faceted selection</code> is to see it as a mirror of some folder, possibly with some filter applied. 
-        The filter is based on facets (metadata) of documents (nodes). An example would be, that you only want to 
+        The easiest way to understand <code>faceted selection</code> is to see it as a mirror of some folder, possibly with some filter applied.
+        The filter is based on facets (metadata) of documents (nodes). An example would be, that you only want to
         show documents which are english and published. By creating some faceted selections, you can
         very easily create websites which are multilingual, and have a "preview" and "live" sites (or any other state in between).
-        Exposing your DMS with faceted selection and authorization (and even facet search combined!) gives you a lot of 
-        flexibility in exposing your (unstructured) physical content in many different (virtual) structured ways. 
+        Exposing your DMS with faceted selection and authorization (and even facet search combined!) gives you a lot of
+        flexibility in exposing your (unstructured) physical content in many different (virtual) structured ways.
       </p>
-      <p><b>Recapitulating:</b> Faceted selection is like a mirror of the folder you point to. If you leave the selection empty and only select a folder, it 
-        acts like an exact mirror (similar to a linux mount except for possible authorization). If you apply a selection, it is a 
-        filtered mirror of the folder you pointed to to be mirrored. 
+      <p><b>Recapitulating:</b> Faceted selection is like a mirror of the folder you point to. If you leave the selection empty and only select a folder, it
+        acts like an exact mirror (similar to a linux mount except for possible authorization). If you apply a selection, it is a
+        filtered mirror of the folder you pointed to to be mirrored.
         Authorization acts as a default filter dependent on the user. </p>
       <subsection name="Faceted selection explained: visual">
         <p>
-          Suppose we have the same hierachical repository data as in the 
+          Suppose we have the same hierachical repository data as in the
           <a href="facetsearch.html#Faceted navigation explained: visual">facet search example</a>:
         </p>
         <source>
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
-Pets                           
-|-- Dogs                           
-|   |-- dog1                 Dog       Large     Adult          
-|   |-- dog2                 Dog       Medium    Adult       
+Pets
+|-- Dogs
+|   |-- dog1                 Dog       Large     Adult
+|   |-- dog2                 Dog       Medium    Adult
 |   |-- dog3                 Dog       Small     Young
 |   `-- dog4                 Dog       Large     Adult
 |-- Rabbits
@@ -60,19 +60,19 @@ Pets
     |-- horse1               Horse     Small     Young
     |-- horse2               Horse     Large     Young
     `-- horse3               Horse     Large     Old
-        </source>  
+        </source>
         <p>
            Now, suppose, you want to browse through the data, but with a filter applied to only show <i>large animals</i>. This is
-           realized by simply creating a facet select node that indicates to only show animals which are of size 'large'. Suppose 
-           that the facet select node is called 'IsLarge', then the navigation would look like: 
+           realized by simply creating a facet select node that indicates to only show animals which are of size 'large'. Suppose
+           that the facet select node is called 'IsLarge', then the navigation would look like:
         </p>
           <source>
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
 IsLarge
-`-- Pets                           
-    |-- Dogs                           
-    |   |-- dog1             Dog       Large     Adult  
+`-- Pets
+    |-- Dogs
+    |   |-- dog1             Dog       Large     Adult
     |   `-- dog4             Dog       Large     Adult
     |-- Rabbits
     |   |-- rabbit1          Rabbit    Large     Young
@@ -80,7 +80,7 @@ IsLarge
     |-- Horses
     |-- horse2               Horse     Large     Young
     `-- horse3               Horse     Large     Old
-          </source>            
+          </source>
       <p>
         You might also have a facet select node which filters such that I get 'large' and 'young' only.
         Then, the navigation would be:
@@ -89,13 +89,13 @@ IsLarge
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
 IsLargeAndYoung
-`-- Pets                           
+`-- Pets
     |-- Rabbits
     |   `-- rabbit1          Rabbit    Large     Young
     `-- Horses
         `-- horse2           Horse     Large     Young
         </source>
-        
+
       <p>
         You can have as many facet select nodes as you want.
         You do not need to have the facet select starting filtering on the root node. You can also make a facet select node, that
@@ -105,24 +105,24 @@ IsLargeAndYoung
 Folder                       Type      Size      Age
 ------------------------------------------------------------------------
 IsLarge
-|-- dog1                     Dog       Large     Adult  
+|-- dog1                     Dog       Large     Adult
 `-- dog4                     Dog       Large     Adult
-       </source> 
+       </source>
         <p>
-          You can even have a facet select, which filters a hierarchical tree which contains in turn another facet select. So, you can have facet selects in facet selects. 
+          You can even have a facet select, which filters a hierarchical tree which contains in turn another facet select. So, you can have facet selects in facet selects.
           Instead of a facetselect in a facetselect, you can have a <a href="/site/use-hippo-ecm/facets/facetsearch.html">facetsearch</a> node <b>inside</b> the result of a facetselect node!
           From this facetsearch node on, faceted navigation will be displayed.
         </p>
         <p>
           By understanding the possibilities, you can model endless combinations of structured data resulting from unstructered data. Obviously, under water all documents
-          are being checked wether the user is authorized to see the document. 
+          are being checked wether the user is authorized to see the document.
         </p>
         <p>
-          Take a look at advanced content modelling to learn about possibilities and use cases. Note 
+          Take a look at advanced content modelling to learn about possibilities and use cases. Note
           that you might want to look at it twice because it is not trivial. In the end, understanding
-          modelling of data on unstructured data will give you an enormeous freedom and enables you developing 
-          complex frontend websites or expose a DMS without writing code. 
-        </p>            
+          modelling of data on unstructured data will give you an enormeous freedom and enables you developing
+          complex frontend websites or expose a DMS without writing code.
+        </p>
       </subsection>
 <!--
     TODO:

@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security;
 
@@ -44,7 +44,7 @@ public class FacetAuthHelper {
 
     /** Epander for group */
     public final static String EXPANDER_GROUP = "__group__";
-    
+
     /** Epander for role */
     public final static String EXPANDER_ROLE = "__role__";
 
@@ -52,7 +52,7 @@ public class FacetAuthHelper {
      * NameFactory for create Names
      */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
-    
+
     /**
      * Get the Name from the node type string short notation
      * @param session The session
@@ -62,15 +62,15 @@ public class FacetAuthHelper {
     public static Name getNameFromJCRName(Session session, String jcrName) throws IllegalNameException, NamespaceException {
         return getNameFromJCRName(new SessionNamespaceResolver(session), jcrName);
     }
-    
+
     public static Name getNameFromJCRName(NamespaceResolver nsRes, String jcrName) throws IllegalNameException, NamespaceException {
         return NameParser.parse(jcrName, nsRes, FACTORY);
     }
-    
+
     public static String getJCRNameFromName(Session session, Name name) throws NamespaceException {
         return getJCRNameFromName(new SessionNamespaceResolver(session), name);
     }
-    
+
     public static String getJCRNameFromName(NamespaceResolver nsRes, Name name) throws NamespaceException {
         String uri = name.getNamespaceURI();
         if (nsRes.getPrefix(uri).length() == 0) {

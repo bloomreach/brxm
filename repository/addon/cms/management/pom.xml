@@ -52,19 +52,19 @@
       <artifactId>hippo-ecm-addon-yui</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-template</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>${parent.version}</version>
     </dependency>
-    
+
   </dependencies>
 
   <build>

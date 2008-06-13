@@ -2,7 +2,7 @@
 <!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
 
 <Configure class="org.mortbay.jetty.Server">
-  
+
   <Call name="addLifeCycle">
         <Arg>
           <New class="org.mortbay.jetty.deployer.WebAppDeployer">
@@ -16,5 +16,5 @@
           </New>
         </Arg>
   </Call>
-  
+
 </Configure>

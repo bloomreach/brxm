@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.xinha.sa;
 
@@ -32,6 +32,9 @@ import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 class XinhaEditorBehavior extends AbstractHeaderContributor {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     protected static final String SINGLE_QUOTE = "'";
@@ -100,7 +103,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             public void renderHead(IHeaderResponse response) {
                 StringBuffer sb = new StringBuffer();
 
-                //Declare/reset Xinha global variables 
+                //Declare/reset Xinha global variables
                 sb.append("if( typeof xinha_editors == \"undefined\" ) { xinha_editors = []; }\n");
                 sb.append("xinha_init    = null;\n");
                 sb.append("xinha_config  = null;\n");

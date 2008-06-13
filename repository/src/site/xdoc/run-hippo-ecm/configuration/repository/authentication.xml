@@ -19,7 +19,7 @@
 -->
 <document>
     <properties>
-        <title>Authentication with The Repository Login Module</title>  
+        <title>Authentication with The Repository Login Module</title>
     </properties>
     <body>
         <section name="Repository based authentication">

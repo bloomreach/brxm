@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.security.user;
 
@@ -23,6 +23,8 @@ import org.hippoecm.repository.security.AAContext;
  * Interface for interacting with a specific user from a backend
  */
 public interface User {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     /**
      * Initialize the user with the given context
@@ -40,7 +42,7 @@ public interface User {
     public String getUserID() throws UserException;
 
     /**
-     * Check with the backend if the password matches 
+     * Check with the backend if the password matches
      * @param password the char array containing the password
      * @return true when password matches
      * @throws UserException
@@ -50,7 +52,7 @@ public interface User {
     /**
      * Try to set the password of the user
      * @param password the password
-     * @throws NotSupportedException thrown when backend does not support setting the password 
+     * @throws NotSupportedException thrown when backend does not support setting the password
      * @throws UserException
      */
     public void setPassword(char[] password) throws NotSupportedException, UserException;

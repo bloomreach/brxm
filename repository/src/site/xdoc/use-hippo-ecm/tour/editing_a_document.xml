@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
     Copyright 2007 Hippo
-    
+
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS"
     BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,8 @@
     <section name="Editing a document">
       <p>
 To edit a document, users must first locate and select it in the
-Browse perspective. A list of actions will be displayed in the Actions pane  
-and if the user has the appropiate rights this list will contain an 
+Browse perspective. A list of actions will be displayed in the Actions pane
+and if the user has the appropiate rights this list will contain an
 action called 'Edit'. (listing 1)
       </p>
       <p>
@@ -34,23 +34,23 @@ action called 'Edit'. (listing 1)
         <em>Listing 1: The document named 'yourArticle' is selected and it's actions are loaded.</em>
       </p>
       <p>
-Clicking the 'Edit' link will open the document in a new editor perspective 
-and the user can start editing (listing 2). When the user has finished editing he 
+Clicking the 'Edit' link will open the document in a new editor perspective
+and the user can start editing (listing 2). When the user has finished editing he
 can save his changes by clicking 'Save' in the Actions pane. The changes
 will be persisted and the tab will be closed.
       </p>
       <p>
         <img src="../../images/tour/edit2.jpg" alt="Editing a document" /><br/>
         <em>
-            Listing 2: A document named 'yourArticle' is currently being edited. The 
-            introduction field shows a rich-text editor widget. 
+            Listing 2: A document named 'yourArticle' is currently being edited. The
+            introduction field shows a rich-text editor widget.
         </em>
       </p>
         <br/><br/><br/>
       <p align="center">
           <a href="navigating_the_cms.html">&lt;- Previous: Navigating the CMS</a>&#160;&#160;&#160;&#160;&#160;<a href="creating_a_document_type_and_template.html">Next: Creating a document type and template -></a>
       </p>
-      <br/><br/>        
+      <br/><br/>
     </section>
   </body>
 </document>

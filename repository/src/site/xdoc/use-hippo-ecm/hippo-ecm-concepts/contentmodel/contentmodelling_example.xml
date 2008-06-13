@@ -4,13 +4,13 @@
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
   <!--
       Copyright 2007 Hippo
-      
+
       Licensed under the Apache License, Version 2.0 (the  "License");
       you may not use this file except in compliance with the License.
       You may obtain a copy of the License at
-      
+
       http://www.apache.org/licenses/LICENSE-2.0
-      
+
       Unless required by applicable law or agreed to in writing, software
       distributed under the License is distributed on an "AS IS"
       BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,35 +28,35 @@
               </p>
               <subsection name="STEP 1">
                   <p>
-                  entry point from the site in the repository would be: 
+                  entry point from the site in the repository would be:
                   </p>
                   <source>
 site-myproject
-|-- nl 
+|-- nl
 |   |-- live      (node nl-live)
 |   `-- preview   (node nl-preview)
-`-- en  
+`-- en
     |-- live      (node en-live)
     `-- preview   (node en-preview)
                   </source>
                   <p>
                       where site-myproject is directly under the root folder. This is the only physical structure under 'site-myproject'!
-                      
-                      nl-live, nl-preview, en-live, etc are *facetselect* nodes! They are a facetselect (filtered mirror) 
+
+                      nl-live, nl-preview, en-live, etc are *facetselect* nodes! They are a facetselect (filtered mirror)
                       on the actual content (containing documents + navigation). For example the node nl-live is:
                   </p>
                   <source>
 jcr:primaryType: hippo:facetselect
-hippo:facets: {language,state}  
+hippo:facets: {language,state}
 hippo:values: {nl,published}
 hippo:modes:  {select,select}
 hippo:docbase: <code>UUID of {/content-myproject}</code>
                   </source>
-                  
+
               </subsection>
               <subsection name="STEP 2">
                   <p>
-                      the actual repository site content: 
+                      the actual repository site content:
                   </p>
                   <source>
 content-myproject
@@ -89,29 +89,29 @@ content-myproject
 `-- navigation
     |-- default (hippo:handle)
     |   `-- default (nt:unstructured)
-    |       |-- home 
+    |       |-- home
     |       |-- about
     |       `-- etc ...
     `-- alternate (hippo:handle)
         `-- some alt navigation
                   </source>
                   <p>
-                      Now, the node /content-myproject/navigation/default/default/home is a facetselect with properties:    
+                      Now, the node /content-myproject/navigation/default/default/home is a facetselect with properties:
                   </p>
                   <source>
-hippo:facets: {}        
+hippo:facets: {}
 hippo:values: {}
 hippo:modes:  {}
 hippo:docbase: UUID of {/content-myproject/pages/home}
                   </source>
                   <p>
-                      Since facets are empty, this facet select works as an mirror 
+                      Since facets are empty, this facet select works as an mirror
                       (the trick is that it is a child of the facetselect nl-live or en-preview, see later)
-                      
+
                       and the node /content-myproject/navigation/default/default/about is a facetselect with properties:
                   </p>
                   <source>
-hippo:facets: {}        
+hippo:facets: {}
 hippo:values: {}
 hippo:modes:  {}
 hippo:docbase: UUID of {/content-myproject/pages/about}
@@ -120,7 +120,7 @@ hippo:docbase: UUID of {/content-myproject/pages/about}
               <subsection name="STEP 3">
                   <p>Virtual tree</p>
                   <p>
-                      When browsing in the above repository to <code>/content-myproject/navigation/default/default/home</code> I have a virtual tree 
+                      When browsing in the above repository to <code>/content-myproject/navigation/default/default/home</code> I have a virtual tree
                       below 'home' of the actual content below <code>/content-myproject/pages/home</code>:
                   </p>
                   <source>
@@ -144,17 +144,17 @@ content-myproject
                        `-- etc...
                   </source>
               </subsection>
-              
+
               <subsection name="STEP 4">
                   <p>putting it all together we have the model to create the site:
                   </p>
                   <p>
-                      In the frontend, I browse to the link <code>http://www.myproject.nl/nl/preview</code> which corresponds to <code>nl</code> and <code>preview</code> site. 
-                      
-                      This will be translated (frontend knowledge/defined) to <code>/site-myproject/nl/preview</code>. Since <code>preview</code> is a facetselect with 
+                      In the frontend, I browse to the link <code>http://www.myproject.nl/nl/preview</code> which corresponds to <code>nl</code> and <code>preview</code> site.
+
+                      This will be translated (frontend knowledge/defined) to <code>/site-myproject/nl/preview</code>. Since <code>preview</code> is a facetselect with
                   </p>
                   <source>
-hippo:facets: {language,state}  
+hippo:facets: {language,state}
 hippo:values: {nl,unpublished}
 hippo:docbase: UUID of {/content-myproject/pages/about}
                   </source>
@@ -163,42 +163,42 @@ hippo:docbase: UUID of {/content-myproject/pages/about}
                   </p>
                   <source>
 site-myproject
-`-- nl    
+`-- nl
     `-- preview
         |-- pages
         |   |-- home (hippo:handle)
         |   |   `-- home (nl,unpublished)   --> link : /index.jsp  , label : HOME
         |   |      `--paragraphs
         |   |          |-- paragraph1
-        |   |          `-- paragraph2    
+        |   |          `-- paragraph2
         |   `-- about
         |       `-- about (nl,unpublished)   --> link : /index.jsp  , label : Over MYPROJECT
         `-- navigation
             |-- default (hippo:handle)
             |   `-- default (nt:unstructured)
-            |       |-- home 
+            |       |-- home
             |       |-- about
             |       `-- etc ...
             `-- alternate (hippo:handle)
-                `-- some alt navigation 
+                `-- some alt navigation
                   </source>
-                  
+
                   <p>
-                      And we see, that with  <code>preivew/nl/navigation/default</code> we only have to iterate over the children to 
+                      And we see, that with  <code>preivew/nl/navigation/default</code> we only have to iterate over the children to
                       have the multilingual multistate aware navigation (because <code>navigation/default/home/home</code> is again
-                      a facetselect with empty facet values, but inherits from parent facet, so only displaying <code>nl</code> and <code>preview</code>) 
+                      a facetselect with empty facet values, but inherits from parent facet, so only displaying <code>nl</code> and <code>preview</code>)
                       home from <code>pages/home</code>, and thus you can display the <code>nl</code> caption or title. The content to show in the homepage,
                       is simply displaying all child nodes below <code>nl/preview/pages/home</code> <b>or</b> all child nodes below
-                      <code>nl/preview/navigation/default/default/home</code>, resulting in the same nodes. 
+                      <code>nl/preview/navigation/default/default/home</code>, resulting in the same nodes.
                   </p>
-                  <p>   
+                  <p>
                       For <code>about</code> and other nodes this works exactly the same.
-                      
+
                   </p>
-                  
+
               </subsection>
-              
+
           </section>
-          
+
       </body>
   </document>

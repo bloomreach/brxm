@@ -39,7 +39,7 @@
             <sv:value>/hippo:configuration/hippo:frontend</sv:value>
         </sv:property>
     </sv:node>
-    
+
 
     <!--(DEPRECATED) Admin Console frontend configuration (DEPRECATED)-->
     <sv:node sv:name="frontend-console-deprecated">

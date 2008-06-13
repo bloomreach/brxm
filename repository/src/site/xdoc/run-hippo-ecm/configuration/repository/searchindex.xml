@@ -47,7 +47,7 @@
       <subsection name="Best practice">
         <p>
           The <a href="http://wiki.apache.org/jackrabbit/Search">Jackrabbit documentation</a> describes
-          all available &lt;SearchIndex&gt; params. Below are some Hippo Repository default settings for 
+          all available &lt;SearchIndex&gt; params. Below are some Hippo Repository default settings for
           a combination of params which have been found to be proper values.
         </p>
         <source>
@@ -77,7 +77,7 @@
               be used. The configured classes must all have a public default constructor.
             </p>
           </li>
-          <li> 
+          <li>
             <p>
               analyzer: Default, JackRabbit ships with a JackrabbitAnalyzer. The analyzer configured
               in &lt;param name="analyzer" value="..."&gt; is used as default text analyzer. If needed, this
@@ -94,9 +94,9 @@
         <source>
 &lt;param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/&gt;
 &lt;param name="supportHighlighting" value="true"/&gt;
-&lt;param name="spellCheckerClass" value="org.hippoecm.repository.query.lucene.LuceneSpellChecker$OneMinuteRefreshInterval"/&gt;      
+&lt;param name="spellCheckerClass" value="org.hippoecm.repository.query.lucene.LuceneSpellChecker$OneMinuteRefreshInterval"/&gt;
         </source>
-    
+
         <p>
           The parameters forceConsistencyCheck, enableConsistencyCheck and autoRepair are all set to true.
           <!--
@@ -136,7 +136,7 @@
 
       <subsection name="ServicingIndexingConfigurationImpl">
         <p>
-          The ServicingIndexingConfigurationImpl only serves to have the 
+          The ServicingIndexingConfigurationImpl only serves to have the
           <code>http://www.hippoecm.org/nt/1.0</code>
           namespace available, and to know wether a property is a Hippo Facet or Hippo Path, and needs
           to be indexed as such. The indexing_configuration is ignored.

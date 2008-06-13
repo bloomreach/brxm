@@ -52,7 +52,7 @@
       <version>${parent.version}</version>
     </dependency>
   </dependencies>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
     <resources>

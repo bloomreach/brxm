@@ -90,7 +90,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-	      <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+          <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>bundle</shadedClassifierName>
               <artifactSet>

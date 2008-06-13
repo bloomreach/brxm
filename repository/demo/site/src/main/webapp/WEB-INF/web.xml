@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007 Hippo
-  
+
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
   <display-name>sample website</display-name>
@@ -30,7 +30,7 @@
   <listener>
     <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
   </listener>
-  
+
   <filter>
     <filter-name>ContextPreview</filter-name>
     <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
@@ -46,7 +46,7 @@
     <init-param>
       <description>
         The repository path to bind as context.
-      </description>      
+      </description>
       <param-name>urlBasePath</param-name>
       <param-value>/preview/site/pages</param-value>
     </init-param>
@@ -67,7 +67,7 @@
     <init-param>
       <description>
         The repository path to bind as context.
-      </description>      
+      </description>
       <param-name>urlBasePath</param-name>
       <param-value>/live/site/pages</param-value>
     </init-param>
@@ -144,7 +144,7 @@
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
-  
+
   <!-- Timeout in minutes -->
   <session-config>
     <session-timeout>1</session-timeout>
@@ -153,7 +153,7 @@
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  
+
   <error-page>
     <exception-type>javax.servlet.ServletException</exception-type>
     <location>/error.jsp</location>

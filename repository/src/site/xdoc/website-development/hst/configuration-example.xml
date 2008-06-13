@@ -24,7 +24,7 @@
     <body>
       <section name="HST Configuration Example">
          <a name="1"></a>
-         <h4>hst.properties</h4>  
+         <h4>hst.properties</h4>
          <p>Usually the main configuration file is <code>/WEB-INF/hst.properties</code>.</p>
           <source><![CDATA[# Repository configuration.
 # The address of the repository and the user name and password
@@ -33,8 +33,8 @@ repository.address=rmi://localhost:1099/hipporepository
 repository.user.name=admin
 repository.password=admin
 
-# The location in the repository where to find URL mappings based on 
-# document type. Required only if url mapping is used. 
+# The location in the repository where to find URL mappings based on
+# document type. Required only if url mapping is used.
 # Defaults to '/urlMapping'.
 # repository.urlmapping.location=
 
@@ -46,7 +46,7 @@ repository.password=admin
 # Not required, defaults to 'context'.
 # includetag.context.name=]]></source>
         <a name="2"></a>
-        <h4>web.xml</h4>  
+        <h4>web.xml</h4>
         <p>This example shows the installation of one 'preview' web filter and
           a servlet for binaries.</p>
           <source><![CDATA[  <!-- General configuration -->
@@ -58,13 +58,13 @@ repository.password=admin
   <listener>
     <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
   </listener>
-  
+
   <!-- Example of one HST filter pointing to a preview path in the repository. -->
   <filter>
       <filter-name>previewContext</filter-name>
       <filter-class>org.hippoecm.hst.URLMappingContextFilter</filter-class>
-      <!-- to omit URL mapping functionality use:  
-      <filter-class>org.hippoecm.hst.ContextFilter</filter-class> 
+      <!-- to omit URL mapping functionality use:
+      <filter-class>org.hippoecm.hst.ContextFilter</filter-class>
       -->
       <init-param>
           <param-name>attributeName</param-name>
@@ -87,8 +87,8 @@ repository.password=admin
       <init-param>
           <description>
               A list of extensions that the filter will not create context objects
-              for, if the URL ends with such an extension. 
-              Defaults to the given value so may be omitted. 
+              for, if the URL ends with such an extension.
+              Defaults to the given value so may be omitted.
           </description>
           <param-name>skippedExtensions</param-name>
           <param-value>ico,gif,jpg,jpeg,svg,png,css,js</param-value>
@@ -111,7 +111,7 @@ repository.password=admin
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
   </servlet-mapping>]]></source>
-         
+
       </section>
 
     </body>

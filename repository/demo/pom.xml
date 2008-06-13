@@ -45,7 +45,7 @@
     <module>all</module>
     <module>skin</module>
   </modules>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
   </build>

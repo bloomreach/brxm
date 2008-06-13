@@ -47,7 +47,7 @@
             <b>EAR</b> projects create an enterprise application (an ear file) that can be deployed
             in an application server (glassfish, weblogic etc.).
           </p>
-        </li>        
+        </li>
         <li>
           <p>
             <b>POM</b> projects act as 'glue' for binding together other projects,
@@ -100,7 +100,7 @@ hippo-ecm                    Pom       hippo-ecm
 |-- demo                     Pom       hippo-ecm-demo
 |   |-- addon                Jar       hippo-ecm-demo-config
 |   |-- all                  War       hippo-ecm-demo-skin
-|   |-- site                 War       hippo-ecm-demo-test        
+|   |-- site                 War       hippo-ecm-demo-test
 |   `-- skin                 War       hippo-ecm-demo-ear
 |-- frontend                 Pom       hippo-ecm-frontend
 |   |-- engine               Jar       hippo-ecm-frontend-engine
@@ -119,7 +119,7 @@ hippo-ecm                    Pom       hippo-ecm
 |-- package                  Pom       hippo-ecm-package
 |   |-- config               Jar       hippo-ecm-package-config
 |   |-- skin                 War       hippo-ecm-package-skin
-|   |-- test                 Jar       hippo-ecm-package-test        
+|   |-- test                 Jar       hippo-ecm-package-test
 |   |-- ear                  Ear       hippo-ecm-package-ear
 |   `-- war                  War       hippo-ecm-package-war
 |-- repository               Pom       hippo-ecm-repository
@@ -132,16 +132,16 @@ hippo-ecm                    Pom       hippo-ecm
     `-- testutils            Jar       hippo-ecm-tools-testutils
       </source>
     </section>
-    
+
     <section name="Why so many projects?">
       <p>
         The large number of projects is a direct consequence of the fact that Hippo ECM
-        has been designed from the ground up for customizability and extendability as described in the  
+        has been designed from the ground up for customizability and extendability as described in the
         <a href="../extend-hippo-ecm/plugins/index.html">plugin</a> documentation. The repository and frontend
         engines that make up the core of Hippo ECM don't implement much functionality themselves. All 'userland'
         functionality is implemented by plugins that are loaded by the engines. See the chapter on
         <a href="../run-hippo-ecm/repository-bootstrap.html">Bootstrapping the repository</a> for
-        further information about this subject. 
+        further information about this subject.
       </p>
     </section>
 
@@ -205,7 +205,7 @@ hippo-ecm                    Pom       hippo-ecm
 
           <li>As a general rule a dependency 'via the repository' is preferred (by far) over a
             direct Java dependency. Examples of this kind of dependency are the displaying of
-            Xinha editors by the template editor and the use of the reporting addon by the 
+            Xinha editors by the template editor and the use of the reporting addon by the
             cms dashboard.</li>
 
           <li>If there's no other way frontend addons MAY directly depend on each other: Examples are
@@ -217,7 +217,7 @@ hippo-ecm                    Pom       hippo-ecm
         <p> To make a long story short: Currently there are very few Java dependencies between addons
           and we're planning to keep it that way. </p>
       </subsection>
-      
+
       <subsection name="Finding your way">
         <p>
           In order to help you find your way some simple naming conventions
@@ -232,13 +232,13 @@ hippo-ecm                    Pom       hippo-ecm
 
 
     <section name="Repository">
-      <p>        
+      <p>
       </p>
       <ul>
         <li><b>engine</b> </li>
         <li><b>connector</b></li>
-        <li><b>application</b> </li>        
-      </ul> 
+        <li><b>application</b> </li>
+      </ul>
     </section>
 
     <section name="Frontend">
@@ -247,8 +247,8 @@ hippo-ecm                    Pom       hippo-ecm
       <ul>
         <li><b>engine</b></li>
         <li><b>plugins</b></li>
-        <li><b>application</b></li>        
-      </ul> 
+        <li><b>application</b></li>
+      </ul>
     </section>
 
 
@@ -261,7 +261,7 @@ hippo-ecm                    Pom       hippo-ecm
       <p>
       </p>
     </section>
-    
+
     <section name="Archetypes">
       <p>
       </p>
@@ -271,14 +271,14 @@ hippo-ecm                    Pom       hippo-ecm
       <p>
       </p>
     </section>
-    
-    
+
+
     <section name="Api">
       <p>
       </p>
     </section>
 
-    
+
   </body>
 </document>
 

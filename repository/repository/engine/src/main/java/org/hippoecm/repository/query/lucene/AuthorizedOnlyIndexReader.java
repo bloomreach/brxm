@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.query.lucene;
 
@@ -25,6 +25,8 @@ import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermPositions;
 
 public class AuthorizedOnlyIndexReader extends FilterIndexReader{
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The deleted documents as initially read from the IndexReader passed
@@ -44,22 +46,22 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         return td;
     }
 
-  
+
     public TermDocs termDocs() throws IOException {
         return new AuthorizedTermDocs(super.termDocs());
     }
-    
+
     public TermPositions termPositions() throws IOException {
         return new AuthorizedTermPositions(super.termPositions());
     }
-    
-    
+
+
     private class AuthorizedTermDocs extends FilterTermDocs {
 
         public AuthorizedTermDocs(TermDocs in) {
             super(in);
         }
-        
+
         public boolean next() throws IOException {
             boolean hasNext = super.next();
             while (hasNext && !authorized.get(super.doc())) {
@@ -67,7 +69,7 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
             }
             return hasNext;
         }
-        
+
         public boolean skipTo(int i) throws IOException {
             boolean exists = super.skipTo(i);
             while (exists && !authorized.get(doc())) {
@@ -76,7 +78,7 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
             return exists;
         }
     }
-    
+
   //---------------------< FilteredTermPositions >----------------------------
 
     /**
@@ -107,5 +109,5 @@ public class AuthorizedOnlyIndexReader extends FilterIndexReader{
         }
 
     }
-    
+
 }

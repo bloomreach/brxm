@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.repository.reviewedactions;
 
@@ -78,7 +78,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
             session.refresh(true);
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
          }
-        
+
         // steps taken by an author
         {
             node = getNode("test/myarticle/myarticle");
@@ -178,7 +178,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
-            reviewedWorkflow.commitEditableInstance();            
+            reviewedWorkflow.commitEditableInstance();
             session.save();
             session.refresh(true);
 
@@ -203,13 +203,13 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
 
 
         // Test regarding Issue HREPTWO-688
-        {  
+        {
             Node node2 = getNode("test/myarticle/hippo:request[@type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node2, "default");
             requestWorkflow.cancelRequest();
             session.save();
             session.refresh(false);
-             
+
             // now it should be possible
             node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");

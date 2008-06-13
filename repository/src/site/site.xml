@@ -51,7 +51,7 @@
     <menu name="ECM Documentation">
 
       <item name="Quickstart" href="/quickstart.html" collapse="false" inherit="top"/>
-      
+
       <item name="Run Hippo ECM" href="/run-hippo-ecm/index.html" collapse="true">
         <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
         <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
@@ -110,7 +110,7 @@
         <item name="Building with Eclipse" href="/building/eclipse.html"/>
         <item name="Building with Netbeans" href="/building/netbeans.html"/>
       </item>
-      
+
       <item name="Extend Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
@@ -125,9 +125,9 @@
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
         <item name="Integrating Hippo ECM" href="/extend-hippo-ecm/integrate-hippo-ecm/index.html" collapse="true">
           <item name="Example" href="/extend-hippo-ecm/integrate-hippo-ecm/example.html"/>
-        </item>        
+        </item>
       </item>
-      
+
     </menu>
 
     <menu name="Website development">

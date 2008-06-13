@@ -57,7 +57,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>org.hippoecm.frontend.Main</param-value>
     </init-param>
   </filter>
-  
+
   <!-- Console application-->
   <filter>
     <filter-name>Console</filter-name>
@@ -71,7 +71,7 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>builtin</param-value>
     </init-param>
   </filter>
-  
+
   <!-- HST -->
   <filter>
     <filter-name>ContextPreview</filter-name>
@@ -124,16 +124,16 @@ web-app metadata-complete="true" version="2.5" xmlns="http://java.sun.com/xml/ns
       <param-value>/live</param-value>
      </init-param>
   </filter>
-  
+
   <filter-mapping>
     <filter-name>CMS</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
+
   <filter-mapping>
     <filter-name>Console</filter-name>
     <url-pattern>/console/*</url-pattern>
-  </filter-mapping>    
+  </filter-mapping>
 
   <filter-mapping>
     <filter-name>ContextPreview</filter-name>

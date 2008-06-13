@@ -1,17 +1,17 @@
 /*
- * Copyright 2007 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.hippoecm.frontend.legacy.plugin.channel;
 
@@ -31,6 +31,9 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class Channel implements IClusterable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static int ADDED = 1;
@@ -43,7 +46,7 @@ public class Channel implements IClusterable {
     private List<INotificationListener> listeners;
     private List<ListChange<INotificationListener>> listenerChanges;
     private int listenersInUse;
-    
+
     private List<ListChange<IRequestHandler>> handlerChanges;
     private List<IRequestHandler> handlers;
     private int handlersInUse;
@@ -54,7 +57,7 @@ public class Channel implements IClusterable {
         listeners = new LinkedList<INotificationListener>();
         listenerChanges = new LinkedList<ListChange<INotificationListener>>();
         listenersInUse = 0;
-        
+
         handlers = new LinkedList<IRequestHandler>();
         handlerChanges = new LinkedList<ListChange<IRequestHandler>>();
         handlersInUse = 0;

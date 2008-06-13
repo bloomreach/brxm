@@ -48,7 +48,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- Custom CMS skin add-on -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -56,7 +56,7 @@
       <version>${parent.version}</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- Custom CMS configuration add-on-->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -64,7 +64,7 @@
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Site add-on-->
     <dependency>
       <groupId>org.hippoecm</groupId>

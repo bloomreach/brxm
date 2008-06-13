@@ -59,8 +59,8 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
     <appender-ref ref="console"/>
-  </category>  
-  
+  </category>
+
   <category additivity="true" name="org.hippoecm.hst">
     <level value="debug"/>
     <appender-ref ref="console"/>

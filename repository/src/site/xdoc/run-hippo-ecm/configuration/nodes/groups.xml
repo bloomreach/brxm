@@ -60,7 +60,7 @@ hippo:configuration
             <table>
                 <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
                 <tr><td>node name</td><td>String</td><td>yes</td><td>the group name</td></tr>
-                <tr><td>hippo:members</td><td>String</td><td>yes</td><td>the username of the user that is member of 
+                <tr><td>hippo:members</td><td>String</td><td>yes</td><td>the username of the user that is member of
                 the group. Multiple hippo:members can be set with each containing one username.</td></tr>
                 <tr><td>hippo:description</td><td>String</td><td>no</td><td>A description of the group</td></tr>
             </table>
