@@ -65,8 +65,9 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
         }
         if(prototype == null)
           throw new WorkflowException("No prototype found");
-        userSession.getRootNode().getNode(subject.getPath().substring(1)).addNode(name, HippoNodeType.NT_HANDLE);
-        Node result = ((HippoSession) userSession).copy(prototype, subject.getPath() + "/" + name + "/" + name);
+	Node newHandle = userSession.getRootNode().getNode(subject.getPath().substring(1)).addNode(name, HippoNodeType.NT_HANDLE);
+	newHandle.addMixin("hippo:hardhandle");
+        Node result = ((HippoSession) userSession).copy(prototype, newHandle.getPath() + "/" + name);
         if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
             NodeIterator children = result.getNodes(prototype.getName());
             while (children.hasNext()) {
