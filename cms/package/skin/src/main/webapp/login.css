@@ -43,7 +43,12 @@ div#loginWrapper input[type="submit"]{padding: 3px;}
 div#loginWrapper input[type="text"], div#loginWrapper input[type="password"] {padding: 2px}
 
 
-div#loginWrapper h2{margin-bottom: 60px; padding-left: 53px; font-size: 18px; font-weight: normal; color: #666666}
+div#loginWrapper h2{
+background: url("images/icons/permissions-48.png") no-repeat;
+margin-bottom: 48px; padding-left: 59px; font-size: 18px; font-weight: normal; color: #666666;
+height: 49px;
+padding-top: 7px;
+}
 div#loginWrapper h2 span{font-size: 12px; }
 div#loginWrapper h2 span{display: block}
 
@@ -53,7 +58,7 @@ background:transparent url(images/loginback.png) no-repeat scroll left top;
 height:280px;
 margin:0px auto;
 padding-left:23px;
-padding-top:50px;
+padding-top:47px;
 position:relative;
 text-align:left;
 width:280px;
@@ -62,6 +67,7 @@ width:280px;
 div#loginWrapper form label {margin-right: 15px;}
 div#loginWrapper form label.label-right { float: right; width: 180px; margin-right:0px;}
 
+div#login-input{width: 234px;}
 
 div#loginWrapper form select { 
   margin-bottom: 5px;

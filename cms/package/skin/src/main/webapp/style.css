@@ -108,22 +108,24 @@ ul.tabs a {
   float: left; 
  }
 
-ul.tabs li a{background-position: 6px 4px; background-repeat: no-repeat; font-size: 11px; padding: 8px 5px 8px 34px; background-image: url('images/tabs/edit.png')}
+ul.tabs li a{background-position: 7px 3px; background-repeat: no-repeat; font-size: 11px; padding: 8px 5px 8px 34px; background-image: url('images/icons/edit-24.png')}
 ul.tabs li.selected { background:url('images/tabactive.gif') no-repeat bottom left}
-ul.tabs li.tab0 a { background-image: url('images/tabs/home.png')}
-ul.tabs li.tab1 a { background-image: url('images/tabs/browse.png')}
-ul.tabs li.tab2 a { background-image: url('images/tabs/management.png')}
+ul.tabs li.tab0 a { background-image: url('images/icons/home-24.png')}
+ul.tabs li.tab1 a { background-image: url('images/icons/emblem-documents-24.png')}
+ul.tabs li.tab2 a { background-image: url('images/icons/groups-24.png')}
 
-ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/closetab.gif') no-repeat center center; padding: 7px; height: 14px; text-indent: -9999px}
+ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/close.png') no-repeat center center; padding: 6px; padding-right: 11px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
 
 /* Preview panel */
 /* ================================================ */
-.preview {padding: 0px; height: 33%; overflow: auto; border: 1px solid black; margin: 11px;}
+.preview {padding: 4px; height: 45%; overflow: auto; border: 1px solid black; margin: 11px;}
+.preview div.fields div{background: #f2f2f2;}
+div.preview div.fields h3{background: #d2d2d2;} 
+div.preview span.iconsSmall, div.preview td.iconsSmall{display: none}
 
-
-/* progress */
+/* Wicket Ajax indicator */
 /* ================================================ */
 span.wicket-ajax-indicator{position: absolute; top: 20px; left: 100px; display: block; visiblity: visible}
 
@@ -155,7 +157,7 @@ padding: 10px;
 #wideright{width: 787px; width: 70%; float: left; height: 66%; margin-left: 5px; background: white;}
 #wideleft{width: 787px; width: 70%; float: left; height: 66%; margin-right: 5px; background: white}
 
-.scrolllist{overflow: auto; height: 80px; padding: 2px; background-color: white}
+.scrolllist{overflow: auto; height: 100px; padding: 2px; background-color: white}
 
 .panelhead{background: #f2f2f2; width: 100%; height: 70px;}
 .panelhead td{padding: 5px;}
@@ -183,7 +185,7 @@ div.iconactions h3{margin-bottom: 16px; color: white}
 
 /* Panel Headings */
 /* ================================================ */
-.panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: center right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
+.panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: left right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
 
 .panelcontainer h2 span.actions{background-image: url("images/headings/actions.png")}
 .panelcontainer h2 span.search{background-image: url("images/headings/browse.png")}
@@ -199,55 +201,54 @@ div.iconactions h3{margin-bottom: 16px; color: white}
 /* Global Icon Management */
 /* ================================================ */
 div div ul li.icolistsmall{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
-div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666}
-div.groupsico div ul li.icolistsmall { background-image: url("images/ico/groups_ico_small.png")}
-div.usersico div ul li.icolistsmall {background-image: url("images/ico/users_ico_small.png")}
+div div ul li.icolistsmall a{display: block; padding-left: 15px; color: #666666;}
+div.groupsico div ul li.icolistsmall { background-image: url("images/icons/groups_ico_small.png")}
+div.usersico div ul li.icolistsmall {background-image: url("images/icons/users_ico_small.png")}
 div.domainsico div ul li.icolistsmall { background-image: url("images/ic/domain_ico_small.png")}
 
-table.users_ico_table tr td{background-image: url("images/ico/users_ico_small.gif")}
+table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.gif")}
 
-.iconsSmall a{display: block; padding: 2px; background-repeat: no-repeat; text-indent: -9999px; width: 16px; height: 16px;}
+.iconsSmall a{display: block; padding: 2px; background-repeat: no-repeat; text-indent: -9999px; width: 16px; height: 16px; margin-top: 2px;}
 .iconsBig a{display: block; padding: 2px; background-repeat: no-repeat;}
 
-.document_big_ico{background-image:url("images/ico/document_ico_big.gif")}
-.users_big_ico{background-image:url("images/ico/users_ico_big.png")}
-.groups_big_ico{background-image:url("images/ico/groups_ico_big.png")}
+.document_big_ico{background-image:url("images/icons/document-48.png")}
+.users_big_ico{background-image:url("images/icons/groups-48.png")}
+.groups_big_ico{background-image:url("images/icons/groups-48.png")}
 
 
-.edit_ico{background-image:url("images/ico/page_white_edit.png")}
-.delete_ico{background-image:url("images/ico/page_white_delete.png")}
-.add_ico{background-image:url("images/ico/add.png")}
-.remove_ico{background-image:url("images/ico/delete.png")}
+.edit_ico{background-image:url("images/icons/edit-16.png")}
+.delete_ico{background-image:url("images/icons/edit-delete-16.png")}
+.add_ico{background-image:url("images/icons/list-add-16.png")}
+.remove_ico{background-image:url("images/icons/edit-delete-16.png")}
 
-.up_ico{background-image:url("images/ico/arrow_up.png")}
-.down_ico{background-image:url("images/ico/arrow_down.png")}
+.up_ico{background-image:url("images/icons/go-up.png")}
+.down_ico{background-image:url("images/icons/go-down.png")}
 
-.revert_ico{background-image:url("images/ico/page_white_delete.png")}
-.save_ico{background-image:url("images/ico/page_save.png")}
+.revert_ico{background-image:url("images/icons/document-revert-16.png")}
+.save_ico{background-image:url("images/icons/document-save-16.png")}
 
-.templateitemup_ico{background-image:url("images/ico/arrow_up.png")}
-.templateitemdown_ico{background-image:url("images/ico/arrow_down.png")}
+.templateitemup_ico{background-image:url("images/icons/go-up.png")}
+.templateitemdown_ico{background-image:url("images/icons/go-down.png")}
 
-.reqdelete_ico{background-image:url("images/ico/page_white_delete.png")}
-.reqpublish_ico{background-image:url("images/ico/page_white_gear.png")}
-.reqdepublish_ico{background-image:url("images/ico/world_delete.png")}
-.publish_ico{background-image:url("images/ico/world_add.png")}
-.depublish_ico{background-image:url("images/ico/world_delete.png")}
+.reqdelete_ico{background-image:url("images/icons/workflow-requestdelete-16.png")}
+.reqpublish_ico{background-image:url("images/icons/workflow-requestpublish-16.png")}
+.reqdepublish_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
+.publish_ico{background-image:url("images/icons/publish-16.png")}
+.depublish_ico{background-image:url("images/icons/unplublish-16.png")}
 
-.reqcancel{background-image:url("images/ico/page_white_gear.png")}
-.reqaccept{background-image:url("images/ico/thumb_up.png")}
-.reqreject{background-image:url("images/ico/thumb_down.png")}
+.reqcancel_ico{background-image:url("images/icons/unpublish-16.png")}
+.reqaccept_ico{background-image:url("images/icons/workflow-accept-16.png")}
+.reqreject_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
 
-.adddocument_ico{background-image:url("images/ico/page_white_add.png")}
-.addfolder_ico{background-image:url("images/ico/folder_add.png")}
-.addextended_ico{background-image:url("images/ico/folder_brick.png")}
+.adddocument_ico{background-image:url("images/icons/document-new-16.png")}
+.addfolder_ico{background-image:url("images/icons/folder-new-16.png")}
+.addextended_ico{background-image:url("images/icons/folder-extended-new-16.png")}
 
-.copymodelrequest_ico{background-image:url("images/ico/page_white_copy.png")}
-.editmodel_ico{background-image:url("images/ico/page_white_edit.png")}
-.copymodelrequest_ico{background-image:url("images/ico/page_white_copy.png")}
-.createnamespace_ico{background-image:url("images/ico/page_white_add.png")}
-.modelreq_ico{background-image:url("images/ico/page_white_gear.png")}
-.createtyperequest_ico{background-image:url("images/ico/page_white_add.png")}
+.copymodelrequest_ico{background-image:url("images/icons/document-copy-16.png")}
+.editmodel_ico{background-image:url("images/icons/edit-16.png")}
+.createnamespace_ico{background-image:url("images/icons/document-new-16.png")}
+.modelreq_ico{background-image:url("images/icons/refresh-16.png")}
+.createtyperequest_ico{background-image:url("images/icons/document-new-16.png")}
 
 
 /* Wicket standard Dialog overwrite */
@@ -283,7 +284,7 @@ body.dialog div.dialogButtons{padding-top: 50px}
 /* Breadcrumbs */
 /* ================================================ */
 .Breadcrumb{
-left:238px;
+left:370px;
 position:absolute;
 top:39px;
 z-index:100;
@@ -298,8 +299,8 @@ span.documentStatus{font-weight: normal; padding-left: 3px;}
 
 /* Paging */
 /* ================================================ */
-a.previous{background: url("images/arrowleft.gif") no-repeat center left; padding: 8px; padding-right: 0px;}
-a.next{background: url("images/arrowright.gif") no-repeat center right; padding: 8px; padding-left: 0px}
+a.previous{background: url("images/icons/go-previous-16.png") no-repeat center left; padding: 8px; padding-left: 20px;}
+a.next{background: url("images/icons/go-next-16.png") no-repeat center right; padding: 8px; padding-right: 20px}
 
 
 /* Versioning */
@@ -359,13 +360,13 @@ overflow: auto;
 }
 
 /* temp icon hack */
-li.string a{background-image:url("images/ico/page_white_gear.png")}
-li.html a{background-image:url("images/ico/page_white_gear.png")}
-li.boolean a{background-image:url("images/ico/page_white_gear.png")}
-li.date a{background-image:url("images/ico/page_white_gear.png")}
-li.hippo_image a{background-image:url("images/ico/page_white_gear.png")}
-li.hippo_query a{background-image:url("images/ico/page_white_gear.png")}
-li.hippo_facetselect a{background-image:url("images/ico/page_white_gear.png")}
+li.string a{background-image:url("images/icons/workflow-16.png")}
+li.html a{background-image:url("images/icons/workflow-16.png")}
+li.boolean a{background-image:url("images/icons/workflow-16.png")}
+li.date a{background-image:url("images/icons/workflow-16.png")}
+li.hippo_image a{background-image:url("images/icons/workflow-16.png")}
+li.hippo_query a{background-image:url("images/icons/workflow-16.png")}
+li.hippo_facetselect a{background-image:url("images/icons/workflow-16.png")}
 
 /* edit template item */
 div#templateitemedit{background: none;width: 200px;}
@@ -378,7 +379,7 @@ td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; positio
 .editor table tr td{vertical-align: top;}
 
 div.fields h3{
-background: url("images/fieldHeadBack.png") repeat-x; 
+background: #666666; 
 padding: 4px;
 color: white;
 font-weight: bold;
@@ -386,10 +387,10 @@ font-size: 11px;
 margin-bottom: 5px;
 }
 
-
 div.fields input[type="text"]{width: 100px;}
 span.actionspanel ul li{background: none}
 div.fields table{width: 100%}
+div.fields div {padding: 2px}
 
 /* Xinha */
 /* ================================================ */
@@ -484,7 +485,7 @@ top: 1px;
 .dialog button{
   background-image: url(button-background.png);
 }
-
+/* keep xinha from taking over the wrong styles */
 div.fields table.htmlarea tr td, .htmlarea div.toolbar {
 padding:0px;
 }
@@ -543,13 +544,13 @@ margin-top: 10px;
 /* User Management */
 /* ================================================ */
 
-.iconListSmall li{margin-bottom: 2px;}
-.iconListSmall li a{background-repeat: no-repeat; display: block; padding: 2px; padding-left: 18px; color: #666666}
+.iconListSmall li{margin-bottom: 3px;}
+.iconListSmall li a{background-repeat: no-repeat; background-position: left center; display: block; padding: 4px; padding-left: 20px; color: #666666}
 
-.users_list_ico li a{background-image:url("images/ico/users_ico_small.gif")}
-.groups_list_ico li a{background-image:url("images/ico/groups_ico_small.gif")}
-.domains_list_ico li a{background-image:url("images/ico/domain_ico_small.gif")}
-.roles_list_ico li a{background-image:url("images/ico/roles_ico_small.gif")}
+.users_list_ico li a{background-image:url("images/icons/user-16.png")}
+.groups_list_ico li a{background-image:url("images/icons/groups-16.png")}
+.domains_list_ico li a{background-image:url("images/icons/domain-16.png")}
+.roles_list_ico li a{background-image:url("images/icons/permissions-16.png")}
 
 .userGroupsList h3{display: none}
 
