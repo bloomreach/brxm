@@ -22,7 +22,9 @@
     <title>Eclipse tips&amp;tricks</title>
   </properties>
   <body>
-    <section name="Eclipse tips &amp; tricks"> When you have finished <a href="eclipse.html">Setting up eclipse</a>
+    <section name="Eclipse tips &amp; tricks"> 
+      <p>
+      When you have finished <a href="eclipse.html">Setting up eclipse</a>
       you'll be able to run and debug Hippo ECM from within Eclipse. However Hippo ECM is a very active project
       with many updates every day. Keeping up to date with the latest developments means regularly synchronizing
       with the latest version on the trunk and incorporating changes into your local source tree. The Eclipse
@@ -37,6 +39,7 @@
       directory. If you absolutely need to do so, first disable automatic building in Eclipse. And don't forget
       to refresh all projects after reenabling it again.
       </div>
+      </p>
       <subsection name="Customize your Eclipse perspective">
         <p> Use 'Window -> show view' to open at least the following views: </p>
         <ul>
