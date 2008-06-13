@@ -34,6 +34,7 @@ public class BrowserPerspective extends Perspective {
         addExtensionPoint("listPlugin");
         addExtensionPoint("workflowsPlugin");
         addExtensionPoint("versionPlugin");
+        addExtensionPoint("versionTogglePlugin");
     }
 
     @Override

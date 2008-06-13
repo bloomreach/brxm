@@ -31,6 +31,7 @@
       </h2>
       <div class="panel">
         <div class="iconactions" wicket:id="workflowsPlugin">workflow here</div>
+        <div wicket:id="versionTogglePlugin">&#160;</div>
       </div>
     </div>
     
@@ -41,14 +42,16 @@
       <div class="panel nopadding">
         <div wicket:id="listPlugin" class="plugin Doclist">documents here</div>
       </div>
-      <div class="slidercontrol">
-        <a href="#">&nbsp;</a>
-      </div>
-      <div class="panel nopadding">
-        <div class="plugin versioning">
-          <div wicket:id="versionPlugin"> </div>
-        </div>
-      </div>
+      <div id="versioningWidget"> 
+	      <div class="slidercontrol">
+	        <a href="#">&nbsp;</a>
+	      </div>
+	      <div class="panel nopadding">
+	        <div class="plugin versioning">
+	          <div wicket:id="versionPlugin"> </div>
+	        </div>
+	      </div>
+	  </div>
     </div>
   </wicket:panel>
   
