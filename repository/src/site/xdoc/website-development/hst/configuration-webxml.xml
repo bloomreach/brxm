@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+        <section name="HST Configuration in web.xml">
+        <p>This example web.xml shows the installation of the hst.properties, 
+            of one 'preview' web filter and a servlet for binaries.</p>
+            <source><![CDATA[  <!-- General configuration -->
+  <context-param>
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
+
+  <!-- Example of one HST filter pointing to a preview path in the repository. -->
+  <filter>
+    <filter-name>previewContext</filter-name>
+    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
+    <!-- to omit URL mapping functionality use:  
+      <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class> 
+    -->
+    <init-param>
+      <description>
+        The name of the context object created in the request scope. 
+        Defaults to 'context'.
+      </description>
+      <param-name>attributeName</param-name>
+      <param-value>context</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The part of the url this filter matches to, so must match 
+        the actual url-pattern of the filter-mapping below.
+      </description>      
+      <param-name>urlBasePath</param-name>
+      <param-value>/preview</param-value>
+    </init-param>
+    <init-param>
+      <description>
+        The repository base path to bind the context to. 
+        Defaults to the same value as urlBasePath.
+      </description>      
+      <param-name>repositoryBaseLocation</param-name>
+      <param-value>/preview</param-value>
+    </init-param>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>previewContext</filter-name>
+    <url-pattern>/preview/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  
+  <!-- Installation of a servlet serving binaries from repository. -->
+  <servlet>
+    <servlet-name>BinariesServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>BinariesServlet</servlet-name>
+    <url-pattern>/binaries/*</url-pattern>
+  </servlet-mapping>]]></source>
+         
+      </section>
+
+    </body>
+</document>

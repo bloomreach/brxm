@@ -24,44 +24,44 @@
     <body>
       <section name="HST Configuration">
         <p>
-          In the application's web deployment descriptor (web.xml), a general HST configuration file is set
-          up holding configuration for the connection to the repository and also taglib configuration. You
+          In the application's web deployment descriptor (web.xml), a general HST configuration file is set 
+          up holding configuration for the connection to the repository and also taglib configuration. You 
           may add your own configuration files at will.</p>
-        <p>
-          Secondly, the basic HST functionality is set up by configuring one or more filters in your
-          web.xml. This applies mainly to making the JSP expression language available.</p>
-         <p>
+        <p>  
+          Secondly, the basic HST functionality is set up by configuring one or more filters in your 
+          web.xml. These filters will make access to the repository from your jsp files available.</p>
+         <p> 
           Thirdly, when wanting to view images or other binaries, a servlet for binaries has to be set up
-          in the web.xml as well.
+          in the web.xml as well. 
         </p>
         <subsection name="General configuration file(s)">
           <p>Repository and taglib configuration is set up in a separate properties file.
-            The file plus an accompanying configuration object is set up in web.xml with a combination
+            The file plus an accompanying configuration object is set up in web.xml with a combination 
             <code>&lt;context-param&gt;</code> and <code>&lt;listener&gt;</code></p>
-           <p>The context parameter is called <code>configurationFiles</code> which represents a
-              comma-separated list of configuration file locations. The object's listener class is
+           <p>The context parameter is called <code>configurationFiles</code> which represents a 
+              comma-separated list of configuration file locations. The object's listener class is 
               <code>org.hippoecm.hst.core.HSTConfiguration</code>.
            </p>
-          <p>For an example <a href="configuration-example.html#1">see here!</a></p>
+          <p>To set up For an example <a href="configuration-hstproperties.html">see here!</a></p>      
         </subsection>
         <subsection name="Configuration of your HST web filter(s)">
             <p>To use the HST, one or more webfilters should be installed in your web application
             using the <code>&lt;filter&gt;</code> tag.</p>
             <p>The main function of an HST web filter is to provide a object in request scope that
-            is able to access the repository. This object, by default identified by the name <em>context</em>,
-            represents a certain location in the repository. It can easily be used from within a jsp using
-            expression language, using for example <code>${context.title}</code> to retrieve the <code>title</code>
+            is able to access the repository. This object, by default identified by the name <em>context</em>, 
+            represents a certain location in the repository. It can easily be used from within a jsp using 
+            expression language, using for example <code>${context.title}</code> to retrieve the <code>title</code> 
             property of the current context. See <a href="el-index.html">here</a> for more on the expression language
             and usage of the context.</p>
           <h4>Which filter: URL mapping or not?</h4>
           <p>
-            If you want to be using the URL mapping functionality (<a href="url-mapping.html">see here</a>),
-            filter(s) of class <code>org.hippoecm.hst.URLMappingContextFilter</code> should be installed.
+            If you want to be using the URL mapping functionality (<a href="url-mapping.html">see here</a>),  
+            filter(s) of class <code>org.hippoecm.hst.URLMappingContextFilter</code> should be installed.        
             For regular jsp site development, <code>org.hippoecm.hst.ContextFilter</code>
-            should be used.<br/>
+            should be used.<br/> 
           </p>
           <h4>The filter's init parameters</h4>
-          <p>As the context object should point to a location in your repository, this should be configured
+          <p>As the context object should point to a location in your repository, this should be configured 
             by init parameters. The <code>urlBasePath</code> and <code>repositoryBaseLocation</code> are the ones
             that describe the relation between the first part of the url and the location in the repository.
             Note that if these are the same (e.g. <code>/preview</code> url points to <code>/preview</code> location,
@@ -76,52 +76,45 @@
               <td>attributeName</td>
               <td>The name of the context object created in the request scope.</td>
               <td>context</td>
-            </tr>
-            <tr>
-              <td>ignoreExtension</td>
-              <td>A list of extensions that the filter will not create context objects
-                for, if the URL ends with such an extension.
-              </td>
-              <td>ico,gif,jpg,jpeg,svg,png,css,js</td>
-            </tr>
+            </tr>                 
             <tr>
               <td>repositoryBaseLocation</td>
               <td>The repository base path to bind the context to.</td>
               <td>Same value as urlBasePath</td>
-            </tr>
+            </tr>                 
             <tr>
               <td>urlBasePath</td>
-              <td>The part of the url this filter matches to, so must match
-                the actual url-pattern of the filter-mapping.
-                <em>Only for URLMappingContextFilter!</em></td>
+              <td>The part of the url this filter matches to, so must match 
+                the actual URL pattern of the filter mapping in the web.xml. 
+                <strong>Only for URLMappingContextFilter!</strong></td>
               <td>/</td>
             </tr>
-          </table>
-
+          </table>  
+          
           <h4>One HST filter or more?</h4>
           <p>Depending on the structure of repository content and application specific
-            decisions, you may want to install more than one filter.</p>
+            decisions, you may want to install more than one filter.</p> 
           <p>For instance, it is common practice to have a <code>/preview</code> and a <code>/live</code> location
             in your repository, containing <code>unpublished</code> and <code>published</code>
             documents, respectively. In this case, one <code>previewContext</code> and one
             <code>liveContext</code> are to be installed, matching <code>/preview</code> and <code>/live</code>
             in the URL. Their attribute names should be identical, so the jsp code doesn't have to change!</p>
-           <p>In another case, if you want to have just one application pointing to the live environment,
+           <p>In another case, if you want to have just one application pointing to the live environment, 
              just install one <code>context</code> pointing to <code>/live</code>!</p>
         </subsection>
-
+        
         <a name="BinariesServlet"></a>
         <subsection name="Configuration of the servlet for binaries">
-          <p>A separate servlet is available in the HST, that can serve binaries such as images and documents
+          <p>A separate servlet is available in the HST, that can serve binaries such as images and documents 
             from any location within the repository based on the URL path it recieves.</p>
           <p>If you need binaries in your application, use a regular <code>&lt;servlet&gt;</code>
-            configuration with class <code>org.hippoecm.hst.BinariesServlet</code>.
-            Set up a descriptive <code>&lt;url-pattern&gt;</code> like <code>/binaries/*</code>,
-            that you will have to use as prefix in your jsp's, for instance in the in a the <code>src</code>
-            attribute of the &lt;img&gt; tag (<a href="binaries.html">more here</a>).</p>
+            configuration with class <code>org.hippoecm.hst.BinariesServlet</code>. 
+            Set up a descriptive <code>&lt;url-pattern&gt;</code> like <code>/binaries/*</code>, 
+            that you will have to use as prefix in your jsp's, for instance in the in a the <code>src</code> 
+            attribute of the &lt;img&gt; tag (<a href="binaries.html">more here</a>).</p>  
         </subsection>
-
-        <p>For an example web.xml, <a href="configuration-example.html#2">see here!</a></p>
+         
+        <p>For an example web.xml, <a href="configuration-webxml.html#2">see here!</a></p>      
       </section>
 
     </body>

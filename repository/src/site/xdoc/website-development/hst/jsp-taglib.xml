@@ -27,53 +27,70 @@
       <subsection name="Importing the taglib">
         <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> within the
           included HST jar file (see <a href="include.html">include the HST</a>) and should be found
-          by your web application. The URI of the taglib is
+          by your web server. The URI of the taglib is
           <code>http://www.hippoecm.org/jsp/hst</code> so to import the taglib in your jsp use the
           piece of code below. As prefix we recommend <code>hst</code>, as a simple <code>h</code>
           is commonly used for jsf html tags.</p>
         <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>]]></source>
       </subsection>
-      <subsection name="Tags">
-        <p>The following tags are available:</p>
+      <subsection name="Tags"> 
+        <p>The following tags are available:</p> 
         <table cellpadding="3" cellspacing="0">
           <tr><th>Tag</th><th>Decription</th></tr>
           <tr>
             <td><pre>&lt;hst:content&gt;</pre></td>
             <td>Gets the value of a property from a context object.</td>
+            <td>URL mapping needed?</td>
           </tr>
           <tr>
             <td><pre>&lt;hst:context&gt;</pre></td>
-            <td>Creates a new context objects from an existing one and a location.</td></tr>
+            <td>Creates a new context object from an existing one and a location.</td>
+            <td>No</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:include&gt;</pre></td>
-            <td>Includes in the page the output for a certain repository location, as found via
-              the URL mapping functionality.</td></tr>
+            <td>Includes in the page the output for a certain repository location, as found via 
+              the URL mapping functionality.</td>
+            <td>Yes</td>
+          </tr> 
           <tr>
             <td><pre>&lt;hst:encodeURL&gt;</pre></td>
-            <td>Encodes a repository path location to a URL valid for URL mapping.</td></tr>
+            <td>Encodes a repository path location to a URL valid for URL mapping.</td>
+            <td>Yes</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:documents&gt;</pre></td>
-            <td>Shows a list of documents.</td></tr>
+            <td>Shows a list of documents.</td>
+            <td>No</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:articles&gt;</pre></td>
-            <td>Shows a list of articles.</td></tr>
+            <td>Shows a list of articles.</td>
+            <td>No</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:news&gt;</pre></td>
-            <td>Shows a list of news items.</td></tr>
+            <td>Shows a list of news items.</td>
+            <td>No</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:events&gt;</pre></td>
-            <td>Shows a list of events.</td></tr>
+            <td>Shows a list of events.</td>
+            <td>No</td>
+          </tr>
           <tr>
             <td><pre>&lt;hst:menu&gt;</pre></td>
             <td>Shows a dynamic menu as read from content in the repository.</td>
+            <td>Not in case of custom output.</td>
           </tr>
           <tr>
             <td><pre>&lt;hst:siteMap&gt;</pre></td>
             <td>Shows a dynamic site map as read from content in the repository.</td>
+            <td>Not in case of custom output.</td>
           </tr>
         </table>
-        <p>No extensive documentation is available as the taglib is under development.</p>
       </subsection>
     </section>
   </body>
 </document>
+
