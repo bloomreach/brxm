@@ -47,7 +47,7 @@
         <p>
         Click on the 'New user' button (listing 1) in the left pane of the management perspective. A 
         text input field will appear where you can type the new user's username (listing 2). 
-        Press enter to create the new user instance.<br/>
+        Press enter to create the new user instance and load the edit user form.<br/>
         The new user will appear in the users list (left pane) with an asterisk marking it 
         as new (listing 3). 
         </p>
@@ -71,8 +71,8 @@
           </tr>
         </table>
         <p>
-          The new user is automatically selected which will load the user-edit
-          form in the middle pane. Above this form two button will appear, "ok" and "cancel".
+          The new user is automatically selected which will load the edit-user-form in the
+          middle pane. Above this form two buttons will appear, "ok" and "cancel".
           Pressing "ok" on a *new* user will persist it in the repository and the asterisk will 
           disappear. Clicking "cancel" on a *new* user will remove it completly. 
           <br/>
@@ -80,11 +80,52 @@
           or simply unload the edit-form again.
           <br/>
           Only after a user has been persisted for the first time, you will be able to configure
-          it as a member of one or more groups. You can easily do this by dragging a group from 
-          the groups list (left pane) into the list beneath the users form. (listing 4)
+          it as a member of one or more groups. You can do this by dragging a group from 
+          the groups list (left pane) into the list beneath the users form.
         </p>
-        
       </subsection>
+      <subsection name="Creating a new group">
+        <p>
+          Click on the 'New group' button (listing 4) in the left pane of the management perspective. A 
+          text input field will appear where you can type the new group's name (listing 5). 
+          Press enter to create the new group instance and load the edit group form.<br/>
+          The new group will appear in the groups list (left pane) with an asterisk marking it 
+          as new (listing 3). 
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newgroup1.png"/>
+              <br/>
+              <em style="width:230px;display:block;">Click on the 'New group' button to add a group</em>
+            </td>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newgroup2.png"/>
+              <br/>
+              <em style="width:230px;display:block;">Type in the new group name and press enter to confirm</em>
+            </td>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newgroup3.png"/>
+              <br/>
+              <em style="width:230px;display:block;">The new group will appear in the list, marked with an asterisk</em>
+            </td>
+          </tr>
+        </table>
+        <p>
+          The new group is automatically selected which will load the edit-group-form in the 
+          middle pane. Above this form two buttons will appear, "ok" and "cancel".
+          Pressing "ok" on a *new* group will persist it in the repository and the asterisk will 
+          disappear. Clicking "cancel" on a *new* group will remove it completly. 
+          <br/>
+          Clicking "ok" or "cancel" on an existing group will either save all pending changes, 
+          or simply unload the edit-form again.
+          <br/>
+          Only after a group has been persisted for the first time, you will be able to configure
+          it's user-members. You can do this by dragging a user from 
+          the users list (left pane) into the list beneath the edit-group-form.
+        </p>
+      </subsection>
+      
       <p align="center">
         <a href="creating_a_document_type_and_template.html">&lt;- Previous: Creating a document type and template</a>&#160;&#160;&#160;&#160;&#160;<a href="workflow.html">Next: Workflow -></a>
       </p>
