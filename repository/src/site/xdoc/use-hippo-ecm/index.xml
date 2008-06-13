@@ -56,9 +56,9 @@
             </li>
           </ul>
         </subsection>
-        <subsection name="Hippo CMS7">
+        <subsection name="Hippo CMS 7">
           <p>
-            Hippo CMS7 is the frontend application. It is implemented with <a href="http://wicket.apache.org">Apache Wicket</a> using
+            Hippo CMS 7 is the frontend application. It is implemented with <a href="http://wicket.apache.org">Apache Wicket</a> using
             a <a href="../extend-hippo-ecm/plugins/index.html">custom plugin framework</a> which is configured in Hippo Repository.
             We have created <a href="tour/index.html">a tour</a> to show you the key concepts you need to know to start using the CMS.
           </p>
