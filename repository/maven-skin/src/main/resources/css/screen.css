@@ -74,3 +74,10 @@ div#content_main ol {
 
 dl dt{font-weight:bold; font-size: 11px}
 dl dd{margin-left: 15px;}
+
+.quickstart{background: url("images/frontpage/quickstart.png") no-repeat}
+.run{background: url("images/frontpage/run.png") no-repeat}
+.use{background: url("images/frontpage/use.png") no-repeat}
+.build{background: url("images/frontpage/build.png") no-repeat}
+.extend{background: url("images/frontpage/extend.png") no-repeat}
+.integrate{background: url("images/frontpage/integrate.png") no-repeat}
