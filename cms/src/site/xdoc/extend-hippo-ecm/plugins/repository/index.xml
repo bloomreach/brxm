@@ -23,10 +23,10 @@
     </properties>
     <body>
       <section name="Repository Plugins">
-
+<p>
 The repository can be extended with additional functionality in a number of
 explicit ways.  It allows the addition of:
-
+</p>
 <ul>
 <li><a href="../../../run-hippo-ecm/repository-bootstrap.html">Default content,
 pre-defining a namespace, and node-types</a>;</li>
