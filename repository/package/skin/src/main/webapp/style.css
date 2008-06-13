@@ -367,6 +367,8 @@ width: 181px;
 padding-top: 35px;
 }
 span.templateactions ul li a span{padding-left: 0px}
+div.fields div span.templateactions ul li{padding: 0px} 
+
 
 .templatedetails{
 padding: 4px;
