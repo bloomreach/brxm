@@ -113,7 +113,7 @@ ul.tabs li.selected { background:url('images/tabactive.gif') no-repeat bottom le
 ul.tabs li.tab0 a { background-image: url('images/icons/home-24.png')}
 ul.tabs li.tab1 a { background-image: url('images/icons/emblem-documents-24.png')}
 ul.tabs li.tab2 a { background-image: url('images/icons/groups-24.png')}
-
+ul.tabs li.tab3{margin-left: 50px}
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/close.png') no-repeat center center; padding: 6px; padding-right: 11px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
@@ -236,8 +236,8 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 .add_ico{background-image:url("images/icons/list-add-16.png")}
 .remove_ico{background-image:url("images/icons/edit-delete-16.png")}
 
-.up_ico{background-image:url("images/icons/go-up.png")}
-.down_ico{background-image:url("images/icons/go-down.png")}
+.up_ico{background-image:url("images/icons/go-up-16.png")}
+.down_ico{background-image:url("images/icons/go-down-16.png")}
 
 .revert_ico{background-image:url("images/icons/document-revert-16.png")}
 .save_ico{background-image:url("images/icons/document-save-16.png")}
@@ -251,7 +251,7 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 .publish_ico{background-image:url("images/icons/publish-16.png")}
 .depublish_ico{background-image:url("images/icons/unplublish-16.png")}
 
-.reqcancel_ico{background-image:url("images/icons/unpublish-16.png")}
+.reqcancel_ico{background-image:url("images/icons/unplublish-16.png")}
 .reqaccept_ico{background-image:url("images/icons/workflow-accept-16.png")}
 .reqreject_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
 
