@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;

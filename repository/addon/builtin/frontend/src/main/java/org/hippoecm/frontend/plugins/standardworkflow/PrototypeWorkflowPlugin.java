@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,9 +29,9 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.FolderDialog;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.PrototypeDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.FolderDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.PrototypeDialog;
 import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;

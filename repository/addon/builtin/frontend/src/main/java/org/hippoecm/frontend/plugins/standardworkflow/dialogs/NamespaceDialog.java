@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
