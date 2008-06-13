@@ -26,7 +26,9 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.ISO9075Helper;
 
+@Deprecated
 public class PrototypeWorkflowImpl implements PrototypeWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -42,6 +44,7 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
     }
 
     public String addDocument(String name) throws WorkflowException, RepositoryException, RemoteException {
+        name = ISO9075Helper.encodeLocalName(name);
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
@@ -78,6 +81,7 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
     }
 
     public String addFolder(String name) throws WorkflowException, RepositoryException, RemoteException {
+        name = ISO9075Helper.encodeLocalName(name);
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
@@ -92,6 +96,7 @@ public class PrototypeWorkflowImpl implements PrototypeWorkflow {
     }
 
     public String addFolder(String name, String prototypePath) throws WorkflowException, RepositoryException, RemoteException {
+        name = ISO9075Helper.encodeLocalName(name);
         if (!subject.isNodeType(HippoNodeType.NT_PROTOTYPED))
             throw new WorkflowException("Invalid node type for workflow");
 
