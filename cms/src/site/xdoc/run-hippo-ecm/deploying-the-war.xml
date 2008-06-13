@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>WAR deployments</title>
+    </properties>
+    <body>
+        <section name="Deploying the Hippo ECM WAR">
+
+            <subsection name="Obtain the packaged product">
+              <p>
+                Hippo ECM is still under development, and therefore there are no released packages available at
+                this time.  You can either build the packages yourself using a
+                <a href="../extend-hippo-ecm/building/maven.html">Maven build</a>.  Or you can download a
+                current snapshot version from:
+              </p>
+<source>
+http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-war/2.01.00-SNAPSHOT/hippo-ecm-package-2.01.00-SNAPSHOT.war
+</source>
+            </subsection>
+
+            <subsection name="Deploying in Tomcat 6.0">
+                <ol>
+                    <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
+                    <li>Unpack the zip</li>
+                    <li>Remove the <code>apache-tomcat-6.0.16\webapps\ROOT</code> folder</li>
+                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
+                    <li>Copy the WAR from the link above to apache-tomcat-6.0.16\webapps\ROOT.war</li>
+                    <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
+                    <li>Open your browser and surf to http://localhost:8080/</li>
+                </ol>
+            </subsection>
+            
+        </section>
+    </body>
+</document>

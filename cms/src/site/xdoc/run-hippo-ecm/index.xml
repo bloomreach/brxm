@@ -23,90 +23,36 @@
     </properties>
     <body>
       <section name="Running Hippo ECM">
-
+        <p>
+          Hippo ECM can be downloaded and run without downloading the source code and building. These pages 
+          describe how to get Hippo ECM up and running and how to configure your running application.
+        </p>
         <ul>
-          <li>
-            <a href="#Quick_Start">Quick Start</a>
-            - Get started with Hippo ECM quickly
-          </li>
           <li>
             <a href="requirements.html">Requirements</a>
             - What you need to run Hippo ECM
           </li>
           <li>
-            <a href="deploying-the-wars.html">Deploying the packaged products</a>
-            - Run Hippo ECM in your application server of choice
+            <a href="deploying-the-war.html">Deploying the Hippo ECM WAR</a>
+            - Run Hippo ECM in Tomcat 6.0
           </li>
           <li>
-            <a href="repository-bootstrap.html">Bootstrapping the Repository</a>
-            - How to get your initial data in
+            <a href="deploying-the-ear.html">Deploying the Hippo ECM EAR</a>
+            - Run Hippo ECM in Sun Glassfish V2
           </li>
           <li>
-            <a href="installing-plugins.html">Installing plugins from the forge</a>
-            - How to install plugins that are available on the Hippo forge
+            <a href="repository-bootstrap.html">Bootstrapping Hippo ECM</a>
+            - How to get your initial data in the Hippo Repository
+          </li>
+          <li>
+            <a href="installing-plugins.html">Installing plugins from the Hippo Forge</a>
+            - How to install plugins that are available on the Hippo Forge
           </li>
           <li>
             <a href="configuration/index.html">Configuration</a>
             - What you can configure, and how
           </li>
         </ul>
-
       </section>
-      <section name="Quick Start">
-
-        <p>
-          At this moment Hippo ECM is still in a development stage. To run it,
-          it is necessary to checkout the sources from the SVN repository, and build
-          them using Maven.  A full guide can be found under
-          <a href="../extend-hippo-ecm/building/maven.html">Building with Maven</a>.
-          The short version below is targeted at those who know what they are doing.
-        </p>
-
-        <p>
-        </p>
-
-        <subsection name="Build Hippo ECM and deploy using Maven and Jetty">
-
-          <p>Checkout the sources:</p>
-<source>
-~/> svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
-</source>
-
-          <p>Build Hippo ECM:</p>
-<source>
-~/> cd hippo-ecm
-~/hippo-ecm> mvn install
-</source>
-
-          <p>Run Hippo ECM:</p>
-<source>
-~/hippo-ecm> cd package/war
-~/hippo-ecm/package/war> mvn clean jetty:run-war
-</source>
-          <p>
-            Finally, direct your browser to <a href="http://localhost:8080/">http://localhost:8080/</a>.
-          </p>
-        </subsection>
-
-        <subsection name="Build Hippo ECM and deploy in application container">
-
-<source>
-~/> svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
-~/> cd hippo-ecm
-~/> mvn package
-</source>
-
-          <p>
-            You can now use the EAR file produced in the file
-            <code>hippo-ecm/package/ear/target/hippo-ecm-package-ear-2.01.00-dev.ear</code>
-            to deploy in your application container, the exact procedure depends on your
-            application container.  For Glassfish execute the procedure:
-          </p>
-
-<source>
-asadmin deploy package/ear/target/hippo-ecm-package-ear-2.01.00-dev.ear
-</source>
-      </subsection>
-    </section>
   </body>
 </document>

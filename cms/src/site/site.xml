@@ -54,7 +54,8 @@
 
       <item name="Run Hippo ECM" href="/run-hippo-ecm/index.html" collapse="true">
         <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
-        <item name="Deploying the WARs" href="/run-hippo-ecm/deploying-the-wars.html"/>
+        <item name="Deploying the WAR" href="/run-hippo-ecm/deploying-the-war.html"/>
+        <item name="Deploying the EAR" href="/run-hippo-ecm/deploying-the-ear.html"/>
         <item name="Bootstrapping the Repository" href="/run-hippo-ecm/repository-bootstrap.html"/>
         <item name="Installing Plugins" href="/run-hippo-ecm/installing-plugins.html"/>
         <item name="Configuration" href="/run-hippo-ecm/configuration/index.html" collapse="true">
