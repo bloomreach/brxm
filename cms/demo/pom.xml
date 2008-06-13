@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>${ecm.version}</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -30,7 +30,6 @@
   <description>Hippo ECM demo</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-demo</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -48,6 +47,7 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
   </build>
 
 </project>

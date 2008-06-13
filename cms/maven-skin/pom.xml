@@ -20,12 +20,11 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>${ecm.version}</version>
     <relativePath>..</relativePath>
   </parent>
 
   <artifactId>hippo-ecm-maven-skin</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
   <name>Hippo ECM Maven Site Skin</name>
   <description>Maven site skin for Hippo ECM documentation</description>
 
@@ -35,4 +34,7 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/maven-skin</url>
   </scm>
 
+  <build>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
+  </build>
 </project>

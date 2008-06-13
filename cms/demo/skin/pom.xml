@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-demo</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>${ecm.version}</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -34,14 +34,31 @@
   <groupId>org.hippoecm</groupId>
   <packaging>war</packaging>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
-
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/demo/skin</url>
   </scm>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+          </manifest>
+          <archive>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
