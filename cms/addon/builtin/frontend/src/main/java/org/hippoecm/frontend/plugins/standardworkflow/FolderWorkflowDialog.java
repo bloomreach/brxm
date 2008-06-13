@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.LinkedList;
 

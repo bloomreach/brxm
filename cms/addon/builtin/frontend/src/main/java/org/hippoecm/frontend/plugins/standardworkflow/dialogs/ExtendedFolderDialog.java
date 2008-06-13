@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -33,7 +33,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standardworkflow.PrototypeWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.PrototypeWorkflow;
 import org.slf4j.Logger;

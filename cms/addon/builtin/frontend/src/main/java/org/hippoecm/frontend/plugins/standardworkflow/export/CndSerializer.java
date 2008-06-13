@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
+package org.hippoecm.frontend.plugins.standardworkflow.export;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,10 +27,10 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.FieldDescriptor;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

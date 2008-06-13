@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow;
+package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -23,7 +23,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs.NamespaceDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
 
 public class NamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;

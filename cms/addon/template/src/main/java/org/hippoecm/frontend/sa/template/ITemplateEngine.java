@@ -18,7 +18,7 @@ package org.hippoecm.frontend.sa.template;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 
 public interface ITemplateEngine extends IClusterable {
 

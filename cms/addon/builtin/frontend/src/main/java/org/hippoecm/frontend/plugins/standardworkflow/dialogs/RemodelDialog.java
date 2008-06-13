@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import java.util.Map;
 
@@ -28,10 +28,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.RemodelWorkflowPlugin;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.export.CndSerializer;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.export.NamespaceUpdater;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
+import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
+import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
+package org.hippoecm.frontend.plugins.standardworkflow.export;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.FieldDescriptor;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.sa.plugins.standardworkflow.types.TypeDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 

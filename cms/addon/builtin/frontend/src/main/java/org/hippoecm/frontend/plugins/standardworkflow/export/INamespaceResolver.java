@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.export;
+package org.hippoecm.frontend.plugins.standardworkflow.export;
 
 public interface INamespaceResolver {
 

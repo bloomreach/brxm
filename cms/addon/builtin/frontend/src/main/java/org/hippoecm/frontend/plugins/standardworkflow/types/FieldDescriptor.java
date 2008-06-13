@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.sa.plugins.standardworkflow.types;
+package org.hippoecm.frontend.plugins.standardworkflow.types;
 
 import java.util.Set;
 

@@ -32,7 +32,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to create a namespace</sv:value>
@@ -57,7 +57,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to remodel the namespace</sv:value>
@@ -82,7 +82,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to edit a template</sv:value>
@@ -107,7 +107,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.PrototypeWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.PrototypeWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.PrototypeWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to create a document</sv:value>
@@ -132,7 +132,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on root folder</sv:value>
@@ -157,7 +157,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.sa.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on folders</sv:value>
