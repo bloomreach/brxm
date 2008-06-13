@@ -53,7 +53,7 @@ public class NodeActionsPlugin extends Plugin {
 
     private static final Logger log = LoggerFactory.getLogger(NodeActionsPlugin.class);
 
-    private static final String ACTION_OK = "ok";
+    private static final String ACTION_OK = "save";
     private static final String ACTION_CANCEL = "cancel";
 
     private static final List<String> builtin = new ArrayList<String>();
