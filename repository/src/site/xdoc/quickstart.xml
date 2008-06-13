@@ -26,27 +26,26 @@
 <p>
 The quickest way to get started is to obtain one of the pre-built packages.
 Even when adding additional functionalities to Hippo ECM, you normally don't
-need to rebuild Hippo-ECM.  This because more functionality can be added by
+need to rebuild Hippo ECM.  This because more functionality can be added by
 simply adding the JARs containing the add-ons to the already packaged product,
-or uploading them into the running packaged product.  There is therefor no
-need to rebuild from all the sources, one of the two pre-built package can
+or uploading them into the running packaged product. Therefore, there is no
+need to do a rebuild from all the sources, one of the two pre-built packages can
 always be customized.
 
-The quickstart packages are the same packages as the core packaged products
-are detailed in X, but have been pre-configured with a number of modules and
-settings, such to give you a quick overview of the product, without having to
-laborious tasks to first enter content, etcetera.
+The quickstart packages contain all the core packaged products, but have been pre-configured with a number of modules and
+settings, to give you a quick overview of the product, without having the
+laborious tasks to first enter content, create users, etcetera.
 
-Hippo-ECM is a web-based application, and therefor is intended to run inside a servlet or application container.  These containers accept pre-built applications in the form of a WAR or EAR archive package, and provide basic functions to Hippo-ECM and management of your application.
-To get you quickly started, first determin the platform you which to use to run Hippo ECM.  Then;
+Hippo ECM is a web-based application, and therefor is intended to run inside a servlet or application container.  These containers accept pre-built applications in the form of a WAR or EAR archive package, and provide basic functions to Hippo ECM and management of your application.
+To get you started quickly, first determine the platform you wish to use to run Hippo ECM.  Then;
 </p>
 <subsection name="Download">
 <p>
 Download either the WAR or EAR package.  For deployment in Tomcat or Jetty,
-use the WAR package. The EARs less configuration and can grow with your needs
-(see discussion in X), but require an application container to run in.
+use the WAR package. The EARs need less configuration and can grow with your needs, 
+but require an application container to run in.
 
-Notice: note that Hippo ECM has not been released.  The following downloads
+Notice: Hippo ECM has not been released.  The following downloads
 are snapshots of the current build.
 </p>
   <blockquote>
@@ -57,7 +56,8 @@ are snapshots of the current build.
   </blockquote>
 
 </subsection>
-<subsection name="Deploy the application in the container">
+<!-- below commented because not yet documented -->
+<!--subsection name="Deploy the application in the container">
 <p>
 Now follow the guidelines for the platform you are using:
 </p>
@@ -67,12 +67,11 @@ Now follow the guidelines for the platform you are using:
   <li><a href="run-hippo-ecm/deploying-the-wars.html">Deploy EAR or WAR in glassfish</a></li>
 </ul>
 <p>
-It should be possible to deploy these downloads in other servlet or
-application containers.  Select the closest resembling container above and
+Hippo ECM can also be deployed in other servlet or application containers.  Select the closest resembling container above and
 repoduce the steps adapted for your other container if your container is not
 listed above.
 </p>
-</subsection>
+</subsection-->
 
  </section>
 
