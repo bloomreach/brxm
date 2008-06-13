@@ -49,13 +49,7 @@
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-frontend-plugins</artifactId>
-      <version>${parent.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-template</artifactId>
+      <artifactId>hippo-ecm-api</artifactId>
       <version>${parent.version}</version>
       <scope>compile</scope>
     </dependency>
