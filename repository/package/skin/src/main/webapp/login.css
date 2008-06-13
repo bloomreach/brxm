@@ -5,17 +5,6 @@ body {
     width: 100%;
 }
 
-/* Login page styles */
-/*div#login-logo {
-  position: absolute;
-  top: 15px;
-  right:5px;
-  width:172px;
-  padding: 0px;
-  margin: 0px;
-  background: url('images/hippoecm.gif') no-repeat;
-}
-*/
 div#login-header {
   background: url('images/home_small.gif') no-repeat;
   background-position: 3px;
