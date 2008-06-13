@@ -55,12 +55,6 @@
 
     <!-- test -->
     <dependency>
-      <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>${parent.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -130,9 +124,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-      <excludes>
-        <exclude>**/ClassLoaderTest.java</exclude>
-      </excludes>
         </configuration>
       </plugin>
     </plugins>

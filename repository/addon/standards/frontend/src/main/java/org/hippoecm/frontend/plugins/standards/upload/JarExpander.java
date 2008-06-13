@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.upload;
+package org.hippoecm.frontend.plugins.standards.upload;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -35,8 +35,9 @@ import javax.jcr.RepositoryException;
  * is approached over RMI.
  */
 public class JarExpander {
+
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id:$";
 
     /** The name of the node type required to expand the archive */
     public static final String TYPE_JARFILE = "rep:jarFile";
@@ -60,7 +61,7 @@ public class JarExpander {
         node.addMixin(TYPE_JARFILE);
         node.setProperty(PROP_EXPAND_DATE, Calendar.getInstance());
 
-        if(node.hasNode(NODE_JARCONTENTS)) {
+        if (node.hasNode(NODE_JARCONTENTS)) {
             node.getNode(NODE_JARCONTENTS).remove();
         }
 
