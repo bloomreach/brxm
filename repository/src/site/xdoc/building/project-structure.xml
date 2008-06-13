@@ -161,21 +161,23 @@ hippo-ecm                    Pom       hippo-ecm
           activity and todo views on the cms-dashboard</li>
 
         <li><b>reviewed-action</b> is a <a href="../about-hippo-ecm/architecture.html#Workflow API">
-          workflow</a> addon, it implements all business and GUI logic around document lifecycle:
-          reviewing, (un)publishing etc. It is a bundling of three addons and a test project: a repository
+          workflow</a> addon, it implements all business and GUI logic around the document lifecycle:
+          reviewing, (un)publishing etc. It is a bundling of three addons: a repository
           addon implementing the business logic, a frontend addon bundling some frontend plugins for user
-          interaction and a common addon for the interface between the two. </li>
+          interaction and a common addon for the interface between the two. It also contains a separate
+          test project.</li>
 
-        <li><b>builtin</b> is also a workflow
-          addon, it differs from other workflow addons in the fact that the server-side
-          implementation is implemented by the repository engine itself instead of in a separate Jar
-          like with a normal addon. Note that these builtin workflow steps are very generic and
+        <li><b>builtin</b> is also a workflow addon, it differs from other workflow addons in the
+          fact that it's business logic is implemented by the repository engine itself instead of
+          in a separate pluggable jar. Note that these builtin workflow steps are very generic and
           low-level and should not be accessed directly. They should only be called indirectly from
           other workflow plugins as part of a chain of workflow steps.</li>
 
-        <li><b>standards-frontend</b> contains a collection of shared frontend plugins. For
-          instance, all cms-* addons contain a Perspective plugin (BrowsePerspective,
-          EditPerspective, ...), so it makes sense to have a common baseclass in standards-frontend.</li>
+        <li><b>standards-frontend</b> contains a collection of shared frontend plugins.
+          This addon acts as a parking place for often used, shared frontend code that
+          doesn't really belong in the frontend engine itself. For instance, all cms-*
+          addons contain a Perspective plugin (BrowsePerspective, EditPerspective, ...),
+          so it makes sense to have a common baseclass somewhere.</li>
 
         <li><b>template</b> is a frontend addon that implements the document template editor</li>
 
@@ -189,33 +191,42 @@ hippo-ecm                    Pom       hippo-ecm
           javascript magic.</li>
       </ul>
       <subsection name="Dependencies between addons">
-        <p> Because addons are ordinary java projects built with Maven it is extremely easy to add
-          any inter-addon Java dependency that may seem nessessary. If left unchecked this can easily
-          lead to a situation where all addons depend on each other. When this happens the whole idea of
-          splitting functionality between addons becomes obsolete and we might as well put all
-          plugins into one big addon, or better yet into the engines themselves and reduce the
-          number of projects drastically. Obviously this will also kill all customizability and
-          extendability. <br/><br/> On the other hand completely forbidding all inter-addon
-          dependencies goes to far because it prohibits code reuse. A middle way is to keep these
-          dependencies to a minimum and stick to some simple guidelines: </p>
-        <ol>
-          <li>Repository addons should NEVER directly depend on each other via a Java dependency.
-            Even in the case of one workflow calling another this is not done by a direct Java call,
-            but via 'workflow chaining' which is core repository functionality.</li>
-
-          <li>As a general rule a dependency 'via the repository' is preferred (by far) over a
-            direct Java dependency. Examples of this kind of dependency are the displaying of
-            Xinha editors by the template editor and the use of the reporting addon by the
-            cms dashboard.</li>
-
-          <li>If there's no other way frontend addons MAY directly depend on each other: Examples are
-            the yui-frontend addon that contains wicket behaviours that perform all kinds of javascript
-            magic that many application plugins would very much like to use, and the standards-frontend addon
-            which acts as a parking place for oftenly used, shared frontend code that doesn't really belong
-            in the frontend engine itself.</li>
-        </ol>
-        <p> To make a long story short: Currently there are very few Java dependencies between addons
-          and we're planning to keep it that way. </p>
+        <p> 
+        
+          Because addons are ordinary java projects built with Maven it is very easy to add
+          any direct dependencies between addons (by putting an entry in the addons pom file)
+          that may seem a good idea at the time. 
+          
+          The problem is that this runs completely against the idea of addons being pluggable.
+          Every dependency between two addons effectively binds them together, and when that
+          happens there is no good reason anymore why you shouldn't simply merge the two.
+          This in turn will reduce customizability and extendability.
+        <br/><br/>
+                
+          Repository addons never need to have direct dependencies on each other. Even in the
+          case of one workflow calling another this is not done by a direct Java call,
+          but via 'workflow chaining'.    
+        <br/><br/>
+          
+          'Application level' frontend addons should never directly depend on each other.
+          These are the addons that bundle the high level plugins that make up a user application.
+          For the CMS these are the addons under <b>addon-cms</b>. Frontend plugins can interact
+          with each other via the plugin
+          <a href="../extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html">communication model</a>
+          offered by the frontend engine.
+        <br/><br/>
+          
+          On the other hand completely forbidding all direct dependencies between addons prohibits code
+          reuse. Therefore two frontend addons have been singled out that all
+          other frontend addons may have direct dependencies on: Those are the <b>yui</b> addon
+          that contains wicket behaviours that perform all kinds of javascript magic that any
+          'application level' addon would like to use, and the <b>standards-frontend</b> addon
+          that holds often used, shared frontend code.
+        <br/><br/>
+          
+          To make a long story short: Currently there are very few Java dependencies between addons
+          and we're planning to keep it that way. 
+        </p>
       </subsection>
 
       <subsection name="Finding your way">

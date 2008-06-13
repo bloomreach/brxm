@@ -34,10 +34,6 @@
 
         <ul>
           <li>
-            <a href="building/index.html">Building Hippo ECM from source</a>
-            - Build the Java sources
-          </li>
-          <li>
             <a href="plugins/index.html">Plugins</a>
             - Extend Hippo ECM with your own plugins
           </li>
