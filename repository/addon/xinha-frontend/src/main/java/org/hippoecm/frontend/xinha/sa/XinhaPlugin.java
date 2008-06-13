@@ -43,7 +43,6 @@ import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.template.ITemplateEngine;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -75,7 +74,7 @@ public class XinhaPlugin extends RenderPlugin {
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        mode = config.getString(ITemplateEngine.MODE);
+        mode = config.getString("mode");
 
         if ("edit".equals(mode)) {
             createEditor(config);
