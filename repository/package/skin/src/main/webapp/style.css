@@ -120,7 +120,7 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
 /* Preview panel */
 /* ================================================ */
-.preview {padding: 4px; height: 44%; overflow: auto; border: 1px solid black; margin: 11px;}
+.preview {padding: 4px; height: 38%; overflow: auto; border: 1px solid black; margin: 11px;}
 .preview div.fields div{background: #f2f2f2;}
 div.preview div.fields h3{background: #d2d2d2;} 
 div.preview span.iconsSmall, div.preview td.iconsSmall{display: none}
@@ -232,6 +232,8 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 .user-48{background-image:url("images/icons/groups-48.png")}
 .folder-48{background-image:url("images/icons/emblem-documents-48.png")}
 
+.panel-toggle-version-16{background-image:url("images/icons/panel-toggle-version-16.png");}
+.panel-toggle-version-16 a:hover{cursor: pointer}
 
 .edit_ico{background-image:url("images/icons/edit-16.png")}
 .delete_ico{background-image:url("images/icons/edit-delete-16.png")}
