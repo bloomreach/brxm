@@ -124,6 +124,7 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 .preview div.fields div{background: #f2f2f2;}
 div.preview div.fields h3{background: #d2d2d2;} 
 div.preview span.iconsSmall, div.preview td.iconsSmall{display: none}
+div.previewMessage{background: url("images/icons/message-preview-128.png") no-repeat center center; height: 400px; text-indent: -9999px}
 
 /* Wicket Ajax indicator */
 /* ================================================ */
@@ -520,6 +521,28 @@ tr.odd td { padding: 5px; }
 .navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
 .navigator { color: grey }
 
+
+/* User Management */
+/* ================================================ */
+
+.iconListSmall li{margin-bottom: 3px;}
+.iconListSmall li a{background-repeat: no-repeat; background-position: left center; display: block; padding: 4px; padding-left: 20px; color: #666666}
+
+.users_list_ico li a{background-image:url("images/icons/user-16.png")}
+.groups_list_ico li a{background-image:url("images/icons/groups-16.png")}
+.domains_list_ico li a{background-image:url("images/icons/domain-16.png")}
+.roles_list_ico li a{background-image:url("images/icons/permissions-16.png")}
+
+.userGroupsList h3{display: none;}
+
+.userGroupsList{
+height: 200px;
+overflow:auto;
+border: 1px solid #4A84C8;
+background: url("images/icons/message-dropitem-128.png") no-repeat center 87px;
+margin-top: 10px;
+} 
+
 .addNodeWidget {
   margin-bottom: 4px;
 }
@@ -533,26 +556,6 @@ tr.odd td { padding: 5px; }
   border: 1px solid #000;
 }
 
-.userGroupsList{
-height: 158px;
-overflow:auto;
-border: 1px solid #4A84C8;
-background: white;
-margin-top: 10px;
-} 
-
-/* User Management */
-/* ================================================ */
-
-.iconListSmall li{margin-bottom: 3px;}
-.iconListSmall li a{background-repeat: no-repeat; background-position: left center; display: block; padding: 4px; padding-left: 20px; color: #666666}
-
-.users_list_ico li a{background-image:url("images/icons/user-16.png")}
-.groups_list_ico li a{background-image:url("images/icons/groups-16.png")}
-.domains_list_ico li a{background-image:url("images/icons/domain-16.png")}
-.roles_list_ico li a{background-image:url("images/icons/permissions-16.png")}
-
-.userGroupsList h3{display: none}
 
 .templatedetails div.fields input{width: 100px;} 
 
