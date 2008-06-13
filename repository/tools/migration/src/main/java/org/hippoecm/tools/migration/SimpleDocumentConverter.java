@@ -133,5 +133,9 @@ public class SimpleDocumentConverter extends AbstractDocumentConverter implement
         node.addMixin("mix:referenceable");
     }
 
+    public String getNodeType(String name) {
+       return null;
+    }
+
 
 }

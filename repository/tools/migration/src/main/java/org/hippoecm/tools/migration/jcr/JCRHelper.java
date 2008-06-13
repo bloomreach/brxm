@@ -94,7 +94,12 @@ public class JCRHelper {
 
             // add node if it doesn't exist
             if (!current.hasNode(nodeName)) {
-                Node n = current.addNode(nodeName);
+                Node n ;
+                if(documentConverter.getNodeType(nodeName) != null ) {
+                    n = current.addNode(nodeName, documentConverter.getNodeType(nodeName));  
+                } else {
+                n = current.addNode(nodeName);
+                }
                 documentConverter.setMixinsPlusProps(n);
                 System.out.println("Added node for jcrPath: " + currentPath);
             }
@@ -103,6 +108,7 @@ public class JCRHelper {
             // shift to child node
             current = current.getNode(nodeName);
         }
+        session.save();
         return current;
     }
 
