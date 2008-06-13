@@ -23,8 +23,68 @@
   </properties>
   <body>
     <section name="Managing users and groups">
-      Todo:
-
+      <p>
+      The HippoECM security model is build around 4 concepts, users, groups, roles and domains. 
+      Users with administrative rights can switch to the management perspective 
+      to do CRUD operations on these entities. 
+        <ul>
+          <li>User: representation of an end-user that can log in to the CMS. Users are member(s) of 0-n groups</li>
+          <li>Group: logical categorization of users. Groups have 0-n users as members.</li>
+          <li>Role: collection of permissions read, write and remove. Either can be true or false.</li>
+          <li>Domain: collection of 'Auth roles' and 'Domain rules'.
+            <ul>
+              <li>
+                Auth role: Maps a role to 0-n groups and/or users 
+              </li>
+              <li>
+                Domain rules: todo
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </p>
+      <subsection name="Creating a new user">
+        <p>
+        Click on the 'New user' button (listing 1) in the left pane of the management perspective. A 
+        text input field will appear where you can type the new user's username (listing 2). 
+        Press enter to create the new user instance.<br/>
+        The new user will appear in the users list (left pane) with an asterisk marking it 
+        as new (listing 3). 
+        </p>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newuser1.png"/>
+              <br/>
+              <em style="width:230px;display:block;">Click on the 'New user' button to add a user</em>
+            </td>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newuser2.png"/>
+              <br/>
+              <em style="width:230px;display:block;">Type in the new username and press enter to confirm</em>
+            </td>
+            <td style="padding-right: 15px;">
+              <img src="../../images/tour/newuser3.png"/>
+              <br/>
+              <em style="width:230px;display:block;">The new user will appear in the list, marked with an asterisk</em>
+            </td>
+          </tr>
+        </table>
+        <p>
+          The new user is automatically selected which will load the user-edit
+          form in the middle pane. Above this form two button will appear, "ok" and "cancel".
+          Pressing "ok" on a *new* user will persist it in the repository and the asterisk will 
+          disappear. Clicking "cancel" on a *new* user will remove it completly. 
+          <br/>
+          Clicking "ok" or "cancel" on an existing user will either save all pending changes, 
+          or simply unload the edit-form again.
+          <br/>
+          Only after a user has been persisted for the first time, you will be able to configure
+          it as a member of one or more groups. You can easily do this by dragging a group from 
+          the groups list (left pane) into the list beneath the users form. (listing 4)
+        </p>
+        
+      </subsection>
       <p align="center">
         <a href="creating_a_document_type_and_template.html">&lt;- Previous: Creating a document type and template</a>&#160;&#160;&#160;&#160;&#160;<a href="workflow.html">Next: Workflow -></a>
       </p>
