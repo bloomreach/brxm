@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.admin.upload;
+package org.hippoecm.frontend.plugins.standards.upload;
 
 import java.util.Calendar;
 
@@ -24,21 +24,36 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.util.lang.Bytes;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UploadPlugin extends Plugin {
+public class UploadPlugin extends RenderPlugin {
+    private final static long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id:$";
+    private final static Logger log = LoggerFactory.getLogger(UploadPlugin.class);
 
-    private static final long serialVersionUID = 1L;
+    private FileUploadForm form;
 
-    static final Logger log = LoggerFactory.getLogger(UploadPlugin.class);
+    public UploadPlugin(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
+
+        // Add upload form with ajax progress bar
+        form = new FileUploadForm("form", (JcrNodeModel) getModel());
+        form.add(new UploadProgressBar("progress", form));
+        add(form);
+    }
+
+    @Override
+    public void onModelChanged() {
+        JcrNodeModel newModel = (JcrNodeModel) getModel();
+        form.setModel(newModel);
+    }
 
     private class FileUploadForm extends Form {
         private static final long serialVersionUID = 1L;
@@ -79,25 +94,5 @@ public class UploadPlugin extends Plugin {
                 }
             }
         }
-    }
-
-    private FileUploadForm form;
-
-    public UploadPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, new JcrNodeModel(model), parentPlugin);
-
-        // Add upload form with ajax progress bar
-        form = new FileUploadForm("form", (JcrNodeModel) getModel());
-        form.add(new UploadProgressBar("progress", form));
-        add(form);
-    }
-
-    @Override
-    public void receive(Notification notification) {
-        if("select".equals(notification.getOperation())) {
-            JcrNodeModel newModel = new JcrNodeModel(notification.getModel());
-            form.setModel(newModel);
-        }
-        super.receive(notification);
     }
 }
