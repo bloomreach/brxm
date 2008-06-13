@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-archetypes</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>${ecm.version}</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -40,6 +40,7 @@
   </scm>
 
   <build>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
     <extensions>
       <extension>
         <groupId>org.apache.maven.archetype</groupId>
@@ -52,6 +53,20 @@
         <artifactId>maven-archetype-plugin</artifactId>
         <version>2.0-alpha-3</version>
         <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

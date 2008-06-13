@@ -40,18 +40,19 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.${buildNumber}-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.${buildNumber}-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
     <defaultGoal>package</defaultGoal>
     <resources>
       <resource>

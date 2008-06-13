@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-package</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>${ecm.version}</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -206,13 +206,13 @@
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hippoecm.hst</groupId>
       <artifactId>hippo-ecm-hst-sample-content</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
 
@@ -220,12 +220,21 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
+    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-alpha-1</version>
         <configuration>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+          </manifest>
+          <archive>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
           <overlays>
             <!-- repeat this overlay for all applications that use the skin -->
             <overlay>
