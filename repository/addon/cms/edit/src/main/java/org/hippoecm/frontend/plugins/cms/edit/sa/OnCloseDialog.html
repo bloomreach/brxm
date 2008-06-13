@@ -19,15 +19,21 @@
     <table width="50%">
       <tr>
         <td>
-          <a wicket:id="donothing">Cancel</a>
+          <span class="fauxbutton">
+            <a wicket:id="save">Save</a>
+          </span>
         </td>
         <td>
-          <a wicket:id="save">Save</a>
+          <span class="fauxbutton">
+            <a class="fauxbutton" wicket:id="discard">Discard changes and close</a>
+          </span>
         </td>
         <td>
-          <a wicket:id="discard">Discard changes and close</a>
+          <span class="fauxbutton">
+            <a wicket:id="donothing">Cancel</a>
+          </span>
         </td>
-      </tr>
+     </tr>
       <tr>
         <td>
           <span wicket:id="onCloseDialogException">[if exception happens, here]</span>

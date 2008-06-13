@@ -85,7 +85,7 @@ div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-wei
 
 /* Tabsplugin */
 /* ================================================ */
-.tabsplugin {position: absolute; top: 50px; left: 5px; padding-top: 30px; height: 128%; width: 80%;}
+.tabsplugin {position: absolute; top: 50px; left: 5px; padding-top: 30px; height: 85%; width: 98%;}
 
 ul.tabs{display: block; position: absolute; top: 0px; left: 15px; width: 800px}
 
@@ -120,7 +120,7 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
 /* Preview panel */
 /* ================================================ */
-.preview {padding: 4px; height: 45%; overflow: auto; border: 1px solid black; margin: 11px;}
+.preview {padding: 4px; height: 44%; overflow: auto; border: 1px solid black; margin: 11px;}
 .preview div.fields div{background: #f2f2f2;}
 div.preview div.fields h3{background: #d2d2d2;} 
 div.preview span.iconsSmall, div.preview td.iconsSmall{display: none}
@@ -128,13 +128,13 @@ div.previewMessage{background: url("images/icons/message-preview-128.png") no-re
 
 /* Wicket Ajax indicator */
 /* ================================================ */
-span.wicket-ajax-indicator{position: absolute; top: 20px; left: 100px; display: block; visiblity: visible}
+span.wicket-ajax-indicator{position: absolute; top: 18px; left: 4px; display: block; visiblity: visible}
 
 /* Logout */
 /* ================================================ */
-div.logout { margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px}
-div.logout span.name{font-size: 22px}
-div.logout div a { color: white; font-weight: bold }
+div.logout {margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px; padding-left: 13px;}
+div.logout span.name{font-size: 22px;}
+div.logout div a { color: white; font-weight: bold; float: right;}
 
 
 /* Main Positioning and Panels */
@@ -142,6 +142,7 @@ div.logout div a { color: white; font-weight: bold }
 #header{
 height: 85px;
 padding: 10px;
+width: 98%;
 }
 
 .panelcontainer{border: 1px solid white; background: white url("images/panelBack.png") repeat-x 0px 29px;}
@@ -149,16 +150,16 @@ padding: 10px;
 .panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/panelHeadBack.png") repeat-x;}
 .nopadding{padding: 0px}
 
-#left{width: 222px; float: left; height: 66%;}
-#lefthalf{width: 50%; float: left; height: 66%; overflow: auto;}
-#righthalf{width: 49%; float: right; height: 66%; overflow: auto}
+#left{width: 222px; float: left; height: 100%;}
+#lefthalf{width: 50%; float: left; height: 100%; overflow: auto;}
+#righthalf{width: 49%; float: right; height: 100%; overflow: auto}
 
-#right{width: 222px; float: right; height: 66%; overflow: auto}
-#center{margin-left: 228px; margin-right: 228px; height: 66%; position: relative;}
-#wideright{width: 787px; width: 70%; float: left; height: 66%; margin-left: 5px; background: white;}
-#wideleft{width: 787px; width: 70%; float: left; height: 66%; margin-right: 5px; background: white}
+#right{width: 222px; float: right; height: 100%; overflow: auto}
+#center{margin-left: 228px; margin-right: 228px; height: 100%; position: relative;}
+#wideright{width: 787px; width: 75%; float: left; height: 100%; margin-left: 5px; background: white;}
+#wideleft{width: 787px; width: 75%; float: left; height: 100%; margin-right: 5px; background: white}
 
-.scrolllist{overflow: auto; height: 100px; padding: 2px; background-color: white}
+.scrolllist{overflow: auto; height: 90px; padding: 2px; background-color: white}
 
 .panelhead{background: #f2f2f2; width: 100%; height: 70px;}
 .panelhead td{padding: 5px;}
@@ -406,7 +407,7 @@ div.fields input[type="text"]{width: 100px;}
 span.actionspanel ul li{background: none}
 div.fields table{width: 100%}
 div.fields div {padding: 2px}
-
+div.fields div ul li ul li{padding:4px}
 /* Xinha */
 /* ================================================ */
 table.htmlarea tr td{border: none}
@@ -424,8 +425,8 @@ body .htmlarea .toolbar select, body .htmlarea .toolbar select:hover, body .html
 top: 1px;
 }
 
-.htmlarea .toolbar {
-  background-color:#f2f0e4;
+body .htmlarea .toolbar {
+  background: gray;
   background-image:url(back.png);
   background-repeat:repeat-y;
 }
@@ -550,10 +551,10 @@ tr.odd td { padding: 5px; }
 .userGroupsList h3{display: none;}
 
 .userGroupsList{
-height: 200px;
+height: 188px;
 overflow:auto;
 border: 1px solid #4A84C8;
-background: url("images/icons/message-dropitem-128.png") no-repeat center 87px;
+background: url("images/icons/message-dropitem-128.png") no-repeat center 70px;
 margin-top: 10px;
 } 
 
