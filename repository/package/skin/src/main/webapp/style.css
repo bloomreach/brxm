@@ -197,8 +197,18 @@ div.iconactions h3{margin-bottom: 16px; color: white}
 .panelcontainer h2 span.edititem{background-image: url("images/headings/edittempateitem.png")}
 .panelcontainer h2 span.previewlabel{background-image: url("images/headings/preview.png")}
 .panelcontainer h2 span.userman{background-image: url("images/headings/usermanagement.png")}
+.panelcontainer h2 span.welcome{background-image: url("images/headings/welcome.png")}
 
 
+/* Welcome Panel */
+/* ================================================ */
+#welcomepanel{
+margin-bottom: 8px;
+}
+#welcomepanel table{width: 100%; margin-bottom: 15px}
+#welcomepanel table tr td{width: 33%; height: 70px; padding-left: 78px; padding-top: 28px; background-position: 15px 15px; background-repeat: no-repeat}
+#welcomepanel table tr td a{font-size: 18px; color: #999999}
+#welcomepanel table tr td a:hover{text-decoration: underline}
 /* Global Icon Management */
 /* ================================================ */
 div div ul li.icolistsmall{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
@@ -215,6 +225,10 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 .document_big_ico{background-image:url("images/icons/document-48.png")}
 .users_big_ico{background-image:url("images/icons/groups-48.png")}
 .groups_big_ico{background-image:url("images/icons/groups-48.png")}
+
+.document-new-48{background-image:url("images/icons/document-48.png")}
+.user-48{background-image:url("images/icons/groups-48.png")}
+.folder-48{background-image:url("images/icons/emblem-documents-48.png")}
 
 
 .edit_ico{background-image:url("images/icons/edit-16.png")}
