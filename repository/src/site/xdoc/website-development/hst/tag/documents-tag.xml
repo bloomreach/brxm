@@ -1,0 +1,88 @@
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+                          "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2008 Hippo
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>ECM Website Development</title>
+  </properties>
+  <body>
+    <section name="The &lt;hst:documents&gt; tag and derived tags">
+      <p><b>&lt;hst:documents&gt;</b> tag, and it's derived tags <b>&lt;hst:news&gt;</b>, 
+        <b>&lt;hst:events&gt;</b> and <b>&lt;hst:articles&gt;</b> show a list of documents, news items, 
+        events or articles, respectively. Their basic functionality is more or less the same, 
+        they differ in the fact that they have different default values and also may be configured
+        differently.</p>
+      
+      <p>Following table shows the attributes of the tag. An attribute's value is first found by the
+        directly available value, subsequently by a configuration key if present,
+        then by a default value. A configuration key is a key in the configuration file normally
+        called <code>hst.properties</code>, as given by a web.xml context parameter (<a
+          href="../configuration.html">see here</a>).</p>
+      <table>
+        <tr>
+          <th>Attribute</th>
+          <th>Required</th>
+          <th>ConfigurationKey</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>context</td>
+          <td>no</td>
+          <td>&lt;tagname&gt;.context.name</td>
+          <td>context</td>
+          <td>The optional name by which to get a context object from request.</td>
+        </tr>
+        <tr>
+          <td>location</td>
+          <td>no</td>
+          <td>&lt;tagname&gt;.location</td>
+          <td>/documents, /news, /events, /articles</td>
+          <td>The optional location, relative to the context, pointing to the documents
+            node applicable.</td>
+        </tr>
+        <tr>
+          <td>maxDocuments</td>
+          <td>no</td>
+          <td>&lt;tagname&gt;.max.documents</td>
+          <td>5</td>
+          <td>The optional variable name by which the encoded URL is set as request attribute. If
+            given, no output is written to the jsp directly.</td>
+        </tr>
+      </table>
+      <h4>File based configuration</h4>
+      <p>Besides the tag attributes, other items can be configured in the configuration
+        file. For sure you need to configure the names of the properties to show
+        for the documents. In short:</p>
+      <source><![CDATA[<tagname>.document.properties
+Comma separated list of document properties to shown. 
+        
+<tagname>.document.property.types=link,date,string
+Comma separated list of property types that are applicable for the above properties. 
+Defines how the properties are output by default.
+              
+<tagname>.document.exclude.names=index
+Comma separated list of names of documents that are excluded from the list, 
+like files called 'index'. 
+                
+<tagname>.document.viewfile
+Location of a custom jsp file that is used for outputting documents, thereby 
+overriding the default output.]]></source>
+        <p>For more detailed information, <a href="../configuration-hstproperties.html">see here.</a></p>
+    </section>
+  </body>
+</document>

@@ -33,13 +33,6 @@
            repository :-). This roadmap is a general list of components and functionalities that
            will end up in future releases. Any feedback on these issues is more than welcome</p>
 
-        <subsection name="Content to URL Mapping">
-          <p>To display repository content by the view techology (jsp, jsf) a flexible
-          mapping is required. Initially this mapping will be configured in a static resource like
-          an xml resource or by Spring. In a later version this might end up in the repository.
-          </p>
-        </subsection>
-
         <subsection name="Templating">
           <p>Templating can be very useful in sites that unlock repository content and to
           speed up development. For this purpose the HST will have functionality to add
@@ -69,7 +62,7 @@
           that expose repository content in a structural manner with rich component based functionality in an efficient way.
           </p>
            <p>
-            The initial choosen technology for the HST is JSP and tag libraries.
+            The initial chosen technology for the HST is JSP and tag libraries.
           </p>
         </subsection>
       </section>
