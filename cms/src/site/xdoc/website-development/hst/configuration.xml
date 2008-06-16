@@ -37,12 +37,12 @@
         <subsection name="General configuration file(s)">
           <p>Repository and taglib configuration is set up in a separate properties file.
             The file plus an accompanying configuration object is set up in web.xml with a combination 
-            <code>&lt;context-param&gt;</code> and <code>&lt;listener&gt;</code></p>
+            <code>&lt;context-param&gt;</code> and <code>&lt;listener&gt;</code>.</p>
            <p>The context parameter is called <code>configurationFiles</code> which represents a 
               comma-separated list of configuration file locations. The object's listener class is 
               <code>org.hippoecm.hst.core.HSTConfiguration</code>.
            </p>
-          <p>To set up For an example <a href="configuration-hstproperties.html">see here!</a></p>      
+          <p>For an example <a href="configuration-hstproperties.html">see here!</a></p>      
         </subsection>
         <subsection name="Configuration of your HST web filter(s)">
             <p>To use the HST, one or more webfilters should be installed in your web application

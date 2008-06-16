@@ -134,16 +134,14 @@
     <menu name="Website development">
       <item name="JCR Interface" href="/website-development/jcr.html"/>
         <item name="Hippo Site Toolkit" href="/website-development/index.html"  collapse="true">
-          <item name="Including" href="/website-development/hst/include.html"></item>
-          <item name="Configuration" href="/website-development/hst/configuration.html">
-            <item name="Example" href="/website-development/hst/configuration-example.html"></item>
-          </item>
+          <item name="Getting it" href="/website-development/hst/getting.html"></item>
+          <item name="Configuration" href="/website-development/hst/configuration.html"></item>
           <item name="Expression Language" href="/website-development/hst/el-index.html"></item>
           <item name="Binaries" href="/website-development/hst/binaries.html"></item>
 <!--          <item name="Dynamic Queries" href="/website-development/hst/el-queries.html"></item> -->
           <item name="URL Mapping" href="/website-development/hst/url-mapping.html"></item>
+          <item name="JSP Taglib" href="/website-development/hst/jsp-taglib.html"></item>
           <item name="Roadmap" href="/website-development/hst/roadmap.html"></item>
-<!--      <item name="JSP Taglib" href="/website-development/hst/jsp-taglib.html"></item> -->
         </item>
     </menu>
 

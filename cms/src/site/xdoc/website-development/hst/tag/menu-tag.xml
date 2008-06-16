@@ -1,0 +1,132 @@
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+                          "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2008 Hippo
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>ECM Website Development</title>
+  </properties>
+  <body>
+    <section name="The &lt;hst:menu&gt; tag">
+      <p><b>&lt;hst:menu&gt;</b> tag shows a dynamic menu as read from content in the
+        repository.</p>
+
+      <p>Following table shows the attributes of the tag. An attribute's value is first found by the
+        directly available value, subsequently by a configuration key if present, then by a default
+        value. A configuration key is a key in the configuration file normally called
+          <code>hst.properties</code>, as given by a web.xml context parameter (<a
+          href="../configuration.html">see here</a>).</p>
+      <table>
+        <tr>
+          <th>Attribute</th>
+          <th>Required</th>
+          <th>ConfigurationKey</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>context</td>
+          <td>no</td>
+          <td>menutag.context.name</td>
+          <td>context</td>
+          <td>Optional name by which the tag gets it's context object from request or page
+          context.</td>
+        </tr>
+        <tr>
+          <td>location</td>
+          <td>no</td>
+          <td>menutag.location</td>
+          <td>/</td>
+          <td>The optional location, relative to the context, pointing to the starting location
+            where to search for menu items at level 0.</td>
+        </tr>
+        <tr>
+          <td>level</td>
+          <td>no</td>
+          <td>-</td>
+          <td>0</td>
+          <td>The optional level indicating the starting level from which default output is
+            generated. </td>
+        </tr>
+        <tr>
+          <td>depth</td>
+          <td>no</td>
+          <td>-</td>
+          <td>1</td>
+          <td>The optional depth indicating, in combination with the level attribute, the end menu
+            level for which default output is generated.</td>
+        </tr>
+        <tr>
+          <td>id</td>
+          <td>no</td>
+          <td>-</td>
+          <td>hst-menu</td>
+          <td>The optional id of this menu that reoccurs as id of the outer div tag of the default
+            output. Also used as request attribute name for custom output.</td>
+        </tr>
+      </table>
+      <h4>File based configuration</h4>
+      <p>Besides the tag attributes, other items can be configured in the configuration file:</p>
+      <source><![CDATA[menutag.document.exclude.names
+Comma separated list of names of documents that are excluded from the menu. 
+Not required, defaults to all documents named 'index'.
+
+menutag.viewfile(.<id>)=
+Location of a custom jsp file that is used for outputting the menu, thereby 
+overriding the default output. The view file may be specified per instance 
+with a postfix that is equal to the tag attribute 'id'.    
+Not required, no default.]]></source>
+
+      <h4>Repository based configuration</h4>
+      <p>To indicate on the repository side which folders and documents (nodes) are part of the menu
+        and which are not, a so-called mixin type can be set on a node. The menu's behaviour is as
+        follows:</p>
+      <ul>
+        <li>On the base level of the repository location indicated by the attribute 'location',
+          nodes (typically folders) are included in the menu <b>only if</b> the mixin type
+            <b>hst:menuItem</b> is set.</li>
+        <li>On deeper levels, <b>all nodes</b> are included.</li>
+        <li>Folder subnodes are included <b>except when</b> the mixin type <b>hst:childless</b> is
+          set on the repository node.</li>
+      </ul>
+      <h4>Repository based labelling</h4>
+      <p>The menu item labels are created taking the capitalized name of the node.
+        If this is not applicable, it may further be specified on a node by the String property
+        <b>hst:label</b>.</p>
+
+      <h4>Default HTML output</h4>
+      <p>The default menu output is based on a possibly nested, <code>&lt;ul&gt;</code> /
+          <code>&lt;li&gt; structure</code>. The id of the outermost
+          <code>&lt;ul&gt;</code> tag, useful for CSS styling, is the actual attribute 'id'
+        or the default <code>hst-menu</code>.</p>
+      <p>The default output will create links for each item, based on reversed URL mapping
+        functionality, <a href="../url-mapping.html">see here</a>.</p>
+
+      <h4>Custom HTML output</h4>
+      <p>When the configuration item <code>menutag.viewfile</code> is specified, it overrides the
+        default output. Instead, a developer can create it's own HTML with a jsp fragment file,
+        using standard Java or jsp expression language on an object representing the menu.</p>
+      <p>An org.hippoecm.hst.components.Menu object is present in the request under key 'hst-menu',
+        which may be overridden by the menu tag attribute 'id'.</p>
+      <p>The tag attributes 'level' and 'depth' are present in the request under fixed keys prefixed
+        by the id: &lt;id&gt;-level and &lt;id&gt;-depth.</p>
+      <p>The MenuItem objects that are retrieved by the 'items' property have the properties
+        'label', 'level', 'active', 'path' and 'items'.</p>
+      <p>Note that path can easily be converted to an URL by the &lt;hst:encodeURL&gt;
+      tag.</p>
+    </section>
+  </body>
+</document>

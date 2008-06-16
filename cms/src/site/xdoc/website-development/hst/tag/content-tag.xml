@@ -24,17 +24,42 @@
   </properties>
   <body>
     <section name="The &lt;hst:content&gt; tag">
-      <p>Gets the value of a property from a context object.</p>
+      <p><b>&lt;hst:content&gt;</b> gets the value of a property from a context object.</p>
+      <p>Following table shows the attributes of the tag. An attribute's value is first found 
+        by the directly available value, subsequently by a configuration key 
+        if present, then by a default value. A configuration key is a key in the configuration 
+        file normally called <code>hst.properties</code>, as given by a web.xml context parameter
+        (<a href="../configuration.html">see here</a>).</p>
       <table>
         <tr>
           <th>Attribute</th>
+          <th>Required</th>
+          <th>ConfigurationKey</th>
           <th>Default</th>
           <th>Description</th>
         </tr>
         <tr>
-          <td>Attribute</td>
-          <td>Default</td>
-          <td>Description</td>
+          <td>context</td>
+          <td>no</td>
+          <td>contenttag.context.name</td>
+          <td>context</td>
+          <td>The name by which to get a context object from request, overriding
+            the configured or default name.</td>
+        </tr>
+        <tr>
+          <td>property</td>
+          <td>yes</td>
+          <td>-</td>
+          <td>-</td>
+          <td>The required name of the property to show.</td>
+        </tr>
+        <tr>
+          <td>var</td>
+          <td>no</td>
+          <td>-</td>
+          <td>-</td>
+          <td>The optional variable name by which the property value is set as request
+            attribute. If given, no output is written to the jsp directly.</td>
         </tr>
       </table>
     </section>
