@@ -50,8 +50,8 @@ are snapshots of the current build.
 </p>
   <blockquote>
       <ul>
-          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-war/2.01.00-SNAPSHOT/hippo-ecm-package-war-2.01.00-20080610.193944-4.war">quickstart war package</a></li>
-          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-ear/2.01.00-SNAPSHOT/hippo-ecm-package-ear-2.01.00-20080610.193944-4.ear">quickstart ear package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-war/2.01.00-SNAPSHOT/hippo-ecm-package-war-2.01.00.00000-SNAPSHOT.war">quickstart war package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-ear/2.01.00-SNAPSHOT/hippo-ecm-package-ear-2.01.00.00000-SNAPSHOT.ear">quickstart ear package</a></li>
       </ul>
   </blockquote>
 
