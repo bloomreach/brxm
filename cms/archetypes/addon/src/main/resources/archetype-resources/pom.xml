@@ -52,7 +52,7 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName>
+    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <defaultGoal>package</defaultGoal>
     <resources>
       <resource>
