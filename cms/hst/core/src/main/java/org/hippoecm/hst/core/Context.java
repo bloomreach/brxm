@@ -375,7 +375,7 @@ public class Context extends AbstractMap {
             try {
                 Item item = JCRConnector.getItem(this.session, this.baseLocation);
 
-                if (item.isNode()) {
+                if ((item != null) && item.isNode()) {
                     Node node = (Node) item;
 
                     // if it is a virtual tree, determine the real content base location

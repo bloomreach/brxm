@@ -53,6 +53,10 @@ public class RepositoryLocaleFactory implements LocaleFactory {
         // context will be there by argument
         Context context = (Context) request.getAttribute(contextName);
 
+        if (context == null) {
+            throw new IllegalStateException("No context found in request by attribute name '" + contextName + "'.");
+        }
+        
         // locales may be different per repository base location
         String sessionKey = this.getClass().getName() + "." + context.getBaseLocation();
 
@@ -64,7 +68,7 @@ public class RepositoryLocaleFactory implements LocaleFactory {
             try {
                 Item item = JCRConnector.getItem(jcrSession, context.getBaseLocation());
 
-                if (item.isNode()) {
+                if ((item != null) && item.isNode()) {
 
                     Node node = (Node) item;
                     if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
