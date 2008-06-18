@@ -107,9 +107,11 @@ public class RepositoryLocaleFactory implements LocaleFactory {
                     // no facetselect
                     else {
 
-                        // direct property
-                        String localeStr = node.getProperty(HIPPOSTD_LANGUAGE).getString();
-                        locale = parseLocaleString(localeStr);
+                        // direct property?
+                        if (node.hasProperty(HIPPOSTD_LANGUAGE)) {
+                            String localeStr = node.getProperty(HIPPOSTD_LANGUAGE).getString();
+                            locale = parseLocaleString(localeStr);
+                        }    
                     }
                 }
             }
