@@ -87,7 +87,7 @@ div.templatetitle h4, div.usertitle h4{font-size: 12px; color: #666666; font-wei
 /* ================================================ */
 .tabsplugin {position: absolute; top: 50px; left: 5px; padding-top: 30px; height: 85%; width: 98%;}
 
-ul.tabs{display: block; position: absolute; top: 0px; left: 15px; width: 800px}
+ul.tabs{display: block; position: absolute; top: 0px; left: 15px;}
 
 ul.tabs li {
   display:block;
