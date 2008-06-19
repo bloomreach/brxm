@@ -71,13 +71,6 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
                         String documentType = prototypeNode.getName();
                         String prototypePath = prototypeNode.getNode("hippo:prototype").getPath();
                         if (!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")) {
-                            /* FIXME: dropping the namespace has of course
-                             * serious consequences, as when within different
-                             * namespaces a same type is used, you can select
-                             * only one.
-                             */
-                            if (documentType.contains(":"))
-                                documentType = documentType.substring(documentType.indexOf(":") + 1);
                             folderTypes.put(documentType, prototypePath);
                         }
                     }
@@ -89,7 +82,7 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
 
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
 
-        add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "folderType"), new LinkedList(folderTypes
+        folderChoice = new DropDownChoice("type", new PropertyModel(this, "folderType"), new LinkedList<String>(folderTypes
                 .keySet())) {
             private static final long serialVersionUID = 1L;
 
@@ -97,21 +90,29 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
             }
-        });
+        }; 
         folderChoice.setNullValid(false);
         folderChoice.setRequired(true);
+        
+        add(folderChoice);
     }
 
     @Override
     protected void execute() throws Exception {
+        if (!folderChoice.checkRequired()) {
+            throw new IllegalArgumentException("No folder type selected.");
+        }
+        
         PrototypeWorkflow workflow = (PrototypeWorkflow) getWorkflow();
         if (workflow != null) {
             String type = folderTypes.get(folderType);
             if (type == null) {
-                log.error("unknown folder type " + folderType);
+                log.error("Unknown folder type " + folderType);
                 return;
             }
-            /* String path = */ workflow.addFolder(name, type);
+            
+            /* String path = */ 
+            workflow.addFolder(name, type);
         } else {
             log.error("no workflow defined on model for selected node");
         }
