@@ -309,8 +309,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
 
         <section name="Run">
             <p>
-                <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Jetty
-                    launcher configuration</a>
+                <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Run-Jetty-Run configuration</a>
             </p>
             <ul>
                 <li>
@@ -336,7 +335,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
             <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
                 'display in favorites menu'</p>
             <p> You can now debug the application within Eclipse: Set a breakpoint in the constructor
-                of org.hippoecm.frontend.Home, run the Jetty launcher in debug mode,
+                of org.hippoecm.frontend.Home, run Run-Jetty-Run launcher in debug mode,
                 open your browser and go to http://localhost:8080 </p>
 
           <p>Now you are ready to check out some Eclipse
