@@ -69,10 +69,6 @@
             For the rest of this chapter ~/hippo-ecm is the directory where the sources
             are checked out and ~/workspace is the Eclipse workspace directory.</p>
           </div>
-          <p></p>
-
-          <p> <a href="http://docs.codehaus.org/display/JETTY/Downloading+and+Installing">
-            Download and install</a> Jetty version >= 6.0 </p>
         </section>
 
         <section name="Install and configure eclipse plugins">
@@ -139,10 +135,10 @@
             <subsection name="Jetty">
                 <ol>
                     <li>
-                        <p>Name='Jetty launcher'</p>
+                        <p>Name='Run Jetty Run'</p>
                     </li>
                     <li>
-                      <p>Update URL='http://dbpowder.sourceforge.net/etc/jettylauncher6/updates/'</p>
+                      <p>Update URL='http://run-jetty-run.googlecode.com/svn/trunk/updatesite'</p>
                     </li>
                 </ol>
             </subsection>
