@@ -211,7 +211,6 @@
             </property>
           </systemProperties>
           <excludes>
-            <exclude>**/RepositoryRolesTest.java</exclude>
             <exclude>**/*PerfTestCase.java</exclude>
           </excludes>
         </configuration>
