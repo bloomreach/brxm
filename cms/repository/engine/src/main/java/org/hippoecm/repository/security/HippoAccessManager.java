@@ -247,8 +247,7 @@ public class HippoAccessManager implements AccessManager {
         if (cacheSize < 0) {
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
-        log.info("Setting cache size: " + cacheSize);
-
+        log.debug("Setting cache size: {}", cacheSize);
         readAccessCache = new PermissionLRUCache(cacheSize);
         
         // we're done
