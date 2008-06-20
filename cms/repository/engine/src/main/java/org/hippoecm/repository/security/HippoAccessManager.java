@@ -22,7 +22,6 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -47,9 +46,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -60,7 +57,6 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
-import org.hippoecm.repository.security.principals.RolePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +75,6 @@ import org.slf4j.LoggerFactory;
  * have the correct permissions on the hippo:document the permissions on the node
  * are granted.
  *
- * TODO: Remove the 'special' checks for the workflow.
  */
 public class HippoAccessManager implements AccessManager {
 
@@ -98,7 +93,7 @@ public class HippoAccessManager implements AccessManager {
     private HippoHierarchyManager hierMgr;
 
     /**
-     * The session item state magener used for fetching transient and attic item states
+     * The session item state manager used for fetching transient and attic item states
      */
     private HippoSessionItemStateManager itemMgr;
 
@@ -116,11 +111,6 @@ public class HippoAccessManager implements AccessManager {
      * Hippo Namespace, TODO: move to better place
      */
     public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
-
-    /**
-     * Name of hippo:docucment, needed for document model checking
-     */
-    private Name hippoDoc;
 
     /**
      * Name of hippo:handle, needed for document model checking
@@ -154,18 +144,18 @@ public class HippoAccessManager implements AccessManager {
     private PermissionLRUCache readAccessCache = new PermissionLRUCache(250);
 
     /**
-     * Flag wheter current user is anonymous
+     * Flag whether current user is anonymous
      */
     @SuppressWarnings("unused")
     private boolean isAnonymous;
 
     /**
-     * Flag wheter current user is a regular user
+     * Flag whether current user is a regular user
      */
     private boolean isUser;
 
     /**
-     * Flag wheter the current user is a system user
+     * Flag whether the current user is a system user
      */
     private boolean isSystem;
 
@@ -190,10 +180,6 @@ public class HippoAccessManager implements AccessManager {
         isAnonymous = false;
         isUser = false;
         isSystem = false;
-
-        // create names from node types
-        // TODO: get the names from somewhere else. The access manager doesn't have
-        // access to the nodetype registry, so the namespace conversion is hard coded.
     }
 
     /**
@@ -215,6 +201,7 @@ public class HippoAccessManager implements AccessManager {
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
         isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
         isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
+        
 
         // prefetch userId
         if (isSystem) {
@@ -235,27 +222,12 @@ public class HippoAccessManager implements AccessManager {
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
-        hippoDoc = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_DOCUMENT);
         hippoHandle = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_HANDLE);
         hippoFacetSearch = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSEARCH);
         hippoFacetSelect = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSELECT);
 
         // we're done
         initialized = true;
-    }
-
-    /**
-     * Get the local part of the node type name string.
-     * TODO: Remove this method when nodetype names are available
-     * @param nodeType string with prefix, eg 'hippo:document'
-     * @return the local part of the nodetype name
-     */
-    private String getLocalName(String nodeType) {
-        int i = nodeType.indexOf(":");
-        if (i < 0) {
-            return nodeType;
-        }
-        return nodeType.substring(i + 1);
     }
 
     /**
@@ -270,7 +242,7 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Check wheter a user can access the NodeState with the requested permissions
+     * Check whether a user can access the NodeState with the requested permissions
      * @param nodeState the state of the node to check
      * @param permissions the (bitset) of the permissions
      * @return true if the user is allowed the requested permissions on the node
@@ -297,7 +269,7 @@ public class HippoAccessManager implements AccessManager {
                 return false;
             }
         }
-        // check for facet auuthorization
+        // check for facet authorization
         if (checkFacetAuth(nodeState, permissions)) {
             return true;
         }
@@ -373,10 +345,10 @@ public class HippoAccessManager implements AccessManager {
 
 
     /**
-     * Check wheter the node can be accessed with the requested permissins based on the
+     * Check whether the node can be accessed with the requested permissions based on the
      * FacetAuths of the subject. The method first checks if the jcr permissions of the
      * FacetAuth match the requested principals. If so, a check is done to check if the
-     * Node is in de Domain of the FacetAuth.
+     * Node is in the Domain of the FacetAuth.
      * @param nodeState the state of the node to check
      * @param permissions the (bitset) of the permissions
      * @return true if the user is allowed the requested permissions on the node
@@ -425,7 +397,7 @@ public class HippoAccessManager implements AccessManager {
 
     /**
      * Check if a node is in the domain of the facet auth principal by looping of all the
-     * domain rules. Foreach domain all the facet rules are checked.
+     * domain rules. For each domain all the facet rules are checked.
      * @param nodeState the state of the node to check
      * @param fap the facet auth principal to check
      * @return true if the node is in the domain of the facet auth
@@ -761,7 +733,7 @@ public class HippoAccessManager implements AccessManager {
      * @see FacetRule
      */
     private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) {
-        // the hierchy manager is attic aware. The property can also be in the removed properties
+        // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName())
                 && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
@@ -1019,7 +991,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         /**
-         * Total numer of times this cache is accessed
+         * Total number of times this cache is accessed
          * @return long
          */
         public long getTotalAccess() {
@@ -1027,7 +999,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         /**
-         * Total numer of cache hits
+         * Total number of cache hits
          * @return long
          */
         public long getHits() {

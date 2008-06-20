@@ -33,7 +33,6 @@ import javax.security.auth.spi.LoginModule;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
 import org.apache.jackrabbit.core.security.SecurityConstants;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.domain.Domain;
