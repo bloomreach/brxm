@@ -43,6 +43,7 @@ public interface HippoNodeType {
     final public static String USERS_PATH = "hippo:users";
     final public static String WORKFLOWS_PATH = "hippo:workflows";
     final public static String QUERIES_PATH = "hippo:queries";
+    final public static String ACCESSMANAGER_PATH = "hippo:accessmanager";
 
     //--- Hippo NodeTypes ---//
     final public static String NT_APPLICATION = "hippo:application";
@@ -141,6 +142,7 @@ public interface HippoNodeType {
     final public static String HIPPO_PARAMETERS = "hippo:parameters";
     final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";
+    final public static String HIPPO_PERMCACHESIZE = "hippo:permcachesize";
     final public static String HIPPO_PROTOTYPE = "hippo:prototype";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
     final public static String HIPPO_REMODEL = "hippo:remodel";
