@@ -148,6 +148,9 @@
 - hippo:viewsize (long) = '10' mandatory autocreated 
 + * (hippo:listingpropnode) = hippo:listingpropnode  
 
+[hippo:accessmanager] > nt:base
+- hippo:permcachesize (long)
+
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:active (boolean) = true mandatory autocreated
@@ -334,3 +337,4 @@
 + hippo:frontend_deprecated (hippo:application) = hippo:application
 + hippo:logging (hippo:logconfig) = hippo:logconfig
 + hippo:queries (hippo:basequeryfolder) = hippo:queryfolder mandatory autocreated
++ hippo:accessmanager (hippo:accessmanager) = hippo:accessmanager

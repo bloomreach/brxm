@@ -41,7 +41,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.hippoecm.repository.security.FacetAuthHelper;
+import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -135,7 +135,7 @@ public class AuthorizationQuery {
                 if (indexingConfig.isFacet(nodeName)) {
                     String internalFieldName = ServicingNameFormat.getInternalFacetName(nodeName, nsMappings);
                     String internalNameTerm = nsMappings.translatePropertyName(nodeName);
-                    if (facetRule.getValue().equals(FacetAuthHelper.WILDCARD)) {
+                    if (facetRule.getValue().equals(FacetAuthConstants.WILDCARD)) {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else {
@@ -144,14 +144,14 @@ public class AuthorizationQuery {
                             return QueryHelper.getNoHitsQuery();
                         }
                     }
-                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_USER)) {
+                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_USER)) {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(internalFieldName, session.getUserID()));
                         } else {
                             return  QueryHelper.negateQuery(new TermQuery(new Term(internalFieldName, session.getUserID())));
                         }
                     }
-                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_ROLE)) {
+                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_ROLE)) {
                         // boolean Or query of roles
                         if(roles.size() == 0) {
                             return QueryHelper.getNoHitsQuery();
@@ -167,7 +167,7 @@ public class AuthorizationQuery {
                             return QueryHelper.negateQuery(b);
                         }
                     }
-                    else if (facetRule.getValue().equals(FacetAuthHelper.EXPANDER_GROUP)) {
+                    else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_GROUP)) {
                      // boolean OR query of groups
                         if(groupPrincipals.isEmpty()) {
                             return QueryHelper.getNoHitsQuery();
