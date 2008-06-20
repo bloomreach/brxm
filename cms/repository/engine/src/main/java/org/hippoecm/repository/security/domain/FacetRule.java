@@ -22,13 +22,17 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.security.FacetAuthHelper;
+import org.hippoecm.repository.security.FacetAuthConstants;
 
 /**
  * The facet rule consist of a facet (property) and a value.
  * The rule can be equals, the values MUST match, or NOT equal,
- * the values MUST NOT match and the propery MUST exist. The
+ * the values MUST NOT match and the property MUST exist. The
  * property can be of type String or of type {@link Name}.
  *
  * A special facet value is "nodetype" in which case the facet rule
@@ -98,19 +102,21 @@ public class FacetRule implements Serializable {
         value = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
 
         // catch some illegal options
-        if (value.equals(FacetAuthHelper.WILDCARD) && !equals) {
+        if (value.equals(FacetAuthConstants.WILDCARD) && !equals) {
             throw new RepositoryException("Not-equals and wildcard value not allowed together.");
         }
 
+
+        NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
         Name name = null;
-        if (type == PropertyType.NAME && !value.equals(FacetAuthHelper.WILDCARD)) {
-            name = FacetAuthHelper.getNameFromJCRName(node.getSession(), value);
+        if (type == PropertyType.NAME && !value.equals(FacetAuthConstants.WILDCARD)) {
+            name = nRes.getQName(value);
         }
         valueName = name;
 
         // Set the JCR Name for the facet (string)
-        facetName = FacetAuthHelper.getNameFromJCRName(node.getSession(), facet);
+        facetName = nRes.getQName(facet);
     }
 
     /**

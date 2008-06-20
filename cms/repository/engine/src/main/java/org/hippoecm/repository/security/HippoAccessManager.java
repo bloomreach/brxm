@@ -46,7 +46,14 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.conversion.CachingNameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.ParsingPathResolver;
+import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -106,6 +113,11 @@ public class HippoAccessManager implements AccessManager {
      * NamespaceResolver
      */
     private NamespaceResolver nsRes;
+    
+    /**
+     * NameResolver
+     */
+    private NameResolver nRes;
 
     /**
      * Hippo Namespace, TODO: move to better place
@@ -141,7 +153,10 @@ public class HippoAccessManager implements AccessManager {
      * SuperSimpleLRUCache
      * TODO: handle multiple users, multiple session (perhaps move to ISM?)
      */
-    private PermissionLRUCache readAccessCache = new PermissionLRUCache(250);
+    private PermissionLRUCache readAccessCache;
+    
+    
+    private static final int DEFAULT_PERM_CACHE_SIZE = 500;
 
     /**
      * Flag whether current user is anonymous
@@ -196,6 +211,7 @@ public class HippoAccessManager implements AccessManager {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
         }
+        nRes = new CachingNameResolver(new ParsingNameResolver(NameFactoryImpl.getInstance(), nsRes));
 
         // Shortcuts for checks
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
@@ -222,10 +238,19 @@ public class HippoAccessManager implements AccessManager {
         // cache root NodeId
         rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
-        hippoHandle = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_HANDLE);
-        hippoFacetSearch = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSEARCH);
-        hippoFacetSelect = FacetAuthHelper.getNameFromJCRName(nsRes, HippoNodeType.NT_FACETSELECT);
+        hippoHandle = nRes.getQName(HippoNodeType.NT_HANDLE);
+        hippoFacetSearch = nRes.getQName(HippoNodeType.NT_FACETSEARCH);
+        hippoFacetSelect = nRes.getQName(HippoNodeType.NT_FACETSELECT);
 
+        // initialize read cache
+        int cacheSize = getPermCacheSize();
+        if (cacheSize < 0) {
+            cacheSize = DEFAULT_PERM_CACHE_SIZE;
+        }
+        log.info("Setting cache size: " + cacheSize);
+
+        readAccessCache = new PermissionLRUCache(cacheSize);
+        
         // we're done
         initialized = true;
     }
@@ -241,6 +266,33 @@ public class HippoAccessManager implements AccessManager {
         initialized = false;
     }
 
+    /**
+     * Try to read the cache size from the configuration
+     * @return the size or -1 when not found
+     */
+    private int getPermCacheSize() {
+        try {
+            PathResolver resolver = new ParsingPathResolver(PathFactoryImpl.getInstance(), nRes);
+            Path path = resolver.getQPath("/" + HippoNodeType.CONFIGURATION_PATH + "/"
+                    + HippoNodeType.ACCESSMANAGER_PATH + "/" + HippoNodeType.HIPPO_PERMCACHESIZE);
+            PropertyId confId = hierMgr.resolvePropertyPath(path);
+            if (confId != null) {
+                PropertyState state = (PropertyState) getState(confId);
+                InternalValue[] iVals = state.getValues();
+                if (iVals.length > 0 && ((int)iVals[0].getLong()) > 0) {
+                    return (int) iVals[0].getLong();
+                }
+            }
+        } catch (NoSuchItemStateException e ) {
+            // not configured, expected
+        } catch (ItemStateException e ) {
+            // too bad.. no correct config found
+        } catch (RepositoryException e) {
+            // too bad.. no correct config found
+        }
+        return -1;
+    }
+    
     /**
      * Check whether a user can access the NodeState with the requested permissions
      * @param nodeState the state of the node to check
@@ -290,7 +342,7 @@ public class HippoAccessManager implements AccessManager {
         }
         String nodeStateType;
         try {
-            nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+            nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
         } catch (NamespaceException e) {
             return false;
         }
@@ -317,7 +369,7 @@ public class HippoAccessManager implements AccessManager {
             // hippo:configuration->hippo:workflows->workflowPlugin->[workflowName]->hippo:types->[workflow]
             // primaryType workflowName -> hippo:workflow
             // primaryType workflow -> hippo:type
-            nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+            nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
             if (nodeStateType.equals(HippoNodeType.NT_WORKFLOW)) {
                 return nodeState;
             }
@@ -684,7 +736,7 @@ public class HippoAccessManager implements AccessManager {
     private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
         try {
             // create NodeType of nodeState's primaryType
-            String nodeStateType = FacetAuthHelper.getJCRNameFromName(nsRes, nodeState.getNodeTypeName());
+            String nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
 
             if (nodeStateType.equals(nodeType)) {
                 if (log.isTraceEnabled()) {
@@ -753,7 +805,7 @@ public class HippoAccessManager implements AccessManager {
                 }
 
                 // WILDCARD match
-                if (FacetAuthHelper.WILDCARD.equals(rule.getValue())) {
+                if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
                     match = true;
                 }
 
@@ -761,19 +813,19 @@ public class HippoAccessManager implements AccessManager {
                     log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
 
                     // expander matches
-                    if (FacetAuthHelper.EXPANDER_USER.equals(rule.getValue())) {
+                    if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
                         if (isUser && userId.equals(iVal.getString())) {
                             match = true;
                             break;
                         }
                     }
-                    if (FacetAuthHelper.EXPANDER_GROUP.equals(rule.getValue())) {
+                    if (FacetAuthConstants.EXPANDER_GROUP.equals(rule.getValue())) {
                         if (isUser && groupIds.contains(iVal.getString())) {
                             match = true;
                             break;
                         }
                     }
-                    if (FacetAuthHelper.EXPANDER_ROLE.equals(rule.getValue())) {
+                    if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
                         if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
                             match = true;
                             break;
@@ -831,7 +883,7 @@ public class HippoAccessManager implements AccessManager {
                 if (iVal.getType() == PropertyType.NAME) {
 
                     // WILDCARD match
-                    if (value.equals(FacetAuthHelper.WILDCARD)) {
+                    if (value.equals(FacetAuthConstants.WILDCARD)) {
                         return true;
                     }
 
@@ -915,6 +967,11 @@ public class HippoAccessManager implements AccessManager {
     private class PermissionLRUCache {
 
         /**
+         * Set size to zero to disable cache
+         */
+        private boolean enabled = true;
+        
+        /**
          * The cache map
          */
         private LRUMap map = null;
@@ -939,12 +996,16 @@ public class HippoAccessManager implements AccessManager {
          * @param size max number of cache objects
          */
         public PermissionLRUCache(int size) {
-            if (size < 1) {
-                throw new IllegalArgumentException("size < 1");
+            if (size < 0) {
+                throw new IllegalArgumentException("size < 0");
             }
             hit = 0;
             miss = 0;
             total = 0;
+            if (size == 0) { 
+                enabled = false;
+                return;
+            }
             map = new LRUMap(size);
         }
 
@@ -954,6 +1015,9 @@ public class HippoAccessManager implements AccessManager {
          * @return cached value or null when not in cache
          */
         synchronized public Boolean get(ItemId id) {
+            if (!enabled) {
+                return null;
+            }
             total++;
             Boolean obj = (Boolean) map.get(id.hashCode());
             if (obj == null) {
@@ -970,6 +1034,9 @@ public class HippoAccessManager implements AccessManager {
          * @param isGranted the value
          */
         synchronized public void put(ItemId id, boolean isGranted) {
+            if (!enabled) {
+                return;
+            }
             map.put(id.hashCode(), isGranted);
         }
 
@@ -978,6 +1045,9 @@ public class HippoAccessManager implements AccessManager {
          * @param id ItemId the key
          */
         synchronized public void remove(ItemId id) {
+            if (!enabled) {
+                return;
+            }
             if (map.containsKey(id.hashCode())) {
                 map.remove(id.hashCode());
             }
@@ -987,6 +1057,9 @@ public class HippoAccessManager implements AccessManager {
          * Clear the cache
          */
         synchronized public void clear() {
+            if (!enabled) {
+                return;
+            }
             map.clear();
         }
 
@@ -1019,6 +1092,9 @@ public class HippoAccessManager implements AccessManager {
          * @return int
          */
         public int getSize() {
+            if (!enabled) {
+                return 0;
+            }
             return map.size();
         }
 
@@ -1027,6 +1103,9 @@ public class HippoAccessManager implements AccessManager {
          * @return int
          */
         public int getMaxSize() {
+            if (!enabled) {
+                return 0;
+            }
             return map.maxSize();
         }
     }
