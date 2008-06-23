@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class NamespaceUpdater {
@@ -36,18 +36,18 @@ public class NamespaceUpdater {
     public Map<String, TypeUpdate> getUpdate(String namespace) {
         Map<String, TypeUpdate> result = new HashMap<String, TypeUpdate>();
 
-        List<TypeDescriptor> list = draftConfig.getTypes(namespace);
-        for (TypeDescriptor descriptor : list) {
+        List<ITypeDescriptor> list = draftConfig.getTypes(namespace);
+        for (ITypeDescriptor descriptor : list) {
             if (descriptor.isNode()) {
                 String type = descriptor.getType();
                 if (type.indexOf(':') > 0) {
                     String prefix = type.substring(0, type.indexOf(':'));
                     if (namespace.equals(prefix)) {
-                        TypeDescriptor current = currentConfig.getTypeDescriptor(type);
+                        ITypeDescriptor current = currentConfig.getTypeDescriptor(type);
                         if (current != null) {
-                            TypeDescriptor draft = draftConfig.getTypeDescriptor(type);
+                            ITypeDescriptor draft = draftConfig.getTypeDescriptor(type);
 
-                            TypeUpdate update = new TypeConversion(currentConfig, draftConfig, current, draft);
+                            TypeUpdate update = new TypeConversion(currentConfig, draftConfig, current, draft).getTypeUpdate();
                             result.put(type, update);
                         }
                     }

@@ -17,11 +17,11 @@ package org.hippoecm.frontend.plugins.standardworkflow.types;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 
-public interface ITypeStore extends IClusterable {
+public interface ITypeStore extends IDetachable {
 
-    TypeDescriptor getTypeDescriptor(String name);
+    ITypeDescriptor getTypeDescriptor(String name);
 
-    List<TypeDescriptor> getTypes(String namespace);
+    List<ITypeDescriptor> getTypes(String namespace);
 }

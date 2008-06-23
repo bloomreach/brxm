@@ -63,16 +63,17 @@ public interface RemodelWorkflow extends Workflow {
     public void createType(String name) throws WorkflowException, MappingException, RepositoryException,
             RemoteException;
 
-    public abstract class TypeUpdate {
+    public final class TypeUpdate implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         public String newName;
 
         public String prototype;
 
-        abstract public Map<FieldIdentifier, FieldIdentifier> getRenames();
+        public Map<FieldIdentifier, FieldIdentifier> renames;
     }
 
-    public class FieldIdentifier implements Serializable {
+    public final class FieldIdentifier implements Serializable {
         private static final long serialVersionUID = 1L;
 
         public String path;

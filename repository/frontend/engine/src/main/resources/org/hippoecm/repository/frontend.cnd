@@ -23,7 +23,7 @@
 
 [frontend:plugin] > hippo:plugin
 
-[frontend:plugincluster] > nt:base
+[frontend:plugincluster] > nt:base orderable
 - frontend:overrides (string) multiple
 - * (string)
 + * (frontend:plugin) = frontend:plugin

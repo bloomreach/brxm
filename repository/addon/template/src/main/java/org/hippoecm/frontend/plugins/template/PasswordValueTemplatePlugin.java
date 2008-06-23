@@ -24,7 +24,7 @@ import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// SA port: used in management perspective, lower prio
+@Deprecated
 public class PasswordValueTemplatePlugin extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

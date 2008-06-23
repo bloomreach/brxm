@@ -19,28 +19,30 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
-public class TypeConversion extends TypeUpdate implements Serializable {
+public class TypeConversion implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Map<FieldIdentifier, FieldIdentifier> fields;
-
-    public TypeConversion(ITypeStore currentConfig, ITypeStore draftConfig, TypeDescriptor current, TypeDescriptor draft) {
+    private TypeUpdate update;
+    
+    public TypeConversion(ITypeStore currentConfig, ITypeStore draftConfig, ITypeDescriptor current, ITypeDescriptor draft) {
+        update = new TypeUpdate();
+        
         if (draft != null) {
-            newName = draft.getName();
+            update.newName = draft.getName();
         } else {
-            newName = current.getName();
+            update.newName = current.getName();
         }
 
-        fields = new HashMap<FieldIdentifier, FieldIdentifier>();
-        for (Map.Entry<String, FieldDescriptor> entry : current.getFields().entrySet()) {
-            FieldDescriptor origField = entry.getValue();
-            TypeDescriptor descriptor = currentConfig.getTypeDescriptor(origField.getType());
+        update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
+        for (Map.Entry<String, IFieldDescriptor> entry : current.getFields().entrySet()) {
+            IFieldDescriptor origField = entry.getValue();
+            ITypeDescriptor descriptor = currentConfig.getTypeDescriptor(origField.getType());
             if (descriptor.isNode()) {
                 continue;
             }
@@ -50,26 +52,26 @@ public class TypeConversion extends TypeUpdate implements Serializable {
             oldId.type = currentConfig.getTypeDescriptor(origField.getType()).getType();
 
             if (draft != null) {
-                FieldDescriptor newField = draft.getField(entry.getKey());
+                IFieldDescriptor newField = draft.getField(entry.getKey());
                 if (newField != null) {
                     FieldIdentifier newId = new FieldIdentifier();
                     newId.path = newField.getPath();
-                    TypeDescriptor newType = draftConfig.getTypeDescriptor(newField.getType());
+                    ITypeDescriptor newType = draftConfig.getTypeDescriptor(newField.getType());
                     if (newType == null) {
                         // FIXME: test namespace prefix before resorting to the current config.
                         newType = currentConfig.getTypeDescriptor(newField.getType());
                     }
                     newId.type = newType.getType();
 
-                    fields.put(oldId, newId);
+                    update.renames.put(oldId, newId);
                 }
             } else {
-                fields.put(oldId, oldId);
+                update.renames.put(oldId, oldId);
             }
         }
     }
 
-    public Map<FieldIdentifier, FieldIdentifier> getRenames() {
-        return fields;
+    public TypeUpdate getTypeUpdate() {
+        return update;
     }
 }

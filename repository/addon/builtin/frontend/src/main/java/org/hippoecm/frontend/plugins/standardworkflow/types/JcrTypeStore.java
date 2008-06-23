@@ -17,24 +17,18 @@ package org.hippoecm.frontend.plugins.standardworkflow.types;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -50,40 +44,40 @@ public class JcrTypeStore implements ITypeStore {
     private static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
     private String version;
+    private transient Map<String, ITypeDescriptor> types = null;
 
     public JcrTypeStore(String version) {
         this.version = version;
     }
 
-    public TypeDescriptor getTypeDescriptor(String name) {
-        try {
-            Node typeNode = lookupConfigNode(name);
-            if (typeNode != null) {
-                return createDescriptor(typeNode, name).type;
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+    public ITypeDescriptor getTypeDescriptor(String name) {
+        if (types == null) {
+            types = new HashMap<String, ITypeDescriptor>();
         }
-        return null;
+        ITypeDescriptor result = types.get(name);
+        if (result == null) {
+            try {
+                Node typeNode = lookupConfigNode(name);
+                if (typeNode != null) {
+                    result = createTypeDescriptor(typeNode, name);
+                    types.put(name, result);
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+        return result;
     }
 
-    public JcrTypeModel getTypeModel(String name) {
-        try {
-            Node node = lookupConfigNode(name);
-            if (node != null) {
-                return new JcrTypeModel(new JcrNodeModel(node), name);
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
+    public void detach() {
+        types = null;
     }
 
-    public List<TypeDescriptor> getTypes(String namespace) {
+    public List<ITypeDescriptor> getTypes(String namespace) {
         Session session = getJcrSession();
 
-        Map<String, TypeDescriptor> currentTypes = new HashMap<String, TypeDescriptor>();
-        Map<String, TypeDescriptor> versionedTypes = new HashMap<String, TypeDescriptor>();
+        Map<String, ITypeDescriptor> currentTypes = new HashMap<String, ITypeDescriptor>();
+        Map<String, ITypeDescriptor> versionedTypes = new HashMap<String, ITypeDescriptor>();
         try {
             String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
                     + HippoNodeType.HIPPO_NODETYPE;
@@ -93,8 +87,8 @@ public class JcrTypeStore implements ITypeStore {
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                Descriptor descriptor = new Descriptor(pluginNode, namespace);
-                TypeDescriptor typeDescriptor = descriptor.type;
+                ITypeDescriptor typeDescriptor = createTypeDescriptor(pluginNode, pluginNode.getParent().getParent()
+                        .getName());
                 if (isVersion(pluginNode, RemodelWorkflow.VERSION_CURRENT)) {
                     currentTypes.put(typeDescriptor.getName(), typeDescriptor);
                 }
@@ -107,9 +101,9 @@ public class JcrTypeStore implements ITypeStore {
             ex.printStackTrace();
         }
 
-        ArrayList<TypeDescriptor> list = new ArrayList<TypeDescriptor>(currentTypes.values().size());
+        ArrayList<ITypeDescriptor> list = new ArrayList<ITypeDescriptor>(currentTypes.values().size());
         list.addAll(versionedTypes.values());
-        for (Map.Entry<String, TypeDescriptor> entry : currentTypes.entrySet()) {
+        for (Map.Entry<String, ITypeDescriptor> entry : currentTypes.entrySet()) {
             if (!versionedTypes.containsKey(entry.getKey())) {
                 list.add(entry.getValue());
             }
@@ -159,12 +153,13 @@ public class JcrTypeStore implements ITypeStore {
             uri = nsReg.getURI("rep");
         }
 
-        String path = "/"+HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/" + HippoNodeType.HIPPO_NODETYPE;
-        if(!session.itemExists(path) || !session.getItem(path).isNode()) {
+        String path = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/"
+                + HippoNodeType.HIPPO_NODETYPE;
+        if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
         }
-        NodeIterator iter = ((Node)session.getItem(path)).getNodes(HippoNodeType.HIPPO_NODETYPE);
-        
+        NodeIterator iter = ((Node) session.getItem(path)).getNodes(HippoNodeType.HIPPO_NODETYPE);
+
         Node current = null;
         while (iter.hasNext()) {
             Node node = iter.nextNode();
@@ -194,209 +189,26 @@ public class JcrTypeStore implements ITypeStore {
         return null;
     }
 
-    protected Descriptor createDescriptor(Node pluginNode, String type) throws RepositoryException {
-        String prefix = "system";
-        if (type.indexOf(':') > 0) {
-            prefix = type.substring(0, type.indexOf(':'));
-        }
-        return new Descriptor(pluginNode, prefix);
-    }
-
-    public TypeDescriptor createTypeDescriptor(Node node, String type) throws RepositoryException {
-        return createDescriptor(node, type).type;
-    }
-
-    protected class Descriptor implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        private String jcrPath;
-
-        RepositoryFieldDescriptor field;
-        TypeDescriptor type;
-        String prefix;
-        Descriptor(Node typeNode, String prefix) {
-
-            System.out.println("......");
-            try {
-                this.jcrPath = typeNode.getPath();
-                this.prefix = prefix;
-
-                if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
-                    Node templateTypeNode = typeNode;
-                    while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                        templateTypeNode = templateTypeNode.getParent();
-                    }
-
-                    String typeName;
-                    if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                        typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                    } else {
-                        typeName = templateTypeNode.getName();
-                    }
-                    type = new RepositoryTypeDescriptor(typeNode, templateTypeNode.getName(), typeName, this);
-                } else if (typeNode.isNodeType(HippoNodeType.NT_FIELD)) {
-                    String path = null;
-                    if (typeNode.hasProperty(HippoNodeType.HIPPO_PATH)) {
-                        path = typeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
-                        if (RemodelWorkflow.VERSION_DRAFT.equals(version)
-                                || RemodelWorkflow.VERSION_ERROR.equals(version)) {
-                            // convert path
-                            if (path.indexOf(':') > 0) {
-                                path = prefix + path.substring(path.indexOf(':'));
-                            }
-                        }
-                    }
-
-                    String name = "";
-                    if (typeNode.hasProperty(HippoNodeType.HIPPO_NAME)) {
-                        name = typeNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
-                    }
-
-                    field = new RepositoryFieldDescriptor(typeNode, name, path, this);
+    public ITypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
+        try {
+            if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
+                Node templateTypeNode = typeNode;
+                while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                    templateTypeNode = templateTypeNode.getParent();
                 }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
 
-        List<Descriptor> getNodeChildren() {
-            List<Descriptor> result = new ArrayList<Descriptor>();
-            try {
-                Node node = getNode();
-                if (node != null) {
-                    NodeIterator it = node.getNodes();
-                    while (it.hasNext()) {
-                        Node child = it.nextNode();
-                        if (child != null) {
-                            result.add(new Descriptor(child, prefix));
-                        }
-                    }
+                String typeName;
+                if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
+                    typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
                 } else {
-                    log.error("No plugin node found under " + jcrPath);
+                    typeName = templateTypeNode.getName();
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), templateTypeNode.getName(), typeName);
             }
-            return result;
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
-
-        List<TypeDescriptor> getTypes() {
-            List<TypeDescriptor> list = new LinkedList<TypeDescriptor>();
-            Iterator<Descriptor> iterator = getNodeChildren().iterator();
-            while (iterator.hasNext()) {
-                Descriptor plugin = iterator.next();
-                if (plugin.type != null) {
-                    list.add(plugin.type);
-                }
-            }
-            return list;
-        }
-
-        Map<String, FieldDescriptor> getFields() {
-            Map<String, FieldDescriptor> map = new HashMap<String, FieldDescriptor>();
-            Iterator<Descriptor> iterator = getNodeChildren().iterator();
-            while (iterator.hasNext()) {
-                Descriptor plugin = iterator.next();
-                if (plugin.field != null) {
-                    map.put(plugin.field.name, plugin.field);
-                }
-            }
-            return map;
-        }
-
-        protected Node getNode() throws RepositoryException {
-            return (Node) getJcrSession().getItem(jcrPath);
-        }
+        return null;
     }
 
-    protected class RepositoryTypeDescriptor extends TypeDescriptor {
-        private static final long serialVersionUID = 1L;
-
-        Descriptor nodeDescriptor;
-
-        public RepositoryTypeDescriptor(Node node, String name, String type, Descriptor nodeDescriptor) {
-            super(name, type);
-
-            this.nodeDescriptor = nodeDescriptor;
-
-            try {
-                if (node.hasProperty(HippoNodeType.HIPPO_NODE)) {
-                    setIsNode(node.getProperty(HippoNodeType.HIPPO_NODE).getBoolean());
-                }
-                if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                    List<String> superTypes = new LinkedList<String>();
-                    Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                    for (int i = 0; i < values.length; i++) {
-                        superTypes.add(values[i].getString());
-                    }
-                    setSuperTypes(superTypes);
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
-
-        @Override
-        public Map<String, FieldDescriptor> getFields() {
-            Map<String, FieldDescriptor> fields = nodeDescriptor.getFields();
-            Set<String> explicit = new HashSet<String>();
-            for (FieldDescriptor field : fields.values()) {
-                if (!field.getPath().equals("*")) {
-                    explicit.add(field.getPath());
-                }
-            }
-            for (FieldDescriptor field : fields.values()) {
-                if (field.getPath().equals("*")) {
-                    field.setExcluded(explicit);
-                }
-            }
-
-            return fields;
-        }
-    }
-
-    protected class RepositoryFieldDescriptor extends FieldDescriptor {
-        private static final long serialVersionUID = 1L;
-
-        String name;
-        Descriptor nodeDescriptor;
-
-        public RepositoryFieldDescriptor(Node node, String name, String path, Descriptor nodeDescriptor) {
-            super(path);
-
-            this.name = name;
-            this.nodeDescriptor = nodeDescriptor;
-
-            try {
-                if (node.hasProperty(HippoNodeType.HIPPO_MULTIPLE)) {
-                    boolean multiple = node.getProperty(HippoNodeType.HIPPO_MULTIPLE).getBoolean();
-                    setIsMultiple(multiple);
-                }
-
-                if (node.hasProperty(HippoNodeType.HIPPO_MANDATORY)) {
-                    boolean mandatory = node.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean();
-                    setMandatory(mandatory);
-                }
-
-                if (node.hasProperty(HippoNodeType.HIPPO_ORDERED)) {
-                    setIsOrdered(node.getProperty(HippoNodeType.HIPPO_ORDERED).getBoolean());
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
-
-        @Override
-        public String getType() {
-            try {
-                Node pluginNode = nodeDescriptor.getNode();
-                if (pluginNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                    return pluginNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return null;
-        }
-    }
 }
