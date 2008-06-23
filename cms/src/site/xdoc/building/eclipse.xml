@@ -308,6 +308,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
                   <p>Under tab 'Source', remove the &lt;project&gt;/src/test/resources folder</p>
                 </li>
               </ol>
+              <b>Repeat the 3 steps above also for the project hippo-ecm-addon-standards-frontend</b>
             </subsection>
         </section>
 
