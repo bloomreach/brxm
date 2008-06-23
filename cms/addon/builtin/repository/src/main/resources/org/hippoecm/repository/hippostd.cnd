@@ -35,14 +35,19 @@
 - hippostd:content (string) primary mandatory
 
 [hippostd:resource] > hippo:document, hippostd:languageable
-+ hippostd:content (nt:resource) = nt:resource primary mandatory
+- hippostd:content (binary) primary mandatory
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
 
-
-// FIXME: these types need reviewing:
 [hippostd:folder] > hippo:document
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder
 
+[hippostd:templates] > nt:base
++ *
+
 [hippostd:templatequery] > nt:query
 - hippostd:icon (string)
-+ hippostd:templates = nt:unstructured
+- hippostd:renderer (string)
+- hippostd:modify (string) multiple
++ hippostd:templates (hippostd:templates) = hippostd:templates
