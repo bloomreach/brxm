@@ -23,6 +23,9 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
+import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
@@ -36,8 +39,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -102,7 +103,14 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         IPluginContext context = getPluginContext();
 
         JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
+        ITypeDescriptor type = typeHelper.getTypeDescriptor("draft");
         JcrNodeModel templateModel = typeHelper.getTemplate();
+        if (templateModel == null) {
+            BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
+            IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
+            templateModel = typeHelper.storeTemplate(cluster);
+        }
+
         PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel);
 
         String uniqId = context.getReference(this).getServiceId();

@@ -20,16 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
-import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 
 public class BuiltinTemplateStore implements IClusterable {
@@ -37,7 +36,6 @@ public class BuiltinTemplateStore implements IClusterable {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private static int instanceCount = 0;
 
     private ITypeStore typeConfig;
 
@@ -46,7 +44,7 @@ public class BuiltinTemplateStore implements IClusterable {
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        return new ClusterConfigDecorator(new BuiltinTemplateConfig(type, mode), newId());
+        return new BuiltinTemplateConfig(type, mode);
     }
 
     class BuiltinTemplateConfig extends JavaClusterConfig {
@@ -66,6 +64,7 @@ public class BuiltinTemplateStore implements IClusterable {
             result.add("wicket.id");
             result.add("wicket.dialog");
             result.add("engine");
+            result.add("mode");
             return result;
         }
 
@@ -75,7 +74,7 @@ public class BuiltinTemplateStore implements IClusterable {
             IPluginConfig config = new JavaPluginConfig();
             config.put("plugin.class", ListViewPlugin.class.getName());
             config.put("wicket.id", "cluster:wicket.id");
-            config.put("item", "{cluster}.item");
+            config.put("item", "{cluster}.field");
             list.add(config);
 
             Map<String, IFieldDescriptor> fields = type.getFields();
@@ -89,7 +88,7 @@ public class BuiltinTemplateStore implements IClusterable {
                 } else {
                     config.put("plugin.class", PropertyFieldPlugin.class.getName());
                 }
-                config.put("wicket.id", "{cluster}.item");
+                config.put("wicket.id", "{cluster}.field");
                 config.put("wicket.model", "cluster:wicket.model");
                 config.put("engine", "cluster:engine");
                 config.put("mode", "cluster:mode");
@@ -108,9 +107,4 @@ public class BuiltinTemplateStore implements IClusterable {
         }
     }
 
-    private static String newId() {
-        synchronized (BuiltinTemplateStore.class) {
-            return BuiltinTemplateStore.class.getName() + "." + (instanceCount++);
-        }
-    }
 }
