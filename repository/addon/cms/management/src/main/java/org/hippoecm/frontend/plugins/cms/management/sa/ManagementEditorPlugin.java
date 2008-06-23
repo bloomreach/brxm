@@ -19,8 +19,8 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.sa.template.editor.EditorForm;
-import org.hippoecm.frontend.sa.template.editor.EditorPlugin;
+import org.hippoecm.frontend.editor.editor.EditorForm;
+import org.hippoecm.frontend.editor.editor.EditorPlugin;
 
 public class ManagementEditorPlugin extends EditorPlugin {
     @SuppressWarnings("unused")
