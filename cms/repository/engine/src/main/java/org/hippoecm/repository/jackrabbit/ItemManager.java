@@ -55,7 +55,7 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     private NodeId rootNodeId;
     private HierarchyManager hierMgr;
     private ItemStateManager itemStateProvider;
-    Set itemCache;
+    Set<ItemId> itemIdCache;
 
     protected ItemManager(SessionItemStateManager itemStateProvider, HierarchyManager hierMgr,
                           SessionImpl session, NodeDefinition rootNodeDef,
@@ -65,7 +65,7 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
         this.rootNodeId = rootNodeId;
         this.hierMgr = hierMgr;
         this.itemStateProvider = itemStateProvider;
-        itemCache = new HashSet();
+        itemIdCache = new HashSet<ItemId>();
     }
 
     /*
@@ -82,9 +82,9 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     }
     */
 
-    private boolean inCache(ItemId id) {
-        synchronized (itemCache) {
-            return itemCache.contains(id);
+    private boolean inParentCache(ItemId id) {
+        synchronized (itemIdCache) {
+            return itemIdCache.contains(id);
         }
     }
 
@@ -128,47 +128,53 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     public synchronized ItemImpl getItem(ItemId id)
             throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        ItemImpl item = null;
-        // check cache
-        if(inCache(id))
+        
+        // check if node is in parent cache
+        if(inParentCache(id)) {
             return super.getItem(id);
-        if (item == null) {
-            // not yet in cache, need to create instance:
-            // check privileges
+        }
+        
+        if (id.denotesNode()) {
+            // Create instance of node locally
             if (!session.getAccessManager().isGranted(id, AccessManager.READ)) {
                 throw new AccessDeniedException("cannot read item " + id);
             }
-            // create instance of item
-            item = createItemInstance(id);
+            ItemImpl item = createItemInstance(id);
             if (item == null) {
-                return super.getItem(id);
+                System.err.println("ITEM NULL!!!??");
             }
+            return item;
+        } else {
+            // Create instance of property by parent
+            return super.getItem(id);
         }
-        return item;
     }
 
+    
     public synchronized ItemImpl getItem(ItemState state)
             throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        ItemImpl item = null;
         ItemId id = state.getId();
-        // check cache
-        if(inCache(id))
+        
+        // check if node is in parent cache
+        if(inParentCache(id)) {
             return super.getItem(id);
-        if (item == null) {
-            // not yet in cache, need to create instance:
+        }
+
+        if (id.denotesNode()) {
+            // Create instance of node locally
             // only check privileges if state is not new
             if (state.getStatus() != ItemState.STATUS_NEW
                     && !session.getAccessManager().isGranted(id, AccessManager.READ)) {
                 throw new AccessDeniedException("cannot read item " + id);
             }
             // create instance of item
-            item = createItemInstance(id);
-            if (item == null) {
-                return super.getItem(state);
-            }
+            return  createItemInstance(id);
+        } else {
+            // Create instance of property by parent 
+            return super.getItem(id);
         }
-        return item;
     }
+    
 
     //-------------------------------------------------< item factory methods >
     private ItemImpl createItemInstance(ItemId id)
@@ -235,23 +241,23 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
     }
 
     public void itemCreated(ItemImpl item) {
-        synchronized (itemCache) {
+        synchronized (itemIdCache) {
             ItemId id = item.getId();
-            itemCache.add(id);
+            itemIdCache.add(id);
             super.itemCreated(item);
         }
     }
 
     public void itemInvalidated(ItemId id, ItemImpl item) {
-        synchronized (itemCache) {
-            itemCache.remove(id);
+        synchronized (itemIdCache) {
+            itemIdCache.remove(id);
             super.itemInvalidated(id, item);
         }
     }
 
     public void itemDestroyed(ItemId id, ItemImpl item) {
-        synchronized (itemCache) {
-            itemCache.remove(id);
+        synchronized (itemIdCache) {
+            itemIdCache.remove(id);
             super.itemDestroyed(id, item);
         }
     }

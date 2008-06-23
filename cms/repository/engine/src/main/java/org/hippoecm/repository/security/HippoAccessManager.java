@@ -405,7 +405,7 @@ public class HippoAccessManager implements AccessManager {
      * @return true if the user is allowed the requested permissions on the node
      * @throws RepositoryException
      */
-    protected boolean checkFacetAuth(NodeState nodeState, int permissions) throws RepositoryException {
+    protected boolean checkFacetAuth(NodeState nodeState, int permissions) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         if (log.isTraceEnabled()) {
             log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
         }
@@ -455,7 +455,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException
      * @see FacetAuthPrincipal
      */
-    protected boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws RepositoryException {
+    protected boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
         boolean isInDomain = false;
 
@@ -495,9 +495,12 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
      * @return true if the node matches the facet rule
+     * @throws RepositoryException 
+     * @throws ItemStateException 
+     * @throws NoSuchItemStateException 
      * @see FacetRule
      */
-    protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) {
+    protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
 
         // is this a 'NodeType' facet?
@@ -631,11 +634,11 @@ public class HippoAccessManager implements AccessManager {
 
             return isGranted;
         } catch (NoSuchItemStateException e) {
-            log.warn("Item not found in hierarchy: " + id + " : " + e.getMessage());
-            throw new ItemNotFoundException("Item not found in hierarchy: " + id);
+            log.warn("NoSuchItemStateException for: " + id + " : " + e.getMessage());
+            throw new ItemNotFoundException("NoSuchItemStateException: Item not found in hierarchy: " + id, e);
         } catch (ItemStateException e) {
-            log.error("ItemSate exception for id: " + id, e);
-            throw new RepositoryException("ItemStateException: " + e.getMessage());
+            log.error("ItemStateException for id: " + id, e);
+            throw new RepositoryException("ItemStateException: " + e.getMessage(), e);
         }
     }
 
@@ -732,45 +735,36 @@ public class HippoAccessManager implements AccessManager {
      * @return boolean
      * @throws NoSuchNodeTypeException
      */
-    private boolean isInstanceOfType(NodeState nodeState, String nodeType) {
-        try {
-            // create NodeType of nodeState's primaryType
-            String nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
+    private boolean isInstanceOfType(NodeState nodeState, String nodeType) throws NamespaceException,
+            NoSuchNodeTypeException, RepositoryException {
+        // create NodeType of nodeState's primaryType
+        String nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
 
-            if (nodeStateType.equals(nodeType)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeType);
-                }
-                return true;
+        if (nodeStateType.equals(nodeType)) {
+            if (log.isTraceEnabled()) {
+                log.trace("MATCH " + nodeState.getId() + " is of type: " + nodeType);
             }
+            return true;
+        }
 
-            // get iterator over all types
-            NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
-            NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
+        // get iterator over all types
+        NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
+        NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
 
-            // iterate over All NodeTypes untill...
-            while (allTypes.hasNext()) {
-                NodeType nt = allTypes.nextNodeType();
-                // the correct NodeType is found
-                if (nt.equals(nodeStateNodeType)) {
-                    // get all supertypes of the nodeState's primaryType's NodeType
-                    NodeType[] superTypes = nt.getSupertypes();
-                    // check if one of the superTypes matches the nodeType
-                    for (NodeType type : superTypes) {
-                        if (type.getName().equals(nodeType)){
-                            return true;
-                        }
+        // iterate over All NodeTypes untill...
+        while (allTypes.hasNext()) {
+            NodeType nt = allTypes.nextNodeType();
+            // the correct NodeType is found
+            if (nt.equals(nodeStateNodeType)) {
+                // get all supertypes of the nodeState's primaryType's NodeType
+                NodeType[] superTypes = nt.getSupertypes();
+                // check if one of the superTypes matches the nodeType
+                for (NodeType type : superTypes) {
+                    if (type.getName().equals(nodeType)) {
+                        return true;
                     }
                 }
             }
-        } catch (NamespaceException e) {
-            log.warn("NamespaceException while checking if " + nodeState.getId() + " isInstanceOf: " + nodeType);
-            log.debug("Error while checking isInstanceOf: {}", nodeType, e);
-        } catch (NoSuchNodeTypeException e) {
-            log.warn("NoSuchNodeTypeException while checking if " + nodeState.getId() + "  isInstanceOf: " + nodeType);
-            log.debug("Error while checking isInstanceOf: {}", nodeType, e);
-        } catch (RepositoryException e) {
-            log.error("Error while checking if " + nodeState.getId() + "  isInstanceOf: " + nodeType,e);
         }
         return false;
     }
@@ -781,83 +775,73 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
      * @return true if the node matches the facet rule
+     * @throws RepositoryException 
      * @see FacetRule
      */
-    private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) {
+    private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName())
                 && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
             return false;
         }
-
-        try {
             HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), rule.getFacetName());
-            PropertyState state = (PropertyState) getState(propertyId);
-            InternalValue[] iVals = state.getValues();
-            boolean match = false;
+        PropertyState state = (PropertyState) getState(propertyId);
+        InternalValue[] iVals = state.getValues();
+        boolean match = false;
 
-            for (InternalValue iVal : iVals) {
-                // types must match
-                if (iVal.getType() != rule.getType()) {
-                    continue;
+        for (InternalValue iVal : iVals) {
+            // types must match
+            if (iVal.getType() != rule.getType()) {
+                continue;
+            }
+
+            // WILDCARD match
+            if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
+                match = true;
+            }
+
+            if (iVal.getType() == PropertyType.STRING) {
+                log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
+
+                // expander matches
+                if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
+                    if (isUser && userId.equals(iVal.getString())) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (FacetAuthConstants.EXPANDER_GROUP.equals(rule.getValue())) {
+                    if (isUser && groupIds.contains(iVal.getString())) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
+                    if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
+                        match = true;
+                        break;
+                    }
                 }
 
-                // WILDCARD match
-                if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
+                if (iVal.getString().equals(rule.getValue())) {
                     match = true;
+                    break;
                 }
+            } else if (iVal.getType() == PropertyType.NAME) {
+                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
 
-                if (iVal.getType() == PropertyType.STRING) {
-                    log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
-
-                    // expander matches
-                    if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
-                        if (isUser && userId.equals(iVal.getString())) {
-                            match = true;
-                            break;
-                        }
-                    }
-                    if (FacetAuthConstants.EXPANDER_GROUP.equals(rule.getValue())) {
-                        if (isUser && groupIds.contains(iVal.getString())) {
-                            match = true;
-                            break;
-                        }
-                    }
-                    if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
-                        if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (iVal.getString().equals(rule.getValue())) {
-                        match = true;
-                        break;
-                    }
-                } else if (iVal.getType() == PropertyType.NAME) {
-                    log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getQName());
-
-                    if (iVal.getQName().equals(rule.getValueName())) {
-                        match = true;
-                        break;
-                    }
+                if (iVal.getQName().equals(rule.getValueName())) {
+                    match = true;
+                    break;
                 }
             }
-            if (rule.isEqual()) {
-                return match;
-            } else {
-                // the property is set but the values don't match
-                return !match;
-            }
-        } catch (NoSuchItemStateException e) {
-            log.error("NoSuchItemStateException for id: " + nodeState.getId(), e);
-            //log.debug("ItemState not found for node state: {} : error: {}", nodeState.getId(),e.getMessage());
-            return false;
-        } catch (ItemStateException e) {
-            log.error("ItemStateException for id: " + nodeState.getId(), e);
-            //log.debug("ItemState exception while checking node state: {} error: {}", nodeState.getId(),e.getMessage());
-            return false;
+        }
+        if (rule.isEqual()) {
+            return match;
+        } else {
+            // the property is set but the values don't match
+            return !match;
         }
     }
 
@@ -866,38 +850,31 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the node to check
      * @param value the mixin type to check for. This is the String representation of the Name
      * @return true if the node has the mixin type
+     * @throws RepositoryException 
      */
-    private boolean hasMixinWithValue(NodeState nodeState, String value) {
+    private boolean hasMixinWithValue(NodeState nodeState, String value) throws NoSuchItemStateException, ItemStateException, RepositoryException {
         if (!nodeState.hasPropertyName(NameConstants.JCR_MIXINTYPES)) {
             return false;
         }
 
         HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), NameConstants.JCR_MIXINTYPES);
-        try {
-            PropertyState state = (PropertyState) getState(propertyId);
-            InternalValue[] iVals = state.getValues();
+        PropertyState state = (PropertyState) getState(propertyId);
+        InternalValue[] iVals = state.getValues();
 
-            for (InternalValue iVal : iVals) {
-                // types must match
-                if (iVal.getType() == PropertyType.NAME) {
+        for (InternalValue iVal : iVals) {
+            // types must match
+            if (iVal.getType() == PropertyType.NAME) {
 
-                    // WILDCARD match
-                    if (value.equals(FacetAuthConstants.WILDCARD)) {
-                        return true;
-                    }
+                // WILDCARD match
+                if (value.equals(FacetAuthConstants.WILDCARD)) {
+                    return true;
+                }
 
-                    log.trace("Checking facetVal: {} (name) -> {}", value, iVal.getQName());
-                    if (iVal.getQName().toString().equals(value)) {
-                        return true;
-                    }
+                log.trace("Checking facetVal: {} (name) -> {}", value, iVal.getQName());
+                if (iVal.getQName().toString().equals(value)) {
+                    return true;
                 }
             }
-        } catch (NoSuchItemStateException e) {
-            //e.printStackTrace();
-            return false;
-        } catch (ItemStateException e) {
-            //e.printStackTrace();
-            return false;
         }
         return false;
     }
@@ -910,10 +887,11 @@ public class HippoAccessManager implements AccessManager {
      * @return NodeState the parent node state or null
      * @throws NoSuchItemStateException
      * @throws ItemStateException
-     * @throws NoSuchNodeTypeException
+     * @throws RepositoryException 
+     * @throws NamespaceException 
      */
     private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException,
-            NoSuchNodeTypeException {
+            NamespaceException, RepositoryException {
 
         if (log.isTraceEnabled()) {
             log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName()
