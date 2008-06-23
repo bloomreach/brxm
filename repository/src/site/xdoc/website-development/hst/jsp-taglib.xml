@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE document PUBLIC
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
@@ -26,15 +25,15 @@
     <section name="The JSP tag library">
       <subsection name="Importing the taglib">
         <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> within the
-          included HST jar file (see <a href="getting.html">getting the HST packages</a>) and 
+          included HST jar file (see <a href="getting.html">getting the HST packages</a>) and
           should be found by your web server. The URI of the taglib is
           <code>http://www.hippoecm.org/jsp/hst</code> so to import the taglib in your jsp use the
           piece of code below. As prefix we recommend <code>hst</code>, as a simple <code>h</code>
           is commonly used for jsf html tags.</p>
         <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>]]></source>
       </subsection>
-      <subsection name="Tags"> 
-        <p>The following tags are available:</p> 
+      <subsection name="Tags">
+        <p>The following tags are available:</p>
         <table cellpadding="3" cellspacing="0">
           <tr>
             <th>Tag</th>
@@ -58,10 +57,10 @@
           </tr>
           <tr>
             <td><pre><a href="tag/include-tag.html">&lt;hst:include&gt;</a></pre></td>
-            <td>Includes in the page the output for a certain repository location, as found via 
+            <td>Includes in the page the output for a certain repository location, as found via
               the URL mapping functionality.</td>
             <td>Yes</td>
-          </tr> 
+          </tr>
           <tr>
             <td><pre><a href="tag/documents-tag.html">&lt;hst:documents&gt;</a></pre></td>
             <td>Show a list of documents from a repository location.</td>
@@ -85,16 +84,15 @@
           <tr>
             <td><pre><a href="tag/menu-tag.html">&lt;hst:menu&gt;</a></pre></td>
             <td>Shows a dynamic menu as read from content in the repository.</td>
-            <td>Yes, overridable.</td>
+            <td>Yes, overridable</td>
           </tr>
           <tr>
             <td><pre><a href="tag/sitemap-tag.html">&lt;hst:siteMap&gt;</a></pre></td>
             <td>Shows a dynamic site map as read from content in the repository.</td>
-            <td>Yes, overridable.</td>
+            <td>Yes, overridable</td>
           </tr>
         </table>
       </subsection>
     </section>
   </body>
 </document>
-
