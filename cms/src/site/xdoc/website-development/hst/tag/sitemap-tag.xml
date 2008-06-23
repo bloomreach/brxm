@@ -129,8 +129,7 @@ Not required, no default.]]></source>
       <p>The SiteMapItem objects that are retrieved by both the 'documents' and the
         'folders' properties have properties 'label', 'level', 'path' and again 
         'documents' and 'folders'.</p> 
-      <p>Note that path can easily be converted to an URL by the &lt;hst:encodeURL&gt; tag.</p>
-      <h4>Site map item labels</h4>      
+      <p>Note that 'path' can easily be converted to an URL by the &lt;hst:encodeURL&gt; tag.</p>
     </section>
   </body>
 </document>

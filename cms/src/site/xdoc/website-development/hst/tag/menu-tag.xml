@@ -125,7 +125,7 @@ Not required, no default.]]></source>
         by the id: &lt;id&gt;-level and &lt;id&gt;-depth.</p>
       <p>The MenuItem objects that are retrieved by the 'items' property have the properties
         'label', 'level', 'active', 'path' and 'items'.</p>
-      <p>Note that path can easily be converted to an URL by the &lt;hst:encodeURL&gt;
+      <p>Note that 'path' can easily be converted to an URL by the &lt;hst:encodeURL&gt;
       tag.</p>
     </section>
   </body>
