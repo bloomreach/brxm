@@ -120,22 +120,12 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
 
         while (currentNode != null) {
 
-            // directly, if pageFile has been set without hst:page mixin
-            if (currentNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+            // directly, via hst:page mixin
+            if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                 displayNode = currentNode;
             }
 
             // directly on handle
-            else if ((handleNode != null) && handleNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
-                displayNode = handleNode;
-            }
-
-            // indirectly, via hst:page mixin
-            else if (currentNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
-                displayNode = currentNode;
-            }
-
-            // indirectly on handle
             else if ((handleNode != null) && handleNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                 displayNode = handleNode;
             }
@@ -154,14 +144,19 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
                             // match by type?
                             if (currentNode.isNodeType(prop.getString())) {
 
-                                // directly, if pageFile has been set directly
-                                if (matchNode.hasProperty(HSTNodeTypes.HST_PAGEFILE)) {
+                                // directly, if hst:page has been set 
+                                if (matchNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                                     displayNode = matchNode;
                                 }
 
-                                // indirectly, get the hst:displaypage subnode
+                                // indirectly, get a hst:displaypage subnode
                                 else {
-                                    displayNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
+                                    if (matchNode.hasNode(HSTNodeTypes.HST_DISPLAYPAGE)) {
+                                        Node subNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
+                                        if (subNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
+                                            displayNode = subNode;
+                                        }    
+                                    }
                                 }
 
                                 break;
