@@ -22,7 +22,7 @@
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
 
 [hst:page] mixin
-- hst:pageType (string) = 'jsp' mandatory < 'jsp', 'jsf'
+- hst:pageType (string) = 'jsp' < 'jsp', 'jsf'
 - hst:pageFile (string) = 'index.jsp' mandatory 
 
 [hst:pageDef] > nt:base, hst:page
