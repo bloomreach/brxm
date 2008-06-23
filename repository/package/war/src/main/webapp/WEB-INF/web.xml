@@ -35,6 +35,10 @@
             <param-name>applicationClassName</param-name>
             <param-value>org.hippoecm.frontend.Main</param-value>
         </init-param>
+        <init-param>
+            <param-name>filterMappingUrlPattern</param-name>
+            <param-value>/*</param-value>
+        </init-param>
     </filter>
 
     <!--Builtin console-->
