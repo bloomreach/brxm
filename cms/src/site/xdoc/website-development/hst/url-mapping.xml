@@ -54,26 +54,22 @@
              should match an existing repository node.</p>
 
            <h4>2. Direct node to page mapping</h4>
-          <p>If the found node has a property <code>hst:pageFile</code>, the value of
-              that property is the page that is forwarded to.</p>
-
-          <p>A more sophisticated way is via a so-call mixin-type. If the found node has
-            a mixin-type <code>hst:page</code> set, the properties <code>hst:pageFile</code>
-            and <code>hst:pageType</code> should be present as well, as they are obligatorily
-            bound to the property <code>hst:page</code>. The value of the property <code>hst:pageFile</code>
-            is the page that is forwarded to.</p>
+          <p>If the found node has a mixin-type <code>hst:page</code> set, the property <code>hst:pageFile</code>
+            should be present as well, as it is mandatorily bound to the mixin type <code>hst:page</code>.
+            The value of the property <code>hst:pageFile</code> is the page that is forwarded to.</p>
 
           <h4>3. Document type mapping</h4>
           <p>If no <code>hst:page</code> mixin type is set on the node, all nodes in the location
             as described by <code>repository.urlmapping.location</code> are iterated. The property
-            <code>hst:nodetype</code> of those subnodes are read: if the value of that property
+            <code>hst:nodeType</code> of those subnodes are read: if the value of that property
             matches the type of the current document, a mapping node is found.</p>
 
-          <p>Then, to get the actual mapped jsp file, if the mapping node has a property
-            <code>hst:pageFile</code>, the value of that property is the page that is forwarded to.</p>
+          <p>Then, to get the actual mapped jsp file, if the mapping node has a mixin-type
+            <code>hst:page</code> set, the property <code>hst:pageFile</code> should be present
+            as well, so the value of that property is the page that is forwarded to.</p>
 
-           <p>Again (see 2), a more sophisticated way is via the mixin-type. If the mapping node has
-             a subnode by the fixed name of <code>hst:displaypage</code>, which is marked as
+           <p>A more sophisticated way is via a named subnode. If the mapping node has
+             a subnode by the fixed name of <code>hst:displayPage</code>, which is marked as
              <code>hst:page</code>, that subnode should have a property <code>hst:pageFile</code>,
              representing the page that is forwarded to.</p>
 
@@ -84,17 +80,7 @@
 
           <h4>An example repository structure for URL mapping</h4>
           <source><![CDATA[  /preview/content/news
-                       [hst:pageFile=/news.jsp]
-  /preview/content/news/new-version-released
-                                            [jcr:primaryType=hippo:newsItem]
-
-  /urlMapping/newsItemMapping
-                             [hst:nodetype=hippo:newsItem]
-                             [hst:pageFile=/newsItem.jsp]]]></source>
-          <h4>Another, sophisticated, example repository structure for URL mapping</h4>
-          <source><![CDATA[  /preview/content/news
                        [hst:page] (mixin type)
-                       [hst:pageType=jsp]
                        [hst:pageFile=/news.jsp]
   /preview/content/news/new-version-released
                                             [jcr:primaryType=hippo:newsItem]
@@ -103,9 +89,8 @@
                              [hst:nodetype=hippo:newsItem]
   /urlMapping/newsItemMapping/hst:displaypage
                                              [hst:page] (mixin type)
-                                             [hst:pageType=jsp]
                                              [hst:pageFile=/newsItem.jsp]]]></source>
-          <p>In the above examples an URL <code>/preview/content/news</code> will
+          <p>In the above example an URL <code>/preview/content/news</code> will
             have <code>/news.jsp</code> as view, whereas <code>/preview/content/news/new-version-released</code> will
             have <code>/newsItem.jsp</code> as view.</p>
         </subsection>
