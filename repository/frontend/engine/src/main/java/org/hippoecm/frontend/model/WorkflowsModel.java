@@ -62,6 +62,8 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
 
     transient private Map<Entry, Vector<WorkflowDescriptor>> workflows;
 
+    String renderer = null;
+
     public void initialize() throws RepositoryException {
         workflows = new TreeMap<Entry, Vector<WorkflowDescriptor>>(new Comparator<Entry>() {
             public int compare(Entry o1, Entry o2) {
@@ -103,10 +105,9 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null) {
+                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
                             if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                                workflows
-                                        .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
+                                workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                             workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
                         }
                     }
@@ -115,7 +116,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     || handle.isNodeType("hippo:namespace") || handle.isNodeType("hippo:namespacefolder")
                     || handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if (workflowDescriptor != null) {
+                if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
                     if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
                         workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                     workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
@@ -126,9 +127,9 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    if (child.isNodeType(HippoNodeType.NT_REQUEST) && !(child.hasProperty("type") && child.getProperty("type").equals("rejected"))) { // FIXME: dependency on knowledge of reviewed actions
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if (workflowDescriptor != null) {
+                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
                             if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
                                 workflows
                                         .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
@@ -136,9 +137,9 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                         }
                     }
                 }
-            } else if (handle.isNodeType(HippoNodeType.NT_REQUEST)) {
+            } else if (handle.isNodeType(HippoNodeType.NT_REQUEST) && !(handle.hasProperty("type") && handle.getProperty("type").equals("rejected"))) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if (workflowDescriptor != null) {
+                if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
                     if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
                         workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
                     workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
@@ -157,10 +158,16 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
     private WorkflowsModel(WorkflowsModel model, List<String> categories, String renderer) throws RepositoryException {
         super(model.getNodeModel());
         this.categories = new LinkedList<String>();
-        // deliberate before adding categories
-        initialize();
         this.categories.addAll(categories);
+        this.renderer = renderer;
+        initialize();
         workflows.put(new Entry(renderer, 0), model.workflows.get(new Entry(renderer)));
+        for(Map.Entry<Entry,Vector<WorkflowDescriptor>> e : workflows.entrySet()) {
+            System.err.println(e.getKey().name+":");
+            for(WorkflowDescriptor w : e.getValue()) {
+                System.err.println(w.toString());
+            }
+        }
     }
 
     @Override

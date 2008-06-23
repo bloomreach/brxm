@@ -164,8 +164,12 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             caption = ISO9075Helper.decodeLocalName(node.getName());
 
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();)
-                    node = iter.nextNode(); // FIXME: take the last one, the first should be good enough
+                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
+                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT))
+                        node = iter.nextNode();
+                    else
+                        iter.nextNode();
+                }
             }
             if (node.hasProperty("hippostd:stateSummary"))
                 stateSummary = node.getProperty("hippostd:stateSummary").getString();
