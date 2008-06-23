@@ -51,6 +51,10 @@ public class JcrTypeStore implements ITypeStore {
     }
 
     public ITypeDescriptor getTypeDescriptor(String name) {
+        if("rep:root".equals(name)) {
+            // ignore the root node
+            return null;
+        }
         if (types == null) {
             types = new HashMap<String, ITypeDescriptor>();
         }
