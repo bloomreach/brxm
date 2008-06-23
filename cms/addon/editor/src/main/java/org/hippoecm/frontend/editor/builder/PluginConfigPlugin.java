@@ -25,12 +25,17 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.config.AutoTypeStore;
+import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
+import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
@@ -38,10 +43,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JavaTypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.config.AutoTypeStore;
-import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
-import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -58,6 +59,8 @@ public class PluginConfigPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PluginConfigPlugin.class);
+
+    private static int instanceCount = 0;
 
     private IPluginControl field;
     private IPluginControl fieldParams;
@@ -245,7 +248,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         final String engineId = getExtensionId(extension + ".engine");
         context.registerService(engine, engineId);
 
-        IClusterConfig templateConfig = templateStore.getTemplate(typeDescriptor, "edit");
+        IClusterConfig templateConfig = new ClusterConfigDecorator(templateStore.getTemplate(typeDescriptor, "edit"), newId());
         templateConfig.put("wicket.id", getExtensionId(extension));
         templateConfig.put("engine", engineId);
 
@@ -326,4 +329,11 @@ public class PluginConfigPlugin extends RenderPlugin {
         }
         return null;
     }
+
+    private static String newId() {
+        synchronized (PluginConfigPlugin.class) {
+            return PluginConfigPlugin.class.getName() + "." + (instanceCount++);
+        }
+    }
+
 }

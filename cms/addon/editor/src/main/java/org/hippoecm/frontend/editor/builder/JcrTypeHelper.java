@@ -15,13 +15,24 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -52,7 +63,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                         } else {
                             typeName = baseNode.getName();
                         }
-                        
+
                         return new JcrTypeDescriptor(new JcrNodeModel(typeNode), baseNode.getName(), typeName);
                     }
                 }
@@ -82,6 +93,52 @@ public class JcrTypeHelper extends NodeModelWrapper {
         return null;
     }
 
+    public JcrNodeModel storeTemplate(IClusterConfig cluster) {
+        if (cluster instanceof Map) {
+            try {
+                Node typeNode = getNodeModel().getNode();
+                Node node;
+                if (!typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+                    node = typeNode.addNode(HippoNodeType.HIPPO_TEMPLATE, HippoNodeType.NT_HANDLE);
+                } else {
+                    node = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
+                }
+                node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
+                JcrNodeModel templateModel = new JcrNodeModel(node);
+
+                JcrClusterConfig jcrConfig = new JcrClusterConfig(templateModel);
+                for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
+                    jcrConfig.put(entry.getKey(), entry.getValue());
+                }
+
+                for (IPluginConfig plugin : cluster.getPlugins()) {
+                    String name = UUID.randomUUID().toString();
+                    Node child = node.addNode(name, "frontend:plugin");
+                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
+                    for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
+                        pluginConfig.put(entry.getKey(), entry.getValue());
+                    }
+                }
+
+                List<String> overrides = cluster.getOverrides();
+                Value[] values = new Value[overrides.size()];
+                int i = 0;
+                for (String override : overrides) {
+                    values[i++] = new StringValue(override);
+                }
+                node.setProperty("frontend:overrides", values);
+
+                return templateModel;
+
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.error("Unable to save cluster config");
+        }
+        return null;
+    }
+
     public JcrNodeModel getPrototype() {
         try {
             NodeIterator iter = getNodeModel().getNode().getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(
@@ -95,7 +152,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                 }
             }
             throw new ItemNotFoundException("draft version of prototype was not found");
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
