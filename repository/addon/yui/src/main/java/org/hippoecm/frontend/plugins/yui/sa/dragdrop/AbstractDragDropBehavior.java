@@ -118,7 +118,7 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
         private Map<String, Object> getHeaderContributorVariables() {
             Component component = getComponent();
 
-            Map<String, Object> variables = new MiniMap(4);
+            Map<String, Object> variables = new MiniMap(5);
             variables.put("id", component.getMarkupId(true));
             variables.put("callbackScript", getCallbackScript());
             variables.put("label", getLabel());
