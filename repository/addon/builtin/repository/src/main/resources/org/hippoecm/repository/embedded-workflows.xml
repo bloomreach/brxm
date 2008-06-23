@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2007 Hippo
+
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+         xmlns:rep="internal"
+         sv:name="embedded">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:workflowcategory</sv:value>
+  </sv:property>
+  <sv:node sv:name="embed">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>*</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Workflow on documents in folders</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="root">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>rep:root</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>*</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Workflow on documents in folders</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

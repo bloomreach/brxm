@@ -15,12 +15,10 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
 
 import org.apache.wicket.model.IModel;
 
@@ -38,18 +36,19 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
         super(context, config);
     }
 
+    @Override
     public void updateModel(IModel model) {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         Node node = nodeModel.getNode();
         try {
             node = node.getParent();
-                while (node != null && !node.isNodeType("hippo:handle") && !node.isNodeType("hippo:document")) {
-                    node = node.getParent();
-                }
-                if (node != null && node.isNodeType("hippo:document")) {
-                    super.updateModel(new JcrNodeModel(node));
-                    return;
-                }
+            while (node != null && !node.isNodeType("hippo:handle") && !node.isNodeType("hippo:document")) {
+                node = node.getParent();
+            }
+            if (node != null && node.isNodeType("hippo:document")) {
+                super.updateModel(new JcrNodeModel(node));
+                return;
+            }
         } catch (ItemNotFoundException ex) {
         } catch (AccessDeniedException ex) {
         } catch (RepositoryException ex) {
