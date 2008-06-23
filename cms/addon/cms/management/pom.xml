@@ -55,6 +55,12 @@
 
     <dependency>
       <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-editor</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-standards-frontend</artifactId>
       <version>2.01.00-SNAPSHOT</version>
     </dependency>
