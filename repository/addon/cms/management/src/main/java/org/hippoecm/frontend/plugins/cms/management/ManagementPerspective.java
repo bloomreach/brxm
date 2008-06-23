@@ -19,9 +19,7 @@ import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.frontend.legacy.plugin.Plugin;
 import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 
-/**
- * Panel representing the content panel for the first tab.
- */
+@Deprecated
 public class ManagementPerspective extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

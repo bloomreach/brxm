@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007 Hippo
+  * Copyright 2008 Hippo
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -14,18 +14,26 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:panel>
-        <div wicket:id="legacyManagement"/>
-    </wicket:panel>
-<!--
   <wicket:panel>
-    <table class="gridroot">
-      <tr>
-        <td>
-          <table wicket:id="managementPlugin" />
-      </td>
-      </tr>
-      </table>
+    <div id="left" class="panelcontainer">
+      <h2><span class="userman"></span></h2>
+      <div class="panel iconListSmall users_list_ico">
+        <div wicket:id="listUsersPlugin">[ ListUsersPlugin ]</div>
+      </div>
+      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+      <div class="panel iconListSmall list_ico groups_list_ico">
+        <div wicket:id="listGroupsPlugin">[ ListGroupsPlugin ]</div>
+      </div>
+      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+      <div class="panel iconListSmall domains_list_ico">
+        <div wicket:id="listDomainsPlugin">[ ListDomainsPlugin ]</div>
+      </div>
+      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+      <div class="panel iconListSmall roles_list_ico">
+        <div wicket:id="listRolesPlugin">[ ListRolesPlugin ]</div>
+      </div>
+      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+    </div>
+    <div wicket:id="editor">[ Editor ]</div>
   </wicket:panel>
--->
 </html>

@@ -370,7 +370,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="editorPlugin">
+  <sv:node sv:name="documentEditorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -391,21 +391,21 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="managementPerspective">
+  <sv:node sv:name="legacyManagementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.LegacyManagementPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>service.management.node</sv:value>
+      <sv:value>service.legacymanagement.node</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>Users</sv:value>
+      <sv:value>(deprecated)Users</sv:value>
     </sv:property>
     <sv:property sv:name="legacyManagement" sv:type="String">
       <sv:value>service.management.legacy</sv:value>
@@ -430,6 +430,156 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="managementPerspective">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.tab</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="perspective.title" sv:type="String">
+      <sv:value>Users</sv:value>
+    </sv:property>
+    <sv:property sv:name="listUsersPlugin" sv:type="String">
+      <sv:value>service.management.listUsers</sv:value>
+    </sv:property>
+    <sv:property sv:name="listGroupsPlugin" sv:type="String">
+      <sv:value>service.management.listGroups</sv:value>
+    </sv:property>
+    <sv:property sv:name="listDomainsPlugin" sv:type="String">
+      <sv:value>service.management.listDomains</sv:value>
+    </sv:property>
+    <sv:property sv:name="listRolesPlugin" sv:type="String">
+      <sv:value>service.management.listRoles</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor" sv:type="String">
+      <sv:value>service.management.editor</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="listUsersPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.management.listUsers</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="parentNodePath" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <sv:property sv:name="label" sv:type="String">
+      <sv:value>New user</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodeType" sv:type="String">
+      <sv:value>hippo:user</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.dd.groups" sv:type="String">
+      <sv:value>add-user-to-group</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="listGroupsPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.management.listGroups</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="parentNodePath" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="label" sv:type="String">
+      <sv:value>New group</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodeType" sv:type="String">
+      <sv:value>hippo:group</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.dd.groups" sv:type="String">
+      <sv:value>add-group-to-user</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="listDomainsPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.management.listDomains</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="parentNodePath" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+    <sv:property sv:name="label" sv:type="String">
+      <sv:value>New domain</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodeType" sv:type="String">
+      <sv:value>hippo:domain</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="listRolesPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.management.listRoles</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="parentNodePath" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:roles</sv:value>
+    </sv:property>
+    <sv:property sv:name="label" sv:type="String">
+      <sv:value>New role</sv:value>
+    </sv:property>
+    <sv:property sv:name="nodeType" sv:type="String">
+      <sv:value>hippo:role</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="managementEditorPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementEditorPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.management.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.management.node</sv:value>
+    </sv:property>
+  </sv:node>
+    
   <sv:node sv:name="logoutPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

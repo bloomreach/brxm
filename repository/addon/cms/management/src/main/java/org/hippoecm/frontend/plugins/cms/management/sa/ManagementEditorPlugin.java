@@ -13,19 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management;
+package org.hippoecm.frontend.plugins.cms.management.sa;
 
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.legacy.plugin.channel.Notification;
-import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.template.editor.EditorForm;
-import org.hippoecm.frontend.plugins.template.editor.EditorPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.sa.template.editor.EditorForm;
+import org.hippoecm.frontend.sa.template.editor.EditorPlugin;
 
-@Deprecated
 public class ManagementEditorPlugin extends EditorPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -34,8 +30,8 @@ public class ManagementEditorPlugin extends EditorPlugin {
 
     private FeedbackPanel feedback;
 
-    public ManagementEditorPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public ManagementEditorPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
         add(feedback = new FeedbackPanel("feedback"));
         feedback.setOutputMarkupId(true);
@@ -43,18 +39,25 @@ public class ManagementEditorPlugin extends EditorPlugin {
 
     @Override
     protected EditorForm newForm() {
-        //JcrNodeModel jcrModel = new JcrNodeModel(getPluginModel());
         JcrNodeModel jcrModel = (JcrNodeModel) getModel();
-        EditorForm form = new EditorForm("form", jcrModel, this);
+        EditorForm form = new EditorForm("form", jcrModel, this, getPluginContext(), getPluginConfig());
         return form;
     }
 
     @Override
-    public void handle(Request request) {
-        if (request.getOperation().equals("feedback")) {
-            request.getContext().addRefresh(feedback);
-        } else {
-            super.handle(request);
-        }
+    public void onModelChanged() {
+        super.onModelChanged();
+
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        System.out.println("");
     }
+
+//    @Override
+//    public void handle(Request request) {
+//        if (request.getOperation().equals("feedback")) {
+//            request.getContext().addRefresh(feedback);
+//        } else {
+//            super.handle(request);
+//        }
+//    }
 }

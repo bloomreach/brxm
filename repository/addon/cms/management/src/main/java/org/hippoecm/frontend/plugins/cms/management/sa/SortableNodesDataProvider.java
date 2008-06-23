@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management;
+package org.hippoecm.frontend.plugins.cms.management.sa;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -24,7 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrNodeModelComparator;
 
-@Deprecated
 public abstract class SortableNodesDataProvider extends SortableDataProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

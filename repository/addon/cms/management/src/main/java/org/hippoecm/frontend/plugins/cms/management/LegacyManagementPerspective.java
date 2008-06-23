@@ -15,19 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.plugins.template.editor.EditorPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 
-@Deprecated
-public class ManagementPlugin extends Plugin {
+public class LegacyManagementPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public ManagementPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public LegacyManagementPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        // addExtensionPoint("managementPlugin");
+        addExtensionPoint("legacyManagement");
     }
 }
