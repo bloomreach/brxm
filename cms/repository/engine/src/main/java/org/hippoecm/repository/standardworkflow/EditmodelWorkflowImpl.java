@@ -157,6 +157,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
             draft.addMixin(HippoNodeType.NT_REMODEL);
             draft.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
             draft.addMixin(HippoNodeType.NT_UNSTRUCTURED);
+            draft.addMixin("mix:referenceable");
 
             PropertyIterator propIter = current.getProperties();
             while (propIter.hasNext()) {

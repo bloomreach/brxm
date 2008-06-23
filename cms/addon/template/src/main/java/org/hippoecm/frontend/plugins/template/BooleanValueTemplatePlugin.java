@@ -21,12 +21,12 @@ import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 import org.hippoecm.frontend.legacy.template.model.TemplateModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
-import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // port me!
 // (not necessary for defaultcontent, i.e. lower prio)
+@Deprecated
 public class BooleanValueTemplatePlugin extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

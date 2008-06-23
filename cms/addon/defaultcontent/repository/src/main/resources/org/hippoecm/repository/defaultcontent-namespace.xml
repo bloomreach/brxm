@@ -241,58 +241,6 @@
 
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
-        </sv:property>
-
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>title</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Title</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>introduction</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Introduction</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-
-      <sv:node sv:name="hippo:template">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
 
@@ -312,7 +260,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -327,7 +275,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -360,7 +308,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -647,7 +595,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -662,7 +610,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -695,7 +643,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -728,7 +676,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -761,7 +709,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -1048,7 +996,7 @@
               <sv:value>frontend:plugin</sv:value>
             </sv:property>
             <sv:property sv:name="plugin.class" sv:type="String">
-              <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+              <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
               <sv:value>cluster:wicket.id</sv:value>
@@ -1063,7 +1011,7 @@
               <sv:value>frontend:plugin</sv:value>
             </sv:property>
             <sv:property sv:name="plugin.class" sv:type="String">
-              <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+              <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
               <sv:value>{cluster}.field</sv:value>
@@ -1096,7 +1044,7 @@
               <sv:value>frontend:plugin</sv:value>
             </sv:property>
             <sv:property sv:name="plugin.class" sv:type="String">
-              <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+              <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
               <sv:value>{cluster}.field</sv:value>
@@ -1129,7 +1077,7 @@
               <sv:value>frontend:plugin</sv:value>
             </sv:property>
             <sv:property sv:name="plugin.class" sv:type="String">
-              <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+              <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
               <sv:value>{cluster}.field</sv:value>
@@ -1162,7 +1110,7 @@
               <sv:value>frontend:plugin</sv:value>
             </sv:property>
             <sv:property sv:name="plugin.class" sv:type="String">
-              <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+              <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
               <sv:value>{cluster}.field</sv:value>
@@ -1396,7 +1344,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.service.render.ListViewPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -1411,7 +1359,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -1444,7 +1392,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.PropertyFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>
@@ -1477,7 +1425,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.sa.template.plugins.field.NodeFieldPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.field</sv:value>

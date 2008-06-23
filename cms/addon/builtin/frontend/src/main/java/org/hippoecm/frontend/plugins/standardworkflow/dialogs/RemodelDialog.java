@@ -83,7 +83,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
                     Node child = children.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
                         if (child.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals("draft")) {
-                            entry.getValue().prototype = child.getPath();
+                            entry.getValue().prototype = child.getUUID();
                         }
                     }
                 }

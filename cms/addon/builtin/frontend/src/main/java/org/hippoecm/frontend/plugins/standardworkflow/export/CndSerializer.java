@@ -27,10 +27,10 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugins.standardworkflow.types.FieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.TypeDescriptor;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,20 +42,20 @@ public class CndSerializer implements IClusterable {
 
     private JcrSessionModel jcrSession;
     private HashMap<String, String> namespaces;
-    private LinkedHashSet<TypeDescriptor> types;
+    private LinkedHashSet<ITypeDescriptor> types;
     private ITypeStore currentConfig;
     private ITypeStore draftConfig;
 
     public CndSerializer(JcrSessionModel sessionModel, String namespace) {
         jcrSession = sessionModel;
         namespaces = new HashMap<String, String>();
-        types = new LinkedHashSet<TypeDescriptor>();
+        types = new LinkedHashSet<ITypeDescriptor>();
 
         currentConfig = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
         draftConfig = new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT);
 
-        List<TypeDescriptor> list = draftConfig.getTypes(namespace);
-        for (TypeDescriptor descriptor : list) {
+        List<ITypeDescriptor> list = draftConfig.getTypes(namespace);
+        for (ITypeDescriptor descriptor : list) {
             if (descriptor.isNode()) {
                 String type = descriptor.getType();
                 if (type.indexOf(':') > 0) {
@@ -77,7 +77,7 @@ public class CndSerializer implements IClusterable {
 
         sortTypes();
 
-        for (TypeDescriptor descriptor : types) {
+        for (ITypeDescriptor descriptor : types) {
             renderType(output, descriptor);
         }
         return output.toString();
@@ -114,7 +114,7 @@ public class CndSerializer implements IClusterable {
         return namespaces;
     }
 
-    public void addType(TypeDescriptor typeDescriptor) {
+    public void addType(ITypeDescriptor typeDescriptor) {
         String type = typeDescriptor.getType();
         if (type.indexOf(':') > 0) {
             if (!types.contains(typeDescriptor)) {
@@ -122,9 +122,9 @@ public class CndSerializer implements IClusterable {
                     addNamespace(superType.substring(0, superType.indexOf(':')));
                 }
 
-                for (FieldDescriptor field : typeDescriptor.getFields().values()) {
+                for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
                     String subType = field.getType();
-                    TypeDescriptor sub = getTypeDescriptor(subType);
+                    ITypeDescriptor sub = getTypeDescriptor(subType);
                     if (sub.isNode()) {
                         addNamespace(subType.substring(0, subType.indexOf(':')));
 
@@ -142,9 +142,9 @@ public class CndSerializer implements IClusterable {
         }
     }
 
-    private void renderField(StringBuffer output, FieldDescriptor field) {
+    private void renderField(StringBuffer output, IFieldDescriptor field) {
         String subType = field.getType();
-        TypeDescriptor sub = getTypeDescriptor(subType);
+        ITypeDescriptor sub = getTypeDescriptor(subType);
         if (sub.isNode()) {
             output.append("+");
         } else {
@@ -173,7 +173,7 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private void renderType(StringBuffer output, TypeDescriptor typeDescriptor) {
+    private void renderType(StringBuffer output, ITypeDescriptor typeDescriptor) {
         String type = typeDescriptor.getType();
         output.append("[" + type + "]");
 
@@ -182,11 +182,11 @@ public class CndSerializer implements IClusterable {
         boolean first = true;
         while (superTypes.hasNext()) {
             String superType = superTypes.next();
-            TypeDescriptor superDescriptor = getTypeDescriptor(superType);
+            ITypeDescriptor superDescriptor = getTypeDescriptor(superType);
             if (superDescriptor != null) {
-                Iterator<FieldDescriptor> fields = superDescriptor.getFields().values().iterator();
+                Iterator<IFieldDescriptor> fields = superDescriptor.getFields().values().iterator();
                 while (fields.hasNext()) {
-                    FieldDescriptor field = fields.next();
+                    IFieldDescriptor field = fields.next();
                     if (!superFields.contains(field.getPath())) {
                         superFields.add(field.getPath());
                     }
@@ -200,7 +200,7 @@ public class CndSerializer implements IClusterable {
             }
         }
 
-        for (FieldDescriptor field : typeDescriptor.getFields().values()) {
+        for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
             if (field.isOrdered()) {
                 output.append(" orderable");
                 break;
@@ -208,7 +208,7 @@ public class CndSerializer implements IClusterable {
         }
 
         output.append("\n");
-        for (FieldDescriptor field : typeDescriptor.getFields().values()) {
+        for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
             if (!superFields.contains(field.getPath())) {
                 renderField(output, field);
             }
@@ -216,8 +216,8 @@ public class CndSerializer implements IClusterable {
         output.append("\n");
     }
 
-    private TypeDescriptor getTypeDescriptor(String subType) {
-        TypeDescriptor sub = draftConfig.getTypeDescriptor(subType);
+    private ITypeDescriptor getTypeDescriptor(String subType) {
+        ITypeDescriptor sub = draftConfig.getTypeDescriptor(subType);
         if (sub == null) {
             // FIXME: check subType prefix, subType could have been removed
             sub = currentConfig.getTypeDescriptor(subType);
@@ -230,35 +230,35 @@ public class CndSerializer implements IClusterable {
     }
 
     class SortContext {
-        HashSet<TypeDescriptor> visited;
-        LinkedHashSet<TypeDescriptor> result;
-        LinkedHashSet<TypeDescriptor> set;
+        HashSet<ITypeDescriptor> visited;
+        LinkedHashSet<ITypeDescriptor> result;
+        LinkedHashSet<ITypeDescriptor> set;
 
         SortContext(LinkedHashSet set) {
             this.set = set;
-            visited = new HashSet<TypeDescriptor>();
-            result = new LinkedHashSet<TypeDescriptor>();
+            visited = new HashSet<ITypeDescriptor>();
+            result = new LinkedHashSet<ITypeDescriptor>();
         }
 
-        void visit(TypeDescriptor descriptor) {
+        void visit(ITypeDescriptor descriptor) {
             if (visited.contains(descriptor) || !types.contains(descriptor)) {
                 return;
             }
 
             visited.add(descriptor);
             for (String superType : descriptor.getSuperTypes()) {
-                TypeDescriptor type = getTypeDescriptor(superType);
+                ITypeDescriptor type = getTypeDescriptor(superType);
                 visit(type);
             }
-            for (FieldDescriptor field : descriptor.getFields().values()) {
-                TypeDescriptor type = getTypeDescriptor(field.getType());
+            for (IFieldDescriptor field : descriptor.getFields().values()) {
+                ITypeDescriptor type = getTypeDescriptor(field.getType());
                 visit(type);
             }
             result.add(descriptor);
         }
 
-        LinkedHashSet<TypeDescriptor> sort() {
-            for (TypeDescriptor type : set) {
+        LinkedHashSet<ITypeDescriptor> sort() {
+            for (ITypeDescriptor type : set) {
                 visit(type);
             }
             return result;

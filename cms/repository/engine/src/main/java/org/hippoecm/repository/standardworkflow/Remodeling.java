@@ -49,8 +49,6 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
-import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -261,13 +259,13 @@ public class Remodeling {
                 } else {
                     if (source.hasProperty(definition.getName())) {
                         Property property = source.getProperty(definition.getName());
-                        TypeUpdate typeUpdate = updates.get(getNewName(sourceType.getName()));
+                        TypeUpdate typeUpdate = updates.get(sourceType.getName());
                         if (typeUpdate != null) {
                             FieldIdentifier fieldId = new FieldIdentifier();
                             fieldId.path = name;
                             fieldId.type = PropertyType.nameFromValue(definition.getRequiredType());
 
-                            FieldIdentifier newId = typeUpdate.getRenames().get(fieldId);
+                            FieldIdentifier newId = typeUpdate.renames.get(fieldId);
                             if (newId != null && !newId.path.equals("*")) {
                                 name = newId.path;
                             }
@@ -293,13 +291,13 @@ public class Remodeling {
                         String name = getNewName(definition.getName());
                         NodeType newType = conversion.get(node.getPrimaryNodeType());
 
-                        TypeUpdate typeUpdate = updates.get(name);
+                        TypeUpdate typeUpdate = updates.get(definition.getName());
                         if (typeUpdate != null) {
                             FieldIdentifier fieldId = new FieldIdentifier();
                             fieldId.path = name;
                             fieldId.type = newType.getName();
 
-                            FieldIdentifier newId = typeUpdate.getRenames().get(fieldId);
+                            FieldIdentifier newId = typeUpdate.renames.get(fieldId);
                             if (newId != null && !newId.path.equals("*")) {
                                 name = newId.path;
                             }
@@ -314,9 +312,9 @@ public class Remodeling {
     }
 
     private void copyPrototype(Node target, NodeType type) throws RepositoryException {
-        TypeUpdate typeUpdate = updates.get(type.getName());
+        TypeUpdate typeUpdate = updates.get(getOldName(type.getName()));
         if (typeUpdate != null && typeUpdate.prototype != null) {
-            Node prototype = (Node) session.getItem(typeUpdate.prototype);
+            Node prototype = (Node) session.getNodeByUUID(typeUpdate.prototype);
 
             // copy properties
             for (PropertyDefinition propDef : type.getPropertyDefinitions()) {

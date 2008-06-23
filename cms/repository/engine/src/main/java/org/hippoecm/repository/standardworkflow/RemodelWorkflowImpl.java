@@ -120,7 +120,7 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         node.addMixin(JcrConstants.MIX_REFERENCEABLE);
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:publishableSummary");
-        node.setProperty("hippostd:state", "unpublished");
+        node.setProperty("hippostd:state", "draft");
 
         node.addMixin(HippoNodeType.NT_UNSTRUCTURED);
         node.addMixin(HippoNodeType.NT_REMODEL);

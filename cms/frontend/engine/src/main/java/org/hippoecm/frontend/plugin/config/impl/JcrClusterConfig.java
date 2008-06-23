@@ -36,29 +36,36 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(JcrClusterConfig.class);
 
-    private List<IPluginConfig> configs;
+    private transient List<IPluginConfig> configs = null;
 
     public JcrClusterConfig(JcrNodeModel nodeModel) {
         super(nodeModel);
+    }
 
-        configs = new LinkedList<IPluginConfig>();
-        try {
-            Node node = nodeModel.getNode();
-            NodeIterator children = node.getNodes();
-            while (children.hasNext()) {
-                Node child = children.nextNode();
-                addPlugin(new JcrPluginConfig(new JcrNodeModel(child)));
+    private void load() {
+        if (configs == null) {
+            configs = new LinkedList<IPluginConfig>();
+            try {
+                Node node = nodeModel.getNode();
+                NodeIterator children = node.getNodes();
+                while (children.hasNext()) {
+                    Node child = children.nextNode();
+                    configs.add(new JcrPluginConfig(new JcrNodeModel(child)));
+                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
             }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
         }
     }
 
-    public void addPlugin(IPluginConfig config) {
-        configs.add(config);
+    @Override
+    public void detach() {
+        configs = null;
+        super.detach();
     }
 
     public List<IPluginConfig> getPlugins() {
+        load();
         return configs;
     }
 

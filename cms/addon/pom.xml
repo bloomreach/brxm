@@ -37,6 +37,7 @@
   <modules>
     <module>builtin</module>
     <module>standards</module>
+    <module>editor</module>
     <module>template</module>
     <module>reporting</module>
     <module>reviewed-action</module>
