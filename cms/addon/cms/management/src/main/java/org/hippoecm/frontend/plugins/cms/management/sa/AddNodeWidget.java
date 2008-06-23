@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management;
+package org.hippoecm.frontend.plugins.cms.management.sa;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,7 +27,6 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public abstract class AddNodeWidget extends AjaxEditableLabel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management;
+package org.hippoecm.frontend.plugins.cms.management.sa;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -33,20 +33,17 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.legacy.plugin.channel.Channel;
-import org.hippoecm.frontend.legacy.plugin.channel.Notification;
-import org.hippoecm.frontend.legacy.plugin.channel.Request;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.yui.dragdrop.node.DragNodeBehavior;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.management.sa.AddNodeWidget;
+import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DragBehavior;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
-public class NodeListWidgetPlugin extends Plugin {
+public class NodeListWidgetPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -72,7 +69,7 @@ public class NodeListWidgetPlugin extends Plugin {
             try {
                 this.path = node.getPath();
             } catch (RepositoryException e) {
-                throw new IllegalArgumentException("Node path is not avilable", e);
+                throw new IllegalArgumentException("Node path is not available", e);
             }
             try {
                 this.displayName = node.getDisplayName();
@@ -88,10 +85,12 @@ public class NodeListWidgetPlugin extends Plugin {
         }
     }
 
-    public NodeListWidgetPlugin(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    public NodeListWidgetPlugin(final IPluginContext context, final IPluginConfig config) {
+        super(context, config);
+        
+        JcrNodeModel model = (JcrNodeModel) getModel();
 
-        String parentNodePath = pluginDescriptor.getParameter("parentNodePath").getStrings().get(0);
+        String parentNodePath = config.getString("parentNodePath");
         parentNodeModel = new JcrNodeModel(parentNodePath);
         listModel = new FlushableListModel();
 
@@ -112,15 +111,13 @@ public class NodeListWidgetPlugin extends Plugin {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        Channel top = getTopChannel();
-                        Request request = top.createRequest("select", new JcrNodeModel(entry.path));
-                        top.send(request);
-                        request.getContext().apply(target);
+                        JcrNodeModel nodeModel = new JcrNodeModel(entry.path);
+                        NodeListWidgetPlugin.this.setModel(nodeModel);
                     }
 
                 }.add(new Label("name", name)));
                 if (!entry.newEntry)
-                    item.add(new DragNodeBehavior(new JcrNodeModel(entry.path)));
+                    item.add(new DragBehavior(context, config));
                 if (entry.selected)
                     item.add(new SimpleAttributeModifier("class", "highlight"));
 
@@ -133,52 +130,51 @@ public class NodeListWidgetPlugin extends Plugin {
         listContainer.add(listView);
         add(listContainer);
 
-        String label = pluginDescriptor.getParameter("label").getStrings().get(0);
-        String nodeType = pluginDescriptor.getParameter("nodeType").getStrings().get(0);
+        String label = config.getString("label");
+        String nodeType = config.getString("nodeType");
         add(new AddNodeWidget("newNode", new Model(label), parentNodeModel, nodeType) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onAddNode(AjaxRequestTarget target, Node node) {
                 refreshListModel();
-
-                Channel top = getTopChannel();
-                Request request = top.createRequest("select", new JcrNodeModel(node));
-                top.send(request);
-                request.getContext().apply(target);
+                JcrNodeModel nodeModel = new JcrNodeModel(node);
+                NodeListWidgetPlugin.this.setModel(nodeModel);
                 target.addComponent(listContainer);
             }
         });
+        
+        onModelChanged();
     }
 
-    @Override
-    public void receive(Notification notification) {
-        if (notification.getOperation().equals("flush")) {
-            refreshListModel();
-            notification.getContext().addRefresh(listContainer);
-        } else if (notification.getOperation().equals("select")) {
-            //for now this suffices
-            boolean refresh = false;
-            for (Entry entry : (List<Entry>) listModel.getObject()) {
-                if (entry.selected) {
-                    refresh = true;
-                    entry.selected = false;
-                }
-            }
-
-            String nodePath = (String) notification.getModel().getMapRepresentation().get("node");
-            for (Entry entry : (List<Entry>) listModel.getObject()) {
-                if (entry.path.equals(nodePath)) {
-                    entry.selected = true;
-                    refresh = true;
-                }
-            }
-
-            if (refresh)
-                notification.getContext().addRefresh(listContainer);
-        }
-        super.receive(notification);
-    }
+//    @Override
+//    public void receive(Notification notification) {
+//        if (notification.getOperation().equals("flush")) {
+//            refreshListModel();
+//            notification.getContext().addRefresh(listContainer);
+//        } else if (notification.getOperation().equals("select")) {
+//            //for now this suffices
+//            boolean refresh = false;
+//            for (Entry entry : (List<Entry>) listModel.getObject()) {
+//                if (entry.selected) {
+//                    refresh = true;
+//                    entry.selected = false;
+//                }
+//            }
+//
+//            String nodePath = (String) notification.getModel().getMapRepresentation().get("node");
+//            for (Entry entry : (List<Entry>) listModel.getObject()) {
+//                if (entry.path.equals(nodePath)) {
+//                    entry.selected = true;
+//                    refresh = true;
+//                }
+//            }
+//
+//            if (refresh)
+//                notification.getContext().addRefresh(listContainer);
+//        }
+//        super.receive(notification);
+//    }
 
     private void refreshListModel() {
         listModel.flush();
