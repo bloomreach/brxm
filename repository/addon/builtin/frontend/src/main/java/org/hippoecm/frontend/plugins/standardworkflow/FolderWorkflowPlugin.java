@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -48,6 +50,7 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
@@ -86,7 +89,10 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
-                      return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                      if(dialogTitle.contains("content selection"))
+                        return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                      else
+                        return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
                     }
                 }, getDialogService());
 
@@ -104,6 +110,17 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         });
 
         onModelChanged();
+    }
+
+    private void writeObject(ObjectOutputStream out)
+            throws IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
     }
 
     @Override
@@ -124,9 +141,15 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     public void select(JcrNodeModel nodeModel) {
         IViewService view = getPluginContext().getService(getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
         if (view != null) {
-            // view.view(nodeModel);
+            try {
+                if(nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                   !nodeModel.getNode().isNodeType("hippostd:folder")) {
+                    view.view(nodeModel);
+                }
+            } catch(RepositoryException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
         }
     }
-
-   
 }

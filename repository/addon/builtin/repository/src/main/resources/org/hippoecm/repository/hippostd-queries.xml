@@ -43,6 +43,96 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="simple">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:templatequery</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:statement" sv:type="String">
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:language" sv:type="String">
+      <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:modify" sv:type="String">
+      <sv:value>./_name</sv:value>
+      <sv:value>$name</sv:value>
+      <sv:value>./_node/_name</sv:value>
+      <sv:value>$name</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippostd:templates">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:templates</sv:value>
+      </sv:property>
+      <sv:node sv:name="document">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:node sv:name="document">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:document</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="String">
+            <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="image">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:hardhandle</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String">
+        </sv:property>
+        <sv:node sv:name="image">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:resource</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:paths" sv:type="String">
+          </sv:property>
+          <sv:property sv:name="hippostd:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:encoding" sv:type="String">
+            <sv:value>UTF-8</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mimeType" sv:type="String">
+            <sv:value>text/html</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:content" sv:type="Binary">
+            <sv:value>Jmx0O2h0bWwmZ3Q7Jmx0O2JvZHkmZ3Q7Jmx0Oy9ib2R5Jmd0OyZsdDsvaHRtbCZndDsK</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>adddocument_ico</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
@@ -53,9 +143,13 @@
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
     </sv:property>
+    <sv:property sv:name="hippostd:modify" sv:type="String">
+      <sv:value>./_name</sv:value>
+      <sv:value>$name</sv:value>
+    </sv:property>
     <sv:node sv:name="hippostd:templates">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
+        <sv:value>hippostd:templates</sv:value>
       </sv:property>
       <sv:node sv:name="document folder">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -90,6 +184,61 @@
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>addextended_ico</sv:value>
     </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="content selection">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:templatequery</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:statement" sv:type="String">
+      <sv:value>/jcr:root/hippo:templates/folders/generic folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:language" sv:type="String">
+      <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:icon" sv:type="String">
+      <sv:value>addextended_ico</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:renderer" sv:type="String">
+      <sv:value>facetselect</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:modify" sv:type="String">
+      <sv:value>./_name</sv:value>
+      <sv:value>$name</sv:value>
+      <sv:value>./_name/content/hippo:docbase</sv:value>
+      <sv:value>$docbase</sv:value>
+      <sv:value>./_name/content/hippo:facets</sv:value>
+      <sv:value>$facet</sv:value>
+      <sv:value>./_name/content/hippo:values</sv:value>
+      <sv:value>$value</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippostd:templates">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:templates</sv:value>
+      </sv:property>
+      <sv:node sv:name="content selection">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>nt:unstructured</sv:value>
+        </sv:property>
+        <sv:node sv:name="content">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:facetselect</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+             <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+           </sv:property>
+           <sv:property sv:name="hippo:facets" sv:type="String">
+             <sv:value>facet</sv:value>
+           </sv:property>
+           <sv:property sv:name="hippo:values" sv:type="String">
+              <sv:value>value</sv:value>
+           </sv:property>
+           <sv:property sv:name="hippo:modes" sv:type="String">
+             <sv:value>single</sv:value>
+           </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
   </sv:node>
 
 </sv:node>

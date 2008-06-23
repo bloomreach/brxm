@@ -29,7 +29,12 @@ public interface FolderWorkflow extends Workflow {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    public Map<String,Set<String>> list() throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public String add(String name, String category, String type) throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public Map<String,Set<String>> list()
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public String add(String category, String type, String name)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public String add(String category, String type, Map<String,String> arguments)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void archive(String name)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

@@ -39,6 +39,7 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 
 public class FolderWorkflowImpl implements FolderWorkflow {
@@ -126,12 +127,17 @@ public class FolderWorkflowImpl implements FolderWorkflow {
             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);
         }
-
         return types;
     }
 
-    public String add(String name, String category, String template) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        name = ISO9075Helper.encodeLocalName(name);
+    public String add(String category, String template, String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Map<String,String> arguments = new TreeMap<String,String>();
+        arguments.put("name", name);
+        return add(category, template, arguments);
+    }
+
+    public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String name = ISO9075Helper.encodeLocalName(arguments.get("name"));
         QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
         Node foldertype = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);
         Query query = qmgr.getQuery(foldertype);
@@ -152,19 +158,51 @@ public class FolderWorkflowImpl implements FolderWorkflow {
                             documentType = documentType.substring(documentType.indexOf(":") + 1);
                         }
                         if (documentType.equals(template)) {
-                            renames.put("_name", new String[] { name });
-                            result = copy(prototype, target, renames, "");
+                            renames.put("./_name", new String[] { name });
+                            renames.put("./_node/_name", new String[] { name });
+                            result = copy(prototype, target, renames, ".");
+		            for(NodeIterator variantIter = result.getNodes(); variantIter.hasNext(); ) {
+			        Node variant = variantIter.nextNode();
+				if(variant.hasProperty("hippo:remodel")) {
+				    variant.remove();
+				} else {
+                                    if(variant.hasProperty("hippostd:state"))
+                                        variant.setProperty("hippostd:state","unpublished");
+                                }
+			    }
+                            break;
                         }
 
                     }
                 }
-            } else {
-                renames.put("_name", new String[] { name });
-                result = copy(prototypeNode, target, renames, "");
+	    } else if(prototypeNode.getName().equals(template)) {
+                if(foldertype.hasProperty("hippostd:modify")) {
+                    Value[] values = foldertype.getProperty("hippostd:modify").getValues();
+                    for(int i=0; i+1<values.length; i+=2) {
+                        String newValue = values[i+1].getString();
+                        if(newValue.equals("$name")) {
+                            newValue = name;
+                        } else if(newValue.startsWith("$")) {
+                            newValue = arguments.get(newValue.substring(1));
+                        }
+                        if(renames.containsKey(values[i].getString())) {
+                            String[] oldValues = renames.get(values[i].getString());
+                            String[] newValues = new String[oldValues.length + 1];
+                            System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                            newValues[oldValues.length] = newValue;
+                            renames.put(values[i].getString(), newValues);
+                        } else {
+                            renames.put(values[i].getString(), new String[] { newValue });
+                        }
+                    }
+                }
+                result = copy(prototypeNode, target, renames, ".");
+                break;
             }
         }
         if(result != null) {
-            target.save();
+            userSession.save();
+            rootSession.save();
             return result.getPath();
         } else {
             return null;
@@ -186,20 +224,19 @@ public class FolderWorkflowImpl implements FolderWorkflow {
         }
     }
 
-    public // FIXME
     Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
         String[] values;
         String name = source.getName();
-        if (renames.containsKey("_name")) {
-            values = renames.get("_name");
+        if (renames.containsKey(path+"/_name")) {
+            values = renames.get(path+"/_name");
             if (values.length > 0) {
                 name = values[0];
             }
         }
 
         String type = source.getPrimaryNodeType().getName();
-        if (renames.containsKey("jcr:primaryType")) {
-            values = renames.get("jcr:primaryType");
+        if (renames.containsKey(path+"/jcr:primaryType")) {
+            values = renames.get(path+"/jcr:primaryType");
             if (values.length > 0) {
                 type = values[0];
                 if (type.equals("")) {
@@ -211,9 +248,9 @@ public class FolderWorkflowImpl implements FolderWorkflow {
         }
 
         if (type != null) {
-            target = target.addNode(name);
-        } else {
             target = target.addNode(name, type);
+        } else {
+            target = target.addNode(name);
         }
         if(source.hasProperty("jcr:mixinTypes")) {
             Value[] mixins = source.getProperty("jcr:mixinTypes").getValues();
@@ -221,8 +258,8 @@ public class FolderWorkflowImpl implements FolderWorkflow {
                 target.addMixin(mixins[i].getString());
             }
         }
-        if (renames.containsKey("jcr:mixinTypes")) {
-            values = renames.get("jcr:mixinTypes");
+        if (renames.containsKey(path+"/jcr:mixinTypes")) {
+            values = renames.get(path+"/jcr:mixinTypes");
             for (int i = 0; i <
                     values.length; i++) {
                 if (!target.isNodeType(values[i])) {
@@ -233,7 +270,13 @@ public class FolderWorkflowImpl implements FolderWorkflow {
 
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
-            copy(child, target, renames, path + child.getName());
+            String childPath;
+            System.err.println("HERE"+path+"/_node/_name"); for(String s : renames.keySet()) System.err.println(s);
+            if(renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/"+ child.getName()))
+                childPath = path + "/_node";
+            else
+                childPath = path + "/" + child.getName();
+            copy(child, target, renames, childPath);
         }
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
