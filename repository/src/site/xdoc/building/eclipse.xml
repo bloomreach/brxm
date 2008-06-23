@@ -256,6 +256,8 @@ C:\hippo-ecm\package\war\src\main\webapp> cd ..\..\..\..\..
 C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> cd ..\skins
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\..\..\..\webResources\xinha\skins\hippo-gray
                   </source>
                 </li>
                 <li>
@@ -270,9 +272,11 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..
  ~/hippo-ecm> cd addon/xinha/src/main/webapp/xinha/plugins
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/AutoSave/ AutoSave
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/CustomLinker/ CustomLinker
-                         </source>
-                    </li>
-                </ul>
+ ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> cd ../skins
+ ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/skins> ln -s ../../../../../webResources/xinha/skins/hippo-gray/ hippo-gray
+                 </source>
+                </li>
+              </ul>
             </subsection>
             <subsection name="Dependencies">
                 <ol>
