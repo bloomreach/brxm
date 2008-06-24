@@ -27,9 +27,9 @@
 
 [hst:pageDef] > nt:base, hst:page
 
-[hst:urlMapping] > nt:base
+[hst:urlMapping] > nt:base, hst:page
 - hst:nodeType (string) mandatory
-+ hst:displayPage (hst:pageDef) = hst:pageDef mandatory
++ hst:displayPage (hst:pageDef) = hst:pageDef 
 
 [hst:urlMappingFolder] > nt:unstructured orderable
 + * (hst:urlMapping) = hst:urlMapping
