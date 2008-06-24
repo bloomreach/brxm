@@ -200,7 +200,7 @@ public class Adapter extends Panel implements IRenderService, IModelListener, IJ
 
     @Override
     public String toString() {
-        return "Adapter";
+        return Adapter.class.getName();
     }
 
     public void updateModel(IModel model) {
