@@ -15,63 +15,55 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.model.PluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.legacy.plugin.channel.Channel;
-import org.hippoecm.frontend.legacy.plugin.channel.Notification;
-import org.hippoecm.frontend.legacy.plugin.channel.Request;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import javax.jcr.RepositoryException;
 
-/**
- * Panel representing the content panel for the first tab.
- */
-public class EditPerspective extends Plugin {
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.PluginRequestTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class EditPerspective extends Perspective {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public EditPerspective(PluginDescriptor pluginDescriptor, IPluginModel model, Plugin parentPlugin) {
-        super(pluginDescriptor, model, parentPlugin);
+    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
+
+    private boolean firstRender = true;
+
+    public EditPerspective(IPluginContext context, IPluginConfig properties) {
+        super(context, properties);
+
+        for (String extension : new String[] { "editorPlugin", "workflowPlugin", "helperPlugins" }) {
+            addExtensionPoint(extension);
+        }
+
+        onModelChanged();
     }
 
     @Override
-    public void receive(Notification notification) {
-        if ("edit".equals(notification.getOperation())) {
-            JcrNodeModel model = new JcrNodeModel(notification.getModel());
-            if (model.equals(getPluginModel())) {
-                Channel channel = getTopChannel();
-                if (channel != null) {
-                    PluginModel pluginModel = new PluginModel();
-                    pluginModel.put("plugin", getPluginPath());
-                    Request request = channel.createRequest("focus", pluginModel);
-                    request.setContext(notification.getContext());
-                    channel.send(request);
-                }
+    public void render(PluginRequestTarget target) {
+        if (firstRender) {
+            focus(null);
+            firstRender = false;
+        }
+        super.render(target);
+    }
 
-                Channel outgoing = getBottomChannel();
-                if (outgoing != null) {
-                    Notification selectNotice = outgoing.createNotification("select", notification.getModel());
-                    selectNotice.setContext(notification.getContext());
-                    outgoing.publish(selectNotice);
-                }
+    @Override
+    public void onModelChanged() {
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        try {
+            if (nodeModel != null && nodeModel.getNode() != null) {
+                setTitle(nodeModel.getNode().getName());
             }
-
-            // don't propagate edit notification to children
-            return;
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
         }
-        super.receive(notification);
     }
 
-    @Override
-    public void handle(Request request) {
-        if ("close".equals(request.getOperation())) {
-            PluginModel requestModel = new PluginModel();
-            requestModel.put("plugin", getPluginPath());
-            request.setModel(requestModel);
-        }
-        super.handle(request);
-    }
 }
