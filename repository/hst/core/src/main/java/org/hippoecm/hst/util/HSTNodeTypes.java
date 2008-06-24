@@ -41,11 +41,12 @@ public final class HSTNodeTypes {
     public static final String HST_CHILDLESS = "hst:childless";
 
     // Node name
-    public static final String HST_DISPLAYPAGE = "hst:displayPage";
+//    public static final String HST_DISPLAYPAGE = "hst:displayPage";
 
     // Node properties
     public static final String HST_NODETYPE = "hst:nodeType";
 //    public static final String HST_PAGETYPE = "hst:pageType";
     public static final String HST_PAGEFILE = "hst:pageFile";
     public static final String HST_LABEL = "hst:label";
+    public static final String HST_I18N_LABELS = "hst:i18nLabels";
 }

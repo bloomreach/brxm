@@ -263,17 +263,12 @@
       <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hstsample:sampleSpecialNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displayPage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pageDef</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageType" sv:type="String">
-          <sv:value>jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageFile" sv:type="String">
-          <sv:value>/special.jsp</sv:value>
-        </sv:property>
-      </sv:node>
+      <sv:property sv:name="hst:pageType" sv:type="String">
+        <sv:value>jsp</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:pageFile" sv:type="String">
+        <sv:value>/special.jsp</sv:value>
+      </sv:property>
     </sv:node>
 
     <sv:node sv:name="plain">
@@ -283,17 +278,12 @@
       <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hstsample:samplePlainNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displayPage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pageDef</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageType" sv:type="String">
-          <sv:value>jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageFile" sv:type="String">
-          <sv:value>/plain.jsp</sv:value>
-        </sv:property>
-      </sv:node>
+      <sv:property sv:name="hst:pageType" sv:type="String">
+        <sv:value>jsp</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:pageFile" sv:type="String">
+        <sv:value>/plain.jsp</sv:value>
+      </sv:property>
     </sv:node>
 
   </sv:node>
@@ -310,17 +300,12 @@
       <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hst:sampleSpecialNodeType</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displayPage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pagedef</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageType" sv:type="String">
-          <sv:value>jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageFile" sv:type="String">
-          <sv:value>/exceptional.jsp</sv:value>
-        </sv:property>
-      </sv:node>
+      <sv:property sv:name="hst:pageType" sv:type="String">
+        <sv:value>jsp</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:pageFile" sv:type="String">
+        <sv:value>/exceptional.jsp</sv:value>
+      </sv:property>
     </sv:node>
 
     <sv:node sv:name="any">
@@ -330,17 +315,15 @@
       <sv:property sv:name="hst:nodeType" sv:type="String">
         <sv:value>hippo:document</sv:value>
       </sv:property>
-      <sv:node sv:name="hst:displayPage">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:pagedef</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageType" sv:type="String">
-          <sv:value>jsp</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:pageFile" sv:type="String">
-          <sv:value>/any.jsp</sv:value>
-        </sv:property>
-      </sv:node>
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:pagedef</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:pageType" sv:type="String">
+        <sv:value>jsp</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:pageFile" sv:type="String">
+        <sv:value>/any.jsp</sv:value>
+      </sv:property>
     </sv:node>
 
   </sv:node>

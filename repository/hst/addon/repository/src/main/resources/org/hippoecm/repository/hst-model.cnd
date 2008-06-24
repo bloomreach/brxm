@@ -23,13 +23,10 @@
 
 [hst:page] mixin
 - hst:pageType (string) = 'jsp' < 'jsp', 'jsf'
-- hst:pageFile (string) = 'index.jsp' mandatory 
-
-[hst:pageDef] > nt:base, hst:page
+- hst:pageFile (string) = 'index.jsp' mandatory
 
 [hst:urlMapping] > nt:base, hst:page
 - hst:nodeType (string) mandatory
-+ hst:displayPage (hst:pageDef) = hst:pageDef 
 
 [hst:urlMappingFolder] > nt:unstructured orderable
 + * (hst:urlMapping) = hst:urlMapping
