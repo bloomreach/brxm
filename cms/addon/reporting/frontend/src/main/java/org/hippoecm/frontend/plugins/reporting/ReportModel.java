@@ -125,7 +125,7 @@ public class ReportModel extends NodeModelWrapper implements IDataProvider {
     // IDetachable
 
     public void detach() {
-        // nope
+        super.detach();
     }
 
     // Object

@@ -76,6 +76,13 @@ public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {
         return parent;
     }
 
+    @Override
+    public void detach() {
+        parent = null;
+        parentCached = false;
+        super.detach();
+    }
+
     public JcrNodeModel findRootModel() {
         JcrNodeModel result = this;
         while (result.getParentModel() != null) {

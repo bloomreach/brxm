@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.model;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-public interface IModelService<T extends IModel> extends IClusterable {
+public interface IModelService<T extends IModel> extends IDetachable {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 

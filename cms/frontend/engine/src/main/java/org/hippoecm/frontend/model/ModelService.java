@@ -75,4 +75,25 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
         listeners.remove(service);
     }
 
+    public void detach() {
+        if(model != null) {
+           model.detach();
+        }
+    }
+
+    public void addService(IModelListener service, String name) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void removeService(IModelListener service, String name) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void updateService(IModelListener service, String name) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

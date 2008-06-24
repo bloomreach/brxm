@@ -76,5 +76,12 @@ public class SortableDataAdapter<T extends IModel> extends SortableDataProvider 
             Collections.reverse(resources);
         }
     }
+    
+    public void detach()
+    {
+        provider.detach();
+        resources = null;
+    }
+
 
 }
