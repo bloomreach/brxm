@@ -115,152 +115,6 @@
       </sv:node>
     </sv:node>
 
-    <sv:node sv:name="hippo:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>content</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Content</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>state</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>State</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>language</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Language</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-
-    <sv:node sv:name="hippo:template">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-
-      <sv:node sv:name="hippo:template">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.item.ItemRowPlugin</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:item">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:templateitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugins.template.builder.PreviewFieldPlugin</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:field" sv:type="String">
-              <sv:value>items</sv:value>
-            </sv:property>
-          </sv:node>
-          <sv:node sv:name="hippo:item">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:templateitem</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugins.template.item.ItemListPlugin</sv:value>
-            </sv:property>
-            <sv:node sv:name="hippo:item">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:templateitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.template.builder.TemplateListPlugin</sv:value>
-              </sv:property>
-              <sv:node sv:name="hippo:parameters">
-                <sv:property sv:name="css" sv:type="String">
-                  <sv:value>templateactions actionspanel</sv:value>
-                </sv:property>
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hippo:parameters</sv:value>
-                </sv:property>
-                <sv:property sv:name="templates" sv:type="String">
-                  <sv:value>String</sv:value>
-                  <sv:value>Html</sv:value>
-                  <sv:value>Boolean</sv:value>
-                  <sv:value>Date</sv:value>
-                  <sv:value>hippo:image</sv:value>
-                  <sv:value>hippo:query</sv:value>
-                  <sv:value>hippo:facetselect</sv:value>
-                </sv:property>
-              </sv:node>
-            </sv:node>
-            <sv:node sv:name="hippo:item">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:templateitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.template.builder.ItemEditorPlugin</sv:value>
-              </sv:property>
-            </sv:node>
-          </sv:node>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-
   </sv:node>
   <!-- end "Template" type -->
 
@@ -309,180 +163,6 @@
             <sv:value>hippo:handle</sv:value>
           </sv:property>
         </sv:node>
-      </sv:node>
-    </sv:node>
-
-    <sv:node sv:name="hippo:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:prototype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:templatetype</sv:value>
-        </sv:property>
-
-        <sv:node sv:name="hippo:nodetype">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>73b3cebd-b972-469c-a232-de8d1effacb4</sv:value>
-          </sv:property>
-
-          <sv:node sv:name="hippo:nodetype">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:nodetype</sv:value>
-            </sv:property>
-
-            <sv:node sv:name="hippo:field">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:field</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:name" sv:type="String">
-                <sv:value>content</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>String</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:path" sv:type="String">
-                <sv:value>content</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
-                <sv:value>true</sv:value>
-              </sv:property>
-            </sv:node>
-
-            <sv:node sv:name="hippo:field">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:field</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:name" sv:type="String">
-                <sv:value>state</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>String</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:path" sv:type="String">
-                <sv:value>state</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
-                <sv:value>true</sv:value>
-              </sv:property>
-            </sv:node>
-
-            <sv:node sv:name="hippo:field">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:field</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:name" sv:type="String">
-                <sv:value>language</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:type" sv:type="String">
-                <sv:value>String</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:path" sv:type="String">
-                <sv:value>language</sv:value>
-              </sv:property>
-            </sv:node>
-
-          </sv:node>
-        </sv:node>
-
-        <sv:node sv:name="hippo:prototype">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:node sv:name="hippo:prototype">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>nt:unstructured</sv:value>
-            </sv:property>
-            <sv:property sv:name="content" sv:type="String">
-              <sv:value>content</sv:value>
-            </sv:property>
-            <sv:property sv:name="state" sv:type="String">
-              <sv:value>state</sv:value>
-            </sv:property>
-            <sv:property sv:name="language" sv:type="String">
-              <sv:value>nl</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-
-        <sv:node sv:name="hippo:template">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:handle</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>f1d54514-1fbc-4f57-a227-a1164c820e85</sv:value>
-          </sv:property>
-
-          <sv:node sv:name="hippo:template">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:template</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippo:renderer" sv:type="String">
-              <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
-            </sv:property>
-            <sv:node sv:name="hippo:item">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:templateitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:field" sv:type="String">
-                <sv:value>content</sv:value>
-              </sv:property>
-              <sv:node sv:name="hippo:parameters">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hippo:parameters</sv:value>
-                </sv:property>
-                <sv:property sv:name="caption" sv:type="String">
-                  <sv:value>Content</sv:value>
-                </sv:property>
-              </sv:node>
-            </sv:node>
-            <sv:node sv:name="hippo:item">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:templateitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:field" sv:type="String">
-                <sv:value>state</sv:value>
-              </sv:property>
-              <sv:node sv:name="hippo:parameters">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hippo:parameters</sv:value>
-                </sv:property>
-                <sv:property sv:name="caption" sv:type="String">
-                  <sv:value>State</sv:value>
-                </sv:property>
-              </sv:node>
-            </sv:node>
-            <sv:node sv:name="hippo:item">
-              <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                <sv:value>hippo:templateitem</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:renderer" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-              </sv:property>
-              <sv:property sv:name="hippo:field" sv:type="String">
-                <sv:value>language</sv:value>
-              </sv:property>
-              <sv:node sv:name="hippo:parameters">
-                <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                  <sv:value>hippo:parameters</sv:value>
-                </sv:property>
-                <sv:property sv:name="caption" sv:type="String">
-                  <sv:value>Language</sv:value>
-                </sv:property>
-              </sv:node>
-            </sv:node>
-          </sv:node>
-        </sv:node>
-
       </sv:node>
     </sv:node>
 
@@ -574,6 +254,10 @@
             <sv:value>String</sv:value>
             <sv:value>Html</sv:value>
             <sv:value>Date</sv:value>
+            <sv:value>Boolean</sv:value>
+            <sv:value>hippo:image</sv:value>
+            <sv:value>hippo:query</sv:value>
+            <sv:value>hippo:facetselect</sv:value>
           </sv:property>
         </sv:node>
 
@@ -596,6 +280,7 @@
         </sv:node>
 
       </sv:node>
+
     </sv:node>
   </sv:node>
   <!-- end "Template type" type -->
@@ -633,127 +318,8 @@
       </sv:node>
     </sv:node>
 
-    <sv:node sv:name="hippo:prototype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:namespace</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:prototyped</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:prototype" sv:type="String">
-        <sv:value>/hippo:namespaces/hippo/hippo:templatetype/hippo:prototype/hippo:prototype</sv:value>
-      </sv:property>
-    </sv:node>
-
   </sv:node>
   <!-- end "Namespace" type -->
-
-  <!-- "Template item" type -->
-  <sv:node sv:name="hippo:templateitem">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:templatetype</sv:value>
-    </sv:property>
-
-    <sv:node sv:name="hippo:nodetype">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:nodetype">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:nodetype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:supertype" sv:type="String">
-          <sv:value>hippo:plugin</sv:value>
-        </sv:property>
-
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>renderer</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:renderer</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>mode</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:templatemode</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>items</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:item</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:multiple" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>parameters</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:parameters</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippo:parameters</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-
-  </sv:node>
-  <!-- end "Template item" type -->
 
   <!-- "Field" type -->
   <sv:node sv:name="hippo:field">
@@ -1331,16 +897,38 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
+          <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.HippoQueryTemplatePlugin</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
 
+        <sv:property sv:name="frontend:overrides" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+          <sv:value>wicket.dialog</sv:value>
+        </sv:property>
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.HippoQueryTemplatePlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>cluster:wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+
+    </sv:node>
   </sv:node>
   <!-- end "Query" type -->
 
@@ -1437,47 +1025,71 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
+          <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+
+        <sv:property sv:name="frontend:overrides" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+          <sv:value>wicket.dialog</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:item">
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.resource.ImageDisplayPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>cluster:wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="display">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.resource.ResourceUploadPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.resource.ImageDisplayPlugin</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="extension.png" sv:type="String">
-              <sv:value>image/png</sv:value>
-            </sv:property>
-            <sv:property sv:name="extension.jpeg" sv:type="String">
-              <sv:value>image/jpeg</sv:value>
-            </sv:property>
-            <sv:property sv:name="extension.jpg" sv:type="String">
-              <sv:value>image/jpeg</sv:value>
-            </sv:property>
-            <sv:property sv:name="extension.gif" sv:type="String">
-              <sv:value>image/gif</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
         </sv:node>
+
+        <sv:node sv:name="upload">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="types" sv:type="String">
+            <sv:value>png=image/png,jpeg=image/jpeg,jpg=image/jpeg,gif=image/gif</sv:value>
+          </sv:property>
+        </sv:node>
+
       </sv:node>
+
     </sv:node>
 
   </sv:node>
@@ -1705,90 +1317,171 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
+          <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+
+        <sv:property sv:name="frontend:overrides" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+          <sv:value>wicket.dialog</sv:value>
+          <sv:value>mode</sv:value>
+          <sv:value>engine</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:item">
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>cluster:wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+        </sv:node>
+
+        <sv:node sv:name="docbase">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>docbase</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Document base</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Document base</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.docbase</sv:value>
+          </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="facets">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>facets</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Facets</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.facets</sv:value>
+          </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="values">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>values</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Values</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Values</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.values</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.values</sv:value>
+          </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="modes">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>modes</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Modes</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Modes</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.modes</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.modes</sv:value>
+          </sv:property>
         </sv:node>
       </sv:node>
+
     </sv:node>
 
   </sv:node>
@@ -1897,70 +1590,137 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
+          <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
+
+        <sv:property sv:name="frontend:overrides" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+          <sv:value>wicket.dialog</sv:value>
+          <sv:value>mode</sv:value>
+          <sv:value>engine</sv:value>
         </sv:property>
-        <sv:node sv:name="hippo:item">
+
+        <sv:property sv:name="wicket.model" sv:type="String">
+          <sv:value>{cluster}.model</sv:value>
+        </sv:property>
+
+        <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>cluster:wicket.id</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+        </sv:node>
+
+        <sv:node sv:name="queryname">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>queryname</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Query name</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Query name</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.queryname</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.queryname</sv:value>
+          </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="docbase">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>docbase</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Document base</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.docbase</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.docbase</sv:value>
+          </sv:property>
         </sv:node>
-        <sv:node sv:name="hippo:item">
+
+        <sv:node sv:name="facets">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>{cluster}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>{cluster}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>cluster:mode</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>cluster:engine</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>facets</sv:value>
           </sv:property>
-          <sv:node sv:name="hippo:parameters">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippo:parameters</sv:value>
-            </sv:property>
-            <sv:property sv:name="caption" sv:type="String">
-              <sv:value>Facets</sv:value>
-            </sv:property>
-          </sv:node>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>{cluster}.facets</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.wicket.id" sv:type="String">
+            <sv:value>{cluster}.facets</sv:value>
+          </sv:property>
         </sv:node>
+
       </sv:node>
     </sv:node>
 

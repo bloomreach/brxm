@@ -13,10 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.hippoecm.frontend.editor.plugins;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -33,59 +30,51 @@ import javax.jcr.version.VersionException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.legacy.model.ExceptionModel;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
-import org.hippoecm.frontend.legacy.plugin.Plugin;
-import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
-import org.hippoecm.frontend.legacy.plugin.channel.Channel;
-import org.hippoecm.frontend.legacy.plugin.channel.Request;
-import org.hippoecm.frontend.legacy.template.model.TemplateModel;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// SA port: port me!
-// used in template list (i.e. could be added to template)
-@Deprecated
-public class HippoQueryTemplatePlugin extends Plugin {
+public class HippoQueryTemplatePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: HippoQueryTemplatePlugin.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(HippoQueryTemplatePlugin.class);
 
-    private JcrNodeModel jcrNodeModel;
     private String language;
     private String statement;
     private String incorrectquery = "";
     private Label incorrectqueryLabel;
 
-    public HippoQueryTemplatePlugin(PluginDescriptor pluginDescriptor, IPluginModel pluginModel, Plugin parentPlugin) {
-        super(pluginDescriptor, new TemplateModel(pluginModel), parentPlugin);
+    public HippoQueryTemplatePlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
 
-        TemplateModel model = (TemplateModel) getPluginModel();
-
-        jcrNodeModel = model.getJcrNodeModel();
+        JcrNodeModel jcrNodeModel = (JcrNodeModel) getModel();
         Node queryNode = jcrNodeModel.getNode();
         try {
 
             //if(!queryNode.isNodeType(JcrConstants.NT_QUERY))
 
-            if(!queryNode.hasProperty("jcr:language")){
+            if (!queryNode.hasProperty("jcr:language")) {
                 queryNode.setProperty("jcr:language", "xpath");
             }
-            if(!queryNode.hasProperty("jcr:statement")){
+            if (!queryNode.hasProperty("jcr:statement")) {
                 queryNode.setProperty("jcr:statement", "//*");
             }
 
             QueryManager qrm = queryNode.getSession().getWorkspace().getQueryManager();
             try {
-               Query query = qrm.getQuery(queryNode);
-               language = query.getLanguage();
-               statement = query.getStatement();
-            } catch (InvalidQueryException e){
+                Query query = qrm.getQuery(queryNode);
+                language = query.getLanguage();
+                statement = query.getStatement();
+            } catch (InvalidQueryException e) {
                 log.error("invalid query statement. Revert to default statement " + e.getMessage());
                 language = "xpath";
                 statement = "//*";
@@ -93,8 +82,7 @@ public class HippoQueryTemplatePlugin extends Plugin {
                 queryNode.setProperty("jcr:language", "xpath");
             }
 
-
-            add(new TextFieldWidget("language", new PropertyModel(this, "language")){
+            add(new TextFieldWidget("language", new PropertyModel(this, "language")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -103,7 +91,7 @@ public class HippoQueryTemplatePlugin extends Plugin {
                 }
             });
 
-            add(new TextFieldWidget("statement", new PropertyModel(this, "statement")){
+            add(new TextFieldWidget("statement", new PropertyModel(this, "statement")) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -111,7 +99,7 @@ public class HippoQueryTemplatePlugin extends Plugin {
                     storeQueryAsNode(target);
                 }
             });
-            incorrectqueryLabel = new Label("incorrectquery",new PropertyModel(this, "incorrectquery"));
+            incorrectqueryLabel = new Label("incorrectquery", new PropertyModel(this, "incorrectquery"));
             incorrectqueryLabel.setOutputMarkupId(true);
             add(incorrectqueryLabel);
 
@@ -127,7 +115,7 @@ public class HippoQueryTemplatePlugin extends Plugin {
     }
 
     private void storeQueryAsNode(AjaxRequestTarget target) {
-        Node queryNode = jcrNodeModel.getNode();
+        Node queryNode = ((JcrNodeModel) getModel()).getNode();
 
         try {
             Node parentNode = queryNode.getParent();
@@ -136,11 +124,11 @@ public class HippoQueryTemplatePlugin extends Plugin {
             Session session = queryNode.getSession();
 
             QueryManager qrm = session.getWorkspace().getQueryManager();
-            if(statement == null) {
+            if (statement == null) {
                 throw new InvalidQueryException("statement is not allowed to be empty");
             }
 
-            if(language == null) {
+            if (language == null) {
                 throw new InvalidQueryException("supported languages are 'xpath' and 'sql'");
             }
             language = language.toLowerCase();
@@ -153,24 +141,24 @@ public class HippoQueryTemplatePlugin extends Plugin {
              * values in memory, remove the node, and store is again
              */
             queryNode.remove();
-            jcrNodeModel.detach();
-            query.storeAsNode(parentNode.getPath()+"/"+nodeName);
+            getModel().detach();
+            query.storeAsNode(parentNode.getPath() + "/" + nodeName);
 
             incorrectquery = "";
             target.addComponent(incorrectqueryLabel);
 
         } catch (InvalidQueryException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         } catch (ValueFormatException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         } catch (VersionException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         } catch (LockException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         } catch (ConstraintViolationException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         } catch (RepositoryException e) {
-            logAndInform(target,e);
+            logAndInform(target, e);
         }
 
     }
@@ -178,10 +166,11 @@ public class HippoQueryTemplatePlugin extends Plugin {
     private void logAndInform(AjaxRequestTarget target, Exception e) {
         if (target != null) {
             incorrectquery = "Incorrect statement: changes won't be saved";
-            Channel channel = getTopChannel();
-            Request request = channel.createRequest("exception", new ExceptionModel(e,"You have an error in your query. "));
-            channel.send(request);
-            request.getContext().apply(target);
+            target.addComponent(incorrectqueryLabel);
+            IDialogService dialogService = getDialogService();
+            if (dialogService != null) {
+                dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, incorrectquery));
+            }
         }
         log.debug(e.getMessage());
     }

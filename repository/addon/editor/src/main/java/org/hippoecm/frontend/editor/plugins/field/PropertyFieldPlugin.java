@@ -72,7 +72,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrPropertyValueModel model = (JcrPropertyValueModel) renderer.getComponent().getModel();
+        final JcrPropertyValueModel model = (JcrPropertyValueModel) findModel(renderer);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -117,7 +117,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 }
             };
         } else {
-            return new Label("add", "");
+            return new Label("add").setVisible(false);
         }
     }
 }

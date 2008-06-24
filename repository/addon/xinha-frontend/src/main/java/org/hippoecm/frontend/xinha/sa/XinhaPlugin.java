@@ -100,6 +100,17 @@ public class XinhaPlugin extends RenderPlugin {
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+
+            IPluginContext context = getPluginContext();
+            XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
+                    XinhaEditorBehavior.class);
+            if (sharedBehavior == null) {
+                sharedBehavior = new XinhaEditorBehavior(context);
+                Page page = context.getService(Home.class.getName(), Home.class);
+                String serviceId = context.getReference(page).getServiceId();
+                context.registerService(sharedBehavior, serviceId);
+                context.registerService(sharedBehavior, XinhaEditorBehavior.class.getName());
+            }
         }
         super.onBeforeRender();
     }
@@ -218,13 +229,6 @@ public class XinhaPlugin extends RenderPlugin {
             // make sure a shared behavior exists
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
                     XinhaEditorBehavior.class);
-            if (sharedBehavior == null) {
-                sharedBehavior = new XinhaEditorBehavior(context);
-                Page page = context.getService(Home.class.getName(), Home.class);
-                String serviceId = context.getReference(page).getServiceId();
-                context.registerService(sharedBehavior, serviceId);
-                context.registerService(sharedBehavior, XinhaEditorBehavior.class.getName());
-            }
             return sharedBehavior.getHeaderContributorsPartly();
         }
     }
