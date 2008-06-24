@@ -40,14 +40,6 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
     private String title = "title";
     private ModelService modelService;
 
-    @Override
-    protected void onDetach() {
-        if(modelService != null) {
-            modelService.detach();
-        }
-        super.onDetach();
-    }
-
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -85,6 +77,14 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
         if (modelService != null) {
             modelService.setModel(model);
         }
+    }
+    
+    @Override
+    protected void onDetach() {
+        if(modelService != null) {
+            modelService.detach();
+        }
+        super.onDetach();
     }
 
 }
