@@ -264,7 +264,7 @@
     </sv:property>
   </sv:node>
 
-  <!-- sv:node sv:name="displayPlugin">
+  <sv:node sv:name="displayPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
         </sv:property>
@@ -277,28 +277,7 @@
         <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>version.model</sv:value>
         </sv:property>
-    </sv:node -->
-
-  <sv:node sv:name="displayPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.legacy.adapter.AdapterPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.version.view</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>version.model</sv:value>
-    </sv:property>
-    <sv:property sv:name="legacy.base" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel/editPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="legacy.plugin" sv:type="String">
-      <sv:value>editor</sv:value>
-    </sv:property>
-  </sv:node>
+    </sv:node>
 
   <sv:node sv:name="workflowListPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -375,7 +354,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.sa.MultiEditorPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.MultiEditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="cluster.name" sv:type="String">
       <sv:value>cms-editor</sv:value>
@@ -391,6 +370,7 @@
     </sv:property>
   </sv:node>
 
+  <!-- START: REMOVE ME after management has been ported-->
   <sv:node sv:name="legacyManagementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -429,6 +409,7 @@
       <sv:value>managementFilter</sv:value>
     </sv:property>
   </sv:node>
+  <!-- END: REMOVE ME after management has been ported-->
 
   <sv:node sv:name="managementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
