@@ -144,22 +144,11 @@ public class URLMappingResponseWrapper extends HttpServletResponseWrapper {
                             // match by type?
                             if (currentNode.isNodeType(prop.getString())) {
 
-                                // directly, if hst:page has been set 
+                                // OK if hst:page has been set 
                                 if (matchNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
                                     displayNode = matchNode;
+                                    break;
                                 }
-
-                                // indirectly, get a hst:displaypage subnode
-                                else {
-                                    if (matchNode.hasNode(HSTNodeTypes.HST_DISPLAYPAGE)) {
-                                        Node subNode = matchNode.getNode(HSTNodeTypes.HST_DISPLAYPAGE);
-                                        if (subNode.isNodeType(HSTNodeTypes.NT_HST_PAGE)) {
-                                            displayNode = subNode;
-                                        }    
-                                    }
-                                }
-
-                                break;
                             }
                         } catch (PathNotFoundException ex) {
                             throw new ServletException(ex);
