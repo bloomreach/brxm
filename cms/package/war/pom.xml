@@ -279,7 +279,7 @@
               <port>8080</port>
             </connector>
           </connectors>
-          <contextPath>/</contextPath>
+          <contextPath>/cms</contextPath>
         </configuration>
         <dependencies>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
