@@ -310,7 +310,7 @@ public class FacetedAuthorizationTest extends TestCase {
         userSession.save();
 
         node = testData.getNode("readdoc0/subwrite");
-        node.addNode("newnode", "hippo:ntunstructured");
+        node.addNode("newnode", "hippo:ntunstructured").setProperty("authtest", "canread");
         userSession.save();
     }
 
@@ -323,7 +323,7 @@ public class FacetedAuthorizationTest extends TestCase {
         userSession.save();
 
         node = testData.getNode("readdoc0/subwrite");
-        node.addNode("newnode", "hippo:ntunstructured");
+        node.addNode("newnode", "hippo:ntunstructured").setProperty("authtest", "canread");
         userSession.save();
     }
 
