@@ -86,7 +86,7 @@ public class PluginContext implements IPluginContext, IClusterable {
         final PluginContext[] contexts = new PluginContext[cluster.getPlugins().size()];
         PluginControl control = new PluginControl(contexts);
 
-        log.info("cluster " + this.controlId + " starting cluster");
+        log.debug("cluster {} starting cluster", this.controlId);
 
         manager.registerService(control, "clusters");
         String controlId = manager.getReference(control).getServiceId();
@@ -96,7 +96,7 @@ public class PluginContext implements IPluginContext, IClusterable {
             contexts[i++] = manager.start(config, controlId);
         }
 
-        log.info("cluster " + this.controlId + " started cluster " + controlId);
+        log.debug("cluster {} started cluster {}", this.controlId, controlId);
 
         children.add(control);
         return control;
@@ -115,7 +115,7 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public void registerService(IClusterable service, String name) {
-        log.info("registering " + controlId + ", name " + name);
+        log.debug("registering {}, name {}", controlId, name);
         List<IClusterable> list = services.get(name);
         if (list == null) {
             list = new LinkedList<IClusterable>();
@@ -127,7 +127,7 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public void unregisterService(IClusterable service, String name) {
-        log.info("unregistering " + controlId + ", name " + name);
+        log.debug("unregistering {}, name {}", controlId, name);
         List<IClusterable> list = services.get(name);
         if (list != null) {
             list.remove(service);
@@ -194,7 +194,7 @@ public class PluginContext implements IPluginContext, IClusterable {
 
         for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
             for (IClusterable service : entry.getValue()) {
-                log.info("unregistering " + controlId + ", name " + entry.getKey());
+                log.debug("unregistering {}, name {}", controlId, entry.getKey());
                 manager.unregisterService(service, controlId);
                 manager.unregisterService(service, entry.getKey());
             }
