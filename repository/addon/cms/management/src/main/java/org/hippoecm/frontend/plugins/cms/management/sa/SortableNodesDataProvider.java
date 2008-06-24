@@ -30,7 +30,7 @@ public abstract class SortableNodesDataProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
 
-    private List<JcrNodeModel> nodes;
+    private transient List<JcrNodeModel> nodes;
 
     public SortableNodesDataProvider(String defaultSort) {
         setSort(defaultSort, true);
