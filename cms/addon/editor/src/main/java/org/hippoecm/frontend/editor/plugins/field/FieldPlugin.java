@@ -19,12 +19,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.model.AbstractProvider;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
@@ -32,8 +35,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.model.AbstractProvider;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
@@ -154,6 +156,10 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         config.put(RenderService.DIALOG_ID, myConfig.getString(RenderService.DIALOG_ID));
     }
 
+    protected C findModel(IRenderService renderer) {
+        return controller.findModel(renderer);
+    }
+
     private class TemplateController implements IClusterable {
         private static final long serialVersionUID = 1L;
 
@@ -194,6 +200,18 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             for (C model : Collections.unmodifiableSet(plugins.keySet())) {
                 removeModel(model);
             }
+        }
+
+        C findModel(IRenderService renderer) {
+            for (Map.Entry<C, IPluginControl> entry : plugins.entrySet()) {
+                IPluginContext context = getPluginContext();
+                String controlId = context.getReference(entry.getValue()).getServiceId();
+                List<IRenderService> services = getPluginContext().getServices(controlId, IRenderService.class);
+                if (services.contains(renderer)) {
+                    return entry.getKey();
+                }
+            }
+            return null;
         }
 
         private void addModel(final C model) {

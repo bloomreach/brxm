@@ -34,15 +34,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
-import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -60,6 +60,7 @@ public class TemplateListPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateListPlugin.class);
 
+    private List<ITypeDescriptor> templateList;
     private ITypeDescriptor editedType;
     private JcrNodeModel templateNodeModel;
 
@@ -84,7 +85,7 @@ public class TemplateListPlugin extends RenderPlugin {
             log.error(ex.getMessage());
         }
 
-        List<ITypeDescriptor> templateList = new LinkedList<ITypeDescriptor>();
+        templateList = new LinkedList<ITypeDescriptor>();
         ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
         if (engine != null) {
             String[] templates = config.getStringArray("templates");
@@ -146,6 +147,9 @@ public class TemplateListPlugin extends RenderPlugin {
 
     @Override
     public void onDetach() {
+        for (ITypeDescriptor type : templateList) {
+            type.detach();
+        }
         editedType.detach();
         templateNodeModel.detach();
         super.onDetach();

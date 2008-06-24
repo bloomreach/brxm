@@ -43,6 +43,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         String caption = config.getString("caption");
         add(new Label("name", caption));
 
+        updateProvider();
         add(createAddLink());
     }
 
@@ -61,7 +62,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrNodeModel model = (JcrNodeModel) item.getModel();
+        final JcrNodeModel model = (JcrNodeModel) findModel(renderer);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
@@ -104,7 +105,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 }
             };
         } else {
-            return new Label("add", "");
+            return new Label("add").setVisible(false);
         }
     }
 
