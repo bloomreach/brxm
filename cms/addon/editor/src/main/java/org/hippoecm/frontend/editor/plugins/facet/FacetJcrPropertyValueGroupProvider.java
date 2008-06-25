@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.template;
+package org.hippoecm.frontend.editor.plugins.facet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,11 +33,9 @@ import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// SA port: this class doesn't seem to be used; low prio
-@Deprecated
 public class FacetJcrPropertyValueGroupProvider extends NodeModelWrapper implements IDataProvider {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: FacetJcrPropertyValueGroupProvider.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
     static final Logger log = LoggerFactory.getLogger(FacetJcrPropertyValueGroupProvider.class);
 

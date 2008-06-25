@@ -17,7 +17,9 @@ package org.hippoecm.frontend.plugins.console.menu.move;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -25,7 +27,6 @@ import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
@@ -39,8 +40,23 @@ public class MoveDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
+    @SuppressWarnings("unused")
+    private String source;
+    @SuppressWarnings("unused")
+    private String target;
+
     public MoveDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(plugin, context, dialogWindow);
+
+        JcrNodeModel model = (JcrNodeModel) plugin.getModel();
+        try {
+            source = model.getNode().getPath();
+            target = model.getNode().getPath();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        add(new Label("source", new PropertyModel(this, "source")));
+        add(new Label("target", new PropertyModel(this, "target")).setOutputMarkupId(true));
     }
 
     public String getTitle() {
@@ -48,10 +64,18 @@ public class MoveDialog extends LookupDialog {
     }
 
     @Override
-    protected Panel getInfoPanel() {
-        RenderPlugin plugin = pluginRef.getService();
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        return new MoveDialogInfoPanel("info", nodeModel);
+    public void onSelect(JcrNodeModel model) {
+        if (model != null) {
+            try {
+                this.target = model.getNode().getPath();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            target.addComponent(get("target"));
+        }
     }
 
     @Override
