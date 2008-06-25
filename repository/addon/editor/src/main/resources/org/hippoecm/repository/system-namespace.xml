@@ -606,7 +606,6 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
 
-
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
@@ -614,8 +613,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>mode</sv:value>
-          <sv:value>engine</sv:value>
         </sv:property>
 
         <sv:property sv:name="wicket.model" sv:type="String">
@@ -627,19 +624,13 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.editor.plugins.LinkPickerPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>{cluster}.model</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>cluster:mode</sv:value>
-          </sv:property>
-          <sv:property sv:name="engine" sv:type="String">
-            <sv:value>cluster:engine</sv:value>
           </sv:property>
         </sv:node>
 

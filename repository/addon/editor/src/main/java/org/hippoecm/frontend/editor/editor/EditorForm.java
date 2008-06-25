@@ -21,17 +21,17 @@ import java.util.List;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.util.lang.Bytes;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.editor.ITemplateEngine;
-import org.hippoecm.frontend.editor.impl.TemplateEngine;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -135,7 +135,6 @@ public class EditorForm extends Form {
         if (type != null) {
             IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
             if (clusterConfig != null) {
-                clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
                 clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
                 clusterConfig.put("helpers", config.getString("builder.helpers"));
                 String modelId = clusterConfig.getString(RenderService.MODEL_ID);

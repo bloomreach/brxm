@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -153,7 +152,6 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         config.put(RenderService.WICKET_ID, myConfig.getString(ITEM));
-        config.put(RenderService.DIALOG_ID, myConfig.getString(RenderService.DIALOG_ID));
     }
 
     protected C findModel(IRenderService renderer) {
@@ -179,17 +177,16 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         void update() {
-            Set<C> current = Collections.unmodifiableSet(plugins.keySet());
             Iterator<C> iter = provider.iterator(0, provider.size());
             Set<C> newModels = new HashSet<C>();
             while (iter.hasNext()) {
                 C model = iter.next();
-                if (!current.contains(model)) {
+                if (!plugins.containsKey(model)) {
                     addModel(model);
                 }
                 newModels.add(model);
             }
-            for (C model : current) {
+            for (C model : plugins.keySet()) {
                 if (!newModels.contains(model)) {
                     removeModel(model);
                 }
@@ -197,8 +194,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         void stop() {
-            for (C model : Collections.unmodifiableSet(plugins.keySet())) {
-                removeModel(model);
+            for (Object model : plugins.keySet().toArray()) {
+                removeModel((C) model);
             }
         }
 

@@ -170,7 +170,8 @@ public class PluginContext implements IPluginContext, IClusterable {
         }
     }
 
-    void connect(IPlugin plugin) {
+    // DO NOT CALL THIS API
+    public void connect(IPlugin plugin) {
         if (initializing) {
             for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
                 List<IServiceTracker> list = entry.getValue();

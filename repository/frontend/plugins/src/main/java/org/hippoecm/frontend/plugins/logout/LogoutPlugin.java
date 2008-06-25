@@ -21,7 +21,6 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 
 public class LogoutPlugin extends RenderPlugin {
@@ -41,7 +40,7 @@ public class LogoutPlugin extends RenderPlugin {
         username = credentials.getString("username");
 
         add(new Label("username", new PropertyModel(this, "username")));
-        add(new LogoutLink("logout-link", context, config.getString(RenderService.DIALOG_ID)));
+        add(new LogoutLink("logout-link", context, config.getString("wicket.dialog")));
     }
 
 }

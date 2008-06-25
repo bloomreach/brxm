@@ -138,7 +138,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
 
         IPluginConfig wflConfig = new JavaPluginConfig();
         wflConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
-        wflConfig.put(RenderService.DIALOG_ID, config.get(RenderService.DIALOG_ID));
 
         String className = model.getWorkflowName();
         wflConfig.put(IPlugin.CLASSNAME, className);

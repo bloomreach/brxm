@@ -178,7 +178,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
           <sv:value>helpers</sv:value>
@@ -458,7 +457,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
@@ -905,7 +903,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
         </sv:property>
 
         <sv:property sv:name="wicket.model" sv:type="String">
@@ -1033,7 +1030,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
         </sv:property>
 
         <sv:property sv:name="wicket.model" sv:type="String">
@@ -1325,7 +1321,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
@@ -1598,7 +1593,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>wicket.dialog</sv:value>
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
         </sv:property>
