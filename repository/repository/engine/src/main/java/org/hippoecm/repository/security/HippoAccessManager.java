@@ -189,7 +189,7 @@ public class HippoAccessManager implements AccessManager {
      * Some property states are resolved many times and this can be expensive 
      * especially for states from the attic.
      */
-    private HashMap<ItemId, ItemState> requestItemStateCache;
+    private HashMap<ItemId, ItemState> requestItemStateCache = new HashMap<ItemId, ItemState>();
 
     /**
      * The logger
@@ -596,7 +596,9 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // initialize per request ItemStateCache
-        requestItemStateCache = new HashMap<ItemId,ItemState>();
+        synchronized (requestItemStateCache) {
+            requestItemStateCache.clear();
+        }
         
         try {
             NodeState nodeState = (NodeState) getItemState(id);
@@ -646,18 +648,20 @@ public class HippoAccessManager implements AccessManager {
         if (id == null) {
             throw new ItemStateException("ItemId cannot be null");
         }
-        if (requestItemStateCache.containsKey(id)) {
-            return requestItemStateCache.get(id);
-        }
-        if (itemMgr.hasItemState(id)) {
-            ItemState itemState = itemMgr.getItemState(id);
-            requestItemStateCache.put(id, itemState);
-            return itemState;
-        }
-        if (itemMgr.hasTransientItemStateInAttic(id)) {
-            ItemState itemState = itemMgr.getAtticItemState(id);
-            requestItemStateCache.put(id, itemState);
-            return itemState;
+        synchronized (requestItemStateCache) {
+            if (requestItemStateCache.containsKey(id)) {
+                return requestItemStateCache.get(id);
+            }
+            if (itemMgr.hasItemState(id)) {
+                ItemState itemState = itemMgr.getItemState(id);
+                requestItemStateCache.put(id, itemState);
+                return itemState;
+            }
+            if (itemMgr.hasTransientItemStateInAttic(id)) {
+                ItemState itemState = itemMgr.getAtticItemState(id);
+                requestItemStateCache.put(id, itemState);
+                return itemState;
+            }   
         }
         throw new NoSuchItemStateException("Item state not found in normal, transient or attic: " + id);
     }
