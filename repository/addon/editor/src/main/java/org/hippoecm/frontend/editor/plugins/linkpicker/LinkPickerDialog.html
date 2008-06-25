@@ -14,11 +14,7 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>  
-    <br/>
-    From <strong><span wicket:id="source">/path/to/source</span></strong>
-    <br/>
-    To <strong><span wicket:id="target">/path/to/destination</span></strong>
-    <br/>
-  </wicket:panel>
+  <wicket:extend>
+    <span wicket:id="info">[ path here ]</span>
+  </wicket:extend>
 </html>

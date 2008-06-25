@@ -64,6 +64,14 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         }
     }
 
+    @Override
+    public void onDetach() {
+        model.detach();
+        pluginRef.detach();
+        jcrServiceRef.detach();
+        super.onDetach();
+    }
+    
     public String getTitle() {
         return title;
     }

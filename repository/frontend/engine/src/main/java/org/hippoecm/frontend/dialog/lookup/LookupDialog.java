@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.dialog.lookup;
 
-import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -32,7 +32,6 @@ public abstract class LookupDialog extends AbstractDialog {
 
     protected IServiceReference<RenderPlugin> pluginRef;
     protected LookupTargetTreeView tree;
-    protected Panel infoPanel;
 
     protected LookupDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
@@ -43,15 +42,12 @@ public abstract class LookupDialog extends AbstractDialog {
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
         add(tree);
-
-        this.infoPanel = getInfoPanel();
-        add(infoPanel);
     }
 
     @Override
-    public void onModelChanged() {
-        infoPanel.setModel(getModel());
+    public final void onModelChanged() {
         ok.setEnabled(isValidSelection(getSelectedNode()));
+        onSelect(getSelectedNode().getNodeModel());
     }
 
     // The selected node
@@ -59,7 +55,8 @@ public abstract class LookupDialog extends AbstractDialog {
         return (AbstractTreeNode) tree.getSelectedNode();
     }
 
-    protected abstract Panel getInfoPanel();
+    protected void onSelect(JcrNodeModel nodeModel) {
+    }
 
     protected abstract AbstractTreeNode getRootNode();
 

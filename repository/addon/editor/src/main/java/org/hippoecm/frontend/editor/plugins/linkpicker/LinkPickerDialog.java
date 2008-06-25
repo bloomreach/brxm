@@ -21,7 +21,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,6 +31,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -44,15 +47,29 @@ public class LinkPickerDialog extends LookupDialog {
 
     protected JcrPropertyValueModel valueModel;
     private List<String> nodetypes;
-    private IJcrService jcrService;
+    private IServiceReference<IJcrService> jcrServiceRef;
+    private Label label;
 
     public LinkPickerDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow,
             JcrPropertyValueModel valueModel, List<String> nodetypes) {
         super(plugin, context, dialogWindow);
         this.nodetypes = nodetypes;
         this.valueModel = valueModel;
-        this.jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+
+        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+        jcrServiceRef = context.getReference(jcrService);
         setOutputMarkupId(true);
+
+        String path = "no path selected";
+        try {
+            if (getSelectedNode() != null) {
+                path = getSelectedNode().getNodeModel().getNode().getPath();
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        add(label = new Label("info", new Model(path)));
+        label.setOutputMarkupId(true);
     }
 
     public String getTitle() {
@@ -60,13 +77,16 @@ public class LinkPickerDialog extends LookupDialog {
     }
 
     @Override
-    protected Panel getInfoPanel() {
-        //RenderPlugin plugin = pluginRef.getService();
-        //JcrPropertyValueModel nodeModel = (JcrPropertyValueModel) plugin.getModel();
-
-        // only make it visible for allowed nodetypes
-        ok.setEnabled(false);
-        return new LinkPickerDialogInfoPanel("info", valueModel);
+    public void onSelect(JcrNodeModel model) {
+        try {
+            label.setModelObject(model.getNode().getPath());
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                target.addComponent(label);
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
     }
 
     @Override
@@ -106,17 +126,18 @@ public class LinkPickerDialog extends LookupDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        RenderPlugin plugin = (RenderPlugin) pluginRef.getService();
-        JcrNodeModel sourceNodeModel = (JcrNodeModel) plugin.getModel();
+        JcrNodeModel sourceNodeModel = new JcrNodeModel(valueModel.getJcrPropertymodel().getItemModel()
+                .getParentModel());
         if (sourceNodeModel.getParentModel() != null) {
             JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
             String targetUUID = targetNodeModel.getNode().getUUID();
             valueModel.setObject(targetUUID);
+
+            IJcrService jcrService = jcrServiceRef.getService();
             if (jcrService != null) {
-                jcrService.flush(targetNodeModel);
+                jcrService.flush(sourceNodeModel);
             }
         }
-
     }
 
     @Override
