@@ -39,6 +39,10 @@
             <param-name>filterMappingUrlPattern</param-name>
             <param-value>/*</param-value>
         </init-param>
+        <init-param>
+            <param-name>configuration</param-name>
+            <param-value>deployment</param-value>
+		</init-param>
     </filter>
 
     <!--Builtin console-->
@@ -53,6 +57,10 @@
             <param-name>config</param-name>
             <param-value>builtin</param-value>
         </init-param>
+        <init-param>
+            <param-name>configuration</param-name>
+            <param-value>deployment</param-value>
+		</init-param>
     </filter>
 
     <filter-mapping>
