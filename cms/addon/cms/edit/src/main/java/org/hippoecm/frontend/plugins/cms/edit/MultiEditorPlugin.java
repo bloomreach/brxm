@@ -89,7 +89,6 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IClusterable {
             String viewerId = clusterConfig.getString(VIEWER_ID);
 
             clusterConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
-            clusterConfig.put(RenderService.DIALOG_ID, config.getString(RenderService.DIALOG_ID));
             IPluginControl plugin = context.start(clusterConfig);
 
             viewer = context.getService(viewerId, IViewService.class);
@@ -103,7 +102,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IClusterable {
                     IViewService viewer = (IViewService) service;
                     Map.Entry<IModel, PluginEntry> entry = getPluginEntry(viewer);
                     if (entry != null) {
-                        IDialogService dialogService = context.getService(config.getString(RenderService.DIALOG_ID),
+                        IDialogService dialogService = context.getService(IDialogService.class.getName(),
                                 IDialogService.class);
 
                         JcrNodeModel nodeModel = (JcrNodeModel) entry.getKey();

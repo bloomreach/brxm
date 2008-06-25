@@ -37,9 +37,6 @@
     <sv:property sv:name="wicket.skin" sv:type="String">
       <sv:value>skin/style.css</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.dialog" sv:type="String">
-      <sv:value>service.dialog</sv:value>
-    </sv:property>
     <sv:property sv:name="tabsPlugin" sv:type="String">
       <sv:value>service.tabs</sv:value>
     </sv:property>
@@ -313,9 +310,6 @@
     <sv:property sv:name="workflow.id" sv:type="String">
       <sv:value>workflows.id</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.dialog" sv:type="String">
-      <sv:value>service.dialog</sv:value>
-    </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>internal</sv:value>
       <sv:value>reviewed-action</sv:value>
@@ -341,9 +335,6 @@
     <sv:property sv:name="workflow.id" sv:type="String">
       <sv:value>workflows.id</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.dialog" sv:type="String">
-      <sv:value>service.dialog</sv:value>
-    </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>embedded</sv:value>
     </sv:property>
@@ -361,9 +352,6 @@
     </sv:property>
     <sv:property sv:name="viewer.id" sv:type="String">
       <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.dialog" sv:type="String">
-      <sv:value>service.dialog</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>

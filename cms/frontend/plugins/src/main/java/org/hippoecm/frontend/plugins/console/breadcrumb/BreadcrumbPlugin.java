@@ -46,6 +46,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeNodel = (JcrNodeModel)model;
             breadcrumb = ISO9075Helper.decodeLocalName(nodeNodel.getItemModel().getPath());
+            redraw();
         }
     }
 }

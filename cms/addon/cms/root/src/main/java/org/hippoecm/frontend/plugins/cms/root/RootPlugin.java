@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.cms.root;
 
 import org.apache.wicket.behavior.HeaderContributor;
-import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -35,9 +34,6 @@ public class RootPlugin extends RenderPlugin {
         for (String extension : new String[] { "logoutPlugin", "tabsPlugin" }) {
             addExtensionPoint(extension);
         }
-        DialogService dialogService = new DialogService();
-        dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
-        add(dialogService);
 
         if (config.getString(RenderService.SKIN_ID) != null) {
             add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));

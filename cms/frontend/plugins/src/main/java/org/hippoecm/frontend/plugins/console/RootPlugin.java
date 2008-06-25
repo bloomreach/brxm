@@ -15,13 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
-import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
 
 public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -44,9 +42,6 @@ public class RootPlugin extends RenderPlugin {
                 "menuPlugin" }) {
             addExtensionPoint(extension);
         }
-        DialogService dialogService = new DialogService();
-        dialogService.init(context, config.getString(RenderService.DIALOG_ID), "dialog");
-        add(dialogService);
     }
 
 }

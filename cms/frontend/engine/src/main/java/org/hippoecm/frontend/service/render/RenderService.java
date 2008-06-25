@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -45,13 +46,14 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     public static final String WICKET_ID = "wicket.id";
     public static final String MODEL_ID = "wicket.model";
-    public static final String DIALOG_ID = "wicket.dialog";
     public static final String SKIN_ID = "wicket.skin";
+    public static final String CSS_ID = "wicket.css";
 
     private boolean redraw;
     private String wicketServiceId;
     private String wicketId;
     private String modelId;
+    private String cssClasses;
 
     private IPluginContext context;
     private IPluginConfig config;
@@ -85,6 +87,25 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
             log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
         }
 
+        StringBuffer sb;
+
+        cssClasses = null;
+        String[] classes = config.getStringArray(CSS_ID);
+        if (classes != null) {
+            sb = null;
+            for (String cssClass : classes) {
+                if (sb == null) {
+                    sb = new StringBuffer();
+                } else {
+                    sb.append(" ");
+                }
+                sb.append(cssClass);
+            }
+            if(sb != null) {
+                cssClasses = new String(sb);
+            }
+        }
+
         context.registerService(this, wicketServiceId);
     }
 
@@ -101,7 +122,6 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     public final void updateModel(IModel model) {
         super.setModel(model);
-        redraw();
     }
 
     // utility routines for subclasses
@@ -132,7 +152,18 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
     }
 
     protected IDialogService getDialogService() {
-        return context.getService(config.getString(DIALOG_ID), IDialogService.class);
+        return context.getService(IDialogService.class.getName(), IDialogService.class);
+    }
+
+    // allow styling
+    
+    @Override
+    public void onComponentTag(final ComponentTag tag) {
+        super.onComponentTag(tag);
+
+        if (cssClasses != null) {
+            tag.put("class", cssClasses);
+        }
     }
 
     // implement IRenderService

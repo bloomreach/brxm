@@ -15,22 +15,22 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.hippoecm.frontend.dialog.DialogService;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
+import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
@@ -47,21 +47,25 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private PluginManager mgr;
     private IRenderService root;
     private IPluginConfigService pluginConfigService;
-    private List<IPluginContext> contexts;
 
     public Home() {
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
-        mgr.registerTracker(this, "service.root");
+        PluginContext context = new PluginContext(mgr, null, null);
+        context.connect(null);
+
+        context.registerTracker(this, "service.root");
 
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
         pluginConfigService = configFactory.getPluginConfigService();
-        mgr.registerService(pluginConfigService, "service.plugin.config");
+        context.registerService(pluginConfigService, "service.plugin.config");
 
         // register JCR service to notify plugins of updates to the jcr tree
         IJcrService jcrService = new IJcrService() {
+            private static final long serialVersionUID = 1L;
+
             public void flush(JcrNodeModel model) {
                 List<IJcrNodeModelListener> listeners = mgr.getServices(IJcrService.class.getName(),
                         IJcrNodeModelListener.class);
@@ -70,10 +74,14 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
                 }
             }
         };
-        mgr.registerService(jcrService, IJcrService.class.getName());
+        context.registerService(jcrService, IJcrService.class.getName());
 
-        mgr.registerService(this, Home.class.getName());
-        String serviceId = mgr.getReference(this).getServiceId();
+        DialogService dialogService = new DialogService();
+        dialogService.init(context, IDialogService.class.getName(), "dialog");
+        add(dialogService);
+
+        context.registerService(this, Home.class.getName());
+        String serviceId = context.getReference(this).getServiceId();
         ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
             private static final long serialVersionUID = 1L;
 
@@ -87,14 +95,10 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
                 remove(behavior);
             }
         };
-        mgr.registerTracker(tracker, serviceId);
+        context.registerTracker(tracker, serviceId);
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
-        List<IPluginConfig> configs = pluginCluster.getPlugins();
-        contexts = new ArrayList<IPluginContext>(configs.size());
-        for (IPluginConfig plugin : configs) {
-            contexts.add(mgr.start(plugin, serviceId));
-        }
+        context.start(pluginCluster);
     }
 
     public Component getComponent() {
@@ -148,9 +152,6 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     @Override
     public void onDetach() {
         mgr.detach();
-        for (IPluginContext context : contexts) {
-            context.detach();
-        }
         super.onDetach();
     }
 

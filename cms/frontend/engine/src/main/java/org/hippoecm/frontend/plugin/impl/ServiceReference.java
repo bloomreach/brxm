@@ -41,4 +41,9 @@ public class ServiceReference<T extends IClusterable> implements IServiceReferen
     public String getServiceId() {
         return serviceId;
     }
+
+    public void detach() {
+        page.detach();
+    }
+
 }
