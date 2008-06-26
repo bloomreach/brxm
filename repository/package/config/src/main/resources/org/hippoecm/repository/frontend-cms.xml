@@ -99,7 +99,10 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.current</sv:value>
     </sv:property>
-    <sv:property sv:name="report" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.report</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.report" sv:type="String">
       <sv:value>service.report.current</sv:value>
     </sv:property>
     <sv:property sv:name="report.input.node" sv:type="String">
@@ -120,7 +123,10 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.todo</sv:value>
     </sv:property>
-    <sv:property sv:name="report" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.report</sv:value>
+    </sv:property>    
+    <sv:property sv:name="extension.report" sv:type="String">
       <sv:value>service.report.todo</sv:value>
     </sv:property>
     <sv:property sv:name="report.input.node" sv:type="String">

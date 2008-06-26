@@ -52,7 +52,6 @@ public class ReportPlugin extends RenderPlugin {
             ModelService modelService = new ModelService(modelId, reportModel);
             modelService.init(context);
 
-            addExtensionPoint("report");
             IClusterConfig renderer = getReportRenderer(reportNode);
             if (renderer != null) {
                 context.start(renderer);
