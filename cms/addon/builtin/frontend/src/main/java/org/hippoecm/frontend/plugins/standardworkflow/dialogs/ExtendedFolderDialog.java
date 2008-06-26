@@ -99,7 +99,7 @@ public class ExtendedFolderDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void execute() throws Exception {
-        if (!folderChoice.checkRequired()) {
+        if (folderType == null || "".equals(folderType)) {
             throw new IllegalArgumentException("No folder type selected.");
         }
         
