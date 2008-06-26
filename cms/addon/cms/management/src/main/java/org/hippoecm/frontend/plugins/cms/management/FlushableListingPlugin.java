@@ -24,6 +24,7 @@ import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.plugins.cms.management.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.list.datatable.CustomizableDocumentListingDataTable;
 
+@Deprecated
 public abstract class FlushableListingPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
