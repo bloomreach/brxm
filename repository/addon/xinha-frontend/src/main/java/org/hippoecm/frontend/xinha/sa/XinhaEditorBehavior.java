@@ -43,7 +43,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     //    private Set<XinhaPlugin.Configuration> configurations;
 
     Pattern numbers = Pattern.compile("\\d*");
-    Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)");
 
     XinhaEditorBehavior(IPluginContext context) {
         this.context = context;
@@ -56,7 +55,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             return "true";
         else if (value.equalsIgnoreCase("false"))
             return "false";
-        else if (numbers.matcher(value).matches() || functions.matcher(value).find())
+        else if (numbers.matcher(value).matches())
             return value;
 
         return SINGLE_QUOTE + value.replaceAll(SINGLE_QUOTE, "\\\\" + SINGLE_QUOTE) + SINGLE_QUOTE;
