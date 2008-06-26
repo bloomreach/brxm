@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -36,9 +37,11 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -66,7 +69,6 @@ public class XinhaPlugin extends RenderPlugin {
             "/hippo:configuration", "/hippo:namespaces" }));
 
     private String mode;
-    private String content;
     private TextArea editor;
     private Configuration configuration;
     private AbstractDefaultAjaxBehavior postBehavior;
@@ -75,23 +77,26 @@ public class XinhaPlugin extends RenderPlugin {
         super(context, config);
 
         mode = config.getString("mode");
+        Fragment fragment = new Fragment("fragment", mode, this);
+        add(fragment);
 
         if ("edit".equals(mode)) {
-            createEditor(config);
+            fragment.add(createEditor(config));
 
             configuration = new Configuration(config);
             context.registerService(configuration, Configuration.class.getName());
         } else {
-            add(editor = new TextArea("value", new Model("Viewing not yet supported")));
+            fragment.add(new WebMarkupContainer("value", getModel()) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
+                    String text = (String) getModelObject(); 
+                    getResponse().write(text);
+                    renderComponentTagBody(markupStream, openTag);
+                }
+            });
         }
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     @Override
@@ -117,15 +122,17 @@ public class XinhaPlugin extends RenderPlugin {
 
     @Override
     public void render(PluginRequestTarget target) {
-        Page page = (Page) findParent(Page.class);
-        if (page == null) {
-            // FIXME: add logic to clean up on the client (delete Xinha.config)
-            editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
+        if (configuration != null) {
+            Page page = (Page) findParent(Page.class);
+            if (page == null) {
+                // FIXME: add logic to clean up on the client (delete Xinha.config)
+                editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
+            }
         }
         super.render(target);
     }
 
-    private void createEditor(final IPluginConfig config) {
+    private Component createEditor(final IPluginConfig config) {
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
         editor = new TextArea("value", valueModel) {
             private static final long serialVersionUID = 1L;
@@ -215,7 +222,7 @@ public class XinhaPlugin extends RenderPlugin {
         editor.add(postBehavior);
 
         add(this.new XinhaHeaderContributor());
-        add(editor);
+        return editor;
     }
 
     //Move this to editorBehaviour?
@@ -236,8 +243,8 @@ public class XinhaPlugin extends RenderPlugin {
     class Configuration extends BaseConfiguration {
         private static final long serialVersionUID = 1L;
 
-        private static final String XINHA_PREFIX = "Xinha.";
-        private static final String XINHA_CONFIG_PREFIX = "Xinha.config.";
+        //        private static final String XINHA_PREFIX = "Xinha.";
+        //        private static final String XINHA_CONFIG_PREFIX = "Xinha.config.";
         private static final String XINHA_PLUGINS = "Xinha.plugins";
         private static final String XINHA_TOOLBAR = "Xinha.config.toolbar";
         private static final String XINHA_CSS = "Xinha.config.css";
@@ -368,9 +375,6 @@ public class XinhaPlugin extends RenderPlugin {
 
         //properties
         private Map<String, String> properties = new HashMap<String, String>();
-
-        // has Xinha transformed the textarea?
-        private boolean rendered = false;
 
         public void setName(String name) {
             this.name = name;

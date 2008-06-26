@@ -69,6 +69,9 @@ public class TemplateEngine implements ITemplateEngine {
                         parent = parent.getParent();
                     }
                     return null;
+                } else if (node.isNodeType("nt:frozenNode")) {
+                    String type = node.getProperty("jcr:frozenPrimaryType").getString();
+                    return getType(type);
                 }
                 return getType(node.getPrimaryNodeType().getName());
             } catch (RepositoryException ex) {
