@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
+@Deprecated
 public class DropBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

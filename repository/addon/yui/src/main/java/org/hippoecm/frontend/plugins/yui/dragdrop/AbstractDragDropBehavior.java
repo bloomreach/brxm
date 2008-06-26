@@ -31,6 +31,7 @@ import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.logger.YuiLogBehavior;
 import org.wicketstuff.yui.YuiHeaderContributor;
 
+@Deprecated
 public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

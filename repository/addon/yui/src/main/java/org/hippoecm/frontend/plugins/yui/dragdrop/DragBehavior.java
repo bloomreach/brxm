@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
+@Deprecated
 public abstract class DragBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
