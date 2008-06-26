@@ -43,7 +43,6 @@ public class ViewPane extends RenderPlugin {
 
     public ViewPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        addExtensionPoint("content");
         add(new Label("alternate", "No document selected"));
     }
 
@@ -57,7 +56,7 @@ public class ViewPane extends RenderPlugin {
     }
 
     protected void onBeforeRender() {
-        Component contentComponent = get("content");
+        Component contentComponent = get("extension.content");
         Component alternateComponent = get("alternate");
         if (contentComponent.isVisible() && alternateComponent.isVisible()) {
             contentComponent.setVisible(false);
@@ -84,7 +83,7 @@ public class ViewPane extends RenderPlugin {
                 }
                 // FIXME: this has knowledge of hippostd, which is not fundamentally wrong, but could be cleaner
                 if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT) && !modelNode.isNodeType("hippostd:folder")) {
-                    get("content").setVisible(true);
+                    get("extension.content").setVisible(true);
                     get("alternate").setVisible(false);
                     redraw();
                     return;
@@ -92,7 +91,7 @@ public class ViewPane extends RenderPlugin {
             } catch (RepositoryException ex) {
             }
         }
-        get("content").setVisible(false);
+        get("extension.content").setVisible(false);
         get("alternate").setVisible(true);
         redraw();
     }

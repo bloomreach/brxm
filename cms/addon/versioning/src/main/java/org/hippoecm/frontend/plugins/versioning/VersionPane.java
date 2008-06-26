@@ -80,7 +80,6 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
             log.warn("");
         }
 
-        addExtensionPoint("display");
         add(documentComponent = new Label("document"));
         add(versionComponent = new Label("version"));
         add(createdComponent = new Label("created"));

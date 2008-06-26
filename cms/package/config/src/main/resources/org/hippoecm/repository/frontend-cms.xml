@@ -229,23 +229,26 @@
     </sv:property>
   </sv:node>
 
-    <sv:node sv:name="viewPlugin">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.versioning.ViewPane</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>service.browse.version</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>model.browse.node</sv:value>
-        </sv:property>
-        <sv:property sv:name="content" sv:type="String">
-            <sv:value>service.browse.version.content</sv:value>
-        </sv:property>
-    </sv:node>
+  <sv:node sv:name="viewPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.versioning.ViewPane</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.version</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.content</sv:value> 
+    </sv:property>
+    <sv:property sv:name="extension.content" sv:type="String">
+      <sv:value>service.browse.version.content</sv:value>
+    </sv:property>
+  </sv:node>
 
   <sv:node sv:name="versioningPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -263,7 +266,10 @@
     <sv:property sv:name="wicket.submodel" sv:type="String">
       <sv:value>version.model</sv:value>
     </sv:property>
-    <sv:property sv:name="display" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.display</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.display" sv:type="String">
       <sv:value>service.browse.version.view</sv:value>
     </sv:property>
   </sv:node>
