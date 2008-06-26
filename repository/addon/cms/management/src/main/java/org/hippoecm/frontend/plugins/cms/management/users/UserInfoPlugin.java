@@ -19,6 +19,7 @@ import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.frontend.legacy.plugin.Plugin;
 import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 
+@Deprecated
 public class UserInfoPlugin extends Plugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

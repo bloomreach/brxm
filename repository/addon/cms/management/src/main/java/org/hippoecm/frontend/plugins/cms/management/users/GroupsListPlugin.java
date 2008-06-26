@@ -46,6 +46,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class GroupsListPlugin extends FlushableListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
