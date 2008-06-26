@@ -146,22 +146,30 @@
     <sv:property sv:name="viewer.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
-    <sv:property sv:name="breadcrumbPlugin" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.breadcrumb</sv:value>
+      <sv:value>extension.browser</sv:value>
+      <sv:value>extension.list</sv:value>
+      <sv:value>extension.workflows</sv:value>
+      <sv:value>extension.version</sv:value>
+      <sv:value>extension.versionToggle</sv:value>      
+    </sv:property>
+    <sv:property sv:name="extension.breadcrumb" sv:type="String">
       <sv:value>service.browse.breadcrumb</sv:value>
     </sv:property>
-    <sv:property sv:name="browserPlugin" sv:type="String">
+    <sv:property sv:name="extension.browser" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
-    <sv:property sv:name="listPlugin" sv:type="String">
+    <sv:property sv:name="extension.list" sv:type="String">
       <sv:value>service.browse.list</sv:value>
     </sv:property>
-    <sv:property sv:name="workflowsPlugin" sv:type="String">
+    <sv:property sv:name="extension.workflows" sv:type="String">
       <sv:value>service.browse.workflows</sv:value>
     </sv:property>
-    <sv:property sv:name="versionPlugin" sv:type="String">
+    <sv:property sv:name="extension.version" sv:type="String">
       <sv:value>service.browse.version</sv:value>
     </sv:property>
-    <sv:property sv:name="versionTogglePlugin" sv:type="String">
+    <sv:property sv:name="extension.versionToggle" sv:type="String">
       <sv:value>service.browse.versiontoggle</sv:value>
     </sv:property>
   </sv:node>

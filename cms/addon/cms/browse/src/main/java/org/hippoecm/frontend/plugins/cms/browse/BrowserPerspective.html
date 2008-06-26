@@ -15,13 +15,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <span wicket:id="breadcrumbPlugin" class="Breadcrumb">breadcrumb</span>
+    <span wicket:id="extension.breadcrumb" class="Breadcrumb">breadcrumb</span>
     <div class="panelcontainer" id="left">
       <h2>
         <span class="search">Search</span>
       </h2>
       <div class="panel nopadding">
-        <div wicket:id="browserPlugin" class="Tree plugin">tree here</div>
+        <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
       </div>
     </div>
     
@@ -30,8 +30,8 @@
         <span class="actions">Actions</span>
       </h2>
       <div class="panel">
-        <div class="iconactions" wicket:id="workflowsPlugin">workflow here</div>
-        <div wicket:id="versionTogglePlugin">&#160;</div>
+        <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
+        <div wicket:id="extension.versionToggle">&#160;</div>
       </div>
     </div>
     
@@ -40,7 +40,7 @@
         <span class="documents">Documents</span>
       </h2>
       <div class="panel nopadding">
-        <div wicket:id="listPlugin" class="plugin Doclist">documents here</div>
+        <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
       </div>
       <div id="versioningWidget"> 
 	      <div class="slidercontrol">
@@ -48,7 +48,7 @@
 	      </div>
 	      <div class="panel nopadding">
 	        <div class="plugin versioning">
-	          <div wicket:id="versionPlugin"> </div>
+	          <div wicket:id="extension.version"> </div>
 	        </div>
 	      </div>
 	  </div>

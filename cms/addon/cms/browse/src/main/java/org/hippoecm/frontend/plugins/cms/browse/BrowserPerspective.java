@@ -28,13 +28,6 @@ public class BrowserPerspective extends Perspective {
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        addExtensionPoint("breadcrumbPlugin");
-        addExtensionPoint("browserPlugin");
-        addExtensionPoint("listPlugin");
-        addExtensionPoint("workflowsPlugin");
-        addExtensionPoint("versionPlugin");
-        addExtensionPoint("versionTogglePlugin");
     }
 
     @Override
