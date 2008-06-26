@@ -47,6 +47,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
     public static final String WICKET_ID = "wicket.id";
     public static final String MODEL_ID = "wicket.model";
     public static final String SKIN_ID = "wicket.skin";
+    public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String CSS_ID = "wicket.css";
 
     private boolean redraw;
@@ -85,6 +86,13 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
             }
         } else {
             log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
+        }
+        
+        String[] extensions = config.getStringArray(EXTENSIONS_ID);
+        if (extensions != null) {
+            for (String extension : extensions) {
+                addExtensionPoint(extension);
+            }
         }
 
         StringBuffer sb;

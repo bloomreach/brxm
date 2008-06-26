@@ -47,17 +47,6 @@ public class ManagementEditorPlugin extends EditorPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-
-        JcrNodeModel model = (JcrNodeModel) getModel();
-        System.out.println("");
+        redraw();
     }
-
-//    @Override
-//    public void handle(Request request) {
-//        if (request.getOperation().equals("feedback")) {
-//            request.getContext().addRefresh(feedback);
-//        } else {
-//            super.handle(request);
-//        }
-//    }
 }

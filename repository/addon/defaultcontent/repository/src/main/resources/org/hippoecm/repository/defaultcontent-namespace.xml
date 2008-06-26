@@ -295,12 +295,6 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
           </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
         </sv:node>
 
         <sv:node sv:name="introduction">
@@ -327,12 +321,6 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
           </sv:property>
         </sv:node>
 
@@ -630,12 +618,6 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
           </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
         </sv:node>
 
         <sv:node sv:name="date">
@@ -662,12 +644,6 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Date</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.date</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.date</sv:value>
           </sv:property>
         </sv:node>
 
@@ -696,12 +672,6 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
-          </sv:property>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -728,12 +698,6 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.body</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.body</sv:value>
           </sv:property>
         </sv:node>
 
@@ -1031,12 +995,6 @@
             <sv:property sv:name="caption" sv:type="String">
               <sv:value>Title</sv:value>
             </sv:property>
-            <sv:property sv:name="item" sv:type="String">
-              <sv:value>{cluster}.title</sv:value>
-            </sv:property>
-            <sv:property sv:name="template.wicket.id" sv:type="String">
-              <sv:value>{cluster}.title</sv:value>
-            </sv:property>
           </sv:node>
 
           <sv:node sv:name="date">
@@ -1063,12 +1021,6 @@
             </sv:property>
             <sv:property sv:name="caption" sv:type="String">
               <sv:value>Date</sv:value>
-            </sv:property>
-            <sv:property sv:name="item" sv:type="String">
-              <sv:value>{cluster}.date</sv:value>
-            </sv:property>
-            <sv:property sv:name="template.wicket.id" sv:type="String">
-              <sv:value>{cluster}.date</sv:value>
             </sv:property>
           </sv:node>
 
@@ -1097,12 +1049,6 @@
             <sv:property sv:name="caption" sv:type="String">
               <sv:value>Introduction</sv:value>
             </sv:property>
-            <sv:property sv:name="item" sv:type="String">
-              <sv:value>{cluster}.introduction</sv:value>
-            </sv:property>
-            <sv:property sv:name="template.wicket.id" sv:type="String">
-              <sv:value>{cluster}.introduction</sv:value>
-            </sv:property>
           </sv:node>
 
           <sv:node sv:name="body">
@@ -1129,12 +1075,6 @@
             </sv:property>
             <sv:property sv:name="caption" sv:type="String">
               <sv:value>Body</sv:value>
-            </sv:property>
-            <sv:property sv:name="item" sv:type="String">
-              <sv:value>{cluster}.body</sv:value>
-            </sv:property>
-            <sv:property sv:name="template.wicket.id" sv:type="String">
-              <sv:value>{cluster}.body</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
@@ -1379,12 +1319,6 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
           </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.title</sv:value>
-          </sv:property>
         </sv:node>
 
         <sv:node sv:name="introduction">
@@ -1412,12 +1346,6 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.introduction</sv:value>
-          </sv:property>
         </sv:node>
 
         <sv:node sv:name="query">
@@ -1444,12 +1372,6 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Query</sv:value>
-          </sv:property>
-          <sv:property sv:name="item" sv:type="String">
-            <sv:value>{cluster}.query</sv:value>
-          </sv:property>
-          <sv:property sv:name="template.wicket.id" sv:type="String">
-            <sv:value>{cluster}.query</sv:value>
           </sv:property>
         </sv:node>
 

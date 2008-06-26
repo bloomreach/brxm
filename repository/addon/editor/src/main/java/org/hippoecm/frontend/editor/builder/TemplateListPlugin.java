@@ -175,7 +175,6 @@ public class TemplateListPlugin extends RenderPlugin {
             itemNode.setProperty("engine", "cluster:engine");
             itemNode.setProperty("field", name);
             itemNode.setProperty(ListViewService.ITEM, "{cluster}." + pluginName);
-            itemNode.setProperty("template.wicket.id", "{cluster}." + pluginName);
             itemNode.setProperty("caption", new Value[] { new StringValue(typeDescriptor.getName()) });
 
             IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
