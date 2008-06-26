@@ -48,13 +48,18 @@
     <sv:property sv:name="viewer.id" sv:type="String">
       <sv:value>{cluster}.view</sv:value>
     </sv:property>
-    <sv:property sv:name="editorPlugin" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.editor</sv:value>
+      <sv:value>extension.workflow</sv:value>
+      <sv:value>extension.helpers</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>{cluster}.editor</sv:value>
     </sv:property>
-    <sv:property sv:name="workflowPlugin" sv:type="String">
+    <sv:property sv:name="extension.workflow" sv:type="String">
       <sv:value>{cluster}.workflows</sv:value>
     </sv:property>
-    <sv:property sv:name="helperPlugins" sv:type="String">
+    <sv:property sv:name="extension.helpers" sv:type="String">
       <sv:value>{cluster}.helpers</sv:value>
     </sv:property>
   </sv:node>
