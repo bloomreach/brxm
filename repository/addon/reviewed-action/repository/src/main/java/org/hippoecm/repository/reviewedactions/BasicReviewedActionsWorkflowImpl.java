@@ -53,7 +53,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 throw new WorkflowException("document is not a publishable document");
             }
         } else {
-            if(!getWorkflowContext().getUsername().equals(draft.username))
+            if(draft.username != null && !getWorkflowContext().getUsername().equals(draft.username))
                 throw new WorkflowException("document already being edited");
         }
         return draft;
