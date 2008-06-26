@@ -77,10 +77,14 @@
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>Dashboard</sv:value>
     </sv:property>
-    <sv:property sv:name="currentActivityPlugin" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.currentActivity</sv:value>
+      <sv:value>extension.todo</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.currentActivity" sv:type="String">
       <sv:value>service.dashboard.current</sv:value>
     </sv:property>
-    <sv:property sv:name="todoPlugin" sv:type="String">
+    <sv:property sv:name="extension.todo" sv:type="String">
       <sv:value>service.dashboard.todo</sv:value>
     </sv:property>
   </sv:node>
