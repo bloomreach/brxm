@@ -27,6 +27,15 @@ function AutoSave(editor) {
     this.textarea = this.editor._textArea;
     this.initial_html = null;
     
+    var self = this;
+    preCallHandler = function() {
+      if (self.timeoutId != null) {
+        window.clearTimeout(self.timeoutId);
+        self.timeoutId = null;
+        self.saveSynchronous();
+      }
+    }
+    Wicket.Ajax.registerPreCallHandler(preCallHandler);
 }
 
 AutoSave.prototype._lc = function(string) {
@@ -85,7 +94,7 @@ AutoSave.prototype.getChanged = function() {
 }
 
 AutoSave.prototype.setTimer = function() {
-    window.clearTimeout(this.timeoutId); 
+    window.clearTimeout(this.timeoutId);
     var self = this;
     saveContent = function() { self.save() } ;
     this.timeoutId = window.setTimeout("saveContent()", this.lConfig.timeoutLength);
@@ -94,38 +103,42 @@ AutoSave.prototype.setTimer = function() {
 AutoSave.prototype.setUnChanged = function() {
     this.changed = false;
 }
+        
+AutoSave.prototype.saveSynchronous = function() {
+    var self = this;
+    this.timoutId = null;
+    var form = this.editor._textArea.form;
+    form.onsubmit();
+    var callbackUrl = this.editor.config.callbackUrl + "&save=true";
+    var myId = this.editor._textArea.getAttribute("id");
+
+    req = Xinha.getXMLHTTPRequestObject();
+    req.open('POST', callbackUrl, false);
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'+(Xinha._postback_send_charset ? '; charset=UTF-8' : ''));
+    req.send(wicketSerialize(Wicket.$(myId)));
+
+    if(req.responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
+      self.initial_html = self.editor.getInnerHTML();
+      self.changed = false;
+    } else {
+      alert('Failed to save HTML');
+    }
+}
 
 AutoSave.prototype.save =  function() {
     var self = this;
-    // verify editors existence
+    this.timoutId = null;
     var form = this.editor._textArea.form;
     form.onsubmit();
     var callbackUrl = this.editor.config.callbackUrl + "&save=true";
     var myId = this.editor._textArea.getAttribute("id");
     
-  function callBack()
-  {
-    if ( req.readyState == 4 )
-    {
-      if ( req.status == 200 || req.status == 0 )
-      {
-        if(req.responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
-          self.initial_html = self.editor.getInnerHTML();
-          self.changed = false;
-        }
-      } else {
-        alert('Failed to save content');
-      }
+    var postFunc = function(responseText) {
+      if(responseText.indexOf(self.lConfig.saveSuccessFlag) > -1) {
+        self.initial_html = self.editor.getInnerHTML();
+        self.changed = false;
+      }  
     }
-  }
-
     //TODO: use Xinha form serialize method instead of Wicket's
-    
-    req = Wicket.Ajax.getTransport();
-
-    req.onreadystatechange = callBack;
-    req.open('POST', callbackUrl, true);
-    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'+(Xinha._postback_send_charset ? '; charset=UTF-8' : ''));
-    req.send(wicketSerialize(Wicket.$(myId)));
+    var doCall = Xinha._postback(callbackUrl, wicketSerialize(Wicket.$(myId)), postFunc);
 }
-

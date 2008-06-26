@@ -30,16 +30,12 @@ import java.util.SortedMap;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -50,14 +46,14 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class VersionPane extends RenderPlugin {
+public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -77,7 +73,7 @@ public class VersionPane extends RenderPlugin {
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.get(RenderPlugin.MODEL_ID)!=null) {
+        if (config.get(RenderPlugin.MODEL_ID) != null) {
             subModel = new ModelService(config.getString("wicket.submodel"), null);
             subModel.init(context);
         } else {
@@ -116,13 +112,6 @@ public class VersionPane extends RenderPlugin {
                 browseVersion(+1);
             }
         });
-
-        add(newerComponent = new AjaxLink("test") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                test();
-            }
-        });
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -137,16 +126,17 @@ public class VersionPane extends RenderPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        JcrNodeModel model = (JcrNodeModel)getModel();
-        if (model!=null) {
+        JcrNodeModel model = (JcrNodeModel) getModel();
+        if (model != null) {
             try {
                 Node modelNode = model.getNode();
                 if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
                             // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state")
+                                    && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -169,18 +159,20 @@ public class VersionPane extends RenderPlugin {
     }
 
     private void restoreVersion() {
-        JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        if (model!=null) {
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
+        if (model != null) {
             Object currentVersionObject = versionComponent.getModel().getObject();
-            int currentVersion = (currentVersionObject instanceof Integer ? ((Integer)currentVersionObject).intValue() : -1);
+            int currentVersion = (currentVersionObject instanceof Integer ? ((Integer) currentVersionObject).intValue()
+                    : -1);
             Node modelNode = model.getNode();
             try {
                 if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
                             // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state")
+                                    && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -194,29 +186,30 @@ public class VersionPane extends RenderPlugin {
 
             Node document = modelNode;
             try {
-                WorkflowManager workflowManager = ((HippoWorkspace)document.getSession().getWorkspace()).getWorkflowManager();
-                VersionWorkflow workflow = (VersionWorkflow)workflowManager.getWorkflow("versioning", document);
-                if (workflow!=null) {
+                WorkflowManager workflowManager = ((HippoWorkspace) document.getSession().getWorkspace())
+                        .getWorkflowManager();
+                VersionWorkflow workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
+                if (workflow != null) {
                     SortedMap<Calendar, Set<String>> versions = workflow.list();
-                    if (versions.size()==0)
+                    if (versions.size() == 0)
                         return;
                     Iterator iter = versions.entrySet().iterator();
-                    if (currentVersion<0||currentVersion>=versions.size())
+                    if (currentVersion < 0 || currentVersion >= versions.size())
                         return;
-                    for (int i = 0; i<currentVersion; i++)
+                    for (int i = 0; i < currentVersion; i++)
                         iter.next();
-                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>)iter.next();
+                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     workflow.revert(entry.getKey());
                     redraw();
                 }
             } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RemoteException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
         }
@@ -224,18 +217,19 @@ public class VersionPane extends RenderPlugin {
 
     private void browseVersion(int direction) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
-        JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        if (model!=null) {
+        JcrNodeModel model = (JcrNodeModel) VersionPane.this.getModel();
+        if (model != null) {
             Object currentVersionObj = versionComponent.getModel().getObject();
-            int currentVersion = (currentVersionObj instanceof Integer ? ((Integer)currentVersionObj).intValue() : -1);
+            int currentVersion = (currentVersionObj instanceof Integer ? ((Integer) currentVersionObj).intValue() : -1);
             Node modelNode = model.getNode();
             try {
                 if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
+                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child.getName().equals(modelNode.getName())) {
                             // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
+                            if (child.hasProperty("hippostd:state")
+                                    && child.getProperty("hippostd:state").equals("published")) {
                                 modelNode = child;
                                 break;
                             } else {
@@ -248,34 +242,35 @@ public class VersionPane extends RenderPlugin {
             }
             Node document = modelNode;
             try {
-                WorkflowManager workflowManager = ((HippoWorkspace)document.getSession().getWorkspace()).getWorkflowManager();
-                VersionWorkflow workflow = (VersionWorkflow)workflowManager.getWorkflow("versioning", document);
-                if (workflow!=null) {
+                WorkflowManager workflowManager = ((HippoWorkspace) document.getSession().getWorkspace())
+                        .getWorkflowManager();
+                VersionWorkflow workflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", document);
+                if (workflow != null) {
                     SortedMap<Calendar, Set<String>> versions = workflow.list();
-                    if (versions.size()==0)
+                    if (versions.size() == 0)
                         return;
                     Iterator iter = versions.entrySet().iterator();
-                    if (currentVersion<0)
+                    if (currentVersion < 0)
                         currentVersion = versions.size();
                     currentVersion += direction;
-                    if (currentVersion>=versions.size())
-                        currentVersion = versions.size()-1;
-                    if (currentVersion<0)
+                    if (currentVersion >= versions.size())
+                        currentVersion = versions.size() - 1;
+                    if (currentVersion < 0)
                         currentVersion = 0;
                     versionComponent.setModel(new Model(new Integer(currentVersion)));
-                    for (int i = 0; i<currentVersion; i++)
+                    for (int i = 0; i < currentVersion; i++)
                         iter.next();
-                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>)iter.next();
+                    Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     Date date = entry.getKey().getTime();
                     createdComponent.setModel(new Model(dateFormat.format(date)));
                     if (iter.hasNext()) {
-                        date = ((Map.Entry<Calendar, Set<String>>)iter.next()).getKey().getTime();
+                        date = ((Map.Entry<Calendar, Set<String>>) iter.next()).getKey().getTime();
                         expiredComponent.setModel(new Model((dateFormat.format(date))));
                     } else
                         expiredComponent.setModel(new Model("present"));
                     StringBuffer labels = new StringBuffer();
                     for (String label : entry.getValue()) {
-                        if (labels.length()>0)
+                        if (labels.length() > 0)
                             labels.append(", ");
                         labels.append(label);
                     }
@@ -286,98 +281,29 @@ public class VersionPane extends RenderPlugin {
                     redraw();
                 }
             } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RemoteException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
         }
-    }
-
-    // FIXME: to be removed after testing
-    private void test() {
-        JcrNodeModel model = (JcrNodeModel)VersionPane.this.getModel();
-        if (model!=null) {
-            Node modelNode = model.getNode();
-            try {
-                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext(); ) {
-                        Node child = iter.nextNode();
-                        if (child.getName().equals(modelNode.getName())) {
-                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                            if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").equals("published")) {
-                                modelNode = child;
-                                break;
-                            } else {
-                                modelNode = child;
-                            }
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-            }
-            Node document = modelNode;
-            try {
-                publish(edit(document));
-            } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-            } catch (RemoteException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-            } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-            }
-        }
-    }
-
-    private Node edit(Node node) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        FullReviewedActionsWorkflow publishwf;
-        Document document;
-
-        Session session = node.getSession();
-        String path = node.getPath();
-
-        // start edit
-        publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
-        document = publishwf.obtainEditableInstance();
-        session.save();
-        session.refresh(false);
-
-        // edit
-        node = session.getNodeByUUID(document.getIdentity());
-        node.setProperty("hippostd:content", node.getProperty("hippostd:content").getString()+"!");
-        session.save();
-        session.refresh(false);
-
-        // commit edit
-        node = session.getNodeByUUID(document.getIdentity());
-        publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
-        publishwf.commitEditableInstance();
-        session.save();
-        session.refresh(false);
-
-        return session.getRootNode().getNode(path.substring(1));
-    }
-
-    private void publish(Node node) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Session session = node.getSession();
-        session.save();
-        FullReviewedActionsWorkflow publishwf = (FullReviewedActionsWorkflow)getWorkflow(node, "reviewed-action");
-        publishwf.publish();
-        session.save();
-        session.refresh(false);
     }
 
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {
-        HippoWorkspace wsp = (HippoWorkspace)node.getSession().getWorkspace();
+        HippoWorkspace wsp = (HippoWorkspace) node.getSession().getWorkspace();
         WorkflowManager workflowMgr = wsp.getWorkflowManager();
-        Node canonicalNode = ((HippoNode)node).getCanonicalNode();
+        Node canonicalNode = ((HippoNode) node).getCanonicalNode();
         return workflowMgr.getWorkflow(category, canonicalNode);
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        JcrNodeModel myModel = (JcrNodeModel) getModel();
+        if (myModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+            modelChanged();
+        }
     }
 }
