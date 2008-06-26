@@ -20,6 +20,7 @@ import java.util.List;
 import org.hippoecm.frontend.legacy.plugin.Plugin;
 import org.hippoecm.frontend.legacy.plugin.PluginDescriptor;
 
+@Deprecated
 public abstract class PluginDragDropBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

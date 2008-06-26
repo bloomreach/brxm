@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugins.yui.dragdrop.PluginDragDropBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public abstract class NodeDragDropBehavior extends PluginDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

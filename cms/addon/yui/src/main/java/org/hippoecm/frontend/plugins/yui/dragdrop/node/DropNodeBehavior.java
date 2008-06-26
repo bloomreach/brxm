@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.yui.dragdrop.node;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
+@Deprecated
 public class DropNodeBehavior extends NodeDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";

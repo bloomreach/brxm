@@ -22,6 +22,7 @@ import org.hippoecm.frontend.legacy.model.PluginModel;
 import org.hippoecm.frontend.legacy.plugin.channel.Notification;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
+@Deprecated
 public class DragNodeBehavior extends NodeDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
