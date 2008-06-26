@@ -44,7 +44,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.render.ListViewService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -174,7 +173,6 @@ public class TemplateListPlugin extends RenderPlugin {
             itemNode.setProperty("mode", "cluster:mode");
             itemNode.setProperty("engine", "cluster:engine");
             itemNode.setProperty("field", name);
-            itemNode.setProperty(ListViewService.ITEM, "{cluster}." + pluginName);
             itemNode.setProperty("caption", new Value[] { new StringValue(typeDescriptor.getName()) });
 
             IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
