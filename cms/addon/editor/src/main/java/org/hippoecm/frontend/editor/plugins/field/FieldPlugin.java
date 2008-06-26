@@ -73,6 +73,12 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     }
 
     @Override
+    protected String getItemId() {
+        String serviceId = getPluginContext().getReference(this).getServiceId();
+        return serviceId + ".item";
+    }
+    
+    @Override
     protected void onDetach() {
         if (provider != null) {
             provider.detach();
@@ -151,7 +157,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             }
         }
 
-        config.put(RenderService.WICKET_ID, myConfig.getString(ITEM));
+        config.put(RenderService.WICKET_ID, getItemId());
     }
 
     protected C findModel(IRenderService renderer) {

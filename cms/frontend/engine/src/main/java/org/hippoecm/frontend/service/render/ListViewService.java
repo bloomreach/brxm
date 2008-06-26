@@ -100,7 +100,8 @@ public class ListViewService extends RenderService {
         };
         add(view);
 
-        if (properties.get("item") != null) {
+        String itemId = getItemId();
+        if (itemId != null) {
             tracker = new ServiceTracker<IRenderService>(IRenderService.class) {
                 private static final long serialVersionUID = 1L;
 
@@ -120,12 +121,16 @@ public class ListViewService extends RenderService {
                     redraw();
                 }
             };
-            context.registerTracker(tracker, properties.getString(ITEM));
+            context.registerTracker(tracker, itemId);
         } else {
             log.warn("No item id configured");
         }
     }
 
+    protected String getItemId() {
+        return getPluginConfig().getString(ITEM);
+    }
+    
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);

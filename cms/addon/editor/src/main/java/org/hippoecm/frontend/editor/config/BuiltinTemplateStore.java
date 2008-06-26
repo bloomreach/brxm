@@ -95,7 +95,6 @@ public class BuiltinTemplateStore implements IClusterable {
                 config.put("caption", entry.getKey());
                 config.put("field", entry.getKey());
                 config.put("item", "{cluster}.fields." + entry.getKey());
-                config.put("template.wicket.id", "{cluster}.fields." + entry.getKey());
                 list.add(config);
             }
             return list;

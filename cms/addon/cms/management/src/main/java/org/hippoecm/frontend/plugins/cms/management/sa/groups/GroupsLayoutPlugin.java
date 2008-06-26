@@ -13,17 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service.render;
+package org.hippoecm.frontend.plugins.cms.management.sa.groups;
 
-import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class LayoutPlugin extends LayoutService implements IPlugin {
+public class GroupsLayoutPlugin extends RenderPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+    
     private static final long serialVersionUID = 1L;
 
-    public LayoutPlugin(IPluginContext context, IPluginConfig config) {
+    public GroupsLayoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
-
 }

@@ -15,30 +15,43 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PasswordValueTemplatePlugin extends RenderPlugin {
+public class NodeNamePlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(PasswordValueTemplatePlugin.class);
+    static final Logger log = LoggerFactory.getLogger(NodeNamePlugin.class);
 
-    public PasswordValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
+    public NodeNamePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        add(new PasswordTextFieldWidget("value", valueModel));
 
-        setOutputMarkupId(true);
+        List<String> captions = Arrays.asList(config.getStringArray("caption"));
+        if(captions != null && captions.size() > 0) {
+            add(new Label("name", captions.get(0)));
+        } else {
+            add(new Label("name", ""));
+        }
+
+        JcrNodeModel nodeModel = (JcrNodeModel)getModel();
+        try {
+            add(new Label("field", nodeModel.getNode().getName()));
+        } catch (RepositoryException e) {
+            log.error("Could not retrieve name of node (" + nodeModel.getItemModel().getPath() + ")", e);
+        }
     }
 
 }

@@ -13,32 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins;
+package org.hippoecm.frontend.plugins.cms.management.sa.users;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.widgets.PasswordTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PasswordValueTemplatePlugin extends RenderPlugin {
+public class UsersLayoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
+    
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(PasswordValueTemplatePlugin.class);
-
-    public PasswordValueTemplatePlugin(IPluginContext context, IPluginConfig config) {
+    public UsersLayoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getModel();
-        add(new PasswordTextFieldWidget("value", valueModel));
-
-        setOutputMarkupId(true);
     }
-
 }
