@@ -21,9 +21,12 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
 
+[hst:labelled] mixin
+- hst:label (string) 
+
 [hst:page] mixin
 - hst:pageType (string) = 'jsp' < 'jsp', 'jsf'
-- hst:pageFile (string) = 'index.jsp' mandatory
+- hst:pageFile (string) = 'index.jsp' 
 
 [hst:urlMapping] > nt:base, hst:page
 - hst:nodeType (string) mandatory
