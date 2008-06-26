@@ -71,11 +71,15 @@ class JavaConfigService implements IPluginConfigService {
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
         config.put("wicket.model", "service.model");
-        config.put("browserPlugin", "service.browser");
-        config.put("breadcrumbPlugin", "service.breadcrumb");
-        config.put("editorPlugin", "service.editor");
-        config.put("menuPlugin", "service.menu");
-        config.put("logoutPlugin", "service.logout");
+        
+        String[] extensions = new String[] { "extension.browser", "extension.breadcrumb", "extension.editor", "extension.logout", "extension.menu" };
+        config.put("wicket.extensions", extensions);
+        
+        config.put("extension.browser", "service.browser");
+        config.put("extension.breadcrumb", "service.breadcrumb");
+        config.put("extension.editor", "service.editor");
+        config.put("extension.menu", "service.menu");
+        config.put("extension.logout", "service.logout");
         plugins.addPlugin(config);
 
         config = new JavaPluginConfig();

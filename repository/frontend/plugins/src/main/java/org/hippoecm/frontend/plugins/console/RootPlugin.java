@@ -37,11 +37,6 @@ public class RootPlugin extends RenderPlugin {
             // unregister: don't repaint root plugin when model changes.
             context.unregisterService(this, modelId);
         }
-
-        for (String extension : new String[] { "browserPlugin", "breadcrumbPlugin", "editorPlugin", "logoutPlugin",
-                "menuPlugin" }) {
-            addExtensionPoint(extension);
-        }
     }
 
 }

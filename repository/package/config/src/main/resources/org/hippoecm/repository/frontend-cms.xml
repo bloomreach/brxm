@@ -37,10 +37,14 @@
     <sv:property sv:name="wicket.skin" sv:type="String">
       <sv:value>skin/style.css</sv:value>
     </sv:property>
-    <sv:property sv:name="tabsPlugin" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.tabs</sv:value>
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.tabs" sv:type="String">
       <sv:value>service.tabs</sv:value>
     </sv:property>
-    <sv:property sv:name="logoutPlugin" sv:type="String">
+    <sv:property sv:name="extension.logout" sv:type="String">
       <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>

@@ -31,10 +31,6 @@ public class RootPlugin extends RenderPlugin {
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        for (String extension : new String[] { "logoutPlugin", "tabsPlugin" }) {
-            addExtensionPoint(extension);
-        }
-
         if (config.getString(RenderService.SKIN_ID) != null) {
             add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
         }
