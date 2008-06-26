@@ -23,38 +23,45 @@
     xmlns:hippo="http://www.hippoecm.org/nt/1.0"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
 
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+  <sv:node sv:name="rootPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugincluster</sv:value>
+      <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:node sv:name="rootPlugin">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:plugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.console.RootPlugin</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.id" sv:type="String">
-            <sv:value>service.root</sv:value>
-        </sv:property>
-        <sv:property sv:name="wicket.model" sv:type="String">
-            <sv:value>service.model</sv:value>
-        </sv:property>
-        <sv:property sv:name="browserPlugin" sv:type="String">
-            <sv:value>service.browser</sv:value>
-        </sv:property>
-        <sv:property sv:name="breadcrumbPlugin" sv:type="String">
-            <sv:value>service.breadcrumb</sv:value>
-        </sv:property>
-        <sv:property sv:name="editorPlugin" sv:type="String">
-            <sv:value>service.editor</sv:value>
-        </sv:property>
-        <sv:property sv:name="menuPlugin" sv:type="String">
-            <sv:value>service.menu</sv:value>
-        </sv:property>
-        <sv:property sv:name="logoutPlugin" sv:type="String">
-            <sv:value>service.logout</sv:value>
-        </sv:property>
-    </sv:node>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.console.RootPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.root</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.model</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.browser</sv:value>
+      <sv:value>extension.breadcrumb</sv:value>
+      <sv:value>extension.editor</sv:value>
+      <sv:value>extension.menu</sv:value>
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.browser" sv:type="String">
+      <sv:value>service.browser</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.breadcrumb" sv:type="String">
+      <sv:value>service.breadcrumb</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.editor" sv:type="String">
+      <sv:value>service.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.menu" sv:type="String">
+      <sv:value>service.menu</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
+  </sv:node>
 
     <sv:node sv:name="browserPlugin">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
