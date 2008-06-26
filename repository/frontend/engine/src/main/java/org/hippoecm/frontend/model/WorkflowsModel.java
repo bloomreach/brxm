@@ -162,12 +162,6 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
         this.renderer = renderer;
         initialize();
         workflows.put(new Entry(renderer, 0), model.workflows.get(new Entry(renderer)));
-        for(Map.Entry<Entry,Vector<WorkflowDescriptor>> e : workflows.entrySet()) {
-            System.err.println(e.getKey().name+":");
-            for(WorkflowDescriptor w : e.getValue()) {
-                System.err.println(w.toString());
-            }
-        }
     }
 
     @Override
