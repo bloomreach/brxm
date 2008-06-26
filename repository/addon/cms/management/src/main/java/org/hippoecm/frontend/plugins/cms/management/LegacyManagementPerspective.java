@@ -27,8 +27,5 @@ public class LegacyManagementPerspective extends Perspective {
 
     public LegacyManagementPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        // addExtensionPoint("managementPlugin");
-        addExtensionPoint("legacyManagement");
     }
 }

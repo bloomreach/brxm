@@ -394,7 +394,10 @@
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>(deprecated)Users</sv:value>
     </sv:property>
-    <sv:property sv:name="legacyManagement" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.legacyManagement</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.legacyManagement" sv:type="String">
       <sv:value>service.management.legacy</sv:value>
     </sv:property>
   </sv:node>
@@ -434,19 +437,26 @@
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>Users</sv:value>
     </sv:property>
-    <sv:property sv:name="listUsersPlugin" sv:type="String">
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.listUsers</sv:value>
+      <sv:value>extension.listGroups</sv:value>
+      <sv:value>extension.listDomains</sv:value>
+      <sv:value>extension.listRoles</sv:value>
+      <sv:value>extension.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.listUsers" sv:type="String">
       <sv:value>service.management.listUsers</sv:value>
     </sv:property>
-    <sv:property sv:name="listGroupsPlugin" sv:type="String">
+    <sv:property sv:name="extension.listGroups" sv:type="String">
       <sv:value>service.management.listGroups</sv:value>
     </sv:property>
-    <sv:property sv:name="listDomainsPlugin" sv:type="String">
+    <sv:property sv:name="extension.listDomains" sv:type="String">
       <sv:value>service.management.listDomains</sv:value>
     </sv:property>
-    <sv:property sv:name="listRolesPlugin" sv:type="String">
+    <sv:property sv:name="extension.listRoles" sv:type="String">
       <sv:value>service.management.listRoles</sv:value>
     </sv:property>
-    <sv:property sv:name="editor" sv:type="String">
+    <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>service.management.editor</sv:value>
     </sv:property>
   </sv:node>

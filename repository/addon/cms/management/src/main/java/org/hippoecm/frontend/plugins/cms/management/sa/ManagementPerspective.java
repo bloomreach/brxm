@@ -28,12 +28,6 @@ public class ManagementPerspective extends Perspective {
 
     public ManagementPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
-        addExtensionPoint("listUsersPlugin");
-        addExtensionPoint("listGroupsPlugin");
-        addExtensionPoint("listDomainsPlugin");
-        addExtensionPoint("listRolesPlugin");
-        addExtensionPoint("editor");
     }
 
 }
