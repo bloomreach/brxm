@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletConfig;
@@ -129,7 +130,8 @@ public class BinariesServlet extends HttpServlet {
                 return;
             }
 
-            InputStream istream = node.getProperty("jcr:data").getStream();
+            Property data = node.getProperty("jcr:data");
+            InputStream istream = data.getStream();
 
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);
@@ -141,6 +143,9 @@ public class BinariesServlet extends HttpServlet {
                 ostream.write(buffer, 0, len);
             }
         } catch (RepositoryException ex) {
+            logger.error("RepositoryException with message " + ex.getMessage() +
+            		" while getting binary data stream item " +
+            		"at path " + path + ", response status = 404)");
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
