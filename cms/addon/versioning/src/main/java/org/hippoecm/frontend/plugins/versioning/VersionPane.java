@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -79,6 +80,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         } else {
             log.warn("");
         }
+
+        context.registerService(this, IJcrService.class.getName());
 
         add(documentComponent = new Label("document"));
         add(versionComponent = new Label("version"));

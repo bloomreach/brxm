@@ -18,10 +18,9 @@ package org.hippoecm.frontend.plugin;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 
-public interface IPluginContext extends IDetachable {
+public interface IPluginContext extends IClusterable {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 

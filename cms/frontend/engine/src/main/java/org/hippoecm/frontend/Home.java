@@ -52,7 +52,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
-        PluginContext context = new PluginContext(mgr, "home", null);
+        PluginContext context = new PluginContext(mgr, "home");
         context.connect(null);
 
         context.registerTracker(this, "service.root");

@@ -74,17 +74,19 @@ public class ViewerPlugin extends RenderPlugin {
 
     protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        ITypeDescriptor type = engine.getType(model);
-        IPluginContext context = getPluginContext();
+        if (model != null) {
+            ITypeDescriptor type = engine.getType(model);
+            IPluginContext context = getPluginContext();
 
-        if (type != null) {
-            IClusterConfig clusterConfig = engine.getTemplate(type, "view");
-            if (clusterConfig != null) {
-                clusterConfig.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
-                String modelId = clusterConfig.getString(RenderService.MODEL_ID);
-                modelService = new ModelService(modelId, model);
-                modelService.init(context);
-                template = context.start(clusterConfig);
+            if (type != null) {
+                IClusterConfig clusterConfig = engine.getTemplate(type, "view");
+                if (clusterConfig != null) {
+                    clusterConfig.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
+                    String modelId = clusterConfig.getString(RenderService.MODEL_ID);
+                    modelService = new ModelService(modelId, model);
+                    modelService.init(context);
+                    template = context.start(clusterConfig);
+                }
             }
         }
     }

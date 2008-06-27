@@ -65,6 +65,7 @@ public class ListViewService extends RenderService {
 
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
+    private AbstractView view;
 
     public ListViewService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -79,7 +80,7 @@ public class ListViewService extends RenderService {
             }
         };
 
-        final AbstractView view = new AbstractView("view", provider) {
+        view = new AbstractView("view", provider) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -133,6 +134,7 @@ public class ListViewService extends RenderService {
     
     @Override
     public void render(PluginRequestTarget target) {
+        view.populate();
         super.render(target);
         for (IRenderService child : services) {
             child.render(target);
