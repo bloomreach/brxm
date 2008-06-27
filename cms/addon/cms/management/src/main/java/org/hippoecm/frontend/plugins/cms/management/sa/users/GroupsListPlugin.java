@@ -53,6 +53,8 @@ public class GroupsListPlugin extends FlushableListingPlugin {
         add(new Label("listLabel", new Model(caption)));
 
         add(new DropBehavior(context, config) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onDrop(IModel model) {
                 if (model instanceof JcrNodeModel) {

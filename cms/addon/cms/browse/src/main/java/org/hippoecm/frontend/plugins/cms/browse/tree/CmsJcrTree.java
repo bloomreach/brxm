@@ -131,6 +131,8 @@ public class CmsJcrTree extends JcrTree {
             private static final long serialVersionUID = 1L;
 
             public void onClick(AjaxRequestTarget target) {
+                // FIXME: there is now workflow on the root node, as we require adding nodes directly under the root
+                /*
                 boolean isRootNode = false;
                 try {
                     isRootNode = (node instanceof FolderTreeNode && ((FolderTreeNode) node).getNodeModel().getNode()
@@ -138,7 +140,7 @@ public class CmsJcrTree extends JcrTree {
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
-                // FIXME: there is now workflow on the root node, as we require adding nodes directly under the root
+                */
                 //if (!isRootNode) {
                     getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
                     onNodeLinkClicked(target, node);
