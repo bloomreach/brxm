@@ -62,6 +62,7 @@ public class DocumentsTag extends SimpleTagSupport {
     private static final String CSS_CLASS_DOCUMENT_TEXT = "hst-document-text";
 
     private String contextName = null;
+    private String id = null;
     private String location = null;
     private Integer maxDocuments = null;
     private String[] documentProperties = null;
@@ -74,6 +75,11 @@ public class DocumentsTag extends SimpleTagSupport {
         this.contextName = contextName;
     }
 
+    /** Setter for the tag attribute 'id'. */
+    public void setId(String id) {
+        this.id = id;
+    }
+    
     /** Setter for the tag attribute 'location'. */
     public void setLocation(String location) {
         this.location = location;
@@ -144,6 +150,11 @@ public class DocumentsTag extends SimpleTagSupport {
         return className.toLowerCase();
     }
 
+    /** Get the default id. */
+    protected String getDefaultId() {
+        return "documentslist";
+    }
+
     /** Get a default location where to find documents in the repository. */
     protected String getDefaultLocation() {
         return "/documents";
@@ -180,6 +191,20 @@ public class DocumentsTag extends SimpleTagSupport {
         }
 
         return this.contextName;
+    }
+
+    private String getId() {
+
+        // lazy, or set by setter (first)
+        if (this.id == null) {
+
+            // second by default
+            if (this.id == null) {
+                this.id = getDefaultId();
+            }
+        }
+
+        return this.id;
     }
 
     private String getLocation() {
@@ -294,14 +319,21 @@ public class DocumentsTag extends SimpleTagSupport {
         // lazy (no setter)
         if (this.documentViewFile == null) {
 
-            // by configuration only
-            if (this.documentViewFile == null) {
-                HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
-                String docViewFile = HSTConfiguration.get(request.getSession().getServletContext(),
-                            KEY_DOCUMENT_VIEWFILE, false/*not required*/);
-                if (docViewFile != null) {
-                    this.documentViewFile = docViewFile;
-                }
+            HttpServletRequest request = (HttpServletRequest) ((PageContext) this.getJspContext()).getRequest();
+
+            // first try key postfixed by .id
+            String docViewFile = HSTConfiguration.get(request.getSession().getServletContext(),
+                    KEY_DOCUMENT_VIEWFILE + "." + getId(), false/*not required*/);
+
+            
+            // then by configuration
+            if (docViewFile == null) {
+                docViewFile = HSTConfiguration.get(request.getSession().getServletContext(),
+                        KEY_DOCUMENT_VIEWFILE, false/*not required*/);
+            }
+            
+            if (docViewFile != null) {
+                this.documentViewFile = docViewFile;
             }
         }
 
@@ -327,7 +359,9 @@ public class DocumentsTag extends SimpleTagSupport {
 
         StringBuffer buffer = new StringBuffer();
 
-        buffer.append("<div class=\"");
+        buffer.append("<div id=\"");
+        buffer.append(getDefaultId());
+        buffer.append("\"  class=\"");
         buffer.append(CSS_CLASS_LIST);
         buffer.append("\">\n");
 

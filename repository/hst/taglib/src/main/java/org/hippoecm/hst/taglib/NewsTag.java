@@ -23,6 +23,11 @@ public class NewsTag extends DocumentsTag {
     private final static String SVN_ID = "$Id$";
 
     // javadoc from super
+    protected String getDefaultId() {
+        return "newslist";
+    }
+
+    // javadoc from super
     protected String getDefaultLocation() {
         return "/news";
     }

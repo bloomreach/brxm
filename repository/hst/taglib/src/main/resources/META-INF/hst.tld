@@ -223,6 +223,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <description>The optional id of this documents tag that reoccurs as id of the outer div tag
+                of the default output. Defaults to 'documentslist'.</description>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>
@@ -245,6 +252,13 @@
         <attribute>
             <description>The optional maximum number of documents to be shown.</description>
             <name>maxDocuments</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>The optional id of this documents tag that reoccurs as id of the outer div tag
+                of the default output. Defaults to 'articleslist'.</description>
+            <name>id</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -273,6 +287,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <description>The optional id of this documents tag that reoccurs as id of the outer div tag
+                of the default output. Defaults to 'eventslist'.</description>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>
@@ -295,6 +316,13 @@
         <attribute>
             <description>The optional maximum number of documents to be shown.</description>
             <name>maxDocuments</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>The optional id of this documents tag that reoccurs as id of the outer div tag
+                of the default output. Defaults to 'newslist'.</description>
+            <name>id</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

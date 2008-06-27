@@ -23,6 +23,11 @@ public class ArticlesTag extends DocumentsTag {
     private final static String SVN_ID = "$Id$";
 
     // javadoc from super
+    protected String getDefaultId() {
+        return "articleslist";
+    }
+
+    // javadoc from super
     protected String getDefaultLocation() {
         return "/articles";
     }

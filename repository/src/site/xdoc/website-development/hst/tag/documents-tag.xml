@@ -63,6 +63,15 @@
           <td>The optional variable name by which the encoded URL is set as request attribute. If
             given, no output is written to the jsp directly.</td>
         </tr>
+        <tr>
+          <td>id</td>
+          <td>no</td>
+          <td>-</td>
+          <td>documentslist, newslist, eventslist, articleslist</td>
+          <td>The optional id of this tag that reoccurs as id of the outer div tag of the default
+            output. Also used to retrieve an instance based view file.
+          </td>
+        </tr>
       </table>
       <h4>File based configuration</h4>
       <p>Besides the tag attributes, other items can be configured in the configuration

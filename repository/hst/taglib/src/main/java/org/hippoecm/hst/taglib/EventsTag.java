@@ -23,6 +23,11 @@ public class EventsTag extends DocumentsTag {
     private final static String SVN_ID = "$Id$";
 
     // javadoc from super
+    protected String getDefaultId() {
+        return "eventslist";
+    }
+
+   // javadoc from super
     protected String getDefaultLocation() {
         return "/events";
     }
