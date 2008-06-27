@@ -327,7 +327,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
                     <p>Webapp dir is 'src/main/webapp'</p>
                 </li>
                 <li>
-                    <p>Context path = '/'</p>
+                    <p>Context path = '/cms'</p>
                 </li>
                 <li>
                     <p>Port is '8080'</p>
@@ -341,7 +341,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
                 'display in favorites menu'</p>
             <p> You can now debug the application within Eclipse: Set a breakpoint in the constructor
                 of org.hippoecm.frontend.Home, run Run-Jetty-Run launcher in debug mode,
-                open your browser and go to http://localhost:8080 </p>
+                open your browser and go to http://localhost:8080/cms</p>
 
           <p>Now you are ready to check out some Eclipse
           <a href="eclipse-tips.html">tips&amp;tricks</a></p>
