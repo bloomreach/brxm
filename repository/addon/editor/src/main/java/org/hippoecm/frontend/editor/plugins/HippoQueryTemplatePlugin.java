@@ -140,8 +140,8 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
              * that result in an item exists exception. The only way is to keep the property
              * values in memory, remove the node, and store is again
              */
-            queryNode.remove();
             getModel().detach();
+            queryNode.remove();
             query.storeAsNode(parentNode.getPath() + "/" + nodeName);
 
             incorrectquery = "";
