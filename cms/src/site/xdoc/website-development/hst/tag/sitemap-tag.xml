@@ -74,7 +74,8 @@
           <td>-</td>
           <td>hst-sitemap</td>
           <td>The optional id of this site map that reoccurs as id of the outer div tag
-            of the default output. Also used as request attribute name for custom output.</td>
+            of the default output. Also used to retrieve an instance based view file.
+            Also used as request attribute name for custom output.</td>
         </tr>
       </table>
       <h4>File based configuration</h4>
