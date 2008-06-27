@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;

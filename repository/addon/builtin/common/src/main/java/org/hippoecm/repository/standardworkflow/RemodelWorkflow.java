@@ -26,7 +26,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
- * @deprecated
+ *  DO NOT USE THIS WORKFLOW
  */
 public interface RemodelWorkflow extends Workflow {
     @SuppressWarnings("unused")
