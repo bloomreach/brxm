@@ -125,31 +125,20 @@ public class PluginFactory implements IClusterable {
         }
 
         @Override
-        //The difference between this implementation and the super implementation
-        //is the boolean parameter of the getMarkupStream call below. Here it is set to 
-        //true which enforces a reload (it effectively disables markup caching for this
-        //plugin).
+        //HACK: This effectively disables the markup cache for this plugin (the boolean true parameter
+        //for getMarkupStream stands for 'enforceReload'). This is nessessary because the component
+        //(plugin) classname is used as cachekey and it is not possible to define your own cachekey.
         public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
             try {
                 return getApplication().getMarkupSettings().getMarkupCache().
                     getMarkupStream(this, true, throwException);
-            } catch (MarkupException ex) {
-                // re-throw it. The exception contains already all the information
-                // required.
-                throw ex;
-            } catch (WicketRuntimeException ex) {
-                // throw exception since there is no associated markup
-                throw new MarkupNotFoundException(
-                        exceptionMessage("Markup of type '"
-                                + getMarkupType()
-                                + "' for component '"
-                                + getClass().getName()
-                                + "' not found."
-                                + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
-                        ex);
+            } catch (Exception ex) {
+                return super.getAssociatedMarkupStream(throwException);
             }
         }
 
+        
+        // implement IMarkupResourceStreamProvider.
         public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
             return markupStream;
         }
