@@ -360,7 +360,7 @@ public class DocumentsTag extends SimpleTagSupport {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("<div id=\"");
-        buffer.append(getDefaultId());
+        buffer.append(getId());
         buffer.append("\"  class=\"");
         buffer.append(CSS_CLASS_LIST);
         buffer.append("\">\n");
