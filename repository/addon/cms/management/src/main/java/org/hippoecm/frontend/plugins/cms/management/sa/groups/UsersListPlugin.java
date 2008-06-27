@@ -33,7 +33,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.management.sa.FlushableListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.sa.SortableNodesDataProvider;
-import org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin;
+import org.hippoecm.frontend.plugins.cms.management.sa.users.GroupsListPlugin;
 import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DropBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -66,6 +66,7 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
     @Override
     protected SortableDataProvider createDataProvider() {
         return new SortableNodesDataProvider("name") {
+            private static final long serialVersionUID = 1L;
 
             @Override
             protected List<JcrNodeModel> createNodes() {
@@ -103,6 +104,7 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
     
     // implements IJcrNodeModelListener
 
+    @Override
     public void onFlush(JcrNodeModel nodeModel) {
         if (!rootModel.getNode().isNew() && getBehaviors(DropBehavior.class).size() == 0) {
             add(new GroupDropBehavior(getPluginContext(), getPluginConfig()));
@@ -111,6 +113,7 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
     }
     
     private class GroupDropBehavior extends DropBehavior {
+        private static final long serialVersionUID = 1L;
 
         public GroupDropBehavior(IPluginContext context, IPluginConfig config) {
             super(context, config);
