@@ -24,7 +24,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
+import org.apache.wicket.markup.MarkupException;
+import org.apache.wicket.markup.MarkupNotFoundException;
+import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -105,20 +109,49 @@ public class PluginFactory implements IClusterable {
     private class LayoutPlugin extends RenderPlugin implements IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
-        private String markup;
+        private IResourceStream markupStream;
 
         public LayoutPlugin(IPluginContext context, IPluginConfig config) {
             super(context, config);
-            markup = config.getString("pluginfactory.markup");
+
+            String markup = config.getString("pluginfactory.markup");
+            if (markup != null) {
+                try {
+                    markupStream = new UrlResourceStream(new URL(markup));
+                } catch (MalformedURLException e) {
+                    log.error(e.getClass().getName() + ": " + e.getMessage());
+                }
+            }
+        }
+
+        @Override
+        //The difference between this implementation and the super implementation
+        //is the boolean parameter of the getMarkupStream call below. Here it is set to 
+        //true which enforces a reload (it effectively disables markup caching for this
+        //plugin).
+        public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
+            try {
+                return getApplication().getMarkupSettings().getMarkupCache().
+                    getMarkupStream(this, true, throwException);
+            } catch (MarkupException ex) {
+                // re-throw it. The exception contains already all the information
+                // required.
+                throw ex;
+            } catch (WicketRuntimeException ex) {
+                // throw exception since there is no associated markup
+                throw new MarkupNotFoundException(
+                        exceptionMessage("Markup of type '"
+                                + getMarkupType()
+                                + "' for component '"
+                                + getClass().getName()
+                                + "' not found."
+                                + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
+                        ex);
+            }
         }
 
         public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
-            try {
-                return new UrlResourceStream(new URL(markup));
-            } catch (MalformedURLException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage());
-            }
-            return null;
+            return markupStream;
         }
     }
 }
