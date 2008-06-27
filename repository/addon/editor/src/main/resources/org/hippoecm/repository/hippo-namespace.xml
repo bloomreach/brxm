@@ -24,7 +24,7 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
 
-  <!-- "Template" type -->
+  <!-- "hippo:template"-->
   <sv:node sv:name="hippo:template">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -116,9 +116,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Template" type -->
+  <!-- end "hippo:template"-->
 
-  <!-- "Template type" type -->
+  <!-- "hippo:templatetype"-->
   <sv:node sv:name="hippo:templatetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -282,9 +282,9 @@
 
     </sv:node>
   </sv:node>
-  <!-- end "Template type" type -->
+  <!-- end "hippo:templatetype"-->
 
-  <!-- "Namespace" type -->
+  <!-- "hippo:namespace"-->
   <sv:node sv:name="hippo:namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -318,9 +318,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Namespace" type -->
+  <!-- end "hippo:namespace"-->
 
-  <!-- "Field" type -->
+  <!-- "hippo:field"-->
   <sv:node sv:name="hippo:field">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -593,9 +593,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Field" type -->
+  <!-- end "hippo:field"-->
 
-  <!-- "Nodetype" type -->
+  <!-- "hippo:nodetype"-->
   <sv:node sv:name="hippo:nodetype">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -689,9 +689,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Nodetype" type -->
+  <!-- end "hippo:nodetype"-->
 
-  <!-- "Remodel" type -->
+  <!-- "hippo:remodel"-->
   <sv:node sv:name="hippo:remodel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -751,9 +751,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Remodel" type -->
+  <!-- end "hippo:remodel"-->
 
-  <!-- "Parameter" type -->
+  <!-- "hippo:parameters"-->
   <sv:node sv:name="hippo:parameters">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -790,9 +790,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Parameter" type -->
+  <!-- end "hippo:parameters"-->
 
-  <!--  "Query" type -->
+  <!--  "hippo:query"-->
   <sv:node sv:name="hippo:query">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -903,9 +903,9 @@
 
     </sv:node>
   </sv:node>
-  <!-- end "Query" type -->
+  <!-- end "hippo:query"-->
 
-  <!-- "Image" type -->
+  <!-- "hippo:image"-->
   <sv:node sv:name="hippo:image">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -1065,9 +1065,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Image" type -->
+  <!-- end "hippo:image"-->
 
-  <!-- hippo:facetlink type -->
+  <!-- "hippo:facetlink"-->
   <sv:node sv:name="hippo:facetlink">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -1158,9 +1158,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "hippo:facetlink" type -->
+  <!-- end "hippo:facetlink"-->
 
-  <!-- hippo:facetselect type -->
+  <!-- "hippo:facetselect"-->
   <sv:node sv:name="hippo:facetselect">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -1432,9 +1432,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "hippo:facetselect" type -->
+  <!-- end "hippo:facetselect"-->
 
-  <!-- hippo:facetsearch type -->
+  <!-- "hippo:facetsearch"-->
   <sv:node sv:name="hippo:facetsearch">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -1653,9 +1653,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end hippo:facetsearch type -->
+  <!-- end "hippo:facetsearch"-->
 
-  <!-- "Document" type -->
+  <!-- "hippo:document"-->
   <sv:node sv:name="hippo:document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -1735,9 +1735,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Document" type -->
+  <!-- end "hippo:document"-->
 
-  <!-- "Group" type -->
+  <!-- "hippo:group"-->
   <sv:node sv:name="hippo:group">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -2029,9 +2029,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Group" type -->
+  <!-- end "hippo:group"-->
 
-  <!-- "User" type -->
+  <!-- "hippo:user"-->
   <sv:node sv:name="hippo:user">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -2614,9 +2614,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "User" type -->
+  <!-- end "hippo:user"-->
 
-  <!-- begin "facetrule" type-->
+  <!-- "hippo:facetrule"-->
   <sv:node sv:name="hippo:facetrule">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -2819,9 +2819,9 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- end "authrole" type -->
+  <!-- end "hippo:facetrule"-->
 
-  <!-- begin "domainrule" type -->
+  <!-- "hippo:domainrule"-->
   <sv:node sv:name="hippo:domainrule">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -2893,9 +2893,9 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- end "domainrule" type -->
+  <!-- end "hippo:domainrule"-->
 
-  <!-- begin "authrole" type-->
+  <!-- "hippo:authrole"-->
   <sv:node sv:name="hippo:authrole">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -3054,9 +3054,9 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- end "authrole" type -->
+  <!-- end "hippo:authrole"-->
 
-  <!-- begin "Domain" type -->
+  <!-- "hippo:domain"-->
   <sv:node sv:name="hippo:domain">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -3235,10 +3235,9 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "Domain" type -->
+  <!-- end "hippo:domain"-->
 
-
-  <!-- begin "role" type-->
+  <!-- "hippo:role"-->
   <sv:node sv:name="hippo:role">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
@@ -3454,5 +3453,6 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- end "role" type -->
+  <!-- end "hippo:role"-->
+
 </sv:node>
