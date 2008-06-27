@@ -32,15 +32,12 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
 
     private static final long serialVersionUID = 1L;
 
-    private DataTable table;
-
     public CustomizableNavigationToolBar(DataTable table, int viewSize) {
         this(table, null, null, viewSize);
      }
 
     public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix, int viewSize) {
         super(table);
-        this.table = table;
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
@@ -93,6 +90,7 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
              *
              * @see AjaxPagingNavigator#onAjaxEvent(AjaxRequestTarget)
              */
+            @Override
             protected void onAjaxEvent(AjaxRequestTarget target)
             {
                 target.addComponent(table);
@@ -105,8 +103,9 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
      *
      * @see org.apache.wicket.Component#isVisible()
      */
+    @Override
     public boolean isVisible()
     {
-        return table.getPageCount() > 1;
+        return getTable().getPageCount() > 1;
     }
 }

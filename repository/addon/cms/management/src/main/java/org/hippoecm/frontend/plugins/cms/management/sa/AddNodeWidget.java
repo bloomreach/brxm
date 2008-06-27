@@ -46,6 +46,12 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
     }
 
     @Override
+    protected void onDetach() {
+        parentNodeModel.detach();
+        super.onDetach();
+    }
+
+    @Override
     protected void onEdit(AjaxRequestTarget target) {
         label = (String) getModel().getObject();
         setModel(new Model(""));

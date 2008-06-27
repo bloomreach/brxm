@@ -122,12 +122,12 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         // calculate list of node models
         // FIXME: move into separate service
         JcrNodeModel model = (JcrNodeModel) getModel();
-        List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
+        final List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
         Node node = (Node) model.getNode();
         try {
             while (node != null) {
-                if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder")) && !node.isNodeType(HippoNodeType.NT_HANDLE)
-                        && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
+                if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder"))
+                        && !node.isNodeType(HippoNodeType.NT_HANDLE) && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
                         && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
                     NodeIterator childNodesIterator = node.getNodes();
                     while (childNodesIterator.hasNext()) {
@@ -141,7 +141,17 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        setDataProvider(new ListDataProvider(entries));
+        setDataProvider(new ListDataProvider(entries) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void detach() {
+                for (JcrNodeModel entry : entries) {
+                    entry.detach();
+                }
+                super.detach();
+            }
+        });
         redraw();
     }
 
@@ -155,6 +165,14 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         } else {
             modelChanged();
         }
+    }
+
+    @Override
+    protected void onDetach() {
+        if (provider != null) {
+            provider.detach();
+        }
+        super.onDetach();
     }
 
     // internals

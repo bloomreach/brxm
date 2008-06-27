@@ -17,9 +17,9 @@ package org.hippoecm.frontend.plugins.cms.dashboard;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class DashboardPerspective extends Perspective {
+public class DashboardPerspective extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

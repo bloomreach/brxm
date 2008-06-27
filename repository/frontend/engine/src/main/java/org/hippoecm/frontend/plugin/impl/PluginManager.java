@@ -91,7 +91,7 @@ public class PluginManager implements IDetachable {
     }
 
     public PluginContext start(IPluginConfig config, String controlId) {
-        final PluginContext context = new PluginContext(this, controlId, config);
+        final PluginContext context = new PluginContext(this, controlId);
         IPlugin plugin = factory.createPlugin(context, config);
         context.connect(plugin);
         return context;

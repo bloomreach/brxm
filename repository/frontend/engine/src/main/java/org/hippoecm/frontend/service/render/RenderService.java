@@ -221,7 +221,6 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     @Override
     protected void onDetach() {
-        context.detach();
         config.detach();
         super.onDetach();
     }

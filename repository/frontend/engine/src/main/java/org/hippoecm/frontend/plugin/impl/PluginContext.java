@@ -48,12 +48,6 @@ public class PluginContext implements IPluginContext, IClusterable {
             this.contexts = contexts;
         }
 
-        void detach() {
-            for (PluginContext context : contexts) {
-                context.detach();
-            }
-        }
-
         public void stopPlugin() {
             for (PluginContext context : contexts) {
                 context.stop();
@@ -65,16 +59,14 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     private String controlId;
-    private IPluginConfig config;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
     private List<PluginControl> children;
     private boolean initializing = true;
     private PluginManager manager;
 
-    public PluginContext(PluginManager manager, String controlId, IPluginConfig config) {
+    public PluginContext(PluginManager manager, String controlId) {
         this.controlId = controlId;
-        this.config = config;
         this.manager = manager;
 
         this.services = new HashMap<String, List<IClusterable>>();
@@ -160,13 +152,6 @@ public class PluginContext implements IPluginContext, IClusterable {
             if (!initializing) {
                 manager.unregisterTracker(listener, name);
             }
-        }
-    }
-
-    public void detach() {
-        config.detach();
-        for (PluginControl control : children) {
-            control.detach();
         }
     }
 
