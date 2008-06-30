@@ -46,6 +46,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void publish() throws WorkflowException, MappingException {
         ReviewedActionsWorkflowImpl.log.info("publication on document ");
+        if(unpublished == null) {
+            if(published == null) {
+                throw new WorkflowException("Document has already been published");
+            } else {
+                throw new WorkflowException("No unpublished version of document available for publication");
+            }
+        }
         published = null;
         unpublished.setState(PublishableDocument.PUBLISHED);
         try {
