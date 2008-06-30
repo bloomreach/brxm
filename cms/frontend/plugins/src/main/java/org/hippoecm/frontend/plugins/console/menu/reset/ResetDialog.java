@@ -45,13 +45,22 @@ public class ResetDialog extends AbstractDialog {
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         try {
-            NodeIterator it = nodeModel.getNode().pendingChanges();
-            hasPendingChanges = it.hasNext();
-            if (hasPendingChanges) {
-                StringBuffer buf = new StringBuffer("Pending changes:\n");
-                while (it.hasNext()) {
-                    Node node = it.nextNode();
-                    buf.append(node.getPath()).append("\n");
+            if (nodeModel.getNode().getSession().hasPendingChanges()) {
+                hasPendingChanges = true;
+                StringBuffer buf;
+                buf = new StringBuffer("Pending changes:\n");
+                // treat root node differently, pendingChanges works on child nodes
+                // and the root node can never be a child node
+                if (nodeModel.getNode().getDepth() == 0) {
+                    buf.append("/\n");
+                } else {
+                    NodeIterator it = nodeModel.getNode().pendingChanges();
+                    if (it.hasNext()) {
+                        while (it.hasNext()) {
+                            Node node = it.nextNode();
+                            buf.append(node.getPath()).append("\n");
+                        }
+                    }
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
@@ -74,7 +83,11 @@ public class ResetDialog extends AbstractDialog {
         nodeModel.getNode().refresh(false);
 
         // Notify other plugins
-        plugin.flushNodeModel(nodeModel.getParentModel());
+        if (nodeModel.getNode().getDepth() == 0) {
+            plugin.flushNodeModel(nodeModel);
+        } else {
+            plugin.flushNodeModel(nodeModel.getParentModel());
+        }
     }
 
     @Override
