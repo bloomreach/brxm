@@ -320,15 +320,6 @@ public class HippoAccessManager implements AccessManager {
         if (subject.getPrincipals(FacetAuthPrincipal.class).isEmpty()) {
             return false;
         }
-        // special hippo node types
-//        if (isWorkflowConfig(nodeState)) {
-//            nodeState = getWorkflowNode(nodeState);
-//            if (nodeState != null) {
-//                return checkFacetAuth(nodeState, permissions);
-//            } else {
-//                return false;
-//            }
-//        }
         // check for facet authorization
         if (checkFacetAuth(nodeState, permissions)) {
             return true;
@@ -342,67 +333,6 @@ public class HippoAccessManager implements AccessManager {
         }
         return false;
     }
-
-    private boolean isWorkflowConfig(NodeState nodeState) {
-        // create NodeType of nodeState's primaryType
-        if (log.isTraceEnabled()) {
-            log.trace("Checking if node: " + nodeState.getId() + " is part of workflow config");
-        }
-        String nodeStateType;
-        try {
-            nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
-        } catch (NamespaceException e) {
-            return false;
-        }
-        if (nodeStateType.equals(HippoNodeType.NT_TYPE)) {
-            return true;
-        }
-        if (nodeStateType.equals(HippoNodeType.NT_TYPES)) {
-            return true;
-        }
-        if (nodeStateType.equals(HippoNodeType.NT_WORKFLOW)) {
-            return true;
-        }
-        return false;
-    }
-
-    private NodeState getWorkflowNode(NodeState nodeState) {
-        if (log.isTraceEnabled()) {
-            log.trace("Fetching workflow node from node: " + nodeState.getId());
-        }
-        String nodeStateType;
-        try {
-            // Workflow subentries are granted by permissions on the parent.
-            // Current (hard coded structure:
-            // hippo:configuration->hippo:workflows->workflowPlugin->[workflowName]->hippo:types->[workflow]
-            // primaryType workflowName -> hippo:workflow
-            // primaryType workflow -> hippo:type
-            nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
-            if (nodeStateType.equals(HippoNodeType.NT_WORKFLOW)) {
-                return nodeState;
-            }
-            if (nodeStateType.equals(HippoNodeType.NT_TYPES)) {
-                return getParentState(nodeState);
-            }
-            if (nodeStateType.equals(HippoNodeType.NT_TYPE)) {
-                return getParentState(getParentState(nodeState));
-            }
-        } catch (NoSuchItemStateException e) {
-            log.error("NoSuchItemStateException while fetching workflow node from id: " + nodeState.getId());
-            log.debug("NoSuchItemStateException: ", e);
-            return null;
-        } catch (ItemStateException e) {
-            log.error("ItemStateException while fetching workflow node from id: " + nodeState.getId());
-            log.debug("NoSuchItemStateException: ", e);
-            return null;
-        } catch (NamespaceException e) {
-            log.error("NamespaceException while fetching workflow node from id: " + nodeState.getId());
-            log.debug("NoSuchItemStateException: ", e);
-            return null;
-        }
-        return null;
-    }
-
 
     /**
      * Check whether the node can be accessed with the requested permissions based on the
@@ -433,8 +363,8 @@ public class HippoAccessManager implements AccessManager {
         boolean allowed = false;
         for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
 
-            if (log.isTraceEnabled()) {
-                log.trace("Checking [" + pString(permissions) + "] : " + nodeState.getId()
+            if (log.isDebugEnabled()) {
+                log.debug("Checking [" + pString(permissions) + "] : " + nodeState.getId()
                         + " against FacetAuthPrincipal: " + fap);
             }
 
@@ -789,6 +719,7 @@ public class HippoAccessManager implements AccessManager {
             if (nodeState.getNodeTypeName().equals(rule.getValueName())) {
                 return true;
             }
+            return false;
         }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
