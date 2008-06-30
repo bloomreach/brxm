@@ -56,6 +56,8 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         add(new Label("status", new PropertyModel(this, "stateSummary")));
 
+        onModelChanged();
+
         addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
@@ -157,6 +159,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.delete();
             }
         });
+    }
+
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
 
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
@@ -165,17 +172,20 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
-                    if(node.isNodeType(HippoNodeType.NT_DOCUMENT))
-                        node = iter.nextNode();
-                    else
-                        iter.nextNode();
+                    Node child = iter.nextNode();
+                    if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        node = child;
+                        break;
+                    }
                 }
             }
-            if (node.hasProperty("hippostd:stateSummary"))
+            if (node.hasProperty("hippostd:stateSummary")) {
                 stateSummary = node.getProperty("hippostd:stateSummary").getString();
+            }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
+            log.info(ex.getClass().getName()+": "+ex.getMessage());
         }
-    }
 
+    }
 }
