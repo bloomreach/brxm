@@ -17,14 +17,19 @@ package org.hippoecm.repository.security.domain;
 
 import java.io.Serializable;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.NameFactory;
+import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
@@ -50,6 +55,10 @@ public class FacetRule implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * NameFactory for resolving JCR names
+     */
+    private static final NameFactory nameFactory = NameFactoryImpl.getInstance();
     /**
      * The property type: PropertyType.STRING or PropertyType.NAME
      * @see PropertyType
@@ -107,16 +116,16 @@ public class FacetRule implements Serializable {
         }
 
 
-        NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
+        //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
         Name name = null;
         if (type == PropertyType.NAME && !value.equals(FacetAuthConstants.WILDCARD)) {
-            name = nRes.getQName(value);
+            name = getQName(value, new SessionNamespaceResolver(node.getSession()));
         }
         valueName = name;
 
         // Set the JCR Name for the facet (string)
-        facetName = nRes.getQName(facet);
+        facetName = getQName(facet, new SessionNamespaceResolver(node.getSession()));
     }
 
     /**
@@ -200,5 +209,17 @@ public class FacetRule implements Serializable {
             hash = this.toString().hashCode();
         }
         return hash;
+    }
+    
+    /**
+     * Parses the prefixed JCR name and returns the resolved qualified name.
+     *
+     * @param name prefixed JCR name
+     * @return qualified name
+     * @throws IllegalNameException if the JCR name format is invalid
+     * @throws NamespaceException if the namespace prefix can not be resolved
+     */
+    private Name getQName(String name, NamespaceResolver resolver) throws IllegalNameException, NamespaceException {
+        return NameParser.parse(name, resolver, nameFactory);
     }
 }
