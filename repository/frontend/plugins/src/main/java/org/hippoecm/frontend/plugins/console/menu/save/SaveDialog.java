@@ -45,13 +45,22 @@ public class SaveDialog extends AbstractDialog {
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
-            NodeIterator it = nodeModel.getNode().pendingChanges();
-            hasPendingChanges = it.hasNext();
-            if (hasPendingChanges) {
-                StringBuffer buf = new StringBuffer("Pending changes:\n");
-                while (it.hasNext()) {
-                    Node node = it.nextNode();
-                    buf.append(node.getPath()).append("\n");
+            if (nodeModel.getNode().getSession().hasPendingChanges()) {
+                hasPendingChanges = true;
+                StringBuffer buf;
+                buf = new StringBuffer("Pending changes:\n");
+                // treat root node differently, pendingChanges works on child nodes
+                // and the root node can never be a child node
+                if (nodeModel.getNode().getDepth() == 0) {
+                    buf.append("/\n");
+                } else {
+                    NodeIterator it = nodeModel.getNode().pendingChanges();
+                    if (it.hasNext()) {
+                        while (it.hasNext()) {
+                            Node node = it.nextNode();
+                            buf.append(node.getPath()).append("\n");
+                        }
+                    }
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
@@ -60,6 +69,7 @@ public class SaveDialog extends AbstractDialog {
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
+            e.printStackTrace();
             ok.setVisible(false);
         }
         add(message);
@@ -71,7 +81,7 @@ public class SaveDialog extends AbstractDialog {
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node saveNode = nodeModel.getNode();
         if (hasPendingChanges) {
-            while (saveNode.isNew()) {
+            while (saveNode.isNew() && saveNode.getDepth() > 0) {
                 saveNode = saveNode.getParent();
             }
             saveNode.save();
