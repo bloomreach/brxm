@@ -35,6 +35,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,6 @@ public class ImportDialog extends AbstractDialog implements ITitleDecorator {
                     throw new IllegalStateException("Unable to create temp file");
                 }
                 msgText.setObject("created temp file: " + upload.getClientFileName());
-                //message.setModel(new Model("created temp file: " + upload.getClientFileName()));
                 
                 // upload to temp file
                 try {
@@ -101,25 +101,23 @@ public class ImportDialog extends AbstractDialog implements ITitleDecorator {
                 }
 
                 msgText.setObject("file uploaded.");
-                //message.setModel(new Model("file uploaded."));
                 
                 // create initialize node
                 try {
                     Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
-                    Node initNode = rootNode.getNode("hippo:configuration/hippo:initialize");
+                    Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
                     
                     if (initNode.hasNode("import-cnd")) {
                         initNode.getNode("import-cnd").remove();
                     }
-                    Node node = initNode.addNode("import-cnd","hippo:initializeitem");
-                    node.setProperty("hippo:nodetypesresource", "file://" + newFile.getAbsolutePath());
+                    Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
+                    node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "file://" + newFile.getAbsolutePath());
                     rootNode.getSession().save();
                     
                     msgText.setObject("initialize node saved.");
-                    //message.setModel(new Model("initialize node saved.\n"));
                 } catch (RepositoryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    log.error("Error while creating nodetypes initialization node: ", e);
+                    throw new RuntimeException(e.getMessage());
                 }
                 
             }

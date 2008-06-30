@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
+import org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
 import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
@@ -136,8 +137,16 @@ public class MenuPlugin extends RenderPlugin {
                 return new ImportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        add(new DialogLink("import-dialog", new Model(" CND Import"), dialogFactory, dialogService));
+        add(new DialogLink("import-dialog", new Model("CND Import"), dialogFactory, dialogService));
 
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
+                return new NamespaceDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
     }
 
     public void flushNodeModel(JcrNodeModel nodeModel) {
