@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.cndimport.ImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
@@ -126,6 +127,17 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
+        
+
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
+                return new ImportDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("import-dialog", new Model(" CND Import"), dialogFactory, dialogService));
+
     }
 
     public void flushNodeModel(JcrNodeModel nodeModel) {

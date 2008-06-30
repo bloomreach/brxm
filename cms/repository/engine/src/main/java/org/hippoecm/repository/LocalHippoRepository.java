@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -418,50 +419,69 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     log.info("Initializing configuration from " + node.getName());
                     try {
                         if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
-                            if (log.isDebugEnabled())
+                            if (log.isDebugEnabled()) {
                                 log.debug("Found namespace configuration");
-                            Property p = null;
-                            try {
-                                String namespace = (p = node.getProperty(HippoNodeType.HIPPO_NAMESPACE)).getString();
-                                log.info("Initializing namespace: " + node.getName() + " " + namespace);
-                                // Add namespace if it doesn't exist
-                                initializeNamespace(nsreg, node.getName(), namespace);
+                            }
+                            Property p = node.getProperty(HippoNodeType.HIPPO_NAMESPACE);
+                            String namespace = p.getString();
+                            log.info("Initializing namespace: " + node.getName() + " " + namespace);
+                            // Add namespace if it doesn't exist
+                            initializeNamespace(nsreg, node.getName(), namespace);
+                            p.remove();
+                        }
+
+                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
+                            if (log.isDebugEnabled()) { 
+                                log.debug("Found nodetypes resource configuration");
+                            }
+                            Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE);
+                            String cndName = p.getString();
+                            InputStream cndStream = null;
+                            if (cndName.startsWith("file:")) {
+                                if (cndName.startsWith("file://")) {
+                                    cndName = cndName.substring(6);
+                                } else if (cndName.startsWith("file:/")) {
+                                    cndName = cndName.substring(5);
+                                } else if (cndName.startsWith("file:")) {
+                                    cndName = "/" + cndName.substring(5);
+                                }
+                                File localFile = new File(cndName);
+                                try {
+                                    cndStream = new BufferedInputStream(new FileInputStream(localFile));
+                                } catch (FileNotFoundException e) {
+                                    log.warn("Nodetypes initialization file not found: " + cndName, e);
+                                }
+                            } else {
+                                cndName = p.getString();
+                                cndStream = getClass().getResourceAsStream(cndName);
+                            }
+                            if (cndStream == null) {
+                                log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
+                            } else {
+                                log.info("Initializing nodetypes from: " + cndName);
+                                initializeNodetypes(workspace, cndStream, cndName);
                                 p.remove();
-                            } catch (PathNotFoundException ex) {
-                                assert (p != null); // cannot happen
                             }
                         }
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE) ||
-                            node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
-                            if (log.isDebugEnabled())
+                        
+                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+                            if (log.isDebugEnabled()) { 
                                 log.debug("Found nodetypes configuration");
-                            if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE) &&
-                                node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
-                                log.error("Initialize cannot contain both " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " and " +
-                                          HippoNodeType.HIPPO_NODETYPES + " definition");
                             }
-                            Property p = null;
-                            try {
-                                String cndName;
-                                InputStream cndStream;
-                                if(node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
-                                    cndName = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)).getString();
-                                    cndStream = getClass().getResourceAsStream(cndName);
-                                } else {
-                                    cndName = "<<internal>>";
-                                    cndStream = (p = node.getProperty(HippoNodeType.HIPPO_NODETYPES)).getStream();
-                                }
-                                if (cndStream == null) {
-                                    log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
-                                } else {
-                                    log.info("Initializing nodetypes from: " + cndName);
-                                    initializeNodetypes(workspace, cndStream, cndName);
-                                    p.remove();
-                                }
-                            } catch (PathNotFoundException ex) {
-                                assert (p != null); // cannot happen
+                            Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPES);
+                            String cndName = "<<internal>>";
+                            InputStream cndStream = p.getStream();
+                            if (cndStream == null) {
+                                log.warn("Cannot get stream for nodetypes definition property.");
+                            } else {
+                                log.info("Initializing nodetypes from nodetypes property.");
+                                initializeNodetypes(workspace, cndStream, cndName);
+                                p.remove();
                             }
                         }
+                        
+                        
+                        
                         if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ||
                             node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                             if (log.isDebugEnabled())
