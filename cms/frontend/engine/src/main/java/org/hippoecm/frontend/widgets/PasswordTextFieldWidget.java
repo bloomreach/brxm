@@ -45,6 +45,8 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
         final PasswordTextField pwd = new PasswordTextField("widget", myModel);
         pwd.setRequired(false);
         pwd.add(new AbstractValidator() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void onValidate(IValidatable validatable) {
                 String modelValue = myModel.getObject() != null ? (String) myModel.getObject() : "";

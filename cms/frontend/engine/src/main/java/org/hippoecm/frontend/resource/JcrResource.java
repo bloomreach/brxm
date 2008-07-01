@@ -31,6 +31,7 @@ public class JcrResource extends Resource {
         setCacheable(false);
     }
 
+    @Override
     public IResourceStream getResourceStream() {
         return resource;
     }

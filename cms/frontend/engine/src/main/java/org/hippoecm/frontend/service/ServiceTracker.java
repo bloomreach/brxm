@@ -17,16 +17,12 @@ package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.IServiceTracker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(ServiceTracker.class);
 
     private Class clazz;
 

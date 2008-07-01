@@ -35,7 +35,6 @@ public class ResetDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean hasPendingChanges;
     private IServiceReference<MenuPlugin> pluginRef;
 
     public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
@@ -46,7 +45,6 @@ public class ResetDialog extends AbstractDialog {
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         try {
             if (nodeModel.getNode().getSession().hasPendingChanges()) {
-                hasPendingChanges = true;
                 StringBuffer buf;
                 buf = new StringBuffer("Pending changes:\n");
                 // treat root node differently, pendingChanges works on child nodes

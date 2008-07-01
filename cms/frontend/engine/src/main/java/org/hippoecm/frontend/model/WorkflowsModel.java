@@ -75,15 +75,6 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     return 1;
                 return o1.name.compareTo(o2.name);
             }
-
-            public boolean equals(Entry o1, Entry o2) {
-                if(o1 == null || o2 == null)
-                    if(o1 == null && o2 == null)
-                        return true;
-                    else
-                        return false;
-                return o1.name.equals(o2.name);
-            }
         });
 
         Node handle = getNodeModel().getNode();
@@ -205,10 +196,6 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
         TreeSet sortedWorkflows = new TreeSet<Entry>(new Comparator<Entry>() {
             public int compare(Entry o1, Entry o2) {
                 return o1.order - o2.order;
-            }
-
-            public boolean equals(Entry o1, Entry o2) {
-                return o1.order == o2.order;
             }
         });
         sortedWorkflows.addAll(workflows.keySet());
