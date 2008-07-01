@@ -138,12 +138,6 @@
     <!-- Template editor -->
     <dependency>
       <groupId>org.hippoecm</groupId>
-      <artifactId>hippo-ecm-addon-template</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-editor</artifactId>
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
