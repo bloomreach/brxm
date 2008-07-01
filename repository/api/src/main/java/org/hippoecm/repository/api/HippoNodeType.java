@@ -63,8 +63,6 @@ public interface HippoNodeType {
     final public static String NT_IMAGE = "hippo:image";
     final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
     final public static String NT_FIELD = "hippo:field";
-    final public static String NT_FRONTEND = "hippo:frontend";
-    final public static String NT_FRONTENDPLUGIN = "hippo:frontendplugin";
     final public static String NT_GROUP = "hippo:group";
     final public static String NT_GROUPFOLDER = "hippo:groupfolder";
     final public static String NT_HANDLE = "hippo:handle";
@@ -81,18 +79,12 @@ public interface HippoNodeType {
     final public static String NT_NODETYPE = "hippo:nodetype";
     final public static String NT_OCMQUERY = "hippo:ocmquery";
     final public static String NT_OCMQUERYFOLDER = "hippo:ocmqueryfolder";
-    final public static String NT_PAGE = "hippo:page";
-    final public static String NT_PARAMETERS = "hippo:parameters";
-    final public static String NT_PLUGIN = "hippo:plugin";
-    final public static String NT_PLUGINFOLDER = "hippo:pluginfolder";
     final public static String NT_PROTOTYPED = "hippo:prototyped";
     final public static String NT_REMODEL = "hippo:remodel";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";
     final public static String NT_ROLEFOLDER = "hippo:rolefolder";
     final public static String NT_SOFTDOCUMENT = "hippo:softdocument";
-    final public static String NT_TEMPLATE = "hippo:template";
-    final public static String NT_TEMPLATEITEM = "hippo:templateitem";
     final public static String NT_TEMPLATETYPE = "hippo:templatetype";
     final public static String NT_TYPE = "hippo:type";
     final public static String NT_TYPES = "hippo:types";
@@ -119,7 +111,6 @@ public interface HippoNodeType {
     final public static String HIPPO_FIELD = "hippo:field";
     final public static String HIPPO_GROUPS = "hippo:groups";
     final public static String HIPPO_INITIALIZE = "hippo:initialize";
-    final public static String HIPPO_ITEM = "hippo:item";
     final public static String HIPPO_JCRREAD = "hippo:jcrread";
     final public static String HIPPO_JCRWRITE = "hippo:jcrwrite";
     final public static String HIPPO_JCRREMOVE = "hippo:jcrremove";
@@ -139,7 +130,6 @@ public interface HippoNodeType {
     final public static String HIPPO_NODETYPESRESOURCE = "hippo:nodetypesresource";
     final public static String HIPPO_ORDERED = "hippo:ordered";
     final public static String HIPPO_PASSWORD = "hippo:password";
-    final public static String HIPPO_PARAMETERS = "hippo:parameters";
     final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";
     final public static String HIPPO_PERMCACHESIZE = "hippo:permcachesize";
@@ -155,7 +145,6 @@ public interface HippoNodeType {
     final public static String HIPPO_SEQUENCE = "hippo:sequence";
     final public static String HIPPO_SUPERTYPE = "hippo:supertype";
     final public static String HIPPO_TEMPLATE = "hippo:template";
-    final public static String HIPPO_TEMPLATEMODE = "hippo:templatemode";
     final public static String HIPPO_TYPE = "hippo:type";
     final public static String HIPPO_TYPES = "hippo:types";
     final public static String HIPPO_URI = "hippo:uri";
