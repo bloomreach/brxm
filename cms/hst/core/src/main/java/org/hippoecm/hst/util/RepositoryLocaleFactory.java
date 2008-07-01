@@ -86,12 +86,12 @@ public class RepositoryLocaleFactory implements LocaleFactory {
 
                         Value[] facetValues = node.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
                         if (localeIndex == -1) {
-                            LOGGER.warn("No value " + HIPPOSTD_LANGUAGE + " found in property " +
+                            LOGGER.info("No value " + HIPPOSTD_LANGUAGE + " found in property " +
                                     HippoNodeType.HIPPO_FACETS + " of facetselect node " + node.getPath());
                         }
 
                         else if (localeIndex >= facetValues.length) {
-                            LOGGER.warn("Value index " + localeIndex +
+                            LOGGER.error("Value index " + localeIndex +
                                     " of property " + HIPPOSTD_LANGUAGE + " is too high for property "
                                     + HippoNodeType.HIPPO_VALUES + " with length " + facetValues.length);
                         }
