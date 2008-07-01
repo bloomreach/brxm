@@ -78,10 +78,10 @@
             <sv:value>frontendplugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:frontendplugin</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippo:frontendplugin</sv:value>
+            <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:mandatory" sv:type="Boolean">
             <sv:value>true</sv:value>
@@ -165,67 +165,6 @@
           </sv:property>
           <sv:property sv:name="hippo:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.reporting.simple.SimpleReportPlugin</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-    </sv:node>
-
-    <sv:node sv:name="hippo:template">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:handle</sv:value>
-      </sv:property>
-      <sv:node sv:name="hippo:template">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:template</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:prototype" sv:type="String">
-          <sv:value>/hippo:namespaces/reporting/reporting:report/hippo:prototype/hippo:prototype</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.template.NodeTemplatePlugin</sv:value>
-        </sv:property>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>query</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>parameter-names</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.PropertyFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>parameter-values</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hippo:item">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:templateitem</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:renderer" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.template.field.NodeFieldPlugin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:field" sv:type="String">
-            <sv:value>frontendplugin</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

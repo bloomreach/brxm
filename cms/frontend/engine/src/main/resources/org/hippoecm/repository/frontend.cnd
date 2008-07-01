@@ -21,20 +21,15 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <frontend='http://www.hippoecm.org/frontend/nt/1.0'>
 
-[frontend:plugin] > hippo:plugin
+[frontend:plugin]
+- * (string)
+- * (string) multiple
+- * (boolean)
+- * (long)
+- * (date)
+- * (double)
 
 [frontend:plugincluster] > nt:base orderable
 - frontend:overrides (string) multiple
 - * (string)
 + * (frontend:plugin) = frontend:plugin
-
-/* BEGIN DEPRECATED */
-[hippo:frontendplugin] > hippo:plugin
-- hippo:renderer (string) mandatory
-+ * (hippo:frontendplugin) = hippo:frontendplugin
-
-[hippo:page] > nt:unstructured
-- hippo:style (string)
-/* END DEPRECATED */
-
-
