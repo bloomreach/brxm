@@ -558,8 +558,8 @@ public class HippoAccessManager implements AccessManager {
             }
             return isGranted;
         } catch (NoSuchItemStateException e) {
-            log.warn("NoSuchItemStateException for: " + id + " : " + e.getMessage());
-            throw new ItemNotFoundException("NoSuchItemStateException: Item not found in hierarchy: " + id, e);
+            log.error("NoSuchItemStateException for: " + id, e);
+            return false;
         } catch (ItemStateException e) {
             log.error("ItemStateException for id: " + id, e);
             throw new RepositoryException("ItemStateException: " + e.getMessage(), e);
