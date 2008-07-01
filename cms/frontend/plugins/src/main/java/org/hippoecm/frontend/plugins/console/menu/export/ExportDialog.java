@@ -30,6 +30,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.Model;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -49,13 +50,32 @@ public class ExportDialog extends AbstractDialog {
 
     private IServiceReference<MenuPlugin> pluginRef;
 
+    private boolean skipBinary = true;
+    
     public ExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
         this.pluginRef = context.getReference(plugin);
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        Model skipBinaryModel = new Model(skipBinary);
+        CheckBox includeBinaries = new CheckBox("skip-binaries",skipBinaryModel) {
 
-        DownloadExportLink link = new DownloadExportLink("download-link", nodeModel);
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected boolean wantOnSelectionChangedNotifications() {
+                return true;
+            }
+
+            @Override
+            protected void onSelectionChanged(Object newSelection) {
+                skipBinary = ((Boolean)newSelection).booleanValue();
+            }
+            
+        };
+        add(includeBinaries);
+        
+        DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
         link.add(new Label("download-link-text", "Download"));
         add(link);
 
@@ -72,7 +92,7 @@ public class ExportDialog extends AbstractDialog {
                     try {
                         Node node = nodeModel.getNode();
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        node.getSession().exportSystemView(node.getPath(), out, true, false);
+                        node.getSession().exportSystemView(node.getPath(), out, skipBinary, false);
                         export = prettyPrint(out.toByteArray());
                     } catch (Exception e) {
                         export = e.getMessage();
