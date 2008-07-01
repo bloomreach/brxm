@@ -1694,7 +1694,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.groups.GroupsLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.groups.GroupsLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -1769,7 +1769,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.groups.UsersListPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.groups.UsersListPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.users</sv:value>
@@ -1793,7 +1793,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeActionsPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.actions</sv:value>
@@ -1966,7 +1966,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.users.UsersLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.users.UsersLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -2165,7 +2165,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.users.GroupsListPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.groups</sv:value>
@@ -2189,7 +2189,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeActionsPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.actions</sv:value>
@@ -2325,7 +2325,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.layout.FacetRuleLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.layout.FacetRuleLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -2651,7 +2651,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.layout.AuthRoleLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.layout.AuthRoleLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -2854,7 +2854,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.layout.DomainsLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.layout.DomainsLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -2987,7 +2987,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeActionsPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.actions</sv:value>
@@ -3131,7 +3131,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.groups.RoleLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.groups.RoleLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -3264,7 +3264,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeActionsPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeActionsPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>{cluster}.actions</sv:value>

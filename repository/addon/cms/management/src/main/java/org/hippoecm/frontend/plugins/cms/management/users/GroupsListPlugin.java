@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management.sa.users;
+package org.hippoecm.frontend.plugins.cms.management.users;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -29,8 +29,8 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.sa.FlushableListingPlugin;
-import org.hippoecm.frontend.plugins.cms.management.sa.QueryDataProvider;
+import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
+import org.hippoecm.frontend.plugins.cms.management.QueryDataProvider;
 import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DropBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;

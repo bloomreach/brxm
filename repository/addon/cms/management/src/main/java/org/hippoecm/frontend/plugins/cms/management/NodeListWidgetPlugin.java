@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management.sa;
+package org.hippoecm.frontend.plugins.cms.management;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.sa.AddNodeWidget;
+import org.hippoecm.frontend.plugins.cms.management.AddNodeWidget;
 import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DragBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNode;

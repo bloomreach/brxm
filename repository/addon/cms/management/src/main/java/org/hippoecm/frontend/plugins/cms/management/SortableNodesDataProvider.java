@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management.sa;
+package org.hippoecm.frontend.plugins.cms.management;
 
 import java.util.Collections;
 import java.util.Iterator;
