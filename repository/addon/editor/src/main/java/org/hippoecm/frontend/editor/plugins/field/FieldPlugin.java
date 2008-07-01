@@ -16,11 +16,9 @@
 package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -77,7 +75,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         String serviceId = getPluginContext().getReference(this).getServiceId();
         return serviceId + ".item";
     }
-    
+
     @Override
     protected void onDetach() {
         if (provider != null) {
@@ -117,21 +115,19 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, P parentModel);
 
     public void onAddItem(AjaxRequestTarget target) {
+        controller.stop();
         provider.addNew();
+        controller.start(provider);
 
-        controller.update();
-
-        // refresh
-        modelChanged();
+        redraw();
     }
 
     public void onRemoveItem(C childModel, AjaxRequestTarget target) {
+        controller.stop();
         provider.remove(childModel);
+        controller.start(provider);
 
-        controller.update();
-
-        // refresh
-        modelChanged();
+        redraw();
     }
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
@@ -147,9 +143,17 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
-    protected void configureTemplate(IClusterConfig config, C model) {
-        final IPluginConfig myConfig = getPluginConfig();
+    protected IClusterConfig getTemplate(C model) {
+        ITemplateEngine engine = getTemplateEngine();
+        IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
 
+        configureTemplate(config);
+
+        return config;
+    }
+
+    protected void configureTemplate(IClusterConfig config) {
+        final IPluginConfig myConfig = getPluginConfig();
         for (String property : config.getOverrides()) {
             Object value = myConfig.get("template." + property);
             if (value != null) {
@@ -182,23 +186,6 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             }
         }
 
-        void update() {
-            Iterator<C> iter = provider.iterator(0, provider.size());
-            Set<C> newModels = new HashSet<C>();
-            while (iter.hasNext()) {
-                C model = iter.next();
-                if (!plugins.containsKey(model)) {
-                    addModel(model);
-                }
-                newModels.add(model);
-            }
-            for (C model : plugins.keySet()) {
-                if (!newModels.contains(model)) {
-                    removeModel(model);
-                }
-            }
-        }
-
         void stop() {
             for (Object model : plugins.keySet().toArray()) {
                 removeModel((C) model);
@@ -218,9 +205,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         }
 
         private void addModel(final C model) {
-            ITemplateEngine engine = getTemplateEngine();
-            IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
-            FieldPlugin.this.configureTemplate(config, model);
+            IClusterConfig config = FieldPlugin.this.getTemplate(model);
 
             String modelId = config.getString(RenderService.MODEL_ID);
             ModelService modelService = new ModelService(modelId, model);
@@ -236,6 +221,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
             IPluginControl plugin = plugins.remove(model);
             if (plugin != null) {
                 plugin.stopPlugin();
+            } else {
+                log.warn("Model " + model + " was not found in list of plugins");
             }
             ModelService modelService = models.remove(model);
             if (modelService != null) {
