@@ -80,6 +80,7 @@ public class ImportDialog extends AbstractDialog implements ITitleDecorator {
             add(fileUploadField = new FileUploadField("fileInput"));
         }
 
+        @Override
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {

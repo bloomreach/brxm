@@ -17,9 +17,7 @@ package org.hippoecm.frontend.session;
 
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.classloader.DynamicRepositoryClassLoader;
 import org.apache.jackrabbit.classloader.RepositoryClassLoader;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class SessionClassLoader extends RepositoryClassLoader {

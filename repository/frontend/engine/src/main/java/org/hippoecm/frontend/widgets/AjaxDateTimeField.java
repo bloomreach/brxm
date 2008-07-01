@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.widgets;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -46,8 +47,9 @@ public class AjaxDateTimeField extends DateTimeField {
         get("minutes").add(new ChangeBehaviour());
         get("amOrPmChoice").add(new ChangeBehaviour());
 
-        Date date = (Date) getModelObject();
-        if (date.getHours() >= 12) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime((Date) getModelObject());
+        if (cal.get(Calendar.HOUR_OF_DAY) >= 12) {
             amPm = "PM";
         }
         String[] ampm = new String[] { "AM", "PM" };

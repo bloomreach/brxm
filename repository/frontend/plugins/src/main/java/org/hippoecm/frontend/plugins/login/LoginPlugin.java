@@ -46,6 +46,7 @@ public class LoginPlugin extends RenderPlugin {
         add(new SignInForm("signInForm"));
     }
 
+    @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
         container.getHeaderResponse().renderOnLoadJavascript("document.forms.signInForm.username.focus();");
@@ -90,6 +91,7 @@ public class LoginPlugin extends RenderPlugin {
 
         }
 
+        @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
             userSession.setJcrCredentials(credentials);
