@@ -40,11 +40,10 @@ http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-package-war/2.01.00
                 <ol>
                     <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
                     <li>Unpack the zip</li>
-                    <li>Remove the <code>apache-tomcat-6.0.16\webapps\ROOT</code> folder</li>
                     <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
-                    <li>Copy the WAR from the link above to apache-tomcat-6.0.16\webapps\ROOT.war</li>
+                    <li>Copy the WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
                     <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
-                    <li>Open your browser and surf to http://localhost:8080/</li>
+                    <li>Open your browser and surf to http://localhost:8080/cms/</li>
                 </ol>
             </subsection>
             
