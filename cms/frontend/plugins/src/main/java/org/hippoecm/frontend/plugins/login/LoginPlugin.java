@@ -63,21 +63,21 @@ public class LoginPlugin extends RenderPlugin {
             super(id);
 
             add(username = new RequiredTextField("username", new PropertyModel(credentials, "username")));
-            username.setLabel(new ResourceModel("org.hippoecm.frontend.sa.plugins.login.username", "Username"));
+            username.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.username", "Username"));
             add(new SimpleFormComponentLabel("username-label", username));
 
             add(password = new PasswordTextField("password", new PropertyModel(credentials, "password")));
             //add(password = new RSAPasswordTextField("password", new Model(), this));
-            password.setLabel(new ResourceModel("org.hippoecm.frontend.sa.plugins.login.password", "Password"));
+            password.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.password", "Password"));
             add(new SimpleFormComponentLabel("password-label", password));
 
             add(new FeedbackPanel("feedback"));
 
             //add(rememberMe = new CheckBox("rememberMe", new Model(Boolean.FALSE)));
-            //rememberMe.setLabel(new ResourceModel("org.hippoecm.frontend.sa.plugins.login.rememberMe", "rememberMe"));
+            //rememberMe.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.rememberMe", "rememberMe"));
             //add(new SimpleFormComponentLabel("rememberMe-label", rememberMe));
 
-            Button submit = new Button("submit", new ResourceModel("org.hippoecm.frontend.sa.plugins.login.submit",
+            Button submit = new Button("submit", new ResourceModel("org.hippoecm.frontend.plugins.login.submit",
                     "Sign In"));
             add(submit);
 

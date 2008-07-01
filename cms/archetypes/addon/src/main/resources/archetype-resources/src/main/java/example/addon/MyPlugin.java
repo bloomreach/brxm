@@ -34,14 +34,14 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.model.Model;
 import ${package}.frontend.model.JcrNodeModel;
-import ${package}.frontend.sa.plugin.IPlugin;
-import ${package}.frontend.sa.plugin.IPluginContext;
-import ${package}.frontend.sa.plugin.config.IPluginConfig;
-import ${package}.frontend.sa.plugin.impl.RenderPlugin;
-import ${package}.frontend.sa.service.IMessageListener;
-import ${package}.frontend.sa.service.Message;
-import ${package}.frontend.sa.service.render.ModelReference;
-import ${package}.frontend.sa.service.topic.TopicService;
+import ${package}.frontend.plugin.IPlugin;
+import ${package}.frontend.plugin.IPluginContext;
+import ${package}.frontend.plugin.config.IPluginConfig;
+import ${package}.frontend.plugin.impl.RenderPlugin;
+import ${package}.frontend.service.IMessageListener;
+import ${package}.frontend.service.Message;
+import ${package}.frontend.service.render.ModelReference;
+import ${package}.frontend.service.topic.TopicService;
 
 public class MyPlugin extends RenderPlugin implements IPlugin, IMessageListener, IClusterable {
     @SuppressWarnings("unused")

@@ -147,7 +147,7 @@
                 <sv:value>String</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective</sv:value>
+                <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPerspective</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>false</sv:value>

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.management.sa.groups;
+package org.hippoecm.frontend.plugins.cms.management.groups;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,9 @@ import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.sa.FlushableListingPlugin;
-import org.hippoecm.frontend.plugins.cms.management.sa.SortableNodesDataProvider;
-import org.hippoecm.frontend.plugins.cms.management.sa.users.GroupsListPlugin;
+import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
+import org.hippoecm.frontend.plugins.cms.management.SortableNodesDataProvider;
+import org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin;
 import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DropBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;

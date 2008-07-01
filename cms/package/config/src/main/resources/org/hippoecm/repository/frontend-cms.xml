@@ -394,7 +394,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementPerspective</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
@@ -434,7 +434,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.management.listUsers</sv:value>
@@ -461,7 +461,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.management.listGroups</sv:value>
@@ -488,7 +488,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.management.listDomains</sv:value>
@@ -512,7 +512,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.NodeListWidgetPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.NodeListWidgetPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.management.listRoles</sv:value>
@@ -536,7 +536,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.sa.ManagementEditorPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementEditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.management.editor</sv:value>
