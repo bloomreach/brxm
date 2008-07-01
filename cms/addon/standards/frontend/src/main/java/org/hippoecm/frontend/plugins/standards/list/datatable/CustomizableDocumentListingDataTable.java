@@ -74,6 +74,7 @@ public class CustomizableDocumentListingDataTable extends DataTable implements I
         }
     }
 
+    @Override
     protected Item newRowItem(String id, int index, IModel model) {
         OddEvenItem item = new OddEvenItem(id, index, model);
 

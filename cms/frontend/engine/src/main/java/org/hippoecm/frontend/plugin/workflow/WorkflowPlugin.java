@@ -36,9 +36,10 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.IViewService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +142,8 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
 
         String className = model.getWorkflowName();
         wflConfig.put(IPlugin.CLASSNAME, className);
-        wflConfig.put(IViewService.VIEWER_ID, config.get(IViewService.VIEWER_ID));
+        wflConfig.put(IEditService.EDITOR_ID, config.get(IEditService.EDITOR_ID));
+        wflConfig.put(IBrowseService.BROWSER_ID, config.get(IBrowseService.BROWSER_ID));
 
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
         clusterConfig.addPlugin(wflConfig);

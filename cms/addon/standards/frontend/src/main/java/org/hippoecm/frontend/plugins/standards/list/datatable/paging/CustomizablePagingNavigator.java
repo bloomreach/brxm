@@ -42,6 +42,7 @@ public class CustomizablePagingNavigator extends AjaxPagingNavigator{
      *            The label provider for the link text.
      * @return the navigation object
      */
+    @Override
     protected PagingNavigation newNavigation(final IPageable pageable,
             final IPagingLabelProvider labelProvider)
     {

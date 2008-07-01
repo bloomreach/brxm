@@ -15,9 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManagementPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -25,8 +30,19 @@ public class ManagementPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(ManagementPerspective.class);
+
+    private ModelService modelService;
+
     public ManagementPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        if (config.getString(RenderPlugin.MODEL_ID) != null) {
+            modelService = new ModelService(config.getString(RenderPlugin.MODEL_ID), new JcrNodeModel("/"));
+            modelService.init(context);
+        } else {
+            log.error("no model service specified");
+        }
     }
 
 }

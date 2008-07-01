@@ -34,13 +34,13 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IFactoryService;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements IPlugin, IViewService, IDetachable {
+public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,7 +54,7 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IDetachable {
         private static final long serialVersionUID = 1L;
         String id;
         IPluginControl plugin;
-        IViewService viewer;
+        IEditService editor;
         IFactoryService factory;
     }
 
@@ -74,33 +74,33 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IDetachable {
             log.error("No cluster ({}) defined", CLUSTER);
         }
 
-        if (config.getString(VIEWER_ID) != null) {
-            context.registerService(this, config.getString(VIEWER_ID));
+        if (config.getString(EDITOR_ID) != null) {
+            context.registerService(this, config.getString(EDITOR_ID));
         } else {
-            log.error("No editor id ({}) defined under which to register", VIEWER_ID);
+            log.error("No editor id ({}) defined under which to register", EDITOR_ID);
         }
     }
 
-    public void view(final IModel model) {
-        IViewService viewer;
+    public void edit(final IModel model) {
+        IEditService editService;
         if (!editors.containsKey(model)) {
             IPluginConfigService pluginConfigService = context.getService("service.plugin.config",
                     IPluginConfigService.class);
             IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString(CLUSTER));
-            String viewerId = clusterConfig.getString(VIEWER_ID);
+            String editorId = clusterConfig.getString(EDITOR_ID);
 
             clusterConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
             IPluginControl plugin = context.start(clusterConfig);
 
-            viewer = context.getService(viewerId, IViewService.class);
-            String serviceId = context.getReference(viewer).getServiceId();
+            editService = context.getService(editorId, IEditService.class);
+            String serviceId = context.getReference(editService).getServiceId();
 
             // register as the factory for the view service
             IFactoryService factory = new IFactoryService() {
                 private static final long serialVersionUID = 1L;
 
                 public void delete(IClusterable service) {
-                    IViewService viewer = (IViewService) service;
+                    IEditService viewer = (IEditService) service;
                     Map.Entry<IModel, PluginEntry> entry = getPluginEntry(viewer);
                     if (entry != null) {
                         IDialogService dialogService = context.getService(IDialogService.class.getName(),
@@ -136,23 +136,23 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IDetachable {
             PluginEntry entry = new PluginEntry();
             entry.plugin = plugin;
             entry.id = serviceId;
-            entry.viewer = viewer;
+            entry.editor = editService;
             entry.factory = factory;
             editors.put(model, entry);
 
             editCount++;
         } else {
-            viewer = editors.get(model).viewer;
+            editService = editors.get(model).editor;
         }
 
-        if (viewer != null) {
-            viewer.view(model);
+        if (editService != null) {
+            editService.edit(model);
         } else {
             log.warn("Configured editor does not provide an IViewService");
         }
     }
 
-    public void deleteEditor(IViewService service) {
+    public void deleteEditor(IEditService service) {
         Map.Entry<IModel, PluginEntry> entry = getPluginEntry(service);
         if (entry != null) {
             String serviceId = entry.getValue().id;
@@ -165,9 +165,9 @@ public class MultiEditorPlugin implements IPlugin, IViewService, IDetachable {
         }
     }
 
-    private Map.Entry<IModel, PluginEntry> getPluginEntry(IViewService service) {
+    private Map.Entry<IModel, PluginEntry> getPluginEntry(IEditService service) {
         for (Map.Entry<IModel, PluginEntry> entry : editors.entrySet()) {
-            if (entry.getValue().viewer.equals(service)) {
+            if (entry.getValue().editor.equals(service)) {
                 return entry;
             }
         }

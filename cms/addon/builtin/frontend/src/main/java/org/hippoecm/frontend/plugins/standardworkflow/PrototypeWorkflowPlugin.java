@@ -32,7 +32,7 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.ExtendedFolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.FolderDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.PrototypeDialog;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,9 +99,9 @@ public class PrototypeWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        IViewService view = getPluginContext().getService(getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
+        IEditService view = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
         if (view != null) {
-            view.view(nodeModel);
+            view.edit(nodeModel);
         }
     }
 }

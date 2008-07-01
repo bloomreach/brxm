@@ -26,7 +26,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -48,9 +48,9 @@ public class BrowseLink extends Panel {
             private static final long serialVersionUID = 1L;
             @Override
             public void onClick(AjaxRequestTarget target) {
-                String linkTo = config.getString("link.to");
-                IViewService viewService = context.getService(linkTo, IViewService.class);
-                viewService.view(variant);
+                String browserId = config.getString("browser.id");
+                IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+                browseService.browse(variant);
 
             }
         };
