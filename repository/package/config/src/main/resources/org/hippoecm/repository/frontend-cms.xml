@@ -389,50 +389,6 @@
     </sv:property>
   </sv:node>
 
-  <!-- START: REMOVE ME after management has been ported-->
-  <sv:node sv:name="legacyManagementPerspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.management.LegacyManagementPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>service.legacymanagement.node</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>(deprecated)Users</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.legacyManagement</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.legacyManagement" sv:type="String">
-      <sv:value>service.management.legacy</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="legacyManagement">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.legacy.adapter.AdapterPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.management.legacy</sv:value>
-    </sv:property>
-    <sv:property sv:name="legacy.base" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend_deprecated/hippo:cms/rootPlugin/tabsPlugin/panel</sv:value>
-    </sv:property>
-    <sv:property sv:name="legacy.plugin" sv:type="String">
-      <sv:value>managementFilter</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- END: REMOVE ME after management has been ported-->
-
   <sv:node sv:name="managementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
