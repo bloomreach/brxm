@@ -127,10 +127,6 @@ public class Main extends WebApplication {
 
     @Override
     public Class getHomePage() {
-        String legacyArchitecture = getConfigurationParameter("legacy", null);
-        if (legacyArchitecture != null) {
-            return org.hippoecm.frontend.legacy.Home.class;
-        }
         return org.hippoecm.frontend.Home.class;
     }
 

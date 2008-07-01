@@ -87,8 +87,6 @@ public class NodeListWidgetPlugin extends RenderPlugin {
 
     public NodeListWidgetPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        
-        JcrNodeModel model = (JcrNodeModel) getModel();
 
         String parentNodePath = config.getString("parentNodePath");
         parentNodeModel = new JcrNodeModel(parentNodePath);

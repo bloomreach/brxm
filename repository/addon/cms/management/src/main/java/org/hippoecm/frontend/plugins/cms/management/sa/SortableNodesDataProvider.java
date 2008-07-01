@@ -65,6 +65,7 @@ public abstract class SortableNodesDataProvider extends SortableDataProvider {
         }
     }
 
+    @Override
     public void detach() {
         nodes = null;
     }

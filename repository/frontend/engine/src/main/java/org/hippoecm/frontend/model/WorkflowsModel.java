@@ -31,7 +31,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -162,13 +161,6 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
         this.renderer = renderer;
         initialize();
         workflows.put(new Entry(renderer, 0), model.workflows.get(new Entry(renderer)));
-    }
-
-    @Override
-    public Map<String, Object> getMapRepresentation() {
-        Map<String, Object> map = super.getMapRepresentation();
-        map.put("workflows", workflows);
-        return map;
     }
 
     public String getWorkflowName() {
