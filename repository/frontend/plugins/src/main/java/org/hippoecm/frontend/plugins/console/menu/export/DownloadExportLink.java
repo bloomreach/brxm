@@ -29,6 +29,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -43,8 +44,11 @@ public class DownloadExportLink extends Link {
 
     private static final Logger log = LoggerFactory.getLogger(DownloadExportLink.class);
 
-    public DownloadExportLink(String id, JcrNodeModel nodeModel) {
+    private Model skipBinaryModel;
+    
+    public DownloadExportLink(String id, JcrNodeModel nodeModel, Model skipBinaryModel) {
         super(id, nodeModel);
+        this.skipBinaryModel = skipBinaryModel;
     }
 
     @Override
@@ -95,7 +99,8 @@ public class DownloadExportLink extends Link {
                 try {
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                     try {
-                        node.getSession().exportSystemView(node.getPath(), bos, false, false);
+                        boolean skipBinary = ((Boolean)skipBinaryModel.getObject()).booleanValue();
+                        node.getSession().exportSystemView(node.getPath(), bos, skipBinary, false);
                         fis = new FileInputStream(tempFile);
                         response.write(fis);
                     } finally {
