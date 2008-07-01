@@ -13,19 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.dashboard;
+package org.hippoecm.frontend.service;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 
-public class DashboardPerspective extends Perspective {
+public interface IEditService<T extends IModel> extends IClusterable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
+    String EDITOR_ID = "editor.id";
 
-    public DashboardPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-    }
+    void edit(T model);
 }

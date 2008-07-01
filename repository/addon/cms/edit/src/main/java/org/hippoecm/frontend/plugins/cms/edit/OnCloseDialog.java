@@ -27,7 +27,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +46,9 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected AjaxLink save;
     private JcrNodeModel model;
     private IServiceReference<MultiEditorPlugin> factory;
-    private IServiceReference<IViewService> editor;
+    private IServiceReference<IEditService> editor;
 
-    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IViewService editor) {
+    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IEditService editor) {
         super(context, dialogWindow);
 
         this.model = model;

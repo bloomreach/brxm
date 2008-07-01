@@ -27,13 +27,9 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
 import org.hippoecm.frontend.service.IJcrService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(RemodelWorkflowPlugin.class);
 
     public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

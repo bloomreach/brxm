@@ -18,11 +18,11 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-public interface IViewService<T extends IModel> extends IClusterable {
+public interface IBrowseService<T extends IModel> extends IClusterable {
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    final static String SVN_ID = "$Id: IViewService.java 12039 2008-06-13 09:27:05Z bvanhalderen $";
 
-    String VIEWER_ID = "viewer.id";
+    String BROWSER_ID = "browser.id";
 
-    void view(T model);
+    void browse(T model);
 }

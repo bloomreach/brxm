@@ -35,7 +35,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
-@Deprecated
 public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
     private String category;

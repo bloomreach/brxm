@@ -26,32 +26,30 @@ import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.CustomizableDialogLink;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
@@ -61,7 +59,9 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(new AbstractView("items", new IDataProvider() {
+        
+        final IDataProvider provider = new IDataProvider() {
+            private static final long serialVersionUID = 1L;
 
             public IModel model(Object object) {
                 return new Model((String) object);
@@ -77,15 +77,17 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
             public void detach() {
             }
-        }) {
+        };
+        add(new AbstractView("items", provider) {
+            private static final long serialVersionUID = 1L;
 
+            @Override
             protected void populateItem(Item item) {
                 final IModel model = item.getModel();
                 // final String dialogTitle = "Add " + ((String) model.getObject());
                 final String dialogTitle = ((String) model.getObject());
                 CustomizableDialogLink link;
                 link = new CustomizableDialogLink("add-dialog", new Model(dialogTitle), new IDialogFactory() {
-
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
@@ -139,12 +141,12 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     public void select(JcrNodeModel nodeModel) {
-        IViewService view = getPluginContext().getService(getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
-        if (view != null) {
+        IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
+        if (browser != null) {
             try {
                 if(nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) &&
                    !nodeModel.getNode().isNodeType("hippostd:folder")) {
-                    view.view(nodeModel);
+                    browser.browse(nodeModel);
                 }
             } catch(RepositoryException ex) {
                 System.err.println(ex.getClass().getName()+": "+ex.getMessage());

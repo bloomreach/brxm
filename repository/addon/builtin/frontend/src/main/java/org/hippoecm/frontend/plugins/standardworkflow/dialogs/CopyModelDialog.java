@@ -27,7 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.slf4j.Logger;
@@ -70,8 +70,8 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
                 IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
                 jcrService.flush(nodeModel.getParentModel());
                 
-                IViewService viewService = context.getService(config.getString(IViewService.VIEWER_ID), IViewService.class);
-                viewService.view(nodeModel);
+                IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID), IEditService.class);
+                viewService.edit(nodeModel);
             } else {
                 log.error("no model found to edit");
             }

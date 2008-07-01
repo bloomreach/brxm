@@ -53,6 +53,7 @@ public class CustomizablePagingNavigation extends AjaxPagingNavigation{
      *            the index the link points to
      * @return the ajaxified page number link.
      */
+    @Override
     protected Link newPagingNavigationLink(String id, IPageable pageable, int pageIndex)
     {
         return new AjaxPagingNavigationLink(id, pageable, pageIndex);

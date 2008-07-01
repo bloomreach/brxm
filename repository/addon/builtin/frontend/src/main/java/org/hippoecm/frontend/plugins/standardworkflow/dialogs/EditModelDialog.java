@@ -27,7 +27,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
 import org.slf4j.Logger;
@@ -59,9 +59,9 @@ public class EditModelDialog extends AbstractWorkflowDialog {
                     IPluginContext context = getPlugin().getPluginContext();
                     IPluginConfig config = getPlugin().getPluginConfig();
 
-                    IViewService viewService = context.getService(config.getString(IViewService.VIEWER_ID),
-                            IViewService.class);
-                    viewService.view(new JcrNodeModel(itemModel));
+                    IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
+                            IEditService.class);
+                    viewService.edit(new JcrNodeModel(itemModel));
                 } else {
                     log.error("no model found to edit");
                 }

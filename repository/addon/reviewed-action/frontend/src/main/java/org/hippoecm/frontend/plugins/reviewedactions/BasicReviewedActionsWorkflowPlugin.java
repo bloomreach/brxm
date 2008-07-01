@@ -27,7 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.service.IViewService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -65,10 +65,10 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
                 Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
-                IViewService viewer = getPluginContext().getService(
-                        getPluginConfig().getString(IViewService.VIEWER_ID), IViewService.class);
+                IEditService viewer = getPluginContext().getService(
+                        getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
                 if (viewer != null) {
-                    viewer.view(new JcrNodeModel(docNode));
+                    viewer.edit(new JcrNodeModel(docNode));
                 } else {
                     log.warn("No editor found to edit {}", docNode.getPath());
                 }

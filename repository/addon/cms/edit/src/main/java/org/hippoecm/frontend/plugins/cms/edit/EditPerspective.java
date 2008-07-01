@@ -17,15 +17,19 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditPerspective extends Perspective {
+public class EditPerspective extends Perspective implements IEditService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -34,9 +38,22 @@ public class EditPerspective extends Perspective {
     private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private boolean firstRender = true;
+    private ModelService modelService;
 
-    public EditPerspective(IPluginContext context, IPluginConfig properties) {
-        super(context, properties);
+    public EditPerspective(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        if (config.getString(RenderPlugin.MODEL_ID) != null) {
+            modelService = new ModelService(config.getString(RenderPlugin.MODEL_ID), new JcrNodeModel("/"));
+            modelService.init(context);
+        } else {
+            log.error("no model service specified");
+        }
+
+        if (config.getString(IEditService.EDITOR_ID) != null) {
+            context.registerService(this, config.getString(IEditService.EDITOR_ID));
+        }
+        
         onModelChanged();
     }
 
@@ -58,6 +75,14 @@ public class EditPerspective extends Perspective {
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+    }
+
+    // IEditService
+
+    public void edit(IModel model) {
+        if (modelService != null) {
+            modelService.setModel(model);
         }
     }
 
