@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.cms.management.sa;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class ManagementPerspective extends Perspective {
     @SuppressWarnings("unused")

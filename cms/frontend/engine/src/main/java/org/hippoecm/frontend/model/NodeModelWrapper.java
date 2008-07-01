@@ -15,13 +15,10 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.Map;
-
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.legacy.model.IPluginModel;
 
-public class NodeModelWrapper implements IChainingModel, IPluginModel {
+public class NodeModelWrapper implements IChainingModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -61,12 +58,6 @@ public class NodeModelWrapper implements IChainingModel, IPluginModel {
         if(nodeModel != null) {
             nodeModel.detach();
         }
-    }
-
-    // implement IPluginModel
-
-    public Map<String, Object> getMapRepresentation() {
-        return nodeModel.getMapRepresentation();
     }
 
 }

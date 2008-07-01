@@ -145,10 +145,10 @@ public class NodeActionsPlugin extends RenderPlugin {
 
             HippoNode node = nodeModel.getNode();
             try {
-                Node parentNode = node.getParent();
                 if (node.isNew()) {
                     String displayName = node.getDisplayName();
                     node.remove();
+                    // Node node = (Node) getItemModel().getObject();
                     // Request request = getTopChannel().createRequest("flush", new JcrNodeModel(parentNode));
                     // getTopChannel().send(request);
                     // request.getContext().apply(target);

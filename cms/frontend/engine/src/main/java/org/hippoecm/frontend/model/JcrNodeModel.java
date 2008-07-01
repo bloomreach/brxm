@@ -15,20 +15,15 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-
-import org.hippoecm.frontend.legacy.model.IPluginModel;
 import org.hippoecm.repository.api.HippoNode;
 
-public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {
+public class JcrNodeModel extends ItemModelWrapper {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -47,16 +42,6 @@ public class JcrNodeModel extends ItemModelWrapper implements IPluginModel {
 
     public JcrNodeModel(String path) {
         super(path);
-    }
-
-    public JcrNodeModel(IPluginModel model) {
-        super((String) model.getMapRepresentation().get("node"));
-    }
-
-    public Map<String, Object> getMapRepresentation() {
-        Map map = new HashMap();
-        map.put("node", itemModel.getPath());
-        return map;
     }
 
     public HippoNode getNode() {
