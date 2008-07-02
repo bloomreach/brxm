@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -33,8 +34,9 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
@@ -94,6 +96,19 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
 
             editService = context.getService(editorId, IEditService.class);
             String serviceId = context.getReference(editService).getServiceId();
+
+            // look up the render service that is created by the cluster
+            List<IRenderService> targetServices = context.getServices(config.getString(RenderService.WICKET_ID),
+                    IRenderService.class);
+            List<IRenderService> clusterServices = context.getServices(context.getReference(plugin).getServiceId(),
+                    IRenderService.class);
+            for (IRenderService target : targetServices) {
+                if (clusterServices.contains(target)) {
+                    // found it!
+                    target.focus(null);
+                    break;
+                }
+            }
 
             // register as the factory for the view service
             IFactoryService factory = new IFactoryService() {

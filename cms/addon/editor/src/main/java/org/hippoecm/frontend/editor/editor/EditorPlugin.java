@@ -32,7 +32,6 @@ public class EditorPlugin extends RenderPlugin {
     public EditorPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
         add(form = newForm());
-        focus(null);
     }
 
     @Override

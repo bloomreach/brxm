@@ -112,7 +112,7 @@ public class TabsPlugin extends RenderPlugin {
     public void focus(IRenderService child) {
         Tab tabbie = findTabbie(child);
         if (tabbie != null) {
-            tabbie.select(false);
+            tabbie.select();
         }
         super.focus(child);
     }
@@ -128,7 +128,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        tabbie.select(true);
+        tabbie.select();
     }
 
     void onClose(Tab tabbie, AjaxRequestTarget target) {
@@ -171,7 +171,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
             }
             if (lastTab != null) {
-                lastTab.select(true);
+                lastTab.select();
             }
         }
 
@@ -208,8 +208,8 @@ public class TabsPlugin extends RenderPlugin {
             return false;
         }
 
-        void select(boolean force) {
-            if (force || tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
+        void select() {
+            if (tabs.indexOf(this) != tabbedPanel.getSelectedTab()) {
                 tabbedPanel.setSelectedTab(tabs.indexOf(this));
                 lastSelected = ++TabsPlugin.this.selectCount;
                 redraw();
