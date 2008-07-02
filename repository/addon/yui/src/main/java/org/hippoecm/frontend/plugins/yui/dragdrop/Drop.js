@@ -14,11 +14,4 @@
  * limitations under the License.
  */
 
-function fn_initDrag${id}(){
-  drag${id} = new YAHOO.hippo.DDModel('${id}', '${group}', {label: '${label}', centerFrame: true, resizeFrame: false});
-  drag${id}.onDragDrop = function(ev, id) {
-    var callbackParameters = [{key: 'targetId', value: id}];
-    ${callbackScript}
-  };
-}
-Wicket.Event.add(window,"domready", fn_initDrag${id});
+YAHOO.hippo.DragDropManager.addDroppable('${id}', ${groups});
