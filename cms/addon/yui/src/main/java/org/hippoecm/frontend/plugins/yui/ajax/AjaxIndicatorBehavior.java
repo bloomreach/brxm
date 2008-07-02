@@ -20,34 +20,24 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.behavior.AbstractHeaderContributor;
-import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
-import org.wicketstuff.yui.YuiHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 
-public class AjaxIndicatorBehavior extends AbstractHeaderContributor {
+public class AjaxIndicatorBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    @Override
-    public IHeaderContributor[] getHeaderContributors() {
-        IHeaderContributor[] dependencies = new IHeaderContributor[3];
-        dependencies[0] = YuiHeaderContributor.forModule("yahoo").getHeaderContributors()[0];
-        dependencies[1] = YuiHeaderContributor.forModule("dom").getHeaderContributors()[0];
-        dependencies[2] = HeaderContributor.forJavaScript(AjaxIndicatorBehavior.class, "ajax_indicator.js");
-        return dependencies;
-    }
-
-    @Override
-    public void bind(Component component) {
-
-        final WicketAjaxIndicatorAppender ajaxIndicator = new WicketAjaxIndicatorAppender() {
+    
+    final private WicketAjaxIndicatorAppender ajaxIndicator;
+    
+    public AjaxIndicatorBehavior() {
+        ajaxIndicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -55,8 +45,12 @@ public class AjaxIndicatorBehavior extends AbstractHeaderContributor {
                 return RequestCycle.get().urlFor(new ResourceReference(AjaxIndicatorBehavior.class, "ajax-loader.gif"));
             }
         };
-        component.add(ajaxIndicator);
-        component.add(TextTemplateHeaderContributor.forJavaScript(AjaxIndicatorBehavior.class,
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        YuiHeaderContributor.forModule("hippo", "ajaxindicator").renderHead(response);
+        TextTemplateHeaderContributor.forJavaScript(AjaxIndicatorBehavior.class,
                 "init_ajax_indicator.js", new AbstractReadOnlyModel() {
                     private static final long serialVersionUID = 1L;
 
@@ -70,8 +64,15 @@ public class AjaxIndicatorBehavior extends AbstractHeaderContributor {
                         }
                         return variables;
                     }
-                }));
+                }).renderHead(response);
 
+
+        super.renderHead(response);
+    }
+
+    @Override
+    public void bind(Component component) {
+        component.add(ajaxIndicator);
         super.bind(component);
     }
 

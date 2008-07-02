@@ -15,7 +15,7 @@
  */
  
 //Create new loading indicator
-var indicator = new AjaxLoadIndicator('${id}');
+var indicator = new YAHOO.hippo.AjaxIndicator('${id}');
 
 //register with wicket pre call
 var wicketGlobalPreCallHandler = function() {
