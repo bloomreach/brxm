@@ -42,13 +42,14 @@ if (!YAHOO.hippo.DragDropManager) {
                         callbackUrl += (callbackUrl.indexOf('?') > -1) ? '&' : '?';
                         callbackUrl += (paramKey + '=' + paramValue);
                     }
-                    callbackFunc.apply(callbackUrl);
+                    callbackFunc(callbackUrl);
                 }
             };
             this.wicketLoader.registerFunction(func);
         },
         
         addDroppable: function(id, groups) {
+            var js = YAHOO.lang;
             var drop = null;
             if(!js.isUndefined(groups) && !js.isNull(groups) && js.isArray(groups)) {
                 drop = new YAHOO.util.DDTarget(id, groups.shift());
