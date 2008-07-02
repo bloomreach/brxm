@@ -65,7 +65,6 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     @Override
     public void onModelChanged() {
-        updateProvider();
         replace(createAddLink());
         redraw();
     }

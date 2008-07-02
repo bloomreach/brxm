@@ -55,7 +55,6 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     public void onModelChanged() {
-        updateProvider();
         replace(createAddLink());
         redraw();
     }

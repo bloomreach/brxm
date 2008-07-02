@@ -119,7 +119,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         provider.addNew();
         controller.start(provider);
 
-        redraw();
+        modelChanged();
     }
 
     public void onRemoveItem(C childModel, AjaxRequestTarget target) {
@@ -127,7 +127,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         provider.remove(childModel);
         controller.start(provider);
 
-        redraw();
+        modelChanged();
     }
 
     public void onMoveItemUp(C model, AjaxRequestTarget target) {
