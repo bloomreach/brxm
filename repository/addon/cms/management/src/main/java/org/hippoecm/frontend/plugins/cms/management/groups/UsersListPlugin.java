@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.management.groups;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -25,6 +26,8 @@ import javax.jcr.Value;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -34,7 +37,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.SortableNodesDataProvider;
 import org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin;
-import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DropBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,52 +50,48 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
 
     private static final Logger log = LoggerFactory.getLogger(UsersListPlugin.class);
 
-    private JcrNodeModel rootModel;
-
     public UsersListPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        rootModel = (JcrNodeModel) getModel();
-
         String caption = config.getString("caption");
         add(new Label("listLabel", new Model(caption)));
-
+        
+        JcrNodeModel rootModel = (JcrNodeModel) getModel();
         if (!rootModel.getNode().isNew()) {
             add(new GroupDropBehavior(context, config));
         }
         add(new SimpleAttributeModifier("class", "userGroupsList"));
+        
+        onModelChanged();
     }
 
     @Override
-    protected SortableDataProvider createDataProvider() {
-        return new SortableNodesDataProvider("name") {
+    protected IDataProvider createDataProvider() {
+        final List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
+        final String usersPath = "/hippo:configuration/hippo:users/";
+        
+        JcrNodeModel rootModel = (JcrNodeModel) getModel();
+        try {
+            if (rootModel.getNode().hasProperty("hippo:members")) {
+                Property property = rootModel.getNode().getProperty("hippo:members");
+                Value[] values = property.getValues();
+                for (Value value : values) {
+                    list.add(new JcrNodeModel(usersPath + value.getString()));
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while getting hippo:members property from group["
+                    + rootModel.getItemModel().getPath() + "]", e);
+        }
+        return new ListDataProvider(list) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected List<JcrNodeModel> createNodes() {
-                List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
-                String usersPath = "/hippo:configuration/hippo:users/";
-
-                //this method is called by super constructor so work around
-                HippoNode groupNode = null;
-                if (rootModel == null) {//our own constructor hasn't finished yet
-                    groupNode = ((JcrNodeModel) getModel()).getNode();
-                } else {
-                    groupNode = rootModel.getNode();
+            public void detach() {
+                for (IModel model : list) {
+                    model.detach();
                 }
-                try {
-                    if (groupNode.hasProperty("hippo:members")) {
-                        Property property = groupNode.getProperty("hippo:members");
-                        Value[] values = property.getValues();
-                        for (Value value : values) {
-                            list.add(new JcrNodeModel(usersPath + value.getString()));
-                        }
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Error while getting hippo:members property from group["
-                            + rootModel.getItemModel().getPath() + "]", e);
-                }
-                return list;
+                super.detach();
             }
         };
     }
@@ -102,13 +101,22 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
         return "USER-PREF-GROUP-USER-MEMBERS-LIST";
     }
     
+    @Override
+    protected void modifyDefaultPrefNode(Node prefNode) throws RepositoryException {
+        Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
+        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
+        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
+        columns.add(getNodeColumn(new Model("Name"), "name"));
+    }
+    
     // implements IJcrNodeModelListener
 
     @Override
     public void onFlush(JcrNodeModel nodeModel) {
+        JcrNodeModel rootModel = (JcrNodeModel) getModel();
         if (!rootModel.getNode().isNew() && getBehaviors(DropBehavior.class).size() == 0) {
             add(new GroupDropBehavior(getPluginContext(), getPluginConfig()));
-            flushDataProvider();
+            onModelChanged();
         }
     }
     
@@ -121,22 +129,20 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
 
         @Override
         public void onDrop(IModel model) {
-            //Is this the best way?
-            HippoNode groupNode = rootModel.getNode();
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel droppedModel = (JcrNodeModel) model;
+                JcrNodeModel groupModel = (JcrNodeModel) getModel();
                 String userPath = droppedModel.getItemModel().getPath();
                 try {
                     String username = droppedModel.getNode().getName();
-
-                    GroupsListPlugin.addMultiValueProperty(groupNode, "hippo:members", username);
-                    if (groupNode.pendingChanges().hasNext()) {
-                        groupNode.save();
-                        flushDataProvider();
+                    GroupsListPlugin.addMultiValueProperty(groupModel.getNode(), "hippo:members", username);
+                    if (groupModel.getNode().pendingChanges().hasNext()) {
+                        groupModel.getNode().save();
+                        onModelChanged();
                     }
                 } catch (RepositoryException e) {
                     log.error("Error while trying to add user[" + userPath + "] to group["
-                            + rootModel.getItemModel().getPath() + "]", e);
+                            + groupModel.getItemModel().getPath() + "]", e);
                 }
             }
         }

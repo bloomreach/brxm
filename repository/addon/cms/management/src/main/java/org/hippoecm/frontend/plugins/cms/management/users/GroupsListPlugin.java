@@ -15,24 +15,33 @@
  */
 package org.hippoecm.frontend.plugins.cms.management.users;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.value.StringValue;
+import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
-import org.hippoecm.frontend.plugins.cms.management.QueryDataProvider;
-import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DropBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +67,7 @@ public class GroupsListPlugin extends FlushableListingPlugin {
             @Override
             public void onDrop(IModel model) {
                 if (model instanceof JcrNodeModel) {
-                    JcrNodeModel droppedGroup = (JcrNodeModel)model;
+                    JcrNodeModel droppedGroup = (JcrNodeModel) model;
                     String myUsername = getUsername();
                     if (myUsername != null) {
                         HippoNode groupNode = droppedGroup.getNode();
@@ -66,7 +75,7 @@ public class GroupsListPlugin extends FlushableListingPlugin {
                             addMultiValueProperty(groupNode, "hippo:members", myUsername);
                             if (groupNode.pendingChanges().hasNext()) {
                                 groupNode.save();
-                                flushDataProvider();
+                                onModelChanged();
                             }
                         } catch (RepositoryException e) {
                             log.error("An error occuirred while trying to add user[" + myUsername
@@ -77,12 +86,42 @@ public class GroupsListPlugin extends FlushableListingPlugin {
             }
         });
         add(new SimpleAttributeModifier("class", "userGroupsList"));
+        
+        onModelChanged();
     }
 
     @Override
-    protected SortableDataProvider createDataProvider() {
-        String query = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
-        return new QueryDataProvider(query, "xpath", "name");
+    protected IDataProvider createDataProvider() {
+        final String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
+        final String queryType = "xpath";
+        final List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
+        try {
+            QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+            HippoQuery query = (HippoQuery) queryManager.createQuery(queryString, queryType);
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            session.refresh(true);
+            QueryResult result;
+            result = query.execute();
+
+            NodeIterator it = result.getNodes();
+            while (it.hasNext()) {
+                JcrNodeModel modcheck = new JcrNodeModel(it.nextNode());
+                list.add(modcheck);
+            }
+        } catch (RepositoryException e) {
+            log.error("Error executing query[" + queryString + "]", e);
+        }
+        return new ListDataProvider(list) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void detach() {
+                for (IModel model : list) {
+                    model.detach();
+                }
+                super.detach();
+            }
+        };
     }
 
     private String getUsername() {
@@ -110,7 +149,8 @@ public class GroupsListPlugin extends FlushableListingPlugin {
         columns.add(getNodeColumn(new Model("Name"), "name"));
     }
 
-    public static HippoNode addMultiValueProperty(HippoNode node, String propertyName, String propertyValue) throws RepositoryException {
+    public static HippoNode addMultiValueProperty(HippoNode node, String propertyName, String propertyValue)
+            throws RepositoryException {
         if (!node.hasProperty(propertyName)) {
             Value[] values = new Value[] { new StringValue(propertyValue) };
             node.setProperty(propertyName, values);

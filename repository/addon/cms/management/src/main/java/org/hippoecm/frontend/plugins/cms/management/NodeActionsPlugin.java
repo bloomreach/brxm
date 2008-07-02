@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.cms.management;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
@@ -36,6 +35,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,23 +58,10 @@ public class NodeActionsPlugin extends RenderPlugin {
         builtin.add(ACTION_CANCEL);
     }
 
-    private JcrNodeModel nodeModel;
-
     public NodeActionsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        nodeModel = (JcrNodeModel) getModel();
-
-        List<String> actions = new ArrayList<String>(builtin);
-        String[] extraActions = config.getStringArray("actions");
-        if (extraActions != null) {
-            for (String action : extraActions) {
-                if (!actions.contains(action))
-                    actions.add(action);
-            }
-        }
-
-        final ListView actionsView = new ListView("actions", actions) {
+        final ListView actionsView = new ListView("actions", new ArrayList<String>(builtin)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -86,25 +73,13 @@ public class NodeActionsPlugin extends RenderPlugin {
 
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form form) {
-                        if (builtin.contains(operation)) {
-                            executeBuiltinAction(target, operation);
-                            // Request request = getTopChannel().createRequest("feedback", null);
-                            // getTopChannel().send(request);
-                            // request.getContext().apply(target);
-                        } else {
-                            // Channel top = getTopChannel();
-                            // Request request = top.createRequest(operation, model);
-                            // top.send(request);
-                            // request.getContext().apply(target);
-                        }
+                        executeBuiltinAction(target, operation);
                     }
 
                     @Override
                     protected void onError(AjaxRequestTarget target, Form form) {
                         if (operation.equals(ACTION_OK)) {
-                            // Request request = getTopChannel().createRequest("feedback", null);
-                            // getTopChannel().send(request);
-                            // request.getContext().apply(target);
+                            //show feedback
                         } else if (operation.equals(ACTION_CANCEL)) {
                             //TODO: clear error messages
                             executeBuiltinAction(target, operation);
@@ -119,15 +94,19 @@ public class NodeActionsPlugin extends RenderPlugin {
     }
 
     private void executeBuiltinAction(AjaxRequestTarget target, String operation) {
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         if (operation.equals(ACTION_OK)) {
             try {
-                Node parentNode = nodeModel.getNode().getParent();
-                parentNode.save();
-                //  Request request = getTopChannel().createRequest("flush", new JcrNodeModel(parentNode));
-                //  getTopChannel().send(request);
-                //  request.getContext().apply(target);
-
-                info("Action " + ACTION_OK + " successfull");
+                HippoNode node = nodeModel.getNode();
+                if (node.getSession().hasPendingChanges() && node.getParent() != null) {
+                    node.getParent().save();
+                    info("Action " + ACTION_OK + " successfull.");
+                    List<RenderPlugin> x = getPluginContext().getServices("service.management.node", RenderPlugin.class);
+                    for (RenderPlugin y : x) {
+                        y.modelChanged();
+                    }
+                    //setModel(new JcrNodeModel(nodeModel.getItemModel().getPath()));
+                }
             } catch (RepositoryException e) {
                 log.error("An error occured while executing ACTION_OK", e);
             }
@@ -140,7 +119,6 @@ public class NodeActionsPlugin extends RenderPlugin {
                 public boolean accept(FeedbackMessage message) {
                     return message.isError();
                 }
-
             });
 
             HippoNode node = nodeModel.getNode();
@@ -148,16 +126,8 @@ public class NodeActionsPlugin extends RenderPlugin {
                 if (node.isNew()) {
                     String displayName = node.getDisplayName();
                     node.remove();
-                    // Node node = (Node) getItemModel().getObject();
-                    // Request request = getTopChannel().createRequest("flush", new JcrNodeModel(parentNode));
-                    // getTopChannel().send(request);
-                    // request.getContext().apply(target);
                     info("User " + displayName + " removed");
                 }
-                //  Request selectRequest = getTopChannel().createRequest("select", new JcrNodeModel(parentNode));
-                //  getTopChannel().send(selectRequest);
-                //  selectRequest.getContext().apply(target);
-
             } catch (RepositoryException e) {
                 log.error("An error occured while executing ACTION_CANCEL", e);
             }
