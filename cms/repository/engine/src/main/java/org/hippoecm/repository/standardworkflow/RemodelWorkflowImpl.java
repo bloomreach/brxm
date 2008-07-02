@@ -116,13 +116,12 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         node.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
 
         node = type.addNode(HippoNodeType.HIPPO_PROTOTYPE, HippoNodeType.NT_HANDLE);
-        node = node.addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:base");
+        node = node.addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
         node.addMixin(JcrConstants.MIX_REFERENCEABLE);
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippostd:state", "draft");
 
-        node.addMixin(HippoNodeType.NT_UNSTRUCTURED);
         node.addMixin(HippoNodeType.NT_REMODEL);
         node.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
 

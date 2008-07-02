@@ -204,16 +204,33 @@ public class Remodeling {
             throws ValueFormatException, VersionException, LockException, ConstraintViolationException,
             RepositoryException {
         PropertyDefinition definition = prop.getDefinition();
-        int propType = definition.getRequiredType();
+        int propType = prop.getType();
+
         boolean found = false;
+        boolean anySingular = false;
+        boolean anyMultiple = false;
         for (PropertyDefinition targetDefinition : targets) {
             String targetName = targetDefinition.getName();
+            int targetType = targetDefinition.getRequiredType();
 
-            if (targetDefinition.getDeclaringNodeType().getName().equals(HippoNodeType.NT_UNSTRUCTURED)) {
+            if (targetName.equals("*")) {
+                if (targetType == propType) {
+                    if (targetDefinition.isMultiple()) {
+                        anyMultiple = true;
+                    } else {
+                        anySingular = true;
+                    }
+                } else if (targetType == PropertyType.UNDEFINED) {
+                    if (targetDefinition.isMultiple()) {
+                        anyMultiple = true;
+                    } else {
+                        anySingular = true;
+                    }
+                }
                 continue;
             }
 
-            if ((targetName.equals(name) || targetName.equals("*")) && targetDefinition.getRequiredType() == propType) {
+            if (targetName.equals(name) && (targetType == PropertyType.UNDEFINED || targetType == propType)) {
                 // copy property
                 if (definition.isMultiple()) {
                     if (targetDefinition.isMultiple()) {
@@ -235,10 +252,36 @@ public class Remodeling {
                     }
                 }
                 found = true;
+                break;
             }
         }
         if (!found) {
-            log.warn("Dropping property " + prop.getName() + " as there is no new definition.");
+            if (definition.isMultiple()) {
+                Value[] values = prop.getValues();
+                if (anyMultiple) {
+                    target.setProperty(name, values);
+                } else if (anySingular && !target.hasProperty(name)) {
+                    if (values.length == 1) {
+                        target.setProperty(name, values[0]);
+                    } else if (values.length > 1) {
+                        throw new ValueFormatException("Property " + prop.getPath()
+                                + " cannot be converted to a single value");
+                    }
+                } else {
+                    log.warn("Dropping property " + prop.getName() + " as there is no new definition.");
+                }
+            } else {
+                Value value = prop.getValue();
+                if (anySingular) {
+                    target.setProperty(name, value);
+                } else if (anyMultiple && !target.hasProperty(name)) {
+                    Value[] values = new Value[1];
+                    values[0] = value;
+                    target.setProperty(name, values);
+                } else {
+                    log.warn("Dropping property " + prop.getName() + " as there is no new definition.");
+                }
+            }
         }
     }
 
@@ -290,21 +333,22 @@ public class Remodeling {
                     } else {
                         String name = getNewName(definition.getName());
                         NodeType newType = conversion.get(node.getPrimaryNodeType());
+                        if (newType != null) {
+                            TypeUpdate typeUpdate = updates.get(definition.getName());
+                            if (typeUpdate != null) {
+                                FieldIdentifier fieldId = new FieldIdentifier();
+                                fieldId.path = name;
+                                fieldId.type = newType.getName();
 
-                        TypeUpdate typeUpdate = updates.get(definition.getName());
-                        if (typeUpdate != null) {
-                            FieldIdentifier fieldId = new FieldIdentifier();
-                            fieldId.path = name;
-                            fieldId.type = newType.getName();
-
-                            FieldIdentifier newId = typeUpdate.renames.get(fieldId);
-                            if (newId != null && !newId.path.equals("*")) {
-                                name = newId.path;
+                                FieldIdentifier newId = typeUpdate.renames.get(fieldId);
+                                if (newId != null && !newId.path.equals("*")) {
+                                    name = newId.path;
+                                }
                             }
-                        }
 
-                        Node copy = target.addNode(name, newType.getName());
-                        traverse(node, true, copy);
+                            Node copy = target.addNode(name, newType.getName());
+                            traverse(node, true, copy);
+                        }
                     }
                 }
             }
@@ -342,8 +386,14 @@ public class Remodeling {
                                 while (siblings.hasNext()) {
                                     Node node = siblings.nextNode();
                                     NodeType newType = conversion.get(node.getPrimaryNodeType());
-                                    Node copy = target.addNode(nodeDef.getName(), newType.getName());
-                                    traverse(node, true, copy);
+                                    if (newType != null) {
+                                        Node copy = target.addNode(nodeDef.getName(), newType.getName());
+                                        traverse(node, true, copy);
+                                    } else {
+                                        log.warn("removing node " + node.getPath()
+                                                + " as there is no new type defined for type "
+                                                + node.getPrimaryNodeType().getName());
+                                    }
                                 }
                             } else {
                                 Node node = prototype.getNode(getOldName(nodeDef.getName()));
@@ -501,7 +551,6 @@ public class Remodeling {
                 traverse(draft, true, newChild);
                 draft.remove();
                 newChild.removeMixin(HippoNodeType.NT_REMODEL);
-                newChild.removeMixin(HippoNodeType.NT_UNSTRUCTURED);
 
                 // prepare workflow mixins
                 if (newChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {

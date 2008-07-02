@@ -204,11 +204,10 @@
 
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>nt:base</sv:value>
+          <sv:value>nt:unstructured</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippo:unstructured</sv:value>
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -437,7 +436,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippo:unstructured</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>8580e005-3757-4b05-b4b3-d79f36e064c5</sv:value>
@@ -723,7 +721,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippo:unstructured</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>1e2ccc8b-5085-45c2-b9f8-a0ab44045648</sv:value>
@@ -995,7 +992,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippo:unstructured</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>a9543c05-12ff-4c47-beb1-bcc9c2dccfa5</sv:value>
