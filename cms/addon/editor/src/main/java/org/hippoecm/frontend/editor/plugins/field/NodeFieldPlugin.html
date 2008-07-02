@@ -16,11 +16,13 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <h3 wicket:id="name">[ field name ]</h3>
-    <div class="iconsSmall" wicket:id="view">
-      <a class="delete_ico" wicket:id="remove">(delete)</a>
-      <a class="up_ico" wicket:id="up">(up)</a>
+    <wicket:container wicket:id="view">
+      <div class="iconsSmall">
+        <a class="delete_ico" wicket:id="remove">(delete)</a>
+        <a class="up_ico" wicket:id="up">(up)</a>
+      </div>
       <div wicket:id="item">[ field goes here ]</div>
-    </div>
+    </wicket:container>
     <span class="iconsSmall">
       <a class="add_ico" wicket:id="add">(add)</a>
     </span>
