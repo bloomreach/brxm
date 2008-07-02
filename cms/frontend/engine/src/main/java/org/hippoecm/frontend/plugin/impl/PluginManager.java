@@ -111,7 +111,7 @@ public class PluginManager implements IDetachable {
 
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {
         List<IClusterable> list = services.get(name);
-        List<T> result = new ArrayList<T>(list.size());
+        List<T> result = new ArrayList<T>();
         if (list != null && list.size() > 0) {
             for (IClusterable service : list) {
                 if (clazz.isInstance(service)) {

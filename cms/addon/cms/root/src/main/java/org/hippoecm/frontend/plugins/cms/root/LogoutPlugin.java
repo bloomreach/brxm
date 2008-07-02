@@ -13,8 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.logout;
+package org.hippoecm.frontend.plugins.cms.root;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
@@ -22,12 +27,16 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LogoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: LogoutPlugin.java 12171 2008-06-25 13:59:53Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(LogoutPlugin.class);
 
     @SuppressWarnings("unused")
     private String username;
@@ -40,7 +49,24 @@ public class LogoutPlugin extends RenderPlugin {
         username = credentials.getString("username");
 
         add(new Label("username", new PropertyModel(this, "username")));
-        add(new LogoutLink("logout-link", context));
+
+        add(new AjaxLink("logout-link") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                UserSession userSession = (UserSession) getSession();
+                try {
+                    Session session = userSession.getJcrSession();
+                    if (session != null) {
+                        session.save();
+                    }
+                    userSession.logout();
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        });
     }
 
 }
