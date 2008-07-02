@@ -84,8 +84,6 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
             if (modelId != null) {
                 context.registerService(this, modelId);
             }
-        } else {
-            log.warn("No model ({}) defined for service {}", MODEL_ID, wicketServiceId);
         }
         
         String[] extensions = config.getStringArray(EXTENSIONS_ID);
