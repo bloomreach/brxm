@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.management;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
@@ -27,8 +27,6 @@ public abstract class FlushableListingPlugin extends AbstractListingPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private SortableDataProvider dataProvider;
 
     public FlushableListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -43,11 +41,12 @@ public abstract class FlushableListingPlugin extends AbstractListingPlugin {
         return dataTable;
     }
 
-
-    protected void flushDataProvider() {
-        dataProvider.detach();
+    @Override
+    public void onModelChanged() {
+        setDataProvider(createDataProvider());
+        redraw();
     }
 
-    protected abstract SortableDataProvider createDataProvider();
+    abstract protected IDataProvider createDataProvider();
 
 }

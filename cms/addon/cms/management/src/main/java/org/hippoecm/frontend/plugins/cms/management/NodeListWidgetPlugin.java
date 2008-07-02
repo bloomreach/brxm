@@ -36,8 +36,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.AddNodeWidget;
-import org.hippoecm.frontend.plugins.yui.sa.dragdrop.DragBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -96,7 +95,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(ListItem item) {
+            protected void populateItem(final ListItem item) {
                 final Entry entry = (Entry) item.getModel().getObject();
 
                 String name = entry.name;
@@ -115,7 +114,14 @@ public class NodeListWidgetPlugin extends RenderPlugin {
 
                 }.add(new Label("name", name)));
                 if (!entry.newEntry)
-                    item.add(new DragBehavior(context, config));
+                    item.add(new NodeDragBehavior(context, config, entry.path) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        protected String getLabel() {
+                            return entry.displayName;
+                        }
+                    });
                 if (entry.selected)
                     item.add(new SimpleAttributeModifier("class", "highlight"));
 
@@ -135,46 +141,49 @@ public class NodeListWidgetPlugin extends RenderPlugin {
 
             @Override
             protected void onAddNode(AjaxRequestTarget target, Node node) {
-                refreshListModel();
+                try {
+                    refreshListModel(node.getName());
+                } catch (RepositoryException e) {
+                    log.error("Error getting name from nodes", e);
+                }
                 JcrNodeModel nodeModel = new JcrNodeModel(node);
                 NodeListWidgetPlugin.this.setModel(nodeModel);
                 target.addComponent(listContainer);
             }
         });
-        
-        onModelChanged();
+
+        //onModelChanged();
     }
 
-//    @Override
-//    public void receive(Notification notification) {
-//        if (notification.getOperation().equals("flush")) {
-//            refreshListModel();
-//            notification.getContext().addRefresh(listContainer);
-//        } else if (notification.getOperation().equals("select")) {
-//            //for now this suffices
-//            boolean refresh = false;
-//            for (Entry entry : (List<Entry>) listModel.getObject()) {
-//                if (entry.selected) {
-//                    refresh = true;
-//                    entry.selected = false;
-//                }
-//            }
-//
-//            String nodePath = (String) notification.getModel().getMapRepresentation().get("node");
-//            for (Entry entry : (List<Entry>) listModel.getObject()) {
-//                if (entry.path.equals(nodePath)) {
-//                    entry.selected = true;
-//                    refresh = true;
-//                }
-//            }
-//
-//            if (refresh)
-//                notification.getContext().addRefresh(listContainer);
-//        }
-//        super.receive(notification);
-//    }
+    @Override
+    protected void onModelChanged() {
+        JcrNodeModel serviceModel = (JcrNodeModel) getModel();
+        String nodePath = serviceModel.getItemModel().getPath();
+        String parentNodePath = getPluginConfig().getString("parentNodePath");
+        if (nodePath.indexOf(parentNodePath) == 0) {
+            String name = nodePath.substring(parentNodePath.length() + 1);
+            refreshListModel(name);
+            redraw();
+        } else {
+            for (Entry entry : listModel.list) {
+                if (entry.selected) {
+                    entry.selected = false;
+                    redraw();
+                    break;
+                }
+            }
+        }
+        super.onModelChanged();
+    }
 
-    private void refreshListModel() {
+    private void refreshListModel(String name) {
+        for (Entry entry : listModel.list) {
+            if (entry.name.equals(name)) {
+                entry.selected = true;
+            } else {
+                entry.selected = false;
+            }
+        }
         listModel.flush();
     }
 
