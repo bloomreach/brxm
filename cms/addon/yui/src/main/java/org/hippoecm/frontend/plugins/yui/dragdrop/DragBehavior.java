@@ -13,18 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.sa.dragdrop;
+package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Request;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelService;
-import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -41,23 +39,34 @@ public class DragBehavior extends AbstractDragDropBehavior {
 
     @Override
     protected void respond(AjaxRequestTarget target) {
+        final IModel draggedModel = getDragModel();
+        if(draggedModel == null)
+            return;
+        
+        final String targetId = getComponent().getRequest().getParameter("targetId");
+        getComponent().getPage().visitChildren(new DropPointVisitor() {
+            @Override
+            void visit(DropBehavior dropPoint) {
+                if (dropPoint.getComponentMarkupId().equals(targetId)) {
+                    dropPoint.onDrop(draggedModel);
+                }
+            }
+        });
+
+    }
+
+    protected IModel getDragModel() {
         String pluginModelId = config.getString(RenderService.MODEL_ID);
         if (pluginModelId != null) {
+            //TODO: generic gedrag uitzoeken
             IModelService pluginModelService = context.getService(pluginModelId, IModelService.class);
             if (pluginModelService != null) {
-                final IModel draggedModel = pluginModelService.getModel();
-                final String targetId = getComponent().getRequest().getParameter("targetId");
-                getComponent().getPage().visitChildren(new DropPointVisitor() {
-                    @Override
-                    void visit(DropBehavior dropPoint) {
-                        if (dropPoint.getComponentMarkupId().equals(targetId)) {
-                            dropPoint.onDrop(draggedModel);
-                        }
-                    }
-                });
+                return pluginModelService.getModel();    
             }
         }
+        return null;
     }
+        
 
     @Override
     protected String getHeaderContributorFilename() {
@@ -68,6 +77,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return DragBehavior.class;
     }
+    
 
     private abstract class DropPointVisitor implements IVisitor {
         @SuppressWarnings("unchecked")
