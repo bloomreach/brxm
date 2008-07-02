@@ -23,7 +23,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.console.menu.cndimport.ImportDialog;
+import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
+import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
@@ -134,7 +135,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new ImportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new CndImportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
         add(new DialogLink("import-dialog", new Model("CND Import"), dialogFactory, dialogService));
@@ -143,9 +144,21 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
+                return new CndExportDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        
+        add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
+
+        
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
                 return new NamespaceDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
+        
         add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
     }
 
