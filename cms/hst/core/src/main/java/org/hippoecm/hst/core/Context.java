@@ -114,14 +114,14 @@ public class Context extends AbstractMap {
      */
     public String getLocation() {
 
-        if (relativeLocation == null) {
-            return baseLocation;
+        if (this.relativeLocation == null) {
+            return this.baseLocation;
         }
 
-        if (relativeLocation.startsWith("/")) {
-            return baseLocation + relativeLocation;
+        if (this.relativeLocation.startsWith("/")) {
+            return this.baseLocation + this.relativeLocation;
         } else {
-            return baseLocation + "/" + relativeLocation;
+            return this.baseLocation + "/" + this.relativeLocation;
         }
     }
 
@@ -130,7 +130,7 @@ public class Context extends AbstractMap {
      * matches.
      */
     public String getURLBasePath() {
-        return urlBasePath;
+        return this.urlBasePath;
     }
 
     /**
@@ -139,16 +139,20 @@ public class Context extends AbstractMap {
      * base location of a virtual tree.
      */
     public String getBaseLocation() {
-        return baseLocation;
+        return this.baseLocation;
     }
 
     /**
      * Get the original requestURI, before any redirection or forwarding.
      */
     public String getRequestURI() {
-        return requestURI;
+        return this.requestURI;
     }
 
+    public boolean isQuery() {
+        return (this.query != null);
+    }
+    
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
@@ -157,7 +161,11 @@ public class Context extends AbstractMap {
 
         if (relativeLocation.startsWith(baseLocation)) {
             this.relativeLocation = relativeLocation.substring(baseLocation.length());
-        } else {
+        }
+        else if (relativeLocation.startsWith(getContentBaseLocation())) {
+                this.relativeLocation = relativeLocation.substring(getContentBaseLocation().length());
+        } 
+        else {
             this.relativeLocation = relativeLocation;
         }
     }
@@ -218,7 +226,7 @@ public class Context extends AbstractMap {
         Set rtvalue = new LinkedHashSet();
         synchronized (this) {
             try {
-                if (query != null) {
+                if (isQuery()) {
                     QueryResult result;
                     if ((arguments != null) && arguments.size() > 0) {
                         Map<String,String> queryArguments = new TreeMap<String,String>();
@@ -232,7 +240,15 @@ public class Context extends AbstractMap {
                     for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
                         Node child = iter.nextNode();
                         if (child != null) {
-                            rtvalue.add(child.getPath());
+                            
+                            // returned node path may have [index] attached
+                            // in case of multiple variants, so remove that 
+                            // as documents cannot be requested with it
+                            String path = child.getPath();
+                            if (path.endsWith("]") && (path.lastIndexOf("[") > -1)) {
+                                path = path.substring(0, path.lastIndexOf("["));
+                            }
+                            rtvalue.add(path);
                         }
                     }
                 } else {
@@ -286,41 +302,41 @@ public class Context extends AbstractMap {
                     }
                     else if (item.isNode()) {
                         Node node = (Node) item;
-                        if (node.isNodeType("nt:query")) {
-                            HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
-                            result = new Context(this, requestedQuery, new LinkedList());
+                        if (field.startsWith("_")) {
+                            field = field.substring(1);
+                            if (field.equals("name")) {
+                                result = node.getName();
+                            } else if (field.equals("path")) {
+                                result = node.getPath();
+                            } else if (field.equals("urlBasePath")) {
+                                result = this.urlBasePath;
+                            } else if (field.equals("parent")) {
+
+                                if (node.getParent() == null) {
+                                    return null;
+                                }
+
+                                Context context = new Context(this.session, this.contextPath, this.urlBasePath, this.baseLocation);
+                                context.setRelativeLocation(node.getParent().getPath());
+
+                                result = context;
+                            } else if (field.equals("location")) {
+                                result = ((HippoNode)node).getCanonicalNode().getPath();
+                            } else if (field.equals("size")) {
+                                result = new Long(node.getNodes().getSize());
+                            } else if (field.equals("index")) {
+                                result = new Integer(index);
+                            } else if (field.equals("locale")) {
+                                result = getLocale();
+                            } else {
+                                logger.warn("context._" + field + " not defined");
+                                result = null;
+                            }
                         }
                         else {
-                            if (field.startsWith("_")) {
-                                field = field.substring(1);
-                                if (field.equals("name")) {
-                                    result = node.getName();
-                                } else if (field.equals("path")) {
-                                    result = node.getPath();
-                                } else if (field.equals("urlBasePath")) {
-                                    result = this.urlBasePath;
-                                } else if (field.equals("parent")) {
-
-                                    if (node.getParent() == null) {
-                                        return null;
-                                    }
-
-                                    Context context = new Context(this.session, this.contextPath, this.urlBasePath, this.baseLocation);
-                                    context.setRelativeLocation(node.getParent().getPath());
-
-                                    result = context;
-                                } else if (field.equals("location")) {
-                                    result = ((HippoNode)node).getCanonicalNode().getPath();
-                                } else if (field.equals("size")) {
-                                    result = new Long(node.getNodes().getSize());
-                                } else if (field.equals("index")) {
-                                    result = new Integer(index);
-                                } else if (field.equals("locale")) {
-                                    result = getLocale();
-                                } else {
-                                    logger.warn("context._" + field + " not defined");
-                                    result = null;
-                                }
+                            if (node.isNodeType("nt:query")) {
+                                HippoQuery requestedQuery = (HippoQuery) session.getWorkspace().getQueryManager().getQuery(node);
+                                result = new Context(this, requestedQuery, new LinkedList());
                             }
                             else {
                                 result = new Context(this, node.getPath());

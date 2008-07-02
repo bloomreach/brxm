@@ -16,8 +16,10 @@
 package org.hippoecm.hst.taglib;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -357,6 +359,29 @@ public class DocumentsTag extends SimpleTagSupport {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         PropertyFormatter propertyFormatter = new PropertyFormatter(request);
 
+        // loop subcontexts, gather documents 
+        Iterator subContexts = context.entrySet().iterator();
+        List documents = new ArrayList();
+        
+        while (subContexts.hasNext()) {
+
+            Context sub = (Context) subContexts.next();
+            if (context.isQuery()) {
+                // every sub context represents a document
+                documents.add(sub);
+            }
+            else {
+                
+                // the sub context represents a handle, get it's first sub 
+                Iterator handleIterator = sub.entrySet().iterator();
+                if (!handleIterator.hasNext()) {
+                    continue;
+                }
+                
+                documents.add(handleIterator.next());
+            }
+        }
+        
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("<div id=\"");
@@ -365,20 +390,12 @@ public class DocumentsTag extends SimpleTagSupport {
         buffer.append(CSS_CLASS_LIST);
         buffer.append("\">\n");
 
-        // loop subcontexts representing handle subnodes
-        Iterator documents = context.entrySet().iterator();
-
+        // loop documents
+        Iterator docs = documents.iterator();
         int counter = 0;
-        while (documents.hasNext() && (counter < getMaxDocuments().intValue())) {
-           Context documentHandle = (Context) documents.next();
+        while (docs.hasNext() && (counter < getMaxDocuments().intValue())) {
 
-            // get first subnode of the handle
-            Iterator handleIterator = documentHandle.entrySet().iterator();
-            if (!handleIterator.hasNext()) {
-                continue;
-            }
-
-            Context documentContext = (Context) handleIterator.next();
+            Context documentContext = (Context) docs.next();
 
             // check the excluded names
             if (inExcludeNames((String) documentContext.get("_name"))) {
@@ -465,20 +482,35 @@ public class DocumentsTag extends SimpleTagSupport {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-        // loop subcontexts representing subnodes
-        Iterator documents = context.entrySet().iterator();
-        int counter = 0;
-        while (documents.hasNext() && (counter < getMaxDocuments().intValue())) {
+        // loop subcontexts, gather documents 
+        Iterator subContexts = context.entrySet().iterator();
+        List documents = new ArrayList();
+        
+        while (subContexts.hasNext()) {
 
-            Context documentHandle = (Context) documents.next();
-
-            // get first subnode of the handle
-            Iterator handleIterator = documentHandle.entrySet().iterator();
-            if (!handleIterator.hasNext()) {
-                continue;
+            Context sub = (Context) subContexts.next();
+            if (context.isQuery()) {
+                // every sub context represents a document
+                documents.add(sub);
             }
+            else {
+                
+                // the sub context represents a handle, get it's first sub 
+                Iterator handleIterator = sub.entrySet().iterator();
+                if (!handleIterator.hasNext()) {
+                    continue;
+                }
+                
+                documents.add(handleIterator.next());
+            }
+        }
+        
+        // loop documents
+        int counter = 0;
+        Iterator docs = documents.iterator();
+        while (docs.hasNext() && (counter < getMaxDocuments().intValue())) {
 
-            Context documentContext = (Context) handleIterator.next();
+            Context documentContext = (Context) docs.next();
 
             // check the excluded names
             if (inExcludeNames((String) documentContext.get("_name"))) {
