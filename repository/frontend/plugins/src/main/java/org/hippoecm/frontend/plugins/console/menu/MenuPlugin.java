@@ -25,9 +25,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
+import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
+import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
-import org.hippoecm.frontend.plugins.console.menu.export.ExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.namespace.NamespaceDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
@@ -89,11 +90,21 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new ExportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new ContentExportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        add(new DialogLink("export-dialog", new Model("Export Node"), dialogFactory, dialogService));
+        add(new DialogLink("content-export-dialog", new Model("Export Node"), dialogFactory, dialogService));
 
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
+                return new ContentImportDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("content-import-dialog", new Model("Import Node"), dialogFactory, dialogService));
+
+        
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -138,7 +149,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new CndImportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        add(new DialogLink("import-dialog", new Model("CND Import"), dialogFactory, dialogService));
+        add(new DialogLink("cnd-import-dialog", new Model("CND Import"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;

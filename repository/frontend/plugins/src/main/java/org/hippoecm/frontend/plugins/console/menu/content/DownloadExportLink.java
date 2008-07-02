@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.export;
+package org.hippoecm.frontend.plugins.console.menu.content;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -101,14 +101,14 @@ public class DownloadExportLink extends Link {
                     try {
                         boolean skipBinary = ((Boolean)skipBinaryModel.getObject()).booleanValue();
                         node.getSession().exportSystemView(node.getPath(), bos, skipBinary, false);
-                        fis = new FileInputStream(tempFile);
-                        response.write(fis);
                     } finally {
                         bos.close();
                     }
                 } finally {
                     fos.close();
                 }
+                fis = new FileInputStream(tempFile);
+                response.write(fis);
             } catch (FileNotFoundException e) {
                 log.error("Tempfile missing during export", e);
             } catch (IOException e) {
