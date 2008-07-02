@@ -166,11 +166,16 @@ public class PluginManager implements IDetachable {
             internalUnregisterService(service, name);
 
             Map.Entry<Integer, RefCount> entry = internalGetReference(service);
-            if (entry.getValue().release()) {
-                Integer id = entry.getKey();
-                String serviceId = SERVICES + id;
-                internalUnregisterService(service, serviceId);
-                referenced.remove(id);
+            RefCount ref = entry.getValue();
+            if(ref != null) {
+                if (ref.release()) {
+                    Integer id = entry.getKey();
+                    String serviceId = SERVICES + id;
+                    internalUnregisterService(service, serviceId);
+                    referenced.remove(id);
+                }
+            } else {
+                log.error("unregistering a service that wasn't registered.");
             }
         } else {
             log.error("unregistering a service that wasn't registered.");

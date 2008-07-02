@@ -29,12 +29,16 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ViewerPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(ViewerPlugin.class);
 
     private ModelService modelService;
     private IPluginControl template;
@@ -66,7 +70,9 @@ public class ViewerPlugin extends RenderPlugin {
     public void onModelChanged() {
         if (template != null) {
             modelService.destroy();
+            modelService = null;
             template.stopPlugin();
+            template = null;
         }
         createTemplate();
         redraw();
@@ -83,9 +89,13 @@ public class ViewerPlugin extends RenderPlugin {
                 if (clusterConfig != null) {
                     clusterConfig.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
                     String modelId = clusterConfig.getString(RenderService.MODEL_ID);
-                    modelService = new ModelService(modelId, model);
-                    modelService.init(context);
-                    template = context.start(clusterConfig);
+                    if (modelId != null) {
+                        modelService = new ModelService(modelId, model);
+                        modelService.init(context);
+                        template = context.start(clusterConfig);
+                    } else {
+                        log.warn("No model specified in template for type " + type.getName());
+                    }
                 }
             }
         }
