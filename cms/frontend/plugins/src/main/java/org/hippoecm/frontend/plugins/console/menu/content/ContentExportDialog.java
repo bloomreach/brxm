@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.export;
+package org.hippoecm.frontend.plugins.console.menu.content;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +42,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.w3c.dom.Document;
 
-public class ExportDialog extends AbstractDialog {
+public class ContentExportDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -52,7 +52,7 @@ public class ExportDialog extends AbstractDialog {
 
     private boolean skipBinary = true;
     
-    public ExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+    public ContentExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
         this.pluginRef = context.getReference(plugin);
 
