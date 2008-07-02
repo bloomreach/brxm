@@ -159,19 +159,21 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         void destroy() {
-            // look for previously selected tab
-            int lastCount = 0;
-            Tab lastTab = null;
-            Iterator<Tab> tabIterator = tabbedPanel.getTabs().iterator();
-            while (tabIterator.hasNext()) {
-                Tab tabbie = tabIterator.next();
-                if (tabbie.lastSelected > lastCount) {
-                    lastCount = tabbie.lastSelected;
-                    lastTab = tabbie;
+            if (tabs.size() > 0) {
+                // look for previously selected tab
+                int lastCount = 0;
+                Tab lastTab = tabs.get(0);
+                Iterator<Tab> tabIterator = tabbedPanel.getTabs().iterator();
+                while (tabIterator.hasNext()) {
+                    Tab tabbie = tabIterator.next();
+                    if (tabbie.lastSelected > lastCount) {
+                        lastCount = tabbie.lastSelected;
+                        lastTab = tabbie;
+                    }
                 }
-            }
-            if (lastTab != null) {
-                lastTab.select();
+                tabbedPanel.setSelectedTab(tabs.indexOf(lastTab));
+                lastTab.lastSelected = ++TabsPlugin.this.selectCount;
+                redraw();
             }
         }
 
@@ -200,11 +202,13 @@ public class TabsPlugin extends RenderPlugin {
         // package internals
 
         boolean canClose() {
+            /*
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
             IFactoryService factory = getPluginContext().getService(reference.getServiceId(), IFactoryService.class);
             if (factory != null) {
                 return true;
             }
+            */
             return false;
         }
 

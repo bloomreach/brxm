@@ -60,7 +60,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         JcrSessionModel sessionModel = ((UserSession) getSession()).getJcrSessionModel();
         PluginConfigFactory configFactory = new PluginConfigFactory(sessionModel);
         pluginConfigService = configFactory.getPluginConfigService();
-        context.registerService(pluginConfigService, "service.plugin.config");
+        context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
         // register JCR service to notify plugins of updates to the jcr tree
         IJcrService jcrService = new IJcrService() {
