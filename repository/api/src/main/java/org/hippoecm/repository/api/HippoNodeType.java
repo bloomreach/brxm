@@ -88,7 +88,6 @@ public interface HippoNodeType {
     final public static String NT_TEMPLATETYPE = "hippo:templatetype";
     final public static String NT_TYPE = "hippo:type";
     final public static String NT_TYPES = "hippo:types";
-    final public static String NT_UNSTRUCTURED = "hippo:unstructured";
     final public static String NT_USER = "hippo:user";
     final public static String NT_USERFOLDER = "hippo:userfolder";
     final public static String NT_WORKFLOW = "hippo:workflow";

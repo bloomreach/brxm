@@ -39,12 +39,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
 
     private static final long serialVersionUID = 1L;
 
-    private Session userSession;
     private Session rootSession;
     private Node subject;
 
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
-        this.userSession = userSession;
         this.rootSession = rootSession;
         this.subject = subject;
     }
@@ -153,10 +151,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow {
                 throw new ItemNotFoundException("Remodel node " + name + ", current version was not found for type "
                         + subject.getPath());
             }
-            draft = current.getParent().addNode(name, "nt:base");
+            draft = current.getParent().addNode(name, "nt:unstructured");
             draft.addMixin(HippoNodeType.NT_REMODEL);
             draft.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
-            draft.addMixin(HippoNodeType.NT_UNSTRUCTURED);
             draft.addMixin("mix:referenceable");
 
             PropertyIterator propIter = current.getProperties();
