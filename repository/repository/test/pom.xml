@@ -124,11 +124,13 @@
       <artifactId>jackrabbit-spi2jcr</artifactId>
       <version>${jackrabbit.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-spi-rmi</artifactId>
       <version>0.1</version>
     </dependency>
+    -->
 
     <dependency>
       <groupId>org.hippoecm</groupId>
