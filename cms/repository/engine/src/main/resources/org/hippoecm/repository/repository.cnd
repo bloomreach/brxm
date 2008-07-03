@@ -87,7 +87,7 @@
 - hippo:docbase (string) mandatory // FIXME ought to be reference
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single'
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
 + * multiple
 
 [hippo:type] > nt:base
