@@ -46,11 +46,11 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
 
     private static final long serialVersionUID = 1L;
 
-    private Session userSession;
+    private Session session;
     private Node subject;
 
     public RemodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
-        this.userSession = userSession;
+        this.session = rootSession;
         this.subject = subject;
     }
 
@@ -63,7 +63,6 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         node.addMixin(JcrConstants.MIX_REFERENCEABLE);
         subject.save();
 
-        Session session = userSession;
         // push new node type definition such that it will be loaded
         try {
             Node base = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(
@@ -137,7 +136,7 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
             String prefix = subject.getName();
 
             StringBufferInputStream istream = new StringBufferInputStream(cnd);
-            Remodeling remodel = Remodeling.remodel(userSession, prefix, istream, update);
+            Remodeling remodel = Remodeling.remodel(session, prefix, istream, update);
             NodeIterator iter = remodel.getNodes();
             String[] paths = new String[(int) iter.getSize()];
             for (int i = 0; iter.hasNext(); i++) {
