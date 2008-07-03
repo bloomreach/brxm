@@ -65,60 +65,63 @@ public class RepositoryLocaleFactory implements LocaleFactory {
 
             // try to read from repository base location
             Session jcrSession = JCRConnector.getJCRSession(request.getSession());
-            try {
-                Item item = JCRConnector.getItem(jcrSession, context.getBaseLocation());
-
-                if ((item != null) && item.isNode()) {
-
-                    Node node = (Node) item;
-                    if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-
-                        Value[] facets = node.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
-
-                        int localeIndex = -1;
-                        for (int i = 0; i < facets.length; i++) {
-
-                            if (facets[i].getString().equals(HIPPOSTD_LANGUAGE)) {
-                                localeIndex = i;
-                                break;
+            
+            if (jcrSession != null) {
+                try {
+                    Item item = JCRConnector.getItem(jcrSession, context.getBaseLocation());
+    
+                    if ((item != null) && item.isNode()) {
+    
+                        Node node = (Node) item;
+                        if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+    
+                            Value[] facets = node.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
+    
+                            int localeIndex = -1;
+                            for (int i = 0; i < facets.length; i++) {
+    
+                                if (facets[i].getString().equals(HIPPOSTD_LANGUAGE)) {
+                                    localeIndex = i;
+                                    break;
+                                }
+                            }
+    
+                            Value[] facetValues = node.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
+                            if (localeIndex == -1) {
+                                LOGGER.info("No value " + HIPPOSTD_LANGUAGE + " found in property " +
+                                        HippoNodeType.HIPPO_FACETS + " of facetselect node " + node.getPath());
+                            }
+    
+                            else if (localeIndex >= facetValues.length) {
+                                LOGGER.error("Value index " + localeIndex +
+                                        " of property " + HIPPOSTD_LANGUAGE + " is too high for property "
+                                        + HippoNodeType.HIPPO_VALUES + " with length " + facetValues.length);
+                            }
+    
+                            // OK
+                            else {
+    
+                                String localeStr = facetValues[localeIndex].getString();
+                                locale = parseLocaleString(localeStr);
                             }
                         }
-
-                        Value[] facetValues = node.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
-                        if (localeIndex == -1) {
-                            LOGGER.info("No value " + HIPPOSTD_LANGUAGE + " found in property " +
-                                    HippoNodeType.HIPPO_FACETS + " of facetselect node " + node.getPath());
-                        }
-
-                        else if (localeIndex >= facetValues.length) {
-                            LOGGER.error("Value index " + localeIndex +
-                                    " of property " + HIPPOSTD_LANGUAGE + " is too high for property "
-                                    + HippoNodeType.HIPPO_VALUES + " with length " + facetValues.length);
-                        }
-
-                        // OK
+    
+                        // no facetselect
                         else {
-
-                            String localeStr = facetValues[localeIndex].getString();
-                            locale = parseLocaleString(localeStr);
+    
+                            // direct property?
+                            if (node.hasProperty(HIPPOSTD_LANGUAGE)) {
+                                String localeStr = node.getProperty(HIPPOSTD_LANGUAGE).getString();
+                                locale = parseLocaleString(localeStr);
+                            }    
                         }
-                    }
-
-                    // no facetselect
-                    else {
-
-                        // direct property?
-                        if (node.hasProperty(HIPPOSTD_LANGUAGE)) {
-                            String localeStr = node.getProperty(HIPPOSTD_LANGUAGE).getString();
-                            locale = parseLocaleString(localeStr);
-                        }    
                     }
                 }
+                catch (RepositoryException re) {
+                    throw new IllegalStateException(re);
+                }
             }
-            catch (RepositoryException re) {
-                throw new IllegalStateException(re);
-            }
-
+            
              // default
             if (locale == null) {
                 locale = Locale.ENGLISH;
