@@ -51,6 +51,8 @@ public class FolderWorkflowImpl implements FolderWorkflow {
     private Session rootSession;
     private Node subject;
 
+    private final String ATTIC_PATH = "/content/attic"; // FIXME
+
     public FolderWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.subject = subject;
         this.userSession = userSession;
@@ -211,16 +213,27 @@ public class FolderWorkflowImpl implements FolderWorkflow {
 
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         name = ISO9075Helper.encodeLocalName(name);
-        Node root = userSession.getRootNode();
-        String path = subject.getPath() + "/" + name;
-        if (root.hasNode(path)) {
-            Node offspring = root.getNode(path);
-            if (subject.getPath().equals("/attic")) {
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        if (folder.hasNode(name)) {
+            Node offspring = folder.getNode(name);
+            if (subject.getPath().equals(ATTIC_PATH)) {
                 offspring.remove();
+                folder.save();
             } else {
-                userSession.getWorkspace().move(path, "/attic" + offspring.getName());
+                userSession.getWorkspace().move(path, ATTIC_PATH + offspring.getName());
             }
+        }
+    }
 
+    public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        name = ISO9075Helper.encodeLocalName(name);
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        if (folder.hasNode(name)) {
+            Node offspring = folder.getNode(name);
+            offspring.remove();
+            folder.save();
         }
     }
 

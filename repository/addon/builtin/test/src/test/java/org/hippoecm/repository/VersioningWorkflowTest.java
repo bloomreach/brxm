@@ -82,7 +82,7 @@ public class VersioningWorkflowTest extends TestCase {
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "published");
-        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
 
         node = root.addNode("baredocument", "hippo:document");
@@ -90,7 +90,7 @@ public class VersioningWorkflowTest extends TestCase {
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "published");
-        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
 
         session.save();
@@ -135,7 +135,7 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("baredocument");
         node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
+        node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
         session.save();
 
         versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
@@ -144,7 +144,7 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("baredocument");
         node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
+        node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
         session.save();
 
         versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
@@ -153,7 +153,7 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("baredocument");
         node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
+        node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
         session.save();
         versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
         versionwf.version();
@@ -161,7 +161,7 @@ public class VersioningWorkflowTest extends TestCase {
 
         node = root.getNode("baredocument");
         node.checkout();
-        node.setProperty("hippostd:username", node.getProperty("hippostd:username").getString() + ".");
+        node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
         session.save();
         versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
         Map<Calendar, Set<String>> history = versionwf.list();
@@ -170,7 +170,7 @@ public class VersioningWorkflowTest extends TestCase {
             document = versionwf.retrieve(entry.getKey());
             Node version = session.getNodeByUUID(document.getIdentity());
             if (count > 0) {
-                assertEquals("admin" + "...........".substring(1, count++), version.getProperty("hippostd:username").getString());
+                assertEquals("admin" + "...........".substring(1, count++), version.getProperty("hippostd:holder").getString());
             } else {
                 ++count;
             }

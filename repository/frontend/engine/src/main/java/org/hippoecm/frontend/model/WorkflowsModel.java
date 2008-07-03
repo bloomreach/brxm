@@ -102,7 +102,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                         }
                     }
                 }
-            } else if (handle.isNodeType("hippo:prototyped") || handle.isNodeType("hippo:templatetype") || handle.isNodeType("rep:root")
+            } else if (handle.isNodeType("hippo:templatetype") || handle.isNodeType("rep:root")
                     || handle.isNodeType("hippo:namespace") || handle.isNodeType("hippo:namespacefolder")
                     || handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);

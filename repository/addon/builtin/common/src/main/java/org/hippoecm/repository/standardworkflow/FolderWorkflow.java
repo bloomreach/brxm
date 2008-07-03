@@ -37,4 +37,6 @@ public interface FolderWorkflow extends Workflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void archive(String name)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void delete(String name)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

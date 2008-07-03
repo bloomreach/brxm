@@ -79,7 +79,6 @@ public interface HippoNodeType {
     final public static String NT_NODETYPE = "hippo:nodetype";
     final public static String NT_OCMQUERY = "hippo:ocmquery";
     final public static String NT_OCMQUERYFOLDER = "hippo:ocmqueryfolder";
-    final public static String NT_PROTOTYPED = "hippo:prototyped";
     final public static String NT_REMODEL = "hippo:remodel";
     final public static String NT_REQUEST = "hippo:request";
     final public static String NT_ROLE = "hippo:role";

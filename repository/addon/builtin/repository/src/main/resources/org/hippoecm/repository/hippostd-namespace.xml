@@ -100,7 +100,7 @@
             <sv:value>String</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippostd:username</sv:value>
+            <sv:value>hippostd:holder</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

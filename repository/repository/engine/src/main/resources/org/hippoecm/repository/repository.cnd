@@ -223,9 +223,6 @@
 - hippo:mixin (boolean)
 + hippo:field (hippo:field) multiple
 
-[hippo:prototyped] mixin
-- hippo:prototype (string) mandatory
-
 [hippo:templatetype] orderable
 + hippo:nodetype (hippo:handle) mandatory
 + hippo:template (hippo:handle)

@@ -22,7 +22,7 @@
     </class>
     <class name="BasicReviewedActionsWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="username" column="hippostd:username"/>
+      <field name="username" column="hippostd:holder"/>
       <field name="draft" column="../{.}[hippostd:state='draft']"/>
       <field name="unpublished" column="../{.}[hippostd:state='unpublished']"/>
       <field name="published" column="../{.}[hippostd:state='published']"/>
@@ -41,7 +41,7 @@
     <class name="PublishableDocument" detachable="true" table="documents">
       <inheritance strategy="new-table"/>
       <field name="state" column="hippostd:state"/>
-      <field name="username" column="hippostd:username"/>
+      <field name="username" column="hippostd:holder"/>
     </class>
     <class name="PublicationRequest" detachable="true" table="documents">
       <datastore-identity strategy="native"/>

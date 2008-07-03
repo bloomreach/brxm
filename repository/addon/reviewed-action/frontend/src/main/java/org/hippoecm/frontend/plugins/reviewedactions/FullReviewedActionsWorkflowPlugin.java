@@ -19,8 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,11 +35,11 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -157,8 +161,39 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();
-            }
-        });
+
+                
+                WorkflowsModel model = (WorkflowsModel) getModel();
+
+                    Node node = model.getNodeModel().getNode();
+                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT))
+                        node = node.getParent();
+                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        boolean isEmpty = true;
+                        for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
+                            Node child = iter.nextNode();
+                            if(child.isNodeType(HippoNodeType.NT_DOCUMENT))
+                                isEmpty = false;
+                            break;
+                        }
+                        if(isEmpty) {
+                            Node ancestor = node.getParent();
+                            while (ancestor != null && !ancestor.isNodeType(HippoNodeType.NT_HANDLE) &&
+                                                       !ancestor.isNodeType(HippoNodeType.NT_DOCUMENT) &&
+                                                       !ancestor.isNodeType("rep:root")) {
+                                ancestor = ancestor.getParent();
+                            }
+                            if (ancestor != null && ancestor.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                                String relPath = node.getPath().substring(ancestor.getPath().length());
+                                HippoWorkspace workspace = (HippoWorkspace) ancestor.getSession().getWorkspace();
+                                Workflow ancestorWorkflow = workspace.getWorkflowManager().getWorkflow("embedded", ancestor);
+                                if(ancestorWorkflow instanceof FolderWorkflow) {
+                                    ((FolderWorkflow)workflow).archive(relPath);
+                                }
+                            }
+                        }
+                    }
+            }});
     }
 
     @Override
