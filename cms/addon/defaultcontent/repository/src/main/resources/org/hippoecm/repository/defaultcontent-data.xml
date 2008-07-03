@@ -17,37 +17,38 @@
 <sv:node sv:name="content" xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+  xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
   xmlns:jcr="http://www.jcp.org/jcr/1.0"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
   xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>nt:unstructured</sv:value>
+    <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>mix:referenceable</sv:value>
-    <sv:value>hippo:prototyped</sv:value>
+    <sv:value>hippo:harddocument</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:prototype" sv:type="String">
-    <sv:value></sv:value>
+  <sv:property sv:name="hippo:paths" sv:type="String">
   </sv:property>
   <sv:node sv:name="articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:prototyped</sv:value>
+      <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:prototype" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent/defaultcontent:article/hippo:prototype</sv:value>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:paths" sv:type="String">
+      <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
     </sv:property>
     <sv:node sv:name="myarticle1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -168,17 +169,19 @@
   </sv:node>
   <sv:node sv:name="news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:prototyped</sv:value>
+      <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:prototype" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent/defaultcontent:news/hippo:prototype</sv:value>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:paths" sv:type="String">
+      <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
     </sv:property>
     <sv:node sv:name="mynews1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -228,17 +231,19 @@
   </sv:node>
   <sv:node sv:name="events">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:prototyped</sv:value>
+      <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:prototype" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent/defaultcontent:event/hippo:prototype</sv:value>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:paths" sv:type="String">
+      <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>document</sv:value>
     </sv:property>
     <sv:node sv:name="myevent1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -288,17 +293,24 @@
   </sv:node>
   <sv:node sv:name="overviews">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>nt:unstructured</sv:value>
+      <sv:value>hippostd:folder</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:prototyped</sv:value>
+    <sv:property sv:name="hippo:paths" sv:type="String">
+      <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>4e557532-98ff-4673-a289-5cdbb2822eed</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:prototype" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent/defaultcontent:overview/hippo:prototype</sv:value>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>document</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="attic">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>nt:unstructured</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

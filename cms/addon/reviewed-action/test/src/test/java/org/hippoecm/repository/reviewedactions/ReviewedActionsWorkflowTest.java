@@ -49,7 +49,7 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
         node = node.addNode("myarticle", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("content", LOREM);
-        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:state", "draft");
 
         session.save();

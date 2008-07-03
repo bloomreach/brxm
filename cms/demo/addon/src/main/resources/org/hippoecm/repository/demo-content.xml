@@ -42,7 +42,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -59,7 +59,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -85,7 +85,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -102,7 +102,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -128,7 +128,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -148,7 +148,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:pageLabel" sv:type="String">
@@ -176,7 +176,7 @@
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>
       </sv:property>
-      <sv:property sv:name="hippostd:username" sv:type="String">
+      <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:node sv:name="demo:query">
@@ -198,7 +198,7 @@
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>published</sv:value>
       </sv:property>
-      <sv:property sv:name="hippostd:username" sv:type="String">
+      <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
       </sv:property>
       <sv:node sv:name="demo:query">
@@ -231,7 +231,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">
@@ -274,7 +274,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">
@@ -297,7 +297,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>published</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">
@@ -326,7 +326,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">
@@ -369,7 +369,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">
@@ -413,7 +413,7 @@
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
-        <sv:property sv:name="hippostd:username" sv:type="String">
+        <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="demo:title" sv:type="String">

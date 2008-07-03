@@ -32,7 +32,11 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowDialog extends AbstractWorkflowDialog {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
+
     private String category;
     private String prototype;
     private String name;

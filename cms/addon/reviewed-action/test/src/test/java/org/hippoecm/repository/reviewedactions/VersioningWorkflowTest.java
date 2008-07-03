@@ -84,7 +84,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "unpublished");
-        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
 
         node = root.addNode("baredocument", "hippo:document");
@@ -92,7 +92,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "unpublished");
-        node.setProperty("hippostd:username", "admin");
+        node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
 
         session.save();

@@ -18,25 +18,62 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.apache.wicket.markup.html.basic.Label;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.Model;
+
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
+import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrItemModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.standardworkflow.EditmodelWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
     transient Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
+
+    String item;
 
     public FolderEmbeddedWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        add(new Label("delete-dialog", "delete"));
-        add(new Label("move-dialog", "move"));
-        add(new Label("rename-dialog", "rename"));
-        add(new Label("duplicate-dialog", "duplicate"));
+        item = (String) config.get(EmbedWorkflowPlugin.ITEM_ID);
+
+        //add(new Label("delete-dialog", "delete"));
+
+        add(new DialogLink("delete-dialog", new Model("Delete"), new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService dialogService) {
+                return new DeleteDialog(FolderEmbeddedWorkflowPlugin.this, dialogService);
+            }
+        }, getDialogService()));
+
+
+        //add(new Label("move-dialog", "move"));
+        //add(new Label("rename-dialog", "rename"));
+        //add(new Label("duplicate-dialog", "duplicate"));
     }
 
     private void writeObject(ObjectOutputStream out)
@@ -50,4 +87,27 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         log = LoggerFactory.getLogger(FolderEmbeddedWorkflowPlugin.class);
     }
 
+    class DeleteDialog extends AbstractWorkflowDialog {
+        private static final long serialVersionUID = 1L;
+
+        public DeleteDialog(FolderEmbeddedWorkflowPlugin plugin, IDialogService dialogWindow) {
+            super(plugin, dialogWindow, "Delete item");
+
+            WorkflowsModel wflModel = (WorkflowsModel) plugin.getModel();
+            if (wflModel.getNodeModel().getNode() == null) {
+                ok.setVisible(false);
+            }
+        }
+
+        @Override
+            protected void execute() throws Exception {
+            FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
+            workflow.delete(item);
+        }
+
+        @Override
+            public void cancel() {
+        }
+    }
 }
+

@@ -24,11 +24,7 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:prototyped</sv:value>
     <sv:value>mix:referenceable</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:prototype" sv:type="String">
-    <sv:value>/hippo:namespaces/hippo/hippo:templatetype/hippo:prototype/hippo:prototype</sv:value>
   </sv:property>
 
   <!-- "Article" template -->

@@ -137,20 +137,17 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
             }
         }
 
+        String workflowId = config.getString(WORKFLOW_ID) + (wflCount++);
+        String modelId = workflowId + ".model";
+
         IPluginConfig wflConfig = new JavaPluginConfig();
         wflConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
-
-        String className = model.getWorkflowName();
-        wflConfig.put(IPlugin.CLASSNAME, className);
-        wflConfig.put(IEditService.EDITOR_ID, config.get(IEditService.EDITOR_ID));
-        wflConfig.put(IBrowseService.BROWSER_ID, config.get(IBrowseService.BROWSER_ID));
+        wflConfig.put(RenderService.MODEL_ID, modelId);
+        wflConfig = configureWorkflow(wflConfig, model);
 
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
         clusterConfig.addPlugin(wflConfig);
 
-        String workflowId = config.getString(WORKFLOW_ID) + (wflCount++);
-        String modelId = workflowId + ".model";
-        wflConfig.put(RenderService.MODEL_ID, modelId);
         ModelService modelService = new ModelService(modelId, model);
         modelService.init(context);
         models.put(workflowId, modelService);
@@ -165,6 +162,14 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         context.registerService(this, context.getReference(renderer).getServiceId());
 
         workflows.put(controlId, plugin);
+    }
+
+    protected IPluginConfig configureWorkflow(IPluginConfig wflConfig, WorkflowsModel model) {
+        String className = model.getWorkflowName();
+        wflConfig.put(IPlugin.CLASSNAME, className);
+        wflConfig.put(IEditService.EDITOR_ID, config.get(IEditService.EDITOR_ID));
+        wflConfig.put(IBrowseService.BROWSER_ID, config.get(IBrowseService.BROWSER_ID));
+        return wflConfig;
     }
 
     private void closeWorkflows() {

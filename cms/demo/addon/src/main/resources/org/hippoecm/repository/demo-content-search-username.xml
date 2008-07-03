@@ -16,7 +16,7 @@
         <sv:value>/site/documents</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:username</sv:value>
+        <sv:value>hippostd:holder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:queryname" sv:type="String">
         <sv:value>username-search</sv:value>

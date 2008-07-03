@@ -129,7 +129,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     public void onModelChanged() {
         super.onModelChanged();
         JcrNodeModel model = (JcrNodeModel) getModel();
-        if (model != null) {
+        if (model != null && model.getNode() != null) {
             try {
                 Node modelNode = model.getNode();
                 if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
