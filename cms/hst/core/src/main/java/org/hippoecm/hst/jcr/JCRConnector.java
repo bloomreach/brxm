@@ -72,6 +72,10 @@ public class JCRConnector {
 
     public static Item getItem(Session session, String path) throws RepositoryException {
 
+        if (session == null) {
+            throw new IllegalArgumentException("No JCR session available to get an item");
+        }
+        
         Node node = session.getRootNode();
 
         // strip first slash
