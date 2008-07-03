@@ -384,21 +384,18 @@ public class SiteMapTag extends SimpleTagSupport {
             boolean isFirst = getLevel() == currentLevel;
 
             // loop
-            Iterator<SiteMapItem> documents = documentItems.iterator();
-            Iterator<SiteMapItem> folders = folderItems.iterator();
-
-            boolean doWriteDocuments = documents.hasNext();
-            boolean doWriteFolders = folders.hasNext();
+            boolean doWriteDocuments = documentItems.size() > 0;
+            boolean doWriteFolders = folderItems.size() > 0;
 
             if (doWriteDocuments || doWriteFolders) {
 
                 if (isFirst) {
                     buffer.append("<div id=\"");
                     buffer.append(getId());
-                    buffer.append("\">\n");
+                    buffer.append("\">");
                 }
 
-                buffer.append("<ul class=\"level");
+                buffer.append("\n<ul class=\"level");
                 buffer.append(currentLevel);
                 buffer.append("\">\n");
 
@@ -406,11 +403,18 @@ public class SiteMapTag extends SimpleTagSupport {
                 if (doWriteFolders) {
                     buffer.append("  <li class=\"folders\"><ul>\n");
 
-                    while (folders.hasNext()) {
-                        SiteMapItem folder = folders.next();
+                    int index = 0;
+                    while (index < folderItems.size()) {
+                        SiteMapItem folder = folderItems.get(index);
 
-                        buffer.append("    <li class=\"folder\">");
-                        buffer.append("<a title=\"");
+                        buffer.append("    <li class=\"folder");
+                        if (index == 0) {
+                            buffer.append(" first");
+                        }
+                        else if (index == folderItems.size() - 1) {
+                            buffer.append(" last");
+                        }
+                        buffer.append("\"><a title=\"");
                         buffer.append(folder.getLabel());
                         buffer.append("\" href=\"");
                         buffer.append(encodePath(folder.getPath(), request, response));
@@ -423,21 +427,30 @@ public class SiteMapTag extends SimpleTagSupport {
                                 folder.getLevel() + 1, pageContext);
 
                         buffer.append("    </li>\n");
+                        
+                        index++;
                     }
 
 
                     buffer.append("  </ul></li>\n");
                 }
 
+                // loop document items for output
                 if (doWriteDocuments) {
                     buffer.append("  <li class=\"documents\"><ul>\n");
 
-                    // loop document items for output
-                    while (documents.hasNext()) {
-                        SiteMapItem document = documents.next();
+                    int index = 0;
+                    while (index < documentItems.size()) {
+                        SiteMapItem document = documentItems.get(index);
 
-                        buffer.append("    <li class=\"document\">");
-                        buffer.append("<a title=\"");
+                        buffer.append("    <li class=\"document");
+                        if (index == 0) {
+                            buffer.append(" first");
+                        }
+                        else if (index == documentItems.size() - 1) {
+                            buffer.append(" last");
+                        }
+                        buffer.append("\"><a title=\"");
                         buffer.append(document.getLabel());
                         buffer.append("\" href=\"");
                         buffer.append(encodePath(document.getPath(), request, response));
@@ -450,6 +463,8 @@ public class SiteMapTag extends SimpleTagSupport {
                                 document.getLevel() + 1, pageContext);
 
                         buffer.append("    </li>\n");
+                        
+                        index++;
                     }
 
                     buffer.append("  </ul></li>\n");
