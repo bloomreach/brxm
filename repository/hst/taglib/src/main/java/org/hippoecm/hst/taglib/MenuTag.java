@@ -356,13 +356,12 @@ public class MenuTag extends SimpleTagSupport {
             boolean isFirst = getLevel() == currentLevel;
 
             // loop
-            Iterator<MenuItem> iterator = menuItems.iterator();
-            if (iterator.hasNext()) {
+            if (!menuItems.isEmpty()) {
 
                 HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
                 HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-                buffer.append("<ul");
+                buffer.append("\n<ul");
                 if (isFirst) {
                     buffer.append(" id=\"");
                     buffer.append(getId());
@@ -371,11 +370,18 @@ public class MenuTag extends SimpleTagSupport {
                 buffer.append(">\n");
 
                 // loop menu items for output
-                while (iterator.hasNext()) {
-                    MenuItem item = iterator.next();
+                int index = 0;
+                while (index < menuItems.size()) {
+                    MenuItem item = menuItems.get(index);
 
-                    buffer.append("<li>");
-                    buffer.append("<a class=\"");
+                    buffer.append("<li");
+                    if (index == 0) {
+                        buffer.append(" class=\"first\"");
+                    }
+                    else if (index == (menuItems.size() - 1)) {
+                        buffer.append(" class=\"last\"");
+                    }
+                    buffer.append("><a class=\"");
                     buffer.append(item.isActive() ? "active" : "inactive");
                     buffer.append("\" title=\"");
                     buffer.append(item.getLabel());
@@ -389,6 +395,8 @@ public class MenuTag extends SimpleTagSupport {
                     writeDefaultOutput(buffer, item.getItems(), item.getLevel() + 1, pageContext);
 
                     buffer.append("</li>\n");
+                    
+                    index++;
                 }
 
                 buffer.append("</ul>\n");
