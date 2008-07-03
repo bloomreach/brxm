@@ -133,9 +133,11 @@ public abstract class TestCase
                 session.getRootNode().getNode("test").remove();
             }
             session.logout();
+            session = null;
         }
         if (external == null && server != null) {
             server.close();
+            server = null;
         }
         if(clearRepository)
             clear();
