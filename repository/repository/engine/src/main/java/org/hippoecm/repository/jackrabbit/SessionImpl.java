@@ -23,12 +23,17 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
@@ -118,7 +123,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     public String getUserID() {
         return helper.getUserID();
     }
-
+    
     /**
      * Method to expose the authenticated users' principals
      * @return Set An unmodifialble set containing the principals
@@ -127,8 +132,8 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
         return helper.getUserPrincipals();
     }
 
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
-                                                                                         NoSuchNodeTypeException, RepositoryException {
+    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,                                                                      NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
     }
+
 }

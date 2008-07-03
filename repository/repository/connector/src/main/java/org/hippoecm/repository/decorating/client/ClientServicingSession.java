@@ -15,14 +15,24 @@
  */
 package org.hippoecm.repository.decorating.client;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
@@ -65,5 +75,31 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     public NodeIterator pendingChanges() throws RepositoryException {
         return pendingChanges(null, null, false);
+    }
+
+    public void exportDereferencedView(String path, OutputStream output, boolean binaryAsLink, boolean noRecurse)
+        throws IOException, PathNotFoundException, RepositoryException, RemoteException {
+        try {
+            byte[] xml = remote.exportDereferencedView(path, binaryAsLink, noRecurse);
+            output.write(xml);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+    
+    public void importDereferencedXML(String path, InputStream xml, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+        try {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] bytes = new byte[4096];
+            for (int n = xml.read(bytes); n != -1; n = xml.read(bytes)) {
+                buffer.write(bytes, 0, n);
+            }
+            remote.importDereferencedXML(path, buffer.toByteArray(), uuidBehavior, referenceBehavior, mergeBehavior);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
     }
 }

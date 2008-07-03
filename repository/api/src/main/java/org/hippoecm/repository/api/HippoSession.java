@@ -15,12 +15,22 @@
  */
 package org.hippoecm.repository.api;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 
 public interface HippoSession extends Session {
     @SuppressWarnings("unused")
@@ -73,4 +83,51 @@ public interface HippoSession extends Session {
      * @see pendingChanges(Node,String,boolean)
      */
     public NodeIterator pendingChanges() throws RepositoryException;
+    
+    /**
+     * DO NOT USE: api of this method has not yet stabilized!
+     * Export a dereferenced view of a node. Node references will be rewritten to 
+     * absolute paths and some auto generated properties will be stripped, such as 
+     * versioning properties and hippo:paths. In every other way the method is 
+     * similar to <link>avax.jcr.Session.exportSystemView</link>.
+     * @see org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator
+     * @see javax.jcr.Session.exportSystemView(String,ContentHandler,boolean,boolean)
+     */
+//    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
+//            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException;
+
+    /**
+     * DO NOT USE: api of this method has not yet stabilized!
+     * Export a dereferenced view of a node. 
+     * @see exportDereferencedView(String,ContentHandler,boolean,boolean)
+     * @see org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator
+     * @see javax.jcr.Session.exportSystemView(String,OutputStream,boolean,boolean)
+     */
+    public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+            throws IOException, PathNotFoundException, RepositoryException;
+
+    /**
+     * DO NOT USE: api of this method has not yet stabilized!
+     * Import a dereferenced export 
+     * @see exportDereferencedView(String,ContentHandler,boolean,boolean)
+     * @see javax.jcr.Session.importXML(String,ContentHandler,boolean)
+     * @see org.hippoecm.repository.api.ImportReferenceBehavior
+     * @see org.hippoecm.repository.api.ImportMergeBehavior
+     */
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException;
+
+    /**
+     * DO NOT USE: api of this method has not yet stabilized!
+     * Get the content handler for a dereferenced export
+     * @see importDerereferencedXML(String,InputStream,int,int)
+     * @see javax.jcr.Session.importXML(String,ContentHandler,boolean)
+     * @see org.hippoecm.repository.api.ImportReferenceBehavior
+     * @see org.hippoecm.repository.api.ImportMergeBehavior
+     */
+//    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
+//            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+//            VersionException, LockException, RepositoryException;
 }

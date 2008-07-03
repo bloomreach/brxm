@@ -66,6 +66,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
+import org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -309,6 +310,54 @@ public class SessionDecorator implements XASession, HippoSession {
     /**
      * Forwards the method call to the underlying session.
      */
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehaviour,
+            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            VersionException, LockException, RepositoryException {
+        return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
+    }
+
+    /**
+     * Forwards the method call to the underlying session.
+     */
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehaviour, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+        session.importXML(parentAbsPath, in, uuidBehaviour);
+    }
+
+
+    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
+            throws PathNotFoundException, SAXException, RepositoryException {
+
+        // check sanity of this session
+        session.isLive();
+
+        Item item = getItem(absPath);
+        if (!item.isNode()) {
+            // there's a property, though not a node at the specified path
+            throw new PathNotFoundException(absPath);
+        }
+        new HippoSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+    }
+
+    public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+            throws IOException, PathNotFoundException, RepositoryException {
+        try {
+            ContentHandler handler = getExportContentHandler(out);
+            this.exportDereferencedView(absPath, handler, binaryAsLink, noRecurse);
+        } catch (SAXException e) {
+            Exception exception = e.getException();
+            if (exception instanceof RepositoryException) {
+                throw (RepositoryException) exception;
+            } else if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else {
+                throw new RepositoryException("Error serializing system view XML", e);
+            }
+        }
+    }
+    
     public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
 

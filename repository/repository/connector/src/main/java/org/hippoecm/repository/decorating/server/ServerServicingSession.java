@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.decorating.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 import javax.jcr.NamespaceException;
@@ -24,11 +27,8 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.server.ServerSession;
-
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 
 public class ServerServicingSession extends ServerSession implements RemoteServicingSession {
@@ -59,6 +59,26 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
             throw getRepositoryException(ex);
         } catch (NoSuchNodeTypeException ex) {
             throw getRepositoryException(ex);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse)
+            throws IOException, RepositoryException, RemoteException {
+        try {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            session.exportDereferencedView(path, buffer, binaryAsLink, noRecurse);
+            return buffer.toByteArray();
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+    
+    public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, RepositoryException, RemoteException {
+        try {
+            session.importDereferencedXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior, mergeBehavior);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

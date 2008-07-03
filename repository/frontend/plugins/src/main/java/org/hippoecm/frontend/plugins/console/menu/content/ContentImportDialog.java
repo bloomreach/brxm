@@ -15,11 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.content;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
-import javax.jcr.Node;
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
@@ -37,7 +47,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,26 +125,54 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                     throw new IllegalStateException("Unable to write to temp file");
                 }
 
-                msgText.setObject("file uploaded.");
-                
-                // create initialize node
+                msgText.setObject("file uploaded. Start import..");
+
+                // do import
                 try {
-                    Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
-                    Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
-                    
-                    if (initNode.hasNode("import-content")) {
-                        initNode.getNode("import-content").remove();
-                    }
-                    Node node = initNode.addNode("import-content", HippoNodeType.NT_INITIALIZEITEM);
-                    node.setProperty(HippoNodeType.HIPPO_CONTENTRESOURCE, "file://" + newFile.getAbsolutePath());
-                    node.setProperty(HippoNodeType.HIPPO_CONTENTROOT, nodeModel.getNode().getPath());
-                    rootNode.getSession().save();
-                    msgText.setObject("initialize node saved.");
-                    
-                } catch (RepositoryException e) {
-                    log.error("Error while creating nodetypes initialization node: ", e);
-                    throw new RuntimeException(e.getMessage());
+                    InputStream contentStream = new BufferedInputStream(new FileInputStream(newFile));
+                    String absPath = nodeModel.getNode().getPath();
+                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, 0 ,0);
+                } catch (PathNotFoundException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (ItemExistsException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (ConstraintViolationException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (VersionException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (InvalidSerializedDataException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (LockException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (RepositoryException ex) {
+                    log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+                } catch (FileNotFoundException e) {
+                    log.warn("Content resource file not found: " + newFile.getAbsolutePath(), e);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
+                msgText.setObject("Import done.");
+                
+                
+//                // create initialize node
+//                try {
+//                    Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
+//                    Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
+//                    
+//                    if (initNode.hasNode("import-content")) {
+//                        initNode.getNode("import-content").remove();
+//                    }
+//                    Node node = initNode.addNode("import-content", HippoNodeType.NT_INITIALIZEITEM);
+//                    node.setProperty(HippoNodeType.HIPPO_CONTENTRESOURCE, "file://" + newFile.getAbsolutePath());
+//                    node.setProperty(HippoNodeType.HIPPO_CONTENTROOT, nodeModel.getNode().getPath());
+//                    rootNode.getSession().save();
+//                    msgText.setObject("initialize node saved.");
+//                    
+//                } catch (RepositoryException e) {
+//                    log.error("Error while creating nodetypes initialization node: ", e);
+//                    throw new RuntimeException(e.getMessage());
+//                }
                 
             }
         }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.decorating.remote;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -30,6 +31,14 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
     final static String SVN_ID = "$Id$";
 
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;
+
     public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws RepositoryException,
-                                                                                                RemoteException;
+            RemoteException;
+
+    public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse) throws IOException,
+            RepositoryException, RemoteException;
+
+    public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, RepositoryException, RemoteException;
+
 }
