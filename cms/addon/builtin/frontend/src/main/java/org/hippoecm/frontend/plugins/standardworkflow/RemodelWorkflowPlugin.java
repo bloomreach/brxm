@@ -29,6 +29,9 @@ import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
 import org.hippoecm.frontend.service.IJcrService;
 
 public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {

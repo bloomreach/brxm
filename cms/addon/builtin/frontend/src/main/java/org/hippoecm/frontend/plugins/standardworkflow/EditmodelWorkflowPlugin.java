@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -27,6 +28,9 @@ import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CopyModelDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.EditModelDialog;
 
 public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public EditmodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {

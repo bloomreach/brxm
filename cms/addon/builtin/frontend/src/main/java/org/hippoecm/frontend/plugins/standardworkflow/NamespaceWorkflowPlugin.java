@@ -26,6 +26,9 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
 
 public class NamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public NamespaceWorkflowPlugin(IPluginContext context, IPluginConfig config) {

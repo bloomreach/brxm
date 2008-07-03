@@ -20,6 +20,8 @@ import java.util.Set;
 import org.apache.wicket.model.IDetachable;
 
 public interface IFieldDescriptor extends IDetachable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String getName();
 
