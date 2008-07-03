@@ -15,21 +15,20 @@
  */
 package org.hippoecm.repository.decorating.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.server.ServerXASession;
-
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 
 public class ServerServicingXASession extends ServerXASession implements RemoteServicingXASession {
@@ -52,14 +51,35 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
     }
 
     public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,
-                                                                 NoSuchNodeTypeException, RepositoryException, RemoteException {
+            NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
-            return getFactory().getRemoteNodeIterator(session.pendingChanges(session.getRootNode().getNode(absPath.substring(1)),
-                                                                             nodeType, prune));
+            return getFactory().getRemoteNodeIterator(
+                    session.pendingChanges(session.getRootNode().getNode(absPath.substring(1)), nodeType, prune));
         } catch (NamespaceException ex) {
             throw getRepositoryException(ex);
         } catch (NoSuchNodeTypeException ex) {
             throw getRepositoryException(ex);
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse) throws IOException,
+            RepositoryException, RemoteException {
+        try {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            session.exportDereferencedView(path, buffer, binaryAsLink, noRecurse);
+            return buffer.toByteArray();
+        } catch (RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, RepositoryException, RemoteException {
+        try {
+            session.importDereferencedXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior,
+                    mergeBehavior);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.repository.api.HippoSession;
 import org.w3c.dom.Document;
 
 public class ContentExportDialog extends AbstractDialog {
@@ -92,7 +93,7 @@ public class ContentExportDialog extends AbstractDialog {
                     try {
                         Node node = nodeModel.getNode();
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        node.getSession().exportSystemView(node.getPath(), out, skipBinary, false);
+                        ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
                         export = prettyPrint(out.toByteArray());
                     } catch (Exception e) {
                         export = e.getMessage();

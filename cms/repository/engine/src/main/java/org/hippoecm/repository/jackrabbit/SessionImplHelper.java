@@ -26,15 +26,17 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -46,11 +48,18 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
+import org.apache.jackrabbit.core.xml.ImportHandler;
+import org.apache.jackrabbit.core.xml.SessionImporter;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
-
+import org.apache.jackrabbit.spi.commons.conversion.NameException;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 abstract class SessionImplHelper {
     @SuppressWarnings("unused")
@@ -244,5 +253,67 @@ abstract class SessionImplHelper {
                 throw new UnsupportedOperationException("remove");
             }
         };
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ContentHandler getImportContentHandler(String parentAbsPath,
+                                                  int uuidBehavior)
+            throws PathNotFoundException, ConstraintViolationException,
+            VersionException, LockException, RepositoryException {
+        
+        System.err.println("INTERCEPTED getImportContentHandler!");
+        
+        // check sanity of this session
+        if (!sessionImpl.isLive()) {
+            throw new RepositoryException("this session has been closed");
+        }
+
+        NodeImpl parent;
+        try {
+            Path p = sessionImpl.getQPath(parentAbsPath).getNormalizedPath();
+            if (!p.isAbsolute()) {
+                throw new RepositoryException("not an absolute path: " + parentAbsPath);
+            }
+            parent = sessionImpl.getItemManager().getNode(p);
+        } catch (NameException e) {
+            String msg = parentAbsPath + ": invalid path";
+            log.debug(msg);
+            throw new RepositoryException(msg, e);
+        } catch (AccessDeniedException ade) {
+            throw new PathNotFoundException(parentAbsPath);
+        }
+
+        // verify that parent node is checked-out
+        if (!parent.isNew()) {
+            NodeImpl node = parent;
+            while (node.getDepth() != 0) {
+                if (node.hasProperty(NameConstants.JCR_ISCHECKEDOUT)) {
+                    if (!node.getProperty(NameConstants.JCR_ISCHECKEDOUT).getBoolean()) {
+                        String msg = parentAbsPath + ": cannot add a child to a checked-in node";
+                        log.debug(msg);
+                        throw new VersionException(msg);
+                    }
+                }
+                node = (NodeImpl) node.getParent();
+            }
+        }
+
+
+        // check protected flag of parent node
+        if (parent.getDefinition().isProtected()) {
+            String msg = parentAbsPath + ": cannot add a child to a protected node";
+            log.debug(msg);
+            throw new ConstraintViolationException(msg);
+        }
+
+        // check lock status
+        if (!parent.isNew()) {
+            sessionImpl.getLockManager().checkLock(parent);
+        }
+
+        SessionImporter importer = new SessionImporter(parent, sessionImpl, uuidBehavior);
+        return new ImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
     }
 }
