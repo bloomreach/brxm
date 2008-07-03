@@ -15,9 +15,13 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.jcr.RepositoryException;
 
@@ -36,13 +40,78 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     protected class ViewNodeId extends MirrorNodeId {
         private static final long serialVersionUID = 1L;
 
+        /* The following fields MUST be immutable
+         */
         boolean singledView;
-        Map<Name,String> view; // must be immutable
+        LinkedHashMap<Name,String> view;
+        LinkedHashMap<Name,String> order;
 
-        ViewNodeId(NodeId parent, NodeId upstream, Name name, Map<Name,String> view, boolean singledView) {
+        ViewNodeId(NodeId parent, NodeId upstream, Name name, LinkedHashMap<Name,String> view, LinkedHashMap<Name,String> order, boolean singledView) {
             super(ViewVirtualProvider.this, parent, name, upstream);
             this.view = view;
+            this.order = order;
             this.singledView = singledView;
+        }
+
+        class Child implements Comparable<Child> {
+            Name name;
+            ViewNodeId nodeId;
+            Child(Name name, ViewNodeId viewNodeId) {
+                this.name = name;
+                this.nodeId = viewNodeId;
+            }
+            public Name getKey() {
+                return name;
+            }
+            public ViewNodeId getValue() {
+                return ViewNodeId.this;
+            }
+            public int compareTo(Child o) {
+                if(o == null)
+                    throw new NullPointerException();
+
+                if(order == null)
+                    return 0;
+
+                for(Map.Entry<Name,String> entry : order.entrySet()) {
+                    Name facet = entry.getKey();
+                    String value = entry.getValue();
+                    
+                    int thisFacetValueIndex = -1;
+                    String[] thisFacetValues = getProperty(upstream, facet);
+                    if(thisFacetValues != null) {
+                        for(int i=0; i<thisFacetValues.length; i++) {
+                            if(thisFacetValues[i].equals(value)) {
+                                thisFacetValueIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    int otherFacetValueIndex = -1;
+                    String[] otherFacetValues = getProperty(o.getValue().upstream, facet);
+                    if(otherFacetValues != null) {
+                        for(int i=0; i<otherFacetValues.length; i++) {
+                            if(otherFacetValues[i].equals(value)) {
+                                otherFacetValueIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
+                        return -1;
+                    } else if(thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
+                        return 1;
+                    } else if(value == null || value.equals("") || value.equals("*")) {
+                        if(thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
+                            return thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]);
+                        }
+                    }
+                }
+
+                return 0;
+            }
         }
     }
 
@@ -64,12 +133,12 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
     public NodeState populate(NodeState state) throws RepositoryException {
         String docbase = getProperty(state.getNodeId(), docbaseName)[0];
         NodeState dereference = getNodeState(new NodeId(new UUID(docbase)));
-        Map<Name,String> view = new HashMap<Name,String>();
+        LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
         if(dereference != null) {
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(this.match(view, entry.getId())) {
-                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view, false);
+                    NodeId childNodeId = this . new ViewNodeId(state.getNodeId(),entry.getId(),entry.getName(),view,null,false);
                     state.addChildNodeEntry(entry.getName(), childNodeId);
                 }
             }
@@ -96,9 +165,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         return true;
     }
 
-    protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
+   protected void populateChildren(NodeId nodeId, NodeState state, NodeState upstream) {
         ViewNodeId viewId = (ViewNodeId) nodeId;
         boolean isHandle = state.getNodeTypeName().equals(handleName);
+        Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
         for(Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext(); ) {
             NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
             if (!isHandle || match(viewId.view, entry.getId())) {
@@ -108,18 +178,26 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                  * Since match() already populates the nodestates of the child entries, this won't impose
                  * extra performance hit
                  */
-                if (isHandle && viewId.singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
-                    continue;
-                } else {
-                    ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view,
-                            viewId.singledView);
-                    state.addChildNodeEntry(entry.getName(), childNodeId);
-                    if (isHandle && viewId.singledView) {
-                        // stop after first match because single hippo document view
-                        break;
+                if (viewId.singledView && isHandle) {
+                    if (getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
+                        continue;
+                    } else {
+                        ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                        children.add(childNodeId . new Child(entry.getName(), childNodeId));
+                        // stop after first match because single hippo document view, and not using sorted set
+                        if(viewId.order == null)
+                            break;
                     }
+                } else {
+                    ViewNodeId childNodeId = new ViewNodeId(nodeId, entry.getId(), entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                    children.add(childNodeId . new Child(entry.getName(), childNodeId));
                 }
             }
         }
-    }
+        ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
+        Arrays.sort(childrenArray);
+        for(int i=0; i<childrenArray.length && (i==0 || !(viewId.singledView && isHandle)); i++) {
+            state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
+        }
+   }
 }

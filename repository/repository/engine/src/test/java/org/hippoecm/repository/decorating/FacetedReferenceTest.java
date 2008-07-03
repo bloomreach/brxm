@@ -74,7 +74,17 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         "hippo:values",  "dutch",
         "hippo:values",  "published",
         "hippo:modes",   "stick",
-        "hippo:modes",   "clear"
+        "hippo:modes",   "clear",
+        "/test/prefer",                                                       "hippo:facetselect",
+        "hippo:docbase", "/test/documents",
+        "hippo:facets",  "language",
+        "hippo:values",  "dutch",
+        "hippo:modes",   "prefer",
+        "/test/preferonce",                                                   "hippo:facetselect",
+        "hippo:docbase", "/test/documents",
+        "hippo:facets",  "language",
+        "hippo:values",  "dutch",
+        "hippo:modes",   "prefer-single"
     };
 
     @Before
@@ -89,7 +99,8 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         super.tearDown();
     }
 
-    @Test public void testFacetedReference() throws Exception {
+    @Test
+    public void testFacetedReference() throws Exception {
         assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds"));
         assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
         assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds[language='english']"));
@@ -98,5 +109,49 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertNull(traverse(session,"/test/english/articles/war-of-the-worlds/war-of-the-worlds[language='dutch']"));
         assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[language='dutch']"));
         assertNull(traverse(session,"/test/dutch/war-of-the-worlds[language='english']"));
+    }
+
+    @Test
+    public void testPreferenceOrder() throws Exception {
+        Node node = traverse(session, "/test/prefer/articles/war-of-the-worlds");
+        NodeIterator iter = node.getNodes(node.getName());
+        assertTrue(iter.hasNext());
+        node = iter.nextNode();
+        assertNotNull(node);
+        assertEquals("dutch", node.getProperty("language").getString());
+        assertTrue(iter.hasNext());
+        node = iter.nextNode();
+        assertNotNull(node);
+        assertEquals("english", node.getProperty("language").getString());
+        assertFalse(iter.hasNext());
+
+        node = traverse(session, "/test/prefer/articles/the-invisible-man");
+        iter = node.getNodes(node.getName());
+        assertTrue(iter.hasNext());
+        node = iter.nextNode();
+        assertNotNull(node);
+        assertEquals("english", node.getProperty("language").getString());
+        assertFalse(iter.hasNext());
+    }
+
+    @Test
+    public void testPreferenceOnceOrder() throws Exception {
+        org.hippoecm.repository.Utilities.dump(System.err, session.getRootNode().getNode("test"));
+
+        Node node = traverse(session, "/test/preferonce/articles/war-of-the-worlds");
+        NodeIterator iter = node.getNodes(node.getName());
+        assertTrue(iter.hasNext());
+        node = iter.nextNode();
+        assertNotNull(node);
+        assertEquals("dutch", node.getProperty("language").getString());
+        assertFalse(iter.hasNext());
+
+        node = traverse(session, "/test/preferonce/articles/the-invisible-man");
+        iter = node.getNodes(node.getName());
+        assertTrue(iter.hasNext());
+        node = iter.nextNode();
+        assertNotNull(node);
+        assertEquals("english", node.getProperty("language").getString());
+        assertFalse(iter.hasNext());
     }
 }

@@ -15,9 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import javax.jcr.RepositoryException;
 
@@ -75,7 +75,8 @@ public class FacetSelectProvider extends HippoVirtualProvider
         }
         if(dereference != null) {
             boolean singledView = false;
-            Map<Name,String> view = new HashMap<Name,String>();
+            LinkedHashMap<Name,String> view = new LinkedHashMap<Name,String>();
+            LinkedHashMap<Name,String> order = null;
 
             /*
              * If state.getParentId() instanceof ViewNodeId, we know for sure we are dealing with
@@ -100,12 +101,20 @@ public class FacetSelectProvider extends HippoVirtualProvider
                     if(newModes[i].equalsIgnoreCase("single")) {
                         singledView = true;
                     }
+                } else if(newModes[i].equalsIgnoreCase("prefer") || newModes[i].equalsIgnoreCase("prefer-single")) {
+                    if(order == null) {
+                        order = new LinkedHashMap<Name,String>();
+                    }
+                    order.put(resolveName(newFacets[i]), newValues[i]);
+                    if(newModes[i].endsWith("prefer-single")) {
+                        singledView = true;
+                    }
                 } else if(newModes[i].equalsIgnoreCase("clear")) {
                     view.remove(resolveName(newFacets[i]));
                 }
             }
 
-            boolean isHandle =  dereference.getNodeTypeName().equals(handleName);
+            boolean isHandle = dereference.getNodeTypeName().equals(handleName);
             for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                 NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
                 if(subNodesProvider.match(view, entry.getId())) {
@@ -118,8 +127,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                     if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
                         continue;
                     } else {
-                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(),
-                                                                               entry.getName(),view, singledView);
+                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
                         state.addChildNodeEntry(entry.getName(), childNodeId);
                         if(isHandle && singledView) {
                            // stop after first match because single hippo document view
