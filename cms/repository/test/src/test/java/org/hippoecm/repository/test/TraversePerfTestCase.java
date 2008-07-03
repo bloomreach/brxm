@@ -209,7 +209,7 @@ public class TraversePerfTestCase extends TestCase {
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
             org.apache.jackrabbit.spi2jcr.BatchReadConfig cfg = new org.apache.jackrabbit.spi2jcr.BatchReadConfig();
-            cfg.setDepth(, 2);
+            //cfg.setDepth(, 2);
             repoService = new org.apache.jackrabbit.spi2jcr.RepositoryServiceImpl(server.getRepository(), cfg);
             Repository repo3 = org.apache.jackrabbit.jcr2spi.RepositoryImpl.create(new org.apache.jackrabbit.jcr2spi.config.RepositoryConfig() {
                          public RepositoryService getRepositoryService() throws RepositoryException {
