@@ -29,7 +29,7 @@
   </sv:property>
 
   <!-- Test node types configuration -->
-  <sv:node sv:name="test">
+  <sv:node sv:name="test-builtin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
