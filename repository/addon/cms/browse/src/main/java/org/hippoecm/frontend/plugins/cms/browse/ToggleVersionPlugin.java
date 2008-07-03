@@ -26,6 +26,9 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ToggleVersionPlugin extends RenderPlugin {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     public ToggleVersionPlugin(IPluginContext context, IPluginConfig config) {

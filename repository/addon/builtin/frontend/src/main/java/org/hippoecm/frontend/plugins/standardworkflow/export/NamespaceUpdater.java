@@ -24,6 +24,8 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class NamespaceUpdater {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private ITypeStore currentConfig;
     private ITypeStore draftConfig;
