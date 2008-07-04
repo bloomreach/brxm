@@ -310,29 +310,34 @@ public class SessionDecorator implements XASession, HippoSession {
     /**
      * Forwards the method call to the underlying session.
      */
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehaviour,
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
+
+        System.err.println("INTERCEPTED getImportContentHandler!");
+        if (session instanceof XASession) {
+            return ((XASessionImpl) session).getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+        } else {
+            return ((SessionImpl) session).getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+        }
     }
 
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehaviour, int referenceBehavior,
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        session.importXML(parentAbsPath, in, uuidBehaviour);
+
+        System.err.println("INTERCEPTED importDereferencedXML!");
+        if (session instanceof XASession) {
+            ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
+        } else {
+            ((SessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
+        }
     }
 
 
     public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
-
-        // check sanity of this session
-        session.isLive();
-
         Item item = getItem(absPath);
         if (!item.isNode()) {
             // there's a property, though not a node at the specified path

@@ -56,6 +56,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.decorating.NodeDecorator;
+import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,13 +259,11 @@ abstract class SessionImplHelper {
     /**
      * {@inheritDoc}
      */
-    public ContentHandler getImportContentHandler(String parentAbsPath,
-                                                  int uuidBehavior)
-            throws PathNotFoundException, ConstraintViolationException,
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
+            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        
-        System.err.println("INTERCEPTED getImportContentHandler!");
-        
+        System.err.println("INTERCEPTED getDereferencedImportContentHandler!");
+
         // check sanity of this session
         if (!sessionImpl.isLive()) {
             throw new RepositoryException("this session has been closed");
@@ -313,7 +312,7 @@ abstract class SessionImplHelper {
             sessionImpl.getLockManager().checkLock(parent);
         }
 
-        SessionImporter importer = new SessionImporter(parent, sessionImpl, uuidBehavior);
+        DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
         return new ImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
     }
 }
