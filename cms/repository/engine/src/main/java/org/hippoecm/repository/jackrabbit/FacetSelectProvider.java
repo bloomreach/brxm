@@ -88,6 +88,9 @@ public class FacetSelectProvider extends HippoVirtualProvider
                if(viewNodeId.view != null) {
                    view.putAll(viewNodeId.view);
                }
+               if(viewNodeId.order != null) {
+                   order.putAll(viewNodeId.order);
+               }
                singledView = viewNodeId.singledView;
             }
 
