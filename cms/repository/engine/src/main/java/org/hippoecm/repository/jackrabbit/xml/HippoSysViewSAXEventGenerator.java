@@ -40,24 +40,33 @@ import org.xml.sax.SAXException;
  * - virtual nodes are not exported
  * - references are rewritten to paths
  * - some auto generated properties are dropped (hippo:path)
+ * 
+ * Store references as: [MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+propname+REFERENCE_SEPARATOR+refpath
  */
 public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
     private static Logger log = LoggerFactory.getLogger(HippoSysViewSAXEventGenerator.class);
-    
-    /** '*' is not valid in property name, but can of course be used in value */
-    private final static char REFERENCE_SEPARATOR = '*';
-    
-    /** shortcut for quick checks */
-    private final static String JCR_PREFIX = "jcr:";
+
 
     /** this implementation requires a property that can be set on a parent node.  Because this
       * node isn't actually persisted, there will be no constraintviolation, but this property
       * may not clash with any property in the parent node. (FIXME)
       */
     final private static String HIPPO_PATHREFERENCE = "hippo:pathreference";
+    
+    /** '*' is not valid in property name, but can of course be used in value */
+    private final static char REFERENCE_SEPARATOR = '*';
+
+    /** indicate whether original reference property was a multi valued property */
+    private final static String MULTI_VALUE = "m";
+    
+    /** indicate whether original reference property was a single valued property */
+    private final static String SINGLE_VALUE = "s";
+    
+    /** shortcut for quick checks */
+    private final static String JCR_PREFIX = "jcr:";
     
     /** use one factory */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
@@ -116,18 +125,40 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             
             // dereference and create a new property
             try {
-                Node node = session.getNodeByUUID(prop.getString());
-                Value val = session.getValueFactory().createValue(node.getName() + REFERENCE_SEPARATOR + node.getPath());
                 Property pathRef;
-                if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
-                    Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
-                    Value[] newValues = new Value[oldValues.length + 1];
-                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                    newValues[oldValues.length] = val;
-                    pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
+                if (prop.getDefinition().isMultiple()) {
+                    Node node;
+                    Value[] uuidVals = prop.getValues();
+                    Value[] pathVals = new Value[uuidVals.length];
+                    // find all paths
+                    for (int i = 0; i<uuidVals.length; i++) {
+                        node = session.getNodeByUUID(uuidVals[i].getString());
+                        pathVals[i] = session.getValueFactory().createValue(MULTI_VALUE + REFERENCE_SEPARATOR + prop.getName() + REFERENCE_SEPARATOR + node.getPath());
+                    }
+                    if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
+                        // multi value to multi value
+                        Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
+                        Value[] newValues = new Value[oldValues.length + pathVals.length];
+                        System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                        System.arraycopy(pathVals, 0, newValues, oldValues.length, pathVals.length);
+                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
+                    } else {
+                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, pathVals);
+                    }
                 } else {
-                    pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, new Value[]{val});
+                    Node node = session.getNodeByUUID(prop.getString());
+                    Value val = session.getValueFactory().createValue(SINGLE_VALUE + REFERENCE_SEPARATOR + prop.getName() + REFERENCE_SEPARATOR + node.getPath());
+                    if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
+                        Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
+                        Value[] newValues = new Value[oldValues.length + 1];
+                        System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                        newValues[oldValues.length] = val;
+                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
+                    } else {
+                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, new Value[]{val});
+                    }
                 }
+                
                 super.process(pathRef, level);
                 return;
             } catch (ItemNotFoundException e) {

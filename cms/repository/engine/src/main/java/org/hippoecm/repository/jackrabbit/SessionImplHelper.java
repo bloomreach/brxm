@@ -262,7 +262,6 @@ abstract class SessionImplHelper {
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        System.err.println("INTERCEPTED getDereferencedImportContentHandler!");
 
         // check sanity of this session
         if (!sessionImpl.isLive()) {

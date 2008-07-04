@@ -313,8 +313,6 @@ public class SessionDecorator implements XASession, HippoSession {
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-
-        System.err.println("INTERCEPTED getImportContentHandler!");
         if (session instanceof XASession) {
             return ((XASessionImpl) session).getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
         } else {
@@ -326,8 +324,6 @@ public class SessionDecorator implements XASession, HippoSession {
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-
-        System.err.println("INTERCEPTED importDereferencedXML!");
         if (session instanceof XASession) {
             ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
         } else {

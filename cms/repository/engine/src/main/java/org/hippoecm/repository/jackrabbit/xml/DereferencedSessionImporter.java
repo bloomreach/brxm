@@ -16,16 +16,16 @@
 package org.hippoecm.repository.jackrabbit.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
+import javax.jcr.NamespaceException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -36,12 +36,12 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.NodeInfo;
-import org.apache.jackrabbit.core.xml.PropInfo;
 import org.apache.jackrabbit.core.xml.SessionImporter;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.apache.jackrabbit.spi.Path;
+import org.apache.jackrabbit.spi.commons.conversion.NameException;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.uuid.UUID;
-import org.apache.jackrabbit.value.ReferenceValue;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +55,28 @@ public class DereferencedSessionImporter implements Importer {
     private final int uuidBehavior;
     private final int referenceBehavior;
     private final int mergeBehavior;
+    private final String importPath;
+
+    /** this implementation requires a property that can be set on a parent node.  Because this
+     * node isn't actually persisted, there will be no constraintviolation, but this property
+     * may not clash with any property in the parent node. (FIXME)
+     */
+   final static String HIPPO_PATHREFERENCE = "hippo:pathreference";
+   
+   /** '*' is not valid in property name, but can of course be used in value */
+   private final static char SEPARATOR = '*';
+
+   /** indicate whether original reference property was a multi valued property */
+   private final static String MULTI_VALUE = "m";
+   
+   /** indicate whether original reference property was a single valued property */
+   private final static String SINGLE_VALUE = "s";
+   
+    /** Keep a list of nodeId's that need revisiting for dereferencing */
+    private List<NodeId> derefNodes = new ArrayList<NodeId>();
 
     private Stack<NodeImpl> parents;
 
-    /**
-     * helper object that keeps track of remapped uuid's and imported reference
-     * properties that might need correcting depending on the uuid mappings
-     */
-    private final ReferenceChangeTracker refTracker;
 
     /**
      * Creates a new <code>SessionImporter</code> instance.
@@ -83,10 +97,9 @@ public class DereferencedSessionImporter implements Importer {
         this.mergeBehavior = mergeBehavior;
         this.referenceBehavior = referenceBehavior;
 
-        refTracker = new ReferenceChangeTracker();
-
         parents = new Stack<NodeImpl>();
         parents.push(importTargetNode);
+        importPath = importTargetNode.safeGetJCRPath();
     }
 
     protected NodeImpl createNode(NodeImpl parent,
@@ -126,10 +139,6 @@ public class DereferencedSessionImporter implements Importer {
             // create new with new uuid
             node = createNode(parent, nodeInfo.getName(),
                     nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames(), null);
-            // remember uuid mapping
-            if (node.isNodeType(NameConstants.MIX_REFERENCEABLE)) {
-                refTracker.mappedUUID(nodeInfo.getId().getUUID(), node.getNodeId().getUUID());
-            }
         } else if (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW) {
             String msg = "a node with uuid " + nodeInfo.getId() + " already exists!";
             log.debug(msg);
@@ -254,7 +263,6 @@ public class DereferencedSessionImporter implements Importer {
         NodeImpl parent = (NodeImpl) parents.peek();
 
         // process node
-
         NodeImpl node = null;
         NodeId id = nodeInfo.getId();
         Name nodeName = nodeInfo.getName();
@@ -268,63 +276,40 @@ public class DereferencedSessionImporter implements Importer {
             return;
         }
         if (parent.hasNode(nodeName)) {
-            // a node with that name already exists...
-            NodeImpl existing = parent.getNode(nodeName);
-            NodeDefinition def = existing.getDefinition();
-            if (!def.allowsSameNameSiblings()) {
-                // existing doesn't allow same-name siblings,
-                // check for potential conflicts
-                if (def.isProtected() && existing.isNodeType(ntName)) {
-                    // skip protected node
-                    parents.push(null); // push null onto stack for skipped node
-                    log.debug("skipping protected node " + existing.safeGetJCRPath());
-                    return;
-                }
-                if (def.isAutoCreated() && existing.isNodeType(ntName)) {
-                    // this node has already been auto-created, no need to create it
-                    node = existing;
-                } else {
-                    // edge case: colliding node does have same uuid
-                    // (see http://issues.apache.org/jira/browse/JCR-1128)
-                    if (! (existing.getId().equals(id)
-                            && (uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING
-                            || uuidBehavior == ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING))) {
-                        throw new ItemExistsException(existing.safeGetJCRPath());
-                    }
-                    // fall through
-                }
+            nodeInfo = resolveMergeConflict(parent,parent.getNode(nodeName), nodeInfo);
+            if (nodeInfo == null) {
+                parents.push(null); // push null onto stack for skipped node
+                return;
             }
         }
 
-        if (node == null) {
-            // create node
-            if (id == null) {
-                // no potential uuid conflict, always add new node
-                node = createNode(parent, nodeName, ntName, mixins, null);
+        // create node
+        if (id == null) {
+            // no potential uuid conflict, always add new node
+            node = createNode(parent, nodeName, ntName, mixins, null);
+        } else {
+            // potential uuid conflict
+            NodeImpl conflicting;
+            try {
+                conflicting = session.getNodeById(id);
+            } catch (ItemNotFoundException infe) {
+                conflicting = null;
+            }
+            if (conflicting != null) {
+                // resolve uuid conflict
+                node = resolveUUIDConflict(parent, conflicting, nodeInfo);
             } else {
-                // potential uuid conflict
-                NodeImpl conflicting;
-                try {
-                    conflicting = session.getNodeById(id);
-                } catch (ItemNotFoundException infe) {
-                    conflicting = null;
-                }
-                if (conflicting != null) {
-                    // resolve uuid conflict
-                    node = resolveUUIDConflict(parent, conflicting, nodeInfo);
-                } else {
-                    // create new with given uuid
-                    node = createNode(parent, nodeName, ntName, mixins, id);
-                }
+                // create new with given uuid
+                node = createNode(parent, nodeName, ntName, mixins, id);
             }
         }
 
         // process properties
-
+        // TODO: optimize, directly dereference when reference path is not part of import path
         Iterator iter = propInfos.iterator();
         while (iter.hasNext()) {
-            PropInfo pi = (PropInfo) iter.next();
-            pi.apply(node, session.getNamePathResolver(), refTracker);
+            PropInfo propInfo = (PropInfo) iter.next();
+            propInfo.apply(node, session.getNamePathResolver(), derefNodes, importPath, referenceBehavior);
         }
 
         parents.push(node);
@@ -341,113 +326,84 @@ public class DereferencedSessionImporter implements Importer {
      * {@inheritDoc}
      */
     public void end() throws RepositoryException {
-        /**
-         * adjust references that refer to uuid's which have been mapped to
-         * newly generated uuid's on import
-         */
-        Iterator<NodeImpl> iter = refTracker.getProcessedReferences();
-        while (iter.hasNext()) {
-            Property prop = (Property) iter.next();
-            // being paranoid...
-            if (prop.getType() != PropertyType.REFERENCE) {
-                continue;
-            }
-            if (prop.getDefinition().isMultiple()) {
-                Value[] values = prop.getValues();
-                Value[] newVals = new Value[values.length];
-                for (int i = 0; i < values.length; i++) {
-                    Value val = values[i];
-                    UUID original = UUID.fromString(val.getString());
-                    UUID adjusted = refTracker.getMappedUUID(original);
-                    if (adjusted != null) {
-                        newVals[i] = new ReferenceValue(session.getNodeByUUID(adjusted));
+        
+        for (NodeId nodeId : derefNodes) {
+            try {
+                NodeImpl node = session.getNodeById(nodeId);
+                // checking again..
+                if (!node.hasProperty(HIPPO_PATHREFERENCE)) { 
+                    continue;
+                }
+                
+                Value[] refVals = node.getProperty(HIPPO_PATHREFERENCE).getValues();
+                for (Value refVal : refVals) {
+                    // format ([MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+
+                    // propname+REFERENCE_SEPARATOR+refpath)
+                    String ref = refVal.getString();
+                    boolean isMulti = false;
+                    if (ref.startsWith(MULTI_VALUE)) {
+                        isMulti = true;
+                    } else if (ref.startsWith(MULTI_VALUE)) {
+                        isMulti = false;
                     } else {
-                        // reference doesn't need adjusting, just copy old value
-                        newVals[i] = val;
+                        log.warn("Not dereferencing unknown format for property: " + HIPPO_PATHREFERENCE);
+                        continue;
                     }
+                    
+                    String path = ref.substring(ref.lastIndexOf(SEPARATOR) + 1, ref.length());
+                    String propName = ref.substring(ref.indexOf(SEPARATOR) + 1);
+                    propName = propName.substring(0, propName.indexOf(SEPARATOR));
+                    
+                    if (path.startsWith("/")) {
+                        path = path.substring(1);
+                    }
+                    NodeImpl referencedNode = findNode(path, session);
+                    if (isMulti) {
+                        if (node.hasProperty(propName)) {
+                            
+                        }
+                    } else {
+                        if (node.hasProperty(propName)) {
+                            // resolve??
+                        }
+                        
+                    }
+                    // find nodes and create props..
                 }
-                prop.setValue(newVals);
-            } else {
-                Value val = prop.getValue();
-                UUID original = UUID.fromString(val.getString());
-                UUID adjusted = refTracker.getMappedUUID(original);
-                if (adjusted != null) {
-                    prop.setValue(session.getNodeByUUID(adjusted));
-                }
+                
+                node.getProperty(HIPPO_PATHREFERENCE).remove();
+                
+//              while (iter.hasNext()) {
+//              Property prop = (Property) iter.next();
+//              // being paranoid...
+//              if (prop.getType() != PropertyType.REFERENCE) {
+//                  continue;
+//              }
+//              if (prop.getDefinition().isMultiple()) {
+            } catch (ItemNotFoundException infe) {
             }
+            
         }
-        refTracker.clear();
+        derefNodes.clear();
     }
-
-    /**
-     * Simple helper class that can be used to keep track of nodes with
-     * dereferenced references
-     */
-    public class ReferenceChangeTracker extends org.apache.jackrabbit.core.util.ReferenceChangeTracker{
-        /**
-         * mapping <original uuid> to <new uuid> of mix:referenceable nodes
-         */
-        private final HashMap uuidMap = new HashMap();
-        /**
-         * list of processed reference properties that might need correcting
-         */
-        private final ArrayList references = new ArrayList();
-
-        /**
-         * Creates a new instance.
-         */
-        public ReferenceChangeTracker() {
-        }
-
-        /**
-         * Resets all internal state.
-         */
-        public void clear() {
-            uuidMap.clear();
-            references.clear();
-        }
-
-        /**
-         * Store the given uuid mapping for later lookup using
-         * <code>{@link #getMappedUUID(UUID)}</code>.
-         *
-         * @param oldUUID old uuid
-         * @param newUUID new uuid
-         */
-        public void mappedUUID(UUID oldUUID, UUID newUUID) {
-            uuidMap.put(oldUUID, newUUID);
-        }
-
-        /**
-         * Store the given reference property for later retrieval using
-         * <code>{@link #getProcessedReferences()}</code>.
-         *
-         * @param refProp reference property
-         */
-        public void processedReference(Object refProp) {
-            references.add(refProp);
-        }
-
-        /**
-         * Returns the new UUID to which <code>oldUUID</code> has been mapped
-         * or <code>null</code> if no such mapping exists.
-         *
-         * @param oldUUID old uuid
-         * @return mapped new uuid or <code>null</code> if no such mapping exists
-         * @see #mappedUUID(UUID, UUID)
-         */
-        public UUID getMappedUUID(UUID oldUUID) {
-            return (UUID) uuidMap.get(oldUUID);
-        }
-
-        /**
-         * Returns an iterator over all processed reference properties.
-         *
-         * @return an iterator over all processed reference properties
-         * @see #processedReference(Object)
-         */
-        public Iterator getProcessedReferences() {
-            return references.iterator();
-        }
+    
+    static NodeImpl findNode(String path, SessionImpl sessionImpl) throws PathNotFoundException, RepositoryException{
+        try {
+            Path p = sessionImpl.getQPath(path).getNormalizedPath();
+            if (!p.isAbsolute()) {
+                throw new RepositoryException("not an absolute path: " + path);
+            }
+            return sessionImpl.getItemManager().getNode(p);
+        } catch (NameException e) {
+            String msg = path + ": invalid path";
+            log.warn(msg);
+            throw new RepositoryException(msg, e);
+        } catch (NamespaceException e) {
+            String msg = path + ": invalid path";
+            log.warn(msg);
+            throw new RepositoryException(msg, e);
+        } catch (AccessDeniedException ade) {
+            throw new PathNotFoundException(path);
+        } 
     }
 }

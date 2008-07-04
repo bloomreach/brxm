@@ -131,7 +131,8 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                 try {
                     InputStream contentStream = new BufferedInputStream(new FileInputStream(newFile));
                     String absPath = nodeModel.getNode().getPath();
-                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, 0 ,0);
+                    //((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, 0 ,0);
+                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 } catch (PathNotFoundException ex) {
                     log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
                 } catch (ItemExistsException ex) {

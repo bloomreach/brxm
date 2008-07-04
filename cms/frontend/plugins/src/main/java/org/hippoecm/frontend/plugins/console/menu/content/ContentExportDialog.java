@@ -93,7 +93,8 @@ public class ContentExportDialog extends AbstractDialog {
                     try {
                         Node node = nodeModel.getNode();
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
+                        //((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
+                        ((HippoSession) node.getSession()).exportSystemView(node.getPath(), out, skipBinary, false);
                         export = prettyPrint(out.toByteArray());
                     } catch (Exception e) {
                         export = e.getMessage();
