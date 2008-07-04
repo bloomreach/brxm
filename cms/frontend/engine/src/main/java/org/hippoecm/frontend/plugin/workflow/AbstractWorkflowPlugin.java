@@ -30,6 +30,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -97,6 +98,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle) {
                     private static final long serialVersionUID = 1L;
+
                     @Override
                     protected void execute() throws Exception {
                         action.execute(getWorkflow());
@@ -144,15 +146,17 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
                     ((UserSession) Session.get()).getJcrSession().refresh(true);
 
-                    IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+                    IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(),
+                            IJcrService.class);
                     if (jcrService != null) {
                         jcrService.flush(handle);
                     }
                 } catch (RepositoryException ex) {
                     log.error("Invalid data to save", ex);
+                    showException(ex);
                 } catch (Exception ex) {
                     log.error(ex.getMessage());
-                    ex.printStackTrace();
+                    showException(ex);
                 }
 
             }
@@ -196,5 +200,13 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         updateActions();
+    }
+
+    private void showException(Exception ex) {
+        IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
+                IDialogService.class);
+        if (dialogService != null) {
+            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, ex.getMessage()));
+        }
     }
 }
