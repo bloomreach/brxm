@@ -16,10 +16,14 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -44,6 +48,7 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
+import org.hippoecm.repository.jackrabbit.xml.DereferencedContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
@@ -125,7 +130,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
 
     /**
      * Method to expose the authenticated users' principals
-     * @return Set An unmodifialble set containing the principals
+     * @return Set An unmodifiable set containing the principals
      */
     public Set<Principal> getUserPrincipals() {
         return helper.getUserPrincipals();
@@ -136,4 +141,18 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
         return helper.pendingChanges(node, nodeType, prune);
     }
     
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
+            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            VersionException, LockException, RepositoryException {
+        return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+    }
+    
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+        ContentHandler handler =
+            getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+        new DereferencedContentHandler(handler).parse(in);
+    }
 }

@@ -26,8 +26,9 @@ public interface ImportMergeBehavior {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
     
-    public static final int IMPORT_MERGE_DROP = 0;
+    public static final int IMPORT_MERGE_SKIP = 0;
     public static final int IMPORT_MERGE_OVERWRITE = 1;
-    public static final int IMPORT_MERGE_ADD = 2;
-    public static final int IMPORT_MERGE_THROW = 3;
+    public static final int IMPORT_MERGE_ADD_OR_SKIP = 2; // try add first else skip
+    public static final int IMPORT_MERGE_ADD_OR_OVERWRITE = 3; //try add first else overwrite
+    public static final int IMPORT_MERGE_THROW = 4;
 }

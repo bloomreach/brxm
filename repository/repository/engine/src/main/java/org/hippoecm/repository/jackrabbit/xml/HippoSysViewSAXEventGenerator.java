@@ -20,6 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.apache.jackrabbit.core.xml.SysViewSAXEventGenerator;
 import org.apache.jackrabbit.spi.Name;
@@ -97,9 +98,9 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             return;
         }
         
-        if (HippoNodeType.HIPPO_PATHS.equals(prop.getName())) {
+        if (isGeneratedProperty(prop)) {
             // must be regenerated on import
-            return;
+            return;   
         }
         
         if (isVersioningProperty(prop)) {
@@ -116,7 +117,17 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             // dereference and create a new property
             try {
                 Node node = session.getNodeByUUID(prop.getString());
-                Property pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, node.getName() + REFERENCE_SEPARATOR + node.getPath());
+                Value val = session.getValueFactory().createValue(node.getName() + REFERENCE_SEPARATOR + node.getPath());
+                Property pathRef;
+                if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
+                    Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
+                    Value[] newValues = new Value[oldValues.length + 1];
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                    newValues[oldValues.length] = val;
+                    pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
+                } else {
+                    pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, new Value[]{val});
+                }
                 super.process(pathRef, level);
                 return;
             } catch (ItemNotFoundException e) {
@@ -180,6 +191,16 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             if (NameConstants.JCR_LOCKISDEEP.equals(propQName)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private boolean isGeneratedProperty(Property prop) throws RepositoryException {
+        if (HippoNodeType.HIPPO_PATHS.equals(prop.getName())) {
+            return true;
+        }
+        if (HippoNodeType.HIPPO_RELATED.equals(prop.getName())) {
+            return true;
         }
         return false;
     }

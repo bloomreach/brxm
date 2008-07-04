@@ -16,10 +16,14 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,10 +35,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
@@ -43,8 +43,11 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
+import org.hippoecm.repository.jackrabbit.xml.DereferencedContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     @SuppressWarnings("unused")
@@ -134,6 +137,21 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,                                                                      NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
+    }
+    
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
+            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            VersionException, LockException, RepositoryException {
+        return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+    }
+    
+    public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+        ContentHandler handler =
+            getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+        new DereferencedContentHandler(handler).parse(in);
     }
 
 }
