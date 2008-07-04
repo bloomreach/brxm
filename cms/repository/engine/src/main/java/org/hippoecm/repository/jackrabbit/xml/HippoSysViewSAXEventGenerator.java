@@ -51,6 +51,12 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
     
     /** shortcut for quick checks */
     private final static String JCR_PREFIX = "jcr:";
+
+    /** this implementation requires a property that can be set on a parent node.  Because this
+      * node isn't actually persisted, there will be no constraintviolation, but this property
+      * may not clash with any property in the parent node. (FIXME)
+      */
+    final private static String HIPPO_PATHREFERENCE = "hippo:pathreference";
     
     /** use one factory */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
@@ -110,7 +116,7 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             // dereference and create a new property
             try {
                 Node node = session.getNodeByUUID(prop.getString());
-                Property pathRef = prop.getParent().setProperty(HippoNodeType.HIPPO_PATHREFERENCE, node.getName() + REFERENCE_SEPARATOR + node.getPath());
+                Property pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, node.getName() + REFERENCE_SEPARATOR + node.getPath());
                 super.process(pathRef, level);
                 return;
             } catch (ItemNotFoundException e) {
@@ -118,8 +124,8 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
                 log.error("Referenced node '"+prop.getString()+"' not found for item: " + prop.getPath());
                 return;
             } finally {
-                if (prop.getParent().hasProperty(HippoNodeType.HIPPO_PATHREFERENCE)) {
-                    prop.getParent().getProperty(HippoNodeType.HIPPO_PATHREFERENCE).remove();
+                if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
+                    prop.getParent().getProperty(HIPPO_PATHREFERENCE).remove();
                 }
             }
         }
