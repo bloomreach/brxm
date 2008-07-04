@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.util.NoSuchElementException;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -149,13 +151,17 @@ public class EventLogger {
         if (appender.equals("folding")) {
             log.warn("Folding appender not implemented yet, falling back to rolling appender");
         }
-        NodeIterator logNodes = logFolder.getNodes();
-        if (logNodes.getSize() > maxSize) {
-            logNodes.skip(maxSize);
-            while (logNodes.hasNext()) {
-                Node toBeRemoved = logNodes.nextNode();
-                toBeRemoved.remove();
+        try {
+            NodeIterator logNodes = logFolder.getNodes();
+            if (logNodes.getSize() > maxSize) {
+                logNodes.skip(maxSize);
+                while (logNodes.hasNext()) {
+                    Node toBeRemoved = logNodes.nextNode();
+                    toBeRemoved.remove();
+                }
             }
+        } catch (NoSuchElementException e) {
+            throw new RepositoryException("Skipped past last element in logFolder", e);
         }
     }
 }
