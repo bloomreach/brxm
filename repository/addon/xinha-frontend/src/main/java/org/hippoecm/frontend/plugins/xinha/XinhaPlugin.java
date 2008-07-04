@@ -141,20 +141,22 @@ public class XinhaPlugin extends RenderPlugin {
             protected void onComponentTag(final ComponentTag tag) {
                 StringBuilder sb = new StringBuilder();
                 String width = config.getString("width");
-                if (width != null) {
-                    sb.append("width: ");
-                    sb.append(width);
-                    sb.append(";");
+                if (width == null) {
+                    width = "500px";
                 }
+                sb.append("width: ");
+                sb.append(width);
+                sb.append(";");
+
                 String height = config.getString("height");
-                if (height != null) {
-                    sb.append("height: ");
-                    sb.append(width);
-                    sb.append(";");
+                if (height == null) {
+                    height = "200px";
                 }
-                if (sb.length() > 0) {
-                    tag.put("style", sb.toString());
-                }
+                sb.append("height: ");
+                sb.append(height);
+                sb.append(";");
+
+                tag.put("style", sb.toString());
                 super.onComponentTag(tag);
             }
         };

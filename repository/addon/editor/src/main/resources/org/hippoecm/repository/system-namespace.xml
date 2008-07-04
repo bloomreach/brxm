@@ -342,7 +342,8 @@
           <sv:value>wicket.id</sv:value>
           <sv:value>mode</sv:value>
           <sv:value>engine</sv:value>
-          <sv:value>size</sv:value>
+          <sv:value>width</sv:value>
+          <sv:value>height</sv:value>
         </sv:property>
 
         <sv:node sv:name="root">
@@ -364,8 +365,11 @@
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>cluster:engine</sv:value>
           </sv:property>
-          <sv:property sv:name="size" sv:type="String">
-            <sv:value>cluster:size</sv:value>
+          <sv:property sv:name="width" sv:type="String">
+            <sv:value>cluster:width</sv:value>
+          </sv:property>
+          <sv:property sv:name="height" sv:type="String">
+            <sv:value>cluster:height</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
             <sv:value>popupeditor</sv:value>
@@ -374,6 +378,8 @@
             <sv:value>bold</sv:value>
             <sv:value>italic</sv:value>
             <sv:value>underline</sv:value>
+            <sv:value>insertorderedlist</sv:value>
+            <sv:value>insertunorderedlist</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>xp-blue</sv:value>
