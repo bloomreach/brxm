@@ -30,7 +30,7 @@
           into some <a href="eclipse-tips.html">Eclipse tips&amp;tricks</a> for how to keep up with the
           most exiting version of Hippo ECM: The trunk!
         </p>
-
+      </section>
         <section name="Prepare">
           <p>Follow all steps documented on the <a href="maven.html">Building with Maven</a> page.
            Don't continue with the instructions on this page before you have seen a running application
