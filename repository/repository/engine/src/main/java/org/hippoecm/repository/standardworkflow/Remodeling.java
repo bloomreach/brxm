@@ -651,9 +651,9 @@ public class Remodeling {
         }
     }
 
-    public static Remodeling remodel(Session userSession, String prefix, InputStream cnd,
+    public static Remodeling remodel(Session session, String prefix, InputStream cnd,
             Map<String, TypeUpdate> updates) throws NamespaceException, RepositoryException {
-        Workspace workspace = userSession.getWorkspace();
+        Workspace workspace = session.getWorkspace();
         HippoNamespaceRegistry nsreg = (HippoNamespaceRegistry) workspace.getNamespaceRegistry();
 
         // obtain namespace URI for prefix as in use
@@ -689,8 +689,8 @@ public class Remodeling {
                 /* EffectiveNodeType effnt = */ntreg.registerNodeType(ntd);
             }
 
-            Remodeling remodel = new Remodeling(userSession, newPrefix, oldNamespaceURI, updates);
-            remodel.traverse(userSession.getRootNode(), false, userSession.getRootNode());
+            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, updates);
+            remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
             nsreg.commit(newPrefix);
 
@@ -700,7 +700,7 @@ public class Remodeling {
             nsreg.close();
             return remodel;
         } catch (Exception ex) {
-            userSession.refresh(false);
+            session.refresh(false);
             nsreg.unregisterNamespace(newPrefix);
             nsreg.close();
             ex.printStackTrace();
