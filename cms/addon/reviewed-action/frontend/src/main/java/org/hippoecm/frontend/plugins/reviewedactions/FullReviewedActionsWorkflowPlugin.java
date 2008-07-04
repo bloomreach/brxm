@@ -162,13 +162,19 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();
 
-                
                 WorkflowsModel model = (WorkflowsModel) getModel();
 
                     Node node = model.getNodeModel().getNode();
                     if (node.isNodeType(HippoNodeType.NT_DOCUMENT))
                         node = node.getParent();
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        /* FIXME: It requires a discussion if this is truely an operation which we want.  An actual document
+                         * delete is not an operation on the document itself, so nothing for the reviewed-actions workflow.
+                         * In itself the procedure below looks sound, call archive on the document, however it leads to
+                         * undesirable events if this user is allowed to delete the document (based on the embedded
+                         * workflow) but is not allowed to see the presence of other variants (such as other languages).
+                         * This somewhat seems to be undesirable situation anyway.
+                         */
                         boolean isEmpty = true;
                         for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
                             Node child = iter.nextNode();
@@ -184,11 +190,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                                 ancestor = ancestor.getParent();
                             }
                             if (ancestor != null && ancestor.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                String relPath = node.getPath().substring(ancestor.getPath().length());
+                                String relPath = node.getPath().substring(ancestor.getPath().length()+1);
                                 HippoWorkspace workspace = (HippoWorkspace) ancestor.getSession().getWorkspace();
                                 Workflow ancestorWorkflow = workspace.getWorkflowManager().getWorkflow("embedded", ancestor);
                                 if(ancestorWorkflow instanceof FolderWorkflow) {
-                                    ((FolderWorkflow)workflow).archive(relPath);
+                                    ((FolderWorkflow)ancestorWorkflow).archive(relPath);
                                 }
                             }
                         }

@@ -212,21 +212,33 @@ public class FolderWorkflowImpl implements FolderWorkflow {
     }
 
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        if(name.startsWith("/"))
+            name  = name.substring(1);
+        System.err.println("BERRY archive ");
         name = ISO9075Helper.encodeLocalName(name);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        System.err.println("BERRY archive "+folder.getPath()+" "+name);
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
+            System.err.println("BERRY offspring "+offspring.getPath());
             if (subject.getPath().equals(ATTIC_PATH)) {
+                System.err.println("BERRY #0");
                 offspring.remove();
                 folder.save();
             } else {
-                userSession.getWorkspace().move(path, ATTIC_PATH + offspring.getName());
+                System.err.println("BERRY #1 ");
+                System.err.println("BERRY #2 "+folder.getPath());
+                System.err.println("BERRY #3 "+ATTIC_PATH + "/" + offspring.getName());
+                userSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
+                                                ATTIC_PATH + "/" + offspring.getName());
             }
         }
     }
 
     public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        if(name.startsWith("/"))
+            name  = name.substring(1);
         name = ISO9075Helper.encodeLocalName(name);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
