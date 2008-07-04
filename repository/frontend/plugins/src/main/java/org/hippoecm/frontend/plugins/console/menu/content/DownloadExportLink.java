@@ -33,6 +33,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,8 @@ public class DownloadExportLink extends Link {
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                     try {
                         boolean skipBinary = ((Boolean)skipBinaryModel.getObject()).booleanValue();
-                        node.getSession().exportSystemView(node.getPath(), bos, skipBinary, false);
+                        //((HippoSession)node.getSession()).exportDereferencedView(node.getPath(), bos, skipBinary, false);
+                        ((HippoSession)node.getSession()).exportSystemView(node.getPath(), bos, skipBinary, false);
                     } finally {
                         bos.close();
                     }

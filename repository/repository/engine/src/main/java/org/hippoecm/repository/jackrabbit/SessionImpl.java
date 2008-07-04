@@ -129,7 +129,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     
     /**
      * Method to expose the authenticated users' principals
-     * @return Set An unmodifialble set containing the principals
+     * @return Set An unmodifiable set containing the principals
      */
     public Set<Principal> getUserPrincipals() {
         return helper.getUserPrincipals();

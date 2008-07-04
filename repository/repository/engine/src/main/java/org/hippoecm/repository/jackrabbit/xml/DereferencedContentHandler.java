@@ -54,7 +54,6 @@ public class DereferencedContentHandler extends DefaultHandler {
      * @param handler content handler
      */
     public DereferencedContentHandler(ContentHandler handler) {
-        System.err.println("USING DereferencedContentHandler");
         this.handler = handler;
     }
 
