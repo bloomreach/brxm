@@ -46,12 +46,16 @@ public class BrowseLink extends Panel {
         final JcrNodeModel variant = new JcrNodeModel(docPath);
         AjaxLink link = new AjaxLink("link", variant) {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
-                browseService.browse(variant);
-
+                if (browseService != null) {
+                    browseService.browse(variant);
+                } else {
+                    log.warn("no browser service found");
+                }
             }
         };
         add(link);
