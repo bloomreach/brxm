@@ -66,9 +66,9 @@
             <sv:property sv:name="wicket.model" sv:type="String">
                 <sv:value>model.report.current</sv:value>
             </sv:property>
-            <sv:property sv:name="link.to" sv:type="String">
-                <sv:value>BrowserPerspective</sv:value>
-            </sv:property>
+          <sv:property sv:name="browser.id" sv:type="String">
+            <sv:value>BrowserPerspective</sv:value>
+          </sv:property>
         </sv:node>
     </sv:node>
 
@@ -111,7 +111,7 @@
             <sv:property sv:name="wicket.model" sv:type="String">
                 <sv:value>model.report.todo</sv:value>
             </sv:property>
-            <sv:property sv:name="link.to" sv:type="String">
+            <sv:property sv:name="browser.id" sv:type="String">
                 <sv:value>BrowserPerspective</sv:value>
             </sv:property>
         </sv:node>
