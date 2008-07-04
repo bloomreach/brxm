@@ -153,7 +153,7 @@ public class TraversePerfTestCase extends TestCase {
         }
     }
 
-    @Ignore
+    @Test
     public void testSPI() throws Exception {
         tearDown(true);
         org.apache.jackrabbit.core.RepositoryImpl repository = null;
@@ -195,21 +195,30 @@ public class TraversePerfTestCase extends TestCase {
         }
     }
 
+    class MyConfig extends org.apache.jackrabbit.spi2jcr.BatchReadConfig {
+        public int getDepth(org.apache.jackrabbit.spi.Name ntName) {
+            return 100;
+        }
+    }
+
     @Test
     public void testNew() throws Exception {
-        tearDown(true);
-        HippoRepositoryServer backgroundServer = null;
-        HippoRepository server = null;
+        //tearDown(true);
+        //HippoRepositoryServer backgroundServer = null;
+        //HippoRepository server = null;
         Session session = null;
         long duration;
         try {
             final org.apache.jackrabbit.spi.RepositoryService repoService;
-            backgroundServer = new HippoRepositoryServer();
-            backgroundServer.run(true);
-            Thread.sleep(3000);
-            server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-            org.apache.jackrabbit.spi2jcr.BatchReadConfig cfg = new org.apache.jackrabbit.spi2jcr.BatchReadConfig();
-            //cfg.setDepth(, 2);
+            //backgroundServer = new HippoRepositoryServer();
+            //backgroundServer.run(true);
+            //Thread.sleep(3000);
+            //server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+            //org.apache.jackrabbit.spi2jcr.BatchReadConfig cfg = new org.apache.jackrabbit.spi2jcr.BatchReadConfig();
+            org.apache.jackrabbit.spi2jcr.BatchReadConfig cfg = new MyConfig();
+            cfg.setDepth(org.apache.jackrabbit.spi.commons.name.NameFactoryImpl.getInstance().create("internal", "root"), -1);
+            cfg.setDepth(org.apache.jackrabbit.spi.commons.name.NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), -1);
+            cfg.setDepth(org.apache.jackrabbit.spi.commons.name.NameFactoryImpl.getInstance().create("nt", "unstructured"), -1);
             repoService = new org.apache.jackrabbit.spi2jcr.RepositoryServiceImpl(server.getRepository(), cfg);
             Repository repo3 = org.apache.jackrabbit.jcr2spi.RepositoryImpl.create(new org.apache.jackrabbit.jcr2spi.config.RepositoryConfig() {
                          public RepositoryService getRepositoryService() throws RepositoryException {
@@ -222,14 +231,16 @@ public class TraversePerfTestCase extends TestCase {
                              return org.apache.jackrabbit.jcr2spi.config.CacheBehaviour.INVALIDATE;
                          }
                 });
-            session = backgroundServer.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            //session = backgroundServer.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            session = server.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             build(session, content); 
             session.save();
             duration = test(session);
             HistoryWriter.write("same", Long.toString(duration), "ms");
             session.logout();
 
-            session = backgroundServer.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            //session = backgroundServer.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            session = server.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             duration = test(session);
             HistoryWriter.write("local", Long.toString(duration), "ms");
             session.logout();
@@ -247,20 +258,20 @@ public class TraversePerfTestCase extends TestCase {
             if (session != null) {
                 session.logout();
             }
-            if (backgroundServer != null) {
-                backgroundServer.close();
-            }
+            //if (backgroundServer != null) {
+            //    backgroundServer.close();
+            //}
         }
     }
 
-    @Test
+    @Ignore
     public void testLocal() throws Exception {
         build(session, content);
         long duration = test(session);
         HistoryWriter.write("traversal", Long.toString(duration), "ms");
     }
 
-    @Test
+    @Ignore
     public void testRemote() throws Exception {
         tearDown();
         HippoRepositoryServer backgroundServer = null;
@@ -296,6 +307,8 @@ public class TraversePerfTestCase extends TestCase {
         long tAfter, tBefore = System.currentTimeMillis();
         Node root = session.getRootNode();
         for(int i=0; i<count; i++) {
+            if(i==1)
+                tBefore = System.currentTimeMillis();
             Node node = root;
             StringTokenizer st = new StringTokenizer("test/noot/zus/jet/teun/vuur/weide/hok/duif","/");
             while(st.hasMoreTokens()) {
