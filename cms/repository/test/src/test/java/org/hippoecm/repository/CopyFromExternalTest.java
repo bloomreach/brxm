@@ -156,6 +156,9 @@ public class CopyFromExternalTest extends org.hippoecm.repository.TestCase {
                     Value value = p.getValue();
                     if(p.getType() == PropertyType.REFERENCE || propertyName.equals("hippo:docbase")) {
                         uuidProperties.add(new Reference(source, originalPropertyName, destination, propertyName));
+                    } else if(p.getType() == PropertyType.BINARY) {
+                        Value newValue = valueFactory.createValue(value.getStream());
+                        destination.setProperty(propertyName, value);
                     } else {
                         Value newValue = valueFactory.createValue(value.getString(), p.getType());
                         destination.setProperty(propertyName, value);
