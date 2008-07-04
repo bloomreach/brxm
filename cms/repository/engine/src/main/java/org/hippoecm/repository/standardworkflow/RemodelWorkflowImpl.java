@@ -49,9 +49,9 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
     private Session session;
     private Node subject;
 
-    public RemodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
+    public RemodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException, RepositoryException {
         this.session = rootSession;
-        this.subject = subject;
+        this.subject = rootSession.getRootNode().getNode(subject.getPath().substring(1));
     }
 
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
@@ -142,6 +142,7 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
             for (int i = 0; iter.hasNext(); i++) {
                 paths[i] = iter.nextNode().getPath();
             }
+            session.save();
             return paths;
         } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
@@ -157,6 +158,7 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
             String prefix = namespace;
 
             Remodeling.convert(subject, prefix, update);
+            session.save();
         } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
         }

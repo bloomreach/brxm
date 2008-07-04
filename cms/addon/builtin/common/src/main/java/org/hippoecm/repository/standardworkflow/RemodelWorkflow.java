@@ -32,6 +32,7 @@ public interface RemodelWorkflow extends Workflow {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
+    // FIXME: should be dropped
     final public static String VERSION_DRAFT = "draft";
     final public static String VERSION_CURRENT = "current";
     final public static String VERSION_ERROR = "error";
@@ -62,6 +63,8 @@ public interface RemodelWorkflow extends Workflow {
      */
     public void createType(String name) throws WorkflowException, MappingException, RepositoryException,
             RemoteException;
+
+    // BIG FIXME: no such classes should be here, this cannot be done in a generic way, it should be dropped.
 
     public final class TypeUpdate implements Serializable {
         private static final long serialVersionUID = 1L;
