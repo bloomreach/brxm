@@ -63,11 +63,11 @@ public class LoginPlugin extends RenderPlugin {
         public SignInForm(final String id) {
             super(id);
 
-            add(username = new RequiredTextField("username", new PropertyModel(credentials, "username")));
+            add(username = new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
             username.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.username", "Username"));
             add(new SimpleFormComponentLabel("username-label", username));
 
-            add(password = new PasswordTextField("password", new PropertyModel(credentials, "password")));
+            add(password = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
             //add(password = new RSAPasswordTextField("password", new Model(), this));
             password.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.password", "Password"));
             add(new SimpleFormComponentLabel("password-label", password));
@@ -100,4 +100,18 @@ public class LoginPlugin extends RenderPlugin {
             setResponsePage(Home.class);
         }
     }
+
+    private static class StringPropertyModel extends PropertyModel {
+        private static final long serialVersionUID = 1L;
+
+        public StringPropertyModel(Object modelObject, String expression) {
+            super(modelObject, expression);
+        }
+
+        @Override
+        public Class getObjectClass() {
+            return String.class;
+        }
+    }
+
 }
