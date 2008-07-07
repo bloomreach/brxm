@@ -29,6 +29,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowDialog extends AbstractWorkflowDialog {
@@ -65,9 +66,19 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                         protected boolean wantOnSelectionChangedNotifications() {
                         return true;
                     }
+
+                    @Override
+                    protected void onSelectionChanged(Object newSelection) {
+                        super.onSelectionChanged(newSelection);
+                        ok.setEnabled(true);
+                    }
+                    
                 });
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
+            // while not a prototype chosen, disable ok button
+            ok.setEnabled(false);
+            
         } else if(folderWorkflowPlugin.templates.get(category).size() == 1) {
             Component component;
             add(component = new EmptyPanel("prototype"));
@@ -84,10 +95,13 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     @Override
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow)getWorkflow();
+        if(prototype == null) {
+           throw new WorkflowException("You need to select a type");
+        }
         if (workflow != null) {
             if (!folderWorkflowPlugin.templates.get(category).contains(prototype)) {
                 log.error("unknown folder type " + prototype);
-                return;
+                throw new WorkflowException("Unknown folder type " + prototype);
             }
             String path = workflow.add(category, prototype, name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
