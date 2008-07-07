@@ -145,23 +145,6 @@
             <sv:value>defaultcontent:introduction</sv:value>
           </sv:property>
         </sv:node>
-
-        <!-- body -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>defaultcontent:body</sv:value>
-          </sv:property>
-        </sv:node>
-
       </sv:node>
     </sv:node>
 
