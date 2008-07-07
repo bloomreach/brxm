@@ -46,6 +46,7 @@ public class MenuTag extends SimpleTagSupport {
     private static final String DEFAULT_ID = "hst-menu";
     private static final Integer DEFAULT_LEVEL = new Integer(0);
     private static final Integer DEFAULT_DEPTH = new Integer(1);
+    private static final Boolean DEFAULT_COLLAPSE = Boolean.TRUE;
     private static final String[] DEFAULT_DOCUMENT_EXCLUDE_NAMES = new String[]{"index"};
 
     private final String KEY_CONTEXT_NAME = "menutag.context.name";
@@ -59,6 +60,7 @@ public class MenuTag extends SimpleTagSupport {
     private String id = null;
     private Integer level = null;
     private Integer depth = null;
+    private Boolean collapse = null;
     private String[] documentExcludeNames = null;
 
     private URLPathTranslator urlPathTranslator;
@@ -86,6 +88,11 @@ public class MenuTag extends SimpleTagSupport {
     /** Setter for the tag attribute 'depth'. */
     public void setDepth(Integer depth) {
         this.depth = depth;
+    }
+
+    /** Setter for the tag attribute 'collapse'. */
+    public void setCollapse(Boolean collapse) {
+        this.collapse = collapse;
     }
 
     // javadoc from super
@@ -218,6 +225,18 @@ public class MenuTag extends SimpleTagSupport {
         }
 
         return this.depth;
+    }
+
+    private Boolean getCollapse() {
+
+        // lazy, or set by setter (first)
+        if (this.collapse == null) {
+
+            // second by default
+            this.collapse = DEFAULT_COLLAPSE;
+        }
+
+        return this.collapse;
     }
 
 
@@ -391,8 +410,11 @@ public class MenuTag extends SimpleTagSupport {
                     buffer.append(item.getLabel());
                     buffer.append("</a>");
 
-                    // recursion!
-                    writeDefaultOutput(buffer, item.getItems(), item.getLevel() + 1, pageContext);
+                    if (item.isActive() || (!getCollapse().booleanValue())) {
+                    
+                        // recursion!
+                        writeDefaultOutput(buffer, item.getItems(), item.getLevel() + 1, pageContext);
+                    }    
 
                     buffer.append("</li>\n");
                     
