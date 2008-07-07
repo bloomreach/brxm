@@ -40,10 +40,9 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class CopyFromExternalTest extends org.hippoecm.repository.TestCase {
+public class MigrateTest extends org.hippoecm.repository.TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
 
     class Reference {
         Node sourceNode;
