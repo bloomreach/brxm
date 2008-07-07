@@ -49,11 +49,12 @@ public class JCRConnector {
         Session result = null;
         try {
             SessionWrapper wrapper = (SessionWrapper) httpSession.getAttribute(JCR_SESSION_KEY);
-            if (wrapper != null && wrapper.jcrSession.isLive()) {
+            if (wrapper != null && wrapper.jcrSessionOK()) {
                 result = wrapper.jcrSession;
             } else {
                 httpSession.removeAttribute(JCR_SESSION_KEY);
 
+                // (re)connect
                 ServletContext sc = httpSession.getServletContext();
                 wrapper = new SessionWrapper(HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS),
                                              HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME),
@@ -63,9 +64,9 @@ public class JCRConnector {
             }
             wrapper.refresh(httpSession);
         } catch (LoginException e) {
-            logger.error("Failed to login to repository", e);
+            throw new JCRConnectionException("Failed to login to repository");
         } catch (RepositoryException e) {
-            logger.error("Failed to initialize repository", e);
+            throw new JCRConnectionException("Failed to initialize repository");
         }
         return result;
     }
@@ -73,7 +74,7 @@ public class JCRConnector {
     public static Item getItem(Session session, String path) throws RepositoryException {
 
         if (session == null) {
-            throw new IllegalArgumentException("No JCR session available to get an item");
+            throw new JCRConnectionException("No JCR session available to get an item");
         }
         
         Node node = session.getRootNode();
@@ -198,12 +199,30 @@ public class JCRConnector {
             lastRefreshed = System.currentTimeMillis();
         }
 
+        public boolean jcrSessionOK() {
+            
+            // isLive may fail for instance if the repository was restarted
+            try {
+                return (jcrSession != null) && jcrSession.isLive();
+            }    
+            catch (Exception ignore) {
+                // do not even log something as will try to reconnect 
+                return false;
+            }
+        }
+
         public void valueBound(HttpSessionBindingEvent event) {
             logger.debug("Bound JCR session to HTTP session");
         }
 
         public void valueUnbound(HttpSessionBindingEvent event) {
-            jcrSession.logout();
+            
+            // logout itself may fail (connection lost) 
+            try {
+                jcrSession.logout();
+            } catch (Exception ignore) {
+            }
+            
             logger.debug("Unbound JCR session from HTTP session");
         }
 
