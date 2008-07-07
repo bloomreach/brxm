@@ -168,16 +168,54 @@ public class CopyFromExternalTest extends org.hippoecm.repository.TestCase {
         }
     }
 
-    // HREPTWO-1118: enable this test by commenting replacing @Ignore by @Test
-    @Ignore
-    public void testCopy() throws Exception {
-        // HREPTWO-1118: replace the rmi address below to the actual server to be copied from
-        external = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+    /**
+     * Althrough this test is enabled by default, it is not active unless the
+     * following system properties have been set:
+     *   hreptwo.migrate.repository
+     *       The location of the old repository from which to copy content
+     *       (optional, defaults to a locally running RMI accessiable
+     *       repository.
+     * hreptwo.migrate.sourcepath
+     *       Required path from which to copy the content
+     * hreptwo.migrate.destination
+     *       Destination path to which import the content from, defaults to
+     *       same path as source.
+     * A dump in XML format is outputted to standard output of the migrated
+     * content.
+     */
+    @Test
+    public void testMigrate() throws Exception {
+        String repositoryPath = System.getProperty("hreptwo.migrate.sourcepath");
+        if(repositoryPath == null || repositoryPath.trim().equals(""))
+            return;
+        String destinationPath = System.getProperty("hreptwo.migrate.destination");
+        String repositoryLocation = System.getProperty("hreptwo.migrate.repository");
+        if(repositoryLocation == null || repositoryLocation.trim().equals(""))
+            repositoryLocation = "rmi://localhost:1099/hipporepository";
+        repositoryPath = repositoryPath.trim();
+        destinationPath = destinationPath.trim();
+        while(repositoryPath.startsWith("/"))
+            repositoryPath = repositoryPath.substring(1);
+        if(destinationPath == null || destinationPath.trim().equals("")) {
+            destinationPath = repositoryPath;
+            if(destinationPath.contains("/"))
+                destinationPath.substring(0,destinationPath.lastIndexOf("/"));
+        }
+        while(destinationPath != null && destinationPath.startsWith("/"))
+            destinationPath = destinationPath.substring(1);
+
+        external = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
         valueFactory = session.getValueFactory();
+
+        System.err.println("Using:");
+        System.err.println("  hreptwo.migrate.repository="+repositoryLocation);
+        System.err.println("  hreptwo.migrate.sourcepath="+repositoryPath);
+        System.err.println("  hreptwo.migrate.destination="+destinationPath);
 
         Session source = external.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         uuidProperties = new HashSet<Reference>();
-        copy(source.getRootNode().getNode("content"), session.getRootNode());
+        copy((repositoryPath.equals("")  ? source.getRootNode()  : source.getRootNode().getNode(repositoryPath)),
+             (destinationPath.equals("") ? session.getRootNode() : session.getRootNode().getNode(destinationPath)));
         for(Reference ref : uuidProperties) {
             Property property = ref.sourceNode.getProperty(ref.sourceProperty);
             if(property.getDefinition().isMultiple()) {
@@ -195,11 +233,15 @@ public class CopyFromExternalTest extends org.hippoecm.repository.TestCase {
                 Value newValue = valueFactory.createValue(targetNode.getUUID(), property.getType());
                 ref.destinationNode.setProperty(ref.destinationProperty, newValue);
             }
+
         }
         session.save();
-    }
-
-    @Test
-    public void testDummy() {
+        String path = "/" + destinationPath;
+        if(!path.equals("/"))
+            path += "/";
+        path += repositoryPath.substring(repositoryPath.lastIndexOf("/") + 1);
+        System.err.println("  export="+path);
+        session.exportSystemView(path, System.out, false, false);
+        System.out.println();
     }
 }
