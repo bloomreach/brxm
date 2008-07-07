@@ -38,6 +38,16 @@
           <th>Description</th>
         </tr>
         <tr>
+          <td>id</td>
+          <td>no</td>
+          <td>-</td>
+          <td>hst-menu</td>
+          <td>The optional id of this menu that reoccurs as id of the outer div tag of the default
+            output. Also used to retrieve an instance based view file.
+            Also used as request attribute name for custom output.
+          </td>
+        </tr>
+        <tr>
           <td>context</td>
           <td>no</td>
           <td>menutag.context.name</td>
@@ -70,14 +80,12 @@
             level for which default output is generated.</td>
         </tr>
         <tr>
-          <td>id</td>
+          <td>collapse</td>
           <td>no</td>
           <td>-</td>
-          <td>hst-menu</td>
-          <td>The optional id of this menu that reoccurs as id of the outer div tag of the default
-            output. Also used to retrieve an instance based view file.
-            Also used as request attribute name for custom output.
-             </td>
+          <td>true</td>
+          <td>The optional collapse flag indicating whether or not sub menu items of inactive 
+            menu items should be shown in the default output.</td>
         </tr>
       </table>
       <h4>File based configuration</h4>

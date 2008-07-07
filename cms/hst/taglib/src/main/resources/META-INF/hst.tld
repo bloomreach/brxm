@@ -157,6 +157,14 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <description>The optional collapse flag indicating whether or not sub menu items of inactive 
+            	menu items should be shown in the default output. Defaults to true, i.e. only 
+            	those sub menu items of items that are active.</description>
+            <name>collapse</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>
