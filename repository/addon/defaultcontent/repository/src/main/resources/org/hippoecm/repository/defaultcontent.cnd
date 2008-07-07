@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 <rep='internal'>
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
@@ -25,6 +25,7 @@
 [defaultcontent:article] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
+- defaultcontent:body (string)
 
 [defaultcontent:news] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
