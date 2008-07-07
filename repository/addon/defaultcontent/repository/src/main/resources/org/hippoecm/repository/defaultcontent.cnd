@@ -25,7 +25,6 @@
 [defaultcontent:article] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
-- defaultcontent:body (string)
 
 [defaultcontent:news] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
