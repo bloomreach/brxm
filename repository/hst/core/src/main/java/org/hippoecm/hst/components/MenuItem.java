@@ -97,11 +97,11 @@ public class MenuItem {
         active = false;
         if (activePath.startsWith(path)) {
             active = true;
-
-            Iterator<MenuItem> items = menuItems.iterator();
-            while (items.hasNext()) {
-                items.next().setActive(activePath);
-            }
+        }
+        
+        Iterator<MenuItem> items = menuItems.iterator();
+        while (items.hasNext()) {
+            items.next().setActive(activePath);
         }
     }
 
