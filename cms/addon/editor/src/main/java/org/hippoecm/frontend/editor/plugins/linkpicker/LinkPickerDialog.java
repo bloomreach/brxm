@@ -70,6 +70,7 @@ public class LinkPickerDialog extends LookupDialog {
         }
         add(label = new Label("info", new Model(path)));
         label.setOutputMarkupId(true);
+        ok.setEnabled(false);
     }
 
     public String getTitle() {
@@ -83,6 +84,7 @@ public class LinkPickerDialog extends LookupDialog {
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
                 target.addComponent(label);
+                target.addComponent(ok);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -115,7 +117,6 @@ public class LinkPickerDialog extends LookupDialog {
             log.error(e.getMessage());
             isReferenceable = false;
         }
-
         return validType && isReferenceable;
     }
 
