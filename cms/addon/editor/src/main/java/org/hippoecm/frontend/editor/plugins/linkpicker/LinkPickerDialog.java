@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,14 +111,20 @@ public class LinkPickerDialog extends LookupDialog {
             }
         }
 
-        boolean isReferenceable;
+        boolean isLinkable;
         try {
-            isReferenceable = targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE);
+            // do not enable linking to not referenceable nodes
+            isLinkable = targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE);
+            // do not enable linking to hippo documents below hippo handle
+            isLinkable = isLinkable
+                    && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT) && targetNode.getParent().isNodeType(
+                            HippoNodeType.NT_HANDLE));
         } catch (RepositoryException e) {
             log.error(e.getMessage());
-            isReferenceable = false;
+            isLinkable = false;
         }
-        return validType && isReferenceable;
+
+        return validType && isLinkable;
     }
 
     @Override
