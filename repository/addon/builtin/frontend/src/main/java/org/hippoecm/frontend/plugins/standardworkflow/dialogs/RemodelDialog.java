@@ -99,7 +99,8 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {
-                /* String[] nodes = */workflow.remodel(cnd, update);
+                /* String[] nodes = */
+                workflow.remodel(cnd, update);
                 sessionModel.getSession().save();
 
                 // log out; the session model will log in again.
