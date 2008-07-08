@@ -114,9 +114,9 @@ Not required, no default.]]></source>
       </ul>
       <h4>Repository based labelling</h4>
       <p>The menu item labels are created taking the capitalized name of the node.
-        If this is not applicable, it may further be specified on a node by the String property
-        <b>hst:label</b>.</p>
-
+        If this is not applicable, it may be specified in an i18n location
+        as specified by <code>repository.i18n.location</code>.</p>
+      
       <h4>Default HTML output</h4>
       <p>The default menu output is based on a possibly nested, <code>&lt;ul&gt;</code> /
           <code>&lt;li&gt; structure</code>. The id of the outermost
