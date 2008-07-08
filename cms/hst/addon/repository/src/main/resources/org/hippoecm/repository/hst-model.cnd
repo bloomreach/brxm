@@ -19,10 +19,12 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
+<hippostd='http://www.hippoecm.org/hippostd/nt/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/1.0'>
 
-[hst:labelled] mixin
-- hst:label (string) 
+[hst:i18nDocument] > hippo:document, hippostd:publishable, hippostd:publishableSummary
+- hippostd:language (string) 
+- * (string)
 
 [hst:page] mixin
 - hst:pageType (string) = 'jsp' < 'jsp', 'jsf'
