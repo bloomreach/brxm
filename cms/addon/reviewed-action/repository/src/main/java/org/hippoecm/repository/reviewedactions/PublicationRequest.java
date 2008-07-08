@@ -46,4 +46,10 @@ public class PublicationRequest extends Document {
         reference = stale.getIdentity();
         this.reason = reason;
     }
+
+    void setRejected(String reason) {
+        type = REJECTED;
+        reference = null;
+        this.reason = reason;
+    }
 }
