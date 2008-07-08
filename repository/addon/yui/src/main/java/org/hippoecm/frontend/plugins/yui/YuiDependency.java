@@ -32,6 +32,7 @@ public class YuiDependency implements Serializable {
     private String suffix;
 
     private boolean hasCss;
+    private boolean hasCoreCss;
     private boolean sourceNotFound;
 
     private YuiDependency[] optionalDependencies;
@@ -112,10 +113,23 @@ public class YuiDependency implements Serializable {
         return hasCss;
     }
 
+    public boolean getHasCoreCss() {
+        return hasCoreCss;
+    }
+
+    public void setHasCoreCss(boolean hasCoreCss) {
+        this.hasCoreCss = hasCoreCss;
+    }
+    
     public String getCssPath() {
         return getBasePath() + "/assets/" + module + ".css";
     }
 
+    public String getCoreCssPath() {
+        return getBasePath() + "/assets/" + module + "-core.css";
+    }
+
+    
     public String toString() {
         return new ToStringBuilder(this).append("module", module).toString();
     }

@@ -54,6 +54,8 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
     static final Map<String, ResourceReference> moduleCache = Collections
             .synchronizedMap(new HashMap<String, ResourceReference>());
     static final YuiDependencyResolver dependencyResolver = new YuiDependencyResolver();
+    
+    private static final List<String> debugModules = Collections.synchronizedList(new ArrayList<String>());
 
     List<IHeaderContributor> contributors = new ArrayList<IHeaderContributor>();
 
@@ -99,6 +101,18 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
     private void addModuleHeaderContributor(YuiDependency dependency) {
         contributors.add(new YuiModuleHeaderContributor(dependency));
     }
+    
+    public static void debugModule(String module) {
+        if(!debugModules.contains(module)) {
+            debugModules.add(module);
+        }
+    }
+
+    public static void debugModules(String... modules) {
+        for(String s : modules) {
+            debugModule(s);
+        }
+    }
 
     public static YuiHeaderContributor forModule(String module) {
         return forModule(new YuiDependency(module));
@@ -143,7 +157,7 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
                 log.error("Unable to find source file for module " + dependency.getModule() + " in namespace "
                         + dependency.getNamespace());
             } else {
-                final boolean debug = log.isDebugEnabled();
+                final boolean debug = log.isDebugEnabled() && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
                 final ResourceReference moduleScript;
                 final String path = dependency.getRealModulePath() + ((debug) ? "-debug" : "") + ".js";
                 if (moduleCache.containsKey(path)) {
@@ -159,21 +173,26 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
                 response.renderJavascriptReference(moduleScript);
 
                 if (dependency.getHasCss()) {
-                    final String assetPath = dependency.getCssPath();
-                    final ResourceReference assetRef;
-                    if (moduleCache.containsKey(assetPath)) {
-                        assetRef = moduleCache.get(assetPath);
-                    } else {
-                        assetRef = new CompressedResourceReference(YuiHeaderContributor.class, assetPath);
-                        moduleCache.put(assetPath, assetRef);
-                    }
-
-                    response.renderCSSReference(assetRef, "screen");
-
+                    renderCSSReference(dependency.getCssPath(), response);
+                }
+                if (dependency.getHasCoreCss()) {
+                    renderCSSReference(dependency.getCoreCssPath(), response);
                 }
             }
         }
 
     }
 
+    private void renderCSSReference(String path, IHeaderResponse response) {
+        final String assetPath = path;
+        final ResourceReference assetRef;
+        if (moduleCache.containsKey(assetPath)) {
+            assetRef = moduleCache.get(assetPath);
+        } else {
+            assetRef = new CompressedResourceReference(YuiHeaderContributor.class, assetPath);
+            moduleCache.put(assetPath, assetRef);
+        }
+
+        response.renderCSSReference(assetRef, "screen");
+    }
 }
