@@ -67,7 +67,11 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     public void rejectRequest(String reason) throws WorkflowException, MappingException, RepositoryException {
         ReviewedActionsWorkflowImpl.log.info("rejecting request for document ");
-        PublishableDocument rejected = unpublishedWorkflow.getRejectedDocument();
+	// it normally should not occur that unpublishedWorkflow is null, but due to invalid
+	// actions in console, e.g. we guard against it.
+        if(unpublishedWorkflow != null) {
+            PublishableDocument rejected = unpublishedWorkflow.getRejectedDocument();
+        }
         request.setRejected(rejected, reason);
     }
 }
