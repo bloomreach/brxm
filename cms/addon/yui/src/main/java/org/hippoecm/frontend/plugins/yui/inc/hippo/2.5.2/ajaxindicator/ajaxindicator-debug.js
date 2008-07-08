@@ -25,6 +25,10 @@ YAHOO.namespace('hippo');
     
 YAHOO.hippo.AjaxIndicator = function(_elId) {
     this.elementId = _elId;
+    
+    var me = this;
+    Wicket.Ajax.registerPreCallHandler(function(){me.show()});
+    Wicket.Ajax.registerPostCallHandler(function(){me.hide()});
 };
 
 YAHOO.hippo.AjaxIndicator.prototype = {
