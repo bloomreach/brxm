@@ -122,6 +122,9 @@ public class YuiDependencyResolver implements Serializable {
                     URL url = getClass().getResource(dependency.getCssPath());
                     dependency.setHasCss(url != null);
 
+                    url = getClass().getResource(dependency.getCoreCssPath());
+                    dependency.setHasCoreCss(url != null);
+
                     return is;
                 }
             }
