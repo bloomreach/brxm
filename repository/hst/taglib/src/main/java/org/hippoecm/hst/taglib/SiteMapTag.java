@@ -106,21 +106,7 @@ public class SiteMapTag extends SimpleTagSupport {
         try {
             pageContext.getOut().flush();
 
-            String relativeLocation = getLocation();
-
-            // starting with /: relative to the base location, else relative to
-            // the complete location
-            String location;
-            if (relativeLocation.startsWith("/")) {
-                location = context.getBaseLocation() + relativeLocation;
-            }
-            else {
-                String loc = context.getLocation();
-                location = loc.endsWith("/") ? loc + relativeLocation
-                                            : loc + "/" + relativeLocation;
-            }
-
-            SiteMap siteMap = SiteMap.getSiteMap(request.getSession(), location,
+            SiteMap siteMap = SiteMap.getSiteMap(request.getSession(), context, getLocation(),
                     getDocumentExcludeNames(), getDocumentLabelProperties());
 
             String viewFile = getViewFile();

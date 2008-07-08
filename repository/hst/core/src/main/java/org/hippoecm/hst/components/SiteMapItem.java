@@ -21,7 +21,9 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -41,21 +43,23 @@ public class SiteMapItem {
 
     /**
      * Constructor.
+     * @param context 
+     * @param session 
      */
-    public SiteMapItem(final Node node, final int level,
+    public SiteMapItem(final HttpSession session, final Context context, final Node node, final int level,
             final String[] excludedDocumentNames,  final String[] documentLabelProperties) {
         super();
 
         this.level = level;
         try {
-            this.label = getLabel(node, documentLabelProperties);
+            this.label = getLabel(session, context, node, documentLabelProperties);
             this.path = node.getPath();
         }
         catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }
 
-        createSubItems(node, excludedDocumentNames, documentLabelProperties);
+        createSubItems(session, context, node, excludedDocumentNames, documentLabelProperties);
     }
 
     public List<SiteMapItem> getDocuments() {
@@ -86,14 +90,9 @@ public class SiteMapItem {
                 + ", folderItems=" + folders+ "]";
     }
 
-    private String getLabel(Node node, String[] documentLabelProperties) throws RepositoryException {
+    private String getLabel(HttpSession session, Context context, Node node, String[] documentLabelProperties) throws RepositoryException {
 
-        // an actively set label property
-        if (node.hasProperty(HSTNodeTypes.HST_LABEL)) {
-            return node.getProperty(HSTNodeTypes.HST_LABEL).getString();
-        }
-
-        // for a document handle, get the document and try the label properties
+        // try the label properties
         if (documentLabelProperties != null) {
             for (int i = 0; i < documentLabelProperties.length; i++) {
                 String property = documentLabelProperties[i];
@@ -103,15 +102,12 @@ public class SiteMapItem {
             }
         }
 
-        // capitalized node name as label
-        String label = node.getName().substring(0, 1).toUpperCase();
-        if (node.getName().length() > 1) {
-            label += node.getName().substring(1);
-        }
-        return label;
+        // otherwise i18n label
+        return new Label(session, context, node).getValue();
     }
 
-    private void createSubItems(final Node node, final String[] excludedDocumentNames,
+    private void createSubItems(final HttpSession session, final Context context, 
+            final Node node, final String[] excludedDocumentNames,
             final String[] documentLabelProperties) {
         try {
             // creating site map sub items may be specifically turned off
@@ -154,13 +150,13 @@ public class SiteMapItem {
                         }
                     }
 
-                    documents.add(new SiteMapItem(documentNode, this.getLevel() + 1,
+                    documents.add(new SiteMapItem(session, context, documentNode, this.getLevel() + 1,
                             excludedDocumentNames, documentLabelProperties));
                 }
 
                 // other nodes (folders)
                 else  {
-                    folders.add(new SiteMapItem(subNode, this.getLevel() + 1,
+                    folders.add(new SiteMapItem(session, context, subNode, this.getLevel() + 1,
                             excludedDocumentNames, documentLabelProperties));
                 }
             }

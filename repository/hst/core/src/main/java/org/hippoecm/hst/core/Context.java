@@ -143,6 +143,13 @@ public class Context extends AbstractMap {
     }
 
     /**
+     * Get the locale as set by setter, or if not set, the default.
+     */
+    public Locale getLocale() {
+        return (locale != null) ? locale : Locale.getDefault();
+    }
+
+    /**
      * Get the original requestURI, before any redirection or forwarding.
      */
     public String getRequestURI() {
@@ -428,10 +435,6 @@ public class Context extends AbstractMap {
         }
 
         return pathReplacer;
-    }
-
-    private Locale getLocale() {
-        return (locale != null) ? locale : Locale.getDefault();
     }
 
     private class EntrySet extends AbstractSet {

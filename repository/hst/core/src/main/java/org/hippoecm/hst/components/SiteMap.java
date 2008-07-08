@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,19 +46,33 @@ public class SiteMap {
      * Get site map object lazily from session.
      *
      * @param session the HTTP session
-     * @param location absolute path in the repository from where to generate a site map
+     * @param context the current context object
+     * @param location path in the repository from where to generate a site map,
+     *          relative to the given context
      * @param excludedDocumentNames optional names of documents that are not
      *      included in the site map
      * @param documentLabelProperties optional properties for documents to set
      *      as label for site map items
      */
-    public static SiteMap getSiteMap(final HttpSession session, final String location,
+    public static SiteMap getSiteMap(final HttpSession session, final Context context, final String location,
             final String[] excludedDocumentNames, final String[] documentLabelProperties) {
 
+        // location starting with /: relative to the base location, else 
+        // relative to the complete location
+        String loc;
+        if (location.startsWith("/")) {
+            loc = context.getBaseLocation() + location;
+        }
+        else {
+            loc = context.getLocation();
+            loc = loc.endsWith("/") ? loc + location : loc + "/" + location;
+        }
+
+        
         SiteMap siteMap = (SiteMap) session.getAttribute(SiteMap.class.getName() + "." + location);
 
         if (siteMap == null) {
-            siteMap = new SiteMap(session, location, excludedDocumentNames, documentLabelProperties);
+            siteMap = new SiteMap(session, context, location, excludedDocumentNames, documentLabelProperties);
             session.setAttribute(SiteMap.class.getName() + "." + location, siteMap);
         }
 
@@ -67,11 +82,11 @@ public class SiteMap {
     /**
      * Constructor.
      */
-    public SiteMap(final HttpSession session, final String location,
+    public SiteMap(final HttpSession session, final Context context, final String location,
                 final String[] excludedDocumentNames, final String[] documentLabelProperties) {
         super();
 
-        this.baseItem = createBaseItem(session, location, excludedDocumentNames, documentLabelProperties);
+        this.baseItem = createBaseItem(session, context, location, excludedDocumentNames, documentLabelProperties);
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +99,7 @@ public class SiteMap {
         return (baseItem != null) ? baseItem.getFolders() : Collections.EMPTY_LIST;
     }
 
-    private SiteMapItem createBaseItem(final HttpSession session, final String location,
+    private SiteMapItem createBaseItem(final HttpSession session, final Context context, final String location,
             final String[] excludedDocumentNames, final String[] documentLabelProperties) {
 
         Session jcrSession = JCRConnector.getJCRSession(session);
@@ -106,8 +121,9 @@ public class SiteMap {
 
             // set base item level at -1 so the first level of items to be
             // gotten is 0, similar to the Menu component
-            return new SiteMapItem(jcrSession.getRootNode().getNode(path), -1/*level*/,
-                    excludedDocumentNames, documentLabelProperties);
+            return new SiteMapItem(session, context, 
+                        jcrSession.getRootNode().getNode(path), -1/*level*/,
+                        excludedDocumentNames, documentLabelProperties);
         }
         catch (RepositoryException re) {
             throw new IllegalStateException(re);

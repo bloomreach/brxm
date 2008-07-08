@@ -48,5 +48,7 @@ public final class HSTNodeTypes {
 //    public static final String HST_PAGETYPE = "hst:pageType";
     public static final String HST_PAGEFILE = "hst:pageFile";
     public static final String HST_LABEL = "hst:label";
-    public static final String HST_I18N_LABELS = "hst:i18nLabels";
+    public static final String HST_I18N_DOCUMENT = "hst:i18nDocument";
+    
+    public static final String HIPPOSTD_LANGUAGE = "hippostd:language";
 }
