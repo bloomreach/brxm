@@ -45,8 +45,6 @@ public class RepositoryLocaleFactory implements LocaleFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryLocaleFactory.class);
 
-    private static final String HIPPOSTD_LANGUAGE = "hippostd:language";
-
     // javadoc from interface
     public Locale getLocale(HttpServletRequest request, String contextName) {
 
@@ -80,7 +78,7 @@ public class RepositoryLocaleFactory implements LocaleFactory {
                             int localeIndex = -1;
                             for (int i = 0; i < facets.length; i++) {
     
-                                if (facets[i].getString().equals(HIPPOSTD_LANGUAGE)) {
+                                if (facets[i].getString().equals(HSTNodeTypes.HIPPOSTD_LANGUAGE)) {
                                     localeIndex = i;
                                     break;
                                 }
@@ -88,13 +86,13 @@ public class RepositoryLocaleFactory implements LocaleFactory {
     
                             Value[] facetValues = node.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
                             if (localeIndex == -1) {
-                                LOGGER.info("No value " + HIPPOSTD_LANGUAGE + " found in property " +
+                                LOGGER.info("No value " + HSTNodeTypes.HIPPOSTD_LANGUAGE + " found in property " +
                                         HippoNodeType.HIPPO_FACETS + " of facetselect node " + node.getPath());
                             }
     
                             else if (localeIndex >= facetValues.length) {
                                 LOGGER.error("Value index " + localeIndex +
-                                        " of property " + HIPPOSTD_LANGUAGE + " is too high for property "
+                                        " of property " + HSTNodeTypes.HIPPOSTD_LANGUAGE + " is too high for property "
                                         + HippoNodeType.HIPPO_VALUES + " with length " + facetValues.length);
                             }
     
@@ -110,8 +108,8 @@ public class RepositoryLocaleFactory implements LocaleFactory {
                         else {
     
                             // direct property?
-                            if (node.hasProperty(HIPPOSTD_LANGUAGE)) {
-                                String localeStr = node.getProperty(HIPPOSTD_LANGUAGE).getString();
+                            if (node.hasProperty(HSTNodeTypes.HIPPOSTD_LANGUAGE)) {
+                                String localeStr = node.getProperty(HSTNodeTypes.HIPPOSTD_LANGUAGE).getString();
                                 locale = parseLocaleString(localeStr);
                             }    
                         }

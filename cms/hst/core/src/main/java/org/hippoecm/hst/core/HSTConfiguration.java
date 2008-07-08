@@ -40,6 +40,7 @@ public class HSTConfiguration implements ServletContextListener {
     public static final String KEY_REPOSITORY_USERNAME = "repository.user.name";
     public static final String KEY_REPOSITORY_PASSWORD = "repository.password";
     public static final String KEY_REPOSITORY_URLMAPPING_LOCATION = "repository.urlmapping.location";
+    public static final String KEY_REPOSITORY_I18N_LOCATION = "repository.i18n.location";
 
     private final List<ResourceBundle> resourceBundles = new ArrayList<ResourceBundle>();
     private final Map<String, String> cache = new HashMap<String, String>();

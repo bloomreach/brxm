@@ -22,7 +22,9 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.util.HSTNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -43,33 +45,19 @@ public class MenuItem {
     /**
      * Constructor.
      */
-    public MenuItem(final Node node, final int level, final String[] excludedDocumentNames) {
+    public MenuItem(HttpSession session, final Context context, final Node node, final int level, final String[] excludedDocumentNames) {
         super();
 
         this.level = level;
         try {
-            this.label = getLabel(node);
+            this.label = new Label(session, context, node).getValue();
             this.path = node.getPath();
         }
         catch (RepositoryException re) {
             throw new IllegalStateException(re);
         }
 
-        createMenuItems(node, excludedDocumentNames);
-    }
-
-    private String getLabel(Node node) throws RepositoryException {
-
-        if (node.hasProperty(HSTNodeTypes.HST_LABEL)) {
-            return node.getProperty(HSTNodeTypes.HST_LABEL).getString();
-        }
-
-        // capitalized node name as label
-        String label = node.getName().substring(0, 1).toUpperCase();
-        if (node.getName().length() > 1) {
-            label += node.getName().substring(1);
-        }
-        return label;
+        createMenuItems(session, context, node, excludedDocumentNames);
     }
 
     public List<MenuItem> getItems() {
@@ -112,7 +100,7 @@ public class MenuItem {
                 + ", menuItems=" + menuItems + "]";
     }
 
-    private void createMenuItems(final Node node, final String[] excludedDocumentNames) {
+    private void createMenuItems(final HttpSession session, final Context context, final Node node, final String[] excludedDocumentNames) {
 
         try {
             // creating menu sub items may be specifically turned off
@@ -151,12 +139,12 @@ public class MenuItem {
                         }
                     }
 
-                    menuItems.add(new MenuItem(documentNode, this.getLevel() + 1, excludedDocumentNames));
+                    menuItems.add(new MenuItem(session, context, documentNode, this.getLevel() + 1, excludedDocumentNames));
                 }
 
                 // other nodes
                 else {
-                    menuItems.add(new MenuItem(subNode, this.getLevel() + 1, excludedDocumentNames));
+                    menuItems.add(new MenuItem(session, context, subNode, this.getLevel() + 1, excludedDocumentNames));
                 }
             }
         }

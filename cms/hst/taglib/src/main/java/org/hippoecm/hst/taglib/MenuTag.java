@@ -111,21 +111,7 @@ public class MenuTag extends SimpleTagSupport {
         try {
             pageContext.getOut().flush();
 
-            String relativeLocation = getLocation();
-
-            // starting with /: relative to the base location, else relative to
-            // the complete location
-            String location;
-            if (relativeLocation.startsWith("/")) {
-                location = context.getBaseLocation() + relativeLocation;
-            }
-            else {
-                String loc = context.getLocation();
-                location = loc.endsWith("/") ? loc + relativeLocation
-                                            : loc + "/" + relativeLocation;
-            }
-
-            Menu menu = Menu.getMenu(request.getSession(), location, getDocumentExcludeNames());
+            Menu menu = Menu.getMenu(request.getSession(), context, getLocation(), getDocumentExcludeNames());
 
             // map decoded URL to active document path
             String activePath = URLDecoder.decode(context.getRequestURI(), "UTF-8");

@@ -1,7 +1,7 @@
 
 Functionalities
 x Dynamic navigation 
-- Sitemap from repository
+x Sitemap from repository
 - Related items (dynamic or hand-picked)
 - Search
 - Reactions/comments
@@ -25,8 +25,8 @@ x	<hst:news>
 x <hst:encodeURL>
 x <hst:content>
 x <hst:menu>
+x <hst:siteMap>
 
-  <hst:sitemap>
   <hst:image>
   <hst:pager>
   

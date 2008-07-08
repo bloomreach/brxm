@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.util.HSTNodeTypes;
+import org.hippoecm.hst.core.Context;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,17 +47,31 @@ public class Menu {
     /* Get menu object lazily from session.
      *
      * @param session the HTTP session
-     * @param location absolute path in the repository from where to generate a site map
+     * @param context the current context object
+     * @param location path in the repository from where to generate a menu,
+     *          relative to the given context
      * @param excludedDocumentNames optional names of documents that are not
      *      included in the site map
      */
-    public static Menu getMenu(final HttpSession session, final String location, final String[] excludedDocumentNames) {
+    public static Menu getMenu(final HttpSession session, final Context context, final String location, final String[] excludedDocumentNames) {
 
-        Menu menu = (Menu) session.getAttribute(Menu.class.getName() + "." + location);
+        // location starting with /: relative to the base location, else 
+        // relative to the complete location
+        String loc;
+        if (location.startsWith("/")) {
+            loc = context.getBaseLocation() + location;
+        }
+        else {
+            loc = context.getLocation();
+            loc = loc.endsWith("/") ? loc + location : loc + "/" + location;
+        }
+
+        // lazy from session
+        Menu menu = (Menu) session.getAttribute(Menu.class.getName() + "." + loc);
 
         if (menu == null) {
-            menu = new Menu(session, location, excludedDocumentNames);
-            session.setAttribute(Menu.class.getName() + "." + location, menu);
+            menu = new Menu(session, context, loc, excludedDocumentNames);
+            session.setAttribute(Menu.class.getName() + "." + loc, menu);
         }
 
         return menu;
@@ -65,10 +80,10 @@ public class Menu {
     /**
      * Constructor.
      */
-    public Menu(HttpSession session, final String location, final String[] excludedDocumentNames) {
+    public Menu(HttpSession session, final Context context, final String location, final String[] excludedDocumentNames) {
         super();
 
-        createMenuItems(session, location, excludedDocumentNames);
+        createMenuItems(session, context, location, excludedDocumentNames);
     }
 
     public List<MenuItem> getItems() {
@@ -84,8 +99,8 @@ public class Menu {
         }
     }
 
-    private void createMenuItems(final HttpSession session, final String location,
-            final String[] excludedDocumentNames) {
+    private void createMenuItems(final HttpSession session, final Context context, 
+                        final String location, final String[] excludedDocumentNames) {
 
         Session jcrSession = JCRConnector.getJCRSession(session);
 
@@ -114,7 +129,7 @@ public class Menu {
 
                 // on level 0, only add nodes with the flag up
                 if (node.isNodeType(HSTNodeTypes.HST_MENU_ITEM)) {
-                    menuItems.add(new MenuItem(node, 0/*level*/, excludedDocumentNames));
+                    menuItems.add(new MenuItem(session, context, node, 0/*level*/, excludedDocumentNames));
                 }
             }
         }
