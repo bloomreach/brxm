@@ -39,10 +39,11 @@ public class LogoutLink extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
-    public LogoutLink(String id, IPluginContext context) {
+    public LogoutLink(String id, IPluginContext context, String dialogId) {
         super(id);
 
         final DialogWindow dialogWindow = new DialogWindow("dialog");
+        context.registerService(dialogWindow, dialogId);
         final LogoutDialog dialog = new LogoutDialog(context, dialogWindow);
         dialogWindow.setPageCreator(new PageCreator() {
             private static final long serialVersionUID = 1L;
