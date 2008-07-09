@@ -72,11 +72,17 @@
 - hippo:docbase (string) mandatory
 + * (hippo:document) multiple
 
+[hippo:resource]
+- jcr:encoding (string)
+- jcr:mimeType (string) mandatory
+- jcr:data (binary) primary mandatory
+- jcr:lastModified (date) mandatory ignore
+
 [hippo:facetselect] > hippo:reference
 - hippo:docbase (string) mandatory // this string is a weak reference
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single'
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
 + * multiple
 
 [hippo:type] > nt:base
@@ -135,10 +141,18 @@
 - hippo:viewsize (long) = '10' mandatory autocreated 
 + * (hippocms:listingpropnode) = hippocms:listingpropnode  
 
+[hippo:accessmanager] > nt:base
+- hippo:permcachesize (long)
+
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:active (boolean) = true mandatory autocreated
   
+[hippocms:user] > hippo:user
+- hippocms:firstname (string)
+- hippocms:lastname (string)
+- hippocms:email (string)
+
 [hippo:group] > nt:base
 - hippo:description (string)
 - hippo:members (string) multiple
@@ -178,21 +192,6 @@
 [hippo:domainfolder] > nt:base
 + * (hippo:domain) = hippo:domain
 
-[hippocms:user] > hippo:user
-- hippocms:firstname (string)
-- hippocms:lastname (string)
-- hippocms:email (string)
-+ * (hippocms:listing) = hippocms:listing
-
-[hippocms:parameters] > nt:base 
-- * (boolean)
-- * (string) multiple
-
-[hippocms:plugin] > nt:unstructured
-+ hippocms:parameters (hippocms:parameters) = hippocms:parameters
-
-[hippocms:pluginfolder] > nt:base
-+ * (hippocms:plugin) = hippocms:plugin
 
 [hippocms:remodel] mixin
 - hippocms:remodel (string) mandatory < 'current', 'draft', 'error', 'old'
@@ -292,7 +291,7 @@
 + * (hippo:logfolder) = hippo:logfolder
 + * (hippo:logitem) = hippo:logitem
 
-[hippo:queryfolder] > nt:base
+[hippo:basequeryfolder] > nt:base
 + * (nt:query) = hippo:query
 
 [hippo:queryfolder] > hippo:basequeryfolder
@@ -312,6 +311,7 @@
 + hippo:logging (hippo:logconfig) = hippo:logconfig
 + hippo:queries (hippo:queryfolder) = hippo:queryfolder mandatory autocreated
 + hippo:addonconfig (hippo:addonconfigfolder) = hippo:addonconfigfolder mandatory autocreated
++ hippo:accessmanager (hippo:accessmanager) = hippo:accessmanager
 
 [hippo:addonconfigfolder] > nt:base
 + * (hippo:addonconfig) = hippo:addonconfig
