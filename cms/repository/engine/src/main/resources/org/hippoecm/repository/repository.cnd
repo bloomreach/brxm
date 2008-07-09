@@ -78,9 +78,6 @@
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
 
-// FIXME: content model has no need to know of any hippo:image type
-[hippo:image] > hippo:resource
-
 // FIXME ought to be: [hippo:facetselect] > hippo:reference
 [hippo:facetselect] > nt:base
 - hippo:docbase (string) mandatory // FIXME ought to be reference

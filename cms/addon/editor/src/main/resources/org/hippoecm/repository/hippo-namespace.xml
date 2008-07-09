@@ -160,7 +160,7 @@
             <sv:value>Html</sv:value>
             <sv:value>Date</sv:value>
             <sv:value>Boolean</sv:value>
-            <sv:value>hippo:image</sv:value>
+            <sv:value>hippo:resource</sv:value>
             <sv:value>hippo:query</sv:value>
             <sv:value>hippo:facetselect</sv:value>
           </sv:property>
@@ -769,8 +769,8 @@
   </sv:node>
   <!-- end "hippo:query"-->
 
-  <!-- "hippo:image"-->
-  <sv:node sv:name="hippo:image">
+  <!-- "hippo:resource"-->
+  <sv:node sv:name="hippo:resource">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -844,7 +844,7 @@
       </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:image</sv:value>
+          <sv:value>hippo:resource</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mimeType" sv:type="String">
           <sv:value>image/gif</sv:value>
@@ -929,7 +929,7 @@
     </sv:node>
 
   </sv:node>
-  <!-- end "hippo:image"-->
+  <!-- end "hippo:resource"-->
 
   <!-- "hippo:facetlink"-->
   <sv:node sv:name="hippo:facetlink">
