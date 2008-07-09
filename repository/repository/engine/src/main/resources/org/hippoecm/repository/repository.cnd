@@ -72,7 +72,6 @@
 - hippo:docbase (string) mandatory
 + * (hippo:document) multiple
 
-//FIXME: should not be there, we already have nt:resource
 [hippo:resource]
 - jcr:encoding (string)
 - jcr:mimeType (string) mandatory
