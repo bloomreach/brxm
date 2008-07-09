@@ -558,10 +558,10 @@ public class HippoAccessManager implements AccessManager {
             }
             return isGranted;
         } catch (NoSuchItemStateException e) {
-            log.debug("NoSuchItemStateException for: " + id);
+            log.debug("NoSuchItemStateException for: " + id, e);
             return false;
         } catch (ItemStateException e) {
-            log.debug("ItemStateException for id: " + id);
+            log.error("ItemStateException for id: " + id, e);
             throw new RepositoryException("ItemStateException: " + e.getMessage(), e);
         }
     }
