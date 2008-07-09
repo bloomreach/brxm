@@ -488,7 +488,7 @@ public class HippoAccessManager implements AccessManager {
     /**
      * {@inheritDoc}
      */
-    public boolean isGranted(ItemId id, int permissions) throws RepositoryException {
+    public boolean isGranted(ItemId id, int permissions) throws RepositoryException, ItemNotFoundException {
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
@@ -559,7 +559,7 @@ public class HippoAccessManager implements AccessManager {
             return isGranted;
         } catch (NoSuchItemStateException e) {
             log.error("NoSuchItemStateException for: " + id, e);
-            return false;
+            throw new ItemNotFoundException("Item not found: " +id);
         } catch (ItemStateException e) {
             log.error("ItemStateException for id: " + id, e);
             throw new RepositoryException("ItemStateException: " + e.getMessage(), e);
