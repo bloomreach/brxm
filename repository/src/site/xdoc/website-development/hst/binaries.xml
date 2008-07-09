@@ -49,18 +49,18 @@
               a <code>img</code> tag, or in the <code>href</code> attribute of the <code>a</code> tag.</p>
             <p>The path to the binary node in the repository should be easily obtained using the
               context's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>). 
-              In the following example <code>hippo:image</code> is a subnode of the current context:</p>
+              In the following example <code>hippo:resource</code> is a subnode of the current context:</p>
           <source><![CDATA[  web.xml setup: BinariesServlet has URL-pattern /binaries/*
   
   using expression language:
           
-  <c:if test="${context['hippo:image'] != null}">
-      <img src="/<contextpath>/binaries${context['hippo:image']._path}"/>
+  <c:if test="${context['hippo:resource'] != null}">
+      <img src="/<contextpath>/binaries${context['hippo:resource']._path}"/>
   </c:if>
   
   or, using tags:
   
-  <hst:context var="image" location="hippo:image">
+  <hst:context var="image" location="hippo:resource">
       <hst:content var="imagePath" context="image" property="_path"/>
       <img src="${pageContext.request.contextPath}/binaries${imagePath}"/>
   </hst:context>]]></source>

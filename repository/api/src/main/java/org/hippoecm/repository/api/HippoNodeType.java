@@ -60,7 +60,6 @@ public interface HippoNodeType {
     final public static String NT_FACETSELECT = "hippo:facetselect";
     final public static String NT_QUERY = "hippo:query";
     final public static String NT_RESOURCE = "hippo:resource";
-    final public static String NT_IMAGE = "hippo:image";
     final public static String NT_FACETSUBSEARCH = "hippo:facetsubsearch";
     final public static String NT_FIELD = "hippo:field";
     final public static String NT_GROUP = "hippo:group";
