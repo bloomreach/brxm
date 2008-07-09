@@ -198,11 +198,6 @@
 [hippo:domainfolder] > nt:base
 + * (hippo:domain) = hippo:domain
 
-[hippo:plugin] > nt:unstructured
-
-[hippo:pluginfolder] > nt:base
-+ * (hippo:plugin) = hippo:plugin
-
 [hippo:remodel] mixin
 - hippo:remodel (string) mandatory < 'current', 'draft', 'error', 'old'
 - hippo:uri (string)

@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.hippoecm.frontend.plugins.standards.upload.JarExpander;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.decorating.PluginClassLoader;
 
 public class ClassLoaderTest extends TestCase {
@@ -52,7 +53,7 @@ public class ClassLoaderTest extends TestCase {
         if (loader != null) {
             loader.destroy();
         }
-        session.getRootNode().getNode("hippo:plugins").remove();
+        session.getRootNode().getNode(HippoNodeType.PLUGIN_PATH).remove();
         session.save();
         session.logout();
         server.close();
@@ -65,8 +66,8 @@ public class ClassLoaderTest extends TestCase {
 
     protected void loadRepository() throws Exception {
         Node root = session.getRootNode();
-        Node node = root.addNode("hippo:plugins", "hippo:pluginfolder");
-        node = node.addNode("test-plugin", "hippo:plugin");
+        Node node = root.addNode(HippoNodeType.PLUGIN_PATH, "nt:unstructured");
+        node = node.addNode("test-plugin", "nt:unstructured");
         node = node.addNode("mock.jar", "nt:resource");
 
         URL url = getClass().getResource("/mock.jar");
