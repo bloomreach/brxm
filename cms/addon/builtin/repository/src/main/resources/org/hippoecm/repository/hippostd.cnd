@@ -34,11 +34,6 @@
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 - hippostd:content (string) primary mandatory
 
-[hippostd:resource] > hippo:document, hippostd:languageable
-- hippostd:content (binary) primary mandatory
-- jcr:encoding (string)
-- jcr:mimeType (string) mandatory
-
 [hippostd:folder] > hippo:document
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder
@@ -51,3 +46,16 @@
 - hippostd:renderer (string)
 - hippostd:modify (string) multiple
 + hippostd:templates (hippostd:templates) = hippostd:templates
+
+
+
+// FIXME: THESE TYPES ARE EXAMPLES ONLY AND SHOULD BE REMOVED BEFORE RELEASE
+// DO NOT USE THESE TYPES IN JAVA CODE!
+
+[hippostd:gallery] > hippostd:folder
+// the children of this node are supposed to be images
+// ie. children conform to
+
+[hippostd:exampleImage] > hippo:document
++ hippostd:passportPhoto (hippo:resource) = hippo:resource primary mandatory
++ hippostd:portraitPhoto (hippo:resource) = hippo:resource
