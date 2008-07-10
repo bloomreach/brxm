@@ -36,7 +36,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
 
     public EditingReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        addWorkflowAction("save", "Save", new WorkflowAction() {
+        addWorkflowAction("save", "Save and close", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -45,7 +45,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                 close();
             }
         });
-        addWorkflowAction("revert", "Revert", new WorkflowAction() {
+        addWorkflowAction("revert", "Close without saving", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
