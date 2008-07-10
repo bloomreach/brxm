@@ -95,38 +95,6 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="image">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
-        <sv:node sv:name="image">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippostd:resource</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:paths" sv:type="String">
-          </sv:property>
-          <sv:property sv:name="hippostd:language" sv:type="String">
-            <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:encoding" sv:type="String">
-            <sv:value>UTF-8</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mimeType" sv:type="String">
-            <sv:value>text/html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:content" sv:type="Binary">
-            <sv:value>Jmx0O2h0bWwmZ3Q7Jmx0O2JvZHkmZ3Q7Jmx0Oy9ib2R5Jmd0OyZsdDsvaHRtbCZndDsK</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>adddocument_ico</sv:value>

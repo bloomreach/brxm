@@ -169,10 +169,16 @@ public class FolderWorkflowImpl implements FolderWorkflow {
             } else if (prototypeNode.getName().equals(template)) {
                 if(foldertype.hasProperty("hippostd:modify")) {
                     Value[] values = foldertype.getProperty("hippostd:modify").getValues();
+                    String currentTime = null;
                     for(int i=0; i+1<values.length; i+=2) {
                         String newValue = values[i+1].getString();
                         if(newValue.equals("$name")) {
                             newValue = name;
+                        } else if(newValue.equals("$now")) {
+                            if(currentTime == null) {
+                                currentTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new java.util.Date());
+                            }
+                            newValue = currentTime;
                         } else if(newValue.startsWith("$")) {
                             newValue = arguments.get(newValue.substring(1));
                         }
@@ -203,22 +209,15 @@ public class FolderWorkflowImpl implements FolderWorkflow {
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         if(name.startsWith("/"))
             name  = name.substring(1);
-        System.err.println("BERRY archive ");
         name = ISO9075Helper.encodeLocalName(name);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
-        System.err.println("BERRY archive "+folder.getPath()+" "+name);
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
-            System.err.println("BERRY offspring "+offspring.getPath());
             if (subject.getPath().equals(ATTIC_PATH)) {
-                System.err.println("BERRY #0");
                 offspring.remove();
                 folder.save();
             } else {
-                System.err.println("BERRY #1 ");
-                System.err.println("BERRY #2 "+folder.getPath());
-                System.err.println("BERRY #3 "+ATTIC_PATH + "/" + offspring.getName());
                 userSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
                                                 ATTIC_PATH + "/" + offspring.getName());
             }
@@ -288,7 +287,6 @@ public class FolderWorkflowImpl implements FolderWorkflow {
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
             String childPath;
-            System.err.println("HERE"+path+"/_node/_name"); for(String s : renames.keySet()) System.err.println(s);
             if(renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/"+ child.getName()))
                 childPath = path + "/_node";
             else
