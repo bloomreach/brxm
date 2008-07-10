@@ -163,15 +163,11 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.breadcrumb</sv:value>
       <sv:value>extension.browser</sv:value>
       <sv:value>extension.list</sv:value>
       <sv:value>extension.workflows</sv:value>
       <sv:value>extension.version</sv:value>
       <sv:value>extension.versionToggle</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.breadcrumb" sv:type="String">
-      <sv:value>service.browse.breadcrumb</sv:value>
     </sv:property>
     <sv:property sv:name="extension.browser" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
