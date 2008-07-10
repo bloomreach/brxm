@@ -288,7 +288,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
 
         <section name="Run">
             <p>
-                <a href="http://jettylauncher.sourceforge.net/docs/quickstart.html">Create Run-Jetty-Run configuration</a>
+                <a href="http://code.google.com/p/run-jetty-run/">Create Run-Jetty-Run configuration</a>
             </p>
             <ul>
                 <li>
