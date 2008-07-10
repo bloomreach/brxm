@@ -232,9 +232,9 @@ mvn jetty:run-war
 </source>
         <p>
           You should now be able to approach the Console application with your web browser
-          on <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
+          on <a href="http://localhost:8080/cms/console/">http://localhost:8080/cms/console/</a>.
           Login with username "admin" and password "admin". The full CMS is accessible at
-          <a href="http://localhost:8080/">http://localhost:8080/</a>, using the same account.
+          <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>, using the same credentials.
         </p>
       </subsection>
 
