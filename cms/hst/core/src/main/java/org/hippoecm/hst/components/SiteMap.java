@@ -72,7 +72,7 @@ public class SiteMap {
         SiteMap siteMap = (SiteMap) session.getAttribute(SiteMap.class.getName() + "." + location);
 
         if (siteMap == null) {
-            siteMap = new SiteMap(session, context, location, excludedDocumentNames, documentLabelProperties);
+            siteMap = new SiteMap(session, context, loc, excludedDocumentNames, documentLabelProperties);
             session.setAttribute(SiteMap.class.getName() + "." + location, siteMap);
         }
 
