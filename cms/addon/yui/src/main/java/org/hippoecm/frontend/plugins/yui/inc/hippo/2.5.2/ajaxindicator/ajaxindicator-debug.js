@@ -20,30 +20,38 @@
  * @requires yahoo, dom
  * @module ajaxindicator
  */
+ 
+ //TODO: might register to a custom layout-processing event to extend the loading indication
+ //untill after the layout has processed, instead of just the postAjaxEvent
+ 
+(function() {
+  var Dom = YAHOO.util.Dom,
+  Lang = YAHOO.util.Lang;
 
-YAHOO.namespace('hippo');
+  YAHOO.namespace('hippo');
     
-YAHOO.hippo.AjaxIndicator = function(_elId) {
+  YAHOO.hippo.AjaxIndicator = function(_elId) {
     this.elementId = _elId;
     
-    var me = this;
-    Wicket.Ajax.registerPreCallHandler(function(){me.show()});
-    Wicket.Ajax.registerPostCallHandler(function(){me.hide()});
-};
+    var _this = this;
+    Wicket.Ajax.registerPreCallHandler(function() { _this.show() });
+    Wicket.Ajax.registerPostCallHandler(function(){ _this.hide() });
+  };
 
-YAHOO.hippo.AjaxIndicator.prototype = {
+  YAHOO.hippo.AjaxIndicator.prototype = {
     elementId: null,
     calls: 0,
     
     getElement: function() {
-        YAHOO.log('Trying to find ajax indicator element[' + this.elementId + ']', 'ajaxindicator');
-        return YAHOO.util.Dom.get(this.elementId);
+        YAHOO.log('Trying to find ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+        return Dom.get(this.elementId);
     },
     
     show: function() {
         this.calls++;
-        YAHOO.util.Dom.setStyle(this.getElement(), 'display', 'block');
-        YAHOO.log('Show ajax indicator element[' + this.elementId + ']', 'ajaxindicator');
+        this.setCursor(window, 'wait');
+        Dom.setStyle(this.getElement(), 'display', 'block');
+        YAHOO.log('Show ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
     },
     
     hide: function() {
@@ -51,11 +59,20 @@ YAHOO.hippo.AjaxIndicator.prototype = {
             this.calls--;
         } 
         if (this.calls == 0) {
-            YAHOO.log('Hide ajax indicator element[' + this.elementId + ']', 'ajaxindicator');
-            YAHOO.util.Dom.setStyle(this.getElement(),'display', 'none');
+            YAHOO.log('Hide ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+            this.setCursor(window, 'default');
+            Dom.setStyle(this.getElement(),'display', 'none');
         }  
+    },
+    
+    setCursor: function(win, cursor) {
+        if (!Lang.isNull(win.document.body)) {
+            YAHOO.log('Setting cursor[' + cursor + '] on window[' + win + ']', 'info', 'AjaxIndicator');
+            Dom.setStyle(win.document.body, 'cursor', cursor);
+        }        
     }
-};
-//}();
+    
+  };
+})();
 
 YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.5.2", build: "1076"});
