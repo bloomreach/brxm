@@ -32,23 +32,11 @@ public interface RemodelWorkflow extends Workflow {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    // FIXME: should be dropped
-    final public static String VERSION_DRAFT = "draft";
-    final public static String VERSION_CURRENT = "current";
-    final public static String VERSION_ERROR = "error";
-    final public static String VERSION_OLD = "old";
-
     /**
      * Instruct the repository to apply the new node definition overriding the
      * earlier node definition.
      */
-    public String[] remodel(String cnd, Map<String, TypeUpdate> updates)
-            throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    /**
-     * convert a single node
-     */
-    public void convert(String namespace, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
+    public String[] remodel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
             RepositoryException, RemoteException;
 
     /**

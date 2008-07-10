@@ -27,7 +27,7 @@
   </sv:property>
 
   <!-- "report" type -->
-  <sv:node sv:name="reporting:report">
+  <sv:node sv:name="report">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -39,6 +39,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/reporting/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -145,6 +151,12 @@
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>reporting:report</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/reporting/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="reporting:parameternames" sv:type="String"> </sv:property>
         <sv:property sv:name="reporting:parametervalues" sv:type="String"> </sv:property>

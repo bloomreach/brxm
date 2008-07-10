@@ -38,6 +38,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -109,6 +115,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -173,6 +185,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -231,6 +249,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -292,6 +316,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -314,6 +344,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -413,6 +449,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -475,6 +517,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -545,6 +593,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
@@ -613,6 +667,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>internal</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>false</sv:value>

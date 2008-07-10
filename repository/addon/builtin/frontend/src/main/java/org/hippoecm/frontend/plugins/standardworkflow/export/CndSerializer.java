@@ -31,7 +31,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +53,8 @@ public class CndSerializer implements IClusterable {
         namespaces = new HashMap<String, String>();
         types = new LinkedHashSet<ITypeDescriptor>();
 
-        currentConfig = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
-        draftConfig = new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT);
+        currentConfig = new JcrTypeStore();
+        draftConfig = new JcrTypeStore(namespace);
 
         List<ITypeDescriptor> list = draftConfig.getTypes(namespace);
         for (ITypeDescriptor descriptor : list) {
@@ -99,11 +98,26 @@ public class CndSerializer implements IClusterable {
     public void versionNamespace(String prefix) {
         if (namespaces.containsKey(prefix)) {
             String namespace = namespaces.get(prefix);
+            String last = namespace;
             int pos = namespace.lastIndexOf('/');
-            int minorPos = namespace.lastIndexOf('.');
+            try {
+                for (String registered : jcrSession.getSession().getNamespacePrefixes()) {
+                    String uri = jcrSession.getSession().getNamespaceURI(registered);
+                    if (uri.startsWith(namespace.substring(0, pos + 1))) {
+                        if (isLater(uri, last)) {
+                            last = uri;
+                        }
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+                return;
+            }
+
+            int minorPos = last.lastIndexOf('.');
             if (minorPos > pos) {
-                int minor = Integer.parseInt(namespace.substring(minorPos + 1));
-                namespace = namespace.substring(0, minorPos + 1) + new Integer(minor + 1).toString();
+                int minor = Integer.parseInt(last.substring(minorPos + 1));
+                namespace = last.substring(0, minorPos + 1) + new Integer(minor + 1).toString();
                 namespaces.put(prefix, namespace);
             } else {
                 log.warn("namespace for " + prefix + " does not conform to versionable format");
@@ -111,6 +125,26 @@ public class CndSerializer implements IClusterable {
         } else {
             log.warn("namespace for " + prefix + " was not found");
         }
+    }
+
+    private static boolean isLater(String one, String two) {
+        int pos = one.lastIndexOf('/');
+        String[] oneVersions = one.substring(pos + 1).split("\\.");
+        String[] twoVersions = two.substring(pos + 1).split("\\.");
+        for (int i = 0; i < oneVersions.length; i++) {
+            if (i < twoVersions.length) {
+                int oneVersion = Integer.parseInt(oneVersions[i]);
+                int twoVersion = Integer.parseInt(twoVersions[i]);
+                if (oneVersion > twoVersion) {
+                    return true;
+                } else if(oneVersion < twoVersion) {
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Map<String, String> getNamespaces() {

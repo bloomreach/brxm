@@ -61,10 +61,10 @@ public class LogoutPlugin extends RenderPlugin {
                     if (session != null) {
                         session.save();
                     }
-                    userSession.logout();
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }
+                userSession.logout();
             }
         });
     }

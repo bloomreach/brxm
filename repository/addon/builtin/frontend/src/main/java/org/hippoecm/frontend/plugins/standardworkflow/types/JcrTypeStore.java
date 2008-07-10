@@ -33,7 +33,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,15 +44,21 @@ public class JcrTypeStore implements ITypeStore {
 
     private static final Logger log = LoggerFactory.getLogger(JcrTypeStore.class);
 
-    private String version;
+    public static final String DRAFT = "draft";
+
+    private String draftNs;
     private transient Map<String, ITypeDescriptor> types = null;
 
-    public JcrTypeStore(String version) {
-        this.version = version;
+    public JcrTypeStore() {
+        this(null);
+    }
+
+    public JcrTypeStore(String prefix) {
+        this.draftNs = prefix;
     }
 
     public ITypeDescriptor getTypeDescriptor(String name) {
-        if("rep:root".equals(name)) {
+        if ("rep:root".equals(name)) {
             // ignore the root node
             return null;
         }
@@ -85,6 +90,9 @@ public class JcrTypeStore implements ITypeStore {
         Map<String, ITypeDescriptor> currentTypes = new HashMap<String, ITypeDescriptor>();
         Map<String, ITypeDescriptor> versionedTypes = new HashMap<String, ITypeDescriptor>();
         try {
+            boolean getDraft = namespace.equals(draftNs);
+            String uri = getUri(namespace);
+
             String xpath = HippoNodeType.NAMESPACES_PATH + "/" + namespace + "/*/" + HippoNodeType.HIPPO_NODETYPE + "/"
                     + HippoNodeType.HIPPO_NODETYPE;
             QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -93,18 +101,21 @@ public class JcrTypeStore implements ITypeStore {
             NodeIterator iter = result.getNodes();
             while (iter.hasNext()) {
                 Node pluginNode = iter.nextNode();
-                ITypeDescriptor typeDescriptor = createTypeDescriptor(pluginNode, pluginNode.getParent().getParent()
-                        .getName());
-                if (isVersion(pluginNode, RemodelWorkflow.VERSION_CURRENT)) {
-                    currentTypes.put(typeDescriptor.getName(), typeDescriptor);
-                }
-                if (isVersion(pluginNode, version)) {
-                    versionedTypes.put(typeDescriptor.getName(), typeDescriptor);
+                Node typeNode = pluginNode.getParent().getParent();
+                String typeName = typeNode.getParent().getName() + ":" + typeNode.getName();
+                ITypeDescriptor typeDescriptor = createTypeDescriptor(pluginNode, typeName);
+                if (pluginNode.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (pluginNode.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        currentTypes.put(typeName, typeDescriptor);
+                    }
+                } else {
+                    if (getDraft) {
+                        versionedTypes.put(typeName, typeDescriptor);
+                    }
                 }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
-            ex.printStackTrace();
         }
 
         ArrayList<ITypeDescriptor> list = new ArrayList<ITypeDescriptor>(currentTypes.values().size());
@@ -119,47 +130,41 @@ public class JcrTypeStore implements ITypeStore {
 
     // Privates
 
+    private String getUri(String prefix) {
+        if ("system".equals(prefix)) {
+            return "internal";
+        }
+        try {
+            NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
+            return nsReg.getURI(prefix);
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+
     private Session getJcrSession() {
         return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
     }
 
-    private boolean useOldType() {
-        return (RemodelWorkflow.VERSION_OLD.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version));
-    }
-
-    private boolean isVersion(Node pluginNode, String version) throws RepositoryException {
-        if (pluginNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-            if (pluginNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals(version)) {
-                return true;
-            }
-        } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
-            return true;
-        }
-        return false;
-    }
-
     private Node lookupConfigNode(String type) throws RepositoryException {
         HippoSession session = (HippoSession) getJcrSession();
-        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
         String prefix = "system";
-        String uri = "";
+        String subType = type;
         if (type.indexOf(':') > 0) {
             prefix = type.substring(0, type.indexOf(':'));
-            uri = nsReg.getURI(prefix);
+            subType = type.substring(type.indexOf(':') + 1);
         }
 
+        String uri = getUri(prefix);
         String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
         if (prefix.length() > nsVersion.length()
                 && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-            type = type.substring(prefix.length());
             prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-            type = prefix + type;
-        } else {
-            uri = nsReg.getURI("rep");
         }
 
-        String path = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/"
+        String path = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
                 + HippoNodeType.HIPPO_NODETYPE;
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
@@ -169,30 +174,23 @@ public class JcrTypeStore implements ITypeStore {
         Node current = null;
         while (iter.hasNext()) {
             Node node = iter.nextNode();
-            if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                String state = node.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
-                if (version.equals(state)) {
-                    if (useOldType()) {
-                        if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
-                            return node;
-                        }
-                    } else {
+            if (prefix.equals(draftNs)) {
+                if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    return node;
+                } else {
+                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                        current = node;
+                    }
+                }
+            } else {
+                if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
                         return node;
                     }
-                } else if (RemodelWorkflow.VERSION_CURRENT.equals(state)) {
-                    current = node;
                 }
-            } else if (RemodelWorkflow.VERSION_CURRENT.equals(version)) {
-                return node;
-            } else {
-                current = node;
             }
         }
-
-        if (RemodelWorkflow.VERSION_DRAFT.equals(version) || RemodelWorkflow.VERSION_ERROR.equals(version)) {
-            return current;
-        }
-        return null;
+        return current;
     }
 
     public ITypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
@@ -203,13 +201,21 @@ public class JcrTypeStore implements ITypeStore {
                     templateTypeNode = templateTypeNode.getParent();
                 }
 
+                String prefix = templateTypeNode.getParent().getName();
+                String pseudoName;
+                if ("system".equals(prefix)) {
+                    pseudoName = templateTypeNode.getName();
+                } else {
+                    pseudoName = prefix + ":" + templateTypeNode.getName();
+                }
+
                 String typeName;
                 if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
                     typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
                 } else {
-                    typeName = templateTypeNode.getName();
+                    typeName = pseudoName;
                 }
-                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), templateTypeNode.getName(), typeName);
+                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), pseudoName, typeName);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

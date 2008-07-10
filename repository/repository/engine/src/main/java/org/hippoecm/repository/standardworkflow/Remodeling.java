@@ -49,15 +49,16 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.value.ReferenceValue;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.HippoNamespaceRegistry;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
@@ -71,11 +72,11 @@ public class Remodeling {
 
     /** The prefix of the namespace which has been changed
      */
-    private String prefix;
+    private String newPrefix;
 
     /** The prefix of the previous version of the namespace
      */
-    private String oldPrefix;
+    private String prefix;
 
     /** lookup map for node types
      */
@@ -101,24 +102,24 @@ public class Remodeling {
      */
     transient Session session;
 
-    Remodeling(Session session, String prefix, String oldUri, Map<String, TypeUpdate> updates)
+    Remodeling(Session session, String newPrefix, String oldUri, Map<String, TypeUpdate> updates)
             throws RepositoryException {
         this.session = session;
-        this.prefix = prefix;
+        this.newPrefix = newPrefix;
         this.updates = updates;
 
         conversion = new HashMap<NodeType, NodeType>();
 
         Workspace workspace = session.getWorkspace();
-        nsRegistry = workspace.getNamespaceRegistry();
-        oldPrefix = nsRegistry.getPrefix(oldUri);
+        this.nsRegistry = workspace.getNamespaceRegistry();
+        this.prefix = nsRegistry.getPrefix(oldUri);
 
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
         for (Name nodeTypeName : ntreg.getRegisteredNodeTypes()) {
             if (nodeTypeName.getNamespaceURI().equals(oldUri)) {
-                String oldName = oldPrefix + ":" + nodeTypeName.getLocalName();
-                String newName = prefix + ":" + nodeTypeName.getLocalName();
+                String oldName = prefix + ":" + nodeTypeName.getLocalName();
+                String newName = newPrefix + ":" + nodeTypeName.getLocalName();
                 try {
                     conversion.put(ntmgr.getNodeType(oldName), ntmgr.getNodeType(newName));
                 } catch (NoSuchNodeTypeException ex) {
@@ -185,16 +186,16 @@ public class Remodeling {
     }
 
     private String getNewName(String name) {
-        if (name.startsWith(oldPrefix + ":")) {
-            return prefix + name.substring(oldPrefix.length());
+        if (name.startsWith(prefix + ":")) {
+            return newPrefix + name.substring(prefix.length());
         } else {
             return name;
         }
     }
 
     private String getOldName(String name) {
-        if (name.startsWith(prefix)) {
-            return oldPrefix + name.substring(prefix.length());
+        if (name.startsWith(newPrefix)) {
+            return prefix + name.substring(newPrefix.length());
         } else {
             return name;
         }
@@ -285,24 +286,52 @@ public class Remodeling {
         }
     }
 
-    private void copyType(Node source, Node target, NodeType sourceType, List<PropertyDefinition> targets)
-            throws RepositoryException {
+    private void copyNode(Node target, Node child, String name, List<NodeDefinition> nodeDefs)
+            throws ValueFormatException, VersionException, LockException, ConstraintViolationException,
+            RepositoryException {
+
+        for (NodeDefinition targetDefinition : nodeDefs) {
+            String targetName = targetDefinition.getName();
+
+            if (targetName.equals("*") || targetName.equals(name)) {
+                NodeType[] targetTypes = targetDefinition.getRequiredPrimaryTypes();
+                NodeType newType = conversion.get(child.getPrimaryNodeType());
+                for (NodeType type : targetTypes) {
+                    if (newType.isNodeType(type.getName())) {
+                        if (targetDefinition.allowsSameNameSiblings() || !target.hasNode(name)) {
+                            // copy node
+                            Node copy = target.addNode(name, newType.getName());
+                            traverse(child, true, copy);
+                            return;
+                        } else {
+                            log.warn("Not copying node " + child.getPath()
+                                    + " as the new type doesn't allow same name siblings");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void copyType(Node source, Node target, NodeType sourceType, List<PropertyDefinition> propDefs,
+            List<NodeDefinition> nodeDefs) throws RepositoryException {
+        TypeUpdate typeUpdate = updates.get(sourceType.getName());
+
         for (PropertyDefinition definition : sourceType.getPropertyDefinitions()) {
             if (!definition.isProtected()) {
-                String name = getNewName(definition.getName());
+                String name = definition.getName();
 
                 if (name.equals("*")) {
                     PropertyIterator properties = source.getProperties(name);
                     while (properties.hasNext()) {
                         Property property = properties.nextProperty();
                         if (property.getDefinition().equals(definition)) {
-                            copyProperty(target, property, getNewName(property.getName()), targets);
+                            copyProperty(target, property, getNewName(property.getName()), propDefs);
                         }
                     }
                 } else {
-                    if (source.hasProperty(definition.getName())) {
+                    if (source.hasProperty(name)) {
                         Property property = source.getProperty(definition.getName());
-                        TypeUpdate typeUpdate = updates.get(sourceType.getName());
                         if (typeUpdate != null) {
                             FieldIdentifier fieldId = new FieldIdentifier();
                             fieldId.path = name;
@@ -313,7 +342,7 @@ public class Remodeling {
                                 name = newId.path;
                             }
                         }
-                        copyProperty(target, property, name, targets);
+                        copyProperty(target, property, getNewName(name), propDefs);
                     }
                 }
             }
@@ -326,19 +355,17 @@ public class Remodeling {
                     Node node = nodes.nextNode();
                     if (definition.getName().equals("*")) {
                         if (node.getDefinition().equals(definition)) {
-                            NodeType newType = conversion.get(node.getPrimaryNodeType());
-                            Node copy = target.addNode(getNewName(node.getName()), newType.getName());
-                            traverse(node, true, copy);
+                            copyNode(target, node, getNewName(node.getName()), nodeDefs);
                         }
                     } else {
-                        String name = getNewName(definition.getName());
-                        NodeType newType = conversion.get(node.getPrimaryNodeType());
+                        String name = definition.getName();
+                        NodeType oldType = node.getPrimaryNodeType();
+                        NodeType newType = conversion.get(oldType);
                         if (newType != null) {
-                            TypeUpdate typeUpdate = updates.get(definition.getName());
                             if (typeUpdate != null) {
                                 FieldIdentifier fieldId = new FieldIdentifier();
                                 fieldId.path = name;
-                                fieldId.type = newType.getName();
+                                fieldId.type = getOldName(newType.getName());
 
                                 FieldIdentifier newId = typeUpdate.renames.get(fieldId);
                                 if (newId != null && !newId.path.equals("*")) {
@@ -346,8 +373,7 @@ public class Remodeling {
                                 }
                             }
 
-                            Node copy = target.addNode(name, newType.getName());
-                            traverse(node, true, copy);
+                            copyNode(target, node, getNewName(name), nodeDefs);
                         }
                     }
                 }
@@ -401,7 +427,7 @@ public class Remodeling {
                                 NodeType newType = conversion.get(node.getPrimaryNodeType());
                                 if (newType != null) {
                                     Node copy = target.addNode(nodeDef.getName(), newType.getName());
-                                    traverse(node, true, copy);
+                                    visit(node, copy);
                                 } else {
                                     log.warn("removing node " + node.getPath()
                                             + " as there is no new type defined for type "
@@ -434,25 +460,33 @@ public class Remodeling {
     private void visit(Node source, Node target) throws ValueFormatException, VersionException, LockException,
             ConstraintViolationException, RepositoryException {
 
-        List<PropertyDefinition> targets = new LinkedList<PropertyDefinition>();
+        List<PropertyDefinition> propDefs = new LinkedList<PropertyDefinition>();
+        List<NodeDefinition> nodeDefs = new LinkedList<NodeDefinition>();
 
         // copy primary type
         NodeType targetType = target.getPrimaryNodeType();
         for (PropertyDefinition def : targetType.getPropertyDefinitions()) {
-            targets.add(def);
+            propDefs.add(def);
         }
+        for (NodeDefinition def : targetType.getChildNodeDefinitions()) {
+            nodeDefs.add(def);
+        }
+
         NodeType[] sourceTypes = source.getMixinNodeTypes();
         for (int i = 0; i < sourceTypes.length; i++) {
             NodeType newType = conversion.get(sourceTypes[i]);
             if (newType != null) {
                 for (PropertyDefinition def : newType.getPropertyDefinitions()) {
-                    targets.add(def);
+                    propDefs.add(def);
+                }
+                for (NodeDefinition def : newType.getChildNodeDefinitions()) {
+                    nodeDefs.add(def);
                 }
             }
         }
 
         NodeType sourceType = source.getPrimaryNodeType();
-        copyType(source, target, sourceType, targets);
+        copyType(source, target, sourceType, propDefs, nodeDefs);
 
         // copy mixin types
         sourceTypes = source.getMixinNodeTypes();
@@ -461,7 +495,7 @@ public class Remodeling {
             if (newType != null) {
                 target.addMixin(newType.getName());
 
-                copyType(source, target, sourceTypes[i], targets);
+                copyType(source, target, sourceTypes[i], propDefs, nodeDefs);
             }
         }
 
@@ -512,45 +546,38 @@ public class Remodeling {
     }
 
     private void visitTemplateType(Node node) throws RepositoryException {
-        Node draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
+        Node draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_NODETYPE);
         if (draft == null) {
             EditmodelWorkflowImpl.checkoutType(node);
-            draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
+            draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_NODETYPE);
         }
 
         // visit node type
-        Node current = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "current");
-        if (current != null) {
-            if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
-                current.addMixin(HippoNodeType.NT_REMODEL);
-            }
-            current.setProperty(HippoNodeType.HIPPO_REMODEL, "old");
-            current.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(oldPrefix));
-        }
-
-        draft = getVersion(node, HippoNodeType.HIPPO_NODETYPE, "draft");
-        draft.removeMixin(HippoNodeType.NT_REMODEL);
+        draft.addMixin(HippoNodeType.NT_REMODEL);
+        draft.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(newPrefix));
 
         // visit prototype
         if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            current = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "current");
-            if (current != null) {
-                if (!current.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    current.addMixin(HippoNodeType.NT_REMODEL);
+            draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_PROTOTYPE);
+            Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
+
+            // remove old prototypes
+            NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
+            while (children.hasNext()) {
+                Node child = children.nextNode();
+                if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
+                    children.remove();
                 }
-                current.setProperty(HippoNodeType.HIPPO_REMODEL, "old");
-                current.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(oldPrefix));
             }
 
-            draft = getVersion(node, HippoNodeType.HIPPO_PROTOTYPE, "draft");
-            Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
+            // convert draft
             NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
-            NodeType newType = ntMgr.getNodeType(node.getName());
+            NodeType newType = ntMgr.getNodeType(newPrefix + ":" + node.getName());
             if (newType != null) {
                 Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
                 traverse(draft, true, newChild);
-                draft.remove();
-                newChild.removeMixin(HippoNodeType.NT_REMODEL);
+                newChild.addMixin(HippoNodeType.NT_REMODEL);
+                newChild.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(newPrefix));
 
                 // prepare workflow mixins
                 if (newChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {
@@ -560,24 +587,6 @@ public class Remodeling {
                 }
             }
         }
-    }
-
-    private Node getVersion(Node node, String name, String version) throws RepositoryException {
-        if (node.hasNode(name)) {
-            Node template = node.getNode(name);
-            NodeIterator iter = template.getNodes(name);
-            while (iter.hasNext()) {
-                Node versionNode = iter.nextNode();
-                if (versionNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    if (version.equals(versionNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString())) {
-                        return versionNode;
-                    }
-                } else if (version.equals("current")) {
-                    return versionNode;
-                }
-            }
-        }
-        return null;
     }
 
     private boolean isVirtual(Node node) throws RepositoryException {
@@ -599,17 +608,27 @@ public class Remodeling {
         if (node.getPath().equals("/jcr:system")) {
             return;
         } else if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-            String name = node.getName();
-            if (name.startsWith(prefix + ":")) {
+            if (node.getParent().getName().equals(prefix)) {
                 typeUpdates.add(node);
-                return;
+            }
+            return;
+        }
+
+        boolean checkin = false;
+        if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            if (!node.isCheckedOut()) {
+                checkin = true;
             }
         }
 
         if (copy) {
             // copy mixin types and properties
             visit(node, target);
+            node.remove();
         } else {
+            if (checkin) {
+                target.checkout();
+            }
             LinkedList<Node> toRename = new LinkedList<Node>();
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
@@ -623,9 +642,8 @@ public class Remodeling {
                     if (newType != oldType) {
                         Node newChild = target.addNode(getNewName(child.getName()), newType.getName());
                         traverse(child, true, newChild);
-                        child.remove(); // iter.remove();
                         changes.add(newChild);
-                    } else if (child.getName().startsWith(oldPrefix + ":")) {
+                    } else if (child.getName().startsWith(prefix + ":")) {
                         toRename.addLast(child);
                     } else {
                         traverse(child, false, child);
@@ -643,6 +661,11 @@ public class Remodeling {
                 traverse(child, false, child);
             }
         }
+
+        if (checkin) {
+            target.getSession().save();
+            target.checkin();
+        }
     }
 
     protected void updateTypes() throws RepositoryException {
@@ -651,34 +674,26 @@ public class Remodeling {
         }
     }
 
-    public static Remodeling remodel(Session session, String prefix, InputStream cnd,
-            Map<String, TypeUpdate> updates) throws NamespaceException, RepositoryException {
+    public static Remodeling remodel(Session session, String prefix, InputStream cnd, Map<String, TypeUpdate> updates)
+            throws NamespaceException, RepositoryException {
         Workspace workspace = session.getWorkspace();
-        HippoNamespaceRegistry nsreg = (HippoNamespaceRegistry) workspace.getNamespaceRegistry();
+        NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) workspace.getNamespaceRegistry();
 
-        // obtain namespace URI for prefix as in use
         String oldNamespaceURI = nsreg.getURI(prefix);
-
-        // compute namespace URI for new model to be used
-        int pos = oldNamespaceURI.lastIndexOf("/");
-        if (pos < 0)
-            throw new RepositoryException("Internal error; invalid namespace URI found in repository itself");
-        if (oldNamespaceURI.lastIndexOf(".") > pos)
-            pos = oldNamespaceURI.lastIndexOf(".");
-        int newNamespaceVersion = Integer.parseInt(oldNamespaceURI.substring(pos + 1));
-        ++newNamespaceVersion;
-        String newNamespaceURI = oldNamespaceURI.substring(0, pos + 1) + newNamespaceVersion;
-        String newPrefix = prefix + "_"
-                + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
         String oldPrefix = prefix + "_"
                 + oldNamespaceURI.substring(oldNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
 
         // push new node type definition such that it will be loaded
         try {
-            nsreg.open();
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd), "remodeling input stream");
+            NamespaceMapping mapping = cndReader.getNamespaceMapping();
+
+            String newNamespaceURI = mapping.getURI(prefix);
+            String newPrefix = prefix + "_"
+                    + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+
             nsreg.registerNamespace(newPrefix, newNamespaceURI);
 
-            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd), prefix);
             List ntdList = cndReader.getNodeTypeDefs();
             NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
             NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
@@ -692,42 +707,15 @@ public class Remodeling {
             Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, updates);
             remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
-            nsreg.commit(newPrefix);
 
             nsreg.externalRemap(prefix, oldPrefix, oldNamespaceURI);
             nsreg.externalRemap(newPrefix, prefix, newNamespaceURI);
 
-            nsreg.close();
             return remodel;
         } catch (Exception ex) {
             session.refresh(false);
-            nsreg.unregisterNamespace(newPrefix);
-            nsreg.close();
             ex.printStackTrace();
         }
         return null;
-    }
-
-    public static void convert(Node node, String prefix, Map<String, TypeUpdate> renames) throws NamespaceException,
-            RepositoryException {
-        Session session = node.getSession();
-        Workspace workspace = session.getWorkspace();
-        NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-
-        // obtain namespace URI for prefix as in use
-        String oldNamespaceURI = nsreg.getURI(prefix);
-
-        // get new prefix
-        if (prefix.indexOf('_') > 0) {
-            prefix = prefix.substring(0, prefix.indexOf('_'));
-        }
-
-        try {
-            Remodeling remodel = new Remodeling(session, prefix, oldNamespaceURI, renames);
-            remodel.traverse(node.getParent(), false, node.getParent());
-        } catch (RepositoryException ex) {
-            session.refresh(false);
-            throw ex;
-        }
     }
 }

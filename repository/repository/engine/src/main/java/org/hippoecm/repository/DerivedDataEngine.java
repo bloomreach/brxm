@@ -79,7 +79,7 @@ public class DerivedDataEngine {
                 logger.debug("Derived engine active");
             Set<Node> recomputeSet = new HashSet<Node>();
             try {
-                for(NodeIterator iter = session.pendingChanges(node,"jcr:uuid"); iter.hasNext(); ) {
+                for(NodeIterator iter = session.pendingChanges(node,"mix:referenceable"); iter.hasNext(); ) {
                     Node modified = iter.nextNode();
                     if(logger.isDebugEnabled()) {
                         logger.debug("Derived engine found modified referenceable node " + modified.getPath() +

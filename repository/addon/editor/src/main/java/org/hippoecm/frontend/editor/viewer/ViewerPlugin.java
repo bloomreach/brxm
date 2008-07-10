@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class ViewerPlugin extends RenderPlugin {
     public ViewerPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
 
-        typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
+        typeStore = new JcrTypeStore();
         engine = new TemplateEngine(context, typeStore);
         context.registerService(engine, ITemplateEngine.class.getName());
         engineId = context.getReference(engine).getServiceId();

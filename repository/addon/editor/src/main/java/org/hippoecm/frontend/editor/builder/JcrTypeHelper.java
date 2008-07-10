@@ -26,6 +26,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -50,25 +51,42 @@ public class JcrTypeHelper extends NodeModelWrapper {
         super(nodeModel);
     }
 
-    public JcrTypeDescriptor getTypeDescriptor(String version) {
+    public String getName() {
         try {
             Node baseNode = getNodeModel().getNode();
+            return baseNode.getParent().getName() + ":" + baseNode.getName();
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+    
+    public JcrTypeDescriptor getTypeDescriptor() {
+        try {
+            Node baseNode = getNodeModel().getNode();
+
+            String prefix = baseNode.getParent().getName();
+            String name;
+            if ("system".equals(prefix)) {
+                name = baseNode.getName();
+            } else {
+                name = prefix + ":" + baseNode.getName();
+            }
+
             Node ntHandle = baseNode.getNode(HippoNodeType.HIPPO_NODETYPE);
             NodeIterator ntIter = ntHandle.getNodes(HippoNodeType.HIPPO_NODETYPE);
             while (ntIter.hasNext()) {
                 Node typeNode = ntIter.nextNode();
-                if (typeNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    String ntVersion = typeNode.getProperty(HippoNodeType.HIPPO_REMODEL).getString();
-                    if (version.equals(ntVersion)) {
-                        String typeName;
-                        if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                            typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                        } else {
-                            typeName = baseNode.getName();
-                        }
+                if (!typeNode.isNodeType(HippoNodeType.NT_REMODEL)) {
 
-                        return new JcrTypeDescriptor(new JcrNodeModel(typeNode), baseNode.getName(), typeName);
+                    String typeName;
+                    if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
+                        typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
+                    } else {
+                        typeName = name;
                     }
+
+                    return new JcrTypeDescriptor(new JcrNodeModel(typeNode), name, typeName);
                 }
             }
         } catch (RepositoryException ex) {
@@ -148,10 +166,8 @@ public class JcrTypeHelper extends NodeModelWrapper {
                     HippoNodeType.HIPPO_PROTOTYPE);
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    if (node.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals("draft")) {
-                        return new JcrNodeModel(node);
-                    }
+                if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                    return new JcrNodeModel(node);
                 }
             }
             throw new ItemNotFoundException("draft version of prototype was not found");

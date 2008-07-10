@@ -36,7 +36,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 
 public class EditorForm extends Form {
     @SuppressWarnings("unused")
@@ -68,7 +67,7 @@ public class EditorForm extends Form {
         // FIXME: make this configurable
         setMaxSize(Bytes.megabytes(5));
 
-        typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT);
+        typeStore = new JcrTypeStore();
         engine = new TemplateEngine(context, typeStore);
         context.registerService(engine, ITemplateEngine.class.getName());
         engineId = context.getReference(engine).getServiceId();

@@ -24,7 +24,7 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
 
-  <sv:node sv:name="hst:page">
+  <sv:node sv:name="page">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -36,6 +36,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/hst/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:mixin" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -90,6 +96,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/hst/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageFile" sv:type="String">
           <sv:value>index.jsp</sv:value>

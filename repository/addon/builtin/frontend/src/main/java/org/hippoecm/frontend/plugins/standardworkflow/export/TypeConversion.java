@@ -45,11 +45,6 @@ public class TypeConversion implements Serializable {
         update.renames = new HashMap<FieldIdentifier, FieldIdentifier>();
         for (Map.Entry<String, IFieldDescriptor> entry : current.getFields().entrySet()) {
             IFieldDescriptor origField = entry.getValue();
-            ITypeDescriptor descriptor = currentConfig.getTypeDescriptor(origField.getType());
-            if (descriptor.isNode()) {
-                continue;
-            }
-
             FieldIdentifier oldId = new FieldIdentifier();
             oldId.path = origField.getPath();
             oldId.type = currentConfig.getTypeDescriptor(origField.getType()).getType();

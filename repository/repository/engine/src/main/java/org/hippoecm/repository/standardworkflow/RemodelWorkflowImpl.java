@@ -101,7 +101,7 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        Node type = subject.addNode(subject.getName() + ":" + name, HippoNodeType.NT_TEMPLATETYPE);
+        Node type = subject.addNode(name, HippoNodeType.NT_TEMPLATETYPE);
         type.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
         Node node = type.addNode(HippoNodeType.HIPPO_NODETYPE, HippoNodeType.NT_HANDLE);
@@ -111,18 +111,13 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         node.setProperty(HippoNodeType.HIPPO_NODE, true);
         node.setProperty(HippoNodeType.HIPPO_SUPERTYPE, new Value[] { new StringValue(HippoNodeType.NT_DOCUMENT),
                 new StringValue("hippostd:publishable"), new StringValue("hippostd:publishableSummary") });
-        node.addMixin(HippoNodeType.NT_REMODEL);
-        node.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
 
         node = type.addNode(HippoNodeType.HIPPO_PROTOTYPE, HippoNodeType.NT_HANDLE);
-        node = node.addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
+        node = node.addNode(HippoNodeType.HIPPO_PROTOTYPE, JcrConstants.NT_UNSTRUCTURED);
         node.addMixin(JcrConstants.MIX_REFERENCEABLE);
         node.addMixin("hippostd:publishable");
         node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippostd:state", "draft");
-
-        node.addMixin(HippoNodeType.NT_REMODEL);
-        node.setProperty(HippoNodeType.HIPPO_REMODEL, "draft");
 
         subject.save();
     }
@@ -149,18 +144,4 @@ public class RemodelWorkflowImpl implements RemodelWorkflow {
         }
     }
 
-    public void convert(String namespace, Map<String, TypeUpdate> update) throws WorkflowException, MappingException,
-            RepositoryException {
-        if (!subject.isNodeType(HippoNodeType.NT_REMODEL))
-            throw new MappingException("invalid node type for RemodelWorkflow");
-
-        try {
-            String prefix = namespace;
-
-            Remodeling.convert(subject, prefix, update);
-            session.save();
-        } catch (NamespaceException ex) {
-            throw new RepositoryException(ex);
-        }
-    }
 }

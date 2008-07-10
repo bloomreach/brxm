@@ -147,8 +147,9 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         ITemplateEngine engine = getTemplateEngine();
         IClusterConfig config = engine.getTemplate(engine.getType(field.getType()), mode);
 
-        configureTemplate(config);
-
+        if (config != null) {
+            configureTemplate(config);
+        }
         return config;
     }
 
@@ -206,15 +207,16 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
 
         private void addModel(final C model) {
             IClusterConfig config = FieldPlugin.this.getTemplate(model);
-
-            String modelId = config.getString(RenderService.MODEL_ID);
-            ModelService modelService = new ModelService(modelId, model);
-            models.put(model, modelService);
-
-            IPluginContext context = getPluginContext();
-            modelService.init(context);
-            IPluginControl plugin = context.start(config);
-            plugins.put(model, plugin);
+            if (config != null) {
+                String modelId = config.getString(RenderService.MODEL_ID);
+                ModelService modelService = new ModelService(modelId, model);
+                models.put(model, modelService);
+    
+                IPluginContext context = getPluginContext();
+                modelService.init(context);
+                IPluginControl plugin = context.start(config);
+                plugins.put(model, plugin);
+            }
         }
 
         private void removeModel(C model) {

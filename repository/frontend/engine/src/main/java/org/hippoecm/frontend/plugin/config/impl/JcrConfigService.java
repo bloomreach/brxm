@@ -115,23 +115,25 @@ public class JcrConfigService implements IPluginConfigService {
             NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
 
             String prefix = "system";
-            String uri = "";
+            String subType = type;
             if (type.indexOf(':') > 0) {
                 prefix = type.substring(0, type.indexOf(':'));
+                subType = type.substring(type.indexOf(':') + 1);
+            }
+            String uri = "internal";
+            if (!"system".equals(prefix)) {
                 uri = nsReg.getURI(prefix);
             }
 
             String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
             if (prefix.length() > nsVersion.length()
                     && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-                type = type.substring(prefix.length());
                 prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-                type = prefix + type;
             } else {
                 uri = nsReg.getURI("rep");
             }
 
-            String path = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + type + "/"
+            String path = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
                     + HippoNodeType.HIPPO_TEMPLATE;
             Node node = session.getRootNode().getNode(path);
             if (node != null) {

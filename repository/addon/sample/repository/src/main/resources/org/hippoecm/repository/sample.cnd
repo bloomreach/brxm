@@ -52,7 +52,7 @@
 - sample:page (string)
 - sample:review (string)
 
-[sample:newsArticle] > hippo:document, mix:referenceable
+[sample:newsArticle] > hippo:document
 - sample:id (long)
 //  > [(0,)]
 - sample:categoryId (long)
@@ -73,7 +73,7 @@
   multiple
 + sample:illustration (sample:illustration) = sample:illustration
 
-[sample:author] > hippo:document, mix:referenceable
+[sample:author] > hippo:document
 - sample:id (long)
 - sample:name (string)
 - sample:email (string)

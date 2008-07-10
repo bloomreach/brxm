@@ -89,10 +89,10 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
-            Visibility visible, final WorkflowAction action) {
+            final Visibility visible, final WorkflowAction action) {
         add(new EmptyPanel(dialogName));
 
-        actions.put(dialogName, new Action(new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
+        DialogLink link = new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
@@ -105,16 +105,15 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
                     }
                 };
             }
-        }, getDialogService()), visible));
+        }, getDialogService());
+        add(link);
+        actions.put(dialogName, new Action(link, visible));
 
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, final String linkTitle, Visibility visible,
-            final WorkflowAction action) {
-        add(new EmptyPanel(linkName));
-
-        actions.put(linkName, new Action(new AjaxLink(linkName, new Model(linkTitle)) {
+    protected void addWorkflowAction(final String linkName, Visibility visible, final WorkflowAction action) {
+        AjaxLink link = new AjaxLink(linkName) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -160,13 +159,15 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
                 }
 
             }
-        }, visible));
+        };
+        add(link);
+        actions.put(linkName, new Action(link, visible));
 
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, final String linkTitle, final WorkflowAction action) {
-        addWorkflowAction(linkName, linkTitle, new Visibility() {
+    protected void addWorkflowAction(final String linkName, final WorkflowAction action) {
+        addWorkflowAction(linkName, new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -188,11 +189,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void updateActions() {
         for (Map.Entry<String, Action> entry : actions.entrySet()) {
-            if (entry.getValue().visible.isVisible()) {
-                replace(entry.getValue().component);
-            } else {
-                replace(new EmptyPanel(entry.getValue().component.getId()));
-            }
+            entry.getValue().component.setVisible(entry.getValue().visible.isVisible());
         }
     }
 

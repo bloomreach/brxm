@@ -62,7 +62,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         onModelChanged();
 
-        addWorkflowAction("edit-dialog", "Edit document", new WorkflowAction() {
+        addWorkflowAction("edit-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -79,7 +79,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestPublication-dialog", "Request publication", new Visibility() {
+        addWorkflowAction("requestPublication-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -94,7 +94,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestDePublication-dialog", "Request unpublication", new Visibility() {
+        addWorkflowAction("requestDePublication-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -109,7 +109,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestDeletion-dialog", "Request delete", new Visibility() {
+        addWorkflowAction("requestDeletion-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -124,7 +124,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("publish-dialog", "Publish", new Visibility() {
+        addWorkflowAction("publish-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -140,7 +140,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("dePublish-dialog", "Unpublish", new Visibility() {
+        addWorkflowAction("dePublish-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -155,7 +155,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("delete-dialog", "Unpublish and/or delete", new WorkflowAction() {
+        addWorkflowAction("delete-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
