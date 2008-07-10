@@ -15,13 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -40,19 +33,14 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.security.AuthContext;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
-import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,11 +119,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @Override
     protected NamespaceRegistryImpl getNamespaceRegistry() {
         return super.getNamespaceRegistry();
-    }
-
-    @Override
-    protected NamespaceRegistryImpl createNamespaceRegistry(FileSystem fs) throws RepositoryException {
-        return new HippoNamespaceRegistry(fs);
     }
 
     public SearchManager getSearchManager(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {

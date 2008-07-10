@@ -16,13 +16,13 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -39,7 +39,6 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 
 public class FolderWorkflowImpl implements FolderWorkflow {
@@ -103,19 +102,16 @@ public class FolderWorkflowImpl implements FolderWorkflow {
                         Query query = qmgr.getQuery(foldertype);
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
-                            Node prototypeNode = iter.nextNode();
-                            if (prototypeNode.isNodeType("hippo:templatetype")) {
-                                if (prototypeNode.hasNode("hippo:prototype")) {
-                                    String documentType = prototypeNode.getName();
+                            Node typeNode = iter.nextNode();
+                            if (typeNode.isNodeType("hippo:templatetype")) {
+                                if (typeNode.hasNode("hippo:prototype")) {
+                                    String documentType = typeNode.getParent().getName() + ":" + typeNode.getName();
                                     if (!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")) {
-                                        if (documentType.contains(":")) {
-                                            documentType = documentType.substring(documentType.indexOf(":") + 1);
-                                        }
                                         prototypes.add(documentType);
                                     }
                                 }
                             } else {
-                                prototypes.add(prototypeNode.getName());
+                                prototypes.add(typeNode.getName());
                             }
                         }
                     }
@@ -153,31 +149,24 @@ public class FolderWorkflowImpl implements FolderWorkflow {
             Node prototypeNode = iter.nextNode();
             if (prototypeNode.isNodeType("hippo:templatetype")) {
                 if (prototypeNode.hasNode("hippo:prototype")) {
-                    String documentType = prototypeNode.getName();
+                    String documentType = prototypeNode.getParent().getName() + ":" + prototypeNode.getName();
                     Node prototype = prototypeNode.getNode("hippo:prototype");
                     if (!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")) {
-                        if (documentType.contains(":")) {
-                            documentType = documentType.substring(documentType.indexOf(":") + 1);
-                        }
                         if (documentType.equals(template)) {
                             renames.put("./_name", new String[] { name });
                             renames.put("./_node/_name", new String[] { name });
                             result = copy(prototype, target, renames, ".");
-		            for(NodeIterator variantIter = result.getNodes(); variantIter.hasNext(); ) {
-			        Node variant = variantIter.nextNode();
-				if(variant.hasProperty("hippo:remodel")) {
-				    variant.remove();
-				} else {
-                                    if(variant.hasProperty("hippostd:state"))
-                                        variant.setProperty("hippostd:state","unpublished");
-                                }
-			    }
+                            for (NodeIterator variantIter = result.getNodes(); variantIter.hasNext();) {
+                                Node variant = variantIter.nextNode();
+                                if (variant.hasProperty("hippostd:state"))
+                                    variant.setProperty("hippostd:state", "unpublished");
+                            }
                             break;
                         }
 
                     }
                 }
-	    } else if(prototypeNode.getName().equals(template)) {
+            } else if (prototypeNode.getName().equals(template)) {
                 if(foldertype.hasProperty("hippostd:modify")) {
                     Value[] values = foldertype.getProperty("hippostd:modify").getValues();
                     for(int i=0; i+1<values.length; i+=2) {
@@ -280,19 +269,22 @@ public class FolderWorkflowImpl implements FolderWorkflow {
         if(source.hasProperty("jcr:mixinTypes")) {
             Value[] mixins = source.getProperty("jcr:mixinTypes").getValues();
             for(int i=0; i<mixins.length; i++) {
-                target.addMixin(mixins[i].getString());
+                if (!mixins[i].getString().equals("hippo:remodel")) {
+                    target.addMixin(mixins[i].getString());
+                }
             }
         }
         if (renames.containsKey(path+"/jcr:mixinTypes")) {
             values = renames.get(path+"/jcr:mixinTypes");
             for (int i = 0; i <
                     values.length; i++) {
-                if (!target.isNodeType(values[i])) {
+                if (!target.isNodeType(values[i]) && !values[i].equals("hippo:remodel")) {
                     target.addMixin(values[i]);
                 }
             }
         }
 
+        NamespaceRegistry nsreg = source.getSession().getWorkspace().getNamespaceRegistry();
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
             String childPath;
@@ -301,13 +293,30 @@ public class FolderWorkflowImpl implements FolderWorkflow {
                 childPath = path + "/_node";
             else
                 childPath = path + "/" + child.getName();
-            copy(child, target, renames, childPath);
+
+            if (source.isNodeType("hippo:handle")) {
+                if (source.getParent() != null && source.getParent().isNodeType("hippo:templatetype")) {
+                    // FIXME: this is tightly coupled to remodeling
+                    if (child.isNodeType("hippo:remodel")) {
+                        String uri = child.getProperty("hippo:uri").getString();
+                        String prefix = source.getParent().getParent().getName();
+                        if (nsreg.getURI(prefix).equals(uri)) {
+                            copy(child, target, renames, childPath);
+                        }
+                    }
+                } else {
+                    copy(child, target, renames, childPath);
+                }
+            } else {
+                copy(child, target, renames, childPath);
+            }
         }
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            if(!prop.getDefinition().isProtected()) {
-                if(prop.getDefinition().isMultiple()) {
+            if (!prop.getDefinition().isProtected()
+                    && !prop.getDefinition().getDeclaringNodeType().isNodeType("hippo:remodel")) {
+                if (prop.getDefinition().isMultiple()) {
                     target.setProperty(prop.getName(), prop.getValues());
                 } else {
                     target.setProperty(prop.getName(), prop.getValue());

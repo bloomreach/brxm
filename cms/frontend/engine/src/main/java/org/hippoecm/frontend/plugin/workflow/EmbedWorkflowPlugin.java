@@ -70,6 +70,7 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
         super.updateModel(new JcrNodeModel((Node) null));
     }
 
+    @Override
     protected IPluginConfig configureWorkflow(IPluginConfig wflConfig, WorkflowsModel model) {
         wflConfig = super.configureWorkflow(wflConfig, model);
         wflConfig.remove(IBrowseService.BROWSER_ID);

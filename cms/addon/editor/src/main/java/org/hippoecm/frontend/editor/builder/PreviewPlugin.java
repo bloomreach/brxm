@@ -42,7 +42,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,22 +54,14 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
     private static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
 
     private ITypeStore typeStore;
-    private TemplateEngine engine;
     private IPluginControl child;
     private ModelService helperModel;
-    private String engineId;
     private Map<String, String> paths;
 
     public PreviewPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         addExtensionPoint("template");
-
-        typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT);
-        engine = new TemplateEngine(context, typeStore);
-        context.registerService(engine, ITemplateEngine.class.getName());
-        engineId = context.getReference(engine).getServiceId();
-        engine.setId(engineId);
 
         // create model service for helper
         helperModel = new ModelService(config.getString("helper.model"), null);
@@ -87,7 +78,9 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
     @Override
     public void onDetach() {
         super.onDetach();
-        typeStore.detach();
+        if (typeStore != null) {
+            typeStore.detach();
+        }
     }
 
     @Override
@@ -96,48 +89,61 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
 
         if (child != null) {
             child.stopPlugin();
+            child = null;
         }
 
         updatePrototype();
 
-        IPluginContext context = getPluginContext();
-
+        typeStore = null;
         JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
-        ITypeDescriptor type = typeHelper.getTypeDescriptor("draft");
-        JcrNodeModel templateModel = typeHelper.getTemplate();
-        if (templateModel == null) {
-            BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
-            IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
-            templateModel = typeHelper.storeTemplate(cluster);
-        }
+        String typeName = typeHelper.getName();
+        if (typeName != null) {
+            String prefix = typeName.substring(0, typeName.indexOf(':'));
 
-        PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel);
+            IPluginContext context = getPluginContext();
 
-        String uniqId = context.getReference(this).getServiceId();
-        IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");
-        cluster.put(ITemplateEngine.ENGINE, engineId);
-        cluster.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
-        cluster.put(RenderPlugin.WICKET_ID, getPluginConfig().getString("template"));
+            typeStore = new JcrTypeStore(prefix);
+            TemplateEngine engine = new TemplateEngine(context, typeStore);
+            context.registerService(engine, ITemplateEngine.class.getName());
+            String engineId = context.getReference(engine).getServiceId();
+            engine.setId(engineId);
 
-        String modelId = cluster.getString(RenderService.MODEL_ID);
-        JcrNodeModel prototypeModel = typeHelper.getPrototype();
-        final ModelService modelService = new ModelService(modelId, prototypeModel);
-        modelService.init(context);
-        final IPluginControl control = context.start(cluster);
-        child = new IPluginControl() {
-            private static final long serialVersionUID = 1L;
-
-            public void stopPlugin() {
-                control.stopPlugin();
-                modelService.destroy();
+            ITypeDescriptor type = typeHelper.getTypeDescriptor();
+            JcrNodeModel templateModel = typeHelper.getTemplate();
+            if (templateModel == null) {
+                BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
+                IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
+                templateModel = typeHelper.storeTemplate(cluster);
             }
-        };
-        redraw();
+
+            PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel);
+
+            String uniqId = context.getReference(this).getServiceId();
+            IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");
+            cluster.put(ITemplateEngine.ENGINE, engineId);
+            cluster.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
+            cluster.put(RenderPlugin.WICKET_ID, getPluginConfig().getString("template"));
+
+            String modelId = cluster.getString(RenderService.MODEL_ID);
+            JcrNodeModel prototypeModel = typeHelper.getPrototype();
+            final ModelService modelService = new ModelService(modelId, prototypeModel);
+            modelService.init(context);
+            final IPluginControl control = context.start(cluster);
+            child = new IPluginControl() {
+                private static final long serialVersionUID = 1L;
+
+                public void stopPlugin() {
+                    control.stopPlugin();
+                    modelService.destroy();
+                }
+            };
+            redraw();
+        }
     }
 
     private void updatePrototype() {
         JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
-        JcrTypeDescriptor typeModel = typeHelper.getTypeDescriptor("draft");
+        JcrTypeDescriptor typeModel = typeHelper.getTypeDescriptor();
         ITemplateEngine engine = getPluginContext().getService(getPluginConfig().getString("engine"),
                 ITemplateEngine.class);
         JcrNodeModel prototypeModel = typeHelper.getPrototype();
@@ -154,6 +160,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                     paths.put(entry.getKey(), entry.getValue().getPath());
                 }
 
+                boolean save = false;
                 for (Map.Entry<String, String> entry : oldFields.entrySet()) {
                     String oldPath = entry.getValue();
                     IFieldDescriptor newField = typeModel.getField(entry.getKey());
@@ -189,6 +196,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                                     }
                                 }
                             }
+                            save = true;
                         } else if (oldPath.equals("*") || newField.getPath().equals("*")) {
                             log.warn("Wildcard fields are not supported");
                         }
@@ -198,13 +206,18 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                                     .warn("Removing wildcard fields is unsupported.  Items that fall under the definition will not be removed.");
                         } else {
                             if (prototype.hasNode(oldPath)) {
+                                save = true;
                                 prototype.getNode(oldPath).remove();
                             }
                             if (prototype.hasProperty(oldPath)) {
+                                save = true;
                                 prototype.getProperty(oldPath).remove();
                             }
                         }
                     }
+                }
+                if (save) {
+                    prototype.save();
                 }
             }
         } catch (RepositoryException ex) {

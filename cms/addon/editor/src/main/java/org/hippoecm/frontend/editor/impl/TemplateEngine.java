@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.impl;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -26,6 +27,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,19 +60,22 @@ public class TemplateEngine implements ITemplateEngine {
         if (model instanceof JcrNodeModel) {
             try {
                 Node node = ((JcrNodeModel) model).getNode();
-                // prototype has primary type "nt:base"; look real type
-                // up by finding the containing templatetype.
-                if (node.isNodeType("hippo:remodel")) {
-                    Node parent = node.getParent();
-                    while (parent != null) {
-                        if (parent.isNodeType("hippo:templatetype")) {
-                            return getType(parent.getName());
+                // prototype has primary type "nt:unstructured"; look up real type
+                // by finding the containing templatetype.
+                if (node.getPath().startsWith("/hippo:namespaces")
+                        && node.getName().equals(HippoNodeType.HIPPO_PROTOTYPE)) {
+                    if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                        Node parent = node.getParent();
+                        while (parent != null) {
+                            if (parent.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                                return getType(parent.getParent().getName() + ":" + parent.getName());
+                            }
+                            parent = parent.getParent();
                         }
-                        parent = parent.getParent();
+                        return null;
                     }
-                    return null;
-                } else if (node.isNodeType("nt:frozenNode")) {
-                    String type = node.getProperty("jcr:frozenPrimaryType").getString();
+                } else if (node.isNodeType(JcrConstants.NT_FROZENNODE)) {
+                    String type = node.getProperty(JcrConstants.JCR_FROZENPRIMARYTYPE).getString();
                     return getType(type);
                 }
                 return getType(node.getPrimaryNodeType().getName());
@@ -84,7 +89,8 @@ public class TemplateEngine implements ITemplateEngine {
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        IPluginConfigService configService = context.getService(IPluginConfigService.class.getName(), IPluginConfigService.class);
+        IPluginConfigService configService = context.getService(IPluginConfigService.class.getName(),
+                IPluginConfigService.class);
         IClusterConfig cluster = configService.getCluster("template/" + type.getName() + "/" + mode);
         if (cluster != null) {
             cluster.put(ITemplateEngine.ENGINE, serviceId);

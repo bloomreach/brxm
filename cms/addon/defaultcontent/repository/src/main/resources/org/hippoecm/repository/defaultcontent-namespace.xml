@@ -13,7 +13,7 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---> 
+-->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
   xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
@@ -28,7 +28,7 @@
   </sv:property>
 
   <!-- "Article" template -->
-  <sv:node sv:name="defaultcontent:article">
+  <sv:node sv:name="article">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -45,11 +45,7 @@
           <sv:value>hippo:nodetype</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
           <sv:value>mix:referenceable</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:remodel" sv:type="String">
-          <sv:value>draft</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -102,8 +98,8 @@
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:remodel" sv:type="String">
-          <sv:value>current</sv:value>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -176,9 +172,13 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>95e02bf8-56b1-4a43-83db-c2bf8dabd877</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">
@@ -204,13 +204,9 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
-          <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>cdca3362-a433-4945-8848-2e181b544729</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:remodel" sv:type="String">
-          <sv:value>draft</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">
@@ -326,7 +322,7 @@
   <!-- end "Article" template -->
 
   <!-- "News" template -->
-  <sv:node sv:name="defaultcontent:news">
+  <sv:node sv:name="news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -344,6 +340,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>mix:referenceable</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -432,6 +432,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>8580e005-3757-4b05-b4b3-d79f36e064c5</sv:value>
@@ -611,7 +615,7 @@
   <!-- end "News" template -->
 
   <!-- "Event" template -->
-  <sv:node sv:name="defaultcontent:event">
+  <sv:node sv:name="event">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -629,6 +633,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>mix:referenceable</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -717,6 +725,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>1e2ccc8b-5085-45c2-b9f8-a0ab44045648</sv:value>
@@ -893,7 +905,7 @@
   <!-- end "Event" template -->
 
   <!-- "Overview" template -->
-  <sv:node sv:name="defaultcontent:overview">
+  <sv:node sv:name="overview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -911,6 +923,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>mix:referenceable</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -988,6 +1004,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>a9543c05-12ff-4c47-beb1-bcc9c2dccfa5</sv:value>

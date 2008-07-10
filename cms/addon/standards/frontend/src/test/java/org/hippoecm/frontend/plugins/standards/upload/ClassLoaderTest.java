@@ -15,16 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.upload;
 
-import java.util.Calendar;
 import java.net.URL;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.RepositoryException;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.frontend.plugins.standards.upload.JarExpander;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -32,6 +30,7 @@ import org.hippoecm.repository.decorating.PluginClassLoader;
 
 public class ClassLoaderTest extends TestCase {
 
+    @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -41,6 +40,7 @@ public class ClassLoaderTest extends TestCase {
     private Session session;
     private PluginClassLoader loader;
 
+    @Override
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -49,6 +49,7 @@ public class ClassLoaderTest extends TestCase {
         loader = new PluginClassLoader(session);
     }
 
+    @Override
     public void tearDown() throws Exception {
         if (loader != null) {
             loader.destroy();

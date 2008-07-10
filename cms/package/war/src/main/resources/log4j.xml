@@ -41,13 +41,13 @@
   <!-- ====================================================================== -->
 
   <category additivity="false" name="org.apache.jackrabbit">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="root"/>
   </category>
   
   <category additivity="false" name="org.hippoecm.repository">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
+    <level value="info"/>
+    <appender-ref ref="console"/>
   </category>
 
   <category additivity="false" name="org.jpox.util">
@@ -61,24 +61,29 @@
   </category>
 
   <category additivity="false" name="org.apache.wicket">
-    <level value="warn"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
   </category>
-
+  
+  <category additivity="false" name="org.hippoecm.repository.HierarchyResolverImpl">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+  
   <category additivity="false" name="org.hippoecm.repository.ocm.FieldManagerImpl">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.ocm.StoreManagerImpl">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.ocm">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.DerivedDataEngine">
-    <level value="warn"/>
+    <level value="debug"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.security.RepositoryLoginModule">
@@ -91,7 +96,7 @@
   </category>
 
   <root>
-    <level value="error"/>
+    <level value="info"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>

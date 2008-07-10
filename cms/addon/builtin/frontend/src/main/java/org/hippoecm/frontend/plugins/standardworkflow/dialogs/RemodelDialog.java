@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -72,22 +73,19 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         CndSerializer serializer = new CndSerializer(sessionModel, namespace);
         serializer.versionNamespace(namespace);
         String cnd = serializer.getOutput();
-        System.out.println(cnd);
 
-        NamespaceUpdater updater = new NamespaceUpdater(new JcrTypeStore(RemodelWorkflow.VERSION_CURRENT),
-                new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT));
+        NamespaceUpdater updater = new NamespaceUpdater(new JcrTypeStore(), new JcrTypeStore(namespace));
         Map<String, TypeUpdate> update = updater.getUpdate(namespace);
         for (Map.Entry<String, TypeUpdate> entry : update.entrySet()) {
-            Node typeNode = node.getNode(entry.getKey());
+            String typeName = entry.getKey();
+            Node typeNode = node.getNode(typeName.substring(typeName.indexOf(':') + 1));
             if (typeNode.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
                 Node handle = typeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE);
                 NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
                 while (children.hasNext()) {
                     Node child = children.nextNode();
-                    if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
-                        if (child.getProperty(HippoNodeType.HIPPO_REMODEL).getString().equals("draft")) {
-                            entry.getValue().prototype = child.getUUID();
-                        }
+                    if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                        entry.getValue().prototype = child.getUUID();
                     }
                 }
             }

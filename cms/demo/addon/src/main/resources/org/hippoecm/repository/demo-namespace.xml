@@ -24,7 +24,7 @@
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
 
-  <sv:node sv:name="demo:webFolder">
+  <sv:node sv:name="webFolder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -36,6 +36,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:folder</sv:value>
@@ -45,7 +51,7 @@
 
   </sv:node>
 
-  <sv:node sv:name="demo:webPage">
+  <sv:node sv:name="webPage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -54,15 +60,23 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
+
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
           <sv:value>hst:page</sv:value>
           <sv:value>hippostd:publishable</sv:value>
         </sv:property>
+
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:field</sv:value>
@@ -124,6 +138,10 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>draft</sv:value>
@@ -148,7 +166,7 @@
 
   </sv:node>
 
-  <sv:node sv:name="demo:webNavigation">
+  <sv:node sv:name="webNavigation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -160,6 +178,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -202,6 +226,12 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>demo:webNavigation</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
+        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -210,7 +240,7 @@
             <sv:value>hippo:facetselect</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>/site/pages/home</sv:value>
+            <sv:value>4c509e-4b05-4577-ba35-ae627125876f</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:facets" sv:type="String"> </sv:property>
           <sv:property sv:name="hippo:values" sv:type="String"> </sv:property>
@@ -221,7 +251,7 @@
             <sv:value>hippo:facetselect</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:docbase" sv:type="String">
-            <sv:value>/site/pages/contact</sv:value>
+            <sv:value>2a725bcc-9b38-47d3-98a2-afded91b19a2</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:facets" sv:type="String"> </sv:property>
           <sv:property sv:name="hippo:values" sv:type="String"> </sv:property>
@@ -232,7 +262,7 @@
 
   </sv:node>
 
-  <sv:node sv:name="demo:paragraph">
+  <sv:node sv:name="paragraph">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -244,6 +274,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:unstructured</sv:value>
@@ -253,7 +289,7 @@
 
   </sv:node>
 
-  <sv:node sv:name="demo:paragraphs">
+  <sv:node sv:name="paragraphs">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -265,6 +301,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:base</sv:value>
@@ -293,7 +335,7 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="demo:languageDocument">
+  <sv:node sv:name="languageDocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -305,6 +347,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -345,7 +393,7 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="demo:countryInfoDocument">
+  <sv:node sv:name="countryInfoDocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -357,6 +405,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -382,7 +436,7 @@
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="demo:countryDocument">
+  <sv:node sv:name="countryDocument">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
@@ -394,6 +448,12 @@
       <sv:node sv:name="hippo:nodetype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>

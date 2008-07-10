@@ -196,8 +196,7 @@
 + * (hippo:domain) = hippo:domain
 
 [hippo:remodel] mixin
-- hippo:remodel (string) mandatory < 'current', 'draft', 'error', 'old'
-- hippo:uri (string)
+- hippo:uri (string) mandatory
  
 [hippo:field] > nt:base
 - hippo:name (string)

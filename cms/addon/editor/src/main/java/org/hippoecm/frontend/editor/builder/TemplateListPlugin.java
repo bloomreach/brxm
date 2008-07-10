@@ -47,7 +47,6 @@ import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +74,8 @@ public class TemplateListPlugin extends RenderPlugin {
                 Node template = templates.nextNode();
                 if (template.isNodeType("frontend:plugincluster")) {
                     templateNodeModel = new JcrNodeModel(template);
-                    JcrTypeStore typeStore = new JcrTypeStore(RemodelWorkflow.VERSION_DRAFT);
-                    editedType = typeStore.getTypeDescriptor(typeNode.getName());
+                    JcrTypeStore typeStore = new JcrTypeStore(typeNode.getParent().getName());
+                    editedType = typeStore.getTypeDescriptor(typeNode.getParent().getName() + ":" + typeNode.getName());
                     break;
                 }
             }

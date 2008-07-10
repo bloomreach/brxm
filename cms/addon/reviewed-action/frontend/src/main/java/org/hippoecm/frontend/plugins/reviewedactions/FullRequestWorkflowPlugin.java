@@ -30,7 +30,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        addWorkflowAction("acceptRequest-dialog", "Approve and execute request", new WorkflowAction() {
+        addWorkflowAction("acceptRequest-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -47,7 +47,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                         workflow.rejectRequest(""); // FIXME
                     }
                 });
-        addWorkflowAction("cancelRequest-dialog", "Cancel request", new WorkflowAction() {
+        addWorkflowAction("cancelRequest-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {

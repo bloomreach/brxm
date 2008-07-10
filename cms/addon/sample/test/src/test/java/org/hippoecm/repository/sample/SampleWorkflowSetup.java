@@ -82,11 +82,13 @@ abstract class SampleWorkflowSetup
 
         node = root.getNode("files");
         node = node.addNode("myauthor","sample:author");
+        node.addMixin("hippo:harddocument");
         node.setProperty("sample:id",newAuthorId);
         node.setProperty("sample:name","Jan Smit");
 
         node = root.getNode("files");
         node = node.addNode("myarticle","sample:newsArticle");
+        node.addMixin("hippo:harddocument");
         node.setProperty("sample:id",1);
         node.setProperty("sample:authorId",oldAuthorId);
 

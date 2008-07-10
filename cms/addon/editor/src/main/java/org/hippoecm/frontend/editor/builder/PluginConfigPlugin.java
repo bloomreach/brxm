@@ -320,7 +320,7 @@ public class PluginConfigPlugin extends RenderPlugin {
             while (typeNodeModel != null) {
                 Node typeNode = typeNodeModel.getNode();
                 if (typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                    return new JcrTypeHelper(new JcrNodeModel(typeNode)).getTypeDescriptor("draft");
+                    return new JcrTypeHelper(new JcrNodeModel(typeNode)).getTypeDescriptor();
                 }
                 typeNodeModel = typeNodeModel.getParentModel();
             }

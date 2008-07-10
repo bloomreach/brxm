@@ -23,6 +23,7 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
     public TemplateEditingWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        addWorkflowAction("save", "Save", new WorkflowAction() {
+        addWorkflowAction("save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow workflow) throws Exception {
@@ -46,6 +47,11 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
                 JcrNodeModel nodeModel = model.getNodeModel();
                 if (nodeModel.getNode() != null) {
                     nodeModel.getNode().save();
+
+                    IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+                    if (jcrService != null) {
+                        jcrService.flush(nodeModel);
+                    }
                 } else {
                     log.error("Node does not exist");
                 }
