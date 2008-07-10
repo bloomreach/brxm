@@ -135,7 +135,11 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
                     }
                     break;
                 }
-                node = node.getParent();
+                if(!node.isNodeType("rep:root")) {
+                    node = node.getParent();
+                } else {
+                    break;
+                }
             }
 
         } catch (RepositoryException e) {
