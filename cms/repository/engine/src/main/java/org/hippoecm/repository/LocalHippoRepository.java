@@ -86,13 +86,13 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
 
-    /** System property for overriding the repostiory path */
+    /** System property for overriding the repository path */
     public final static String SYSTEM_PATH_PROPERTY = "repo.path";
 
-    /** System property for overriding the repostiory config file */
+    /** System property for overriding the repository config file */
     public final static String SYSTEM_CONFIG_PROPERTY = "repo.config";
 
-    /** System property for overriding the repostiory config file */
+    /** System property for overriding the servlet config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
 
     /** Default config file */
