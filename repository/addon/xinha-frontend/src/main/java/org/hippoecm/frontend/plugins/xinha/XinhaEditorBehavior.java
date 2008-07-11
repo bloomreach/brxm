@@ -40,6 +40,8 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     protected static final String SINGLE_QUOTE = "'";
 
     private IPluginContext context;
+    
+    private static final String BINARIES_PREFIX = "/binaries";
     //    private Set<XinhaPlugin.Configuration> configurations;
 
     Pattern numbers = Pattern.compile("\\d*");
@@ -92,7 +94,8 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 }
                 for (XinhaPlugin.Configuration config : configurations) {
                     if(config.getJcrNodePath() != null) {
-                        sb.append("_editor_jcrnode_url = '" + config.getJcrNodePath() + "';\n");
+                        System.out.println(config.getJcrNodePath());
+                        sb.append("_editor_jcrnode_url = '"+BINARIES_PREFIX + config.getJcrNodePath() + "';\n");
                         break;
                     }
                 }
