@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
 
@@ -121,16 +122,19 @@ public class Main extends WebApplication {
             }
         });
 
-        mount(new AbstractRequestTargetUrlCodingStrategy("images") {
+        mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
 
             public IRequestTarget decode(RequestParameters requestParameters) {
-                String path = requestParameters.getPath().substring("images/".length());
+                String path = requestParameters.getPath().substring("binaries/".length());
                 path = urlDecodePathComponent(path);
                 try {
                     UserSession session = (UserSession) Session.get(); 
                     Node node = session.getJcrSession().getRootNode().getNode(path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
-                } catch(RepositoryException ex) {
+                } catch (PathNotFoundException e) {
+                    log.error("binary not found " + e.getMessage());
+                } 
+                catch(RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
                 return null;
