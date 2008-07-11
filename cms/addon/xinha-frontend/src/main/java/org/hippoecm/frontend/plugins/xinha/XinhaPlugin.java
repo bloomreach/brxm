@@ -43,6 +43,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.hippoecm.frontend.Home;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -83,7 +84,10 @@ public class XinhaPlugin extends RenderPlugin {
         if ("edit".equals(mode)) {
             fragment.add(createEditor(config));
 
-            configuration = new Configuration(config);
+            JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
+            String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
+            JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
+            configuration = new Configuration(config, nodePath);
             context.registerService(configuration, Configuration.class.getName());
         } else {
             fragment.add(new WebMarkupContainer("value", getModel()) {
@@ -256,8 +260,11 @@ public class XinhaPlugin extends RenderPlugin {
         private List<String> toolbarItems;
         private List<String> styleSheets;
         private String skin;
+        private String jcrNodePath;
 
-        public Configuration(IPluginConfig config) {
+        public Configuration(IPluginConfig config, String nodePath) {
+            jcrNodePath = nodePath;
+            
             toolbarItems = new ArrayList();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
@@ -324,6 +331,10 @@ public class XinhaPlugin extends RenderPlugin {
 
         public String getSkin() {
             return skin;
+        }
+        
+        public String getJcrNodePath() {
+            return jcrNodePath;
         }
 
         public void setPluginConfigurations(Set<PluginConfiguration> plugins) {

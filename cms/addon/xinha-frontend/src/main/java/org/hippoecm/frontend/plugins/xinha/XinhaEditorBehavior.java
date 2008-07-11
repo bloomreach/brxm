@@ -86,10 +86,17 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 sb.append("_editor_lang = '" + page.getLocale().getLanguage() + "';\n");
                 for (XinhaPlugin.Configuration config : configurations) {
                     if (config.getSkin() != null) {
-                        sb.append("_editor_skin = '" + config.getSkin() + "'");
+                        sb.append("_editor_skin = '" + config.getSkin() + "';\n");
                         break;
                     }
                 }
+                for (XinhaPlugin.Configuration config : configurations) {
+                    if(config.getJcrNodePath() != null) {
+                        sb.append("_editor_jcrnode_url = '" + config.getJcrNodePath() + "';\n");
+                        break;
+                    }
+                }
+                
                 response.renderJavascript(sb, null);
             }
         },
@@ -198,7 +205,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 sb.append("};\n");
 
                 //add Xinha initialize function to window.onLoad event
-                sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
+                //sb.append("Xinha._addEvent(window,'load', xinha_init);\n");
                 response.renderJavascript(sb, null);
             }
 
