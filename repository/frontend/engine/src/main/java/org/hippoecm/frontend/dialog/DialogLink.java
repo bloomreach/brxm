@@ -30,7 +30,7 @@ public class DialogLink extends Panel {
     private static final long serialVersionUID = 1L;
 
     public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
-        super(id);
+        super(id, linktext);
 
         final PageCreator pageCreator = new PageCreator() {
             private static final long serialVersionUID = 1L;
