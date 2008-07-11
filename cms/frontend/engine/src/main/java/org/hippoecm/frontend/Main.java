@@ -18,10 +18,12 @@ package org.hippoecm.frontend;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.Response;
@@ -31,12 +33,15 @@ import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.RequestParameters;
+import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.util.resource.locator.ResourceStreamLocator;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.session.UserSession;
@@ -74,7 +79,7 @@ public class Main extends WebApplication {
                 return true;
             }
         });
-
+        
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {
@@ -113,6 +118,32 @@ public class Main extends WebApplication {
                     log.warn("malformed url for skin override " + ex.getMessage());
                 }
                 return oldLocator.locate(clazz, path);
+            }
+        });
+
+        mount(new AbstractRequestTargetUrlCodingStrategy("images") {
+
+            public IRequestTarget decode(RequestParameters requestParameters) {
+                String path = requestParameters.getPath().substring("images/".length());
+                path = urlDecodePathComponent(path);
+                try {
+                    UserSession session = (UserSession) Session.get(); 
+                    Node node = session.getJcrSession().getRootNode().getNode(path);
+                    return new JcrResourceRequestTarget(new JcrNodeModel(node));
+                } catch(RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+                return null;
+            }
+
+            public CharSequence encode(IRequestTarget requestTarget) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            public boolean matches(IRequestTarget requestTarget) {
+                // TODO Auto-generated method stub
+                return false;
             }
         });
     }
