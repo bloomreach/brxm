@@ -15,29 +15,23 @@
  */
 package org.hippoecm.repository.api;
 
-import java.io.Serializable;
-
 import javax.jcr.RepositoryException;
 
 public interface WorkflowDescriptor {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**
-     * Conveniance method to obtain the human-interpretable display name of
-     * this workflow.
+     * Obtain the human-interpretable display name of this workflow.
      *
-     * @returns a description of the workflow
+     * @returns A description of the workflow
      */
     public String getDisplayName() throws RepositoryException;
 
     /**
-     * Conveniance method to access class name to be used by a front-end
-     * application to access the workflow.  This front-end class is not part
-     * of the repository interface.
+     * Method to access extra information that might be associated with this workflow.
+     * An example is the plugin class name to be used by a frontend application to access the workflow.
      *
-     * @returns classname of the class to be instantiated for the workflow
-     * rendering in a front-end.
+     * @returns A String value, can be null.
      */
-    public String getRendererName() throws RepositoryException;
+    public String getValue(String name) throws RepositoryException;
 }

@@ -55,7 +55,6 @@ public class WorkflowChainingTest extends TestCase {
             node = node.addNode("chaining", "hippo:workflow");
             node.setProperty("hippo:nodetype", "hippo:document");
             node.setProperty("hippo:display", "Test workflow chaining");
-            node.setProperty("hippo:renderer", "");
             node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
             node.setProperty("hippo:workflow", "org.hippoecm.repository.test.ChainingImpl");
             Node types = node.getNode("hippo:types");

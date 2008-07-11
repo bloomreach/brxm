@@ -33,3 +33,7 @@
 - frontend:overrides (string) multiple
 - * (string)
 + * (frontend:plugin) = frontend:plugin
+
+[frontend:workflow] > hippo:workflow
+- frontend:renderer (string)
+

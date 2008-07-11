@@ -96,7 +96,6 @@
 
 [hippo:workflow] > hippo:type
 - hippo:workflow (string)
-- hippo:renderer (string)
 - hippo:roles (string) multiple
 + hippo:types (hippo:types) = hippo:types mandatory autocreated
 

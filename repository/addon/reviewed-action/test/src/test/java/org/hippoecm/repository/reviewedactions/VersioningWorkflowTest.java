@@ -59,7 +59,6 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
             node = node.addNode("version", "hippo:workflow");
             node.setProperty("hippo:nodetype", "hippo:document");
             node.setProperty("hippo:display", "Versioning workflow");
-            node.setProperty("hippo:renderer", "");
             node.setProperty("hippo:classname", "org.hippoecm.repository.api.Document");
             node.setProperty("hippo:workflow", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
             Node types = node.getNode("hippo:types");

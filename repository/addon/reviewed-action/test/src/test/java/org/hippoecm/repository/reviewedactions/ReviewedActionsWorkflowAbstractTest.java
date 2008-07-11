@@ -60,7 +60,6 @@ public abstract class ReviewedActionsWorkflowAbstractTest {
         node = wfs.addNode("reviewedactions", "hippo:workflow");
         node.setProperty("hippo:nodetype", "hippostd:publishable");
         node.setProperty("hippo:display", "Reviewed actions workflow");
-        node.setProperty("hippo:renderer", "org.hippoecm.frontend.reviewedactions.ReviewedActionsRenderer");
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");
@@ -75,7 +74,6 @@ public abstract class ReviewedActionsWorkflowAbstractTest {
         node = wfs.addNode("reviewedrequests", "hippo:workflow");
         node.setProperty("hippo:nodetype", "hippo:request");
         node.setProperty("hippo:display", "Reviewed requests workflow");
-        node.setProperty("hippo:renderer", "org.hippoecm.frontend.reviewedactions.RequestWorkflowRenderer");
         node.setProperty("hippo:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
         types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hippo:type");

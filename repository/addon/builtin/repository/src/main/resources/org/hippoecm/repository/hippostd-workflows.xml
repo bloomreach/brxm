@@ -23,7 +23,7 @@
   </sv:property>
   <sv:node sv:name="namespace-management">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespacefolder</sv:value>
@@ -31,7 +31,7 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
+    <sv:property sv:name="frontend:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
@@ -45,7 +45,7 @@
   </sv:node>
   <sv:node sv:name="standard-remodel">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespace</sv:value>
@@ -56,7 +56,7 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
+    <sv:property sv:name="frontend:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
@@ -70,7 +70,7 @@
   </sv:node>
   <sv:node sv:name="edit-model">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:templatetype</sv:value>
@@ -81,7 +81,7 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
+    <sv:property sv:name="frontend:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
@@ -95,7 +95,7 @@
   </sv:node>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>rep:root</sv:value>
@@ -106,7 +106,7 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
+    <sv:property sv:name="frontend:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
@@ -120,7 +120,7 @@
   </sv:node>
   <sv:node sv:name="folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:folder</sv:value>
@@ -131,7 +131,7 @@
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:renderer" sv:type="String">
+    <sv:property sv:name="frontend:renderer" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
