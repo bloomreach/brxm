@@ -22,7 +22,7 @@
     </sv:property>
     <sv:node sv:name="reviewedactions">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:workflow</sv:value>
+            <sv:value>frontend:workflow</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:roles" sv:type="String">
             <sv:value>author</sv:value>
@@ -36,7 +36,7 @@
         <sv:property sv:name="hippo:display" sv:type="String">
             <sv:value>Author Reviewed actions workflow</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:renderer" sv:type="String">
+        <sv:property sv:name="frontend:renderer" sv:type="String">
             <sv:value>org.hippoecm.frontend.plugins.reviewedactions.EditingReviewedActionsWorkflowPlugin</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:types">

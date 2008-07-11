@@ -13,21 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating.remote;
+package org.hippoecm.frontend.model;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.Workflow;
-
-public interface RemoteWorkflowDescriptor extends Remote {
+public interface FrontendNodeTypes {
     final static String SVN_ID = "$Id$";
+    
+    // NodeTypes
+    public static final String NT_FRONTEND_WORKFLOW = "frontend:workflow";
 
-    public String getDisplayName() throws RepositoryException, RemoteException;
+    // Paths
+    final public static String WORKFLOW_RENDERER = "frontend:renderer";
 
-    public String getValue(String name) throws RepositoryException, RemoteException;
-
-    public Workflow getWorkflow() throws RepositoryException, RemoteException;
 }

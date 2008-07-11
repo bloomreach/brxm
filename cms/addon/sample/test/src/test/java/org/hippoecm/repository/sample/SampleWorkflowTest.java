@@ -29,6 +29,7 @@ import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
 
+import org.hippoecm.frontend.model.FrontendNodeTypes;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -123,7 +124,7 @@ public class SampleWorkflowTest extends TestCase {
             Node node = root.getNode("files/myarticle");
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor("mycategory", node);
-            Class rendererClass = Class.forName(descriptor.getRendererName());
+            Class rendererClass = Class.forName(descriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER));
             Object[] actualArgs = new Object[2];
             actualArgs[0] = manager;
             actualArgs[1] = descriptor;

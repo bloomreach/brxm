@@ -95,21 +95,29 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
-                            if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                                workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
-                            workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
-                        }
+                        if (workflowDescriptor != null) {
+                        	String workflowRenderer = workflowDescriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER);
+                        	if (workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {
+	                            if (!workflows.containsKey(new Entry(workflowRenderer))) {
+	                                workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
+	                            }
+	                            workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
+                        	}
+                       }
                     }
                 }
             } else if (handle.isNodeType("hippo:templatetype") || handle.isNodeType("rep:root")
                     || handle.isNodeType("hippo:namespace") || handle.isNodeType("hippo:namespacefolder")
                     || handle.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
-                    if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                        workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
-                    workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
+                if (workflowDescriptor != null) {
+                	String workflowRenderer = workflowDescriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER);
+                	if (workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {                
+                      if (!workflows.containsKey(new Entry(workflowRenderer))) {
+                        workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
+                      }
+                      workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
+                	}
                 }
             }
         }
@@ -119,20 +127,27 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                     Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_REQUEST) && !(child.hasProperty("type") && child.getProperty("type").equals("rejected"))) { // FIXME: dependency on knowledge of reviewed actions
                         WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, child);
-                        if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
-                            if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                                workflows
-                                        .put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
-                            workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
+                        if (workflowDescriptor != null) {
+                        	String workflowRenderer = workflowDescriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER);
+                        	if(workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {
+                              if (!workflows.containsKey(new Entry(workflowRenderer))) {
+                                workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
+                              }
+                              workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
+                        	}
                         }
                     }
                 }
             } else if (handle.isNodeType(HippoNodeType.NT_REQUEST) && !(handle.hasProperty("type") && handle.getProperty("type").equals("rejected"))) {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
-                if (workflowDescriptor != null && workflowDescriptor.getRendererName() != null && (renderer == null || renderer.equals(workflowDescriptor.getRendererName()))) {
-                    if (!workflows.containsKey(new Entry(workflowDescriptor.getRendererName())))
-                        workflows.put(new Entry(workflowDescriptor.getRendererName(), sequence++), new Vector());
-                    workflows.get(new Entry(workflowDescriptor.getRendererName())).add(workflowDescriptor);
+                if (workflowDescriptor != null) {
+                	String workflowRenderer = workflowDescriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER);
+                	if (workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {
+                		if (!workflows.containsKey(new Entry(workflowRenderer))) {
+                			workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
+                		}
+                		workflows.get(new Entry(workflowRenderer)).add(workflowDescriptor);
+                	}
                 }
             }
         }

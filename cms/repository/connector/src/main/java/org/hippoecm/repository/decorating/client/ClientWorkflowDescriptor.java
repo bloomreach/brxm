@@ -18,13 +18,9 @@ package org.hippoecm.repository.decorating.client;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowDescriptor;
 
@@ -47,11 +43,11 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
         }
     }
 
-    public String getRendererName() throws RepositoryException {
-        try {
-            return remote.getRendererName();
+	public String getValue(String name) throws RepositoryException {
+		try {
+            return remote.getValue(name);
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
-    }
+	}
 }

@@ -45,10 +45,10 @@ abstract class SampleWorkflowSetup
         Node node = root.getNode("hippo:configuration");
         node = node.getNode("hippo:workflows");
         node = node.addNode("mycategory","hippo:workflowcategory");
-        node = node.addNode("myworkflow","hippo:workflow");
+        node = node.addNode("myworkflow", "frontend:workflow");
         node.setProperty("hippo:nodetype","sample:newsArticle");
         node.setProperty("hippo:display","Sample Workflow");
-        node.setProperty("hippo:renderer","org.hippoecm.repository.sample.SampleWorkflowRenderer");
+        node.setProperty("frontend:renderer", "org.hippoecm.repository.sample.SampleWorkflowRenderer");
         node.setProperty("hippo:classname","org.hippoecm.repository.sample.SampleWorkflowImpl");
         Node types = node.getNode("hippo:types");
         node = types.addNode("org.hippoecm.repository.sample.AuthorDocument","hippo:type");
