@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
@@ -35,6 +41,9 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     private static final long serialVersionUID = 1L;
 
     private ModelService modelService;
+    private boolean isGallery = false;
+    private Component listWrapper;
+    private Component galleryWrapper;
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -49,10 +58,73 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
         if (config.getString(IBrowseService.BROWSER_ID) != null) {
             context.registerService(this, config.getString(IBrowseService.BROWSER_ID));
         }
+
+        add(listWrapper = new Wrapper("list.wrapper"));
+        add(galleryWrapper = new Wrapper("gallery.wrapper").setEnabled(false));
+
+        // model didn't exist for super constructor, so set it explicitly
+        updateModel(modelService.getModel());
     }
 
     public void browse(IModel model) {
         modelService.setModel(model);
         focus(null);
     }
+
+    @Override
+    public void onModelChanged() {
+        IModel model = getModel();
+        if (model != null && model instanceof JcrNodeModel) {
+            try {
+                Node node = ((JcrNodeModel) model).getNode();
+                if (node.isNodeType("hippostd:gallery")) {
+                    if (!isGallery) {
+                        isGallery = true;
+                        galleryWrapper.setEnabled(true);
+                        listWrapper.setEnabled(false);
+                        redraw();
+                    }
+                } else {
+                    if (isGallery) {
+                        listWrapper.setEnabled(true);
+                        galleryWrapper.setEnabled(false);
+                        isGallery = false;
+                        redraw();
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            isGallery = false;
+            listWrapper.setEnabled(true);
+            galleryWrapper.setEnabled(false);
+            redraw();
+        }
+    }
+
+    private class Wrapper extends WebMarkupContainer {
+        private static final long serialVersionUID = 1L;
+
+        Wrapper(String id) {
+            super(id);
+        }
+
+        @Override
+        public boolean isTransparentResolver() {
+            return true;
+        }
+
+        @Override
+        public void onComponentTag(final ComponentTag tag) {
+            super.onComponentTag(tag);
+
+            if (isEnabled()) {
+                tag.put("style", "display: block;");
+            } else {
+                tag.put("style", "display: none;");
+            }
+        }
+    }
+
 }
