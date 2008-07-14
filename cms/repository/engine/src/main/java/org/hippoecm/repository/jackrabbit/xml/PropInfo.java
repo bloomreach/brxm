@@ -15,25 +15,19 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.util.List;
+import java.util.Map;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
-import org.apache.jackrabbit.core.BatchedItemOperations;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
-import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.core.xml.TextValue;
 import org.apache.jackrabbit.spi.Name;
@@ -53,6 +47,9 @@ import org.slf4j.LoggerFactory;
  */
 public class PropInfo {
 
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
+    
     /**
      * Logger instance.
      */
@@ -74,7 +71,7 @@ public class PropInfo {
     private final TextValue[] values;
 
     /**
-     * Creates a proprety information instance.
+     * Creates a property information instance.
      *
      * @param name name of the property being imported
      * @param type type of the property being imported
@@ -83,7 +80,7 @@ public class PropInfo {
     public PropInfo(Name name, int type, TextValue[] values) {
         this.name = name;
         this.type = type;
-        this.values = values;
+        this.values = values.clone();
     }
 
     /**
@@ -119,7 +116,7 @@ public class PropInfo {
 
     public void apply(
             NodeImpl node, NamePathResolver resolver,
-            List<NodeId> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
+            Map<NodeId, Reference> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
         // find applicable definition
         PropDef def = getApplicablePropertyDef(node.getEffectiveNodeType());
         if (def.isProtected()) {
@@ -135,6 +132,40 @@ public class PropInfo {
             va[i] = values[i].getValue(targetType, resolver);
         }
 
+        if (name.equals(Reference.PROPERTY_NAME)) {
+            // always multiple, one entry per property
+            for (int i = 0; i < values.length; i++) {
+
+                // 0. add nodeId and Reference for later processing
+                // 1. if prop != mandatory => don't set
+                // 2. if prop == mandatory
+                // 2.1 if prop is multi => set empty
+                // 2.2 if prop is single => set ref to root
+                
+                Reference ref =  new Reference(va[i].getString());
+                derefNodes.put(node.getNodeId(), ref);
+                String targetPropName = ref.getPropertyName();
+                
+                if (node.getDefinition().getDeclaringNodeType().canRemoveItem(targetPropName)) {
+                    // not mandatory
+                    continue;
+                }
+                
+                // best effort guess, original data multi value prop => new data multi value prop
+                if (ref.isMulti()) {
+                    // set empty
+                    node.setProperty(targetPropName, new Value[] {});
+                    continue;
+                }
+                
+                // sigle value mandatory property, temporary set ref to rootNode
+                Value rootRef = node.getSession().getValueFactory().createValue(node.getSession().getRootNode().getUUID(), PropertyType.REFERENCE);
+                node.setProperty(targetPropName, rootRef);
+            }
+            return;
+        }
+        
+        
         // multi- or single-valued property?
         if (va.length == 1 && !def.isMultiple()) {
             Exception e = null;
@@ -156,74 +187,70 @@ public class PropInfo {
             // can only be multi-valued (n == 0 || n > 1)
             node.setProperty(name, va, type);
         }
-        if (name.equals(DereferencedSessionImporter.HIPPO_PATHREFERENCE)) {
-            // store reference for later resolution
-            derefNodes.add(node.getNodeId());
-        }
     }
 
-    public void apply(
-            NodeState node, BatchedItemOperations itemOps, NodeTypeRegistry ntReg, 
-            List<NodeId> derefNodes, String basePath, int referenceBehavior)
-            throws RepositoryException {
-        PropertyState prop = null;
-        PropDef def = null;
-
-        if (node.hasPropertyName(name)) {
-            // a property with that name already exists...
-            PropertyId idExisting = new PropertyId(node.getNodeId(), name);
-            prop = (PropertyState) itemOps.getItemState(idExisting);
-            def = ntReg.getPropDef(prop.getDefinitionId());
-            if (def.isProtected()) {
-                // skip protected property
-                log.debug("skipping protected property "
-                        + itemOps.safeGetJCRPath(idExisting));
-                return;
-            }
-            if (!def.isAutoCreated()
-                    || (prop.getType() != type && type != PropertyType.UNDEFINED)
-                    || def.isMultiple() != prop.isMultiValued()) {
-                throw new ItemExistsException(itemOps.safeGetJCRPath(prop.getPropertyId()));
-            }
-        } else {
-            // there's no property with that name,
-            // find applicable definition
-            def = getApplicablePropertyDef(itemOps.getEffectiveNodeType(node));
-            if (def.isProtected()) {
-                // skip protected property
-                log.debug("skipping protected property " + name);
-                return;
-            }
-
-            // create new property
-            prop = itemOps.createPropertyState(node, name, type, def);
-        }
-
-        // check multi-valued characteristic
-        if (values.length != 1 && !def.isMultiple()) {
-            throw new ConstraintViolationException(itemOps.safeGetJCRPath(prop.getPropertyId())
-                    + " is not multi-valued");
-        }
-
-        // convert serialized values to InternalValue objects
-        int targetType = getTargetType(def);
-        InternalValue[] iva = new InternalValue[values.length];
-        for (int i = 0; i < values.length; i++) {
-            iva[i] = values[i].getInternalValue(targetType);
-        }
-
-        // set values
-        prop.setValues(iva);
-
-        // make sure property is valid according to its definition
-        itemOps.validate(prop);
-
-        if (name.equals(DereferencedSessionImporter.HIPPO_PATHREFERENCE)) {
-            // store reference for later resolution
-            derefNodes.add(node.getNodeId());
-        }
-
-        // store property
-        itemOps.store(prop);
-    }
+//    public void apply(
+//            NodeState node, BatchedItemOperations itemOps, NodeTypeRegistry ntReg, 
+//            List<NodeId> derefNodes, String basePath, int referenceBehavior)
+//            throws RepositoryException {
+//        PropertyState prop = null;
+//        PropDef def = null;
+//
+//        if (node.hasPropertyName(name)) {
+//            // a property with that name already exists...
+//            PropertyId idExisting = new PropertyId(node.getNodeId(), name);
+//            prop = (PropertyState) itemOps.getItemState(idExisting);
+//            def = ntReg.getPropDef(prop.getDefinitionId());
+//            if (def.isProtected()) {
+//                // skip protected property
+//                log.debug("skipping protected property "
+//                        + itemOps.safeGetJCRPath(idExisting));
+//                return;
+//            }
+//            if (!def.isAutoCreated()
+//                    || (prop.getType() != type && type != PropertyType.UNDEFINED)
+//                    || def.isMultiple() != prop.isMultiValued()) {
+//                throw new ItemExistsException(itemOps.safeGetJCRPath(prop.getPropertyId()));
+//            }
+//        } else {
+//            // there's no property with that name,
+//            // find applicable definition
+//            def = getApplicablePropertyDef(itemOps.getEffectiveNodeType(node));
+//            if (def.isProtected()) {
+//                // skip protected property
+//                log.debug("skipping protected property " + name);
+//                return;
+//            }
+//
+//            // create new property
+//            prop = itemOps.createPropertyState(node, name, type, def);
+//        }
+//
+//        // check multi-valued characteristic
+//        if (values.length != 1 && !def.isMultiple()) {
+//            throw new ConstraintViolationException(itemOps.safeGetJCRPath(prop.getPropertyId())
+//                    + " is not multi-valued");
+//        }
+//
+//        // convert serialized values to InternalValue objects
+//        int targetType = getTargetType(def);
+//        InternalValue[] iva = new InternalValue[values.length];
+//        for (int i = 0; i < values.length; i++) {
+//            iva[i] = values[i].getInternalValue(targetType);
+//        }
+//
+//        // set values
+//        prop.setValues(iva);
+//
+//        // make sure property is valid according to its definition
+//        itemOps.validate(prop);
+//
+//        if (name.equals(Reference.PROPERTY_NAME)) {
+//            // store reference for later resolution
+//            derefNodes.add(node.getNodeId());
+//        }
+//
+//        // store property
+//        itemOps.store(prop);
+//    }
 }

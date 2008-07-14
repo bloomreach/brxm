@@ -48,7 +48,8 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
-import org.hippoecm.repository.jackrabbit.xml.DereferencedContentHandler;
+import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
@@ -153,6 +154,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
             RepositoryException {
         ContentHandler handler =
             getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-        new DereferencedContentHandler(handler).parse(in);
+        new DefaultContentHandler(handler).parse(in);
     }
 }

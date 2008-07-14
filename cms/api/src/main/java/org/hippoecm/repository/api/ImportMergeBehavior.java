@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.api;
 
+
 /**
  * WARNING: this api is not yet stable!
  * The possible actions specified by the <code>mergeBehavior</code>
@@ -31,4 +32,13 @@ public interface ImportMergeBehavior {
     public static final int IMPORT_MERGE_ADD_OR_SKIP = 2; // try add first else skip
     public static final int IMPORT_MERGE_ADD_OR_OVERWRITE = 3; //try add first else overwrite
     public static final int IMPORT_MERGE_THROW = 4;
+    
+
+    public static final String[] STRINGS = new String[]{
+            "Skip",
+            "Overwrite",
+            "Add or skip",
+            "Add or overwrite",
+            "Throw error"
+    };
 }

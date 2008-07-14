@@ -22,13 +22,11 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.core.xml.SysViewSAXEventGenerator;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,60 +41,32 @@ import org.xml.sax.SAXException;
  * 
  * Store references as: [MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+propname+REFERENCE_SEPARATOR+refpath
  */
-public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
+public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEventGenerator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
-    private static Logger log = LoggerFactory.getLogger(HippoSysViewSAXEventGenerator.class);
-
-
-    /** this implementation requires a property that can be set on a parent node.  Because this
-      * node isn't actually persisted, there will be no constraintviolation, but this property
-      * may not clash with any property in the parent node. (FIXME)
-      */
-    final private static String HIPPO_PATHREFERENCE = "hippo:pathreference";
-    
-    /** '*' is not valid in property name, but can of course be used in value */
-    private final static char REFERENCE_SEPARATOR = '*';
-
-    /** indicate whether original reference property was a multi valued property */
-    private final static String MULTI_VALUE = "m";
-    
-    /** indicate whether original reference property was a single valued property */
-    private final static String SINGLE_VALUE = "s";
+    private static Logger log = LoggerFactory.getLogger(DereferencedSysViewSAXEventGenerator.class);
     
     /** shortcut for quick checks */
     private final static String JCR_PREFIX = "jcr:";
     
     /** use one factory */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
+    
+    /** base export path */
+    private final String basePath;
 
-    public HippoSysViewSAXEventGenerator(Node node, boolean noRecurse, boolean skipBinary,
+
+    public DereferencedSysViewSAXEventGenerator(Node node, boolean noRecurse, boolean skipBinary,
             ContentHandler contentHandler) throws RepositoryException {
         super(node, noRecurse, skipBinary, contentHandler);
-    }
-
-    @Override
-    protected void process(Node node, int level) throws RepositoryException, SAXException {
-        if (node instanceof HippoNode) {
-            HippoNode hippoNode = (HippoNode) node;
-            try {
-                if (hippoNode.getCanonicalNode() == null) {
-                    // virtual node
-                    return;
-                }
-                if (!hippoNode.getCanonicalNode().isSame(hippoNode)) {
-                    // virtual node
-                    return;
-                }
-            } catch (ItemNotFoundException e) {
-                // can happen only for virtual nodes while HREPTWO-599
-                return;
-            }
-
+        // strip node name of base path
+        if (node.getDepth() == 0 ) {
+            basePath = "";
+        } else {
+            basePath = node.getParent().getPath();
         }
-        // if here, we have a physical node: continue
-        super.process(node, level);
+        log.info("Starting export of '" + node.getPath() + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);   
     }
 
     @Override
@@ -109,6 +79,12 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
         
         if (isGeneratedProperty(prop)) {
             // must be regenerated on import
+            try {
+                prop.setValue(new Value[]{});
+                super.process(prop, level);
+            } finally {
+                prop.refresh(false);
+            }
             return;   
         }
         
@@ -126,37 +102,24 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             // dereference and create a new property
             try {
                 Property pathRef;
+                Reference ref;
+                Value refValue;
+                
                 if (prop.getDefinition().isMultiple()) {
-                    Node node;
-                    Value[] uuidVals = prop.getValues();
-                    Value[] pathVals = new Value[uuidVals.length];
-                    // find all paths
-                    for (int i = 0; i<uuidVals.length; i++) {
-                        node = session.getNodeByUUID(uuidVals[i].getString());
-                        pathVals[i] = session.getValueFactory().createValue(MULTI_VALUE + REFERENCE_SEPARATOR + prop.getName() + REFERENCE_SEPARATOR + node.getPath());
-                    }
-                    if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
-                        // multi value to multi value
-                        Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
-                        Value[] newValues = new Value[oldValues.length + pathVals.length];
-                        System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                        System.arraycopy(pathVals, 0, newValues, oldValues.length, pathVals.length);
-                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
-                    } else {
-                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, pathVals);
-                    }
+                    ref = new Reference(basePath, prop.getValues(), prop.getName());
                 } else {
-                    Node node = session.getNodeByUUID(prop.getString());
-                    Value val = session.getValueFactory().createValue(SINGLE_VALUE + REFERENCE_SEPARATOR + prop.getName() + REFERENCE_SEPARATOR + node.getPath());
-                    if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
-                        Value[] oldValues = prop.getParent().getProperty(HIPPO_PATHREFERENCE).getValues();
-                        Value[] newValues = new Value[oldValues.length + 1];
-                        System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                        newValues[oldValues.length] = val;
-                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, newValues);
-                    } else {
-                        pathRef = prop.getParent().setProperty(HIPPO_PATHREFERENCE, new Value[]{val});
-                    }
+                    ref = new Reference(basePath, prop.getValue(), prop.getName());
+                }
+                refValue = session.getValueFactory().createValue(ref.createPathString(session));
+                
+                if (prop.getParent().hasProperty(Reference.PROPERTY_STRING)) {
+                    Value[] oldValues = prop.getParent().getProperty(Reference.PROPERTY_STRING).getValues();
+                    Value[] newValues = new Value[oldValues.length + 1];
+                    System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+                    newValues[oldValues.length] = refValue;
+                    pathRef = prop.getParent().setProperty(Reference.PROPERTY_STRING, newValues);
+                } else {
+                    pathRef = prop.getParent().setProperty(Reference.PROPERTY_STRING, new Value[] { refValue });
                 }
                 
                 super.process(pathRef, level);
@@ -166,8 +129,8 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
                 log.error("Referenced node '"+prop.getString()+"' not found for item: " + prop.getPath());
                 return;
             } finally {
-                if (prop.getParent().hasProperty(HIPPO_PATHREFERENCE)) {
-                    prop.getParent().getProperty(HIPPO_PATHREFERENCE).remove();
+                if (prop.getParent().hasProperty(Reference.PROPERTY_STRING)) {
+                    prop.getParent().getProperty(Reference.PROPERTY_STRING).remove();
                 }
             }
         }
@@ -235,7 +198,5 @@ public class HippoSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
         }
         return false;
     }
-    
-
 
 }

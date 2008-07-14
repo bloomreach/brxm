@@ -16,16 +16,29 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <span wicket:id="message"></span>
-    <br/><br/>
+    <br/>
+    <br/>
     <form wicket:id="simpleUpload">
-     <fieldset>
-      <legend>Upload form</legend>
-        <p>
-        <label for="upload">File</label>
-        <input wicket:id="fileInput" id="upload" type="file"/>
-        </p>
-        <input type="submit" value="Upload!"/>
-     </fieldset>
+  <p>
+          <legend><strong>Merge behavior: </strong></legend>
+          <fieldset>
+            <select wicket:id="mergeBehaviors"/>
+          </fieldset>
+    </p>
+    <p>
+          <legend><strong>References resolution: </strong></legend>
+          <fieldset>
+            <select wicket:id="referenceBehaviors"/>
+          </fieldset>
+    </p>
+    <p>
+            <legend><strong>Upload form: </strong></legend>
+          <fieldset>
+                <label for="upload"><strong>File: </strong></label>
+                <input wicket:id="fileInput" id="upload" type="file"/>
+            <input type="submit" value="Import"/>
+          </fieldset>
+    </p>
     </form>
   </wicket:extend>
 </html>

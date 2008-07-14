@@ -101,8 +101,8 @@ public class DownloadExportLink extends Link {
                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                     try {
                         boolean skipBinary = ((Boolean)skipBinaryModel.getObject()).booleanValue();
-                        //((HippoSession)node.getSession()).exportDereferencedView(node.getPath(), bos, skipBinary, false);
-                        ((HippoSession)node.getSession()).exportSystemView(node.getPath(), bos, skipBinary, false);
+                        ((HippoSession)node.getSession()).exportDereferencedView(node.getPath(), bos, skipBinary, false);
+                        //((HippoSession)node.getSession()).exportSystemView(node.getPath(), bos, skipBinary, false);
                     } finally {
                         bos.close();
                     }
