@@ -34,8 +34,12 @@ import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.settings.IDebugSettings;
+import org.onehippo.yui.YuiDependency;
+import org.onehippo.yui.YuiDependencyResolver;
+import org.onehippo.yui.YuiNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class YuiHeaderContributor extends AbstractHeaderContributor {
     @SuppressWarnings("unused")
@@ -45,26 +49,27 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
 
     private static final Logger log = LoggerFactory.getLogger(YuiHeaderContributor.class);
 
-    static final String YUI_BUILD_VERSION = "2.5.2";
-    static final String YUI_BUILD_ROOT = "inc";
-    static final String YUI_NAMESPACE = "yahoo";
+    public static final YuiNamespace HIPPO_NS = new HippoNamespace();
+    private static final YuiDependency HIPPO_LOG_DEPENDENCY = new YuiDependency(HIPPO_NS, "hippologger");
 
-    static final YuiDependency HIPPO_LOG_DEPENDENCY = new YuiDependency("hippo", "hippologger");
-
-    static final Map<String, ResourceReference> moduleCache = Collections
+    private static final Map<String, ResourceReference> moduleCache = Collections
             .synchronizedMap(new HashMap<String, ResourceReference>());
-    static final YuiDependencyResolver dependencyResolver = new YuiDependencyResolver();
-    
+    private static final Map<String, YuiHeaderContributor> modulesLoaded = Collections
+    .synchronizedMap(new HashMap<String, YuiHeaderContributor>());
+
+    private static final YuiDependencyResolver dependencyResolver = new YuiDependencyResolver();
+
     private static final List<String> debugModules = Collections.synchronizedList(new ArrayList<String>());
-
-    List<IHeaderContributor> contributors = new ArrayList<IHeaderContributor>();
-
-    static final Map<String, YuiHeaderContributor> modulesLoaded = Collections
-            .synchronizedMap(new HashMap<String, YuiHeaderContributor>());
-
+    
+    private List<IHeaderContributor> contributors = new ArrayList<IHeaderContributor>();
+    
+    //TODO: use thread_local for cache to implement a more decent mechanism than this
+    
     public YuiHeaderContributor() {
         //Make sure all Wicket javascript is loaded first (copied from AbstractDefaultAjaxBehavior)
         contributors.add(new IHeaderContributor() {
+            private static final long serialVersionUID = 1L;
+            
             public void renderHead(IHeaderResponse response) {
                 response.renderJavascriptReference(WicketEventReference.INSTANCE);
                 response.renderJavascriptReference(WicketAjaxReference.INSTANCE);
@@ -118,7 +123,7 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
         return forModule(new YuiDependency(module));
     }
 
-    public static YuiHeaderContributor forModule(String namespace, String module) {
+    public static YuiHeaderContributor forModule(YuiNamespace namespace, String module) {
         return forModule(new YuiDependency(namespace, module, null));
     }
 
@@ -146,7 +151,6 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
         private static final long serialVersionUID = 1L;
 
         private YuiDependency dependency;
-        public boolean flagged;
 
         public YuiModuleHeaderContributor(YuiDependency dependency) {
             this.dependency = dependency;
@@ -158,41 +162,44 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
                         + dependency.getNamespace());
             } else {
                 final boolean debug = log.isDebugEnabled() && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
-                final ResourceReference moduleScript;
                 final String path = dependency.getRealModulePath() + ((debug) ? "-debug" : "") + ".js";
+                Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
+
+                final ResourceReference moduleScript;
                 if (moduleCache.containsKey(path)) {
                     moduleScript = moduleCache.get(path);
                 } else {
                     if (debug) {
-                        moduleScript = new ResourceReference(YuiHeaderContributor.class, path);
+                        moduleScript = new ResourceReference(clazz, path);
                     } else {
-                        moduleScript = new JavascriptResourceReference(YuiHeaderContributor.class, path);
+                        moduleScript = new JavascriptResourceReference(clazz, path);
                     }
                     moduleCache.put(path, moduleScript);
                 }
                 response.renderJavascriptReference(moduleScript);
 
                 if (dependency.getHasCss()) {
-                    renderCSSReference(dependency.getCssPath(), response);
+                    renderCSSReference(dependency.getCssPath(), clazz, response);
                 }
                 if (dependency.getHasCoreCss()) {
-                    renderCSSReference(dependency.getCoreCssPath(), response);
+                    renderCSSReference(dependency.getCoreCssPath(), clazz, response);
                 }
             }
         }
 
     }
 
-    private void renderCSSReference(String path, IHeaderResponse response) {
+    private void renderCSSReference(String path, Class<? extends YuiNamespace> clazz, IHeaderResponse response) {
         final String assetPath = path;
         final ResourceReference assetRef;
         if (moduleCache.containsKey(assetPath)) {
             assetRef = moduleCache.get(assetPath);
         } else {
-            assetRef = new CompressedResourceReference(YuiHeaderContributor.class, assetPath);
+            assetRef = new CompressedResourceReference(clazz, assetPath);
             moduleCache.put(assetPath, assetRef);
         }
 
         response.renderCSSReference(assetRef, "screen");
     }
+
 }
