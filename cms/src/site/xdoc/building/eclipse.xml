@@ -251,11 +251,12 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
               <p>
                 The maven-eclipse-plugin creates source folders for test resources.  These
                 can interfere with the initialization of the repository, so they should be removed
-                from the classpath.
+                from the classpath. Apply the following steps to the hippo-ecm-repository-engine and 
+                hippo-ecm-addon-standards-frontend projects.  
               </p>
               <ol>
                 <li>
-                  <p>Right-click the hippo-ecm-repository-engine project in the package explorer.</p>
+                  <p>Right-click the project in the package explorer.</p>
                 </li>
                 <li>
                   <p>Select 'Java Build Path'</p>
@@ -264,7 +265,6 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
                   <p>Under tab 'Source', remove the &lt;project&gt;/src/test/resources folder</p>
                 </li>
               </ol>
-              <b>Repeat the 3 steps above also for the project hippo-ecm-addon-standards-frontend</b>
             </subsection>
         </section>
 
