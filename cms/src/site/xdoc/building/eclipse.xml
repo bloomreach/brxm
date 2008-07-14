@@ -76,35 +76,15 @@
                         <p>Name='Subversive'</p>
                     </li>
                     <li>
-                        <p>Update URL='http://www.polarion.org/projects/subversive/download/1.1/update-site/'</p>
+                        <p>Update URL='http://download.eclipse.org/technology/subversive/0.7/update-site/' (Subversive plug-in update site)</p>
+                    </li>
+                    <li>
+                        <p>Update URL='http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/' (Subversive SVN Connectors update site)</p>
                     </li>
                 </ol>
                 <p>
-                    In the 'Select features to install' step only select the following two features:
+                    See the official <a href="http://www.eclipse.org/subversive/documentation/gettingStarted/aboutSubversive/install.php">installation instructions</a>.
                 </p>
-                <ol>
-                    <li>
-                        Subversive SVN Team Provider Plugin -> SVN Team Provider &lt;version number&gt;
-                    </li>
-                    <li>
-                        Subversive Client Libraries -> SVNKit &lt;version number&gt; Implementation
-                    </li>
-                </ol>
-                <p>In the eclipse preferences dialog:</p>
-                <ol>
-                    <li>
-                        <p>Select Team -&gt; SVN</p>
-                    </li>
-                    <li>
-                        <p>Select 'SVN Client' tab</p>
-                    </li>
-                    <li>
-                        <p>Set 'SVN Client' to 'SVN Kit'</p>
-                    </li>
-                    <li>
-                        <p>Apply changes and close the dialog</p>
-                    </li>
-                </ol>
             </subsection>
             <subsection name="Jetty">
                 <ol>
