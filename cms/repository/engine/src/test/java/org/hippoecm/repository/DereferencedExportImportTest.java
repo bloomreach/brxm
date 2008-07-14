@@ -210,7 +210,10 @@ public class DereferencedExportImportTest extends TestCase {
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         session.save();
-        
+
+        out = new ByteArrayOutputStream();
+        ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
+        in = new ByteArrayInputStream(out.toByteArray());
         try {
             referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
             mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_THROW;
@@ -240,8 +243,7 @@ public class DereferencedExportImportTest extends TestCase {
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
-        assertEquals(8L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());
-        
+        assertEquals(8L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());        
     }
     
     private void prettyPrint(byte[] bytes, OutputStream out) throws Exception {
