@@ -61,12 +61,8 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
             ContentHandler contentHandler) throws RepositoryException {
         super(node, noRecurse, skipBinary, contentHandler);
         // strip node name of base path
-        if (node.getDepth() == 0 ) {
-            basePath = "";
-        } else {
-            basePath = node.getParent().getPath();
-        }
-        log.info("Starting export of '" + node.getPath() + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);   
+        basePath = node.getPath();
+        log.info("Starting export of '" + basePath + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);   
     }
 
     @Override
