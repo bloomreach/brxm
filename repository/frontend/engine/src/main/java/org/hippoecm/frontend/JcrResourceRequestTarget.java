@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -27,6 +29,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,26 @@ public class JcrResourceRequestTarget implements IRequestTarget {
         try {
             Node node = nodeModel.getNode();
 
+            // if node is facetselect, check the referenced node
+            // TODO now by default return primary item. If facetselect has filter, there might be no
+            // primary item visible and another resource needs to be shown
+            if(node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                log.debug("binary links to facetselect");
+                if(node.hasNodes()){
+                    Node firstChild = node.getNodes().nextNode();
+                    try {
+                        if(firstChild.getPrimaryItem().isNode() && ((Node)firstChild.getPrimaryItem()).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                            log.debug("fetching hippo:resource from: " +  firstChild.getPrimaryItem().getPath());
+                            node = (Node)firstChild.getPrimaryItem();
+                        } else {
+                            log.error("Primary item is not of type " + HippoNodeType.NT_RESOURCE + " : " + firstChild.getPrimaryItem().getPath());
+                        }
+                    } catch (ItemNotFoundException e) {
+                        log.error("No primary item found for : " + firstChild.getPath());
+                        throw (e);
+                    }
+                }
+            }
             // Determine encoding
             String encoding = null;
             if (node.hasProperty("jcr:encoding")) {
