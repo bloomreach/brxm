@@ -21,7 +21,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,6 +47,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     private boolean isGallery = false;
     private Component listWrapper;
     private Component galleryWrapper;
+    private String listingTitle = "documents"; 
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -62,6 +66,17 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
         add(listWrapper = new Wrapper("list.wrapper"));
         add(galleryWrapper = new Wrapper("gallery.wrapper").setEnabled(false));
 
+        //add(new Label("listing.title",new PropertyModel(this,"listingTitle")));
+      
+        add(new Label("listing.title",new PropertyModel(this,"listingTitle")){
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("class", listingTitle);
+            }
+        }); 
+      
         // model didn't exist for super constructor, so set it explicitly
         updateModel(modelService.getModel());
     }
@@ -81,12 +96,14 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     if (!isGallery) {
                         isGallery = true;
                         galleryWrapper.setEnabled(true);
+                        listingTitle = "gallery";
                         listWrapper.setEnabled(false);
                         redraw();
                     }
                 } else {
                     if (isGallery) {
                         listWrapper.setEnabled(true);
+                        listingTitle = "documents";
                         galleryWrapper.setEnabled(false);
                         isGallery = false;
                         redraw();
