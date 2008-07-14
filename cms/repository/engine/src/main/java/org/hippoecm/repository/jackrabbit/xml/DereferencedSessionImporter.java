@@ -193,6 +193,7 @@ public class DereferencedSessionImporter implements Importer {
         if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_THROW) {
             String msg = "a node already exists add " + conflicting.safeGetJCRPath() + "!";
             log.debug(msg);
+            importTargetNode.refresh(false);
             throw new ItemExistsException(msg);
         }
         if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_OVERWRITE) {
@@ -253,6 +254,7 @@ public class DereferencedSessionImporter implements Importer {
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW) {
             buf.append("throw error.");
             log.warn(buf.toString());
+            importTargetNode.refresh(false);
             throw new RepositoryException(buf.toString());
         }
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT) {
@@ -265,6 +267,7 @@ public class DereferencedSessionImporter implements Importer {
             } else {
                 buf.append("root not referenceable.");
                 log.warn(buf.toString());
+                importTargetNode.refresh(false);
                 throw new RepositoryException(buf.toString());
             }
         }
@@ -408,7 +411,7 @@ public class DereferencedSessionImporter implements Importer {
                 Value[] newValues = new Value[oldValues.length + stringVals.length];
                 System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
                 for (int i = 0; i < stringVals.length; i++) {
-                    newValues[stringVals.length + i] = session.getValueFactory().createValue(stringVals[i],
+                    newValues[oldValues.length + i] = session.getValueFactory().createValue(stringVals[i],
                             PropertyType.REFERENCE);
                 }
                 node.setProperty(name, newValues);
