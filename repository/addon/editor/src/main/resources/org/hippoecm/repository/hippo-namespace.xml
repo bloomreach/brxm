@@ -1984,53 +1984,6 @@
           </sv:property>
         </sv:node>
 
-        <!-- firstname -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>firstname</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:firstname</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- lastname -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>lastname</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:lastname</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- email -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>email</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>String</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>hippo:email</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
     </sv:node>
 
@@ -2050,15 +2003,6 @@
           <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:password" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippo:firstname" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippo:lastname" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="hippo:email" sv:type="String">
           <sv:value/>
         </sv:property>
       </sv:node>
@@ -2089,7 +2033,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.users.UsersLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.users.HippoUserLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
@@ -2097,10 +2041,7 @@
           <sv:property sv:name="wicket.extensions" sv:type="String">
             <sv:value>extension.name</sv:value>
             <sv:value>extension.active</sv:value>
-            <sv:value>extension.firstname</sv:value>
-            <sv:value>extension.lastname</sv:value>
             <sv:value>extension.password</sv:value>
-            <sv:value>extension.email</sv:value>
             <sv:value>extension.groups</sv:value>
             <sv:value>extension.actions</sv:value>
           </sv:property>
@@ -2110,17 +2051,8 @@
           <sv:property sv:name="extension.active" sv:type="String">
             <sv:value>{cluster}.active</sv:value>
           </sv:property>
-          <sv:property sv:name="extension.firstname" sv:type="String">
-            <sv:value>{cluster}.firstname</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.lastname" sv:type="String">
-            <sv:value>{cluster}.lastname</sv:value>
-          </sv:property>
           <sv:property sv:name="extension.password" sv:type="String">
             <sv:value>{cluster}.password</sv:value>
-          </sv:property>
-          <sv:property sv:name="extension.email" sv:type="String">
-            <sv:value>{cluster}.email</sv:value>
           </sv:property>
           <sv:property sv:name="extension.groups" sv:type="String">
             <sv:value>{cluster}.groups</sv:value>

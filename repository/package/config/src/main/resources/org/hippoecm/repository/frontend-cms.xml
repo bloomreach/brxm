@@ -440,7 +440,7 @@
       <sv:value>New user</sv:value>
     </sv:property>
     <sv:property sv:name="nodeType" sv:type="String">
-      <sv:value>hippo:user</sv:value>
+      <sv:value>frontend:user</sv:value>
     </sv:property>
     <sv:property sv:name="yui.dd.groups" sv:type="String">
       <sv:value>add-user-to-group</sv:value>

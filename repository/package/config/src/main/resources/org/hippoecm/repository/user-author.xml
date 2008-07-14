@@ -25,7 +25,7 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     sv:name="author">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:user</sv:value>
+        <sv:value>frontend:user</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:active" sv:type="Boolean">
         <sv:value>true</sv:value>
@@ -33,13 +33,13 @@
       <sv:property sv:name="hippo:password" sv:type="String">
         <sv:value>author</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:firstname" sv:type="String">
+      <sv:property sv:name="frontend:firstname" sv:type="String">
         <sv:value></sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:lastname" sv:type="String">
+      <sv:property sv:name="frontend:lastname" sv:type="String">
         <sv:value></sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:email" sv:type="String">
+      <sv:property sv:name="frontend:email" sv:type="String">
         <sv:value></sv:value>
       </sv:property>
 </sv:node>
