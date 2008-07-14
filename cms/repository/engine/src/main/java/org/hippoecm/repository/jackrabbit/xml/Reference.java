@@ -230,7 +230,6 @@ public class Reference {
         String path;
         for (int i = 0; i < uuids.length; i++) {
             path = session.getNodeByUUID(uuids[i]).getPath();
-            System.err.println("path before: " + path);
             if (path.startsWith(getBasePath())) {
                 paths[i] = path.substring(len);
             } else {
