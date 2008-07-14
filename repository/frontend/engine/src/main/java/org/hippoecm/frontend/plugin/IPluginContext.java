@@ -21,7 +21,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 
 public interface IPluginContext extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     IPluginControl start(IClusterConfig cluster);

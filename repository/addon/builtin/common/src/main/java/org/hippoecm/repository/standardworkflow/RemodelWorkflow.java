@@ -29,7 +29,6 @@ import org.hippoecm.repository.api.WorkflowException;
  *  DO NOT USE THIS WORKFLOW
  */
 public interface RemodelWorkflow extends Workflow {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

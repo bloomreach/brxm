@@ -37,7 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DefaultContentHandler extends DefaultHandler {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Logger instance.

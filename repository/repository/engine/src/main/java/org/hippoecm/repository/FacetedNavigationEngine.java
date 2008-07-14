@@ -192,7 +192,6 @@ count template that go with them.
  */
 public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query,C extends FacetedNavigationEngine.Context>
 {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

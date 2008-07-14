@@ -30,7 +30,6 @@ import org.apache.commons.httpclient.HttpClient;
  * Interface for the converter plugins.
  */
 public interface DocumentConverter {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

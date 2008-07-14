@@ -25,7 +25,6 @@ import org.hippoecm.repository.security.AAContext;
  * Interface for managing groups in the backend
  */
 public interface GroupManager {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

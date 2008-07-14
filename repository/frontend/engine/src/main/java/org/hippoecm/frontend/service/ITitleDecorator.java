@@ -18,7 +18,6 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 
 public interface ITitleDecorator extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String getTitle();

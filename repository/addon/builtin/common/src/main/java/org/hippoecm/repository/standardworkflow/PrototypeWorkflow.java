@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface PrototypeWorkflow extends Workflow {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public String addDocument(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;

@@ -42,7 +42,7 @@ public class Deployer {
     protected Logger logger = LoggerFactory.getLogger(Deployer.class);
 
     @SuppressWarnings("unused")
-    public final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     private DeploymentManager deploymentManager;
     private boolean done;

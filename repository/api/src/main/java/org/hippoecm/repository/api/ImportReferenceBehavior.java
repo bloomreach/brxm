@@ -23,7 +23,6 @@ package org.hippoecm.repository.api;
  */
 
 public interface ImportReferenceBehavior {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
     
     public static final int IMPORT_REFERENCE_NOT_FOUND_REMOVE = 0;

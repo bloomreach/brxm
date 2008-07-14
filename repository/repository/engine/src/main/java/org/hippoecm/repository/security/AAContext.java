@@ -21,6 +21,5 @@ package org.hippoecm.repository.security;
  *
  */
 public interface AAContext {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 }

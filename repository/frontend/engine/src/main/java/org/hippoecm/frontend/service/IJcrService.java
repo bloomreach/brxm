@@ -20,7 +20,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 
 // global service to broadcast repository changes
 public interface IJcrService extends IClusterable {
-    @SuppressWarnings("unused")
     static String SVN_ID = "$Id$";
 
     // support for broadcasting JCR flush

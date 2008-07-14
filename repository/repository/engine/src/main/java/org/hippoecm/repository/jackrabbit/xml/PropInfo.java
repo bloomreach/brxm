@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class PropInfo {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     /**
      * Logger instance.

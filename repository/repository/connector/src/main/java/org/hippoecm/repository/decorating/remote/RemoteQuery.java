@@ -26,7 +26,6 @@ import javax.jcr.Value;
 import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 
 public interface RemoteQuery extends org.apache.jackrabbit.rmi.remote.RemoteQuery, Remote, Serializable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public String[] getArguments() throws RepositoryException, RemoteException;

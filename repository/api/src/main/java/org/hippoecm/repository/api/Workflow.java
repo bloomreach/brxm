@@ -26,6 +26,5 @@ import java.rmi.Remote;
  */
 
 public interface Workflow extends Remote, Serializable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 }

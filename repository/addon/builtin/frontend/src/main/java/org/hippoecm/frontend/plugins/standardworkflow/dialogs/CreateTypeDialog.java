@@ -36,7 +36,6 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(CreateTypeDialog.class);
 
-    @SuppressWarnings("unused")
     private String name;
 
     private IServiceReference<IJcrService> jcrServiceRef;

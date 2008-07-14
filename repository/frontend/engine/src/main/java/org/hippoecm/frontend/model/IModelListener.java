@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IModelListener extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     void updateModel(IModel model);

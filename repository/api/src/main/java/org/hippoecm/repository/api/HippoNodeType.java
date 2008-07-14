@@ -26,7 +26,6 @@ package org.hippoecm.repository.api;
  */
 
 public interface HippoNodeType {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     final public static String CONFIGURATION_PATH = "hippo:configuration";

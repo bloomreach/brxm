@@ -30,7 +30,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public interface Chaining extends Workflow {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public void test() throws WorkflowException, MappingException, RepositoryException, RemoteException;

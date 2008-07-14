@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class DereferencedSessionImporter implements Importer {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     private static Logger log = LoggerFactory.getLogger(DereferencedSessionImporter.class);
 

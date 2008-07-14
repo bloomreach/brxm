@@ -23,7 +23,6 @@ import org.hippoecm.repository.security.AAContext;
  * Interface for interacting with a specific user from a backend
  */
 public interface User {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

@@ -29,7 +29,7 @@ import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 public class Reference {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
     

@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public interface RemoteWorkflowManager extends Remote {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public RemoteWorkflowDescriptor getWorkflowDescriptor(String category, String absPath)

@@ -19,7 +19,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 
 public interface HippoWorkspace extends Workspace {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public DocumentManager getDocumentManager() throws RepositoryException;

@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.model;
 
 public interface IJcrNodeModelListener extends IModelListener {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     void onFlush(JcrNodeModel nodeModel);

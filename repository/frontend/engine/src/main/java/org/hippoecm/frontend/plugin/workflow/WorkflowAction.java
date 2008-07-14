@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.repository.api.Workflow;
 
 public interface WorkflowAction extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public void execute(Workflow workflow) throws Exception;

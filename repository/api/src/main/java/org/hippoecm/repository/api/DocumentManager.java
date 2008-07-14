@@ -19,7 +19,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 public interface DocumentManager {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public Session getSession() throws RepositoryException;

@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 public interface HippoNode extends Node {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /*

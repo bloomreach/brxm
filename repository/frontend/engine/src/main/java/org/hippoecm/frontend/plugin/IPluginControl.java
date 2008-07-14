@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugin;
 import org.apache.wicket.IClusterable;
 
 public interface IPluginControl extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     void stopPlugin();

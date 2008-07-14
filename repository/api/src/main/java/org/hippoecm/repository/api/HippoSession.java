@@ -33,7 +33,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 public interface HippoSession extends Session {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public Node copy(Node original, String absPath) throws RepositoryException;

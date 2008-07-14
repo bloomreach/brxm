@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugin.config;
 import java.util.List;
 
 public interface IClusterConfig extends IPluginConfig {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     List<IPluginConfig> getPlugins();

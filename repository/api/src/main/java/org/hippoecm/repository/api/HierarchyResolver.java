@@ -31,7 +31,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HierarchyResolver;
 
 public interface HierarchyResolver {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public final class Entry {
