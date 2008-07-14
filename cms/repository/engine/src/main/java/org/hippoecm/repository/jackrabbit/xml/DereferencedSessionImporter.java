@@ -186,12 +186,12 @@ public class DereferencedSessionImporter implements Importer {
             return null;
         }
         if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
-            String msg = "merge_drop node " + conflicting.safeGetJCRPath();
+            String msg = "Import merge skip node " + conflicting.safeGetJCRPath();
             log.debug(msg);
             return null;
         }
         if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_THROW) {
-            String msg = "a node already exists add " + conflicting.safeGetJCRPath() + "!";
+            String msg = "A node already exists add " + conflicting.safeGetJCRPath() + "!";
             log.debug(msg);
             importTargetNode.refresh(false);
             throw new ItemExistsException(msg);
@@ -201,7 +201,7 @@ public class DereferencedSessionImporter implements Importer {
             if (def.isProtected() && conflicting.isNodeType(ntName)) {
                 // skip protected node
                 parents.push(null); // push null onto stack for skipped node
-                log.warn("merge_overwrite, skipping protected node " + conflicting.safeGetJCRPath());
+                log.warn("Import merge overwrite, skipping protected node " + conflicting.safeGetJCRPath());
                 return null;
             } else {
                 conflicting.remove();
@@ -212,7 +212,7 @@ public class DereferencedSessionImporter implements Importer {
             if (def.allowsSameNameSiblings()) {
                 return nodeInfo;
             } else {
-                String msg = "merge add, skipped node" + conflicting.safeGetJCRPath() + " a node alread !";
+                String msg = "Import merge add or skip, skipped node " + conflicting.safeGetJCRPath() + " a node alread !";
                 log.debug(msg);
                 return null;
             }
@@ -224,7 +224,7 @@ public class DereferencedSessionImporter implements Importer {
                 // check for potential conflicts
                 if (def.isProtected() && conflicting.isNodeType(ntName)) {
                     // skip protected node
-                    log.warn("merge_add_or_overwrite, skipping protected node " + conflicting.safeGetJCRPath());
+                    log.warn("Imoprt merge add or overwrite, skipping protected node " + conflicting.safeGetJCRPath());
                     return null;
                 } else {
                     conflicting.remove();
@@ -307,6 +307,21 @@ public class DereferencedSessionImporter implements Importer {
             return;
         }
         if (parent.hasNode(nodeName)) {
+            if (importPath.equals(parent.safeGetJCRPath())) {
+                // this is the root target node, decided by the user self
+                // only throw an error on the most strict import
+                if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
+                    String msg = "A node already exists add " + parent.safeGetJCRPath() + "!";
+                    log.warn(msg);
+                    importTargetNode.refresh(false);
+                    throw new ItemExistsException(msg);
+                } else {
+                    String msg = "Import base node already exists. skipping: " + parent.safeGetJCRPath();
+                    log.debug(msg);
+                    parents.push(parent.getNode(nodeName));
+                    return;
+                }
+            }
             nodeInfo = resolveMergeConflict(parent, parent.getNode(nodeName), nodeInfo);
             if (nodeInfo == null) {
                 parents.push(null); // push null onto stack for skipped node
