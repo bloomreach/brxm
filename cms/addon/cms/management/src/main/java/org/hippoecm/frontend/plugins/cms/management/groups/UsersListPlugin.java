@@ -18,12 +18,12 @@ package org.hippoecm.frontend.plugins.cms.management.groups;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -92,19 +92,14 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
             }
         };
     }
-
-    @Override
-    protected String getPluginUserPrefNodeName() {
-        return "USER-PREF-GROUP-USER-MEMBERS-LIST";
-    }
     
     @Override
-    protected void modifyDefaultPrefNode(Node prefNode) throws RepositoryException {
-        Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
+    protected List<IStyledColumn> createTableColumns() {
+        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
         columns.add(getNodeColumn(new Model("Name"), "name"));
+        return columns;
     }
+    
     
     // implements IJcrNodeModelListener
 

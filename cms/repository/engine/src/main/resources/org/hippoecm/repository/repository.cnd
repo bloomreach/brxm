@@ -128,21 +128,6 @@
 
 [hippo:application] > nt:unstructured orderable
 
-
-
-[hippo:usersettings] > nt:base
-- hippo:path (string)
-- hippo:name (string)
-- hippo:value (string)  
-
-[hippo:listingpropnode] > nt:base
-- * (string)
-
-[hippo:listing] > nt:base
-- hippo:pagesize (long) = '10' mandatory autocreated 
-- hippo:viewsize (long) = '10' mandatory autocreated 
-+ * (hippo:listingpropnode) = hippo:listingpropnode  
-
 [hippo:accessmanager] > nt:base
 - hippo:permcachesize (long)
 
