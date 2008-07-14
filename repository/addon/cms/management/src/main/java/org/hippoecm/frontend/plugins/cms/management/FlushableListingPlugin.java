@@ -15,7 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
+import java.util.List;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -33,7 +36,8 @@ public abstract class FlushableListingPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected CustomizableDocumentListingDataTable getTable(String wicketId, ISortableDataProvider provider) {
+    protected CustomizableDocumentListingDataTable getTable(String wicketId, ISortableDataProvider provider, int pageSize, int viewSize) {
+        List<IStyledColumn> columns = createTableColumns();
         CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable("table", columns,
                 provider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
@@ -46,7 +50,7 @@ public abstract class FlushableListingPlugin extends AbstractListingPlugin {
         setDataProvider(createDataProvider());
         redraw();
     }
-
+    
     abstract protected IDataProvider createDataProvider();
 
 }

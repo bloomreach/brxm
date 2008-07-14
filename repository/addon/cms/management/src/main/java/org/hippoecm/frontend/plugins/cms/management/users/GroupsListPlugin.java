@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.cms.management.users;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -29,6 +28,7 @@ import javax.jcr.query.QueryResult;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -123,6 +123,13 @@ public class GroupsListPlugin extends FlushableListingPlugin {
             }
         };
     }
+    
+    @Override
+    protected List<IStyledColumn> createTableColumns() {
+        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
+        columns.add(getNodeColumn(new Model("Name"), "name"));
+        return columns;
+    }
 
     private String getUsername() {
         if (username == null) {
@@ -134,19 +141,6 @@ public class GroupsListPlugin extends FlushableListingPlugin {
             }
         }
         return username;
-    }
-
-    @Override
-    protected String getPluginUserPrefNodeName() {
-        return "USER-PREF-USER-GROUP-MEMBERS-LIST";
-    }
-
-    @Override
-    protected void modifyDefaultPrefNode(Node prefNode) throws RepositoryException {
-        Node pref = prefNode.addNode("name", LISTINGPROPS_NODETYPE);
-        pref.setProperty(COLUMNNAME_PROPERTY, "Name");
-        pref.setProperty(PROPERTYNAME_PROPERTY, "name");
-        columns.add(getNodeColumn(new Model("Name"), "name"));
     }
 
     public static HippoNode addMultiValueProperty(HippoNode node, String propertyName, String propertyValue)

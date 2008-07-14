@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.RepositoryException;
+
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -32,8 +38,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String USER_PREF_NODENAME = "browseperspective-listingview";
-
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
@@ -44,30 +48,35 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
                 setModel(model);
                 return;
             }
-        } catch(javax.jcr.AccessDeniedException ex) {
-        } catch(javax.jcr.ItemNotFoundException ex) {
-        } catch(javax.jcr.RepositoryException ex) {
+        } catch(RepositoryException ex) {
         }
         setModel(new JcrNodeModel((javax.jcr.Node)null));
     }
 
     @Override
-    protected Component getTable(String wicketId, ISortableDataProvider provider) {
-        CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable(wicketId, columns,
-                provider, pageSize, false);
+    protected Component getTable(String wicketId, ISortableDataProvider provider, int pageSize, int viewSize) {
+        List<IStyledColumn> columns = createTableColumns();
+        CustomizableDocumentListingDataTable dataTable = 
+            new CustomizableDocumentListingDataTable(wicketId, columns, provider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
         return dataTable;
     }
 
     @Override
-    protected String getPluginUserPrefNodeName() {
-        return USER_PREF_NODENAME;
-    }
-
-    @Override
     protected IStyledColumn getNodeColumn(Model model, String propertyName) {
         return new DocumentListingNodeColumn(model, propertyName, this);
     }
+    
+    @Override
+    protected List<IStyledColumn> createTableColumns() {
+        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
+        columns.add(getNodeColumn(new Model("Name"), "name"));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE));
+        columns.add(getNodeColumn(new Model("State"), "state"));
+        
+        return columns;
+    }
+
 
 }

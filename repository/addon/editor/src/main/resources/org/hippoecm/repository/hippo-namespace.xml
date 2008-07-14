@@ -3224,7 +3224,7 @@
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
           <sv:property sv:name="plugin.class" sv:type="String">
-            <sv:value>org.hippoecm.frontend.plugins.cms.management.groups.RoleLayoutPlugin</sv:value>
+            <sv:value>org.hippoecm.frontend.plugins.cms.management.layout.RoleLayoutPlugin</sv:value>
           </sv:property>
           <sv:property sv:name="wicket.id" sv:type="String">
             <sv:value>cluster:wicket.id</sv:value>
