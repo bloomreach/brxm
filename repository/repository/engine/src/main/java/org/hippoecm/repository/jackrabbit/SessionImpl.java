@@ -43,7 +43,7 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.hippoecm.repository.jackrabbit.xml.DereferencedContentHandler;
+import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +151,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
             RepositoryException {
         ContentHandler handler =
             getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-        new DereferencedContentHandler(handler).parse(in);
+        new DefaultContentHandler(handler).parse(in);
     }
 
 }

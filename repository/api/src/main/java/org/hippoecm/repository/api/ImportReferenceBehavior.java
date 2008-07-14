@@ -26,8 +26,13 @@ public interface ImportReferenceBehavior {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
     
-    public static final int IMPORT_REFERENCE_NOT_FOUND_DROP = 0;
+    public static final int IMPORT_REFERENCE_NOT_FOUND_REMOVE = 0;
     public static final int IMPORT_REFERENCE_NOT_FOUND_TO_ROOT = 1;
-    public static final int IMPORT_REFERENCE_NOT_FOUND_KEEP_PATH= 2;
-    public static final int IMPORT_REFERENCE_NOT_FOUND_THROW = 3;
+    public static final int IMPORT_REFERENCE_NOT_FOUND_THROW = 2;
+    
+    public static final String[] STRINGS = new String[] { 
+        "remove reference when not found",
+        "add reference to root node when not found", 
+        "throw error when not found" 
+    };
 }

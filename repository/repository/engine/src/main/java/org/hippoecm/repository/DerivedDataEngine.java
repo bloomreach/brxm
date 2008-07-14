@@ -72,6 +72,7 @@ public class DerivedDataEngine {
     }
 
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        long start = System.currentTimeMillis();
         try {
             ValueFactory valueFactory = session.getValueFactory();
 
@@ -134,8 +135,9 @@ public class DerivedDataEngine {
             }
 
             if(logger.isDebugEnabled())
-                logger.debug("Derived engine found "+recomputeSet.size()+" nodes to be evaluated");
+                logger.debug("Derived engine found "+recomputeSet.size()+" nodes to be evaluated in " + (System.currentTimeMillis() - start) + " ms");
 
+                
             if(recomputeSet.size() == 0)
                 return;
 
@@ -365,6 +367,10 @@ public class DerivedDataEngine {
         } catch(RepositoryException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
+        } finally {
+
+            if(logger.isDebugEnabled())
+                logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
         }
     }
 

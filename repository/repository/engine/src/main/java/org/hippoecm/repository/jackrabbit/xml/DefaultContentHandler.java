@@ -34,13 +34,16 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class DereferencedContentHandler extends DefaultHandler {
+public class DefaultContentHandler extends DefaultHandler {
+
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     /**
      * Logger instance.
      */
     private static final Logger logger =
-        LoggerFactory.getLogger(DereferencedContentHandler.class);
+        LoggerFactory.getLogger(DefaultContentHandler.class);
 
     /**
      * The adapted content handler instance.
@@ -53,7 +56,7 @@ public class DereferencedContentHandler extends DefaultHandler {
      *
      * @param handler content handler
      */
-    public DereferencedContentHandler(ContentHandler handler) {
+    public DefaultContentHandler(ContentHandler handler) {
         this.handler = handler;
     }
 

@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidSerializedDataException;
@@ -34,10 +36,12 @@ import javax.jcr.version.VersionException;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.file.Folder;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -48,6 +52,8 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +70,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     
     Component message;
     Model msgText;
+
 
     public ContentImportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
@@ -98,20 +105,44 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
         private FileUploadField fileUploadField;
 
+        private List<String> mergeOpts = new ArrayList<String>();
+        private List<String> referenceOpts = new ArrayList<String>();
+        
+        private String mergeBehavior = ImportMergeBehavior.STRINGS[ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP];
+        private String referenceBehavior = ImportReferenceBehavior.STRINGS[ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE];
+        
         public FileUploadForm(String name) {
+            
             super(name);
+            setMergeBehaviors();
+            setReferenceBehaviors();
+            
+            
+            DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), mergeOpts);
+            DropDownChoice reference = new DropDownChoice("referenceBehaviors", new PropertyModel(this, "referenceBehavior"),
+                    referenceOpts);
+            
+            add(merge.setNullValid(false).setRequired(true));
+            add(reference.setNullValid(false).setRequired(true));
+            
+            // file upload
             setMultiPart(true);
             add(fileUploadField = new FileUploadField("fileInput"));
+            
         }
 
         @Override
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
+
+            int mergeOpt = mergeOpts.indexOf(mergeBehavior);
+            int referenceOpt = referenceOpts.indexOf(referenceBehavior);
+            
             if (upload != null) {
                 // create temporary file
                 File newFile;
                 try {
-                    newFile = File.createTempFile(upload.getClientFileName() + ".", ".xml", getUploadFolder() );
+                    newFile = File.createTempFile(upload.getClientFileName(), "", getUploadFolder() );
                 } catch (IOException e) {
                     throw new IllegalStateException("Unable to create temp file");
                 }
@@ -131,8 +162,10 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                 try {
                     InputStream contentStream = new BufferedInputStream(new FileInputStream(newFile));
                     String absPath = nodeModel.getNode().getPath();
-                    //((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, 0 ,0);
-                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+                    log.info("Starting import: importDereferencedXML(" + absPath + "," + newFile.getAbsolutePath() + "," + ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW + "," + mergeBehavior + "," +referenceBehavior);
+                    
+                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, mergeOpt , referenceOpt);
+                    //((HippoSession)((UserSession) Session.get()).getJcrSession()).importXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 } catch (PathNotFoundException ex) {
                     log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
                 } catch (ItemExistsException ex) {
@@ -154,30 +187,22 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                     e.printStackTrace();
                 }
                 msgText.setObject("Import done.");
-                
-                
-//                // create initialize node
-//                try {
-//                    Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
-//                    Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
-//                    
-//                    if (initNode.hasNode("import-content")) {
-//                        initNode.getNode("import-content").remove();
-//                    }
-//                    Node node = initNode.addNode("import-content", HippoNodeType.NT_INITIALIZEITEM);
-//                    node.setProperty(HippoNodeType.HIPPO_CONTENTRESOURCE, "file://" + newFile.getAbsolutePath());
-//                    node.setProperty(HippoNodeType.HIPPO_CONTENTROOT, nodeModel.getNode().getPath());
-//                    rootNode.getSession().save();
-//                    msgText.setObject("initialize node saved.");
-//                    
-//                } catch (RepositoryException e) {
-//                    log.error("Error while creating nodetypes initialization node: ", e);
-//                    throw new RuntimeException(e.getMessage());
-//                }
-                
             }
         }
 
+        
+        private void setMergeBehaviors() {
+            for (String s : ImportMergeBehavior.STRINGS) {
+                mergeOpts.add(s);
+            }
+        }
+
+        private void setReferenceBehaviors() {
+            for (String s : ImportReferenceBehavior.STRINGS) {
+                referenceOpts.add(s);
+            }
+        }
+        
         private Folder getUploadFolder() {
             Folder uploadFolder = new Folder(System.getProperty("java.io.tmpdir"), "wicket-uploads");
             // Ensure folder exists
@@ -187,6 +212,22 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                 }
             }
             return uploadFolder;
+        }
+
+        public String getMergeBehavior() {
+            return mergeBehavior;
+        }
+
+        public void setMergeBehavior(String mergeBehavior) {
+            this.mergeBehavior = mergeBehavior;
+        }
+
+        public String getReferenceBehavrior() {
+            return referenceBehavior;
+        }
+
+        public void setgetReferenceBehavriorBehavior(String referenceBehavior) {
+            this.referenceBehavior = referenceBehavior;
         }
     }
 

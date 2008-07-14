@@ -49,13 +49,14 @@ import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.xml.ImportHandler;
-import org.apache.jackrabbit.core.xml.SessionImporter;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.decorating.NodeDecorator;
+import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.slf4j.Logger;
@@ -312,6 +313,7 @@ abstract class SessionImplHelper {
         }
 
         DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
-        return new ImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
+        //return new ImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
+        return new DereferencedImportHandler(importer, sessionImpl.getNamespaceResolver(), rep.getNamespaceRegistry());
     }
 }

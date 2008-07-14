@@ -66,7 +66,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
-import org.hippoecm.repository.jackrabbit.xml.HippoSysViewSAXEventGenerator;
+import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -324,11 +324,15 @@ public class SessionDecorator implements XASession, HippoSession {
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
+        
         if (session instanceof XASession) {
             ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
         } else {
             ((SessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
         }
+        // run derived data engine
+        derivedEngine.save();
+        //session.save();
     }
 
 
@@ -339,7 +343,7 @@ public class SessionDecorator implements XASession, HippoSession {
             // there's a property, though not a node at the specified path
             throw new PathNotFoundException(absPath);
         }
-        new HippoSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
+        new DereferencedSysViewSAXEventGenerator((Node) item, noRecurse, binaryAsLink, contentHandler).serialize();
     }
 
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
