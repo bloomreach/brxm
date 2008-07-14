@@ -35,7 +35,7 @@ import org.xml.sax.SAXParseException;
 public class DereferencedImportHandler extends ImportHandler {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     private static Logger log = LoggerFactory.getLogger(DereferencedImportHandler.class);
 

@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public String getDisplayName() throws RepositoryException, RemoteException;

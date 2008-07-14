@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 
 public interface IDialogService extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     void show(Page page);

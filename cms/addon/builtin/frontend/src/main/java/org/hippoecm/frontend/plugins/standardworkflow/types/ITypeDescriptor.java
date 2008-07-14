@@ -23,7 +23,6 @@ import javax.jcr.Value;
 import org.apache.wicket.model.IDetachable;
 
 public interface ITypeDescriptor extends IDetachable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String getName();

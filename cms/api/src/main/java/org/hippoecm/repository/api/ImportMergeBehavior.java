@@ -24,7 +24,6 @@ package org.hippoecm.repository.api;
  */
 
 public interface ImportMergeBehavior {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
     
     public static final int IMPORT_MERGE_SKIP = 0;

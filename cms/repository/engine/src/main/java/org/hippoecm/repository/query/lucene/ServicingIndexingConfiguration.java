@@ -19,7 +19,6 @@ import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
 import org.apache.jackrabbit.spi.Name;
 
 public interface ServicingIndexingConfiguration extends IndexingConfiguration{
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

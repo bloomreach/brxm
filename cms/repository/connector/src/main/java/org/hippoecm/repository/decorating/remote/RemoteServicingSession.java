@@ -29,7 +29,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;

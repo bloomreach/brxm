@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reporting;
 
 public interface ReportingNodeTypes {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     // NodeTypes

@@ -23,7 +23,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 public interface HippoQuery extends Query {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public static final String HIPPOQL = "HIPPOQL";

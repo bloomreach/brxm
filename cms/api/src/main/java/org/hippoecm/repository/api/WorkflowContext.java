@@ -16,10 +16,8 @@
 package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 public interface WorkflowContext {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public Document getDocument(String category, String identifier) throws RepositoryException;

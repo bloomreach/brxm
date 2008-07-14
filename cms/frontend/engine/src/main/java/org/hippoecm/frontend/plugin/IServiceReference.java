@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 
 public interface IServiceReference<T extends IClusterable> extends IDetachable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     T getService();

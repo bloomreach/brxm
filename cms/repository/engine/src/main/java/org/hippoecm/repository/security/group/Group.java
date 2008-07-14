@@ -22,7 +22,6 @@ import javax.transaction.NotSupportedException;
 import org.hippoecm.repository.security.AAContext;
 
 public interface Group {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

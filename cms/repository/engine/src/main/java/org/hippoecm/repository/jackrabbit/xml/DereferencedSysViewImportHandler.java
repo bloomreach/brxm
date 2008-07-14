@@ -45,7 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DereferencedSysViewImportHandler extends DefaultHandler {
     
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     /**
      * stack of ImportState instances; an instance is pushed onto the stack

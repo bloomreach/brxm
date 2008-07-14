@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 public interface ICustomizableDocumentListingDataTable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

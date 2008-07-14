@@ -20,7 +20,6 @@ package org.hippoecm.repository.jackrabbit;
  * be able to distinguish between Date, String, Long, Double and Boolean
  */
 public interface FacetTypeConstants {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public final static Character STRING_POSTFIX = '\uFFFF';

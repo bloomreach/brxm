@@ -21,7 +21,6 @@ import org.hippoecm.repository.security.AAContext;
  * A role a user has on a domain.
  */
 public interface Role {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

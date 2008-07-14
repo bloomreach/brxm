@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.wicket.model.IDetachable;
 
 public interface ITypeStore extends IDetachable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     ITypeDescriptor getTypeDescriptor(String name);

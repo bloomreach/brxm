@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 
 public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflow {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

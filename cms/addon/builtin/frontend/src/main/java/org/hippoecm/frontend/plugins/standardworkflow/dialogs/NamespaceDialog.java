@@ -33,10 +33,8 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private static final Logger log = LoggerFactory.getLogger(NamespaceDialog.class);
 
-    @SuppressWarnings("unused")
     private String prefix;
 
-    @SuppressWarnings("unused")
     private String url;
 
     public NamespaceDialog(NamespaceWorkflowPlugin plugin, IDialogService dialogWindow) {

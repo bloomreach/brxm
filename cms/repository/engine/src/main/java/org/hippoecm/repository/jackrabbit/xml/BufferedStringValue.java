@@ -52,7 +52,7 @@ import java.io.Writer;
 class BufferedStringValue implements TextValue {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(BufferedStringValue.class);
 

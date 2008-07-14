@@ -21,7 +21,6 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Test extends Remote, Serializable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public int test(int max) throws RemoteException;

@@ -31,7 +31,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteProperty;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public interface RemoteHierarchyResolver extends Remote {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public class RemoteHierarchyResult {

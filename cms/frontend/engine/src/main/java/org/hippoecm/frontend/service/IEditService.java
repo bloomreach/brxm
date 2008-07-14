@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IEditService<T extends IModel> extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String EDITOR_ID = "editor.id";

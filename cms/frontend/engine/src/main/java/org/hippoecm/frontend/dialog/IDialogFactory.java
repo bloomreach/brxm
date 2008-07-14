@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 
 public interface IDialogFactory extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public AbstractDialog createDialog(IDialogService dialogService);

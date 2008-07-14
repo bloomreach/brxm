@@ -26,7 +26,6 @@ import org.hippoecm.repository.security.user.User;
  * Interface for managing users in the backend
  */
 public interface UserManager {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

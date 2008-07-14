@@ -163,7 +163,6 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Flag whether current user is anonymous
      */
-    @SuppressWarnings("unused")
     private boolean isAnonymous;
 
     /**

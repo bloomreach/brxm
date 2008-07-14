@@ -21,7 +21,6 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 
 public interface ITemplateEngine extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     String ENGINE = "engine";

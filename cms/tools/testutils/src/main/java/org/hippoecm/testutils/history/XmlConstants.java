@@ -19,7 +19,6 @@ package org.hippoecm.testutils.history;
  * XmlConstants.java
  */
 public interface XmlConstants {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     // the testsuite element

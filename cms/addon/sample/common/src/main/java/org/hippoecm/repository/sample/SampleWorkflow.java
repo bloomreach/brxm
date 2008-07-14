@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface SampleWorkflow extends Workflow {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     public void renameAuthor(String newName) throws WorkflowException, RepositoryException, RemoteException;

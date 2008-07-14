@@ -19,7 +19,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 
 public interface IRenderService extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     Component getComponent();

@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugin;
 import org.apache.wicket.IClusterable;
 
 public interface IServiceTracker<S extends IClusterable> extends IClusterable {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     void addService(S service, String name);

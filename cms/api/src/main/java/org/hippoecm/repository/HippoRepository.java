@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 public interface HippoRepository {
-    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**
