@@ -149,11 +149,6 @@
 [hippo:user] > nt:base
 - hippo:password (string) mandatory
 - hippo:active (boolean) = true mandatory autocreated
-- hippo:firstname (string)
-- hippo:lastname (string)
-- hippo:email (string)
-+ * (hippo:listing) = hippo:listing
-+ * (hippo:usersettings) = hippo:usersettings
   
 [hippo:group] > nt:base
 - hippo:description (string)

@@ -37,3 +37,7 @@
 [frontend:workflow] > hippo:workflow
 - frontend:renderer (string)
 
+[frontend:user] > hippo:user
+- frontend:firstname (string)
+- frontend:lastname (string)
+- frontend:email (string)
