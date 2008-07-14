@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -120,11 +121,7 @@ public class Reference {
         propName = name;
     }
     void setBasePath(String path) {
-        if (path.endsWith("/")) {
-            basePath = path;
-        } else {
-            basePath = path + "/";
-        }
+        basePath = path;
     }
     
 
@@ -216,16 +213,29 @@ public class Reference {
         }
     }
 
+    /**
+     * Resolve uuids to paths. Make paths to uuids inside the export relative.
+     * @param session
+     * @throws RepositoryException
+     */
     void resolvePaths(Session session) throws RepositoryException {
-        int len = getBasePath().length();
+        Node base = session.getRootNode().getNode(getBasePath().substring(1)); // remove starting slash
+        Node parent;
+        if (base.getDepth() == 0) {
+            parent = base;
+        } else {
+            parent = base.getParent();
+        }
+        int len = parent.getPath().length() + 1; // +1 is trailing slash
         String path;
         for (int i = 0; i < uuids.length; i++) {
-             path = session.getNodeByUUID(uuids[i]).getPath();
-             if (path.startsWith(getBasePath())) {
-                 paths[i] = path.substring(len);
-             } else {
-                 paths[i] = path;
-             }
+            path = session.getNodeByUUID(uuids[i]).getPath();
+            System.err.println("path before: " + path);
+            if (path.startsWith(getBasePath())) {
+                paths[i] = path.substring(len);
+            } else {
+                paths[i] = path;
+            }
         }
     }
 
