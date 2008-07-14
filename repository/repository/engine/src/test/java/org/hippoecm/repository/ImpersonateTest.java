@@ -63,16 +63,13 @@ public class ImpersonateTest extends TestCase {
     public void testImpersonate() throws RepositoryException {
         // setup user session
         Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-        System.out.println("USER: "+ userSession.getUserID());
         Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
-        System.out.println("USER: "+ impersonateSession.getUserID());
         assertEquals("admin", impersonateSession.getUserID());
     }
     @Test
     public void testAnonymous() throws RepositoryException {
         // setup user session
         Session userSession = server.login();
-        System.out.println("USER: "+ userSession.getUserID());
         try {
             Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
             fail("User anonymous should not be allowed to impersonate.");
