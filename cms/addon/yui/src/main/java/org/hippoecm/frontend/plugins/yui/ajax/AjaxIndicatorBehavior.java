@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 
 public class AjaxIndicatorBehavior extends AbstractBehavior {
@@ -49,7 +50,7 @@ public class AjaxIndicatorBehavior extends AbstractBehavior {
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        YuiHeaderContributor.forModule("hippo", "ajaxindicator").renderHead(response);
+        YuiHeaderContributor.forModule(HippoNamespace.NS, "ajaxindicator").renderHead(response);
         TextTemplateHeaderContributor.forJavaScript(AjaxIndicatorBehavior.class,
                 "init_ajax_indicator.js", new AbstractReadOnlyModel() {
                     private static final long serialVersionUID = 1L;

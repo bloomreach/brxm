@@ -31,6 +31,7 @@ import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 import org.hippoecm.frontend.service.render.RenderService;
 
@@ -55,7 +56,7 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        YuiHeaderContributor.forModule("hippo", "dragdropmanager").renderHead(response);
+        YuiHeaderContributor.forModule(HippoNamespace.NS, "dragdropmanager").renderHead(response);
         TextTemplateHeaderContributor.forJavaScript(getHeaderContributorClass(), getHeaderContributorFilename(),
                 new HeaderContributerModel()).renderHead(response);
         super.renderHead(response);
