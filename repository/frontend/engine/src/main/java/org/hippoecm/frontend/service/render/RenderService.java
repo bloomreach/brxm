@@ -122,6 +122,8 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
         IModelService service = context.getService(modelId, IModelService.class);
         if (service != null) {
             service.setModel(model);
+        } else {
+            updateModel(model);
         }
         return this;
     }
