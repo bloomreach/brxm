@@ -16,6 +16,9 @@
 package org.hippoecm.frontend.plugins.login;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
@@ -26,6 +29,7 @@ import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
@@ -88,7 +92,9 @@ public class LoginPlugin extends RenderPlugin {
             } else {
                 submit.setEnabled(true);
             }
-
+            
+            //Prevent timeout on the login page
+            add(new PingBehavior(LoginPlugin.this));
         }
 
         @Override
@@ -114,4 +120,20 @@ public class LoginPlugin extends RenderPlugin {
         }
     }
 
+    private static class PingBehavior extends AbstractAjaxTimerBehavior {
+        private static final long serialVersionUID = 1L;
+
+        private Component component;
+
+        public PingBehavior(Component component) {
+            //Shortest possible timeout value in web.xml is 1 minute.
+            super(Duration.seconds(59));
+            this.component = component;
+        }
+
+        @Override
+        protected void onTimer(AjaxRequestTarget target) {
+            target.addComponent(component);
+        }
+    }
 }
