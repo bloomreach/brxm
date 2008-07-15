@@ -28,12 +28,12 @@
   <artifactId>hippo-ecm-addon-gallery</artifactId>
   <packaging>jar</packaging>
 
-<!--  <scm>
+  <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</url>
   </scm>
--->
+
   <dependencies>
     <dependency>
       <groupId>org.hippoecm</groupId>
