@@ -56,7 +56,16 @@
 
 [hippo:request] > nt:unstructured
 
+// FIXME ought to be: [hippo:facetselect] > hippo:reference
+[hippo:facetselect] > nt:base
+- hippo:docbase (string) mandatory // FIXME ought to be reference
+- hippo:facets (string) mandatory multiple
+- hippo:values (string) mandatory multiple
+- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
++ * multiple
+
 [hippo:document] > nt:base
++ * (hippo:facetselect)
 
 [hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple
@@ -77,14 +86,6 @@
 - jcr:mimeType (string) mandatory
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
-
-// FIXME ought to be: [hippo:facetselect] > hippo:reference
-[hippo:facetselect] > nt:base
-- hippo:docbase (string) mandatory // FIXME ought to be reference
-- hippo:facets (string) mandatory multiple
-- hippo:values (string) mandatory multiple
-- hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
-+ * multiple
 
 [hippo:type] > nt:base
 - hippo:nodetype (string) mandatory
