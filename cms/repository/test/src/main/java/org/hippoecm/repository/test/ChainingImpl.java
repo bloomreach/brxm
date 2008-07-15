@@ -18,15 +18,11 @@ package org.hippoecm.repository.test;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.Workflow;
-
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class ChainingImpl extends WorkflowImpl implements Chaining {

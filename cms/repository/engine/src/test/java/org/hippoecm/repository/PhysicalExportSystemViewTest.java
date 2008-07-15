@@ -15,9 +15,10 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -35,13 +36,11 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import org.junit.*;
-import static org.junit.Assert.*;
 
 public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")

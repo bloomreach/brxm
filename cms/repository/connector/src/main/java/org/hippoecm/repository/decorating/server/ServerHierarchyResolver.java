@@ -23,14 +23,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.rmi.remote.RemoteItem;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.apache.jackrabbit.rmi.server.ServerObject;
-
 import org.hippoecm.repository.api.HierarchyResolver;
-
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
-import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver.RemoteHierarchyResult;
 
 public class ServerHierarchyResolver extends ServerObject implements RemoteHierarchyResolver
 {

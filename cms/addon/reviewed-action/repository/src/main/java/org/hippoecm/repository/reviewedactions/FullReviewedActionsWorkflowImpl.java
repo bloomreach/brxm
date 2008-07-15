@@ -15,15 +15,12 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import java.util.Date;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {

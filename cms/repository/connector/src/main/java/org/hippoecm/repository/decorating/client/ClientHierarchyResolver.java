@@ -17,20 +17,16 @@ package org.hippoecm.repository.decorating.client;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.InvalidItemStateException;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-
-import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
-
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public class ClientHierarchyResolver extends ClientObject implements HierarchyResolver {

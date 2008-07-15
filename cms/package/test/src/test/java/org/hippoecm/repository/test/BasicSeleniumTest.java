@@ -15,14 +15,11 @@
  */
 package org.hippoecm.repository.test;
 
-import org.junit.*;
-import org.junit.internal.runners.InitializationError;
-import org.junit.runner.Description;
-import org.junit.runner.RunWith;
-import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.Suite;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.SeleniumException;

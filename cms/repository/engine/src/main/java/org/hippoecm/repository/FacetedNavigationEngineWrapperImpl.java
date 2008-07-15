@@ -17,14 +17,12 @@ package org.hippoecm.repository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
   implements FacetedNavigationEngine<Q,C>

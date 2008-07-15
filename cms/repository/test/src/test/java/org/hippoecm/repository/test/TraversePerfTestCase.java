@@ -16,9 +16,7 @@
 package org.hippoecm.repository.test;
 
 import java.io.InputStream;
-import java.rmi.RemoteException;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -28,19 +26,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.junit.*;
-import static org.junit.Assert.*;
-
 import org.apache.jackrabbit.spi.RepositoryService;
-
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.testutils.history.HistoryWriter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class TraversePerfTestCase extends TestCase {
 

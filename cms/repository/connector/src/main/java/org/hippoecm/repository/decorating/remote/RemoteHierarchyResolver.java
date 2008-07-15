@@ -18,16 +18,10 @@ package org.hippoecm.repository.decorating.remote;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Item;
-import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.InvalidItemStateException;
-
-import org.hippoecm.repository.api.HierarchyResolver;
+import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteItem;
-import org.apache.jackrabbit.rmi.remote.RemoteProperty;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public interface RemoteHierarchyResolver extends Remote {

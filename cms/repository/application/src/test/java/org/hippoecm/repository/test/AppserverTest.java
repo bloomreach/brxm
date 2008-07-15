@@ -15,31 +15,18 @@
  */
 package org.hippoecm.repository.test;
 
-import java.io.File;
-import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
-
-import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.nodetype.PropertyDefinition;
 
-import org.junit.*;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.TestCase;
+import org.hippoecm.testutils.deployer.Deployer;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
-import static org.junit.Assert.*;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.testutils.deployer.Deployer;
 
 @RunWith(AppserverTest.class)
 @Suite.SuiteClasses({

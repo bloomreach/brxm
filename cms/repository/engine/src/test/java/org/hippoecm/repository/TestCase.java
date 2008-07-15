@@ -24,10 +24,11 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * Abstract base class for writing tests against repository.

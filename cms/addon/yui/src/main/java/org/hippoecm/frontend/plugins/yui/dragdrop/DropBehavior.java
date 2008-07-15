@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 

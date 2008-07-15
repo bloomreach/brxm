@@ -15,18 +15,13 @@
  */
 package org.hippoecm.repository.test;
 
-import java.io.File;
-
-import org.junit.*;
+import org.hippoecm.testutils.deployer.Deployer;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
-import static org.junit.Assert.*;
-
-import org.hippoecm.testutils.deployer.Deployer;
 
 @RunWith(IntegrationTest.class)
 @Suite.SuiteClasses({

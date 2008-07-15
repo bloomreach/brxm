@@ -15,7 +15,8 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -25,16 +26,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.TestCase;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
     @SuppressWarnings("unused")

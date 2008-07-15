@@ -15,19 +15,16 @@
  */
 package org.hippoecm.repository.decorating;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.Utilities;
-import org.hippoecm.repository.api.HippoNodeType;
-
 import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Test;
 
 public class SingledViewFacetSelectTest  extends TestCase {
     @SuppressWarnings("unused")

@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -23,9 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")

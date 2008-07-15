@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import java.util.Date;
-import java.rmi.RemoteException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

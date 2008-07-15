@@ -15,39 +15,19 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jcr.RepositoryException;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.markup.html.basic.Label;
-
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
-import org.hippoecm.frontend.dialog.ExceptionDialog;
-import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.frontend.dialog.DialogService;
 
 public class GalleryShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")

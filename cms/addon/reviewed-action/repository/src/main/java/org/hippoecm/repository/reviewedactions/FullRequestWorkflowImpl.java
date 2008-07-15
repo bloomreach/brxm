@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements FullRequestWorkflow {
     @SuppressWarnings("unused")

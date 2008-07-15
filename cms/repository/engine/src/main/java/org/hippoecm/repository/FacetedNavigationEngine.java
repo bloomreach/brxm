@@ -19,7 +19,6 @@ package org.hippoecm.repository;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,7 +26,6 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 /**
 

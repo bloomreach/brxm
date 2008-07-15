@@ -15,13 +15,12 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class HREPTWO280Test extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")

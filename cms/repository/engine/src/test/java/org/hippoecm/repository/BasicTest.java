@@ -15,13 +15,14 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class BasicTest {
     @SuppressWarnings("unused")

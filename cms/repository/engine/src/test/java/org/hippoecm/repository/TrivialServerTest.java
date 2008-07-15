@@ -15,16 +15,17 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.ISO9075Helper;
-
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class TrivialServerTest extends TestCase {
     @SuppressWarnings("unused")

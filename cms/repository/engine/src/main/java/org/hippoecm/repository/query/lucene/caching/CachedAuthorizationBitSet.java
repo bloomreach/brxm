@@ -18,7 +18,6 @@ package org.hippoecm.repository.query.lucene.caching;
 import java.util.BitSet;
 
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Filter;
 
 public class CachedAuthorizationBitSet {
     @SuppressWarnings("unused")

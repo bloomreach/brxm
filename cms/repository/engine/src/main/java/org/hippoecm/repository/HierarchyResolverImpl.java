@@ -24,17 +24,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HierarchyResolver;
 
 public class HierarchyResolverImpl implements HierarchyResolver {
     @SuppressWarnings("unused")

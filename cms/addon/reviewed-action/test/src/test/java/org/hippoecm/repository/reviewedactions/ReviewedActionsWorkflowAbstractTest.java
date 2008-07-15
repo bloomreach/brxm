@@ -22,12 +22,11 @@ import javax.jcr.Session;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.api.HippoWorkspace;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class ReviewedActionsWorkflowAbstractTest {
     @SuppressWarnings("unused")

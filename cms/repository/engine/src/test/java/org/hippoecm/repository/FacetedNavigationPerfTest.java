@@ -15,12 +15,9 @@
  */
 package org.hippoecm.repository;
 
-import org.junit.*;
+import org.hippoecm.testutils.history.HistoryWriter;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import static org.junit.Assert.*;
-
-import org.hippoecm.testutils.history.HistoryWriter;
 
 @RunWith(HistoryWriter.class)
 @Suite.SuiteClasses({
