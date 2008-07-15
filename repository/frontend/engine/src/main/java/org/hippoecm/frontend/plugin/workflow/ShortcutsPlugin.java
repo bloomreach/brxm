@@ -99,15 +99,12 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
         }
 
         context.registerService(this, IJcrService.class.getName());
-        System.err.println("BERRY done");
     }
 
     @Override
     public void updateModel(IModel imodel) {
-        System.err.println("BERRY updateModel");
         closePlugins();
         try {
-        System.err.println("BERRY query "+pluginsQuery);
             QueryManager qmgr = ((UserSession) getSession()).getJcrSession().getWorkspace().getQueryManager();
             Query query = qmgr.createQuery(pluginsQuery, Query.XPATH);
             QueryResult result = query.execute();
