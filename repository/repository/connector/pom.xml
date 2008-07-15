@@ -111,6 +111,25 @@
       <artifactId>atomikos-util</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr2spi</artifactId>
+      <version>${jackrabbit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-spi2jcr</artifactId>
+      <version>${jackrabbit.version}</version>
+    </dependency>
+    <!-- FIXME: to be added on some external repository
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-spi-rmi</artifactId>
+      <version>0.1</version>
+    </dependency>
+    -->
+
   </dependencies>
 
   <build>

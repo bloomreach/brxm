@@ -33,12 +33,9 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.TrivialServerTest.class,
   org.hippoecm.repository.FacetedAuthorizationTest.class,
   org.hippoecm.repository.RepositoryLoginTest.class,
-  /*
-  org.hippoecm.repository.CanonicalPathTest.class,
   org.hippoecm.repository.ConfigurationTest.class,
   org.hippoecm.repository.CopyNodeTest.class,
   org.hippoecm.repository.DerivedDataTest.class,
-  org.hippoecm.repository.FacetedNavigationAbstractTest.class,
   org.hippoecm.repository.FacetedNavigationChildNameTest.class,
   org.hippoecm.repository.FacetedNavigationHippoCountTest.class,
   org.hippoecm.repository.FacetedNavigationNamespaceTest.class,
@@ -46,24 +43,25 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.FacetedNavigationTest.class,
   org.hippoecm.repository.HREPIssueTest.class,
   org.hippoecm.repository.HREPTWO280Test.class,
-  org.hippoecm.repository.HREPTWO283IssueTest.class,
   org.hippoecm.repository.HREPTWO425Test.class,
   org.hippoecm.repository.HREPTWO451Test.class,
   org.hippoecm.repository.HREPTWO456Test.class,
   org.hippoecm.repository.HREPTWO475Test.class,
   org.hippoecm.repository.HREPTWO650Test.class,
-  org.hippoecm.repository.HREPTWO690Test.class,
   org.hippoecm.repository.HippoISMTest.class,
-  org.hippoecm.repository.HippoNodeTypeSanityTest.class,
-  org.hippoecm.repository.HippoQueryTest.class,
-  org.hippoecm.repository.PendingChangesTest.class,
-  org.hippoecm.repository.PhysicalExportSystemViewTest.class,
-  org.hippoecm.repository.RepositoryRolesTest.class,
-  org.hippoecm.repository.TransactionTest.class,
   org.hippoecm.repository.TrivialServerTest.class,
-  org.hippoecm.repository.decorating.FacetedReferenceTest.class,
-  org.hippoecm.repository.decorating.MirrorTest.class,
-  org.hippoecm.repository.decorating.PathsTest.class,
+  /*
+  org.hippoecm.repository.CanonicalPathTest.class, // fails, test may be broken
+  org.hippoecm.repository.HREPTWO283IssueTest.class, // fails
+  org.hippoecm.repository.HREPTWO690Test.class, // fails
+  org.hippoecm.repository.HippoNodeTypeSanityTest.class, // fails
+  org.hippoecm.repository.HippoQueryTest.class, // fails
+  org.hippoecm.repository.PendingChangesTest.class, // fails
+  org.hippoecm.repository.TransactionTest.class, // fails
+  org.hippoecm.repository.decorating.FacetedReferenceTest.class, // fails
+  org.hippoecm.repository.decorating.PathsTest.class, // fails
+  org.hippoecm.repository.PhysicalExportSystemViewTest.class, // fails depending on previous test
+  org.hippoecm.repository.decorating.MirrorTest.class, // fails depending on previous test
   */
   org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class
 })

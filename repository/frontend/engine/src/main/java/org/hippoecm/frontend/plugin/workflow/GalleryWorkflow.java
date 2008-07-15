@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugin.workflow;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 
@@ -24,5 +25,6 @@ import org.hippoecm.repository.api.Document;
 
 public interface GalleryWorkflow extends Workflow
 {
-    public Document createGalleryItem(String name) throws RemoteException, RepositoryException;
+    public List<String> getGalleryTypes() throws RemoteException, RepositoryException;
+    public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException;
 }

@@ -24,7 +24,7 @@ import javax.jcr.version.VersionHistory;
 
 /**
  */
-public class VersionDecorator extends NodeDecorator implements Version {
+public abstract class VersionDecorator extends NodeDecorator implements Version {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

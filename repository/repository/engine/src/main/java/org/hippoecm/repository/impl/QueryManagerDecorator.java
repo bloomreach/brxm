@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -22,17 +22,16 @@ import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.hippoecm.repository.decorating.DecoratorFactory;
+
 /**
  */
-public class QueryManagerDecorator extends AbstractDecorator implements QueryManager {
+public class QueryManagerDecorator extends org.hippoecm.repository.decorating.QueryManagerDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final QueryManager manager;
-
     public QueryManagerDecorator(DecoratorFactory factory, Session session, QueryManager manager) {
-        super(factory, session);
-        this.manager = manager;
+        super(factory, session, manager);
     }
 
     /**
@@ -40,21 +39,6 @@ public class QueryManagerDecorator extends AbstractDecorator implements QueryMan
      */
     public Query createQuery(String statement, String language) throws InvalidQueryException, RepositoryException {
         statement = QueryDecorator.mangleArguments(statement);
-        return factory.getQueryDecorator(session, manager.createQuery(statement, language));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public Query getQuery(Node node) throws InvalidQueryException, RepositoryException {
-        Query query = manager.getQuery(NodeDecorator.unwrap(node));
-        return factory.getQueryDecorator(session, query);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public String[] getSupportedQueryLanguages() throws RepositoryException {
-        return manager.getSupportedQueryLanguages();
+        return super.createQuery(statement, language);
     }
 }

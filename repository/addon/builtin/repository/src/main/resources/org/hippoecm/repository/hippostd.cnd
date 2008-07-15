@@ -53,6 +53,10 @@
 - hippostd:content (string) primary mandatory
 + * (hippo:facetselect)
 
+[hippostd:gallery] > hippostd:folder
+// the children of this node are supposed to be images
+// ie. children conform to
+
 // FIXME: THESE TYPES ARE EXAMPLES ONLY AND SHOULD BE REMOVED BEFORE RELEASE
 // DO NOT USE THESE TYPES IN JAVA CODE!
 
@@ -61,5 +65,5 @@
 // ie. children conform to
 
 [hippostd:exampleImageSet] > hippo:document
-+ hippostd:thumbnail (hippo:resource) = hippo:resource primary mandatory
++ hippostd:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
 + hippostd:picture (hippo:resource) = hippo:resource

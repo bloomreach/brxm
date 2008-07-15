@@ -43,11 +43,11 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
         }
     }
 
-	public String getValue(String name) throws RepositoryException {
-		try {
-            return remote.getValue(name);
+    public String getAttribute(String name) throws RepositoryException {
+        try {
+            return remote.getAttribute(name);
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
-	}
+    }
 }

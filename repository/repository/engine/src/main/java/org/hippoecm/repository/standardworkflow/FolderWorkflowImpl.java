@@ -40,8 +40,9 @@ import javax.jcr.query.QueryResult;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
 
-public class FolderWorkflowImpl implements FolderWorkflow {
+public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

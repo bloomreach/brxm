@@ -36,6 +36,7 @@ import javax.jcr.version.VersionHistory;
  * easier to customize the behaviour of a decorator layer.
  */
 public interface DecoratorFactory {
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
     /**

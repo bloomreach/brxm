@@ -28,8 +28,6 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.DerivedDataEngine;
-
 /**
  */
 public class ItemDecorator extends AbstractDecorator implements Item {
@@ -143,9 +141,6 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     /** {@inheritDoc} */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
-        if(item.isNode()) {
-            ((SessionDecorator)getSession()).derivedEngine.save((Node)item);
-        }
         item.save();
     }
 
@@ -156,9 +151,6 @@ public class ItemDecorator extends AbstractDecorator implements Item {
 
     /** {@inheritDoc} */
     public void remove() throws VersionException, LockException, RepositoryException {
-        if(isNode()) {
-            DerivedDataEngine.removal((Node)this);
-        }
         item.remove();
     }
 

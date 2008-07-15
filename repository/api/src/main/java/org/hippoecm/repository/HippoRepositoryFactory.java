@@ -112,6 +112,42 @@ public class HippoRepositoryFactory {
             }
         }
 
+        if (location.startsWith("spi://")) {
+            try {
+                defaultLocation = location;
+                try {
+                    return (HippoRepository) Class.forName("org.hippoecm.repository.SPIHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+                } catch(ClassNotFoundException ex) {
+                    throw new RepositoryException(ex);
+                } catch(NoSuchMethodException ex) {
+                    throw new RepositoryException(ex);
+                } catch(IllegalAccessException ex) {
+                    throw new RepositoryException(ex);
+                } catch(InvocationTargetException ex) {
+                    if(ex.getCause() instanceof RemoteException)
+                        throw (RemoteException) ex.getCause();
+                    else if(ex.getCause() instanceof NotBoundException)
+                        throw (NotBoundException) ex.getCause();
+                    else if(ex.getCause() instanceof MalformedURLException)
+                        throw (MalformedURLException) ex.getCause();
+                    else if(ex.getCause() instanceof RepositoryException)
+                        throw (RepositoryException) ex.getCause();
+                    else {
+                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
+                    }
+                }
+            } catch (RemoteException ex) {
+                return null;
+                // FIXME
+            } catch (NotBoundException ex) {
+                return null;
+                // FIXME
+            } catch (MalformedURLException ex) {
+                return null;
+                // FIXME
+            }
+        }
+
         if(location.startsWith("java:")) {
             try {
                 defaultLocation = location;

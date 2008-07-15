@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
         return displayName;
     }
 
-    public String getValue(String key) throws RepositoryException {
+    public String getAttribute(String key) throws RepositoryException {
         return attributes.get(key);
     }
 

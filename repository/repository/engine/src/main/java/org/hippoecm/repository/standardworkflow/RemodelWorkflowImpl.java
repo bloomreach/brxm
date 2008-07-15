@@ -36,11 +36,12 @@ import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
 
 /**
  * @deprecated
  */
-public class RemodelWorkflowImpl implements RemodelWorkflow {
+public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

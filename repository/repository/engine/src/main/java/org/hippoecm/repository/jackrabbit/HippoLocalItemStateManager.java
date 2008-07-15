@@ -209,7 +209,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                 Name nodeTypeName = nodeState.getNodeTypeName();
                 if(virtualNodeNames.containsKey(nodeTypeName) && !virtualStates.contains(state)) {
                     int type =  isVirtual(nodeState);
-                    if( (type  & ITEM_TYPE_EXTERNAL) != 0  && (type  & ITEM_TYPE_VIRTUAL) != 0) {
+                    if( (type & ITEM_TYPE_EXTERNAL) != 0  && (type & ITEM_TYPE_VIRTUAL) != 0) {
                         nodeState.removeAllChildNodeEntries();
                     }
                     try {

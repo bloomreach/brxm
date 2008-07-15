@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,70 +57,43 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.spi.Path;
+
 import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
-/**
- */
-public class SessionDecorator implements XASession, HippoSession {
+public class SessionDecorator extends org.hippoecm.repository.decorating.SessionDecorator implements XASession, HippoSession {
 
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final DecoratorFactory factory;
-
-    protected final Repository repository;
-
-    protected final Session session;
-
     protected DerivedDataEngine derivedEngine;
 
     SessionDecorator(DecoratorFactory factory, Repository repository, Session session) {
-        this.factory = factory;
-        this.repository = repository;
-        this.session = session;
+        super(factory, repository, session);
         derivedEngine = new DerivedDataEngine(this);
     }
 
     SessionDecorator(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
-        this.factory = factory;
-        this.repository = repository;
-        this.session = session;
+        super(factory, repository, session);
         derivedEngine = new DerivedDataEngine(this);
-    }
-
-    public static Session unwrap(Session session) {
-        if (session == null) {
-            return null;
-        } else if (session instanceof SessionDecorator) {
-            return session = ((SessionDecorator)session).session;
-        } else {
-            return session;
-        }
-    }
-
-    protected void finalize() {
-        /* FIXME
-        if (utm != null) {
-            utm.close();
-            utm = null;
-        }
-        */
     }
 
     String[] getQPath(String absPath) throws NamespaceException, RepositoryException {
@@ -143,107 +116,6 @@ public class SessionDecorator implements XASession, HippoSession {
         return ((XASession) session).getXAResource();
     }
 
-    /** {@inheritDoc} */
-    public Repository getRepository() {
-        return repository;
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String getUserID() {
-        return session.getUserID();
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public Object getAttribute(String name) {
-        return session.getAttribute(name);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String[] getAttributeNames() {
-        return session.getAttributeNames();
-    }
-
-    /**
-     * Forwards the method call to the underlying session. The returned
-     * workspace is wrapped into a workspace decorator using the decorator
-     * factory.
-     *
-     * @return decorated workspace
-     */
-    public Workspace getWorkspace() {
-        return factory.getWorkspaceDecorator(this, session.getWorkspace());
-    }
-
-    /**
-     * Forwards the method call to the underlying session. The returned
-     * session is wrapped into a session decorator using the decorator factory.
-     *
-     * @return decorated session
-     */
-    public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
-        Session newSession = session.impersonate(credentials);
-        return factory.getSessionDecorator(repository, newSession);
-    }
-
-    /**
-     * Forwards the method call to the underlying session. The returned
-     * node is wrapped into a node decorator using the decorator factory.
-     *
-     * @return decorated node
-     */
-    public Node getRootNode() throws RepositoryException {
-        Node root = session.getRootNode();
-        return factory.getNodeDecorator(this, root);
-    }
-
-    /**
-     * Forwards the method call to the underlying session. The returned
-     * node is wrapped into a node decorator using the decorator factory.
-     *
-     * @return decorated node
-     */
-    public Node getNodeByUUID(String uuid) throws ItemNotFoundException, RepositoryException {
-        Node node = session.getNodeByUUID(uuid);
-        return factory.getNodeDecorator(this, node);
-    }
-
-    /**
-     * Forwards the method call to the underlying session. The returned
-     * item is wrapped into a node, property, or item decorator using
-     * the decorator factory. The decorator type depends on the type
-     * of the underlying item.
-     *
-     * @return decorated item, property, or node
-     */
-    public Item getItem(String absPath) throws PathNotFoundException, RepositoryException {
-        Item item = session.getItem(absPath);
-        return factory.getItemDecorator(this, item);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public boolean itemExists(String path) throws RepositoryException {
-        return session.itemExists(path);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
-            VersionException, RepositoryException {
-        session.move(srcAbsPath, destAbsPath);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
         try {
@@ -265,51 +137,9 @@ public class SessionDecorator implements XASession, HippoSession {
             ex.printStackTrace(System.err);
             throw ex;
         }
-        session.save();
+        super.save();
     }
 
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void refresh(boolean keepChanges) throws RepositoryException {
-        session.refresh(keepChanges);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public boolean hasPendingChanges() throws RepositoryException {
-        return session.hasPendingChanges();
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        session.checkPermission(absPath, actions);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehaviour)
-            throws PathNotFoundException, ConstraintViolationException, VersionException, LockException,
-            RepositoryException {
-        return session.getImportContentHandler(parentAbsPath, uuidBehaviour);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void importXML(String parentAbsPath, InputStream in, int uuidBehaviour) throws IOException,
-            PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException,
-            InvalidSerializedDataException, LockException, RepositoryException {
-        session.importXML(parentAbsPath, in, uuidBehaviour);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
@@ -397,50 +227,6 @@ public class SessionDecorator implements XASession, HippoSession {
     /**
      * Forwards the method call to the underlying session.
      */
-    public void exportDocumentView(String absPath, ContentHandler contentHandler, boolean binaryAsLink,
-            boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
-        session.exportDocumentView(absPath, contentHandler, binaryAsLink, noRecurse);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void exportDocumentView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
-            throws IOException, PathNotFoundException, RepositoryException {
-        session.exportDocumentView(absPath, out, binaryAsLink, noRecurse);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void setNamespacePrefix(String prefix, String uri) throws NamespaceException, RepositoryException {
-        session.setNamespacePrefix(prefix, uri);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String[] getNamespacePrefixes() throws RepositoryException {
-        return session.getNamespacePrefixes();
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String getNamespaceURI(String prefix) throws NamespaceException, RepositoryException {
-        return session.getNamespaceURI(prefix);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String getNamespacePrefix(String uri) throws NamespaceException, RepositoryException {
-        return session.getNamespacePrefix(uri);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
     public void logout() {
         try {
             Repository rep = session.getRepository();
@@ -450,37 +236,8 @@ public class SessionDecorator implements XASession, HippoSession {
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         } finally {
-            session.logout();
+            super.logout();
         }
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void addLockToken(String lt) {
-        session.addLockToken(lt);
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public String[] getLockTokens() {
-        return session.getLockTokens();
-    }
-
-    /**
-     * Forwards the method call to the underlying session.
-     */
-    public void removeLockToken(String lt) {
-        session.removeLockToken(lt);
-    }
-
-    public ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return factory.getValueFactoryDecorator(this, session.getValueFactory());
-    }
-
-    public boolean isLive() {
-        return session.isLive();
     }
 
     /**

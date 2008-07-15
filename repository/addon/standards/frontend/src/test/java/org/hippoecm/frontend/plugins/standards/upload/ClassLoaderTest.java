@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.decorating.PluginClassLoader;
+import org.hippoecm.repository.impl.PluginClassLoader;
 
 public class ClassLoaderTest extends TestCase {
 
