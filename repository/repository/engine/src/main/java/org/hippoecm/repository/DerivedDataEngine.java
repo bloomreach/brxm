@@ -375,7 +375,7 @@ public class DerivedDataEngine {
     }
 
     public static void removal(Node removed) throws RepositoryException {
-        if(removed.isNodeType("jcr:referenceable")) {
+        if(removed.isNodeType("mix:referenceable")) {
             final String uuid = removed.getUUID();
             removed.accept(new ItemVisitor() {
                     public void visit(Property property) throws RepositoryException {
@@ -389,9 +389,9 @@ public class DerivedDataEngine {
                                     if(values[i].getString().equals(uuid)) {
                                         Value[] newValues = new Value[values.length - 1];
                                         if(i > 0)
-                                            System.arraycopy(values, 0, newValues, 0, i - 1);
-                                        if(values.length - i > 0)
-                                            System.arraycopy(values, i + 1, newValues, i, values.length - i);
+                                            System.arraycopy(values, 0, newValues, 0, i);
+                                        if(values.length - i > 1)
+                                            System.arraycopy(values, i + 1, newValues, i, values.length - i - 1);
                                         prop.setValue(values);
                                         break;
                                     }
