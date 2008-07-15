@@ -78,14 +78,48 @@
       <sv:value>Dashboard</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.shortcuts</sv:value>
       <sv:value>extension.currentActivity</sv:value>
       <sv:value>extension.todo</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.shortcuts" sv:type="String">
+      <sv:value>service.dashboard.shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="extension.currentActivity" sv:type="String">
       <sv:value>service.dashboard.current</sv:value>
     </sv:property>
     <sv:property sv:name="extension.todo" sv:type="String">
       <sv:value>service.dashboard.todo</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="shortcutsPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.dashboard.shortcuts</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.path" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="galleryShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.workflow.GalleryShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.path" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
     </sv:property>
   </sv:node>
 
