@@ -199,7 +199,7 @@ public class Reference {
             try {
                 String path = paths[i];
                 if (!path.startsWith("/")) {
-                    path = getBasePath() + path;
+                    path = getBasePath() + "/" + path;
                 }
                 Path p = sessionImpl.getQPath(path).getNormalizedPath();
                 if (!p.isAbsolute()) {
