@@ -182,6 +182,7 @@ div.iconactions h3{margin-bottom: 16px; color: white}
 .actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #333333}
 .actionspanel ul li span span{display: inline; padding: 0px;}
 .actionspanel ul li span a{display: inline; padding: 0px;}
+.actionspanel ul li a span{display: inline; padding: 0px;}
 .actionspanel ul li a:hover{text-decoration: underline; color: #666666;}
 
 
@@ -384,17 +385,12 @@ overflow: auto;
 }
 
 /* temp icon hack */
-li.string a{background-image:url("images/icons/workflow-16.png")}
-li.html a{background-image:url("images/icons/workflow-16.png")}
-li.boolean a{background-image:url("images/icons/workflow-16.png")}
-li.date a{background-image:url("images/icons/workflow-16.png")}
-li.hippo_image a{background-image:url("images/icons/workflow-16.png")}
-li.hippo_query a{background-image:url("images/icons/workflow-16.png")}
-li.hippo_facetselect a{background-image:url("images/icons/workflow-16.png")}
+ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; margin-bottom: 2px;}
 
 /* edit template item */
 div#templateitemedit{background: none;width: 200px;}
-div#templateitemedit h3{margin-top: 5px; font-size: 12px;}
+div#templateitemedit h3{font-size: 12px; margin-bottom: 10px;}
+div#templateitemedit h3.name {color: black; margin-bottom: 4px;}
 div#templateitemedit input{width: 140px;}
 
 /* template model edit */
