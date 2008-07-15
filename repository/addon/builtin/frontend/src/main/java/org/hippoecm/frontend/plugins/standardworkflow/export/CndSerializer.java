@@ -207,6 +207,9 @@ public class CndSerializer implements IClusterable {
         if (field.isMandatory()) {
             output.append(" mandatory");
         }
+        if (field.isPrimary()) {
+            output.append(" primary");
+        }
         output.append("\n");
     }
 
