@@ -22,8 +22,12 @@
       <fieldset>
         <legend>Create item in gallery</legend>
         <p>
-          <label for="upload">Primary displayed component for item</label>
+          <label for="upload">Primary displayed component for item:</label>
           <input wicket:id="input" id="upload" type="file"/>
+        </p>
+        <p>
+          <label for="typeselect">Item provided is of type:</label>
+          <select wicket:id="type" id="typeselect"></select>
         </p>
         <input class="fauxbutton" type="submit" value="Create"/>
       </fieldset>

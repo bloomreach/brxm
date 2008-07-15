@@ -13,21 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating.remote;
+package org.hippoecm.repository.ext;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.Workflow;
-
-public interface RemoteWorkflowDescriptor extends Remote {
+/** Marker interface
+ *  DO NOT USE, should be moved to repository engine package [ FIXME ]
+ */
+public interface InternalWorkflow {
     final static String SVN_ID = "$Id$";
-
-    public String getDisplayName() throws RepositoryException, RemoteException;
-
-    public String getAttribute(String name) throws RepositoryException, RemoteException;
-
-    public Workflow getWorkflow() throws RepositoryException, RemoteException;
 }

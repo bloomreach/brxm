@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -58,6 +58,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.ext.InternalWorkflow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,15 +245,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
                  */
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     Workflow workflow;
-                    if (classname.startsWith("org.hippoecm.repository.standardworkflow.")) {
+                    Class clazz = Class.forName(classname);
+                    if (InternalWorkflow.class.isAssignableFrom(clazz)) {
                         try {
-                            Class clazz = Class.forName(classname);
                             Constructor constructor = clazz.getConstructor(new Class[] {Session.class, Session.class, Node.class});
                             workflow = (Workflow)constructor.newInstance(getSession(), rootSession, item);
                         } catch (IllegalAccessException ex) {
                             throw new RepositoryException("no access to standards plugin", ex);
-                        } catch (ClassNotFoundException ex) {
-                            throw new RepositoryException("standards plugin missing", ex);
                         } catch (NoSuchMethodException ex) {
                             throw new RepositoryException("standards plugin invalid", ex);
                         } catch (InstantiationException ex) {
@@ -327,6 +326,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                     return workflow;
                 }
+            } catch (ClassNotFoundException ex) {
+                log.error("Workflow specified at "+workflowNode.getPath()+" not present");
+                throw new RepositoryException("workflow not present", ex);
             } catch (PathNotFoundException ex) {
                 log.error("Workflow specification corrupt on node "+workflowNode.getPath());
                 throw new RepositoryException("workflow specification corrupt", ex);

@@ -39,31 +39,25 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.HierarchyResolverImpl;
+import org.xml.sax.ContentHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
 
 /**
  * Simple workspace decorator.
  */
-public class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
+public abstract class WorkspaceDecorator extends AbstractDecorator implements HippoWorkspace {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final static Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
-
     /** The underlying workspace instance. */
     protected final Workspace workspace;
-    protected DocumentManager documentManager;
-    protected WorkflowManager workflowManager;
-    private SessionDecorator rootSession;
-    private DocumentManagerImpl workflowDocumentManager;
 
     /**
      * Creates a workspace decorator.
@@ -75,19 +69,6 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
-        documentManager = null;
-        workflowManager = null;
-        rootSession = null;
-
-        Repository repository = RepositoryDecorator.unwrap(session.getRepository());
-        try {
-            if(repository instanceof RepositoryImpl) {
-                rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
-                        SessionDecorator.unwrap(session.impersonate(new SimpleCredentials("workflowuser", new char[] { })))); // FIXME: hardcoded workflowuser
-            }
-        } catch(RepositoryException ex) {
-            logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
-        }
     }
 
     /** {@inheritDoc} */
@@ -156,24 +137,11 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
         return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
     }
 
-    public DocumentManager getDocumentManager() throws RepositoryException {
-        if (documentManager == null) {
-            documentManager = new DocumentManagerImpl(session);
-        }
-        return documentManager;
-    }
+    public abstract DocumentManager getDocumentManager() throws RepositoryException;
 
-    public WorkflowManager getWorkflowManager() throws RepositoryException {
-        if (workflowManager == null) {
-            workflowDocumentManager = new DocumentManagerImpl(rootSession);
-            workflowManager = new WorkflowManagerImpl(session, workflowDocumentManager);
-        }
-        return workflowManager;
-    }
+    public abstract WorkflowManager getWorkflowManager() throws RepositoryException;
 
-    public HierarchyResolver getHierarchyResolver() throws RepositoryException {
-        return new HierarchyResolverImpl();
-    }
+    public abstract HierarchyResolver getHierarchyResolver() throws RepositoryException;
 
     /**
      * Forwards the method call to the underlying workspace.

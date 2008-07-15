@@ -322,8 +322,7 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>gallery</sv:value>
-      <sv:value>image</sv:value>
+      <sv:value>hippostd:exampleImageSet</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="attic">

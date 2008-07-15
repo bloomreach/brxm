@@ -103,9 +103,6 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.shortcuts</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.path" sv:type="String">
-      <sv:value>/content/gallery</sv:value>
-    </sv:property>
   </sv:node>
 
   <sv:node sv:name="galleryShortcut">
@@ -120,6 +117,9 @@
     </sv:property>
     <sv:property sv:name="gallery.path" sv:type="String">
       <sv:value>/content/gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.workflow" sv:type="String">
+      <sv:value>internal</sv:value>
     </sv:property>
   </sv:node>
 

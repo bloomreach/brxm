@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating;
+package org.hippoecm.repository.impl;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -36,10 +36,11 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.core.query.QueryImpl;
 
 import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.decorating.DecoratorFactory;
 
 /**
  */
-public class QueryDecorator extends AbstractDecorator implements HippoQuery {
+public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDecorator implements HippoQuery {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -50,7 +51,7 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     private final static String MAGIC_NAMED_END = "CIGAM";
 
     public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
-        super(factory, session);
+        super(factory, session, query);
         this.query = query;
         this.arguments = null;
     }
@@ -75,29 +76,6 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
             queryString = queryString.replaceAll(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END, "\\$"+argumentNames[i]);
         }
         return queryString;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public String getLanguage() {
-        return query.getLanguage();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public String getStoredQueryPath() throws ItemNotFoundException, RepositoryException {
-        return query.getStoredQueryPath();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
-            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
-        Node node = query.storeAsNode(absPath);
-        return factory.getNodeDecorator(session, node);
     }
 
     /**

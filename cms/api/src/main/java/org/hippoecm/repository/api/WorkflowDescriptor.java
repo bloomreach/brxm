@@ -33,5 +33,5 @@ public interface WorkflowDescriptor {
      *
      * @returns A String value, can be null.
      */
-    public String getValue(String name) throws RepositoryException;
+    public String getAttribute(String name) throws RepositoryException;
 }

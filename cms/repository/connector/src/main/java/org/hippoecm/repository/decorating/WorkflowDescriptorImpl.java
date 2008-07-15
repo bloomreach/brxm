@@ -13,21 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.decorating.remote;
+package org.hippoecm.repository.decorating;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 
-public interface RemoteWorkflowDescriptor extends Remote {
-    final static String SVN_ID = "$Id$";
+abstract class WorkflowDescriptorImpl implements WorkflowDescriptor {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-    public String getDisplayName() throws RepositoryException, RemoteException;
-
-    public String getAttribute(String name) throws RepositoryException, RemoteException;
-
-    public Workflow getWorkflow() throws RepositoryException, RemoteException;
+    WorkflowDescriptorImpl() throws RepositoryException {
+    }
 }

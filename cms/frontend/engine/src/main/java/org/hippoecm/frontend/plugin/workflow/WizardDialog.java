@@ -17,19 +17,25 @@ package org.hippoecm.frontend.plugin.workflow;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.rmi.RemoteException;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -47,7 +53,6 @@ public class WizardDialog extends WebPage {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private JcrNodeModel model;
     private IServiceReference<IJcrService> jcrServiceRef;
     private WizardForm form;
     private String workflowCategory;
@@ -56,9 +61,22 @@ public class WizardDialog extends WebPage {
     private String exception = "";
 
     public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config, IDialogService dialogWindow) {
-        //super(context, dialogWindow);
         this.windowRef = context.getReference(dialogWindow);
-        this.model = (JcrNodeModel) plugin.getModel();
+
+        try {
+            String path = config.getString("gallery.path");
+            if(path != null) {
+                while(path.startsWith("/"))
+                    path = path.substring(1);
+                setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)));
+            }
+        } catch(PathNotFoundException ex) {
+            // cannot occur anymore because GalleryShortcutPlugin already checked this, however
+            // because of HREPTWO-1218 we cannot use the model of GalleryShortcutPlugin.
+        } catch(RepositoryException ex) {
+            Gallery.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        }
+        JcrNodeModel model = (JcrNodeModel) getModel();
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
@@ -67,7 +85,7 @@ public class WizardDialog extends WebPage {
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
 
-        workflowCategory = config.getString("gallery.path");
+        workflowCategory = config.getString("gallery.workflow");
         add(form = new WizardForm("form", model));
 
         submit = new AjaxLink("submit") {
@@ -101,9 +119,6 @@ public class WizardDialog extends WebPage {
 
     @Override
     public void onDetach() {
-        if(model != null) {
-            model.detach();
-        }
         if(jcrServiceRef != null) {
             jcrServiceRef.detach();
         }
@@ -115,11 +130,52 @@ public class WizardDialog extends WebPage {
 
         private final FileUploadField uploadField;
 
+        private String type;
+
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+
         public WizardForm(String name, JcrNodeModel model) {
             super(name, model);
             setMultiPart(true);
             setMaxSize(Bytes.megabytes(5));
             add(uploadField = new FileUploadField("input"));
+
+            Node galleryNode = model.getNode();
+            List<String> galleryTypes = null;
+            try {
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
+                galleryTypes = workflow.getGalleryTypes();
+            } catch(MappingException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                Gallery.log.error(ex.getMessage(), ex);
+            } catch(RepositoryException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                Gallery.log.error(ex.getMessage(), ex);
+            } catch(RemoteException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
+                Gallery.log.error(ex.getMessage(), ex);
+            }
+            if(galleryTypes != null && galleryTypes.size() > 0) {
+                DropDownChoice folderChoice;
+                type = galleryTypes.get(0);
+                add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes));
+                folderChoice.setNullValid(false);
+                folderChoice.setRequired(true);
+            } else {
+                Component component;
+                add(component = new Label("type", "default"));
+                component.setVisible(false);
+                type = null;
+            }
         }
 
         @Override
@@ -137,7 +193,7 @@ public class WizardDialog extends WebPage {
                         try {
                             Node galleryNode = model.getNode();
                             GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
-                            Document document = workflow.createGalleryItem(filename);
+                            Document document = workflow.createGalleryItem(filename, type);
                             Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                             Item item = node.getPrimaryItem();
                             if(item.isNode()) {
@@ -149,14 +205,25 @@ public class WizardDialog extends WebPage {
                                 node.save();
                             }
                         } catch (MappingException ex) {
+                            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                            ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
+                            exception = "Workflow error: " + ex.getMessage();
                         } catch (RepositoryException ex) {
+                            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                            ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
+                            exception = "Workflow error: " + ex.getMessage();
                         }
                     }
                 } catch(IOException ex) {
+                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                    ex.printStackTrace(System.err);
                     Gallery.log.info("upload of image truncated");
+                    exception = "Upload failed: " + ex.getMessage();
                 }
+            } else {
+                exception = "No file uploaded";
             }
         }
     }

@@ -38,7 +38,10 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 
-public class VersionWorkflowImpl extends Document implements VersionWorkflow {
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.ext.InternalWorkflow;
+
+public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

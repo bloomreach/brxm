@@ -124,7 +124,7 @@ public class SampleWorkflowTest extends TestCase {
             Node node = root.getNode("files/myarticle");
             WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             WorkflowDescriptor descriptor = manager.getWorkflowDescriptor("mycategory", node);
-            Class rendererClass = Class.forName(descriptor.getValue(FrontendNodeTypes.WORKFLOW_RENDERER));
+            Class rendererClass = Class.forName(descriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER));
             Object[] actualArgs = new Object[2];
             actualArgs[0] = manager;
             actualArgs[1] = descriptor;

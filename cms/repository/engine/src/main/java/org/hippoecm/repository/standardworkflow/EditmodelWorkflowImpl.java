@@ -31,13 +31,14 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.ext.InternalWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @deprecated
  */
-public class EditmodelWorkflowImpl implements EditmodelWorkflow {
+public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
