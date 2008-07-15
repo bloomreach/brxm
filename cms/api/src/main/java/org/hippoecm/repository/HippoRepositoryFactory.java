@@ -20,10 +20,9 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
@@ -136,13 +135,16 @@ public class HippoRepositoryFactory {
             } catch(IllegalAccessException ex) {
                 throw new RepositoryException(ex);
             } catch(InvocationTargetException ex) {
-                if(ex.getCause() instanceof RepositoryException)
+                if (ex.getCause() instanceof RepositoryException) {
                     throw (RepositoryException) ex.getCause();
-                else
-                    throw new RepositoryException("unchecked exception: "+ex.getMessage());
+                } else if (ex.getCause() instanceof IllegalArgumentException) {
+                    throw new RepositoryException("Invalid data: " + ex.getCause());
+                } else {
+                    throw new RepositoryException("unchecked exception: " + ex.getMessage());
+                }
             }
         }
-
+ 
         // embedded/local with location
         try {
             repository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
@@ -153,10 +155,13 @@ public class HippoRepositoryFactory {
         } catch(IllegalAccessException ex) {
             throw new RepositoryException(ex);
         } catch(InvocationTargetException ex) {
-            if(ex.getCause() instanceof RepositoryException)
+            if (ex.getCause() instanceof RepositoryException) {
                 throw (RepositoryException) ex.getCause();
-            else
-                throw new RepositoryException("unchecked exception: "+ex.getMessage());
+            } else if (ex.getCause() instanceof IllegalArgumentException) {
+                throw new RepositoryException("Invalid data: " + ex.getCause());
+            } else {
+                throw new RepositoryException("unchecked exception: " + ex.getMessage());
+            }
         }
 
         // in case this local repository is build from the default location
