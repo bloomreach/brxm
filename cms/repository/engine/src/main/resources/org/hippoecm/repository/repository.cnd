@@ -185,6 +185,7 @@
 - hippo:multiple (boolean)
 - hippo:mandatory (boolean)
 - hippo:ordered (boolean)
+- hippo:primary (boolean)
 
 [hippo:nodetype] > hippo:document orderable
 - hippo:type (string)

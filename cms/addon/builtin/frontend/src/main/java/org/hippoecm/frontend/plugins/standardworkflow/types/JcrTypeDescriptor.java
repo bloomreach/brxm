@@ -56,6 +56,7 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
     private String name;
     private String type;
     private transient Map<String, IFieldDescriptor> fields;
+    private transient JcrFieldDescriptor primary;
 
     public JcrTypeDescriptor(JcrNodeModel nodeModel, String name, String type) {
         super(nodeModel);
@@ -94,6 +95,7 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
 
     public Map<String, IFieldDescriptor> getFields() {
         if (fields == null) {
+            primary = null;
             fields = new HashMap<String, IFieldDescriptor>();
             try {
                 Node node = getNodeModel().getNode();
@@ -102,8 +104,11 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
                     while (it.hasNext()) {
                         Node child = it.nextNode();
                         if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
-                            IFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child));
+                            JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child));
                             fields.put(field.getName(), field);
+                            if (field.isPrimary()) {
+                                primary = field;
+                            }
                         }
                     }
                 }
@@ -202,6 +207,7 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
 
     public void removeField(String field) {
         fields = null;
+        primary = null;
         try {
             Node fieldNode = getFieldNode(field);
             if (fieldNode != null) {
@@ -214,10 +220,35 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
         }
     }
 
+    public void setPrimary(String name) {
+        getFields();
+        if (primary != null) {
+            if (!primary.getName().equals(name)) {
+                primary.setPrimary(false);
+                primary = null;
+            } else {
+                return;
+            }
+        }
+
+        IFieldDescriptor field = fields.get(name);
+        if (field != null) {
+            if (field instanceof JcrFieldDescriptor) {
+                ((JcrFieldDescriptor) field).setPrimary(true);
+                primary = (JcrFieldDescriptor) field;
+            } else {
+                log.warn("unknown type " + field.getClass().getName());
+            }
+        } else {
+            log.warn("field " + name + " was not found");
+        }
+    }
+
     @Override
     public void detach() {
         super.detach();
         fields = null;
+        primary = null;
     }
 
     private boolean getBoolean(String path) {

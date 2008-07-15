@@ -73,7 +73,7 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
         return getBoolean(HippoNodeType.HIPPO_MULTIPLE);
     }
 
-    public void setIsMultiple(boolean multiple) {
+    public void setMultiple(boolean multiple) {
         setBoolean(HippoNodeType.HIPPO_MULTIPLE, multiple);
     }
 
@@ -81,8 +81,12 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
         return getBoolean(HippoNodeType.HIPPO_ORDERED);
     }
 
-    public void setIsOrdered(boolean isOrdered) {
+    public void setOrdered(boolean isOrdered) {
         setBoolean(HippoNodeType.HIPPO_ORDERED, isOrdered);
+    }
+
+    public boolean isPrimary() {
+        return getBoolean(HippoNodeType.HIPPO_PRIMARY);
     }
 
     public Set<String> getExcluded() {
@@ -101,6 +105,10 @@ public class JcrFieldDescriptor extends NodeModelWrapper implements IFieldDescri
     public boolean isProtected() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    void setPrimary(boolean isprimary) {
+        setBoolean(HippoNodeType.HIPPO_PRIMARY, isprimary);
     }
 
     @Override

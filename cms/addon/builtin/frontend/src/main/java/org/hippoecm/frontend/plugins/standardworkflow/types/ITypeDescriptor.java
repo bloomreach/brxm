@@ -41,6 +41,8 @@ public interface ITypeDescriptor extends IDetachable {
 
     void removeField(String name);
 
+    void setPrimary(String name);
+
     boolean isNode();
 
     void setIsNode(boolean isNode);

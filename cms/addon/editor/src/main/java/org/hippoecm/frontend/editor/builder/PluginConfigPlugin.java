@@ -25,6 +25,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.config.AutoTypeStore;
 import org.hippoecm.frontend.editor.config.BuiltinTemplateStore;
@@ -41,7 +43,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JavaTypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
@@ -62,7 +63,6 @@ public class PluginConfigPlugin extends RenderPlugin {
 
     private static int instanceCount = 0;
 
-    private IPluginControl field;
     private IPluginControl fieldParams;
     private IPluginControl template;
     private List<IRenderService> children;
@@ -76,11 +76,12 @@ public class PluginConfigPlugin extends RenderPlugin {
         children = new LinkedList<IRenderService>();
         templateStore = new BuiltinTemplateStore(new AutoTypeStore());
 
-        addExtension("field");
         addExtension("fieldParams");
         addExtension("template");
 
         onModelChanged();
+
+        add(new EmptyPanel("field"));
     }
 
     @Override
@@ -93,10 +94,6 @@ public class PluginConfigPlugin extends RenderPlugin {
 
     @Override
     public void onModelChanged() {
-        if (field != null) {
-            field.stopPlugin();
-            field = null;
-        }
         if (fieldParams != null) {
             fieldParams.stopPlugin();
             fieldParams = null;
@@ -109,7 +106,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         // look for the type
         typeModel = getTypeModel();
         if (typeModel != null) {
-            field = createFieldPlugin();
+            createFieldEditor();
             template = createTemplatePlugin();
             fieldParams = createFieldParamsPlugin();
         }
@@ -125,37 +122,25 @@ public class PluginConfigPlugin extends RenderPlugin {
         }
     }
 
-    protected IPluginControl createFieldPlugin() {
-        IFieldDescriptor fieldModel = getFieldModel();
-        if (fieldModel != null && fieldModel instanceof JcrFieldDescriptor) {
-            JcrNodeModel nodeModel = ((JcrFieldDescriptor) fieldModel).getNodeModel();
-            ITemplateEngine engine = getTemplateEngine();
-            ITypeDescriptor type = engine.getType(HippoNodeType.NT_FIELD);
+    private void createFieldEditor() {
+        IFieldDescriptor descriptor = getFieldModel();
+        if (descriptor != null) {
+            FieldEditor service = new FieldEditor("field", new Model(getFieldModel()) {
+                private static final long serialVersionUID = 1L;
 
-            if (type != null) {
-                IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
-                if (clusterConfig != null) {
-                    IPluginContext context = getPluginContext();
-                    String id = getExtensionId("field");
-                    clusterConfig.put(RenderService.WICKET_ID, id);
-
-                    String modelId = clusterConfig.getString(RenderService.MODEL_ID);
-                    final ModelService modelService = new ModelService(modelId, nodeModel);
-                    modelService.init(context);
-
-                    final IPluginControl control = context.start(clusterConfig);
-                    return new IPluginControl() {
-                        private static final long serialVersionUID = 1L;
-
-                        public void stopPlugin() {
-                            control.stopPlugin();
-                            modelService.destroy();
-                        }
-                    };
+                @Override
+                public void detach() {
+                    Object object = getObject();
+                    if (object != null) {
+                        ((IDetachable) object).detach();
+                    }
                 }
-            }
+            });
+            service.setType(typeModel);
+            replace(service);
+        } else {
+            replace(new EmptyPanel("field"));
         }
-        return null;
     }
 
     private IPluginControl createFieldParamsPlugin() {
@@ -170,12 +155,12 @@ public class PluginConfigPlugin extends RenderPlugin {
                     Map<String, IFieldDescriptor> result = new HashMap<String, IFieldDescriptor>();
 
                     JavaFieldDescriptor caption = new JavaFieldDescriptor("caption");
-                    caption.setIsMultiple(false);
+                    caption.setMultiple(false);
                     caption.setType("String");
                     result.put("caption", caption);
 
                     JavaFieldDescriptor css = new JavaFieldDescriptor("css");
-                    css.setIsMultiple(true);
+                    css.setMultiple(true);
                     css.setType("String");
                     result.put("css", css);
 
@@ -248,7 +233,8 @@ public class PluginConfigPlugin extends RenderPlugin {
         final String engineId = getExtensionId(extension + ".engine");
         context.registerService(engine, engineId);
 
-        IClusterConfig templateConfig = new ClusterConfigDecorator(templateStore.getTemplate(typeDescriptor, "edit"), newId());
+        IClusterConfig templateConfig = new ClusterConfigDecorator(templateStore.getTemplate(typeDescriptor, "edit"),
+                newId());
         templateConfig.put("wicket.id", getExtensionId(extension));
         templateConfig.put("engine", engineId);
 
@@ -267,10 +253,6 @@ public class PluginConfigPlugin extends RenderPlugin {
             }
 
         };
-    }
-
-    private ITemplateEngine getTemplateEngine() {
-        return getPluginContext().getService(getPluginConfig().getString("engine"), ITemplateEngine.class);
     }
 
     private String getExtensionId(String id) {

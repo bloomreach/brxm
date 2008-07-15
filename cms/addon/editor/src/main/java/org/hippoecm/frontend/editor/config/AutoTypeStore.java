@@ -141,7 +141,7 @@ public class AutoTypeStore implements ITypeStore {
 
             if (definition instanceof NodeDefinition) {
                 NodeDefinition ntDef = (NodeDefinition) definition;
-                setIsMultiple(ntDef.allowsSameNameSiblings());
+                setMultiple(ntDef.allowsSameNameSiblings());
                 setMandatory(ntDef.isMandatory());
 
                 // set referenced type
@@ -152,7 +152,7 @@ public class AutoTypeStore implements ITypeStore {
                 setType(types[0].getName());
             } else {
                 PropertyDefinition propDef = (PropertyDefinition) definition;
-                setIsMultiple(propDef.isMultiple());
+                setMultiple(propDef.isMultiple());
                 setMandatory(propDef.isMandatory());
 
                 setType(PropertyType.nameFromValue(propDef.getRequiredType()));
@@ -162,7 +162,7 @@ public class AutoTypeStore implements ITypeStore {
 
             if (isMultiple()) {
                 if (definition.getDeclaringNodeType().hasOrderableChildNodes()) {
-                    setIsOrdered(true);
+                    setOrdered(true);
                 }
             }
         }

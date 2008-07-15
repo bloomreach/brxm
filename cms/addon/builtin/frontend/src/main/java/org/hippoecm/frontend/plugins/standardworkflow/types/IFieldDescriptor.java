@@ -32,7 +32,7 @@ public interface IFieldDescriptor extends IDetachable {
 
     void setPath(String path);
 
-    void setIsMultiple(boolean multiple);
+    void setMultiple(boolean multiple);
 
     boolean isMultiple();
 
@@ -46,7 +46,9 @@ public interface IFieldDescriptor extends IDetachable {
 
     boolean isOrdered();
 
-    void setIsOrdered(boolean isOrdered);
+    void setOrdered(boolean isOrdered);
+
+    boolean isPrimary();
 
     Set<String> getExcluded();
 

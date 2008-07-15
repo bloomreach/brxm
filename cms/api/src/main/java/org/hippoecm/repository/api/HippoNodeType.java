@@ -129,6 +129,7 @@ public interface HippoNodeType {
     final public static String HIPPO_PATH = "hippo:path";
     final public static String HIPPO_PATHS = "hippo:paths";
     final public static String HIPPO_PERMCACHESIZE = "hippo:permcachesize";
+    final public static String HIPPO_PRIMARY = "hippo:primary";
     final public static String HIPPO_PROTOTYPE = "hippo:prototype";
     final public static String HIPPO_QUERYNAME = "hippo:queryname";
     final public static String HIPPO_RELATED = "hippo:related";

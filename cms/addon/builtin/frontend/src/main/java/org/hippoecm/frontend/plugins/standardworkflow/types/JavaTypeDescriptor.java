@@ -49,6 +49,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
     private String type;
     private List<String> superTypes;
     private Map<String, IFieldDescriptor> fields;
+    private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
 
@@ -57,6 +58,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
         this.type = type;
         this.superTypes = new LinkedList<String>();
         this.fields = new HashMap<String, IFieldDescriptor>();
+        this.primary = null;
         this.node = true;
         this.mixin = false;
     }
@@ -93,6 +95,29 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     public void removeField(String name) {
         fields.remove(name);
+    }
+
+    public void setPrimary(String name) {
+        if (primary != null) {
+            if (!primary.getName().equals(name)) {
+                primary.setPrimary(false);
+                primary = null;
+            } else {
+                return;
+            }
+        }
+
+        IFieldDescriptor field = fields.get(name);
+        if (field != null) {
+            if (field instanceof JavaFieldDescriptor) {
+                ((JavaFieldDescriptor) field).setPrimary(true);
+                primary = (JavaFieldDescriptor) field;
+            } else {
+                log.warn("unknown type " + field.getClass().getName());
+            }
+        } else {
+            log.warn("field " + name + " was not found");
+        }
     }
 
     public boolean isNode() {

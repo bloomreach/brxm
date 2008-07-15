@@ -33,13 +33,14 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
     private boolean protect;
     private boolean mandatory;
     private boolean ordered;
+    private boolean primary;
 
     public JavaFieldDescriptor(String path) {
         this.type = null;
         this.path = path;
         this.excluded = null;
 
-        multiple = protect = binary = mandatory = ordered = false;
+        multiple = protect = binary = mandatory = ordered = primary = false;
     }
 
     public String getName() {
@@ -62,7 +63,7 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         this.path = path;
     }
 
-    public void setIsMultiple(boolean multiple) {
+    public void setMultiple(boolean multiple) {
         this.multiple = multiple;
     }
 
@@ -90,8 +91,12 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
         return ordered;
     }
 
-    public void setIsOrdered(boolean isOrdered) {
+    public void setOrdered(boolean isOrdered) {
         this.ordered = isOrdered;
+    }
+
+    public boolean isPrimary() {
+        return primary;
     }
 
     public Set<String> getExcluded() {
@@ -100,6 +105,10 @@ public class JavaFieldDescriptor implements IFieldDescriptor {
 
     public void setExcluded(Set<String> set) {
         excluded = set;
+    }
+
+    void setPrimary(boolean isPrimary) {
+        this.primary = isPrimary;
     }
 
     public void detach() {
