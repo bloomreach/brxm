@@ -101,7 +101,6 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
         context.registerService(this, IJcrService.class.getName());
     }
 
-    @Override
     public void updateModel(IModel imodel) {
         closePlugins();
         try {
