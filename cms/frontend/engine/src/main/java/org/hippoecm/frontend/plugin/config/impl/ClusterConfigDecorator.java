@@ -123,7 +123,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     }
 
     private String filter(String value) {
-        if (value.charAt(0) == '{') {
+        if (value.length() > 0 && value.charAt(0) == '{') {
             String variable = value.substring(1, value.indexOf('}'));
             Object origValue = variables.get(variable);
             if (origValue != null) {

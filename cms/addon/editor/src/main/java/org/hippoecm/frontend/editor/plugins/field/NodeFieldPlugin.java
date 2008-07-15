@@ -50,7 +50,11 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
-        return new NodeTemplateProvider(descriptor, type, nodeModel.getItemModel());
+        NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, type, nodeModel.getItemModel());
+        if (!descriptor.isMultiple() && provider.size() == 0) {
+            provider.addNew();
+        }
+        return provider;
     }
 
     @Override
@@ -71,7 +75,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onRemoveItem(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || field.isMandatory()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || field.isMandatory() || !field.isMultiple()) {
             remove.setVisible(false);
         }
         item.add(remove);
@@ -84,7 +88,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
                 onMoveItemUp(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isOrdered()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {
@@ -94,7 +98,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     }
 
     protected Component createAddLink() {
-        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) &&  (field.isMultiple() || (provider.size() == 0))) {
+        if (ITemplateEngine.EDIT_MODE.equals(mode) && (field != null) && field.isMultiple()) {
             return new AjaxLink("add") {
                 private static final long serialVersionUID = 1L;
 
