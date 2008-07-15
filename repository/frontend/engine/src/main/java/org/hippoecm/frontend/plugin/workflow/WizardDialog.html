@@ -1,0 +1,33 @@
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+    <link href="skin/style.css" type="text/css" rel="stylesheet"/>
+  </wicket:head>
+  <body class="dialog">
+    <form wicket:id="form">
+      <fieldset>
+        <legend>Create item in gallery</legend>
+        <p>
+          <label for="upload">Primary displayed component for item</label>
+          <input wicket:id="input" id="upload" type="file"/>
+        </p>
+        <input class="fauxbutton" type="submit" value="Create"/>
+      </fieldset>
+    </form>
+    <strong><span wicket:id="exception"></span></strong>
+  </body>
+</html>

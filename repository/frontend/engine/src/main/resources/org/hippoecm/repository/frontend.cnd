@@ -21,13 +21,16 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <frontend='http://www.hippoecm.org/frontend/nt/1.0'>
 
-[frontend:plugin]
+[frontend:pluginconfig] > nt:base orderable
 - * (string)
 - * (string) multiple
 - * (boolean)
 - * (long)
 - * (date)
 - * (double)
++ * (frontend:pluginconfig) multiple
+
+[frontend:plugin] > frontend:pluginconfig
 
 [frontend:plugincluster] > nt:base orderable
 - frontend:overrides (string) multiple
