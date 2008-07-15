@@ -122,7 +122,7 @@
     </sv:property>
   </sv:node>
 
-  <!-- defaultcontent folder templates -->
+  <!-- defaultcontent image templates -->
   <sv:node sv:name="image">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

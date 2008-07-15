@@ -60,6 +60,6 @@
 // the children of this node are supposed to be images
 // ie. children conform to
 
-[hippostd:exampleImage] > hippo:document
-+ hippostd:passportPhoto (hippo:resource) = hippo:resource primary mandatory
-+ hippostd:portraitPhoto (hippo:resource) = hippo:resource
+[hippostd:exampleImageSet] > hippo:document
++ hippostd:thumbnail (hippo:resource) = hippo:resource primary mandatory
++ hippostd:picture (hippo:resource) = hippo:resource
