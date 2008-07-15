@@ -664,10 +664,8 @@ class FieldManagerImpl extends AbstractFieldManager {
                     HierarchyResolver.Entry last = new HierarchyResolver.Entry();
                     child = (Node) ((HippoWorkspace)node.getSession().getWorkspace()).getHierarchyResolver().getItem(node, field, false, last);
                     if (child != null) {
-                        if(child != null) {
-                            DerivedDataEngine.removal(child);
-                            child.remove();
-                        }
+                        DerivedDataEngine.removal(child);
+                        child.remove();
                     }
                     Document document = (Document) value;
                     child = node.getSession().getNodeByUUID(document.isCloned().getIdentity());
