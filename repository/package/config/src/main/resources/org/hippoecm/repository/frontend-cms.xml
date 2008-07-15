@@ -259,7 +259,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.gallery.ImageGalleryPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.browse.gallery</sv:value>
