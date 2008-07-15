@@ -15,16 +15,14 @@
  */
 package org.hippoecm.repository.decorating.server;
 
-import java.util.Map;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 import org.apache.jackrabbit.rmi.server.ServerQueryResult;
-
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.remote.RemoteQuery;
 

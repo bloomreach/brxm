@@ -33,7 +33,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
@@ -45,15 +44,11 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.HierarchyResolverImpl;
-
 import org.hippoecm.repository.ext.DerivedDataFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DerivedDataEngine {
     @SuppressWarnings("unused")

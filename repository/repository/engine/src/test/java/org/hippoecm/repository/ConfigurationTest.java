@@ -15,12 +15,11 @@
  */
 package org.hippoecm.repository;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.RepositoryException;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import javax.jcr.Node;
+
+import org.junit.Test;
 
 public class ConfigurationTest extends TestCase {
     @SuppressWarnings("unused")

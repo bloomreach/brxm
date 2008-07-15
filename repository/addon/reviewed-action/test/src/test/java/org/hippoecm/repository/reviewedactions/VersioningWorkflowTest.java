@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Map;
@@ -22,22 +24,18 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest {
 

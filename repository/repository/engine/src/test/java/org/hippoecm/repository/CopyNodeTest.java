@@ -15,15 +15,16 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-import org.junit.*;
-import static org.junit.Assert.*;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CopyNodeTest extends TestCase {
     @SuppressWarnings("unused")

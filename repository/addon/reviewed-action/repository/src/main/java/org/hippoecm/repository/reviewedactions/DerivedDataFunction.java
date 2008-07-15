@@ -18,7 +18,6 @@ package org.hippoecm.repository.reviewedactions;
 import java.util.Map;
 
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 
 public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedDataFunction {
     @SuppressWarnings("unused")

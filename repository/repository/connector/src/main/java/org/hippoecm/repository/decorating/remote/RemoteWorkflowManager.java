@@ -21,7 +21,6 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public interface RemoteWorkflowManager extends Remote {
     final static String SVN_ID = "$Id$";

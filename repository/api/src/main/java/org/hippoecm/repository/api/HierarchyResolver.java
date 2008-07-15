@@ -18,17 +18,8 @@ package org.hippoecm.repository.api;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HierarchyResolver;
 
 public interface HierarchyResolver {
     final static String SVN_ID = "$Id$";

@@ -23,11 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.testutils.history.HistoryWriter;
-
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest {
     @SuppressWarnings("unused")

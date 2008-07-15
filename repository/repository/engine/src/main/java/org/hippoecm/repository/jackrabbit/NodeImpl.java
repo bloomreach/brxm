@@ -15,16 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.core.ItemLifeCycleListener;
 import org.apache.jackrabbit.core.NodeId;
@@ -33,11 +26,8 @@ import org.apache.jackrabbit.core.nodetype.NodeDefinitionImpl;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.hippoecm.repository.api.HippoSession;
 
 public class NodeImpl extends org.apache.jackrabbit.core.NodeImpl {
     @SuppressWarnings("unused")

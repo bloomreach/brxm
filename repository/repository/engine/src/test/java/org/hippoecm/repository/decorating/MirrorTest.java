@@ -15,27 +15,15 @@
  */
 package org.hippoecm.repository.decorating;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintStream;
 
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.PropertyDefinition;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.Utilities;
-
 import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.hippoecm.repository.Utilities;
+import org.junit.Test;
 
 public class MirrorTest extends TestCase {
     @SuppressWarnings("unused")

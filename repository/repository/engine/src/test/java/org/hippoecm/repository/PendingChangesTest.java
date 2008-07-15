@@ -15,28 +15,16 @@
  */
 package org.hippoecm.repository;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.lang.reflect.Field;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeIterator;
-import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.nodetype.PropertyDefinition;
 
 import junit.framework.TestCase;
 
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 
 public class PendingChangesTest extends TestCase {
     @SuppressWarnings("unused")

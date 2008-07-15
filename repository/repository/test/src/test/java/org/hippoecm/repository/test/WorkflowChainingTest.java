@@ -15,23 +15,21 @@
  */
 package org.hippoecm.repository.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.rmi.RemoteException;
-import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.Workflow;
-
-import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.TestCase;
-
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class WorkflowChainingTest extends TestCase {
 

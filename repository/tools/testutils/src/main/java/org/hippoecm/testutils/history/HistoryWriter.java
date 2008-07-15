@@ -23,20 +23,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 
 import org.hippoecm.testutils.history.myXML.myXMLException;
-
-import org.junit.*;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
-import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
-import static org.junit.Assert.*;
 
 public class HistoryWriter extends Suite implements XmlConstants {
     @SuppressWarnings("unused")

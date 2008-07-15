@@ -15,12 +15,10 @@
  */
 package org.hippoecm.repository;
 
-import java.security.Principal;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -33,7 +31,6 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.Name;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class FacetedNavigationEngineFirstImpl
   implements FacetedNavigationEngine<FacetedNavigationEngineFirstImpl.QueryImpl,

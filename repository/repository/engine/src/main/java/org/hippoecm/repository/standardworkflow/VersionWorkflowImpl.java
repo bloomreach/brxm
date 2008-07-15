@@ -15,31 +15,28 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
-import java.rmi.RemoteException;
-
-import java.util.SortedMap;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
-import javax.jcr.Value;
-import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-
-import org.hippoecm.repository.Utilities;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow {
     @SuppressWarnings("unused")

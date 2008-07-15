@@ -15,23 +15,20 @@
  */
 package org.hippoecm.repository.test;
 
-import java.rmi.RemoteException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PersistanceInheritanceTest extends TestCase
 {

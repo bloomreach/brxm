@@ -16,7 +16,6 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.LinkedHashMap;
 
 import javax.jcr.RepositoryException;
@@ -25,7 +24,6 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
 

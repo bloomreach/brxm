@@ -15,21 +15,11 @@
  */
 package org.hippoecm.repository;
 
-import java.util.Map;
-import java.util.TreeMap;
+import static org.junit.Assert.assertTrue;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.PropertyDefinition;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class FacetedNavigationHippoCountTest extends TestCase
 {

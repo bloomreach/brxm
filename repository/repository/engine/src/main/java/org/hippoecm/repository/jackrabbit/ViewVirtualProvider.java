@@ -16,11 +16,9 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.jcr.RepositoryException;
@@ -29,7 +27,6 @@ import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
-
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViewVirtualProvider extends MirrorVirtualProvider
