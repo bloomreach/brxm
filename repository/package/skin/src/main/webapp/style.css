@@ -17,6 +17,7 @@ caption,th { text-align : left; }
 /* used as a fast fix if you want something to float left */
 /* to clear */
 div.clearer {clear: both;}
+.hideme {display:none;}
 .floatleft{float: left}
  /* firefox fix for left right movement when scrollbar is enabled */
  html { min-height: 100%; margin-bottom: 0.01em; } 
