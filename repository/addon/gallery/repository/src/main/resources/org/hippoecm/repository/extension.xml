@@ -64,7 +64,7 @@
       <sv:value>2003</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>gallarytemplate-image.xml</sv:value>
+      <sv:value>gallerytemplate-image.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:queries/hippo:templates</sv:value>
