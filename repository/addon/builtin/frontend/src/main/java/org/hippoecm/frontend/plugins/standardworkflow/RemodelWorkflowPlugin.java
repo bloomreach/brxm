@@ -23,7 +23,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -48,10 +48,10 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
         IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
         final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
 
-        JcrNodeModel model = (JcrNodeModel) getModel();
+        WorkflowsModel model = (WorkflowsModel) getModel();
         String ns = "types";
         try {
-            ns = model.getNode().getName() + " types";
+            ns = model.getNodeModel().getNode().getName() + " types";
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
