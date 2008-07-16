@@ -41,7 +41,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
     private IPluginContext context;
 
-    private static final String BINARIES_PREFIX = "/binaries";
+    private static final String BINARIES_PREFIX = "binaries";
     //    private Set<XinhaPlugin.Configuration> configurations;
 
     Pattern numbers = Pattern.compile("\\d*");
@@ -78,7 +78,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
         new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
-
+            
             public void renderHead(IHeaderResponse response) {
                 String xinhaEditorUrl = RequestCycle.get().getRequest().getRelativePathPrefixToContextRoot()
                         + "xinha/xinha/";

@@ -76,7 +76,7 @@ public class ImageGalleryListingNodeCell extends NodeCell {
     public String getUrl(){
         Node node = model.getNode();
         try {
-            if(node.isNodeType(HippoNodeType.NT_HANDLE) &&  node.getParent().isNodeType("hippostd:gallery")) {
+            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if(node.hasNode(node.getName())) {
                     Node imageSet = node.getNode(node.getName());
                     try {
@@ -84,7 +84,7 @@ public class ImageGalleryListingNodeCell extends NodeCell {
                        if(primItem.isNode()) {
                           if(((Node)primItem).isNodeType(HippoNodeType.NT_RESOURCE)){
                           // node location of image
-                          return "/binaries"+primItem.getPath();
+                          return "binaries"+primItem.getPath();
                           } else {
                               ImageGalleryPlugin.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                           }
@@ -92,12 +92,12 @@ public class ImageGalleryListingNodeCell extends NodeCell {
                            ImageGalleryPlugin.log.warn("primary item must be a node for image set");
                        }
                     } catch (ItemNotFoundException e) {
-                        ImageGalleryPlugin.log.warn("no primary item present for imageset");
+                        ImageGalleryPlugin.log.debug("ImageSet must have a primary item. " + node.getPath() + " probably not of correct image set type");
                     }
                 }
             } 
             else {
-                ImageGalleryPlugin.log.debug("Cannot display image");
+                ImageGalleryPlugin.log.debug("ImageSet must have a primary item. " + node.getPath() + " probably not of correct image set type");
             }
         } catch (RepositoryException e) {
             ImageGalleryPlugin.log.error(e.getMessage());
