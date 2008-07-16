@@ -21,5 +21,5 @@
 <hippogallery='http://www.hippoecm.org/hippogallery/nt/1.0'>
 
 [hippogallery:stdgalleryset] > hippo:document
-+ hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory
++ hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
 + hippogallery:picture (hippo:resource) = hippo:resource
