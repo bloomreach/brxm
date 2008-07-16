@@ -416,6 +416,7 @@
             <sv:value>underline</sv:value>
             <sv:value>insertorderedlist</sv:value>
             <sv:value>insertunorderedlist</sv:value>
+            <sv:value>imagepicker</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>xp-blue</sv:value>
@@ -424,6 +425,7 @@
             <sv:value>AutoSave</sv:value>
             <sv:value>CustomLinker</sv:value>
             <sv:value>ImageFilter</sv:value>
+            <sv:value>ImagePicker</sv:value>
           </sv:property>
           <sv:property sv:name="AutoSave" sv:type="String">
             <sv:value>timeoutLength=1500</sv:value>
