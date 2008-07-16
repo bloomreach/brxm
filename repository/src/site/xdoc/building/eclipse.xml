@@ -211,6 +211,7 @@ C:\hippo-ecm> cd addon\xinha\src\main\webapp\xinha\plugins
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction ImageFilter ..\..\..\..\..\webResources\xinha\plugins\ImageFilter
+C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> junction ImagePicker ..\..\..\..\..\webResources\xinha\plugins\ImagePicker
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\plugins> cd ..\skins
 C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\..\..\..\webResources\xinha\skins\hippo-gray
                   </source>
@@ -228,6 +229,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/AutoSave/ AutoSave
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/CustomLinker/ CustomLinker
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/ImageFilter/ ImageFilter
+ ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> ln -s ../../../../../webResources/xinha/plugins/ImagePicker/ ImagePicker
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/plugins> cd ../skins
  ~/hippo-ecm/addon/xinha/src/main/webapp/xinha/skins> ln -s ../../../../../webResources/xinha/skins/hippo-gray/ hippo-gray
                  </source>
