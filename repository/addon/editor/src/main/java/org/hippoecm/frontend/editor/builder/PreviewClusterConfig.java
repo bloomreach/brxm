@@ -46,7 +46,7 @@ public class PreviewClusterConfig extends JcrClusterConfig {
         List<IPluginConfig> plugins = super.getPlugins();
         List<IPluginConfig> result = new LinkedList<IPluginConfig>();
         for (final IPluginConfig config : plugins) {
-            if (config.get("wicket.id") != null && !"cluster:wicket.id".equals(config.get("wicket.id"))) {
+            if (config.get("wicket.id") != null && !"${wicket.id}".equals(config.get("wicket.id"))) {
                 final String wrappedId = PreviewClusterConfig.class.getName() + "." + newId();
                 IPluginConfig previewWrapper = new JavaPluginConfig();
                 previewWrapper.put("plugin.class", PreviewPluginPlugin.class.getName());

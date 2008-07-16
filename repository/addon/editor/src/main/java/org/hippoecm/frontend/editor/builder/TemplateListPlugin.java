@@ -167,10 +167,10 @@ public class TemplateListPlugin extends RenderPlugin {
             } else {
                 itemNode.setProperty(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
             }
-            itemNode.setProperty("wicket.id", "{cluster}.field");
-            itemNode.setProperty("wicket.model", "{cluster}.model");
-            itemNode.setProperty("mode", "cluster:mode");
-            itemNode.setProperty("engine", "cluster:engine");
+            itemNode.setProperty("wicket.id", "${cluster.id}.field");
+            itemNode.setProperty("wicket.model", "${wicket.model}");
+            itemNode.setProperty("mode", "${mode}");
+            itemNode.setProperty("engine", "${engine}");
             itemNode.setProperty("field", name);
             itemNode.setProperty("caption", new Value[] { new StringValue(typeDescriptor.getName()) });
 

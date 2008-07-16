@@ -15,14 +15,10 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClusterConfigDecorator extends JavaClusterConfig {
     @SuppressWarnings("unused")
@@ -30,15 +26,14 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ClusterConfigDecorator.class);
-
     private IClusterConfig upstream;
-    private Map<String, String> variables;
     private List<String> overrides;
+    private String clusterId;
 
-    public ClusterConfigDecorator(IClusterConfig upstream, String clusterId) {
+    public ClusterConfigDecorator(IClusterConfig upstream, final String clusterId) {
         this.upstream = upstream;
         this.overrides = upstream.getOverrides();
+        this.clusterId = clusterId;
 
         List<IPluginConfig> configs = upstream.getPlugins();
         for (final IPluginConfig conf : configs) {
@@ -49,19 +44,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 public Object get(Object key) {
                     Object obj = conf.get(key);
                     if ((obj != null) && (obj instanceof String)) {
-                        // values of the form scope + ":" + ... refer to keys in other scopes
-                        // Only the "template" scope is recognized.
-                        String value = (String) obj;
-                        if (value.indexOf(':') > 0) {
-                            String scope = value.substring(0, value.indexOf(':'));
-                            if ("cluster".equals(scope)) {
-                                String clusterKey = value.substring(value.indexOf(':') + 1);
-                                return ClusterConfigDecorator.this.get(clusterKey);
-                            } else {
-                                log.warn("Unknown scope {} used in key {}", scope, key);
-                            }
-                        }
-                        return filter(value);
+                        return filter((String) obj);
                     }
                     return obj;
                 }
@@ -79,9 +62,6 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 }
             });
         }
-
-        variables = new HashMap<String, String>();
-        variables.put("cluster", clusterId);
     }
 
     @Override
@@ -93,7 +73,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
 
         obj = upstream.get(key);
         if ((obj != null) && (obj instanceof String)) {
-            // Intercept values of the form "{" + variable + "}" + ...
+            // Intercept values of the form "${" + variable + "}" + ...
             // These values are rewritten using the variables
             return filter((String) obj);
         }
@@ -123,17 +103,19 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
     }
 
     private String filter(String value) {
-        if (value.length() > 0 && value.charAt(0) == '{') {
-            String variable = value.substring(1, value.indexOf('}'));
-            Object origValue = variables.get(variable);
-            if (origValue != null) {
-                String result = origValue + value.substring(value.indexOf('}') + 1);
-                log.debug("Rewriting value {} to {}", value, result);
-                return result;
+        if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
+            String variable = value.substring(2, value.lastIndexOf('}'));
+            String remainder = value.substring(value.lastIndexOf('}') + 1);
+            String result;
+            if ("cluster.id".equals(variable)) {
+                result = clusterId + remainder;
             } else {
-                log.warn("Unknown variable {} used", variable);
+                result = ClusterConfigDecorator.this.get(variable) + remainder;
             }
+            System.out.println("Converted " + value + " to " + result);
+            return result;
         }
         return value;
     }
+
 }
