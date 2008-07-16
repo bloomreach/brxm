@@ -4,16 +4,6 @@ ____________________
 Add a prefix to images with a relative @src value
 \*------------------------------------------*/
 
-function ImageFilter(editor) {
-    this.editor = editor;
-    this.prefix = _editor_jcrnode_url;
-    if (this.prefix.charAt(this.prefix.length - 1) != '/') {
-        this.prefix += '/';
-    }
-    this.imgRE = new RegExp('<img[^>]+>', 'gi');
-    this.srcRE = new RegExp('src="[^"]+"', 'i');
-}
-
 ImageFilter._pluginInfo = {
     name :"ImageFilter",
     version :"1.0",
@@ -23,6 +13,16 @@ ImageFilter._pluginInfo = {
     sponsor :"",
     sponsor_url :"",
     license :""
+}
+
+function ImageFilter(editor) {
+    this.editor = editor;
+    this.prefix = _editor_jcrnode_url;
+    if (this.prefix.charAt(this.prefix.length - 1) != '/') {
+        this.prefix += '/';
+    }
+    this.imgRE = new RegExp('<img[^>]+>', 'gi');
+    this.srcRE = new RegExp('src="[^"]+"', 'i');
 }
 
 ImageFilter.prototype.inwardHtml = function(html) {
