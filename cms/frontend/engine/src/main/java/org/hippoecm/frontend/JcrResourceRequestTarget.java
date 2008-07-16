@@ -73,6 +73,8 @@ public class JcrResourceRequestTarget implements IRequestTarget {
                             log.error("Primary item is not of type " + HippoNodeType.NT_RESOURCE + " : " + firstChild.getPrimaryItem().getPath());
                         }
                     } catch (ItemNotFoundException e) {
+                        // TODO if there is no primary type, look for the first property of type HippoNodeType.NT_RESOURCE
+                        // to display. Normally, the facetselect has logic to display the correct image
                         log.error("No primary item found for : " + firstChild.getPath());
                         throw (e);
                     }
