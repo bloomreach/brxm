@@ -43,6 +43,12 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         String caption = config.getString("caption");
         add(new Label("name", caption));
 
+        Label required = new Label("required", "*");
+        if (!field.isMandatory()) {
+            required.setVisible(false);
+        }
+        add(required);
+
         updateProvider();
         add(createAddLink());
     }

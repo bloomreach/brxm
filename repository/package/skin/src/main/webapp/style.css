@@ -385,6 +385,12 @@ height: 80%;
 overflow: auto;
 }
 
+.required{
+color: red;
+font-size: 14px;
+margin-right: 2px;
+}
+
 /* temp icon hack */
 ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; margin-bottom: 2px;}
 
