@@ -47,6 +47,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaImagePickerBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -73,6 +74,9 @@ public class XinhaPlugin extends RenderPlugin {
     private TextArea editor;
     private Configuration configuration;
     private AbstractDefaultAjaxBehavior postBehavior;
+    private AbstractDefaultAjaxBehavior imagePickerBehavior;
+
+    //private XinhaModalWindow modalWindow;
 
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -95,12 +99,14 @@ public class XinhaPlugin extends RenderPlugin {
 
                 @Override
                 protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
-                    String text = (String) getModelObject(); 
+                    String text = (String) getModelObject();
                     getResponse().write(text);
                     renderComponentTagBody(markupStream, openTag);
                 }
             });
         }
+
+        add(imagePickerBehavior = new XinhaImagePickerBehavior());
     }
 
     @Override
@@ -108,6 +114,7 @@ public class XinhaPlugin extends RenderPlugin {
         if (configuration != null) {
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
+            configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
 
             IPluginContext context = getPluginContext();
@@ -264,7 +271,7 @@ public class XinhaPlugin extends RenderPlugin {
 
         public Configuration(IPluginConfig config, String nodePath) {
             jcrNodePath = nodePath;
-            
+
             toolbarItems = new ArrayList();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
@@ -332,7 +339,7 @@ public class XinhaPlugin extends RenderPlugin {
         public String getSkin() {
             return skin;
         }
-        
+
         public String getJcrNodePath() {
             return jcrNodePath;
         }
