@@ -57,20 +57,20 @@
       </sv:property>
       <sv:node sv:name="image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippostd:exampleImageSet</sv:value>
+          <sv:value>hippogallery:stdgalleryset</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
-        <sv:node sv:name="hippostd:thumbnail">
+        <sv:node sv:name="hippogallery:thumbnail">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:resource</sv:value>
           </sv:property>
-          <!--sv:property sv:name="jcr:encoding" sv:type="String">
+          <sv:property sv:name="jcr:encoding" sv:type="String">
             <sv:value>UTF-8</sv:value>
-          </sv:property-->
+          </sv:property>
           <sv:property sv:name="jcr:mimeType" sv:type="String">
             <sv:value>image/jpeg</sv:value>
           </sv:property>
