@@ -36,6 +36,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         ReviewedActionsWorkflowImpl.log.info("deletion on document ");
         if(current != null)
             throw new WorkflowException("cannot delete document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot delete document with pending depublication request");
         if(published != null)
             throw new WorkflowException("cannot delete published document");
         unpublished = draft = null;
@@ -45,9 +47,9 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         ReviewedActionsWorkflowImpl.log.info("publication on document ");
         if(unpublished == null) {
             if(published == null) {
-                throw new WorkflowException("Document has already been published");
-            } else {
                 throw new WorkflowException("No unpublished version of document available for publication");
+            } else {
+                throw new WorkflowException("Document has already been published");
             }
         }
         published = null;

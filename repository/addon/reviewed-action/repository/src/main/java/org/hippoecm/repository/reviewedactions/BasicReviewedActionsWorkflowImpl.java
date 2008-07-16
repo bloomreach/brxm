@@ -30,6 +30,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     protected String username;
     protected PublicationRequest current;
+    protected PublicationRequest current2;
     protected PublishableDocument published;
     protected PublishableDocument unpublished;
     protected PublishableDocument draft;

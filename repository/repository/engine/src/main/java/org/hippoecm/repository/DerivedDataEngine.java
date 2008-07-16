@@ -46,6 +46,7 @@ import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,7 +139,9 @@ public class DerivedDataEngine {
 
             Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
             for(Node modified : recomputeSet) {
-
+                if(!modified.isCheckedOut()) {
+                    modified.checkout();
+                }
                 modified.setProperty(HippoNodeType.HIPPO_RELATED, new Value[0]);
                 Set<String> dependencies = new HashSet<String>();
 
@@ -206,7 +209,8 @@ public class DerivedDataEngine {
                                      * Property property = ((HippoWorkspace)(modified.getSession().getWorkspace())).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
                                      * however this is broken because of a cast exception as the session is not wrapped
                                      */
-                                    Property property = new HierarchyResolverImpl().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
+                                    HierarchyResolver.Entry lastNode = new HierarchyResolver.Entry();
+                                    Property property = new HierarchyResolverImpl().getProperty(modified, propDef.getProperty("hippo:relPath").getString(), lastNode);
                                     if(property != null) {
                                         if(property.getParent().isNodeType("mix:referenceable")) {
                                             dependencies.add(property.getParent().getUUID());
@@ -217,6 +221,10 @@ public class DerivedDataEngine {
                                             parameters.put(propName, values);
                                         } else {
                                             parameters.put(propName, property.getValues());
+                                        }
+                                    } else {
+                                        if(lastNode.node.isNodeType("mix:referenceable")) {
+                                            dependencies.add(lastNode.node.getUUID());
                                         }
                                     }
                                 } else {
