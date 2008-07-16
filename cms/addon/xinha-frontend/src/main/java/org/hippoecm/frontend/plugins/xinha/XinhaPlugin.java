@@ -93,6 +93,7 @@ public class XinhaPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
             configuration = new Configuration(config, nodePath);
             context.registerService(configuration, Configuration.class.getName());
+            add(imagePickerBehavior = new XinhaImagePickerBehavior(nodeModel));
         } else {
             fragment.add(new WebMarkupContainer("value", getModel()) {
                 private static final long serialVersionUID = 1L;
@@ -105,8 +106,6 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
-
-        add(imagePickerBehavior = new XinhaImagePickerBehavior());
     }
 
     @Override

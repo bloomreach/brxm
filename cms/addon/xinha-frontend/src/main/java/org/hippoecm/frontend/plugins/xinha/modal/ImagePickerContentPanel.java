@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class ImagePickerContentPanel extends XinhaContentPanel {
     @SuppressWarnings("unused")
@@ -27,7 +28,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public ImagePickerContentPanel(XinhaModalWindow modal, Map<String, String> parameters) {
+    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel, Map<String, String> parameters) {
         super(modal, parameters);
 
         form.add(new TextField("url", new XinhaImageModel(parameters, XinhaImageProperty.URL)));

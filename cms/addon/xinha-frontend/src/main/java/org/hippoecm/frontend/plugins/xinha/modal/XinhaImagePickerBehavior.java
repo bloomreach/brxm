@@ -17,15 +17,23 @@ package org.hippoecm.frontend.plugins.xinha.modal;
 
 import java.util.Map;
 
+import org.hippoecm.frontend.model.JcrNodeModel;
+
 public class XinhaImagePickerBehavior extends XinhaModalBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    
+    private JcrNodeModel nodeModel;
 
+    public XinhaImagePickerBehavior(JcrNodeModel model) {
+        nodeModel = model;
+    }
+    
     @Override
     XinhaContentPanel createContentPanel(Map<String, String> params) {
-        return new ImagePickerContentPanel(modalWindow, params);
+        return new ImagePickerContentPanel(modalWindow, nodeModel, params);
     }
 
 }
