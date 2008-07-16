@@ -1,5 +1,3 @@
-// FIXME [BvH] work in progress, this needs to be moved into seperate package
-
 /*
  *  Copyright 2008 Hippo.
  * 
@@ -15,20 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin.workflow;
+package org.hippoecm.repository.gallery;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.rmi.RemoteException;
+import java.util.List;
 
-public class Gallery {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+import javax.jcr.RepositoryException;
 
-    static final Logger log = LoggerFactory.getLogger(Gallery.class);
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.Document;
 
-    private static final long serialVersionUID = 1L;
-
-    public Gallery() {
-        super();
-    }
+public interface GalleryWorkflow extends Workflow
+{
+    public List<String> getGalleryTypes() throws RemoteException, RepositoryException;
+    public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException;
 }

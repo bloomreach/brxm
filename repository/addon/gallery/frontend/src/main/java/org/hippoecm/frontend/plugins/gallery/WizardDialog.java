@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin.workflow;
+package org.hippoecm.frontend.plugins.gallery;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +48,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 public class WizardDialog extends WebPage {
     @SuppressWarnings("unused")
