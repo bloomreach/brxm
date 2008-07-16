@@ -63,9 +63,13 @@ public class Label {
                 path = path.substring(context.getBaseLocation().length());
             }
             
-            // translate remaining path to a valid key as slashes are disallowed  
-            // in a property name: replace slashes by dots and prefix by 'node'.
+            // translate remaining path to a valid key with prefix 'node' 
+            // 1. slashes are disallowed in a property name: replace slashes by 
+            // dots
+            // 2. colons cannot be used in a property name as the preceding part
+            // will be interpreted as (unregistered!) JCR namespace prefix
             String key = "node" + path.replace("/", ".");
+            key = key.replace(":", "_");
 
             // from repository
             this.value = retrieveValue(session, context.getLocale(), key);
