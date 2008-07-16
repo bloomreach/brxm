@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin.workflow;
+package org.hippoecm.repository.gallery.impl;
 
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
@@ -31,6 +31,8 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.InternalWorkflow;
+
+import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 // FIXME: this implementation should be totally rewritten as it should not
 // implement InternalWorkflow, but could and should be a plain POJO workflow.

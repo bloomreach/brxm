@@ -17,30 +17,44 @@
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-addon</artifactId>
+    <artifactId>hippo-ecm-addon-gallery</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Gallery Addon</name>
-  <description>Hippo ECM Gallery Addon</description>
+  <name>Gallery common addon</name>
+  <description>Hippo ECM gallery common addon</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-addon-gallery</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>hippo-ecm-addon-gallery-common</artifactId>
+  <packaging>jar</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery/common</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery/common</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/addon/gallery/common</url>
   </scm>
 
-  <modules>
-    <module>common</module>
-    <module>repository</module>
-    <module>frontend</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-api</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 
   <build>
+    <defaultGoal>package</defaultGoal>
     <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+   </plugins>
   </build>
+
 </project>

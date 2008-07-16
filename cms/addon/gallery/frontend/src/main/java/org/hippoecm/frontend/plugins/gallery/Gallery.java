@@ -13,18 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugin.workflow;
+package org.hippoecm.frontend.plugins.gallery;
 
-import java.rmi.RemoteException;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
+public class Gallery {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.Document;
+    static final Logger log = LoggerFactory.getLogger(Gallery.class);
 
-public interface GalleryWorkflow extends Workflow
-{
-    public List<String> getGalleryTypes() throws RemoteException, RepositoryException;
-    public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException;
+    private static final long serialVersionUID = 1L;
+
+    public Gallery() {
+        super();
+    }
 }
