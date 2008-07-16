@@ -21,6 +21,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.widgets.Pinger;
 
 public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -36,6 +37,7 @@ public class RootPlugin extends RenderPlugin {
         }
 
         add(new AjaxIndicatorBehavior());
+        add(new Pinger("pinger"));
     }
 
 }
