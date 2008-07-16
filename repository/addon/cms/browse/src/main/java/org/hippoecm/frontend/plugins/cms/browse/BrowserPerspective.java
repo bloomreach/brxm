@@ -15,22 +15,31 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IPluginControl;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +51,12 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String VIEWERS = "browser.viewers";
+
     private ModelService modelService;
-    private boolean isGallery = false;
-    private Component listWrapper;
-    private Component galleryWrapper;
-    private String listingTitle = "documents"; 
+    private String viewerName;
+    private IPluginControl viewer;
+    private String listingTitle = "documents";
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -62,20 +72,16 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
             context.registerService(this, config.getString(IBrowseService.BROWSER_ID));
         }
 
-        add(listWrapper = new Wrapper("list.wrapper"));
-        add(galleryWrapper = new Wrapper("gallery.wrapper").setEnabled(false));
-
-        //add(new Label("listing.title",new PropertyModel(this,"listingTitle")));
-      
-        add(new Label("listing.title",new PropertyModel(this,"listingTitle")){
+        add(new Label("listing.title", new PropertyModel(this, "listingTitle")) {
             private static final long serialVersionUID = 1L;
+
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
                 tag.put("class", listingTitle);
             }
-        }); 
-      
+        });
+
         // model didn't exist for super constructor, so set it explicitly
         updateModel(modelService.getModel());
     }
@@ -91,56 +97,87 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
         if (model != null && model instanceof JcrNodeModel) {
             try {
                 Node node = ((JcrNodeModel) model).getNode();
-                if (node.isNodeType("hippostd:gallery")) {
-                    if (!isGallery) {
-                        isGallery = true;
-                        galleryWrapper.setEnabled(true);
-                        listingTitle = "gallery";
-                        listWrapper.setEnabled(false);
-                        redraw();
+                Node root = node.getSession().getRootNode();
+                Map<String, IClusterConfig> viewers = getViewers();
+                boolean shown = false;
+                do {
+                    shown = showNode(node, viewers);
+                    if(!node.isSame(root)) {
+                        node = node.getParent();
+                    } else {
+                        break;
                     }
-                } else {
-                    if (isGallery) {
-                        listWrapper.setEnabled(true);
-                        listingTitle = "documents";
-                        galleryWrapper.setEnabled(false);
-                        isGallery = false;
-                        redraw();
+                } while (!shown);
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            if (viewer != null) {
+                viewer.stopPlugin();
+                viewer = null;
+                viewerName = null;
+            }
+            redraw();
+        }
+    }
+
+    protected boolean showNode(Node node, Map<String, IClusterConfig> viewers) throws RepositoryException {
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
+        for (Map.Entry<String, IClusterConfig> entry : viewers.entrySet()) {
+            String type = entry.getKey();
+            if (node.isNodeType(type)) {
+                if (!type.equals(viewerName)) {
+                    if (viewer != null) {
+                        viewer.stopPlugin();
+                        viewer = null;
+                        viewerName = null;
+                    }
+
+                    String myId = context.getReference(this).getServiceId();
+                    IClusterConfig cluster = entry.getValue();
+                    IClusterConfig decorated = new ClusterConfigDecorator(cluster, myId + ".viewer");
+                    decorated.put("wicket.id", config.getString("extension.list"));
+                    decorated.put("wicket.model", config.getString("wicket.model"));
+                    viewer = context.start(decorated);
+                    viewerName = type;
+
+                    // find title as service in started cluster
+                    // (could be more precise by just looking for decorators on the root renderservice)
+                    ITitleDecorator title = context.getService(context.getReference(viewer).getServiceId(),
+                            ITitleDecorator.class);
+                    if (title != null) {
+                        listingTitle = title.getTitle();
+                    } else {
+                        listingTitle = viewerName;
+                    }
+                    redraw();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected Map<String, IClusterConfig> getViewers() {
+        IPluginConfig config = getPluginConfig();
+        Map<String, IClusterConfig> viewers = new LinkedHashMap<String, IClusterConfig>();
+        if (config.getString(BrowserPerspective.VIEWERS) != null) {
+            String path = config.getString(BrowserPerspective.VIEWERS);
+            try {
+                Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
+                NodeIterator iter = node.getNodes();
+                while (iter.hasNext()) {
+                    Node child = iter.nextNode();
+                    if (child.isNodeType("frontend:plugincluster")) {
+                        viewers.put(child.getName(), new JcrClusterConfig(new JcrNodeModel(child)));
                     }
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-        } else {
-            isGallery = false;
-            listWrapper.setEnabled(true);
-            galleryWrapper.setEnabled(false);
-            redraw();
         }
-    }
-
-    private class Wrapper extends WebMarkupContainer {
-        private static final long serialVersionUID = 1L;
-
-        Wrapper(String id) {
-            super(id);
-        }
-
-        @Override
-        public boolean isTransparentResolver() {
-            return true;
-        }
-
-        @Override
-        public void onComponentTag(final ComponentTag tag) {
-            super.onComponentTag(tag);
-
-            if (isEnabled()) {
-                tag.put("style", "display: block;");
-            } else {
-                tag.put("style", "display: none;");
-            }
-        }
+        return viewers;
     }
 
 }

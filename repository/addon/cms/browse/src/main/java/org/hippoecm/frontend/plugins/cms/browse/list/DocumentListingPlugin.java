@@ -31,8 +31,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class DocumentListingPlugin extends AbstractListingPlugin {
+public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -76,6 +77,10 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         columns.add(getNodeColumn(new Model("State"), "state"));
         
         return columns;
+    }
+
+    public String getTitle() {
+        return "Document listing";
     }
 
 
