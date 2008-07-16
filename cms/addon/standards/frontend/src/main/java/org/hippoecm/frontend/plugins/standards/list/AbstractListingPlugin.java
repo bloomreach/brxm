@@ -76,6 +76,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         pageSize = DEFAULT_PAGE_SIZE;
         viewSize = DEFAULT_VIEW_SIZE;
         createTableColumns();
+
+        modelChanged();
     }
 
     public void setDataProvider(IDataProvider provider) {

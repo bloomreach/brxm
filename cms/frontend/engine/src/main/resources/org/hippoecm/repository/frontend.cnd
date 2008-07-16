@@ -37,6 +37,9 @@
 - * (string)
 + * (frontend:plugin) = frontend:plugin
 
+[frontend:clusterfolder] > nt:base orderable
++ * (frontend:plugincluster) = frontend:plugincluster
+
 [frontend:workflow] > hippo:workflow
 - frontend:renderer (string)
 

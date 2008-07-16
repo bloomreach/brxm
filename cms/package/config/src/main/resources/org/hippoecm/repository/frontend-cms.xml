@@ -196,10 +196,12 @@
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
+    <sv:property sv:name="browser.viewers" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms-folder-views</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.browser</sv:value>
       <sv:value>extension.list</sv:value>
-      <sv:value>extension.gallery</sv:value>
       <sv:value>extension.workflows</sv:value>
       <sv:value>extension.version</sv:value>
       <sv:value>extension.versionToggle</sv:value>
@@ -209,9 +211,6 @@
     </sv:property>
     <sv:property sv:name="extension.list" sv:type="String">
       <sv:value>service.browse.list</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.gallery" sv:type="String">
-      <sv:value>service.browse.gallery</sv:value>
     </sv:property>
     <sv:property sv:name="extension.workflows" sv:type="String">
       <sv:value>service.browse.workflows</sv:value>
@@ -239,36 +238,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="listPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.list</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  <sv:node sv:name="galleryPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.gallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>
-  </sv:node>
-  
   <sv:node sv:name="viewPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

@@ -59,8 +59,8 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
     public void setModel(T model) {
         if (model != this.model) {
             this.model = model;
-            for (IModelListener listener : listeners) {
-                listener.updateModel(model);
+            for (Object listener : listeners.toArray()) {
+                ((IModelListener) listener).updateModel(model);
             }
         }
     }
