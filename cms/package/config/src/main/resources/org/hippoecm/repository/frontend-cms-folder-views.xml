@@ -41,10 +41,10 @@
       <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>cluster:wicket.id</sv:value>
+      <sv:value>${wicket.id}</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>cluster:wicket.model</sv:value>
+      <sv:value>${wicket.model}</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
@@ -67,10 +67,10 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>cluster:wicket.id</sv:value>
+      <sv:value>${wicket.id}</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>cluster:wicket.model</sv:value>
+      <sv:value>${wicket.model}</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
@@ -93,10 +93,10 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>cluster:wicket.id</sv:value>
+      <sv:value>${wicket.id}</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>cluster:wicket.model</sv:value>
+      <sv:value>${wicket.model}</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

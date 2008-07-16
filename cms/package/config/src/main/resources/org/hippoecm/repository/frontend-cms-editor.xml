@@ -29,7 +29,7 @@
   </sv:property>
 
   <sv:property sv:name="editor.id" sv:type="String">
-    <sv:value>{cluster}.perspective</sv:value>
+    <sv:value>${cluster.id}.perspective</sv:value>
   </sv:property>
 
   <sv:node sv:name="editPerspective">
@@ -40,13 +40,13 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.EditPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>cluster:wicket.id</sv:value>
+      <sv:value>${wicket.id}</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>{cluster}.model</sv:value>
+      <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>{cluster}.perspective</sv:value>
+      <sv:value>${editor.id}</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.editor</sv:value>
@@ -54,13 +54,13 @@
       <sv:value>extension.helpers</sv:value>
     </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
-      <sv:value>{cluster}.editor</sv:value>
+      <sv:value>${cluster.id}.editor</sv:value>
     </sv:property>
     <sv:property sv:name="extension.workflow" sv:type="String">
-      <sv:value>{cluster}.workflows</sv:value>
+      <sv:value>${cluster.id}.workflows</sv:value>
     </sv:property>
     <sv:property sv:name="extension.helpers" sv:type="String">
-      <sv:value>{cluster}.helpers</sv:value>
+      <sv:value>${cluster.id}.helpers</sv:value>
     </sv:property>
   </sv:node>
 
@@ -72,13 +72,13 @@
       <sv:value>org.hippoecm.frontend.editor.editor.EditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>{cluster}.editor</sv:value>
+      <sv:value>${cluster.id}.editor</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>{cluster}.model</sv:value>
+      <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
     <sv:property sv:name="builder.helpers" sv:type="String">
-      <sv:value>{cluster}.helpers.helper</sv:value>
+      <sv:value>${cluster.id}.helpers.helper</sv:value>
     </sv:property>
   </sv:node>
 
@@ -90,10 +90,10 @@
       <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>{cluster}.workflows</sv:value>
+      <sv:value>${cluster.id}.workflows</sv:value>
     </sv:property>
     <sv:property sv:name="item" sv:type="String">
-      <sv:value>{cluster}.workflows.workflow</sv:value>
+      <sv:value>${cluster.id}.workflows.workflow</sv:value>
     </sv:property>
   </sv:node>
 
@@ -105,16 +105,16 @@
       <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>{cluster}.workflows.workflow</sv:value>
+      <sv:value>${cluster.id}.workflows.workflow</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>{cluster}.model</sv:value>
+      <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>{cluster}.workflows.id</sv:value>
+      <sv:value>${cluster.id}.workflows.id</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>{cluster}.perspective</sv:value>
+      <sv:value>${editor.id}</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>editing</sv:value>
@@ -130,10 +130,10 @@
       <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>{cluster}.helpers</sv:value>
+      <sv:value>${cluster.id}.helpers</sv:value>
     </sv:property>
     <sv:property sv:name="item" sv:type="String">
-      <sv:value>{cluster}.helpers.helper</sv:value>
+      <sv:value>${cluster.id}.helpers.helper</sv:value>
     </sv:property>
   </sv:node>
 

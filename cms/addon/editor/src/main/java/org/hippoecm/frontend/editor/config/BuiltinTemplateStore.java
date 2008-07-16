@@ -55,7 +55,7 @@ public class BuiltinTemplateStore implements IClusterable {
         public BuiltinTemplateConfig(ITypeDescriptor type, String mode) {
             this.type = type;
             put("mode", mode);
-            put("wicket.model", "{cluster}.model");
+            put("wicket.model", "${cluster.id}.model");
         }
 
         @Override
@@ -73,8 +73,8 @@ public class BuiltinTemplateStore implements IClusterable {
             List<IPluginConfig> list = new LinkedList<IPluginConfig>();
             IPluginConfig config = new JavaPluginConfig();
             config.put("plugin.class", ListViewPlugin.class.getName());
-            config.put("wicket.id", "cluster:wicket.id");
-            config.put("item", "{cluster}.field");
+            config.put("wicket.id", "${wicket.id}");
+            config.put("item", "${cluster.id}.field");
             list.add(config);
 
             Map<String, IFieldDescriptor> fields = type.getFields();
@@ -88,10 +88,10 @@ public class BuiltinTemplateStore implements IClusterable {
                 } else {
                     config.put("plugin.class", PropertyFieldPlugin.class.getName());
                 }
-                config.put("wicket.id", "{cluster}.field");
-                config.put("wicket.model", "cluster:wicket.model");
-                config.put("engine", "cluster:engine");
-                config.put("mode", "cluster:mode");
+                config.put("wicket.id", "${cluster.id}.field");
+                config.put("wicket.model", "${wicket.model}");
+                config.put("engine", "${engine}");
+                config.put("mode", "${mode}");
                 config.put("caption", entry.getKey());
                 config.put("field", entry.getKey());
                 list.add(config);
