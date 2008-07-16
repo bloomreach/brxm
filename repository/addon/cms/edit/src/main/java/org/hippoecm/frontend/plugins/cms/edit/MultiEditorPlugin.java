@@ -91,12 +91,12 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
             String user = ((UserSession) Session.get()).getCredentials().getString("username");
             QueryManager qMgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
             Query query = qMgr.createQuery("select * from hippostd:publishable where hippostd:state='draft' "
-                    + "and (hippostd:holder='" + user + "' or hippostd:holder is null)", Query.SQL);
+                    + "and hippostd:holder='" + user + "'", Query.SQL);
             NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
                 if (!node.getName().equals("hippo:prototype")) {
-                    edit(new JcrNodeModel(node));
+                    openEditor(new JcrNodeModel(node));
                 }
             }
         } catch (RepositoryException ex) {
@@ -105,6 +105,11 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
     }
 
     public void edit(final IModel model) {
+        PluginEntry entry = openEditor(model);
+        focusEditor(entry, model);
+    }
+
+    protected PluginEntry openEditor(final IModel model) {
         PluginEntry entry;
         if (!editors.containsKey(model)) {
             IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
@@ -167,13 +172,17 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
         } else {
             entry = editors.get(model);
         }
+        entry.editor.edit(model);
+        return entry;
+    }
 
+    protected void focusEditor(PluginEntry entry, IModel model) {
         if (entry != null) {
             // look up the render service that is created by the cluster
             List<IRenderService> targetServices = context.getServices(config.getString(RenderService.WICKET_ID),
                     IRenderService.class);
-            List<IRenderService> clusterServices = context.getServices(context.getReference(entry.plugin).getServiceId(),
-                    IRenderService.class);
+            List<IRenderService> clusterServices = context.getServices(context.getReference(entry.plugin)
+                    .getServiceId(), IRenderService.class);
             for (IRenderService target : targetServices) {
                 if (clusterServices.contains(target)) {
                     // found it!
@@ -181,7 +190,6 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
                     break;
                 }
             }
-            entry.editor.edit(model);
         } else {
             log.warn("Configured editor does not provide an IViewService");
         }
