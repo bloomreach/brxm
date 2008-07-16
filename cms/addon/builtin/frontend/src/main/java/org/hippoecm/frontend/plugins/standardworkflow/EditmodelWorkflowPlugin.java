@@ -19,14 +19,15 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -50,6 +51,17 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
+        String title = "Edit type";
+        try {
+            String name = ((WorkflowsModel) getModel()).getNodeModel().getNode().getName();
+            name = name.substring(title.indexOf(':') + 1);
+            char[] chars = name.toLowerCase().toCharArray();
+            chars[0] = Character.toUpperCase(chars[0]);
+            title = String.copyValueOf(chars) + " type";
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        add(new Label("title", title));
         addWorkflowAction("editModel-action", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
@@ -80,7 +92,7 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        add(new DialogLink("copyModelRequest-dialog", new Model("Copy model"), new IDialogFactory() {
+        add(new DialogLink("copyModelRequest-dialog", new Model("Copy"), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
