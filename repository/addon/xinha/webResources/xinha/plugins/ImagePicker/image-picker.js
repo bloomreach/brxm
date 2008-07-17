@@ -73,7 +73,7 @@ ImagePicker.prototype.outwardHtml = function(html) {
 
 ImagePicker.prototype.getPrefix = function() {
     if (this.prefix == null) {
-        this.prefix = encodeURI(this.editor.config.jcrNodePath);
+        this.prefix = this.editor.config.jcrNodePath;
         if (this.prefix.charAt(this.prefix.length - 1) != '/') {
             this.prefix += '/';
         }
