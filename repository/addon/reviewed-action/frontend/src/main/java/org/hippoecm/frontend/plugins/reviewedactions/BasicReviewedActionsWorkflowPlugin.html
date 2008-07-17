@@ -16,15 +16,7 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
    <div class="actionspanel">
-      <h3><span wicket:id="caption"/><span class="documentStatus" wicket:id="status"/></h3>
-    <ul>
-      <li>
-        <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
-      </li>
-    </ul>
-    </div>
-    <div class="actionspanel">
-      <h3>Send Request</h3>
+    <h3><span wicket:id="caption"/><span class="documentStatus" wicket:id="status"/><span wicket:id="locked"><img src="skin/images/reviewedactions/locked.gif"/></span></h3>
     <ul>
       <li>
         <a class="reqpublish_ico" wicket:id="requestPublication-dialog">Request publication</a>
@@ -34,6 +26,11 @@
       </li>
       <li>
         <a class="reqdelete_ico" wicket:id="requestDeletion-dialog">Request Deletion</a>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
       </li>
     </ul>
     </div>
