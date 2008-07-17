@@ -51,8 +51,17 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
 
     private static final Logger log = LoggerFactory.getLogger(JcrPluginConfig.class);
 
+    private IPluginConfig overrides;
+
     public JcrPluginConfig(JcrNodeModel nodeModel) {
+        this(nodeModel, false);
+    }
+
+    public JcrPluginConfig(JcrNodeModel nodeModel, boolean mutable) {
         super(nodeModel);
+        if (!mutable) {
+            this.overrides = new JavaPluginConfig();
+        }
     }
 
     public void clear() {
@@ -181,6 +190,16 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public Object put(Object key, Object value) {
+        if (overrides != null) {
+            Object obj;
+            if (overrides.containsKey(key)) {
+                obj = overrides.put(key, value);
+            } else {
+                obj = get(key);
+                overrides.put(key, value);
+            }
+            return obj;
+        }
         Object result = get(key);
         if (key instanceof String) {
             String strKey = (String) key;
@@ -324,6 +343,9 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public Object get(Object key) {
+        if (overrides != null && overrides.containsKey(key)) {
+            return overrides.get(key);
+        }
         if (key instanceof String) {
             String strKey = (String) key;
             try {
@@ -361,7 +383,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
                     int i = 0;
                     while (children.hasNext()) {
                         Node child = children.nextNode();
-                        result[i++] = new JcrPluginConfig(new JcrNodeModel(child));
+                        result[i++] = new JcrPluginConfig(new JcrNodeModel(child), overrides == null);
                     }
                     return result;
                 }
@@ -449,7 +471,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
                         list = new LinkedList<JcrPluginConfig>();
                         map.put(child.getName(), list);
                     }
-                    list.add(new JcrPluginConfig(new JcrNodeModel(child)));
+                    list.add(new JcrPluginConfig(new JcrNodeModel(child), overrides == null));
                 }
 
                 for (Map.Entry<String, List<JcrPluginConfig>> entry : map.entrySet()) {

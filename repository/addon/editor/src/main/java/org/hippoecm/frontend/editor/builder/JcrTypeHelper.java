@@ -127,7 +127,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                 node = node.addNode(HippoNodeType.HIPPO_TEMPLATE, "frontend:plugincluster");
                 JcrNodeModel templateModel = new JcrNodeModel(node);
 
-                JcrClusterConfig jcrConfig = new JcrClusterConfig(templateModel);
+                JcrClusterConfig jcrConfig = new JcrClusterConfig(templateModel, true);
                 for (Map.Entry entry : (Set<Map.Entry>) ((Map) cluster).entrySet()) {
                     jcrConfig.put(entry.getKey(), entry.getValue());
                 }
@@ -135,7 +135,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                 for (IPluginConfig plugin : cluster.getPlugins()) {
                     String name = UUID.randomUUID().toString();
                     Node child = node.addNode(name, "frontend:plugin");
-                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
+                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child), true);
                     for (Map.Entry entry : (Set<Map.Entry>) ((Map) plugin).entrySet()) {
                         pluginConfig.put(entry.getKey(), entry.getValue());
                     }
