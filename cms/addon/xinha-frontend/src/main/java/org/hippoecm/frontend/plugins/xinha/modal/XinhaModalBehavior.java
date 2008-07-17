@@ -33,6 +33,14 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
     private final static Logger log = LoggerFactory.getLogger(XinhaModalBehavior.class);
 
     private static final long serialVersionUID = 1L;
+    
+    XinhaModalWindow modalWindow;
+    
+    public XinhaModalBehavior(XinhaModalWindow modalWindow) {
+        if(modalWindow == null)
+            throw new IllegalArgumentException("XinaModalWindow cannot be null");
+        this.modalWindow = modalWindow;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -48,25 +56,11 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
             }
         }
 
-        XinhaModalWindow modalWindow = getModalWindow();
-        if (modalWindow != null) {
-            modalWindow.setTitle("ModalWindow[" + pluginName + "]");
-            modalWindow.setContent(createContentPanel(modalWindow, params));
-            modalWindow.show(target);
-        } else {
-            log.error("No modal window found");
-        }
+        modalWindow.setTitle("ModalWindow[" + pluginName + "]");
+        modalWindow.setContent(createContentPanel(params));
+        modalWindow.show(target);
     }
 
-    protected XinhaModalWindow getModalWindow() {
-        if (getComponent() != null && getComponent() instanceof XinhaPlugin) {
-            return ((XinhaPlugin) getComponent()).getModalWindow();
-        } else {
-            log.error("Not attached to a xinha plugin");
-        }
-        return null;
-    }
-
-    abstract XinhaContentPanel createContentPanel(XinhaModalWindow modalWindow, Map<String, String> params);
+    abstract XinhaContentPanel createContentPanel(Map<String, String> params);
 
 }

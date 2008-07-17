@@ -27,7 +27,8 @@ public class XinhaImagePickerBehavior extends XinhaModalBehavior {
 
     private JcrNodeModel nodeModel;
 
-    public XinhaImagePickerBehavior(JcrNodeModel model) {
+    public XinhaImagePickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
+        super(modalWindow);
         nodeModel = model;
     }
 
