@@ -546,10 +546,10 @@ public class Remodeling {
     }
 
     private void visitTemplateType(Node node) throws RepositoryException {
-        Node draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_NODETYPE);
+        Node draft = EditmodelWorkflowImpl.getDraftType(node);
         if (draft == null) {
             EditmodelWorkflowImpl.checkoutType(node);
-            draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_NODETYPE);
+            draft = EditmodelWorkflowImpl.getDraftType(node);
         }
 
         // visit node type
@@ -558,15 +558,15 @@ public class Remodeling {
 
         // visit prototype
         if (node.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            draft = EditmodelWorkflowImpl.getDraft(node, HippoNodeType.HIPPO_PROTOTYPE);
+            draft = EditmodelWorkflowImpl.getDraftPrototype(node);
             Node handle = node.getNode(HippoNodeType.HIPPO_PROTOTYPE);
 
             // remove old prototypes
             NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
             while (children.hasNext()) {
                 Node child = children.nextNode();
-                if (child.isNodeType(HippoNodeType.NT_REMODEL)) {
-                    children.remove();
+                if (!child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                    child.remove();
                 }
             }
 
@@ -576,8 +576,6 @@ public class Remodeling {
             if (newType != null) {
                 Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
                 traverse(draft, true, newChild);
-                newChild.addMixin(HippoNodeType.NT_REMODEL);
-                newChild.setProperty(HippoNodeType.HIPPO_URI, nsRegistry.getURI(newPrefix));
 
                 // prepare workflow mixins
                 if (newChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {

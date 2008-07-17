@@ -152,12 +152,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>reporting:report</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/reporting/nt/1.0</sv:value>
-        </sv:property>
         <sv:property sv:name="reporting:parameternames" sv:type="String"> </sv:property>
         <sv:property sv:name="reporting:parametervalues" sv:type="String"> </sv:property>
         <sv:node sv:name="hippo:query">
