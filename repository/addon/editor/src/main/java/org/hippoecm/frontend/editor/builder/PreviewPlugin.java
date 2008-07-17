@@ -116,7 +116,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
                 templateModel = typeHelper.storeTemplate(cluster);
             }
 
-            PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel);
+            PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
 
             String uniqId = context.getReference(this).getServiceId();
             IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");

@@ -21,9 +21,13 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.plugins.field.FieldPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -88,8 +92,7 @@ public class PreviewPluginPlugin extends RenderPlugin {
                         Node next = siblings.nextNode();
                         if (next.isNodeType("frontend:plugin")) {
                             if (previous != null && previous.isSame(pluginNode)) {
-                                pluginNode.getParent().orderBefore(
-                                        next.getName() + "[" + next.getIndex() + "]",
+                                pluginNode.getParent().orderBefore(next.getName() + "[" + next.getIndex() + "]",
                                         previous.getName() + "[" + previous.getIndex() + "]");
                                 flush();
                                 break;
@@ -118,6 +121,36 @@ public class PreviewPluginPlugin extends RenderPlugin {
                 try {
                     Node node = pluginNodeModel.getNode();
                     if (node != null) {
+                        JcrTypeHelper helper = new JcrTypeHelper(new JcrNodeModel(node.getParent().getParent()
+                                .getParent()));
+
+                        // clean up prototype
+                        String fieldName = node.getProperty(FieldPlugin.FIELD).getString();
+                        ITypeDescriptor type = helper.getTypeDescriptor();
+                        IFieldDescriptor field = type.getField(fieldName);
+                        if (!field.getPath().equals("*")) {
+                            ITypeDescriptor subType = getTemplateEngine().getType(field.getType());
+                            JcrNodeModel prototype = helper.getPrototype();
+                            if (subType.isNode()) {
+                                NodeIterator children = prototype.getNode().getNodes(field.getPath());
+                                while (children.hasNext()) {
+                                    Node child = children.nextNode();
+                                    child.remove();
+                                }
+                            } else {
+                                Node prototypeNode = prototype.getNode();
+                                if (prototypeNode.hasProperty(field.getPath())) {
+                                    prototypeNode.getProperty(field.getPath()).remove();
+                                }
+                            }
+                        } else {
+                            log.error("removing wildcard fields is not supported");
+                        }
+
+                        // clean up type
+                        helper.getTypeDescriptor().removeField(fieldName);
+
+                        // clean up template
                         node.remove();
                         flush();
                     }
@@ -128,6 +161,11 @@ public class PreviewPluginPlugin extends RenderPlugin {
         });
 
         addExtensionPoint("preview");
+    }
+
+    protected ITemplateEngine getTemplateEngine() {
+        IPluginContext context = getPluginContext();
+        return context.getService(getPluginConfig().getString("engine"), ITemplateEngine.class);
     }
 
     @Override
