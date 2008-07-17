@@ -33,8 +33,8 @@ public class XinhaImagePickerBehavior extends XinhaModalBehavior {
     }
 
     @Override
-    XinhaContentPanel createContentPanel(XinhaModalWindow modalWindow, Map<String, String> params) {
-        return new ImagePickerContentPanel(modalWindow, nodeModel, params);
+    XinhaContentPanel createContentPanel(Map<String, String> params) {
+        return new ImagePickerContentPanel(modalWindow, nodeModel, params);    
     }
 
 }
