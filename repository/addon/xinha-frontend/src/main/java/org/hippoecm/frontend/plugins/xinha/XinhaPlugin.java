@@ -65,7 +65,8 @@ public class XinhaPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
 
-    public final static String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
+    private static final String BINARIES_PREFIX = "binaries";
+    public static final String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
 
     // hardcoded ignore path set
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
@@ -87,13 +88,13 @@ public class XinhaPlugin extends RenderPlugin {
 
         if ("edit".equals(mode)) {
             fragment.add(createEditor(config));
-
+            configuration = new Configuration(config);
+            context.registerService(configuration, Configuration.class.getName());
+            
             JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
-            configuration = new Configuration(config, nodePath);
-            context.registerService(configuration, Configuration.class.getName());
-            
+
             fragment.add(modalWindow = new XinhaModalWindow("modalwindow"));
             fragment.add(imagePickerBehavior = new XinhaImagePickerBehavior(modalWindow, nodeModel));
         } else {
@@ -115,10 +116,13 @@ public class XinhaPlugin extends RenderPlugin {
         if (configuration != null) {
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-            if(imagePickerBehavior != null)
-                configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG); 
-
+            configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
+            
+            JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
+            String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
+            configuration.addProperty("jcrNodePath", BINARIES_PREFIX + nodePath);
+            
             IPluginContext context = getPluginContext();
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
                     XinhaEditorBehavior.class);
@@ -269,11 +273,8 @@ public class XinhaPlugin extends RenderPlugin {
         private List<String> toolbarItems;
         private List<String> styleSheets;
         private String skin;
-        private String jcrNodePath;
 
-        public Configuration(IPluginConfig config, String nodePath) {
-            jcrNodePath = nodePath;
-
+        public Configuration(IPluginConfig config) {
             toolbarItems = new ArrayList();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
@@ -340,10 +341,6 @@ public class XinhaPlugin extends RenderPlugin {
 
         public String getSkin() {
             return skin;
-        }
-
-        public String getJcrNodePath() {
-            return jcrNodePath;
         }
 
         public void setPluginConfigurations(Set<PluginConfiguration> plugins) {
