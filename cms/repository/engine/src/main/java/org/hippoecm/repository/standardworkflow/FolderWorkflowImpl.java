@@ -210,7 +210,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     public void archive(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         if(name.startsWith("/"))
             name  = name.substring(1);
-        name = ISO9075Helper.encodeLocalName(name);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
@@ -228,7 +227,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         if(name.startsWith("/"))
             name  = name.substring(1);
-        name = ISO9075Helper.encodeLocalName(name);
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
