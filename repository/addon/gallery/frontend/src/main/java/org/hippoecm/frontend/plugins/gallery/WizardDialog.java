@@ -24,6 +24,8 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
@@ -198,11 +200,26 @@ public class WizardDialog extends WebPage {
                             Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                             Item item = node.getPrimaryItem();
                             if(item.isNode()) {
-                                node = (Node) item;
-                                if(node.isNodeType("hippo:resource")) {
-                                    node.setProperty("jcr:mimeType", mimetype);
-                                    node.setProperty("jcr:data", istream);
+                                Node primaryChild = (Node) item;
+                                if(primaryChild.isNodeType("hippo:resource")) {
+                                    primaryChild.setProperty("jcr:mimeType", mimetype);
+                                    primaryChild.setProperty("jcr:data", istream);
                                 }
+                                NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
+                                for(int i=0; i<childDefs.length; i++) {
+                                    if(childDefs[i].getDefaultPrimaryType() != null &&
+                                       childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                                        if(!node.hasNode(childDefs[i].getName())) {
+                                            Node child = node.addNode(childDefs[i].getName());
+                                            child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
+                                            child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType").getString());
+                                            child.setProperty("jcr:lastModified", primaryChild.getProperty("jcr:lastModified").getDate());
+                                        }
+                                    }
+                                }
+                                makeThumbnail(primaryChild,
+                                              primaryChild.getProperty("jcr:data").getStream(),
+                                              primaryChild.getProperty("jcr:mimeType").getString());
                                 node.save();
                             }
                         } catch (MappingException ex) {
@@ -226,6 +243,17 @@ public class WizardDialog extends WebPage {
             } else {
                 exception = "No file uploaded";
             }
+        }
+    }
+
+    protected void makeThumbnail(Node resource, InputStream istream, String mimeType) {
+        // HREPTWO-1238
+        try {
+            InputStream scaledImage = istream;
+            String scaledMimeType = mimeType;
+            resource.setProperty("jcr:data", scaledImage);
+            resource.setProperty("jcr:mimeType", scaledMimeType);
+        } catch(RepositoryException ex) {
         }
     }
 }

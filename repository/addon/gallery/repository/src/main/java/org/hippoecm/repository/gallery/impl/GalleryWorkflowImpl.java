@@ -68,6 +68,9 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         structure[2] = Integer.toString(timestamp.get(Calendar.DAY_OF_MONTH));
         structure[3] = Integer.toString(timestamp.get(Calendar.HOUR_OF_DAY));
         structure[4] = Integer.toString((timestamp.get(Calendar.MINUTE)/15)*15);
+        if(structure[4].length() == 1) {
+            structure[4] = "0" + structure[4];
+        }
         node = folder;
         for(int i=0; i<structure.length; i++) {
             if(node.hasNode(structure[i])) {
