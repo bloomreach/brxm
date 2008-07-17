@@ -112,7 +112,6 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
             } else {
                 result = ClusterConfigDecorator.this.get(variable) + remainder;
             }
-            System.out.println("Converted " + value + " to " + result);
             return result;
         }
         return value;
