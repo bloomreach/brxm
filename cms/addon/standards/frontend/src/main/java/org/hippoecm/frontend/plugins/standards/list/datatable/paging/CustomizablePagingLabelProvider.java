@@ -34,7 +34,7 @@ public class CustomizablePagingLabelProvider implements IPagingLabelProvider {
     }
 
     public String getPageLabel(int page) {
-        return prefix + page + postfix;
+        return prefix + (page + 1) + postfix;
     }
 
 }
