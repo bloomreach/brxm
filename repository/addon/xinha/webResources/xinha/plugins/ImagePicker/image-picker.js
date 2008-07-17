@@ -113,6 +113,7 @@ Xinha.prototype._insertImage = function(image)
         {
           var sel = editor.getSelection();
           var range = editor.createRange(sel);
+          //TODO: check if this still works.
           editor._doc.execCommand("insertimage", false, param.f_url);
           img = range.parentElement();
           // wonder if this works...
@@ -207,7 +208,6 @@ ModalDialogImpl.prototype = {
         }
         if(str.length > 1)
             componentUrl += str;
-        console.log('url: ' + componentUrl);
         var _this = this;
         var func = function() {
             _this.modalAction = action;
