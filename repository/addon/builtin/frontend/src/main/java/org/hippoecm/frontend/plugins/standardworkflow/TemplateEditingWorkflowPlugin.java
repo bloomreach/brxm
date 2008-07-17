@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -58,6 +62,29 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
                 close();
             }
 
+        });
+        add(new AjaxLink("revert") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                WorkflowsModel model = (WorkflowsModel) TemplateEditingWorkflowPlugin.this.getModel();
+                JcrNodeModel nodeModel = model.getNodeModel();
+                if (nodeModel.getNode() != null) {
+                    try {
+                        nodeModel.getNode().refresh(false);
+                    } catch (RepositoryException ex) {
+                        log.error(ex.getMessage());
+                    }
+                    IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+                    if (jcrService != null) {
+                        jcrService.flush(nodeModel);
+                    }
+                } else {
+                    log.error("Node does not exist");
+                }
+                close();
+            }
         });
     }
 
