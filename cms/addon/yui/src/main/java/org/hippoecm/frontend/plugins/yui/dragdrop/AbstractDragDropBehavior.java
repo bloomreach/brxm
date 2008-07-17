@@ -59,6 +59,7 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
         YuiHeaderContributor.forModule(HippoNamespace.NS, "dragdropmanager").renderHead(response);
         TextTemplateHeaderContributor.forJavaScript(getHeaderContributorClass(), getHeaderContributorFilename(),
                 new HeaderContributerModel()).renderHead(response);
+        response.renderOnLoadJavascript("YAHOO.hippo.DragDropManager.onLoad()");
         super.renderHead(response);
     }
 
