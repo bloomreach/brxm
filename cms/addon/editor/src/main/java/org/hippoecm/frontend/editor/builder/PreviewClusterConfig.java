@@ -34,10 +34,12 @@ public class PreviewClusterConfig extends JcrClusterConfig {
 
     private static int instanceCount = 0;
     private String pluginConfigModel;
+    private String engineId;
 
-    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node, ModelService model) {
+    public PreviewClusterConfig(IPluginContext context, JcrNodeModel node, ModelService model, String engineId) {
         super(node);
 
+        this.engineId = engineId;
         this.pluginConfigModel = context.getReference(model).getServiceId();
     }
 
@@ -52,6 +54,7 @@ public class PreviewClusterConfig extends JcrClusterConfig {
                 previewWrapper.put("plugin.class", PreviewPluginPlugin.class.getName());
                 previewWrapper.put("wicket.id", config.get("wicket.id"));
                 previewWrapper.put("wicket.model", pluginConfigModel);
+                previewWrapper.put("engine", engineId);
                 previewWrapper.put("preview", wrappedId);
 
                 JcrNodeModel pluginNodeModel = ((JcrPluginConfig) config).getNodeModel();
