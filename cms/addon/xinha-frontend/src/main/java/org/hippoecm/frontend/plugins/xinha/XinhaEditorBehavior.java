@@ -41,9 +41,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
     private IPluginContext context;
 
-    private static final String BINARIES_PREFIX = "binaries";
-    //    private Set<XinhaPlugin.Configuration> configurations;
-
     Pattern numbers = Pattern.compile("\\d*");
 
     XinhaEditorBehavior(IPluginContext context) {
@@ -92,13 +89,6 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                         break;
                     }
                 }
-                for (XinhaPlugin.Configuration config : configurations) {
-                    if (config.getJcrNodePath() != null) {
-                        sb.append("_editor_jcrnode_url = '" + BINARIES_PREFIX + config.getJcrNodePath() + "';\n");
-                        break;
-                    }
-                }
-
                 response.renderJavascript(sb, null);
             }
         },
