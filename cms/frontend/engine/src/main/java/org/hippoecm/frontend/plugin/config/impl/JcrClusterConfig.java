@@ -39,7 +39,11 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     private transient List<IPluginConfig> configs = null;
 
     public JcrClusterConfig(JcrNodeModel nodeModel) {
-        super(nodeModel);
+        this(nodeModel, false);
+    }
+
+    public JcrClusterConfig(JcrNodeModel nodeModel, boolean mutable) {
+        super(nodeModel, mutable);
     }
 
     private void load() {
