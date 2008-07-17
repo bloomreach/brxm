@@ -24,15 +24,15 @@ public class XinhaImagePickerBehavior extends XinhaModalBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private JcrNodeModel nodeModel;
 
     public XinhaImagePickerBehavior(JcrNodeModel model) {
         nodeModel = model;
     }
-    
+
     @Override
-    XinhaContentPanel createContentPanel(Map<String, String> params) {
+    XinhaContentPanel createContentPanel(XinhaModalWindow modalWindow, Map<String, String> params) {
         return new ImagePickerContentPanel(modalWindow, nodeModel, params);
     }
 

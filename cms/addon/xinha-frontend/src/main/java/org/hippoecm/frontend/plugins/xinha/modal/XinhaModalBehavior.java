@@ -18,28 +18,21 @@ package org.hippoecm.frontend.plugins.xinha.modal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private final static Logger log = LoggerFactory.getLogger(XinhaModalBehavior.class);
+
     private static final long serialVersionUID = 1L;
-
-    XinhaModalWindow modalWindow;
-
-    @Override
-    protected void onBind() {
-        if (modalWindow == null) {
-            modalWindow = new XinhaModalWindow("modalwindow");
-            ((MarkupContainer) getComponent()).add(modalWindow);
-        }
-        super.onBind();
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -54,11 +47,26 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
                 params.put(key.substring("ModalDialogParam-".length()), request.getParameter(key));
             }
         }
-        modalWindow.setTitle("ModalWindow[" + pluginName + "]");
-        modalWindow.setContent(createContentPanel(params));
-        modalWindow.show(target);
+
+        XinhaModalWindow modalWindow = getModalWindow();
+        if (modalWindow != null) {
+            modalWindow.setTitle("ModalWindow[" + pluginName + "]");
+            modalWindow.setContent(createContentPanel(modalWindow, params));
+            modalWindow.show(target);
+        } else {
+            log.error("No modal window found");
+        }
     }
 
-    abstract XinhaContentPanel createContentPanel(Map<String, String> params);
+    protected XinhaModalWindow getModalWindow() {
+        if (getComponent() != null && getComponent() instanceof XinhaPlugin) {
+            return ((XinhaPlugin) getComponent()).getModalWindow();
+        } else {
+            log.error("Not attached to a xinha plugin");
+        }
+        return null;
+    }
+
+    abstract XinhaContentPanel createContentPanel(XinhaModalWindow modalWindow, Map<String, String> params);
 
 }
