@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
@@ -48,6 +49,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaImagePickerBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -75,6 +77,7 @@ public class XinhaPlugin extends RenderPlugin {
     private Configuration configuration;
     private AbstractDefaultAjaxBehavior postBehavior;
     private AbstractDefaultAjaxBehavior imagePickerBehavior;
+    private XinhaModalWindow modalWindow;
 
     //private XinhaModalWindow modalWindow;
 
@@ -106,6 +109,13 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
+
+        modalWindow = new XinhaModalWindow("modalwindow");
+        add(modalWindow);
+    }
+
+    public XinhaModalWindow getModalWindow() {
+        return modalWindow;
     }
 
     @Override
