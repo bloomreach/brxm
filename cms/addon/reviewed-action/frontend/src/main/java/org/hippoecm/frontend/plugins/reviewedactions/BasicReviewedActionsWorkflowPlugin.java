@@ -19,8 +19,16 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebComponent;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.markup.html.panel.Panel;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -34,8 +42,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -48,6 +55,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private String caption = "unknown document";
     private String stateSummary = "UNKNOWN";
+    private boolean isLocked = false;
+    private Component locked;
 
     public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -56,9 +65,17 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         add(new Label("status", new PropertyModel(this, "stateSummary")));
 
+        add(locked = new org.apache.wicket.markup.html.WebMarkupContainer("locked"));
+
         onModelChanged();
 
-        addWorkflowAction("edit-dialog", new WorkflowAction() {
+        addWorkflowAction("edit-dialog", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !isLocked;
+            }
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -131,17 +148,30 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             Node node = model.getNodeModel().getNode();
             caption = ISO9075Helper.decodeLocalName(node.getName());
 
+            Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
-                    Node child = iter.nextNode();
+                    child = iter.nextNode();
                     if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         node = child;
-                        break;
+                        if(child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
+                            break;
+                        }
+                    } else {
+                        child = null;
                     }
                 }
             }
-            if (node.hasProperty("hippostd:stateSummary")) {
+            if (child != null && child.hasProperty("hippostd:stateSummary")) {
                 stateSummary = node.getProperty("hippostd:stateSummary").getString();
+            }
+            isLocked = false;
+            locked.setVisible(isLocked);
+            if (child != null && child.hasProperty("hippostd:state") &&
+                child.getProperty("hippostd:state").getString().equals("draft") && child.hasProperty("hippostd:holder") &&
+                !child.getProperty("hippostd:holder").getString().equals(child.getSession().getUserID())) {
+                isLocked = true;
+                locked.setVisible(isLocked);
             }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
