@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
@@ -79,8 +78,6 @@ public class XinhaPlugin extends RenderPlugin {
     private AbstractDefaultAjaxBehavior imagePickerBehavior;
     private XinhaModalWindow modalWindow;
 
-    //private XinhaModalWindow modalWindow;
-
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -96,7 +93,9 @@ public class XinhaPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
             configuration = new Configuration(config, nodePath);
             context.registerService(configuration, Configuration.class.getName());
-            add(imagePickerBehavior = new XinhaImagePickerBehavior(nodeModel));
+            
+            fragment.add(modalWindow = new XinhaModalWindow("modalwindow"));
+            fragment.add(imagePickerBehavior = new XinhaImagePickerBehavior(modalWindow, nodeModel));
         } else {
             fragment.add(new WebMarkupContainer("value", getModel()) {
                 private static final long serialVersionUID = 1L;
@@ -109,13 +108,6 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
-
-        modalWindow = new XinhaModalWindow("modalwindow");
-        add(modalWindow);
-    }
-
-    public XinhaModalWindow getModalWindow() {
-        return modalWindow;
     }
 
     @Override
@@ -123,8 +115,9 @@ public class XinhaPlugin extends RenderPlugin {
         if (configuration != null) {
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-            configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
-            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+            if(imagePickerBehavior != null)
+                configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
+            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG); 
 
             IPluginContext context = getPluginContext();
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
