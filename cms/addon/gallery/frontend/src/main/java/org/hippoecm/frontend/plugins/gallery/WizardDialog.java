@@ -17,15 +17,16 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
@@ -37,7 +38,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -62,7 +62,12 @@ public class WizardDialog extends WebPage {
     protected AjaxLink submit;
     private IServiceReference<IDialogService> windowRef;
     private String exception = "";
-
+    
+    private static final Set<String> supportRescaleMimeTypes = new HashSet<String>();
+    {
+        supportRescaleMimeTypes.add("image/jpeg");
+    }
+  
     public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config, IDialogService dialogWindow) {
         this.windowRef = context.getReference(dialogWindow);
 
@@ -189,7 +194,6 @@ public class WizardDialog extends WebPage {
                     String filename = upload.getClientFileName();
                     String mimetype = upload.getContentType();
                     InputStream istream = upload.getInputStream();
-
                     WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     JcrNodeModel model = (JcrNodeModel) getModel();
                     if(model != null && model.getNode() != null) {
@@ -247,13 +251,22 @@ public class WizardDialog extends WebPage {
     }
 
     protected void makeThumbnail(Node resource, InputStream istream, String mimeType) {
-        // HREPTWO-1238
-        try {
-            InputStream scaledImage = istream;
-            String scaledMimeType = mimeType;
-            resource.setProperty("jcr:data", scaledImage);
-            resource.setProperty("jcr:mimeType", scaledMimeType);
-        } catch(RepositoryException ex) {
+        int maxWidthThumbnail = 100;
+        if(supportRescaleMimeTypes.contains(mimeType)) {
+            try {
+                String scaledMimeType = mimeType;
+                InputStream thumbStream = null;
+                try {
+                    thumbStream = JpegImageResizer.resizeImage(istream, maxWidthThumbnail);
+                } catch (IOException e) {
+                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    e.printStackTrace(System.err);
+                    return;
+                }
+                resource.setProperty("jcr:data", thumbStream);
+                resource.setProperty("jcr:mimeType", scaledMimeType);
+            } catch(RepositoryException ex) {
+            }
         }
     }
 }
