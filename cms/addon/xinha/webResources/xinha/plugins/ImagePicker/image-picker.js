@@ -12,8 +12,10 @@ ImagePicker._pluginInfo = {
 function ImagePicker(editor) {
     this.config = editor.config;
     this.editor = editor;
+    this.imgRE = new RegExp('<img[^>]+>', 'gi');
+    this.srcRE = new RegExp('src="[^"]+"', 'i');
+    this.noReplacePrefixes = ['http:', 'https:', '/'];
     cfg = editor.config;
-
     cfg.registerButton({
         id       : "imagepicker",
         tooltip  : this._lc("Image picker"),
@@ -30,6 +32,66 @@ function ImagePicker(editor) {
 ImagePicker.prototype._lc = function(string) {
     return Xinha._lc(string, 'ImagePicker');
 };
+
+/**
+ * Prefix relative image sources with binaries prefix
+ */
+ImagePicker.prototype.inwardHtml = function(html) {
+    var _this = this;
+    var prefix = this.getPrefix();    
+    html = html.replace(this.imgRE, function(m) {
+        m = m.replace(_this.srcRE, function(n) {
+            var url = n.substring(5, n.length - 1);
+            if(_this.shouldPrefix(url)) {
+                return 'src="' + prefix + url + '"';
+            }
+            return n;
+        });
+        return m;
+    });
+    return html;
+}
+
+/**
+ * Strip of binaries prefix
+ */
+ImagePicker.prototype.outwardHtml = function(html) {
+    var _this = this;
+    var prefix = this.getPrefix();
+    html = html.replace(this.imgRE, function(m) {
+        m = m.replace(_this.srcRE, function(n) {
+            var idx = n.indexOf(prefix);
+            if (idx > -1) {
+                return 'src="' + n.substr(prefix.length + idx);
+            }
+            return n;
+        });
+        return m;
+    });
+    return html;
+}
+
+ImagePicker.prototype.getPrefix = function() {
+    if (this.prefix == null) {
+        this.prefix = encodeURI(this.editor.config.jcrNodePath);
+        if (this.prefix.charAt(this.prefix.length - 1) != '/') {
+            this.prefix += '/';
+        }
+    }
+    return this.prefix;
+}
+
+ImagePicker.prototype.shouldPrefix = function(url) {
+    if(this.checkPrefixes == null) {
+        this.checkPrefixes = this.noReplacePrefixes;
+        this.checkPrefixes.push(this.getPrefix());
+    }    
+    for(var i=0; i<this.checkPrefixes.length; i++) {
+        if(url.indexOf(this.checkPrefixes[i]) == 0) 
+            return false;
+    }
+    return true;
+}
 
 /**
  * Override Xinha._insertImage
