@@ -107,12 +107,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:image</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
-        </sv:property>
         <sv:property sv:name="jcr:mimeType" sv:type="String">
           <sv:value>image/gif</sv:value>
         </sv:property>
@@ -375,12 +369,6 @@
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>sample:simpledocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/sample/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="sample:title" sv:type="String">
           <sv:value>title</sv:value>

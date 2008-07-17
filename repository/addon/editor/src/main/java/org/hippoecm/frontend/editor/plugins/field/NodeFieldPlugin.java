@@ -40,6 +40,8 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        updateProvider();
+
         String caption = config.getString("caption");
         add(new Label("name", caption));
 
@@ -49,7 +51,6 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         }
         add(required);
 
-        updateProvider();
         add(createAddLink());
     }
 

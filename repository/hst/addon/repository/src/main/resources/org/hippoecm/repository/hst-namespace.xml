@@ -96,10 +96,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hst:pageFile" sv:type="String">
           <sv:value>index.jsp</sv:value>

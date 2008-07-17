@@ -138,13 +138,9 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hst:page</sv:value>
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
-          <sv:value>draft</sv:value>
+          <sv:value>unpublished</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:holder" sv:type="String">
           <sv:value>admin</sv:value>
@@ -225,12 +221,6 @@
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>demo:webNavigation</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:remodel</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/demo/nt/1.0</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
