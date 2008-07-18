@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,8 +36,6 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
 
     private static final long serialVersionUID = 1L;
 
-    //private static List<YuiLayoutConfig> configurations = Collections.synchronizedList(new ArrayList<YuiLayoutConfig>());
-
     private YuiWireframeConfig configuration;
     private Component component;
 
@@ -49,21 +46,21 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
     public YuiWireframeBehavior(boolean linkedWithParent) {
         this(null, linkedWithParent);
     }
-    
+
     public YuiWireframeBehavior(String rootElementId) {
         this(rootElementId, false);
     }
-    
+
     public YuiWireframeBehavior(String rootElementId, boolean linkedWithParent) {
         configuration = new YuiWireframeConfig(linkedWithParent);
         configuration.setRootElementId(rootElementId);
     }
-    
+
     public YuiWireframeBehavior registerUnitElement(String position, String elId) {
         configuration.registerUnitElement(position, elId);
         return this;
     }
-    
+
     public YuiWireframeBehavior addUnit(String position, Map<String, String> options) {
         configuration.addUnit(position, options);
         return this;
@@ -74,22 +71,14 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
         return this;
     }
 
-    public YuiWireframeBehavior addUnit(String position, String id) {
-        Map<String, String> opts = new HashMap<String, String>();
-        opts.put("id", id);
-        configuration.addUnit(position, opts);
-        return this;
-    }
-    
-    
     @Override
     public void bind(Component component) {
-        if(!MarkupContainer.class.isAssignableFrom(component.getClass())) {
+        if (!MarkupContainer.class.isAssignableFrom(component.getClass())) {
             throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
         }
         this.component = component;
-        
-        if(configuration.getRootElementId() == null) {
+
+        if (configuration.getRootElementId() == null) {
             configuration.setRootElementId(component.getMarkupId(true));
         }
     }
@@ -99,8 +88,8 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
         YuiHeaderContributor.forModule(HippoNamespace.NS, "layoutmanager").renderHead(response);
 
         fillConfig();
-        TextTemplateHeaderContributor tthc = TextTemplateHeaderContributor.forJavaScript(YuiWireframeBehavior.class, "YuiWireframeBehavior.js",
-                getHeaderContributorVariablesModel(configuration));
+        TextTemplateHeaderContributor tthc = TextTemplateHeaderContributor.forJavaScript(YuiWireframeBehavior.class,
+                "YuiWireframeBehavior.js", getHeaderContributorVariablesModel(configuration));
         TextTemplateHeaderContributor.forJavaScript(YuiWireframeBehavior.class, "YuiWireframeBehavior.js",
                 getHeaderContributorVariablesModel(configuration)).renderHead(response);
         response.renderOnLoadJavascript("YAHOO.hippo.LayoutManager.onLoad()");
@@ -118,7 +107,7 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
                 for (Iterator j = parent.getBehaviors().iterator(); j.hasNext();) {
                     Object parentBehavior = j.next();
                     if (YuiWireframeBehavior.class.isAssignableFrom(parentBehavior.getClass())) {
-                        YuiWireframeBehavior parentWireframe = (YuiWireframeBehavior)parentBehavior;
+                        YuiWireframeBehavior parentWireframe = (YuiWireframeBehavior) parentBehavior;
                         configuration.setParentId(parentWireframe.getConfiguration().getRootElementId());
                         found = true;
                         break;
@@ -127,14 +116,14 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
             }
         }
 
-        MarkupContainer cont = (MarkupContainer)component;
+        MarkupContainer cont = (MarkupContainer) component;
         cont.visitChildren(new IVisitor() {
 
             public Object component(Component component) {
                 Component c = component;
                 for (Iterator i = component.getBehaviors().iterator(); i.hasNext();) {
                     Object behavior = i.next();
-                    if(YuiWireframeBehavior.class.isAssignableFrom(behavior.getClass())) {
+                    if (YuiWireframeBehavior.class.isAssignableFrom(behavior.getClass())) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (YuiUnitBehavior.class.isAssignableFrom(behavior.getClass())) {
                         YuiUnitBehavior unitBehavior = (YuiUnitBehavior) behavior;
