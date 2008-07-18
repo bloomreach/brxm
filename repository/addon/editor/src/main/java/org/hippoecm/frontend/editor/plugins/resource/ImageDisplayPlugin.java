@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.IOException;
 
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -46,7 +46,7 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
 
         resource = new JcrResourceStream(((JcrNodeModel) getModel()).getNode());
 
-        add(new Image("image", new JcrResource(resource)));
+        add(new NonCachingImage("image", new JcrResource(resource)));
     }
 
     public void onFlush(JcrNodeModel newModel) {

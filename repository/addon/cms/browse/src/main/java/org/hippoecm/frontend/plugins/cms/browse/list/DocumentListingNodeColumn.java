@@ -16,9 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
-import org.hippoecm.frontend.plugins.standards.list.NodeCell;
 import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
 
 public class DocumentListingNodeColumn extends NodeColumn {
@@ -27,18 +25,11 @@ public class DocumentListingNodeColumn extends NodeColumn {
 
     private static final long serialVersionUID = 1L;
 
-    private DocumentListingPlugin plugin;
-
     public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, IJcrNodeViewerFactory resolver, DocumentListingPlugin plugin) {
-        super(displayModel, nodePropertyName, resolver);
-        this.plugin = plugin;
+        super(displayModel, nodePropertyName, resolver, plugin);
     }
 
     @Override
-    protected NodeCell getNodeCell(String componentId, IModel model, IJcrNodeViewerFactory resolver) {
-        return new DocumentListingNodeCell(componentId, (JcrNodeModel) model, resolver, plugin);
-    }
-
     public String getCssClass() {
         if ("icon".equals(getSortProperty())) {
             return "icon-16";

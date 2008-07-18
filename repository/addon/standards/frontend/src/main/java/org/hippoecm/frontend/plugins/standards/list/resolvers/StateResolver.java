@@ -36,13 +36,15 @@ public class StateResolver implements IJcrNodeViewerFactory {
             HippoNode n = (HippoNode) model.getObject();
 
             //State property is only available on variants
-            HippoNode variant = (HippoNode) (n.getNode(n.getName()));
-            Node canonicalNode = variant.getCanonicalNode();
-            String state = "unknown";
-            if (canonicalNode.hasProperty("hippostd:stateSummary")) {
-                state = canonicalNode.getProperty("hippostd:stateSummary").getString();
+            if (n.hasNode(n.getName())) {
+                HippoNode variant = (HippoNode) (n.getNode(n.getName()));
+                Node canonicalNode = variant.getCanonicalNode();
+                String state = "unknown";
+                if (canonicalNode.hasProperty("hippostd:stateSummary")) {
+                    state = canonicalNode.getProperty("hippostd:stateSummary").getString();
+                }
+                return new Label(id, state);
             }
-            return new Label(id, state);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

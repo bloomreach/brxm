@@ -48,32 +48,28 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
         super(context, config);
     }
 
+    @Override
     protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
         try {
-            if(model.getNode().getParent() != null) {
+            if (model.getNode().getParent() != null) {
                 setModel(model);
                 return;
             }
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
         }
-        setModel(new JcrNodeModel((javax.jcr.Node)null));
+        setModel(new JcrNodeModel((javax.jcr.Node) null));
     }
 
     @Override
     protected Component getTable(String wicketId, ISortableDataProvider provider, int pageSize, int viewSize) {
         List<IStyledColumn> columns = createTableColumns();
-        CustomizableDocumentListingDataTable dataTable = 
-            new CustomizableDocumentListingDataTable(wicketId, columns, provider, pageSize, false);
+        CustomizableDocumentListingDataTable dataTable = new CustomizableDocumentListingDataTable(wicketId, columns,
+                provider, pageSize, false);
         dataTable.addBottomPaging(viewSize);
         dataTable.addTopColumnHeaders();
         return dataTable;
     }
 
-    @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName, IJcrNodeViewerFactory resolver) {
-        return new DocumentListingNodeColumn(model, propertyName, resolver, this);
-    }
-    
     @Override
     protected List<IStyledColumn> createTableColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
@@ -81,13 +77,17 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
         columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
         columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, new TypeResolver()));
         columns.add(getNodeColumn(new Model("State"), "state", new StateResolver()));
-        
+
         return columns;
+    }
+
+    @Override
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, IJcrNodeViewerFactory resolver) {
+        return new DocumentListingNodeColumn(model, propertyName, resolver, this);
     }
 
     public String getTitle() {
         return "Document listing";
     }
-
 
 }
