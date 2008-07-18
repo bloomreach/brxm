@@ -423,6 +423,7 @@
           </sv:property>
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
+            <sv:value>AutoResize</sv:value>
             <sv:value>CustomLinker</sv:value>
             <sv:value>ImagePicker</sv:value>
           </sv:property>
