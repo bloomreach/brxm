@@ -45,6 +45,10 @@ public class ToggleVersionPlugin extends RenderPlugin {
         JcrNodeModel model = (JcrNodeModel) getModel();
         try {
             Node node = model.getNode().getCanonicalNode();
+            if(node == null) {
+                // virtual node not having canonical equivalent
+                return;
+            }
             if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 replace(new ToggleVersionPanel("toggleLabel"));
             } else {
