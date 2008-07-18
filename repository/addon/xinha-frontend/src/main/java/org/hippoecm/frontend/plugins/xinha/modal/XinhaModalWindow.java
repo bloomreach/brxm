@@ -40,6 +40,9 @@ public class XinhaModalWindow extends ModalWindow {
             protected String getSelectedValue() {
                 return "{}";
             }
+            @Override
+            protected void onSubmitCreateLinks() {
+            }
 
         });
     }

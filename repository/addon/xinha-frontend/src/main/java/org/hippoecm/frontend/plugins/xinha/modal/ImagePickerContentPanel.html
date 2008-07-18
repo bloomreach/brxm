@@ -17,12 +17,25 @@
   <h2>Image picker</h2>
   <form wicket:id="form">
     <p>
-      <label>Image url</label>  
-      <input type="text" wicket:id="url" />
+      <label>Image Name</label>  
+      <input type="text" wicket:id="alt" /><br/>
+      <span wicket:id="exists" style="color:red" />
+      <img src="" wicket:id="selectedimg"/>
+      <div>
+        <p style="padding-top: 20px;">
+          <input type="button" wicket:id="ok" value = "OK"/>
+          <input type="button" wicket:id="close" value="Close" />
+        </p> 
+      </div>   
+      <div style="clear:both"/>
+      <div class="item" wicket:id="item">
+        <a wicket:id="callback">
+          <div wicket:id="entry" style="float:left; margin:5px;">
+              <img src="" wicket:id="thumbnail" />
+          </div>
+        </a>
+      </div>
     </p>
-    <p style="padding-top: 20px;">
-      <input type="button" wicket:id="ok" value = "OK"/>
-      <input type="button" wicket:id="close" value="Close" />
-    </p>    
+    
   </form>
 </wicket:panel>
