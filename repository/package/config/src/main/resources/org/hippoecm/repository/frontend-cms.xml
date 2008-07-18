@@ -362,6 +362,30 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="embedWorkflowPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.node</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.id" sv:type="String">
+      <sv:value>workflows.id</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.categories" sv:type="String">
+      <sv:value>embedded</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="workflowPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -387,30 +411,6 @@
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>internal</sv:value>
       <sv:value>reviewed-action</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="embedWorkflowPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflows.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>embedded</sv:value>
     </sv:property>
   </sv:node>
 
