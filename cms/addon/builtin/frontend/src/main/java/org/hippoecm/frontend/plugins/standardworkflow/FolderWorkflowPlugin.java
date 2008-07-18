@@ -25,13 +25,21 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Node;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.html.basic.Label;
+
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.CustomizableDialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -43,13 +51,12 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -59,10 +66,43 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
     transient Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
     Map<String, Set<String>> templates;
+    Label folderName;
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         
+        add(folderName = new Label("foldername"));
+
+        DialogLink deleteLink;
+        deleteLink = new DialogLink("delete-dialog", new Model("Delete folder"), new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+
+                public AbstractDialog createDialog(IDialogService dialogService) {
+                    // FIXME: fixed (in code) dialog text
+                    String text = "Are you sure you want to delete ";
+                    try {
+                        text += "folder ";
+                        text += ((WorkflowsModel)FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
+                    } catch(RepositoryException ex) {
+                        text += "this folder";
+                    }
+                    text += " and all of its contents permanently?";
+                    return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
+                            protected void execute() throws Exception {
+                                // FIXME: this assumes that folders are always embedded in other folders
+                                // and there is some logic here to look up the parent.  The real solution is
+                                // in the visual component to merge two workflows.
+                                WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
+                                Node node = model.getNodeModel().getNode();
+                                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                                workflow.delete(node.getName());
+                            }
+                        };
+                }
+            }, getDialogService());
+        add(deleteLink);
+
         final IDataProvider provider = new IDataProvider() {
             private static final long serialVersionUID = 1L;
 
@@ -94,7 +134,7 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
-                      if(dialogTitle.contains("content selection"))
+                      if(dialogTitle.contains("New Smart Folder")) // FIXME very bad check on name
                         return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
                       else
                         return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
@@ -133,6 +173,14 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+        try {
+            if(model.getNodeModel() != null) {
+                if(model.getNodeModel().getNode() != null) {
+                    folderName.setModel(new Model(((HippoNode)model.getNodeModel().getNode()).getDisplayName()));
+                }
+            }
+        } catch (RepositoryException ex) {
+        }
         try {
             FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(model.getWorkflowDescriptor());
             templates = workflow.list();

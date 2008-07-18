@@ -49,7 +49,11 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     private IServiceReference<IJcrService> jcrServiceRef;
 
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
-        super(plugin.getPluginContext(), dialogWindow);
+        this(plugin, dialogWindow, title, null);
+    }
+
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title, String text) {
+        super(plugin.getPluginContext(), dialogWindow, text);
 
         IPluginContext context = plugin.getPluginContext();
         this.title = title;

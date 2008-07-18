@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -39,11 +40,21 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
     private String exception = "";
 
     public AbstractDialog(IPluginContext context, IDialogService dialogWindow) {
+        this(context, dialogWindow, null);
+    }
+
+    public AbstractDialog(IPluginContext context, IDialogService dialogWindow, String text) {
         this.windowRef = context.getReference(dialogWindow);
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
+
+        if(text != null) {
+            add(new Label("text", new Model(text)));
+        } else {
+            add(new Label("text"));
+        }
 
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;
