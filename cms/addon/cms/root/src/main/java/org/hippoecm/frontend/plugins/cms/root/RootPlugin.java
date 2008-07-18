@@ -15,10 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.behavior.HeaderContributor;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.Pinger;
@@ -35,6 +39,24 @@ public class RootPlugin extends RenderPlugin {
         if (config.getString(RenderService.SKIN_ID) != null) {
             add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
         }
+
+        YuiWireframeBehavior rootWireframe = new YuiWireframeBehavior("");
+        Map<String, String> opts = new HashMap<String, String>();
+        opts.put("height", "50");
+        opts.put("id", "root-layout-header");
+        rootWireframe.addUnit("top", opts);
+        
+        opts = new HashMap<String, String>();
+        opts.put("id", "root-layout-center");
+        opts.put("gutter", "0 5px 0 5px");
+        rootWireframe.addUnit("center", opts);
+        
+        opts = new HashMap<String, String>();
+        opts.put("height", "5");
+        opts.put("id", "root-layout-footer");
+        rootWireframe.addUnit("bottom", opts);
+        
+        add(rootWireframe);
 
         add(new AjaxIndicatorBehavior());
         add(new Pinger("pinger"));

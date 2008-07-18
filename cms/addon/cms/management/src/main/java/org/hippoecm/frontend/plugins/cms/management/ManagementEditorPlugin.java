@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.YuiUnitBehavior;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 
@@ -35,6 +36,8 @@ public class ManagementEditorPlugin extends EditorPlugin {
 
         add(feedback = new FeedbackPanel("feedback"));
         feedback.setOutputMarkupId(true);
+        
+        add(new YuiUnitBehavior("center", "gutter=0px 5px 0px 0px", "scroll=true"));
     }
 
     @Override

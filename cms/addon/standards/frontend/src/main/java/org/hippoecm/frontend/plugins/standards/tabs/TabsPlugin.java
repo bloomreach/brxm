@@ -27,6 +27,8 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.YuiUnitBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeConfig;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -156,6 +158,8 @@ public class TabsPlugin extends RenderPlugin {
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
+            Panel fo = (Panel) renderer;
+            fo.add(new YuiUnitBehavior(YuiWireframeConfig.Unit.CENTER));
         }
 
         void destroy() {

@@ -15,9 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 
 public class DashboardPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -27,5 +31,18 @@ public class DashboardPerspective extends Perspective {
 
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        YuiWireframeBehavior wireframe = new YuiWireframeBehavior("dashboard-perspective-wrapper", true);
+        Map<String, String> optsLeft = new HashMap<String, String>();
+        optsLeft.put("width", "50%");
+        optsLeft.put("id", "lefthalf");
+        optsLeft.put("resize", "true");
+        optsLeft.put("scroll", "true");
+        optsLeft.put("gutter", "0px 5px 0px 0px");
+        wireframe.addUnit("left", optsLeft);
+        
+        wireframe.addUnit("top", "height=200", "id=welcomepanel", "resize=true", "gutter=0px 0px 5px 0px");
+        wireframe.addUnit("center", "id=righthalf");
+        add(wireframe);
     }
 }
