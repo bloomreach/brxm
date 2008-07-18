@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -145,6 +146,12 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         }
     }
 
+    /**
+     * Called when node is selected.
+     */
+    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
+    }
+
     @Override
     protected void onDetach() {
         if (provider != null) {
@@ -158,7 +165,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     protected abstract List<IStyledColumn> createTableColumns();
 
     protected IStyledColumn getNodeColumn(Model model, String propertyName, IJcrNodeViewerFactory resolver) {
-        return new NodeColumn(model, propertyName, resolver);
+        return new NodeColumn(model, propertyName, resolver, this);
     }
 
     protected abstract Component getTable(String wicketId, ISortableDataProvider provider, int pageSize, int viewSize);

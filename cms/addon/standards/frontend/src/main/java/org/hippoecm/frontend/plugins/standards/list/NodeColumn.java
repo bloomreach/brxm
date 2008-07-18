@@ -27,10 +27,12 @@ public class NodeColumn extends AbstractColumn {
     private static final long serialVersionUID = 1L;
 
     private IJcrNodeViewerFactory resolver;
+    private AbstractListingPlugin plugin;
 
-    public NodeColumn(IModel displayModel, String prop, IJcrNodeViewerFactory resolver) {
+    public NodeColumn(IModel displayModel, String prop, IJcrNodeViewerFactory resolver, AbstractListingPlugin plugin) {
         super(displayModel, prop);
         this.resolver = resolver;
+        this.plugin = plugin;
     }
 
     public void populateItem(Item item, String componentId, IModel model) {
@@ -44,7 +46,7 @@ public class NodeColumn extends AbstractColumn {
      * @return NodeCell
      */
     protected NodeCell getNodeCell(String componentId, IModel model, IJcrNodeViewerFactory resolver) {
-        return new NodeCell(componentId, (JcrNodeModel)model, resolver);
+        return new NodeCell(componentId, (JcrNodeModel)model, resolver, plugin);
     }
 
 }

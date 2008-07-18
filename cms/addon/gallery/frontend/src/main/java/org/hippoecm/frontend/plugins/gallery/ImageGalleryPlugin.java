@@ -28,7 +28,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -37,8 +36,6 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
-import org.hippoecm.frontend.resource.JcrResource;
-import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +63,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         return columns;
     }
 
-
+    @Override
     protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
         try {
             if(model.getNode().getParent() != null) {
@@ -102,8 +99,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
                             Item primItem = imageSet.getPrimaryItem();
                             if (primItem.isNode()) {
                                 if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                                    JcrResourceStream resource = new JcrResourceStream((Node) primItem);
-                                    return new Image("image", new JcrResource(resource));
+                                    return new ImageContainer(id, new JcrNodeModel((Node) primItem));
                                 } else {
                                     ImageGalleryPlugin.log.warn("primary item of image set must be of type "
                                             + HippoNodeType.NT_RESOURCE);

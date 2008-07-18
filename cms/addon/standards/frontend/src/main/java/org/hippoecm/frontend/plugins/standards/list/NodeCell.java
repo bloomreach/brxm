@@ -30,26 +30,20 @@ public class NodeCell extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(NodeCell.class);
 
-    public NodeCell(String id, final JcrNodeModel model, IJcrNodeViewerFactory resolver) {
+    public NodeCell(String id, final JcrNodeModel model, IJcrNodeViewerFactory resolver, final AbstractListingPlugin plugin) {
         super(id, model);
-        
+
         AjaxLink link = new AjaxLink("link", model) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                onSelect(model, target);
+                plugin.onSelect(model, target);
             }
         };
 
         link.add(resolver.getViewer("label", model));
         add(link);
-    }
-
-    /**
-     * Called when node is selected.
-     */
-    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
     }
 
 }
