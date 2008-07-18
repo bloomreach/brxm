@@ -30,7 +30,11 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.StateResolver;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeResolver;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
 public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
@@ -65,16 +69,16 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
     }
 
     @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName) {
-        return new DocumentListingNodeColumn(model, propertyName, this);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, IJcrNodeViewerFactory resolver) {
+        return new DocumentListingNodeColumn(model, propertyName, resolver, this);
     }
     
     @Override
     protected List<IStyledColumn> createTableColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(getNodeColumn(new Model("Name"), "name"));
-        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE));
-        columns.add(getNodeColumn(new Model("State"), "state"));
+        columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
+        columns.add(getNodeColumn(new Model("Type"), JcrConstants.JCR_PRIMARYTYPE, new TypeResolver()));
+        columns.add(getNodeColumn(new Model("State"), "state", new StateResolver()));
         
         return columns;
     }

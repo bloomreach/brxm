@@ -38,6 +38,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -127,7 +128,7 @@ public class GroupsListPlugin extends FlushableListingPlugin {
     @Override
     protected List<IStyledColumn> createTableColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(getNodeColumn(new Model("Name"), "name"));
+        columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
         return columns;
     }
 

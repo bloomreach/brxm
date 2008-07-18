@@ -26,15 +26,15 @@ public class NodeColumn extends AbstractColumn {
 
     private static final long serialVersionUID = 1L;
 
-    private String nodePropertyName;
+    private IJcrNodeViewerFactory resolver;
 
-    public NodeColumn(IModel displayModel, String nodePropertyName) {
-        super(displayModel, nodePropertyName);
-        this.nodePropertyName = nodePropertyName;
+    public NodeColumn(IModel displayModel, String prop, IJcrNodeViewerFactory resolver) {
+        super(displayModel, prop);
+        this.resolver = resolver;
     }
 
     public void populateItem(Item item, String componentId, IModel model) {
-        item.add(getNodeCell(componentId, model, nodePropertyName));
+        item.add(getNodeCell(componentId, model, resolver));
     }
 
     /**
@@ -43,12 +43,8 @@ public class NodeColumn extends AbstractColumn {
      * @param model
      * @return NodeCell
      */
-    protected NodeCell getNodeCell(String componentId, IModel model, String nodePropertyName) {
-        return new NodeCell(componentId, (JcrNodeModel)model, nodePropertyName);
-    }
-
-    public String getNodePropertyName() {
-        return nodePropertyName;
+    protected NodeCell getNodeCell(String componentId, IModel model, IJcrNodeViewerFactory resolver) {
+        return new NodeCell(componentId, (JcrNodeModel)model, resolver);
     }
 
 }
