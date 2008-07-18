@@ -45,6 +45,8 @@ clear: both;
 margin: 0;
 }
 
+select#versionselect{width: 200px; font-size: 14px; margin-bottom: 10px;}
+select#versionselect option{padding: 2px;}
 
 
 div#navigation {width: auto; background-repeat: repeat-x}

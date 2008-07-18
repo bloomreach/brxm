@@ -375,6 +375,17 @@
  </div>
 </div>
 <div id="leftnav">
+<form>
+<select id="versionselect">
+          <option>Change version</option>
+		  <option>6.1</option>
+          <option>6.2</option>
+          <option>6.05.01</option>
+          <option>6.06.01</option>
+</select>
+</from>
+
+
        #publishDate( "navigation-top" $decoration.publishDate $decoration.version )
        #mainMenu( $decoration.body.menus )
        #publishDate( "navigation-bottom" $decoration.publishDate $decoration.version )
