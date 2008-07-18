@@ -44,7 +44,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.lookup.LookupTargetTreeView;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -63,7 +62,6 @@ public class ImagePickerContentPanel extends XinhaContentPanel {
     private String altName = null;
     private String selectedimg = "";
     private String existsMsg = "";
-    protected LookupTargetTreeView tree;
     
     public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel, Map<String, String> parameters) {
         super(modal, parameters);
