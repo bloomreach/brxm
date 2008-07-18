@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.io.Serializable;
@@ -9,12 +25,15 @@ import org.hippoecm.frontend.plugins.yui.util.JavascriptUtil;
 import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
 public class YuiWireframeConfig implements Serializable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private String rootElementId;
     private String parentElementId;
     private boolean linkedWithParent = false;
-    
+
     private Map<String, Unit> units;
     private Map<String, String> unitElements;
 
@@ -22,7 +41,7 @@ public class YuiWireframeConfig implements Serializable {
         this();
         this.linkedWithParent = linkedWithParent;
     }
-    
+
     public YuiWireframeConfig() {
         units = new MiniMap(5);
         units.put(Unit.TOP, null);
@@ -30,14 +49,14 @@ public class YuiWireframeConfig implements Serializable {
         units.put(Unit.LEFT, null);
         units.put(Unit.RIGHT, null);
         units.put(Unit.CENTER, null);
-        
+
         unitElements = new MiniMap(5);
     }
 
     public void addUnit(String position, String... pairs) {
         addUnit(position, OptionsUtil.keyValuePairsToMap(pairs));
     }
-    
+
     public void addUnit(String position, Map<String, String> options) {
         if (!units.containsKey(position)) {
             throw new IllegalArgumentException(
@@ -48,18 +67,18 @@ public class YuiWireframeConfig implements Serializable {
             units.put(position, new Unit(options));
         }
     }
-    
+
     //pass none ajax updatable element as root
     public void registerUnitElement(String position, String elId) {
         unitElements.put(position, elId);
     }
-    
+
     public String getUnitElement(String position) {
-        if(unitElements.containsKey(position))
+        if (unitElements.containsKey(position))
             return unitElements.get(position);
         return null;
     }
-    
+
     public void setRootElementId(String id) {
         rootElementId = id;
     }
@@ -97,10 +116,10 @@ public class YuiWireframeConfig implements Serializable {
         newMap.put("rootElementId", JavascriptUtil.serialize2JS(rootElementId));
         newMap.put("parentElementId", JavascriptUtil.serialize2JS(parentElementId));
         newMap.put("linkedWithParent", linkedWithParent);
-        
+
         StringBuilder config = new StringBuilder();
         config.append("{");
-        if(units.size() > 0) {
+        if (units.size() > 0) {
             config.append("units: [");
             for (String unitKey : units.keySet()) {
                 Unit unit = units.get(unitKey);
@@ -116,7 +135,7 @@ public class YuiWireframeConfig implements Serializable {
                     config.append("}");
                     if (!unitKey.equals(Unit.CENTER))
                         config.append(",");
-    
+
                 }
             }
             config.append("]");
@@ -133,9 +152,9 @@ public class YuiWireframeConfig implements Serializable {
     public void setParentId(String parentId) {
         this.parentElementId = parentId;
     }
-    
+
     public boolean isLinkedWithParent() {
         return linkedWithParent;
     }
-    
+
 }
