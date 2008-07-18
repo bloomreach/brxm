@@ -39,4 +39,12 @@ public class DocumentListingNodeColumn extends NodeColumn {
         return new DocumentListingNodeCell(componentId, (JcrNodeModel) model, resolver, plugin);
     }
 
+    public String getCssClass() {
+        if ("icon".equals(getSortProperty())) {
+            return "icon-16";
+        } else {
+            return super.getCssClass();
+        }
+    }
+
 }
