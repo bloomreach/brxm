@@ -18,19 +18,21 @@
     <link href="skin/style.css" type="text/css" rel="stylesheet"/>
   </wicket:head>
   <body class="dialog">
+    <h1>Add an image to the image gallery</h1>
     <form wicket:id="form">
-      <fieldset>
-        <legend>Create item in gallery</legend>
-        <p>
-          <label for="upload">Primary displayed component for item:</label>
-          <input wicket:id="input" id="upload" type="file"/>
-        </p>
-        <p>
-          <label for="typeselect">Item provided is of type:</label>
-          <select wicket:id="type" id="typeselect"></select>
-        </p>
-        <input class="fauxbutton" type="submit" value="Create"/>
-      </fieldset>
+    <table>
+        <tr>
+          <td><label for="upload"> Select Image:</label></td>
+          <td><input wicket:id="input" id="upload" type="file" /></td>
+        </tr>
+      <tr>
+      <td><label for="typeselect">Item provided is of type:</label></td>
+      <td><select wicket:id="type" id="typeselect"></select></td>
+      </tr>
+        <tr>
+          <td colspan="2"><input class="fauxbutton" type="submit" value="Create"/></td>
+        </tr>
+    </table>
     </form>
     <strong><span wicket:id="exception"></span></strong>
   </body>
