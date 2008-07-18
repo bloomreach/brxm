@@ -38,7 +38,8 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.acceptRequest();
             }
         });
-        addWorkflowDialog("rejectRequest-dialog", "Reject request (with reason)", "Reject request (with reason)",
+        addWorkflowDialog("rejectRequest-dialog", "Reject request", "Reject request",
+                          "Are you sure you want to reject this request?",
                 new WorkflowAction() {
                     private static final long serialVersionUID = 1L;
 
@@ -46,7 +47,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                         FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
                         workflow.rejectRequest(""); // FIXME
                     }
-                });
+        });
         addWorkflowAction("cancelRequest-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
