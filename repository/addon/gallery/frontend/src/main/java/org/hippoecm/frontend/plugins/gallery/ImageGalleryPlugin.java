@@ -18,16 +18,28 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.frontend.plugins.standards.list.datatable.CustomizableDocumentListingDataTable;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
+import org.hippoecm.frontend.resource.JcrResource;
+import org.hippoecm.frontend.resource.JcrResourceStream;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
  
@@ -45,11 +57,12 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         super(context, config);
     }
 
+    @Override
     public List<IStyledColumn> createTableColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
         columns = new ArrayList<IStyledColumn>();
-        columns.add(getNodeColumn(new Model("PrimaryItem"), "primaryitem"));
-        columns.add(getNodeColumn(new Model("Name"), "name"));
+        columns.add(getNodeColumn(new Model("PrimaryItem"), "primaryitem", new PrimaryItemViewer()));
+        columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
         return columns;
     }
 
@@ -76,9 +89,40 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         return dataTable;
     }
 
-    @Override
-    protected IStyledColumn getNodeColumn(Model model, String propertyName) {
-        return new ImageGalleryListingNodeColumn(model, propertyName, this);
+    private static class PrimaryItemViewer implements IJcrNodeViewerFactory {
+        private static final long serialVersionUID = 1L;
+
+        public Component getViewer(String id, JcrNodeModel model) {
+            Node node = model.getNode();
+            try {
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (node.hasNode(node.getName())) {
+                        Node imageSet = node.getNode(node.getName());
+                        try {
+                            Item primItem = imageSet.getPrimaryItem();
+                            if (primItem.isNode()) {
+                                if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                                    JcrResourceStream resource = new JcrResourceStream((Node) primItem);
+                                    return new Image("image", new JcrResource(resource));
+                                } else {
+                                    ImageGalleryPlugin.log.warn("primary item of image set must be of type "
+                                            + HippoNodeType.NT_RESOURCE);
+                                }
+                            }
+                        } catch (ItemNotFoundException e) {
+                            ImageGalleryPlugin.log.debug("ImageSet must have a primary item. " + node.getPath()
+                                    + " probably not of correct image set type");
+                        }
+                    }
+                } else {
+                    ImageGalleryPlugin.log.debug("ImageSet must have a primary item. " + node.getPath()
+                            + " probably not of correct image set type");
+                }
+            } catch (RepositoryException e) {
+                ImageGalleryPlugin.log.error(e.getMessage());
+            }
+            return new Label(id);
+        }
     }
 
 }

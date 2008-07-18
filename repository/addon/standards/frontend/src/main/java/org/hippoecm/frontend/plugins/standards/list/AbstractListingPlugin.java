@@ -157,8 +157,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     protected abstract List<IStyledColumn> createTableColumns();
 
-    protected IStyledColumn getNodeColumn(Model model, String propertyName) {
-        return new NodeColumn(model, propertyName);
+    protected IStyledColumn getNodeColumn(Model model, String propertyName, IJcrNodeViewerFactory resolver) {
+        return new NodeColumn(model, propertyName, resolver);
     }
 
     protected abstract Component getTable(String wicketId, ISortableDataProvider provider, int pageSize, int viewSize);

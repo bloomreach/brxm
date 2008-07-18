@@ -13,28 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list;
+package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
-import org.hippoecm.frontend.plugins.standards.list.NodeCell;
+import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DocumentListingNodeCell extends NodeCell {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
+public class LockResolver implements IJcrNodeViewerFactory {
     private static final long serialVersionUID = 1L;
 
-    private DocumentListingPlugin plugin;
+    private static final Logger log = LoggerFactory.getLogger(LockResolver.class);
 
-    public DocumentListingNodeCell(String id, JcrNodeModel model, IJcrNodeViewerFactory resolver, DocumentListingPlugin plugin) {
-        super(id, model, resolver);
-        this.plugin = plugin;
+    public Component getViewer(String id, JcrNodeModel model) {
+        try {
+            HippoNode n = (HippoNode) model.getObject();
+
+            return new Label(id, String.valueOf(n.isLocked()));
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return new Label(id);
     }
 
-    @Override
-    protected void onSelect(JcrNodeModel model, AjaxRequestTarget target) {
-        plugin.onSelect(model, target);
-    }
 }
