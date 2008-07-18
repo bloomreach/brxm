@@ -51,7 +51,7 @@ public class TabbedPanel extends AjaxTabbedPanel {
             public Object component(Component component) {
                 if(component.getId().equals("tabs-container")) {
                     component.setOutputMarkupId(true);
-                    component.add(new YuiUnitBehavior(YuiWireframeConfig.Unit.TOP, "height=30"));
+                    component.add(new YuiUnitBehavior(YuiWireframeConfig.Unit.TOP, "height=70"));
                     return STOP_TRAVERSAL;
                 } 
                 return CONTINUE_TRAVERSAL;
