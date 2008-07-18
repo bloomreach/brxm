@@ -297,8 +297,10 @@ height: 15px;
 width:350px;
 color: white;
 }
-body.dialog{background: white; text-align: right; padding: 15px;}
+body.dialog{background: white; padding: 15px;}
 body.dialog div.dialogButtons{padding-top: 50px}
+body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
+body.dialog h1{margin-bottom: 10px; font-size: 16px;}
 
 /* Breadcrumbs */
 /* ================================================ */
@@ -313,8 +315,6 @@ color: #f2f2f2;
 /* Workflow */
 /* ================================================ */
 span.documentStatus{font-weight: normal; padding-left: 3px;}
-
-
 
 /* Paging */
 /* ================================================ */
@@ -362,9 +362,6 @@ div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: bl
 /* ================================================ */
 
 div.editor{
-/*height: 85%;
-max-height:500px;
-overflow:auto;*/
 padding:7px;
 }
 
@@ -387,11 +384,6 @@ div.fields div span.templateactions ul li{padding: 0px}
 
 .templatedetails{
 padding: 4px;
-/*height: auto;
-width:auto;*/
-/*height: 410px;
-height: 80%;
-overflow: auto;*/
 }
 
 .required{
@@ -429,6 +421,7 @@ span.actionspanel ul li{background: none}
 div.fields table{width: 100%}
 div.fields div {padding: 2px}
 div.fields div ul li ul li{padding:4px}
+
 /* Xinha */
 /* ================================================ */
 table.htmlarea tr td{border: none}
@@ -549,7 +542,6 @@ tr.odd td { padding: 5px; }
 table tr td.icon-16{width: 15px}
 table tr td.icon-16 span a span{display: block; height: 16px;}
 
-
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
 .dataListPaging td div{margin-bottom: 5px}
 .dataListPaging td a{padding: 5px;}
@@ -599,8 +591,8 @@ margin-top: 10px;
 
 .templatedetails div.templateactions {
 position: absolute;
-left: 520px;
-top:58px;
+left: 0px;
+top: 3px;
 }
 
 div.templateactions {
