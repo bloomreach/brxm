@@ -30,7 +30,6 @@ import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -62,77 +61,54 @@ public class WizardDialog extends WebPage {
     protected AjaxLink submit;
     private IServiceReference<IDialogService> windowRef;
     private String exception = "";
-    
+
     private static final Set<String> supportRescaleMimeTypes = new HashSet<String>();
     {
         supportRescaleMimeTypes.add("image/jpeg");
     }
-  
-    public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config, IDialogService dialogWindow) {
+
+    public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
+            IDialogService dialogWindow) {
         this.windowRef = context.getReference(dialogWindow);
 
         try {
             String path = config.getString("gallery.path");
-            if(path != null) {
-                while(path.startsWith("/"))
+            if (path != null) {
+                while (path.startsWith("/"))
                     path = path.substring(1);
                 setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)));
             }
-        } catch(PathNotFoundException ex) {
+        } catch (PathNotFoundException ex) {
             // cannot occur anymore because GalleryShortcutPlugin already checked this, however
             // because of HREPTWO-1218 we cannot use the model of GalleryShortcutPlugin.
-        } catch(RepositoryException ex) {
-            Gallery.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            Gallery.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
         JcrNodeModel model = (JcrNodeModel) getModel();
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
-        add(exceptionLabel); 
+        add(exceptionLabel);
 
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
 
         workflowCategory = config.getString("gallery.workflow");
         add(form = new WizardForm("form", model));
+    }
 
-        submit = new AjaxLink("submit") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                try {
-                    // do the action to be performed for user
-                    ((UserSession) Session.get()).getJcrSession().refresh(true);
-                    IJcrService jcrService = jcrServiceRef.getService();
-                    if (jcrService != null) {
-                        jcrService.flush(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode()));
-                    }
-
-                    windowRef.getService().close();
-                } catch (Exception e) {
-                    String msg = e.getClass().getName() + ": " + e.getMessage();
-                    Gallery.log.error(msg);
-                    if (Gallery.log.isDebugEnabled()) {
-                        Gallery.log.debug("Error from repository: ", e);
-                    }
-                    exception = msg;
-                    target.addComponent(exceptionLabel);
-                    e.printStackTrace();
-                }
-            }
-        };
-        add(submit);
+    public String getException() {
+        return exception;
     }
 
     @Override
     public void onDetach() {
-        if(jcrServiceRef != null) {
+        if (jcrServiceRef != null) {
             jcrServiceRef.detach();
         }
         super.onDetach();
     }
-    
+
     private class WizardForm extends Form {
         private static final long serialVersionUID = 1L;
 
@@ -143,6 +119,7 @@ public class WizardDialog extends WebPage {
         public String getType() {
             return type;
         }
+
         public void setType(String type) {
             this.type = type;
         }
@@ -159,20 +136,20 @@ public class WizardDialog extends WebPage {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
                 galleryTypes = workflow.getGalleryTypes();
-            } catch(MappingException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            } catch (MappingException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
-            } catch(RepositoryException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            } catch (RepositoryException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
-            } catch(RemoteException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            } catch (RemoteException ex) {
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
             }
-            if(galleryTypes != null && galleryTypes.size() > 0) {
+            if (galleryTypes != null && galleryTypes.size() > 0) {
                 DropDownChoice folderChoice;
                 type = galleryTypes.get(0);
                 add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes));
@@ -196,50 +173,54 @@ public class WizardDialog extends WebPage {
                     InputStream istream = upload.getInputStream();
                     WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                     JcrNodeModel model = (JcrNodeModel) getModel();
-                    if(model != null && model.getNode() != null) {
+                    if (model != null && model.getNode() != null) {
                         try {
                             Node galleryNode = model.getNode();
-                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
+                            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory,
+                                    galleryNode);
                             Document document = workflow.createGalleryItem(filename, type);
-                            Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                            Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
+                                    document.getIdentity());
                             Item item = node.getPrimaryItem();
-                            if(item.isNode()) {
+                            if (item.isNode()) {
                                 Node primaryChild = (Node) item;
-                                if(primaryChild.isNodeType("hippo:resource")) {
+                                if (primaryChild.isNodeType("hippo:resource")) {
                                     primaryChild.setProperty("jcr:mimeType", mimetype);
                                     primaryChild.setProperty("jcr:data", istream);
                                 }
                                 NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
-                                for(int i=0; i<childDefs.length; i++) {
-                                    if(childDefs[i].getDefaultPrimaryType() != null &&
-                                       childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                                        if(!node.hasNode(childDefs[i].getName())) {
+                                for (int i = 0; i < childDefs.length; i++) {
+                                    if (childDefs[i].getDefaultPrimaryType() != null
+                                            && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                                        if (!node.hasNode(childDefs[i].getName())) {
                                             Node child = node.addNode(childDefs[i].getName());
-                                            child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
-                                            child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType").getString());
-                                            child.setProperty("jcr:lastModified", primaryChild.getProperty("jcr:lastModified").getDate());
+                                            child.setProperty("jcr:data", primaryChild.getProperty("jcr:data")
+                                                    .getStream());
+                                            child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType")
+                                                    .getString());
+                                            child.setProperty("jcr:lastModified", primaryChild.getProperty(
+                                                    "jcr:lastModified").getDate());
                                         }
                                     }
                                 }
-                                makeThumbnail(primaryChild,
-                                              primaryChild.getProperty("jcr:data").getStream(),
-                                              primaryChild.getProperty("jcr:mimeType").getString());
+                                makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(),
+                                        primaryChild.getProperty("jcr:mimeType").getString());
                                 node.save();
                             }
                         } catch (MappingException ex) {
-                            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                             ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
                             exception = "Workflow error: " + ex.getMessage();
                         } catch (RepositoryException ex) {
-                            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                             ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
                             exception = "Workflow error: " + ex.getMessage();
                         }
                     }
-                } catch(IOException ex) {
-                    System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                } catch (IOException ex) {
+                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                     ex.printStackTrace(System.err);
                     Gallery.log.info("upload of image truncated");
                     exception = "Upload failed: " + ex.getMessage();
@@ -252,20 +233,20 @@ public class WizardDialog extends WebPage {
 
     protected void makeThumbnail(Node resource, InputStream istream, String mimeType) {
         int maxWidthThumbnail = 100;
-        if(supportRescaleMimeTypes.contains(mimeType)) {
+        if (supportRescaleMimeTypes.contains(mimeType)) {
             try {
                 String scaledMimeType = mimeType;
                 InputStream thumbStream = null;
                 try {
                     thumbStream = JpegImageResizer.resizeImage(istream, maxWidthThumbnail);
                 } catch (IOException e) {
-                    System.err.println(e.getClass().getName()+": "+e.getMessage());
+                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
                     e.printStackTrace(System.err);
                     return;
                 }
                 resource.setProperty("jcr:data", thumbStream);
                 resource.setProperty("jcr:mimeType", scaledMimeType);
-            } catch(RepositoryException ex) {
+            } catch (RepositoryException ex) {
             }
         }
     }
