@@ -78,6 +78,12 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.center</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
