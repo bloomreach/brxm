@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,8 @@ public class NameResolver implements IJcrNodeViewerFactory {
     public Component getViewer(String id, JcrNodeModel model) {
         try {
             HippoNode n = (HippoNode) model.getObject();
-            
-            return new Label(id, n.getName());
+            String name = ISO9075Helper.decodeLocalName( n.getName());
+            return new Label(id, name);
         } catch(RepositoryException ex) {
             log.error(ex.getMessage());
         }
