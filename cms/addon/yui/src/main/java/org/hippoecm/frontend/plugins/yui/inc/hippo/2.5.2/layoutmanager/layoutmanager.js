@@ -73,7 +73,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (Dom.getStyle(el, 'display') == 'none') {
                     // YAHOO.widget.Effects.Appear(el, {ease:
                     // YAHOO.util.Easing.easeIn, seconds: 0.5, delay: false});
-                    YAHOO.widget.Effects.Show(el);
+                    //YAHOO.widget.Effects.Show(el);
+                    Dom.setStyle(el, 'display', 'block');
                 }
             },
 
@@ -162,7 +163,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     _this.wireframes[parentId].childInitializer = childInit;
                     if (update) {
                         var func = function() {
-                            _this.renderWireframe(_this.ROOT_ELEMENT_ID)
+                            _this.renderWireframe(parentId)
                         };
                         this.renderQueue.registerFunction(func,
                                 _this.ROOT_ELEMENT_ID);
@@ -180,6 +181,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         };
                     }
                     this.createQueue.registerFunction(initFunc, id);
+                    
+                    //Might move these into the init functions
                     this.renderQueue.registerFunction( function() {
                         _this.renderWireframe(id)
                     }, id);
@@ -199,6 +202,14 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     if (_this.wireframes[id].childInitializer != null) {
                         _this.wireframes[id].childInitializer();
                         _this.wireframes[id].childInitializer = null;
+                    } else {
+                        for(var i in _this.wireframes) {
+                            if(_this.wireframes[i].parentId == id) {
+                                _this.renderWireframe(_this.wireframes[i].id);
+                                break;
+                            }
+                    
+                        }
                     }
                 });
                 layout

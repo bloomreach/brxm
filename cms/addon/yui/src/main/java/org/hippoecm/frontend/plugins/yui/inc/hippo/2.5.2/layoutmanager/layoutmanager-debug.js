@@ -34,23 +34,23 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             renderQueue :new YAHOO.hippo.FunctionQueue('render'),
 
             onLoad : function() {
-                YAHOO.log('onLoad: createQueue.length='
-                        + this.createQueue.queue.length
-                        + ', renderQueue.length='
-                        + this.renderQueue.queue.length, 'info', 'LayoutManager');
+                YAHOO.log('onLoad', 'info', 'LayoutManager');
                 this.createWireframes();
                 this.renderWireframes();
             },
 
             createWireframes : function() {
+                YAHOO.log('Create ' + this.createQueue.queue.length + 'wireframes', 'info', 'LayoutManager');
                 this.createQueue.handleQueue();
             },
 
             renderWireframes : function() {
+                YAHOO.log('Render ' + this.renderQueue.queue.length + 'wireframes', 'info', 'LayoutManager');                
                 this.renderQueue.handleQueue();
             },
 
             cleanup : function(id) {
+                YAHOO.log("Start cleanup of wireframe[" + id + "]", 'info', 'LayoutManager');
                 for ( var i in this.wireframes) {
                     if (!Lang.isFunction(i)) {
                         var parId = this.wireframes[i].parentId;
@@ -65,10 +65,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (layout != null) {
                     layout.destroy();
                     this.wireframes[id].layout = null;
+                    YAHOO.log('Destroyed layout of wireframe[' + id + ']', 'info', 'LayoutManager');
                 }
+                YAHOO.log("Cleanup of wireframe[" + id + "] finished", 'info', 'LayoutManager');
             },
 
             renderWireframe : function(id) {
+                YAHOO.log("Render wireframe[" + id + "]", 'info', 'LayoutManager');
                 this.wireframes[id].layout.render();
 
                 // TODO: make this configurable
@@ -77,11 +80,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (Dom.getStyle(el, 'display') == 'none') {
                     // YAHOO.widget.Effects.Appear(el, {ease:
                     // YAHOO.util.Easing.easeIn, seconds: 0.5, delay: false});
-                    YAHOO.widget.Effects.Show(el);
+                    //YAHOO.widget.Effects.Show(el);
+                    Dom.setStyle(el, 'display', 'block');
                 }
             },
 
             registerResizeListener : function(el, obj, func) {
+                YAHOO.log('Element[' + el.id + '] tries to register as resizeListener', 'info', 'LayoutManager');
                 var layoutUnitEl = this.findLayoutUnit(el);
                 if (layoutUnitEl) {
                     var layoutUnit = YAHOO.widget.LayoutUnit
@@ -120,13 +125,32 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                             parentId);
                 }
                 var wireframe = this.wireframes[id];
+                var str = '';
+                for(var i in config) {
+                    if(!Lang.isFunction(config[i]) && i != 'units') {
+                        str += (' ' + i + '=' + config[i]);
+                    }
+                }
+                YAHOO.log('Create wireframe[' + id + '] - parentId=' + parentId + ' - linkedWithParent=' + linkedWithParent + str, 'info', 'LayoutManager');
+                for(var i in config.units) {
+                    var j = config.units[i];
+                    if(!Lang.isFunction(j)) {
+                        var str = '';
+                        for(var k in j) {
+                            if(!Lang.isFunction(j[k]) && k != 'position') {
+                                str += (k + '=' + j[k] + ' ');
+                            }
+                        }
+                        YAHOO.log('Wireframe[' + id + '] unit[' + j.position + ']: ' + str, 'info', 'LayoutManager');                    
+                    }
+                }
                 var update = wireframe.layout != null;
-
                 if (update)
                     this.cleanup(id);
 
                 if (linkedWithParent) {
                     var childInit = function() {
+                        YAHOO.log('Linked wireframe[' + id + '] initialize function', 'info', 'LayoutManager');
                         var parentLayout = _this.wireframes[parentId].layout;
                         config.parent = parentLayout;
 
@@ -137,8 +161,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                 'height')
 
                         var bodyEl = Dom.get(id);
-                        Dom.setStyle(bodyEl, 'width', parentWidth);
-                        Dom.setStyle(bodyEl, 'height', parentHeight);
+                        Dom.setStyle(id, 'width', parentWidth);
+                        Dom.setStyle(id, 'height', parentHeight);
 
                         // TODO: This should be a custom configAttr in the unit
                         // itself, so write a patch
@@ -166,7 +190,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     _this.wireframes[parentId].childInitializer = childInit;
                     if (update) {
                         var func = function() {
-                            _this.renderWireframe(_this.ROOT_ELEMENT_ID)
+                            _this.renderWireframe(parentId)
                         };
                         this.renderQueue.registerFunction(func,
                                 _this.ROOT_ELEMENT_ID);
@@ -175,6 +199,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var initFunc = null;
                     if (id == this.ROOT_ELEMENT_ID) {
                         initFunc = function() {
+                            YAHOO.log('Create root wireframe', 'info', 'LayoutManager');
                             _this.addLinkedWireframe(id, config);
                         };
                     } else {
@@ -183,7 +208,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                     id, config);
                         };
                     }
+
                     this.createQueue.registerFunction(initFunc, id);
+                    //Might move these into the init functions
                     this.renderQueue.registerFunction( function() {
                         _this.renderWireframe(id)
                     }, id);
@@ -200,9 +227,20 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                 var _this = this;
                 layout.on('render', function() {
+                    YAHOO.log('Wireframe[' + id + '] onrender', 'info', 'LayoutManager');
                     if (_this.wireframes[id].childInitializer != null) {
+                        YAHOO.log('Wireframe[' + id + '] childInit', 'info', 'LayoutManager');
                         _this.wireframes[id].childInitializer();
                         _this.wireframes[id].childInitializer = null;
+                    } else {
+                        YAHOO.log('Wireframe[' + id + '] find child and render it', 'info', 'LayoutManager');
+                        for(var i in _this.wireframes) {
+                            if(_this.wireframes[i].parentId == id) {
+                                _this.renderWireframe(_this.wireframes[i].id);
+                                break;
+                            }
+                    
+                        }
                     }
                 });
                 layout
@@ -217,8 +255,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                         var parentCenterEl = parentLayout
                                                 .getUnitByPosition('center')
                                                 .get('wrap');
-                                        var bodyEl = document
-                                                .getElementById(id);
+                                        var bodyEl = document.getElementById(id);
                                         Dom.setStyle(bodyEl, 'height', Dom
                                                 .getStyle(parentCenterEl,
                                                         'height'));
