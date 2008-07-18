@@ -29,6 +29,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -124,7 +125,8 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("delete-dialog", new WorkflowAction() {
+        addWorkflowDialog("delete-dialog", "Delete", "Delete", "Are you sure you want to delete this document?",
+                          new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -164,6 +166,12 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                                 Workflow ancestorWorkflow = workspace.getWorkflowManager().getWorkflow("embedded", ancestor);
                                 if(ancestorWorkflow instanceof FolderWorkflow) {
                                     ((FolderWorkflow)ancestorWorkflow).archive(relPath);
+                                }
+                                // now make the browser select this folder
+                                IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(
+                                                                               IBrowseService.BROWSER_ID), IBrowseService.class);
+                                if (browser != null) {
+                                    browser.browse(new JcrNodeModel(ancestor));
                                 }
                             }
                         }
