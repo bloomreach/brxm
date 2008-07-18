@@ -90,13 +90,16 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
             final Visibility visible, final WorkflowAction action) {
-        add(new EmptyPanel(dialogName));
+        addWorkflowDialog(dialogName, dialogLink, dialogTitle, visible, action);
+    }
 
+    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
+            final String text, final Visibility visible, final WorkflowAction action) {
         DialogLink link = new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle) {
+                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle, text) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -178,7 +181,12 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
             final WorkflowAction action) {
-        addWorkflowDialog(dialogName, dialogTitle, dialogTitle, new Visibility() {
+        addWorkflowDialog(dialogName, dialogLink, dialogTitle, (String) null, action);
+    }
+
+    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
+            final String text, final WorkflowAction action) {
+        addWorkflowDialog(dialogName, dialogTitle, dialogTitle, text, new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {

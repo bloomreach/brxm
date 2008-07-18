@@ -24,12 +24,12 @@
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
          xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
          xmlns:fn="http://www.w3.org/2005/xpath-functions"
-         sv:name="gallery">
+         sv:name="New Gallery">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:statement" sv:type="String">
-    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/gallery/hippostd:templates/node()</sv:value>
+    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Gallery/hippostd:templates/node()</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:language" sv:type="String">
     <sv:value>xpath</sv:value>
@@ -53,8 +53,8 @@
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>gallery</sv:value>
-        <sv:value>image</sv:value>
+        <sv:value>New Gallery</sv:value>
+        <sv:value>New Image</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

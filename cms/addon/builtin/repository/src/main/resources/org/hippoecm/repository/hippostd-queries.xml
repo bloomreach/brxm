@@ -33,7 +33,7 @@
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>//element(*, hippo:templatetype)/hippo:prototype/hippo:prototype</sv:value>
+      <sv:value>//element(*,hippo:templatetype)/hippo:prototype/hippo:prototype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -108,7 +108,7 @@
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/folder/hippostd:templates/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -156,14 +156,13 @@
       <sv:value>addextended_ico</sv:value>
     </sv:property>
   </sv:node>
--->
 
   <sv:node sv:name="New Smart Folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:templates/folders/generic folder</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Smart_x0020_Folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -212,5 +211,6 @@
       </sv:node>
     </sv:node>
   </sv:node>
+-->
 
 </sv:node>
