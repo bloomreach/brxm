@@ -76,7 +76,7 @@ public class TypesListingPlugin extends AbstractListingPlugin implements ITitleD
 
             public Component getViewer(String id, JcrNodeModel node) {
                 Component result = new Label(id);
-                result.add(new AttributeModifier("class", true, new Model("document-16")));
+                result.add(new AttributeModifier("class", true, new Model("document-type-16")));
                 return result;
             }
         }));
