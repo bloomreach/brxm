@@ -325,6 +325,20 @@
       <sv:value>hippostd:exampleImageSet</sv:value>
     </sv:property>
   </sv:node>
+  
+  <sv:node sv:name="gallery-search">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetsearch</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String"/>
+    <sv:property sv:name="hippo:queryname" sv:type="String">
+      <sv:value>gallery search</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="attic">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>nt:unstructured</sv:value>
