@@ -62,7 +62,6 @@ public class TabsPlugin extends RenderPlugin {
         add(new EmptyPanel("tabs"));
 
         selectCount = 0;
-        addExtensionPoint("logoutPlugin");
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
 
