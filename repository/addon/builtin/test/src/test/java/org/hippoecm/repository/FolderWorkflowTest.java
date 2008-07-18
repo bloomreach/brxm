@@ -45,7 +45,7 @@ public class FolderWorkflowTest extends TestCase {
     
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         root = session.getRootNode();
         if(root.hasNode("test"))
             root.getNode("test").remove();
@@ -61,7 +61,7 @@ public class FolderWorkflowTest extends TestCase {
         super.tearDown();
     }
 
-    @Ignore
+    @Test
     public void testTemplateFolder() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:folder");
         node.addMixin("hippo:harddocument");
@@ -101,10 +101,6 @@ public class FolderWorkflowTest extends TestCase {
         assertTrue(node.isNodeType("hippo:handle"));
         assertTrue(node.hasNode(node.getName()));
         assertTrue(node.getNode(node.getName()).isNodeType("hippostd:document"));
-    }
-
-    @Test
-    public void dummy() {
     }
 
     /* The following two tests can only be executed if repository is run

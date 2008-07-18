@@ -100,6 +100,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     Set<String> prototypes = new TreeSet<String>();
                     if (foldertype.isNodeType("nt:query")) {
                         Query query = qmgr.getQuery(foldertype);
+                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString().replaceAll(" ","_x0020_"), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                             Node typeNode = iter.nextNode();
@@ -143,6 +144,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
         Node foldertype = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);
         Query query = qmgr.getQuery(foldertype);
+        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString().replaceAll(" ","_x0020_"), query.getLanguage()); // HREPTWO-1266
         QueryResult rs = query.execute();
         Node result = null;
         Node target = userSession.getRootNode();
