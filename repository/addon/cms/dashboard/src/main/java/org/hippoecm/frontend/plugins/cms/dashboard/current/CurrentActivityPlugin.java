@@ -33,16 +33,19 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CurrentActivityPlugin extends RenderPlugin {
+public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -53,6 +56,9 @@ public class CurrentActivityPlugin extends RenderPlugin {
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        context.registerService(this, IJcrService.class.getName());
+        
         if (!(getModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("CurrentActivityPlugin needs an IDataProvider as Plugin model.");
         }
@@ -63,6 +69,10 @@ public class CurrentActivityPlugin extends RenderPlugin {
         df.setTimeZone(tz);
 
         add(new CurrentActivityView("view", getModel()));
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        redraw();
     }
 
     private class CurrentActivityView extends RefreshingView {
@@ -199,4 +209,5 @@ public class CurrentActivityPlugin extends RenderPlugin {
             return null;
         }
     }
+
 }

@@ -207,6 +207,9 @@ public class WizardDialog extends WebPage {
                                         primaryChild.getProperty("jcr:mimeType").getString());
                                 node.save();
                             }
+
+                            IJcrService jcrService = jcrServiceRef.getService();
+                            jcrService.flush(model);
                         } catch (MappingException ex) {
                             System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                             ex.printStackTrace(System.err);

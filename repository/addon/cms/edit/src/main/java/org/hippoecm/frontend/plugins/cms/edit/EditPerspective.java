@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ public class EditPerspective extends Perspective implements IEditService {
 
     private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
-    private boolean firstRender = true;
     private ModelService modelService;
 
     public EditPerspective(IPluginContext context, IPluginConfig config) {
@@ -70,15 +68,6 @@ public class EditPerspective extends Perspective implements IEditService {
         add(wireframe);
         
         onModelChanged();
-    }
-
-    @Override
-    public void render(PluginRequestTarget target) {
-        if (firstRender) {
-            focus(null);
-            firstRender = false;
-        }
-        super.render(target);
     }
 
     @Override

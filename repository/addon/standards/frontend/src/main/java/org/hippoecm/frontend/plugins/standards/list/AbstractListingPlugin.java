@@ -111,7 +111,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
                     break;
                 }
                 if (!node.isNodeType("rep:root")) {
-                    node = node.getParent();
+                    model = model.getParentModel();
+                    node = model.getNode();
                 } else {
                     break;
                 }
