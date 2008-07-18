@@ -31,20 +31,23 @@ public abstract class XinhaContentPanel extends Panel {
 
     final protected Form form;
     final protected Map<String, String> parameters;
-
+    final protected AjaxButton ok;
+    
     public XinhaContentPanel(final XinhaModalWindow modal, Map<String, String> parameters) {
         super(modal.getContentId());
         this.parameters = parameters;
 
         add(form = new Form("form"));
 
-        form.add(new AjaxButton("ok", form) {
+        ok = new AjaxButton("ok", form) {
             private static final long serialVersionUID = 1L;
-
             protected void onSubmit(AjaxRequestTarget target, Form form) {
+                onSubmitCreateLinks();
                 modal.onSelect(target, getSelectedValue());
             }
-        });
+        };
+        
+        form.add(ok);
 
         form.add(new AjaxButton("close", form) {
             private static final long serialVersionUID = 1L;
@@ -57,6 +60,8 @@ public abstract class XinhaContentPanel extends Panel {
     }
 
     protected abstract String getSelectedValue();
+    
+    protected abstract void onSubmitCreateLinks();
 
     String MapToJavascriptObject(Map<String, String> map) {
         StringBuilder sb = new StringBuilder(map.size() * 20);
