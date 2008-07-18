@@ -93,51 +93,6 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestPublication-dialog", new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live"));
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public void execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestPublication();
-            }
-        });
-
-        addWorkflowAction("requestDePublication-dialog", new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new"));
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public void execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestDepublication();
-            }
-        });
-
-        addWorkflowAction("requestDeletion-dialog", new Visibility() {
-            private static final long serialVersionUID = 1L;
-
-            public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live"));
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public void execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.requestDeletion();
-            }
-        });
-
         addWorkflowAction("publish-dialog", new Visibility() {
             private static final long serialVersionUID = 1L;
 
