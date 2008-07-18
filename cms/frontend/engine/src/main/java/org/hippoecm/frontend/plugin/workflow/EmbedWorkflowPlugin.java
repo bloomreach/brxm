@@ -50,7 +50,7 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
         Node node = nodeModel.getNode();
         try {
 	    // FIXME: hides this embed workflow if initial document is handle
-            if(!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            if(node == null || !node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 item = null;
                 super.updateModel(new JcrNodeModel((Node) null));
                 return;
