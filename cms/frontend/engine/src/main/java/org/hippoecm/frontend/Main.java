@@ -82,7 +82,6 @@ public class Main extends WebApplication {
         });
         
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
-        
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {
@@ -97,6 +96,7 @@ public class Main extends WebApplication {
         });
 
         IResourceSettings resourceSettings = getResourceSettings();
+        
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override

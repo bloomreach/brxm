@@ -10,7 +10,7 @@ public class HeaderPlugin extends RenderPlugin {
     public HeaderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        addExtensionPoint("logoutPlugin");
+
     }
 
 }

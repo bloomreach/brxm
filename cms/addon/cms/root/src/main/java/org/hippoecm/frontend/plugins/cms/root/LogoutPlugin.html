@@ -15,11 +15,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="logout">
-      <div>
-        <a href="#" wicket:id="logout-link">Logout</a>
-      </div>
-      <span class="name" style="text-transform: capitalize" wicket:id="username"/>
-    </div>
+    <ul class="logout">
+     <li>
+      <a href="#" wicket:id="logout-link">Logout</a>  
+     </li>
+     <li>
+      <span class="name" wicket:id="username"></span> |
+     </li>
+    </ul>
   </wicket:panel>
 </html>
