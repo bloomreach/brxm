@@ -15,25 +15,29 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div id="left" class="panelcontainer">
-      <h2><span class="userman"></span></h2>
-      <div class="panel iconListSmall users_list_ico">
-        <div wicket:id="extension.listUsers">[ ListUsersPlugin ]</div>
+    <div id="management-perspective-wrapper">
+      <div id="management-perspective-left" class="panelcontainer">
+        <h2><span class="userman"></span></h2>
+        <div class="panel iconListSmall users_list_ico">
+          <div wicket:id="extension.listUsers">[ ListUsersPlugin ]</div>
+        </div>
+        <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel iconListSmall list_ico groups_list_ico">
+          <div wicket:id="extension.listGroups">[ ListGroupsPlugin ]</div>
+        </div>
+        <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel iconListSmall domains_list_ico">
+          <div wicket:id="extension.listDomains">[ ListDomainsPlugin ]</div>
+        </div>
+        <div class="slidercontrol"><a href="#">&nbsp;</a></div>
+        <div class="panel iconListSmall roles_list_ico">
+          <div wicket:id="extension.listRoles">[ ListRolesPlugin ]</div>
+        </div>
+        <div class="slidercontrol"><a href="#">&nbsp;</a></div>
       </div>
-      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-      <div class="panel iconListSmall list_ico groups_list_ico">
-        <div wicket:id="extension.listGroups">[ ListGroupsPlugin ]</div>
-      </div>
-      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-      <div class="panel iconListSmall domains_list_ico">
-        <div wicket:id="extension.listDomains">[ ListDomainsPlugin ]</div>
-      </div>
-      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-      <div class="panel iconListSmall roles_list_ico">
-        <div wicket:id="extension.listRoles">[ ListRolesPlugin ]</div>
-      </div>
-      <div class="slidercontrol"><a href="#">&nbsp;</a></div>
-    </div>
-    <div wicket:id="extension.editor">[ Editor ]</div>
+      <div id="management-perspective-center">
+        <div wicket:id="extension.editor">[ Editor ]</div>
+      </div>  
+    </div>  
   </wicket:panel>
 </html>

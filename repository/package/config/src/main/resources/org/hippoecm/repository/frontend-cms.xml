@@ -38,18 +38,37 @@
       <sv:value>skin/style.css</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.tabs</sv:value>
-      <sv:value>extension.logout</sv:value>
+      <sv:value>extension.header</sv:value>
+      <sv:value>extension.center</sv:value>
+      <sv:value>extension.footer</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.tabs" sv:type="String">
-      <sv:value>service.tabs</sv:value>
+    <sv:property sv:name="extension.header" sv:type="String">
+      <sv:value>service.header</sv:value>
     </sv:property>
-    <sv:property sv:name="extension.logout" sv:type="String">
+    <sv:property sv:name="extension.center" sv:type="String">
+      <sv:value>service.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.footer" sv:type="String">
+      <sv:value>service.footer</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="headerPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.HeaderPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.header</sv:value>
+    </sv:property>
+    <sv:property sv:name="logoutPlugin" sv:type="String">
       <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="tabsPlugin">
+  <sv:node sv:name="centerPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -57,10 +76,22 @@
       <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tabs</sv:value>
+      <sv:value>service.center</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="footerPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.FooterPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.footer</sv:value>
     </sv:property>
   </sv:node>
 

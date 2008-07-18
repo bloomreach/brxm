@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -84,6 +86,29 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
 
         // model didn't exist for super constructor, so set it explicitly
         updateModel(modelService.getModel());
+        
+        Map<String, String> optsLeft = new HashMap<String, String>();
+        optsLeft.put("width", "200");
+        optsLeft.put("id", "browse-perspective-left");
+        optsLeft.put("resize", "true");
+        optsLeft.put("scroll", "true");
+        optsLeft.put("minWidth", "150");
+        optsLeft.put("gutter", "0px 5px 0px 3px");
+
+        Map<String, String> optsRight= new HashMap<String, String>();
+        optsRight.put("width", "200");
+        optsRight.put("id", "browse-perspective-right");
+        optsRight.put("resize", "true");
+        optsRight.put("scroll", "true");
+        optsRight.put("gutter", "0px 3px 0px 5px");
+
+        Map<String, String> optsCenter= new HashMap<String, String>();
+        optsCenter.put("id", "browse-perspective-center");
+        optsCenter.put("minWidth", "200");
+        //optsCenter.put("minHeight", "200");
+        optsCenter.put("scroll", "true");
+
+       add(new YuiWireframeBehavior("browse-perspective-wrapper", true).addUnit("left", optsLeft).addUnit("right", optsRight).addUnit("center", optsCenter));
     }
 
     public void browse(IModel model) {

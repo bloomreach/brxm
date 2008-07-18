@@ -27,7 +27,7 @@ div.clearer {clear: both;}
 /* Global elements styles */
 /* ================================================ */
 
-body {background: #4a84c8 url('images/back.gif') repeat-x; padding: 2px;}
+body {background: #4a84c8 url('images/back.gif') repeat-x; padding: 0px;}
 
 /* default font settings */
 body, table tr td, table tr th{
@@ -133,9 +133,9 @@ span.wicket-ajax-indicator{position: absolute; top: 18px; left: 4px; display: bl
 
 /* Logout */
 /* ================================================ */
-div.logout {margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding: 5px; padding-bottom: 0px; padding-top: 0px; padding-left: 13px;}
-div.logout span.name{font-size: 22px;}
-div.logout div a { color: white; font-weight: bold; float: right;}
+div.logout {margin-bottom: 0px; text-align: left; text-transform: capitalize; color: white; padding-right: 10px; padding-bottom: 0px; padding-top: 10px; padding-left: 13px;}
+div.logout span.name{font-size: 22px;padding-left:10px;}
+div.logout div a { color: white; font-weight: bold; float: right; margin-right:10px;margin-top:5px;}
 
 
 /* Main Positioning and Panels */
@@ -151,6 +151,7 @@ width: 98%;
 .panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/panelHeadBack.png") repeat-x;}
 .nopadding{padding: 0px}
 
+/*
 #left{width: 222px; float: left; height: 100%;}
 #lefthalf{width: 50%; float: left; height: 100%; overflow: auto;}
 #righthalf{width: 49%; float: right; height: 100%; overflow: auto}
@@ -159,6 +160,12 @@ width: 98%;
 #center{margin-left: 228px; margin-right: 228px; height: 100%; position: relative;}
 #wideright{width: 787px; width: 75%; float: left; height: 100%; margin-left: 5px; background: white;}
 #wideleft{width: 787px; width: 75%; float: left; height: 100%; margin-right: 5px; background: white}
+*/
+
+/*#wideright{height: 99%; width:99%;background: white;}*/
+#management-perspective-center {
+  background: white;
+}
 
 .scrolllist{overflow: auto; height: 90px; padding: 2px; background-color: white}
 
@@ -347,6 +354,19 @@ border: none;
 margin-top: 2px;
 }
 
+div.Tree div.wicket-tree{margin: 0px; overflow: auto; width:auto;}
+
+div.Tree div.wicket-tree div{overflow: visible}
+
+div.Tree .wicket-tree .row a {color: black}
+div.wicket-tree div.a_{width: auto ! important; display:block;}
+div.Tree .wicket-tree .row {width:auto;}
+div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
+div.Tree .wicket-tree .row-selected a {}
+div.Tree .wicket-tree .row-selected { background: #f2f2f2; overflow:hidden; }
+div.Tree div.wicket-tree{border: none;}
+div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+/*
 div.Tree div.wicket-tree{margin: 0px; height: 477px; width: 222px; overflow: auto;} 
 div.Tree div.wicket-tree div{overflow: visible}
 
@@ -357,15 +377,15 @@ div.Tree .wicket-tree .row-selected a {}
 div.Tree .wicket-tree .row-selected { background: #f2f2f2; }
 div.Tree div.wicket-tree{border: none;}
 div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
-
+*/
 
 /* Template Editor */
 /* ================================================ */
 
 div.editor{
-height: 85%;
+/*height: 85%;
 max-height:500px;
-overflow:auto;
+overflow:auto;*/
 padding:7px;
 }
 
@@ -380,9 +400,11 @@ div.fields div span.templateactions ul li{padding: 0px}
 
 .templatedetails{
 padding: 4px;
-height: 410px;
+/*height: auto;
+width:auto;*/
+/*height: 410px;
 height: 80%;
-overflow: auto;
+overflow: auto;*/
 }
 
 .required{
@@ -535,7 +557,7 @@ tr.even td{background-color: #f7f7f7}
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
-.Doclist{ height: 45%; overflow: auto}
+/*.Doclist{ height: 100%; overflow: visible;}*/
 
 
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
@@ -621,4 +643,9 @@ div.templateactions div{margin-bottom: 0px; padding: 0px}
 .target {
   border: 1px solid #62C621 ! important;
   background: white url("images/dropback.gif") no-repeat center 40px;
+}
+
+.xinha-modal {
+  height: auto;
+  margin: 10px;
 }

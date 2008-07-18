@@ -15,19 +15,21 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="panelcontainer" id="wideleft">
-      <div class="templatetitle document_big_ico">
-        <h3>Edit Document</h3>
-        <h4>You can open multiple documents at the same time</h4>
+    <div id="editor-perspective-wrapper">
+      <div class="panelcontainer" id="editor-perspective-center">
+        <div class="templatetitle document_big_ico">
+          <h3>Edit Document</h3>
+          <h4>You can open multiple documents at the same time</h4>
+        </div>
+        <div class="editor" wicket:id="extension.editor"></div>
       </div>
-      <div class="editor" wicket:id="extension.editor"></div>
-    </div>
-    <div style="float: left" class="panelcontainer" id="right">
-      <h2><span class="actions">Actions</span></h2>
-      <div class="panel">
-        <div class="iconactions" wicket:id="extension.workflow">workflow here</div>
-        <div class="iconactions" wicket:id="extension.helpers">helpers here</div>
+      <div class="panelcontainer" id="editor-perspective-right">
+        <h2><span class="actions">Actions</span></h2>
+        <div class="panel">
+          <div class="iconactions" wicket:id="extension.workflow">workflow here</div>
+          <div class="iconactions" wicket:id="extension.helpers">helpers here</div>
+        </div>
       </div>
-    </div>
+    </div>  
   </wicket:panel>
 </html>

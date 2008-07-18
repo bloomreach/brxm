@@ -18,10 +18,15 @@
         <title>Hippo CMS 7</title>
     </wicket:head>
     <wicket:panel>
-        <div id="header">
-            <div wicket:id="extension.logout">logout</div>
+        <div id="root-layout-header">
+            <div class="headerplugin" wicket:id="extension.header">[header here]</div>
+        </div>    
+        <div id="root-layout-center">
+            <div class="centerplugin" wicket:id="extension.center">[center here]</div>
+        </div>  
+        <div id="root-layout-footer">
+            <div class="footerplugin" wicket:id="extension.footer">[footer here]</div>
         </div>
-        <div class="tabsplugin" wicket:id="extension.tabs">[tabbed panel will be here]</div>
         <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>
