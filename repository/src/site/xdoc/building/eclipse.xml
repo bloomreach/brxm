@@ -27,8 +27,8 @@
           This chapter is meant as a guide for setting up and managing a debugging environment
           for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
           run and debug every aspect of Hippo ECM from within Eclipse. As a follow up you might look
-          into some <a href="eclipse-tips.html">Eclipse tips&amp;tricks</a> for how to keep up with the
-          most exiting version of Hippo ECM: The trunk!
+          into some <a href="eclipse-tips.html">Eclipse tips &amp; tricks</a> for how to keep up with the
+          most exciting version of Hippo ECM: the trunk!
         </p>
       </section>
         <section name="Prepare">
@@ -45,20 +45,18 @@
           </div>
         </section>
 
-        <section name="Install and configure eclipse plugins">
+        <section name="Install and configure Eclipse plugins">
           <p> Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.2</p>
 
           <subsection name="Maven">
-            <p>Integrate with the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">
-            Maven eclipse plugin </a> by opening a command shell and running:</p>
-            <source>
-~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:configure-workspace
-            </source>
+            <p>Integrate with the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">Maven Eclipse plugin</a>
+            by opening a command shell and running:</p>
+            <source>~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:configure-workspace</source>
           </subsection>
 
           <subsection name="Tune your Eclipse memory settings">
             <p>
-              Add some memory flags to the eclipse -vmargs startup argument.
+              Add some memory flags to the Eclipse <code>-vmargs</code> startup argument.
             </p>
             <ul>
               <li>Set the heap size to at least 512M by adding something like -Xms512m -Xmx512m</li>
@@ -66,8 +64,8 @@
             </ul>
           </subsection>
 
-          <p> Start Eclipse, it is strongly advised to start with a clean workspace. Use the eclipse
-          update manager (Help -> Software Updates -> Find and Install) to install the following eclipse plugins:
+          <p> Start Eclipse, it is strongly advised to start with a clean workspace. Use the Eclipse
+          update manager (<i>Help -> Software Updates -> Find and Install</i>) to install the following Eclipse plugins:
           </p>
 
             <subsection name="Subversion">
@@ -108,18 +106,18 @@
                 <p>
                   In the 'Select features to install' step only select 'JPOX Eclipse Plugin'
                   <br/><br/>
-                  In the eclipse preferences dialog:
+                  In the Eclipse preferences dialog:
                 </p>
                 <ol>
                     <li>
                         <p>Select JPOX</p>
                     </li>
                     <li>
-                        <p>Uncheck 'Use project classpath when running tools' (some versions have it below submenu 'JPOX -> General')</p>
+                        <p>Uncheck 'Use project classpath when running tools' (some versions have it below submenu '<i>JPOX -> General</i>')</p>
                     </li>
                     <li>
                         <p>Add the following jars to the classpath: You can find these jars in your
-                            local maven repository if you have followed the instructions on the <a
+                            local Maven repository if you have followed the instructions on the <a
                                 href="maven.html">Building with Maven</a> page.</p>
                         <ul>
                             <li>&lt;maven-repository&gt;/jpox/jpox-core/1.2.0-beta-2/jpox-core-1.2.0-beta-2.jar</li>
@@ -134,28 +132,28 @@
             </subsection>
         </section>
 
-        <section name="Create eclipse projects, part one">
+        <section name="Create Eclipse projects, part one">
             <div style="border:1px solid black; padding:1em;"> NOTE: Make sure that there is no
                 .project file in the toplevel (hippo-ecm) directory before proceding. If there is
-                one the eclipse import projects wizard will fail. </div>
+                one the Eclipse import projects wizard will fail. </div>
             <p></p>
-            <p> Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">maven
-                    eclipse plugin</a> to generate eclipse project files: </p>
+            <p> Use the <a href="http://maven.apache.org/plugins/maven-eclipse-plugin/">Maven
+                    Eclipse plugin</a> to generate Eclipse project files: </p>
             <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn clean
 ~/hippo-ecm> mvn [-o] eclipse:eclipse
             </source>
           <p>
-            The first time you run this command it will take extremely long, do it right before lunch
-            kind of long. This is in part because it will attempt to download everything including sources
+            The first time you run this command it will take a while.
+            This is because Maven needs to download everything including sources
             and javadocs. On later runs you could add a -o (offline) flag to prevent downloading the sources,
             this makes it a lot faster.
           </p>
             <ol>
                 <li>
-                    <p>Run the import project wizard: File -&gt; Import -&gt; General
-                        -&gt; Existing Projects into Workspace</p>
+                    <p>Run the import project wizard: <i>File -&gt; Import -&gt; General
+                        -&gt; Existing Projects into Workspace</i></p>
                 </li>
                 <li>
                     <p>Press 'Browse'</p>
@@ -175,18 +173,18 @@
             </ol>
         </section>
 
-        <section name="Create eclipse projects, part two">
+        <section name="Create Eclipse projects, part two">
             <p>
-              The <a href="maven.html">maven build</a> extensively uses
+              The <a href="maven.html">Maven build</a> extensively uses
               <a href="http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html">WAR overlays</a>
-              which unfortunately aren't fully supported by the maven eclipse plugin. Therefore you need to manually
-              fix the eclipse projects before you can proceed.
+              which unfortunately aren't fully supported by the Maven Eclipse plugin. Therefore you need to manually
+              fix the Eclipse projects before you can proceed.
             </p>
             <subsection name="Resources">
               <p>
-                The maven build overlays the skin and xinha plugins over the final package-war by copying
+                The Maven build overlays the skin and xinha plugins over the final package-war by copying
                 the skin and xinha files to the package/war/src/main/webapp directory. Manually copying
-                these files in order to fix the package-war project for eclipse can be very painful because
+                these files in order to fix the package-war project for Eclipse can be very painful because
                 it needs to be done every time when a skin or xinha file changes. A much better way is to
                 use symbolic links.
               </p>
@@ -239,7 +237,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
             <subsection name="Dependencies">
                 <ol>
                     <li>
-                      <p>Right-click the hippo-ecm-package-war project in the package explorer</p>
+                      <p>Right-click the <b>hippo-ecm-package-war</b> project in the package explorer</p>
                     </li>
                     <li>
                         <p>Select 'Java Build Path'</p>
@@ -251,10 +249,10 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
             </subsection>
             <subsection name="Test resource folders">
               <p>
-                The maven-eclipse-plugin creates source folders for test resources.  These
+                The Maven Eclipse plugin creates source folders for test resources.  These
                 can interfere with the initialization of the repository, so they should be removed
-                from the classpath. Apply the following steps to the hippo-ecm-repository-engine and 
-                hippo-ecm-addon-standards-frontend projects.  
+                from the classpath. Apply the following steps to the <b>hippo-ecm-repository-engine</b> and 
+                <b>hippo-ecm-addon-standards-frontend</b> projects.  
               </p>
               <ol>
                 <li>
@@ -272,7 +270,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
 
         <section name="Run">
             <p>
-                <a href="http://code.google.com/p/run-jetty-run/">Create Run-Jetty-Run configuration</a>
+                <a href="http://code.google.com/p/run-jetty-run/wiki/GettingStarted#Using">Create Run-Jetty-Run configuration</a>
             </p>
             <ul>
                 <li>
@@ -292,9 +290,7 @@ C:\hippo-ecm\addon\xinha\src\main\webapp\xinha\skins> junction hippo-gray ..\..\
                 </li>
             </ul>
             <p>Select the 'Arguments' tab and add to 'VM Arguments':</p>
-            <source>
--Dorg.mortbay.util.FileResource.checkAliases=False
-            </source>
+            <source>-Dorg.mortbay.util.FileResource.checkAliases=False</source>
             <p>(Optional) Select the 'Common' tab and check 'Run' and 'Debug' under
                 'display in favorites menu'</p>
             <p> You can now debug the application within Eclipse: Set a breakpoint in the constructor
