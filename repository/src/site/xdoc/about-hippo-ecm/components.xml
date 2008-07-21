@@ -26,11 +26,14 @@
 
       <subsection name="Hippo Repository">
         <p>
-          Hippo Repository is built on top of <a href="http://jackrabbit.apache.org/"
+          Hippo Repository is where all your content is stored.
+          It is built on top of <a href="http://jackrabbit.apache.org/"
             title="Apache Jackrabbit">Apache Jackrabbit</a>. Hippo Repository adds extra
           fuctionality to the default Jackrabbit distribution while keeping full compliance with the
-          JCR 1.0 <a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html"
-            title="JSR 170">JSR 170</a>. The main added features are virtual nodes based on facets (metadata), access management, authorization and workflow.
+          Java Content Repository 1.0 open standard
+          (<a href="http://jcp.org/aboutJava/communityprocess/review/jsr170/index.html" title="JSR 170">JSR 170</a>).
+          The main added features are virtual nodes based on facets (metadata), access management, authorization
+          and workflow.
         </p>
       </subsection>
 
@@ -39,6 +42,15 @@
           Hippo CMS is a user-friendly content management system for maintaining all your
           information in a structured publication on Internet, intranet or extranet. The key points
           of Hippo CMS are user-friendliness, interoperability and expandability.
+        </p>
+      </subsection>
+
+      <subsection name="Hippo Site Toolkit">
+        <p>
+          Hippo Site Toolkit provides the tools for rapid development of websites in a Hippo ECM
+          environment. Features include a templating engine which is easily configurable through
+          the Hippo CMS user interface, and a tag library to accomodate the development of JSP based
+          front ends.
         </p>
       </subsection>
 
@@ -52,6 +64,7 @@
         </p>
       </subsection>
 
+<!--
       <subsection name="Hippo Sample Applications">
         <p>
           The Hippo Sample Applications are included to demonstrate the possibilities of Hippo ECM.
@@ -66,6 +79,8 @@
           <li>Document importer</li>
         </ul>
       </subsection>
+-->
+
     </section>
   </body>
 </document>
