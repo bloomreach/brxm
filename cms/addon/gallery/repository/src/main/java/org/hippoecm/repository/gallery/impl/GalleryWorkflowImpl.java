@@ -64,10 +64,19 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
 
         String[] structure = new String[5];
         structure[0] = Integer.toString(timestamp.get(Calendar.YEAR));
-        structure[1] = Integer.toString(timestamp.get(Calendar.MONTH));
+        structure[1] = Integer.toString(timestamp.get(Calendar.MONTH) + 1);
         structure[2] = Integer.toString(timestamp.get(Calendar.DAY_OF_MONTH));
         structure[3] = Integer.toString(timestamp.get(Calendar.HOUR_OF_DAY));
         structure[4] = Integer.toString((timestamp.get(Calendar.MINUTE)/15)*15);
+        if(structure[1].length() == 1) {
+            structure[1] = "0" + structure[1];
+        }
+        if(structure[2].length() == 1) {
+            structure[2] = "0" + structure[2];
+        }
+        if(structure[3].length() == 1) {
+            structure[3] = "0" + structure[3];
+        }
         if(structure[4].length() == 1) {
             structure[4] = "0" + structure[4];
         }
