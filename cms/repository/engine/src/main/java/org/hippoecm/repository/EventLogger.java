@@ -72,7 +72,7 @@ public class EventLogger {
                 log.info("Event logging disabled, workflow steps will not be logged");
             }
         } catch (RepositoryException e) {
-            log.warn("Event logger configuration failed: " + e.getMessage());
+            log.error("Event logger configuration failed: " + e.getMessage());
         }
     }
 
@@ -140,8 +140,7 @@ public class EventLogger {
                 logFolder.refresh(true);
 
             } catch (RepositoryException e) {
-                log.error("Failed logging event: [" +who + " -> " + className + "." + methodName + "] : " + e.getMessage());
-                log.debug("Event logging failed: " + e.getMessage(), e);
+                log.warn("Event logging failed: [" + who + " -> " + className + "." + methodName + "] : " + e.getMessage());
             }
         }
     }
