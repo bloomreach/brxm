@@ -76,8 +76,8 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
                 node = parentNodeModel.getNode().getNode(nodeName);
             } else {
                 String path = parentNodeModel.getNode().getPath() + "/" + nodeName;
-                String prefix = nodeType.substring(0, nodeType.indexOf((":")));
-                String prototypePath = "/hippo:namespaces/" + prefix + "/" + nodeType
+                String nodeTypeAsPath = nodeType.replace(':', '/');
+                String prototypePath = "/hippo:namespaces/" + nodeTypeAsPath
                         + "/hippo:prototype/hippo:prototype";
                 Node prototype = parentNodeModel.getNode().getSession().getRootNode().getNode(
                         prototypePath.substring(1));
