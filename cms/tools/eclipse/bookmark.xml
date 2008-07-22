@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bookmarks>
+  <site name="Subversive" 
+    url="http://download.eclipse.org/technology/subversive/0.7/update-site/"
+    web="false" selected="true" local="false"/>
+  <site name="Subversive SVN Connectors"
+    url="http://www.polarion.org/projects/subversive/download/eclipse/2.0/update-site/"
+    web="false" selected="true" local="false"/>
+  <site name="Run Jetty Run" 
+    url="http://run-jetty-run.googlecode.com/svn/trunk/updatesite" 
+    web="false" selected="true" local="false"/>
+  <site name="JPOX launcher" 
+    url="http://www.jpox.org/downloads/eclipse-update/" 
+    web="false" selected="true" local="false"/>
+  <site name="Groovy Monkey" 
+    url="http://groovy-monkey.sourceforge.net/update" 
+    web="false" selected="true" local="false"/> 
+</bookmarks>

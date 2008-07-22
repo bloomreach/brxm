@@ -1,0 +1,96 @@
+/*
+ * Menu: Fix Hippo ECM projects
+ * Script-Path: /ecm/tools/eclipse/monkey/fixProjects.gm
+ * Kudos: Wander (onehippo.com)
+ * License: Apache 2.0
+ * Job: WorkspaceJob
+ * Exec-Mode: Foreground
+ * DOM: http://groovy-monkey.sourceforge.net/update/plugins/net.sf.groovyMonkey.dom
+ */
+import org.eclipse.jdt.internal.core.SetClasspathOperation;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.internal.core.ClasspathEntry;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.core.internal.resources.Workspace;
+
+out.clear();
+println "$metadata.menuName started\n";
+
+addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application');
+removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
+removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
+
+println "\n$metadata.menuName finished";
+
+/////////////
+
+def addProjectDependency(fromName, toName) {
+    def from = workspace.root.getProject(fromName);
+    def to = workspace.root.getProject(toName);
+    if (from.isOpen() && to.isOpen()) {  
+        
+        def fromProject = from.getNature('org.eclipse.jdt.core.javanature');
+        def classpath = fromProject.getRawClasspath(); 
+        def fixedClasspath = [];
+        def skip = 0;
+        classpath.each() {
+            if (it.getPath().toString().contains(to.getFullPath().toString())) {
+                skip = 1;                 
+            } else {
+                fixedClasspath.add(it);
+            }
+        };
+                
+        if (skip == 0) {
+	        println "  Adding project dependency from $fromName to $toName";
+	        def dep = new ClasspathEntry(
+	            IPackageFragmentRoot.K_SOURCE,     // indicates this classpath entry contains source files.
+	            IClasspathEntry.CPE_PROJECT,       // indicates a required project.
+	            to.getFullPath(),                  // target project
+	            ClasspathEntry.INCLUDE_ALL,        // inclusion patterns
+	            ClasspathEntry.EXCLUDE_NONE,       // exclusion patterns
+	            null,                              // source attachment
+	            null,                              // source attachment root
+	            null,                              // specific output folder
+	            false,                             // isExported
+	            null,                              // accessRules
+	            true,                              // combineAccessRules
+	            (IClasspathAttribute[])[]          // extraAttributes
+	        );        
+	        fixedClasspath.add(dep);
+	        
+	        def op = new SetClasspathOperation(fromProject, (IClasspathEntry[])fixedClasspath.toArray(), fromProject.getOutputLocation(), true);
+	        op.runOperation(monitor);
+        } else {
+            println "  Project dependency from $fromName to $toName allready exist, leaving as is..";
+        }
+    }
+}
+
+def removeClasspathEntry(projectName, pattern) {
+	def project = workspace.root.getProject(projectName);
+	if (project.isOpen()) {
+	    def name = project.getName();
+	    
+	    def javaProject = project.getNature('org.eclipse.jdt.core.javanature');
+	    def classpath = javaProject.getRawClasspath(); 
+	    def fixedClasspath = [];
+	    def skip = 1;
+	    classpath.each() {
+	        if (it.getPath().toString().contains(pattern)) {
+	           skip = 0; 
+	        } else {
+	           fixedClasspath.add(it);
+	        };
+	    };
+	    if (skip == 0) {
+	        println "  Remove classpath entry $pattern for $name";
+		    def op = new SetClasspathOperation(javaProject, (IClasspathEntry[])fixedClasspath.toArray(), javaProject.getOutputLocation(), true);
+		    op.runOperation(monitor);
+	    } else {
+	       println "  $projectName has no dependency $pattern, leaving as is..";
+	    }
+	}
+}
+
