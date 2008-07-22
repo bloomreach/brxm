@@ -38,6 +38,7 @@
     <module>migration</module>
     <module>testutils</module>
     <module>dropbox</module>
+    <module>eclipse</module>
   </modules>
 
   <build>
