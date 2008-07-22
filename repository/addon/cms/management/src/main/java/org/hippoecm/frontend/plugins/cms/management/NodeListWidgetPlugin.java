@@ -177,20 +177,14 @@ public class NodeListWidgetPlugin extends RenderPlugin {
     }
 
     private void refreshListModel(String name) {
-        for (Entry entry : listModel.list) {
-            if (entry.name.equals(name)) {
-                entry.selected = true;
-            } else {
-                entry.selected = false;
-            }
-        }
-        listModel.flush();
+        listModel.flush(name);
     }
 
     class FlushableListModel extends Model {
         private static final long serialVersionUID = 1L;
         private List<Entry> list;
         private boolean flush = true; //first run fills list
+        private String selectedPath = null;
 
         @Override
         public Object getObject() {
@@ -198,11 +192,12 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                 list = new LinkedList<Entry>();
 
             if (flush) {
-                String selectedPath = null;
-                for (Entry entry : list) {
-                    if (entry.selected) {
-                        selectedPath = entry.path;
-                        break;
+                if (selectedPath == null) {
+                    for (Entry entry : list) {
+                        if (entry.selected) {
+                            selectedPath = entry.path;
+                            break;
+                        }
                     }
                 }
                 list.clear();
@@ -224,12 +219,14 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                     }
                 });
                 flush = false;
+                selectedPath = null;
             }
             return list;
         }
 
-        public void flush() {
+        public void flush(String selectedNodeName) {
             flush = true;
+            this.selectedPath = parentNodeModel.getItemModel().getPath() + "/" + selectedNodeName;
         }
 
     }
