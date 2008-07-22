@@ -19,30 +19,58 @@
 -->
 <document>
   <properties>
-    <title>Usages for Hippo ECM</title>
+    <title>Use Cases</title>
   </properties>
   <body>
-    <section name="Usages for Hippo ECM">
+    <section name="Use Cases">
 
       <subsection name="Introduction">
-
-        <p>Hippo ECM can be used in a wide variety of cases, and can be tailored where needed. Hippo
+        <p>
+          Hippo ECM can be used in a wide variety of cases, and can be tailored where needed. Hippo
           does not enforce structure, although it does bring clarity in the enormous amount of
-          content that users have to cope with on a day to day basis. Some of the most common usages
-          are listed in this section. </p>
+          information that users have to cope with on a day to day basis. Some of the most common usages
+          are listed in this section.
+        </p>
       </subsection>
 
       <subsection name="Using Hippo ECM for Document Management">
-        <p>Out of the box, Hippo ECM provides Document Management functionalities that allows users
+        <p>
+          Out of the box, Hippo ECM provides Document Management functionalities that allows users
           to share and collaborate on documents. Hippo ECM extends standard Document Management
           functionalities by allowing users to organize all information in a way that is most useful
           to themselves or to the group they participate in, without forcing anyone to use a certain
-          predefined structure.</p>
-        <p> By using the Hippo ECM Faceted interface, anyone can start adding documents in no time
-          without having to worry about the structure in which information should be stored. </p>
+          predefined structure.
+        </p>
+        <p> 
+          By using the Hippo ECM Faceted interface, anyone can start adding documents in no time
+          without having to worry about the structure in which information should be stored. 
+        </p>
       </subsection>
 
-      <subsection name="Using Hippo ECM for Web Content Management"> </subsection>
+      <subsection name="Using Hippo ECM for Web Content Management">
+        <p>
+          Hippo ECM provides one integrated environment through which you can publish your
+          content to the web, whether it is on the internet, intranet, extranet or any 
+          combination of those. A toolkit is available for rapid development of tailor-made 
+          websites, while its use of open standards makes integration of Hippo ECM in an existing 
+          environment easy and straightforward. Out of the box features like a fast and effective 
+          search engine and faceted navigation let your users find the information they are looking 
+          for with minimal effort, optimizing the user experience.
+        </p>
+      </subsection>
+
+      <subsection name="Using Hippo ECM for Technical Documentation">
+        <p>
+          Content reuse and unlimited possibilities to organize your content in different ways
+          make Hippo ECM particularly well suited to manage your technical documentation.
+          Let your specialists maintain content such as specifications, manuals, andd part lists
+          in their respective fields of knowledge, and assemble the same content into many
+          different publications, based on their target audience and publication media.
+          Advanced version management and authorization, and fine grained content reuse
+          make sure your audience always gets tailor made and up-to-date information, through
+          the web, PDF, and print.
+        </p>
+      </subsection>
 
     </section>
 
