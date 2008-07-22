@@ -874,7 +874,7 @@
           <sv:value>hippo:facetlink</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
-          <sv:value>/</sv:value>
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -1056,7 +1056,7 @@
           <sv:value>hippo:facetselect</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
-          <sv:value>/</sv:value>
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String"> </sv:property>
         <sv:property sv:name="hippo:values" sv:type="String"> </sv:property>
@@ -1312,7 +1312,7 @@
           <sv:value>query name</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:docbase" sv:type="String">
-          <sv:value>/</sv:value>
+          <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:facets" sv:type="String"> </sv:property>
       </sv:node>
