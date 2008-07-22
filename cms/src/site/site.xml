@@ -22,13 +22,18 @@
     <version>2.01.00-SNAPSHOT</version>
   </skin>
 
+    <publishDate position="navigation-bottom" format="MM-dd-yy"/>
+    <version position="navigation-bottom" /> 
+
   <bannerLeft>
     <name>Hippo ECM</name>
     <src>/images/style/hippo-logo.gif</src>
     <href>/</href>
   </bannerLeft>
 
+    
   <body>
+    
     <links>
       <item name="Hippo" href="http://www.hippo.nl/"/>
       <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
@@ -128,7 +133,6 @@
           <item name="Example" href="/extend-hippo-ecm/integrate-hippo-ecm/example.html"/>
         </item>
       </item>
-
     </menu>
 
     <menu name="Website development">
@@ -151,6 +155,14 @@
     </menu>
 
     <menu ref="reports" name="Other"/>
+    
+    <menu name="Documentation versions">
+      <item name="Latest release" href="http://docs.onehippo.org/hippo-ecm/"/>
+      <item name="M6.2" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12677/"/>
+      <item name="M6.1" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12357/"/>
+      <item name="M6" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12094/"/>
+      <item name="SNAPSHOT" href="http://docs.onehippo.org/hippo-ecm/SNAPSHOT/"/>
+    </menu>
 
   </body>
 
