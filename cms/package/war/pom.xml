@@ -106,7 +106,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-addon-versioning</artifactId>
-      <version>${parent.version}</version>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
