@@ -15,24 +15,22 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="displaytable">
-      <tbody>
-        <tr>
-          <td class="itemmovehandle iconsSmall">
-            <div style="float: right">
-              <a class="up_ico" wicket:id="up">&nbsp;</a>
-              <a class="down_ico" wicket:id="down">&nbsp;</a>
-            </div>
-            <a class="edit_ico" wicket:id="edit">Edit</a>
-          </td>
-          <td style="position: relative">
+    <table class="templateItemTable">
+      <tr>
+        <td class="controls">
+          <a class="up-control" wicket:id="up">&nbsp;</a>
+          <a class="down-control" wicket:id="down">&nbsp;</a>
+        </td>
+        <td>
+          <div class="templateItem">
+            <a class="edit-control" wicket:id="edit">Edit</a>
             <div wicket:id="preview">[ item goes here ]</div>
-          </td>
-          <td class="iconsSmall" style="width: 10%; text-align: right">
-            <a class="remove_ico" wicket:id="remove">&nbsp;</a>
-          </td>
-        </tr>
-      </tbody>
+          </div>
+        </td>
+        <td class="removeItem">
+          <a class="close-control" wicket:id="remove">&nbsp;</a>
+        </td>
+      </tr>
     </table>
   </wicket:panel>
 </html>

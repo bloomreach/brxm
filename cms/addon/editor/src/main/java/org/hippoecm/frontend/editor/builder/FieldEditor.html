@@ -15,12 +15,43 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <label for="text">Path:</label><input type="text" wicket:id="path" size="20" />
-    <ul id="fieldeditor" style="list-style: none;">
-      <li><input type="checkbox" wicket:id="mandatory"/><label for="mandatory">Mandatory</label></li>
-      <li><input type="checkbox" wicket:id="multiple"/><label for="multiple">Multiple</label></li>
-      <li><input type="checkbox" wicket:id="ordered"/><label for="ordered">Ordered</label></li>
-      <li><input type="checkbox" wicket:id="primary"/><label for="primary">Primary</label></li>
-    </ul>
+    <div class="fieldedit">
+      <label for="text">Path:</label>
+      <input type="text" wicket:id="path" size="20"/>
+      <table>
+        <tr>
+          <td>
+            <label for="mandatory">Mandatory</label>
+          </td>
+          <td>
+            <input type="checkbox" wicket:id="mandatory"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="multiple">Multiple</label>
+          </td>
+          <td>
+            <input type="checkbox" wicket:id="multiple"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="ordered">Ordered</label>
+          </td>
+          <td>
+            <input type="checkbox" wicket:id="ordered"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="primary">Primary</label>
+          </td>
+          <td>
+            <input type="checkbox" wicket:id="primary"/>
+          </td>
+        </tr>
+      </table>
+    </div>
   </wicket:panel>
 </html>

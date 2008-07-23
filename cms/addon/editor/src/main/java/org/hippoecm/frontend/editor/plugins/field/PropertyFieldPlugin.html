@@ -15,18 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <h3><span class="required" wicket:id="required">*</span><span wicket:id="name">[ field name ]</span></h3>
-    <table wicket:id="view">
-      <tr>
-        <td><span wicket:id="item"></span></td>
-        <td class="iconsSmall" style="text-align: left;"> 
+    <h3><span wicket:id="name">[ field name ]</span><span class="required" wicket:id="required">*</span></h3>
+    <div wicket:id="view">
+      <span wicket:id="item"></span>
+      <div class="iconsSmall">
           <a class="remove_ico" wicket:id="remove">Remove</a>
           <a class="up_ico" wicket:id="up">(up)</a>
-        </td>
-      </tr>
-    </table>
-    <span class="iconsSmall">
-      <a class="add_ico" wicket:id="add">Add value</a>
-    </span>
+          </div>
+     </div>
+    <div class="iconsSmall">
+    <a class="add_ico" wicket:id="add">Add value</a>
+    </div>
   </wicket:panel>
 </html>
