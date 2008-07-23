@@ -74,8 +74,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         compare.put("state", new JcrNodeModelComparator("state"));
         add(new EmptyPanel("table"));
         
-        pageSize = DEFAULT_PAGE_SIZE;
-        viewSize = DEFAULT_VIEW_SIZE;
+        pageSize = config.getInt("list.page.size", DEFAULT_PAGE_SIZE);
+        viewSize = config.getInt("list.view.size", DEFAULT_VIEW_SIZE);
         createTableColumns();
 
         modelChanged();
