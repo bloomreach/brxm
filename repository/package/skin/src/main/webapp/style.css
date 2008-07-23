@@ -214,8 +214,8 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 
 .icons-48 a{background-repeat: no-repeat;}
 .icons-24 a{background-repeat: no-repeat;}
-.icon-16 span a span{background-repeat: no-repeat; 5px; background-position: center left;}
-.icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px;}
+.icon-16 span a span{background-repeat: no-repeat; 5px; background-position: center left; padding: 0px;}
+.icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px;s }
 
 /* filetype icons */
 table tr.selected .document-16, .document-16{background-image:url("images/icons/document-16.png")}
@@ -230,7 +230,7 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 .folder-48{background-image:url("images/icons/emblem-documents-48.png")}
 
 .image-add-48{background-image:url("images/icons/image-add-48.png")}
-.image-add{background-image:url("images/icons/image-add-16.png")}
+.image-add{background-image:url("images/icons/image-add-16.png");}
 
 .panel-toggle-version-16{background-image:url("images/icons/panel-toggle-version-16.png");}
 .panel-toggle-version-16 a:hover{cursor: pointer}
@@ -344,13 +344,12 @@ margin:0px;
 border: none;
 margin-top: 2px;
 }
+div.Tree *{white-space: nowrap;}
 
-div.Tree div.wicket-tree{margin: 0px; overflow: auto; width:auto; white-space: nowrap }
-
-div.Tree div.wicket-tree div{overflow: visible}
+div.Tree div.wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 
 div.Tree .wicket-tree .row a {color: black}
-div.wicket-tree div.a_{width: auto ! important; display:block;}
+div.wicket-tree div.a_{width: auto; display:block;}
 div.Tree .wicket-tree .row {width:auto;}
 div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
 div.Tree .wicket-tree .row-selected a {}
