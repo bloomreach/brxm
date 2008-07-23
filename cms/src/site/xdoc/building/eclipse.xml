@@ -220,6 +220,16 @@
       <br/>  
     </section>
     
+    <section name="Code formatting">
+      <p>
+        Before committing java code, please make sure that it has been formatted
+    	using the standard Hippo code formatting rules. Download
+    	<a href="http://repository.hippocms.org/coding-standards/hippo-eclipse-formatting.xml">hippo-eclipse-formatting.xml</a>
+    	and load it into Eclipse using <i>Window -> Preferences -> Java -> Code style -> Formatter -> Import</i>.
+    	Formatting a Java file is done in Eclipse by hitting Ctrl-Shift-F 
+      </p>
+    </section>
+    
     <section name="Keeping up">
       <p>
         Hippo ECM is a very active project with many updates every day. 'Ordinary' updates can be digested
