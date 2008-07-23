@@ -25,6 +25,7 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.SessionClassLoader;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
@@ -138,7 +139,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
         if (result == null) {
             Main main = (Main) Application.get();
             main.resetConnection();
-            throw new RestartResponseException(main.getHomePage());
+            throw new RestartResponseException(InvalidLoginPage.class);
         }
         return result;
     }
