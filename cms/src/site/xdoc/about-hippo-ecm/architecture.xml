@@ -29,7 +29,7 @@
             Hippo ECM consists of a number of seperate components that integrate through
             a standard Java Content Repository interface. This modular architecture is
             based on the notion of seperation of concerns, thereby allowing for maximum
-            extendability, interoperability and scalability.
+            extensibility, interoperability and scalability.
           </p>
           <p>
             Each component is described in more detail in its own section below.
