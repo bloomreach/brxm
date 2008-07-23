@@ -52,7 +52,7 @@
           are checked out and ~/workspace is the Eclipse workspace directory.</p>
       </div>
       
-      <p>Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.2</p>
+      <p>Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2</p>
             
       <p>Add some memory flags to the Eclipse -vmargs startup argument:</p>
       <ul>
@@ -182,7 +182,7 @@
       </ol>     
       <p>
         As a final step you need to run the
-        <b>"Fix Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu.
+        <b>"Prepare Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu.
         This script will fix some project dependencies that were not set correctly by
         the 'mvn eclipse:eclipse' step above.
         <br/><br/>
@@ -237,7 +237,7 @@
         <li>Make sure there is no .project file in the project root (ie. there is no 'ecm files' resource
         project for the whole source tree)</li>
         <li>Run the import project wizard</li>
-        <li>Run the <b>"Fix Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu</li>
+        <li>Run the <b>"Prepare Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu</li>
       </ol>
       <p>
         This should always work (in theory at least :-) Note that it is not always necessary to go through all
