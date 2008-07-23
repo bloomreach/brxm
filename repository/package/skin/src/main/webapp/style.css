@@ -105,9 +105,12 @@ width: 177px;
 
 /* Preview panel */
 /* ================================================ */
-.preview {padding: 4px; height: 38%; overflow: auto; border: 1px solid black; margin: 11px;}
-.preview div.fields div{background: #f2f2f2;}
-div.preview div.fields h3{background: #d2d2d2;} 
+.preview {padding: 4px; height: 38%; overflow: auto; margin: 11px;}
+.preview .renderItem{padding: 8px; margin-bottom: 4px; position: relative;}
+.preview .renderItem div span{font-family: arial, helvetica, sans-serif; font-size: 18px; background: white; padding: 2px; display: block}
+
+.preview .renderItem h3 span{font-size: 11px; font-weight: normal; color: #b2b2b2; margin-bottom: 8px; font-family: tahoma, arial, helvetica, sans-serif}
+
 div.preview span.iconsSmall, div.preview td.iconsSmall{display: none}
 div.previewMessage{background: url("images/icons/message-preview-128.png") no-repeat center center; height: 400px; text-indent: -9999px}
 
@@ -269,6 +272,13 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 .modelreq_ico{background-image:url("images/icons/refresh-16.png")}
 .createtyperequest_ico{background-image:url("images/icons/document-new-16.png")}
 
+/* Global control buttons */
+/* ================================================ */
+.up-control{background-image:url("images/controls/up-control.gif")}
+.down-control{background-image:url("images/controls/down-control.gif")}
+.edit-control{background-image:url("images/controls/edit-control.gif")}
+.close-control{background-image:url("images/controls/close-control.gif")}
+
 
 /* Wicket standard Dialog overwrite */
 /* ================================================ */
@@ -360,26 +370,21 @@ div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: bl
 /* Template Editor */
 /* ================================================ */
 
-div.editor{
-padding:7px;
-}
+#editor-perspective-wrapper div.panelcontainer{border-top: none; background: white;}
 
-#editor-perspective-wrapper div.panelcontainer{border-top: none;}
+div.editor{
+padding:4px;
+}
 
 div.templatetitle{
 background: url("images/editBack.gif") repeat-x;
 height: 30px;
 }
- 
 
-span.templateactions{
-display:block;
-width: 181px;
-padding-top: 35px;
-}
+.editor table tr td{vertical-align: top;}
+ 
 span.templateactions ul li a span{padding-left: 0px}
 div.fields div span.templateactions ul li{padding: 0px} 
-
 
 .templatedetails{
 padding: 4px;
@@ -391,35 +396,72 @@ font-size: 14px;
 margin-right: 2px;
 }
 
-
 /* temp icon hack */
 ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; margin-bottom: 2px;}
 
 /* edit template item */
 div#templateitemedit{background: none;width: 200px;}
-div#templateitemedit h3{font-size: 12px; margin-bottom: 10px; display: none;}
+div#templateitemedit h3{font-size: 12px; margin-bottom: 10px;}
+body div#templateitemedit .renderItem h3{color: #666666}
+div.fieldedit table{margin-top: 4px;}
+div.fieldedit table tr td{padding:3px;}
+
 div#templateitemedit h3.name {color: black; margin-bottom: 4px;}
 div#templateitemedit input{width: 140px;}
 
 /* template model edit */
-td.itemmovehandle{vertical-align: top; background: #f8f8f9; width: 43px; position: relative;}
+.templatedetails div.templateItem,
+.editor div.renderItem div, .editor div.templateItem{padding: 8px; margin-bottom: 4px; position: relative;}
 
-.editor table tr td{vertical-align: top;}
+.editor div.renderItem div div{padding: 0px; margin: 0px;}
+.editor div.renderItem div.renderItem{margin-bottom: 5px; background: none}
 
-div.fields h3{
-background: #666666; 
-padding: 4px;
-color: white;
-font-weight: bold;
-font-size: 11px;
-margin-bottom: 5px;
+.editor table.templateItemTable{width: 100%; background: #f2f2f2}
+.templatedetails div.templateItem {background: #f2f2f2}
+
+.templatedetails div.templateItem h3,
+.editor div.renderItem div h3, 
+.editor table.templateItemTable h3{font-size: 11px; font-weight: normal; color: #b2b2b2; margin-bottom: 8px; text-decoration: underline}
+.templatedetails div.templateItem h3{color: #666666; text-decoration: none;}
+
+.editor table.templateItemTable td.controls{width: 15px; background: white; padding: 0px;}
+.editor table.templateItemTable td.removeItem{width: 15px; background: white; padding: 0px}
+.editor table.templateItemTable td{padding: 8px}
+
+.editor table.templateItemTable a.up-control, .editor table.templateItemTable a.down-control{display: block; width: 10px; height: 10px; background-repeat: no-repeat; background-position: center center; margin-bottom: 4px;}
+.editor table.templateItemTable a.edit-control{
+display:block;
+height:6px;
+left:0px;
+padding:5px;
+position:absolute;
+text-indent:-9999px;
+top:0px;
+width:317px;
+z-index: 5;
 }
 
-div.fields input[type="text"]{width: 100px;}
-span.actionspanel ul li{background: none}
-div.fields table{width: 100%}
-div.fields div {padding: 2px}
-div.fields div ul li ul li{padding:4px}
+.editor table.templateItemTable a.close-control{display: block; background-repeat: no-repeat; background-position: center center; padding: 0px 8px 3px 8px; margin-left: 2px;}  
+
+/* input element styling */
+.templatedetails div.templateItem input,
+.templatedetails div.templateItem select,
+.templatedetails div.templateItem textarea,
+.editor div.renderItem div input,
+.editor div.renderItem div select,
+.editor div.renderItem div textarea,
+.editor table.templateItemTable input,
+.editor table.templateItemTable select,
+.editor table.templateItemTable textarea
+{font-family: arial, helvetica, sans-serif; font-size: 18px; background: white; border: 1px solid #666666; padding: 2px;}
+
+.templatedetails div.templateItem input,
+.editor div.renderItem div input, .editor table.templateItemTable input{width: 100%;}
+.editor div.renderItem div select, .editor table.templateItemTable select{}
+.templatedetails div.templateItem textarea, .editor div.renderItem div textarea, .editor table.templateItemTable textarea{width: 100%; height: 300px}
+ 
+
+
 
 /* Xinha */
 /* ================================================ */
@@ -571,6 +613,11 @@ border: 1px solid #4A84C8;
 background: url("images/icons/message-dropitem-128.png") no-repeat center 70px;
 margin-top: 10px;
 } 
+
+
+
+
+
 
 .addNodeWidget {
   margin-bottom: 4px;
