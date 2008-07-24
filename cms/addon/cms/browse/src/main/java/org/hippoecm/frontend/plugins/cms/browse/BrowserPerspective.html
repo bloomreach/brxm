@@ -14,27 +14,23 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
+
   <wicket:panel>
     <div id="browse-perspective-wrapper">
       <div class="panelcontainer" id="browse-perspective-left">
-        <h2>
-          <span class="search">Search</span>
-        </h2>
+        <div class="panelHead">
+          &nbsp;
+        </div>
         <div class="panel nopadding">
           <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
         </div>
       </div>
-      <div class="panelcontainer" id="browse-perspective-right">
-        <h2>
-          <span class="actions">Actions</span>
-        </h2>
-        <div class="panel">
+      <div class="panelcontainer" id="browse-perspective-center">
+        <div class="panelHead">
           <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
           <div wicket:id="extension.versionToggle">&#160;</div>
         </div>
-      </div>
-      <div class="panelcontainer" id="browse-perspective-center">
-        <h2>
+        <h2 class="hideme">
           <span class="documents" wicket:id="listing.title">title listing here</span>
         </h2>
         <div class="panel nopadding">

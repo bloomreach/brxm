@@ -17,17 +17,13 @@
   <wicket:head>
     <link href="skin/style.css" type="text/css" rel="stylesheet"/>
   </wicket:head>
-  <body class="dialog">
+  <body class="dialog dialog-question-48">
     <span wicket:id="text"></span>
     <wicket:child />
-    <strong><span wicket:id="exception"></span></strong>
+    <div class="dialogException" wicket:id="exception"></div>
     <div class="dialogButtons">
-          <span class="fauxbutton">
-          <a wicket:id="cancel">Cancel</a>
-          </span>
-    <span class="fauxbutton">
-      <a wicket:id="ok">OK</a>
-    </span>
+      <button wicket:id="ok">OK</button>
+      <button wicket:id="cancel">Cancel</button>
     </div>
   </body>
 </html>

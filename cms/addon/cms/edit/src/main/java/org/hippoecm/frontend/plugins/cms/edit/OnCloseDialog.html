@@ -16,29 +16,9 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <div wicket:id="onclosemessage">[onclosemessage]</div>
-    <table width="50%">
-      <tr>
-        <td>
-          <span class="fauxbutton">
-            <a wicket:id="save">Save</a>
-          </span>
-        </td>
-        <td>
-          <span class="fauxbutton">
-            <a class="fauxbutton" wicket:id="discard">Discard changes and close</a>
-          </span>
-        </td>
-        <td>
-          <span class="fauxbutton">
-            <a wicket:id="donothing">Cancel</a>
-          </span>
-        </td>
-     </tr>
-      <tr>
-        <td>
+    <button wicket:id="save">Save</button>
+              <button wicket:id="discard">Discard changes and close</button>
+              <button wicket:id="donothing">Cancel</button>
           <span wicket:id="onCloseDialogException">[if exception happens, here]</span>
-        </td>
-      </tr>
-    </table>
   </wicket:extend>
 </html>
