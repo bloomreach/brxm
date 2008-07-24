@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.management.groups;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -29,18 +31,18 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeModelListener {
+public class UsersListPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -64,8 +66,8 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
     }
 
     @Override
-    protected IDataProvider createDataProvider() {
-        final List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
+    protected IDataProvider getRows() {
+        final List<IModel> list = new ArrayList<IModel>();
         final String usersPath = "/hippo:configuration/hippo:users/";
         
         JcrNodeModel rootModel = (JcrNodeModel) getModel();
@@ -83,11 +85,10 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
         }
         return new ListDataProvider(list) {
             private static final long serialVersionUID = 1L;
-
             @Override
             public void detach() {
-                for (IModel model : list) {
-                    model.detach();
+                for (IModel entry : list) {
+                    entry.detach();
                 }
                 super.detach();
             }
@@ -95,14 +96,17 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
     }
     
     @Override
-    protected List<IStyledColumn> createTableColumns() {
+    protected List<IStyledColumn> getColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
+        columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
         return columns;
     }
     
+    @Override
+    protected Map<String, Comparator> getComparators() {
+       return null;
+    }
     
-    // implements IJcrNodeModelListener
 
     @Override
     public void onFlush(JcrNodeModel nodeModel) {
@@ -141,5 +145,6 @@ public class UsersListPlugin extends FlushableListingPlugin implements IJcrNodeM
         }
         
     }
+
 
 }

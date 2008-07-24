@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.model;
+package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,13 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SortableDataAdapter<T extends IModel> extends SortableDataProvider {
+class SortableDataAdapter<T extends IModel> extends SortableDataProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,21 +38,35 @@ public class SortableDataAdapter<T extends IModel> extends SortableDataProvider 
     static final Logger log = LoggerFactory.getLogger(SortableDataAdapter.class);
 
     private IDataProvider provider;
-    private Map<String, Comparator<? super T>> comparators;
-    private transient List<T> resources;
+    private Map<String, Comparator> comparators;
 
-    public SortableDataAdapter(IDataProvider provider, Map<String, Comparator<? super T>> comparators) {
+    public SortableDataAdapter(final IDataProvider provider, Map<String, Comparator> comparators) {
         this.provider = provider;
         this.comparators = comparators;
-        resources = null;
-    }
-
-    public IDataProvider getDataProvider() {
-        return provider;
     }
 
     public Iterator<T> iterator(int first, int count) {
-        sortResources();
+        List<T> resources = new ArrayList<T>(provider.size());
+        Iterator<T> iter = provider.iterator(0, provider.size());
+        while (iter.hasNext()) {
+            resources.add(iter.next());
+        }
+                
+        if (comparators != null) {
+            SortParam sortParam = getSort();
+            if (sortParam != null) {
+                String sortProperty = sortParam.getProperty();
+                if (sortProperty != null) {
+                    Comparator comparator = comparators.get(sortProperty);
+                    if (comparator != null) {
+                        Collections.sort(resources, comparator);
+                        if (getSort().isAscending() == false) {
+                            Collections.reverse(resources);
+                        }
+                    }
+                }
+            }
+        }
         return Collections.unmodifiableList(resources.subList(first, first + count)).iterator();
     }
 
@@ -63,24 +78,9 @@ public class SortableDataAdapter<T extends IModel> extends SortableDataProvider 
         return provider.size();
     }
 
-    private void sortResources() {
-        resources = new ArrayList<T>(provider.size());
-        Iterator<T> iter = provider.iterator(0, provider.size());
-        while (iter.hasNext()) {
-            resources.add(iter.next());
-        }
-
-        Comparator<? super T> comparator = comparators.get(getSort().getProperty());
-        Collections.sort(resources, comparator);
-        if (getSort().isAscending() == false) {
-            Collections.reverse(resources);
-        }
-    }
-
     @Override
     public void detach() {
         provider.detach();
-        resources = null;
     }
 
 }

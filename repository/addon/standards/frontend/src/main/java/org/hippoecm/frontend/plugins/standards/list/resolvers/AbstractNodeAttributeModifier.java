@@ -17,28 +17,34 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LockResolver implements IJcrNodeViewerFactory {
+public abstract class AbstractNodeAttributeModifier implements IListCellAttributeModifier {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(LockResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
 
-    public Component getViewer(String id, JcrNodeModel model) {
-        try {
-            HippoNode n = (HippoNode) model.getObject();
-
-            return new Label(id, String.valueOf(n.isLocked()));
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+    public AttributeModifier getAttributeModifier(IModel model) {
+        if (model instanceof JcrNodeModel) {
+            try {
+                HippoNode node = (HippoNode) model.getObject();
+                if (node != null) {
+                    return getAttributeModifier(node);
+                } else {
+                    log.warn("Cannot render a null node");
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
         }
-        return new Label(id);
+        return null;
     }
+    
+    protected abstract AttributeModifier getAttributeModifier(HippoNode node) throws RepositoryException;
 
 }

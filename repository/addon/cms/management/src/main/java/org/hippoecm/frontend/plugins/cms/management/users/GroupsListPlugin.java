@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.management.users;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -37,8 +39,9 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.management.FlushableListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.NameResolver;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -46,7 +49,7 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GroupsListPlugin extends FlushableListingPlugin {
+public class GroupsListPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -92,10 +95,10 @@ public class GroupsListPlugin extends FlushableListingPlugin {
     }
 
     @Override
-    protected IDataProvider createDataProvider() {
-        final String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
-        final String queryType = "xpath";
-        final List<JcrNodeModel> list = new ArrayList<JcrNodeModel>();
+    protected IDataProvider getRows() {
+        String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
+        String queryType = "xpath";
+        final List<IModel> list = new ArrayList<IModel>();
         try {
             QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
             HippoQuery query = (HippoQuery) queryManager.createQuery(queryString, queryType);
@@ -114,22 +117,27 @@ public class GroupsListPlugin extends FlushableListingPlugin {
         }
         return new ListDataProvider(list) {
             private static final long serialVersionUID = 1L;
-
             @Override
             public void detach() {
-                for (IModel model : list) {
-                    model.detach();
+                for (IModel entry : list) {
+                    entry.detach();
                 }
                 super.detach();
             }
         };
     }
     
+    
     @Override
-    protected List<IStyledColumn> createTableColumns() {
+    protected List<IStyledColumn> getColumns() {
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(getNodeColumn(new Model("Name"), "name", new NameResolver()));
+        columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
         return columns;
+    }
+    
+    @Override
+    protected Map<String, Comparator> getComparators() {
+        return null;
     }
 
     private String getUsername() {
@@ -170,5 +178,6 @@ public class GroupsListPlugin extends FlushableListingPlugin {
         }
         return node;
     }
+
 
 }

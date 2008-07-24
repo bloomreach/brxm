@@ -13,29 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.list;
+package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
-import org.hippoecm.frontend.plugins.standards.list.NodeColumn;
+import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 
-public class DocumentListingNodeColumn extends NodeColumn {
+public class ListPagingLabelProvider implements IPagingLabelProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public DocumentListingNodeColumn(IModel displayModel, String nodePropertyName, IJcrNodeViewerFactory resolver, DocumentListingPlugin plugin) {
-        super(displayModel, nodePropertyName, resolver, plugin);
+    private String prefix = "";
+    private String postfix = "";
+
+    public ListPagingLabelProvider() {}
+
+    public ListPagingLabelProvider(String prefix, String postfix) {
+        this.prefix = prefix != null ?  prefix :  "" ;
+        this.postfix = postfix != null ? postfix : "";
     }
 
-    @Override
-    public String getCssClass() {
-        if ("icon".equals(getSortProperty())) {
-            return "icon-16";
-        } else {
-            return super.getCssClass();
-        }
+    public String getPageLabel(int page) {
+        return prefix + (page + 1) + postfix;
     }
 
 }
