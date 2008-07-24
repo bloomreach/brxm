@@ -101,7 +101,7 @@
       <sv:value>rep:root</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>*</sv:value>
+      <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
@@ -127,7 +127,7 @@
       <sv:value>hippostd:gallery</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>*</sv:value>
+      <sv:value>author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
@@ -149,7 +149,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>*</sv:value>
+      <sv:value>author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
