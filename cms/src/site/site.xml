@@ -135,9 +135,7 @@
       <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
         <item name="Project Structure" href="/building/project-structure.html"/>
         <item name="Building with Maven" href="/building/maven.html"/>
-        <item name="Building with Eclipse" href="/building/eclipse.html" collapse="true">
-          <item name="Eclipse Tips &amp; Tricks" href="/building/eclipse-tips.html"/>
-        </item>
+        <item name="Building with Eclipse" href="/building/eclipse.html" collapse="true"/>
         <item name="Building with Netbeans" href="/building/netbeans.html"/>
       </item>
 
