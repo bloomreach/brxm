@@ -19,10 +19,10 @@
 -->
 <document>
     <properties>
-      <title>ECM Website Development</title>
+      <title>JCR Interface</title>
     </properties>
     <body>
-      <section name="Website Development">
+      <section name="JCR Interface">
         <p>
           After having set up your ECM, you may very well want to publish the contents
           of the repository by means of a website. This means that your website has to connect to

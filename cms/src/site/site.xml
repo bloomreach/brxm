@@ -46,11 +46,11 @@
 
     <menu name="About Hippo ECM">
       <item name="What is Hippo ECM?" href="/about-hippo-ecm/what-is-hippo-ecm.html"/>
-      <item name="Usages for Hippo ECM" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
+      <item name="Use Cases" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
       <item name="Features" href="/about-hippo-ecm/features.html"/>
       <item name="Architecture" href="/about-hippo-ecm/architecture.html"/>
       <item name="Components" href="/about-hippo-ecm/components.html"/>
-      <item name="Future" href="/about-hippo-ecm/future.html"/>
+      <!--<item name="Future" href="/about-hippo-ecm/future.html"/>-->
     </menu>
 
     <menu name="ECM Documentation">
@@ -109,15 +109,44 @@
           <item name="Working with authorizations" href="/use-hippo-ecm/tour/working_with_authorizations.html"/>
         </item>
       </item>
+      
+      <item name="Implement Hippo ECM" href="/implement-hippo-ecm/index.html" collapse="true">
+        <item name="Website Development" href="/implement-hippo-ecm/website-development/index.html" collapse="true">
+          <item name="Getting Started" href="/implement-hippo-ecm/website-development/getting-started.html"/>
+          <item name="Hello World" href="/implement-hippo-ecm/website-development/hello-world.html"/>
+          <item name="Navigation" href="/implement-hippo-ecm/website-development/navigation.html"/>
+        </item>
+        <item name="Advanced" href="/implement-hippo-ecm/advanced/index.html" collapse="true">
+          <item name="JCR Interface" href="/implement-hippo-ecm/advanced/jcr.html"/>
+        </item>
+        <item name="Reference" href="/implement-hippo-ecm/reference/index.html" collapse="true">
+          <item name="Concepts" href="/implement-hippo-ecm/reference/concepts.html"/>
+          <item name="Configuration" href="/implement-hippo-ecm/reference/configuration.html" collapse="true">
+            <item name="hst.properties" href="/implement-hippo-ecm/reference/configuration-hstproperties.html"/>
+            <item name="web.xml" href="/implement-hippo-ecm/reference/configuration-webxml.html"/>
+          </item>
+          <item name="JSP Taglib" href="/implement-hippo-ecm/reference/jsp-taglib.html"/>
+          <item name="Expression Language" href="/implement-hippo-ecm/reference/el-index.html"/>
+          <item name="URL Mapping" href="/implement-hippo-ecm/reference/url-mapping.html"/>
+          <item name="Binaries" href="/implement-hippo-ecm/reference/binaries.html"/>
+        </item>
+      </item>
 
       <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
         <item name="Project Structure" href="/building/project-structure.html"/>
         <item name="Building with Maven" href="/building/maven.html"/>
-        <item name="Building with Eclipse" href="/building/eclipse.html"/>
+        <item name="Building with Eclipse" href="/building/eclipse.html" collapse="true">
+          <item name="Eclipse Tips &amp; Tricks" href="/building/eclipse-tips.html"/>
+        </item>
         <item name="Building with Netbeans" href="/building/netbeans.html"/>
       </item>
 
       <item name="Extend Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
+        <item name="Document Templates" href="/extend-hippo-ecm/document-templates/index.html" collapse="true">
+          <item name="Tutorial" href="/extend-hippo-ecm/document-templates/tutorial.html" />
+          <item name="Examples" href="/extend-hippo-ecm/document-templates/examples.html" />
+          <item name="Importing Content" href="/extend-hippo-ecm/document-templates/importing-content.html" />
+        </item>
         <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
             <item name="Workflow" href="/extend-hippo-ecm/plugins/repository/workflow.html"/>
@@ -135,19 +164,21 @@
       </item>
     </menu>
 
+    <!--
     <menu name="Website development">
       <item name="JCR Interface" href="/website-development/jcr.html"/>
         <item name="Hippo Site Toolkit" href="/website-development/index.html"  collapse="true">
-          <item name="Getting it" href="/website-development/hst/getting.html"></item>
-          <item name="Configuration" href="/website-development/hst/configuration.html"></item>
-          <item name="Expression Language" href="/website-development/hst/el-index.html"></item>
-          <item name="Binaries" href="/website-development/hst/binaries.html"></item>
-<!--          <item name="Dynamic Queries" href="/website-development/hst/el-queries.html"></item> -->
-          <item name="URL Mapping" href="/website-development/hst/url-mapping.html"></item>
-          <item name="JSP Taglib" href="/website-development/hst/jsp-taglib.html"></item>
-          <item name="Roadmap" href="/website-development/hst/roadmap.html"></item>
-        </item>
+        <item name="Getting it" href="/website-development/hst/getting.html"></item>
+        <item name="Configuration" href="/website-development/hst/configuration.html"></item>
+        <item name="Expression Language" href="/website-development/hst/el-index.html"></item>
+        <item name="Binaries" href="/website-development/hst/binaries.html"></item>
+        <item name="Dynamic Queries" href="/website-development/hst/el-queries.html"></item>
+        <item name="URL Mapping" href="/website-development/hst/url-mapping.html"></item>
+        <item name="JSP Taglib" href="/website-development/hst/jsp-taglib.html"></item>
+        <item name="Roadmap" href="/website-development/hst/roadmap.html"></item>
+      </item>
     </menu>
+    -->
 
     <menu name="Community">
       <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
