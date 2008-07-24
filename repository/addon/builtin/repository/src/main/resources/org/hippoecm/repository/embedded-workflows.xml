@@ -54,7 +54,7 @@
       <sv:value>rep:root</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:roles" sv:type="String">
-      <sv:value>author</sv:value>
+      <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
