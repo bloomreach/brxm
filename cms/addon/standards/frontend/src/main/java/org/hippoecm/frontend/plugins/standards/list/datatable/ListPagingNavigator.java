@@ -13,23 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable.paging;
+package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 
-public class CustomizablePagingNavigator extends AjaxPagingNavigator{
+public class ListPagingNavigator extends AjaxPagingNavigator{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1;
 
-    public CustomizablePagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
+    public ListPagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
         super(id, pageable, labelProvider);
     }
-    public CustomizablePagingNavigator(String id, IPageable pageable) {
+    public ListPagingNavigator(String id, IPageable pageable) {
         super(id, pageable);
     }
 
@@ -46,7 +46,7 @@ public class CustomizablePagingNavigator extends AjaxPagingNavigator{
     protected PagingNavigation newNavigation(final IPageable pageable,
             final IPagingLabelProvider labelProvider)
     {
-        PagingNavigation pagingNavigation = new CustomizablePagingNavigation("navigation", pageable, labelProvider);
+        PagingNavigation pagingNavigation = new ListPagingNavigation("navigation", pageable, labelProvider);
         return pagingNavigation;
     }
 

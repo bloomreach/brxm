@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable.paging;
+package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,17 +26,17 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.Model;
 
-public class CustomizableNavigationToolBar extends AbstractToolbar{
+public class ListNavigationToolBar extends AbstractToolbar{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public CustomizableNavigationToolBar(DataTable table, int viewSize) {
-        this(table, null, null, viewSize);
+    public ListNavigationToolBar(DataTable table) {
+        this(table, null, null);
      }
 
-    public CustomizableNavigationToolBar(DataTable table, String prefix, String postfix, int viewSize) {
+    public ListNavigationToolBar(DataTable table, String prefix, String postfix) {
         super(table);
 
         WebMarkupContainer span = new WebMarkupContainer("span");
@@ -45,8 +45,6 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
                 .valueOf(table.getColumns().length))));
 
         PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, prefix, postfix);
-        // FIXME: viewsize can be set after onBeforeRender, not yet here
-        // pagingNavigator.getPagingNavigation().setViewSize(viewSize);
         span.add(pagingNavigator);
         span.add(newNavigatorLabel("navigatorLabel", table));
     }
@@ -79,8 +77,8 @@ public class CustomizableNavigationToolBar extends AbstractToolbar{
      */
     protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, String prefix, String postfix)
     {
-        return new CustomizablePagingNavigator(navigatorId, table,
-                        new CustomizablePagingLabelProvider(prefix,postfix))
+        return new ListPagingNavigator(navigatorId, table,
+                        new ListPagingLabelProvider(prefix,postfix))
             {
             private static final long serialVersionUID = 1L;
 

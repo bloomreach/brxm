@@ -19,26 +19,14 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.IJcrNodeViewerFactory;
 import org.hippoecm.repository.api.HippoNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class PathResolver implements IJcrNodeViewerFactory {
+public class LockRenderer extends AbstractNodeRenderer {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(PathResolver.class);
-
-    public Component getViewer(String id, JcrNodeModel model) {
-        try {
-            HippoNode n = (HippoNode) model.getObject();
-
-            return new Label(id, n.getPath());
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return new Label(id);
+    @Override
+    protected Component getViewer(String id, HippoNode node) throws RepositoryException {
+        return new Label(id, String.valueOf(node.isLocked()));
     }
 
 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable.paging;
+package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigation;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigationLink;
@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 
-public class CustomizablePagingNavigation extends AjaxPagingNavigation{
+public class ListPagingNavigation extends AjaxPagingNavigation{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,7 +37,7 @@ public class CustomizablePagingNavigation extends AjaxPagingNavigation{
      * @param labelProvider
      *            The label provider for the text that the links should be displaying.
      */
-    public CustomizablePagingNavigation(final String id, final IPageable pageable, final IPagingLabelProvider labelProvider)
+    public ListPagingNavigation(final String id, final IPageable pageable, final IPagingLabelProvider labelProvider)
     {
         super(id, pageable, labelProvider);
     }

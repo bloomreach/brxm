@@ -21,32 +21,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
-import org.hippoecm.frontend.plugins.cms.browse.list.resolvers.StateRenderer;
 import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class DocumentListingPlugin extends AbstractDocumentListingPlugin implements ITitleDecorator {
+public class TypesListingPlugin extends AbstractDocumentListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: DocumentListingPlugin.java 12651 2008-07-18 11:59:05Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 
-    public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
+    public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
-
+    
     public String getTitle() {
         return "Document listing";
     }
@@ -56,9 +56,12 @@ public class DocumentListingPlugin extends AbstractDocumentListingPlugin impleme
         List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
         columns.add(new ListColumn(new Model(""), "icon", new EmptyRenderer(), new IconAttributeModifier()));
         columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
-        columns.add(new ListColumn(new Model("Type"), "type", new TypeRenderer()));
-        columns.add(new ListColumn(new Model("State"), "state", new StateRenderer()));
-
+        columns.add(new ListColumn(new Model("Type"), "type", new IListCellRenderer() {
+            private static final long serialVersionUID = 1L;
+            public Component getRenderer(String id, IModel model) {
+                return new Label(id, "Document type");
+            }
+        }));
         return columns;
     }
 
@@ -67,8 +70,6 @@ public class DocumentListingPlugin extends AbstractDocumentListingPlugin impleme
         Map<String, Comparator> compare;
         compare = new HashMap<String, Comparator>();
         compare.put("name", new NameComparator());
-        compare.put("type", new TypeComparator());
-        compare.put("state", new StateComparator());
         return compare;
     }
 
