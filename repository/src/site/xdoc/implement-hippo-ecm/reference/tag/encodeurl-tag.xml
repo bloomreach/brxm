@@ -1,0 +1,67 @@
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+                          "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+    Copyright 2008 Hippo
+    
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<document>
+  <properties>
+    <title>ECM Website Development</title>
+  </properties>
+  <body>
+    <section name="The &lt;hst:encodeURL&gt; tag">
+      <p><b>&lt;hst:encodeURL&gt;</b> encodes a repository path location to a URL valid for
+        URL mapping functionality (<a href="../url-mapping.html">see here</a>)</p>
+
+      <p>Following table shows the attributes of the tag. An attribute's value is first found by the
+        directly available value, subsequently by a configuration key if present,
+        then by a default value. A configuration key is a key in the configuration file normally
+        called <code>hst.properties</code>, as given by a web.xml context parameter (<a
+          href="../configuration.html">see here</a>).</p>
+      <table>
+        <tr>
+          <th>Attribute</th>
+          <th>Required</th>
+          <th>ConfigurationKey</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>value</td>
+          <td>yes</td>
+          <td>-</td>
+          <td>-</td>
+          <td>The required value to encode, i.e. a repository document path.</td>
+        </tr>
+        <tr>
+          <td>context</td>
+          <td>no</td>
+          <td>-</td>
+          <td>-</td>
+          <td>The optional name by which to get a context object from request or page context, that
+            is then used to initialize URL encoding, instead of using the default initialization as
+            done by the URL mapping filter.</td>
+        </tr>
+        <tr>
+          <td>var</td>
+          <td>no</td>
+          <td>-</td>
+          <td>-</td>
+          <td>The optional variable name by which the encoded URL is set as request attribute. If
+            given, no output is written to the jsp directly.</td>
+        </tr>
+      </table>
+    </section>
+  </body>
+</document>
