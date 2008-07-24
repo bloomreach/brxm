@@ -29,14 +29,6 @@
         for Hippo ECM inside Eclipse. By the time you have finished reading you will be able to
         run and debug every aspect of Hippo ECM from within Eclipse.
       </p>
-      <p>
-        Note that the Eclipse setup described here is much more complex than the corresponding
-        chapter on <a href="netbeans.html">Netbeans</a>. This is because Netbeans uses the Maven build directly
-        whereas Eclipse uses it's own build system. This page in effect describes how to set up a parallel
-        build using Eclipse that behaves exactly as the main Maven build. A tradeoff here is the response time
-        to code changes which is longer for Netbeans: because it depends on the underlying Maven build it
-        cannot do a lot of the optimizations that Eclipse can do.
-      </p>
     </section>
     
     <section name="Prepare">
