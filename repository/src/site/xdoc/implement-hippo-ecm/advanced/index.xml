@@ -19,34 +19,26 @@
 -->
 <document>
     <properties>
-        <title>Extending Hippo ECM</title>
+        <title>Advanced</title>
     </properties>
     <body>
-      <section name="Extending Hippo ECM">
+      <section name="Advanced">
 
         <p>
-          Hippo ECM provides a full enterprise content management system that
-          can be used straight out of the box. Should the default functionality
-          however not suit your organization's needs, then Hippo ECM's open
-          component based architecture allows for easy customization and extension
-          of the system.
+          Hippo ECM provides almost endless possibilities to organize and publish your
+          content. The JCR interface gives developers the freedom to build any imaginable
+          application on top of Hippo ECM. This section describes how to get started. In addition,
+          this section provides examples of some use cases of Hippo ECM in a variety of
+          environment.
         </p>
 
         <ul>
           <li>
-            <a href="document-templates/index.html">Document Templates</a>
-            - Customize the Hippo ECM document types or create your own
-          </li>
-          <li>
-            <a href="plugins/index.html">Plugins</a>
-            - Extend Hippo ECM with your own plugins
-          </li>
-          <li>
-            <a href="hello-world.html">Hello World add-on</a>
-            - Create a trivial front end plugin in this step-by-step tutorial
+            <a href="jcr.html">JCR Interface</a>
+            - Learn how to get low level access to your content through the JCR interface
           </li>
         </ul>
-
+        
       </section>
     </body>
 </document>

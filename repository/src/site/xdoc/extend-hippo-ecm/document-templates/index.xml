@@ -19,34 +19,32 @@
 -->
 <document>
     <properties>
-        <title>Extending Hippo ECM</title>
+        <title>Document Templates</title>
     </properties>
     <body>
-      <section name="Extending Hippo ECM">
+      <section name="Document Templates">
 
         <p>
-          Hippo ECM provides a full enterprise content management system that
-          can be used straight out of the box. Should the default functionality
-          however not suit your organization's needs, then Hippo ECM's open
-          component based architecture allows for easy customization and extension
-          of the system.
+          Document templates describe how your content is edited and stored. This section
+          describes how to customize or create your own templates through the Hippo CMS
+          user interface.
         </p>
 
         <ul>
           <li>
-            <a href="document-templates/index.html">Document Templates</a>
-            - Customize the Hippo ECM document types or create your own
+            <a href="tutorial.html">Tutorial</a>
+            - Learn how to create your own document template step by step
           </li>
           <li>
-            <a href="plugins/index.html">Plugins</a>
-            - Extend Hippo ECM with your own plugins
+            <a href="examples.html">Examples</a>
+            - See examples of a wide variety of document templates
           </li>
           <li>
-            <a href="hello-world.html">Hello World add-on</a>
-            - Create a trivial front end plugin in this step-by-step tutorial
+            <a href="importing-content.html">Importing Content</a>
+            - Learn how to migrate your existing content to Hippo ECM
           </li>
-        </ul>
-
+       </ul>
+        
       </section>
     </body>
 </document>

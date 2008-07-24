@@ -19,33 +19,34 @@
 -->
 <document>
     <properties>
-        <title>Extending Hippo ECM</title>
+        <title>Website Development</title>
     </properties>
     <body>
-      <section name="Extending Hippo ECM">
+      <section name="Website Development">
 
         <p>
-          Hippo ECM provides a full enterprise content management system that
-          can be used straight out of the box. Should the default functionality
-          however not suit your organization's needs, then Hippo ECM's open
-          component based architecture allows for easy customization and extension
-          of the system.
+          Ultimately you will want to publish your content to a website, intranet or extranet. Hippo ECM
+          comes with a set of tools and components to allow rapid development of websites, the Hippo Site
+          Toolkit. This section describes helps you get started with the Hippo Site Toolkit, and develop
+          your own websites in a Hippo ECM enviroment.
         </p>
+        
 
         <ul>
           <li>
-            <a href="document-templates/index.html">Document Templates</a>
-            - Customize the Hippo ECM document types or create your own
+            <a href="getting-started.html">Getting Started</a>
+            - Learn how to get up and running with your own project
           </li>
           <li>
-            <a href="plugins/index.html">Plugins</a>
-            - Extend Hippo ECM with your own plugins
+            <a href="hello-world.html">Hello World</a>
+            - See a trivial example of a Hippo ECM based website
           </li>
           <li>
-            <a href="hello-world.html">Hello World add-on</a>
-            - Create a trivial front end plugin in this step-by-step tutorial
+            <a href="navigation.html">Navigation</a>
+            - Add a navigation to your website
           </li>
         </ul>
+              
 
       </section>
     </body>
