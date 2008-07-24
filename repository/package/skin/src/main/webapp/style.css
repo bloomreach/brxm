@@ -1,6 +1,7 @@
 /* Defaults */
 * { margin : 0; padding : 0;}
 /* Normalizes font-size for headers */
+button{padding: 4px; margin: 2px; font-size: 12px;}
 h1,h2,h3,h4,h5,h6 { font-size : 100%; }
 /* Removes list-style from lists */
 ol,ul { list-style : none; }
@@ -27,7 +28,7 @@ div.clearer {clear: both;}
 /* Global elements styles */
 /* ================================================ */
 
-body {background: white}
+body {background: url("images/bodyback.png") repeat-x}
 
 /* default font settings */
 body, table tr td, table tr th{
@@ -40,8 +41,8 @@ overflow: hidden;
 a {color: #00A2E3;}
 
 input[type="submit"] {
- font-size: 11px;
- padding: 3px;
+ font-size: 12px;
+ padding: 4px;
 }
 
 ul.highlight li,
@@ -55,31 +56,31 @@ table tr.selected td a,
 /* ================================================ */
 .tabsplugin {position: absolute; top: 0px; left: 0px; padding-top: 75px; height: 100%}
 
-ul.tabs{width: 100%;display: block; position: absolute; top: 0px; left: 0px; background: url("images/hippocms7.gif") no-repeat }
+ul.tabs{width: 100%;display: block; position: absolute; top: 0px; left: 0px; 
+background: url("images/hippocms7.gif") no-repeat 177px 0px;
+}
 
 ul.tabs li {
   display:block;
   float:left;
-  margin-right: 2px;
-  padding-top: 12px;
-  padding-bottom: 0px;
+  margin-right: 10px;
   position: relative;
   text-align: center;
 }
 
 ul.tabs a {
-  text-decoration:none;
   font-weight: normal;
   white-space:nowrap;
   display: block;
   float: left;
-  padding-left: 10px;
-  padding-right: 10px; 
+  padding: 6px; 
+  text-decoration: underline;
+  text-align: center;
+  
  }
-ul.tabs a:hover{text-decoration: underline}
 
-ul.tabs li.tab0{margin-left: 50px;}
-ul.tabs li.selected a{font-weight: bold; }
+ul.tabs li.tab0{}
+ul.tabs li.selected a{font-weight: bold; text-decoration: none; color: black }
 
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/close.png') no-repeat center center; padding: 6px; padding-right: 11px; height: 14px; text-indent: -9999px}
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
@@ -95,13 +96,18 @@ body ul.tabs li.tab0, body ul.tabs li.tab1, body ul.tabs li.tab2{background: non
 body ul.tabs li.tab3{margin-left: 300px;}
 body ul.tabs li.tab3, body ul.tabs li.tab4, body ul.tabs li.tab5,
 body ul.tabs li.tab6, body ul.tabs li.tab7, body ul.tabs li.tab8
-body ul.tabs li.tab9, body ul.tabs li.tab4, body ul.tabs li.tab10{
-margin-top: 47px;
-padding-top: 5px;
-padding-left: 15px;
+body ul.tabs li.tab9, body ul.tabs li.tab11, body ul.tabs li.tab10{
+margin-top: 46px;
+padding-top: 0px;
+padding-left: 20px;
 padding-bottom: 5px;
 width: 177px;
 }
+body ul.tabs li.tab3 a, body ul.tabs li.tab4 a, body ul.tabs li.tab5 a, 
+body ul.tabs li.tab6 a, body ul.tabs li.tab7 a, body ul.tabs li.tab8 a,
+body ul.tabs li.tab9 a, body ul.tabs li.tab11 a, body ul.tabs li.tab10{
+padding-top: 5px}
+
 
 /* Preview panel */
 /* ================================================ */
@@ -116,11 +122,11 @@ div.previewMessage{background: url("images/icons/message-preview-128.png") no-re
 
 /* Wicket Ajax indicator */
 /* ================================================ */
-span.wicket-ajax-indicator{position: absolute; top: 11px; left: 360px; display: block; visiblity: visible}
+span.wicket-ajax-indicator{position: absolute; top: 6px; left: 442px; display: block; visiblity: visible}
 
 /* Logout */
 /* ================================================ */
-ul.logout {position: absolute; right: 0px; top: 0px; z-index: 10; padding: 11px; width: 400px;}
+ul.logout {position: absolute; right: 0px; top: 0px; z-index: 10; padding: 6px; width: 400px;}
 ul.logout li{float: right; margin-left: 15px;}
 ul.logout li span.name{color: black; font-weight: bold;}
 ul.logout a:hover{text-decoration: underline}
@@ -136,60 +142,36 @@ background: url("images/hippocms7.gif") no-repeat top left;
 
 .panelcontainer{border: 1px solid #cccccc; background: white url("images/panelBack.png") repeat-x 0px 29px;}
 .panel{padding-top: 5px; position: relative;}
-.panelcontainer h2{display: block; margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/panelHeadBack.png") repeat-x;}
+.panelcontainer h2{margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/inactiveView.gif") repeat-x;}
 .nopadding{padding: 0px}
 
-#edit-perspective-wrapper
+#editor-perspective-wrapper,
 #management-perspective-wrapper,
 #dashboard-perspective-wrapper, 
 #browse-perspective-wrapper{
-
 }
-
 .scrolllist{overflow: auto; height: 90px; padding: 2px; background-color: white}
-
-.panelhead{background: #f2f2f2; width: 100%; height: 70px;}
-.panelhead td{padding: 5px;}
 
 div.slidercontrol a {background: url("images/sliderback.gif") repeat-x; height: 6px; width: 100%; text-align: center; display: block}
 div.slidercontrol a:hover{cursor: s-resize}
 
-/* windows explorer like actions panels */
-.actionspanel{
-background: url("images/actionspanelback.gif") no-repeat top left;
-padding: 10px;
-padding-top: 7px;
-padding-bottom: 2px;
-margin-bottom: 15px;
+/* Main Positioning and Panels */
+/* ================================================ */
+.panelcontainer h2 span{font-family: arial, helvetica, sans-serif; display: block; padding: 4px; background-position: left right; background-repeat: no-repeat; font-size: 18px; color: #666666; font-weight: normal}
+
+.panelHead{background: url("images/inactiveView.gif") repeat-x top left; height: 30px;}
+body div.actionspanel{
+padding: 6px;
 }
+div.iconactions{padding: 0px;}
+div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 15px;}
+div.iconactions h3{color: white; display: none;}
+div.actionspanel ul{float: left}
+div.actionspanel ul li{margin-right: 15px; float: left;}
+.actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #666666}
+.actionspanel ul li a span, .actionspanel ul li span a, .actionspanel ul li span span{display: inline; padding: 0px;}
 
-div.iconactions{padding: 10px;}
-div.iconactions h3{margin-bottom: 16px; color: white}
-.actionspanel ul li{margin-bottom: 10px}
-.actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #333333}
-.actionspanel ul li span span{display: inline; padding: 0px;}
-.actionspanel ul li span a{display: inline; padding: 0px;}
-.actionspanel ul li a span{display: inline; padding: 0px;}
-.actionspanel ul li a:hover{text-decoration: underline; color: #666666;}
-
-
-/* Panel Headings */
-/* ================================================ */
-.panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: left right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
-/* Panel Headings */
-/* ================================================ */
-.panelcontainer h2 span{display: block; width: 100%; height: 29px; background-position: left right; background-repeat: no-repeat; text-indent: -9999px; font-size: 11px;}
-
-.panelcontainer h2 span.actions{background-image: url("images/headings/actions.png")}
-.panelcontainer h2 span.search{background-image: url("images/headings/browse.png")}
-.panelcontainer h2 span.history{background-image: url("images/headings/history.png")}
-.panelcontainer h2 span.documents{background-image: url("images/headings/documents.png")}
-.panelcontainer h2 span.edit{background-image: url("images/headings/edit.png")}
-.panelcontainer h2 span.task{background-image: url("images/headings/tasks.png")}
-.panelcontainer h2 span.edititem{background-image: url("images/headings/edittempateitem.png")}
-.panelcontainer h2 span.previewlabel{background-image: url("images/headings/preview.png")}
-.panelcontainer h2 span.userman{background-image: url("images/headings/usermanagement.png")}
-.panelcontainer h2 span.welcome{background-image: url("images/headings/welcome.png")}
+.actionspanel ul li a:hover{text-decoration: underline; color: black;}
 
 /* Welcome Panel */
 /* ================================================ */
@@ -235,6 +217,9 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 .image-add-48{background-image:url("images/icons/image-add-48.png")}
 .image-add{background-image:url("images/icons/image-add-16.png");}
 
+.dialog-information-48{background-image:url("images/icons/dialog-information-48.png")}
+.dialog-question-48{background-image:url("images/icons/dialog-question-48.png")}
+
 .panel-toggle-version-16{background-image:url("images/icons/panel-toggle-version-16.png");}
 .panel-toggle-version-16 a:hover{cursor: pointer}
 
@@ -278,37 +263,34 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 .down-control{background-image:url("images/controls/down-control.gif")}
 .edit-control{background-image:url("images/controls/edit-control.gif")}
 .close-control{background-image:url("images/controls/close-control.gif")}
-
+.back-control{background-image:url("images/controls/back-control.gif"); background-repeat: no-repeat; display: block; width:45px; height: 45px; text-indent: -9999px; position: absolute; top: 0px; left: 12px; z-index:100;}
 
 /* Wicket standard Dialog overwrite */
 /* ================================================ */
 body div.wicket-modal div.w_blue div.w_top, body div.wicket-modal div.w_blue div.w_bottom, body div.wicket-modal div.w_blue div.w_topLeft, body div.wicket-modal div.w_blue div.w_topRight, body div.wicket-modal div.w_blue div.w_bottomRight, body div.wicket-modal div.w_blue div.w_bottomLeft, body div.wicket-modal div.w_blue a.w_close{
-background-image: url(images/wicketframe-hippo.png);
+background-image: url(images/wicketframe-hippo.png); 
 }
 body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue div.w_right {
-background-image:url(images/wicketframe2-hippo.png);
+background-image:url(images/wicketframe2-hippo.png); 
 }
-body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue div.w_right {
-background: white;
-}
-body div.wicket-modal div.w_caption{
-background: white url("images/panelHeadBack.png") repeat-x;
-padding: 7px;
-height: 15px;
-}
-body div.wicket-modal div.w_right_1{margin-left: 0px;}
-body div.wicket-modal div.w_content_1{margin-right: 0px;}
-body div.wicket-modal div.w_content_3{border: none} 
 
-body.dialog .fauxbutton a{float: right; margin-left: 15px;} 
-body div.wicket-modal span.w_captionText{
-display: block;
-height: 15px;
-width:350px;
-color: white;
-}
-body.dialog{background: white; padding: 15px;}
-body.dialog div.dialogButtons{padding-top: 50px}
+body div.wicket-modal div.w_caption{background: #fafbfb}
+body div.wicket-modal div.w_content {background: #fafbfb url("images/dialogBack.gif") repeat-x bottom left} 
+body div.wicket-modal div.w_content_3{border: none}
+body div.wicket-modal div.w_content_2 {padding-top: 0px}
+body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none;}
+
+body div.wicket-modal div.w_content_1{margin-right: 5px;}
+body div.wicket-modal div.w_right_1 {margin-left:5px;}
+
+/* element get's shown even when there is no message, uncomment this line when the issue is fixed 
+body.dialog div.dialogException{border: 1px solid red; padding: 5px; color: red; background: green}
+*/
+
+
+
+body.dialog div.dialogButtons{text-align: right; position: absolute; right: 50px; bottom:50px;}
+
 body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
 body.dialog h1{margin-bottom: 10px; font-size: 16px;}
 
@@ -342,6 +324,9 @@ table tr td table.versiondetails tr td{padding: 0px; color: #a2a2a2}
 
 table.panelhead tr td{vertical-align: middle}
 table.panelhead tr td.document_big_ico {background-repeat: no-repeat; background-position: center center; width: 40px}
+div.versioning .panelHead{height: auto; background: #f2f2f2; width: 100%;}
+div.versioning .panelHead td{padding: 5px;}
+
 
 #versioningWidget {
     display:none;
@@ -374,10 +359,11 @@ div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: bl
 
 div.editor{
 padding:4px;
+background: url("images/panelBack.png") repeat-x;
 }
 
 div.templatetitle{
-background: url("images/editBack.gif") repeat-x;
+background: url("images/inactiveView.gif") repeat-x;
 height: 30px;
 }
 
@@ -460,6 +446,8 @@ z-index: 5;
 .editor div.renderItem div select, .editor table.templateItemTable select{}
 .templatedetails div.templateItem textarea, .editor div.renderItem div textarea, .editor table.templateItemTable textarea{width: 100%; height: 300px}
  
+
+.editor div.renderItem div.datePicker input{width: 80px;}
 
 
 
@@ -545,9 +533,7 @@ body .htmlarea .toolbar {
   background-repeat:repeat-x;
   background-color:#f2f0e4;
 }
-.dialog {
-  background-color:#f2f0e4;
-}
+
 .dialog .title {
   background-image: url(button-background.png);
 }  
@@ -614,11 +600,6 @@ background: url("images/icons/message-dropitem-128.png") no-repeat center 70px;
 margin-top: 10px;
 } 
 
-
-
-
-
-
 .addNodeWidget {
   margin-bottom: 4px;
 }
@@ -632,29 +613,17 @@ margin-top: 10px;
   border: 1px solid #000;
 }
 
-
-.templatedetails div.fields input{width: 100px;} 
-
 .templatedetails div.templateactions {
 position: absolute;
-left: 0px;
-top: 3px;
+left: 167px;
+top: 0px;
 }
+
+div.templateactions div {display: inline}
+
 
 div.templateactions {
   width:240px;
-}
-
-.templatedetails .templateactions a {
-background: transparent url("images/fauxbutton.gif") no-repeat scroll 0%;
-color:black;
-display:block;
-float:left;
-height:18px;
-margin-left:10px;
-padding-top:4px;
-text-align:center;
-width:100px;
 }
 
 div.templateactions div{margin-bottom: 0px; padding: 0px} 
