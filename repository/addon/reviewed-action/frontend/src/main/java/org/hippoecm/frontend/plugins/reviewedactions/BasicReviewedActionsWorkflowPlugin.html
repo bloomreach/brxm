@@ -16,9 +16,11 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
    <div class="actionspanel">
-    <span class="hideme" wicket:id="caption"/>
-     <span class="hideme documentStatus" wicket:id="status"/>
-     <span class="documentLocked" wicket:id="locked">Document is LOCKED</span>
+     <h3 class="documentInfo">
+       <span class="documentLocked document-lock-16" wicket:id="locked"/>
+       <span class="documentCaption" wicket:id="caption"/>
+       <span class="documentStatus" wicket:id="status"/>
+    </h3>
     <ul>
       <li>
         <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
