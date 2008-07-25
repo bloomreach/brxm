@@ -1,7 +1,6 @@
 /* Defaults */
 * { margin : 0; padding : 0;}
 /* Normalizes font-size for headers */
-button{padding: 4px; margin: 2px; font-size: 12px;}
 h1,h2,h3,h4,h5,h6 { font-size : 100%; }
 /* Removes list-style from lists */
 ol,ul { list-style : none; }
@@ -40,10 +39,13 @@ overflow: hidden;
 
 a {color: #00A2E3;}
 
-input[type="submit"] {
+/* default buttons */
+button, input[type="button"], input[type="submit"] {
  font-size: 12px;
  padding: 4px;
+margin: 2px;
 }
+
 
 ul.highlight li,
 ul.highlight li a span,
@@ -228,7 +230,7 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 .image-add-48{background-image:url("images/icons/image-add-48.png")}
 .image-add{background-image:url("images/icons/image-add-16.png");}
 
-.document-lock-16{background-image:url("images/icons/permissions-16.png")}
+.document-lock-16{background-image:url("images/icons/document-lock-16.png")}
 
 .dialog-information-48{background-image:url("images/icons/dialog-information-48.png")}
 .dialog-question-48{background-image:url("images/icons/dialog-question-48.png")}
@@ -291,8 +293,8 @@ body div.wicket-modal div.w_caption{background: #fafbfb}
 body div.wicket-modal div.w_content {background: #fafbfb url("images/dialogBack.gif") repeat-x bottom left} 
 body div.wicket-modal div.w_content_3{border: none}
 body div.wicket-modal div.w_content_2 {padding-top: 0px}
-body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none; background-image: none}
-
+body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none;}
+div.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background: transparent url("images/icons/dialog-question-48.png") no-repeat 40px 38px;}
 body div.wicket-modal div.w_content_1{margin-right: 5px;}
 body div.wicket-modal div.w_right_1 {margin-left:5px;}
 
@@ -302,10 +304,17 @@ body.dialog div.dialogException{border: 1px solid red; padding: 5px; color: red;
 
 
 
-body.dialog div.dialogButtons{text-align: right; position: absolute; right: 50px; bottom:50px;}
+div.dialog div.dialogButtons, body.dialog div.dialogButtons{text-align: right; position: absolute; right: 50px; bottom:50px;}
 
-body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
-body.dialog h1{margin-bottom: 10px; font-size: 16px;}
+body div.dialog table tr td, body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
+body div.dialog h1, body.dialog h1{margin-bottom: 10px; font-size: 16px;}
+
+div.dialog table.imagePicker tr td{padding: 5px;}
+div.dialog table.imagePicker{margin-bottom: 15px}
+
+/* Image gallery Popup */
+/* ================================================ */
+div.thumbnailScroll{width: 400px; overflow: auto; white-space: nowrap; border:1px solid #CCCCCC; background: url("images/panelBack.png") repeat-x; border-top: none;}
 
 /* Breadcrumbs */
 /* ================================================ */
@@ -316,10 +325,6 @@ top:39px;
 z-index:100;
 color: #f2f2f2;
 }
-
-/* Workflow */
-/* ================================================ */
-span.documentStatus{font-weight: normal; padding-left: 3px;}
 
 /* Paging */
 /* ================================================ */
@@ -426,6 +431,8 @@ div#templateitemedit input{width: 140px;}
 .editor table.templateItemTable td.controls{width: 15px; background: white; padding: 0px;}
 .editor table.templateItemTable td.removeItem{width: 15px; background: white; padding: 0px}
 .editor table.templateItemTable td{padding: 8px}
+.editor table.templateItemTable table td{padding: 0px}
+
 
 .editor table.templateItemTable a.up-control, .editor table.templateItemTable a.down-control{display: block; width: 10px; height: 10px; background-repeat: no-repeat; background-position: center center; margin-bottom: 4px;}
 .editor table.templateItemTable a.edit-control{
@@ -547,12 +554,6 @@ body .htmlarea .toolbar {
   background-color:#f2f0e4;
 }
 
-.dialog .title {
-  background-image: url(button-background.png);
-}  
-.dialog button{
-  background-image: url(button-background.png);
-}
 /* keep xinha from taking over the wrong styles */
 div.fields table.htmlarea tr td, .htmlarea div.toolbar {
 padding:0px;

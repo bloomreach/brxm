@@ -14,30 +14,33 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <h2>Image picker</h2>
-  <form wicket:id="form">
-    <p>
-      <label>Image Name</label>  
-      <input type="text" wicket:id="alt" /> 
+ <form wicket:id="form">
+   <p class="statusMessage"><span wicket:id="exists" style="color:red" /></p>
+ <table class="imagePicker">
+   <tr>
+     <td>
+      <label>Image Name</label>
+     </td>
+     <td>  
+      <input type="text" wicket:id="alt" />
+     </td>
+     <td> 
       <img src="" wicket:id="selectedimg"/>
-      <br/>
-      <span wicket:id="exists" style="color:red" />
-      
-      <div>
-        <p style="padding-top: 20px;">
-          <input type="button" wicket:id="ok" value = "OK"/>
-          <input type="button" wicket:id="close" value="Close" />
-        </p> 
-      </div>   
-      <div style="clear:both"/>
-      <div class="item" wicket:id="item">
+     </td>
+     </tr>
+ </table>
+      <div class="thumbnailScroll">
+      <div class="thumbnail" wicket:id="item">
         <a wicket:id="callback">
           <div wicket:id="entry" style="float:left; margin:5px;">
               <img src="" wicket:id="thumbnail" />
           </div>
         </a>
       </div>
-    </p>
-    
+      </div>
+   <div class="dialogButtons">
+     <input type="button" wicket:id="ok" value = "OK"/>
+     <input type="button" wicket:id="close" value="Close" />
+   </div>
   </form>
 </wicket:panel>
