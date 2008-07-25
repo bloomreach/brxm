@@ -278,7 +278,7 @@ body div.wicket-modal div.w_caption{background: #fafbfb}
 body div.wicket-modal div.w_content {background: #fafbfb url("images/dialogBack.gif") repeat-x bottom left} 
 body div.wicket-modal div.w_content_3{border: none}
 body div.wicket-modal div.w_content_2 {padding-top: 0px}
-body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none;}
+body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none; background-image: none}
 
 body div.wicket-modal div.w_content_1{margin-right: 5px;}
 body div.wicket-modal div.w_right_1 {margin-left:5px;}
@@ -455,7 +455,7 @@ z-index: 5;
 /* ================================================ */
 table.htmlarea tr td{border: none}
 table.htmlarea tr td table tr td{border: none}
-table.htmlarea tr td select{margin-top: 0px;}
+body div.renderItem div table.htmlarea tr td select{margin-top: 0px; font-size: 11px;}
 table.htmlarea tr td{padding: 0px; vertical-align: top;}
 
 div.fields div.toolbar div, div.toolbar div {
