@@ -469,7 +469,7 @@ top: 1px;
 }
 
 body .htmlarea .toolbar {
-  background-image: url("back.png") repeat-y;
+  background-color: #fefefe;
 }
 .htmlarea table.toolbarRow {
   margin-top:2px;
