@@ -212,12 +212,11 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 
 .icons-48 a{background-repeat: no-repeat;}
 .icons-24 a{background-repeat: no-repeat;}
-.icon-16 span a span{background-repeat: no-repeat; 5px; background-position: center left; padding: 0px;}
 .icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px;s }
 
-/* filetype icons */
-table tr.selected .document-16, .document-16{background-image:url("images/icons/document-16.png")}
-table tr.selected .folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
+/* mimetypes icons */
+.document-16{background-image:url("images/icons/document-16.png")}
+.folder-16{background-image:url("images/icons/folder-16.png")}
 
 .document_big_ico{background-image:url("images/icons/document-48.png")}
 .users_big_ico{background-image:url("images/icons/groups-48.png")}
@@ -579,9 +578,8 @@ tr.odd td { padding: 5px; }
 .Doclist table tr td a{color: black}
 .Doclist{ height: 45%; overflow: auto}
 
-
 table tr td.icon-16{width: 15px}
-table tr td.icon-16 span a span{display: block; height: 16px;}
+table tr td.icon-16 span {display: block; height: 16px;}
 
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
 .dataListPaging td div{margin-bottom: 5px}
@@ -595,7 +593,6 @@ table tr td.icon-16 span a span{display: block; height: 16px;}
 
 /* User Management */
 /* ================================================ */
-
 .iconListSmall li{margin-bottom: 3px;}
 .iconListSmall li a{background-repeat: no-repeat; background-position: left center; display: block; padding: 4px; padding-left: 20px; color: #666666}
 
