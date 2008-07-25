@@ -163,9 +163,20 @@ div.slidercontrol a:hover{cursor: s-resize}
 body div.actionspanel{
 padding: 6px;
 }
+
+/* Actions buttons */
+/* ================================================ */ 
 div.iconactions{padding: 0px;}
-div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 15px;}
+div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 8px;}
+
+/* action titles and documentInfo */
 div.iconactions h3{color: white; display: none;}
+div.iconactions h3.documentInfo{display: block; float: left; color: #666666; padding-top: 2px; margin-right: 15px; background: url("images/devider.png") no-repeat center right; padding-right: 15px;}
+div.iconactions h3.documentInfo span.documentLocked{color: black; display: block; float: left; background-repeat: no-repeat; background-position: center center; margin-right: 10px; height: 16px; width: 16px;}
+div.iconactions h3.documentInfo span.documentStatus{padding-left: 5px; display; block;}
+div.iconactions h3.documentInfo span.documentCaption{display; block}
+
+
 div.actionspanel ul{float: left}
 div.actionspanel ul li{margin-right: 15px; float: left;}
 .actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #666666}
@@ -216,6 +227,8 @@ table tr.selected .folder-16, .folder-16{background-image:url("images/icons/fold
 
 .image-add-48{background-image:url("images/icons/image-add-48.png")}
 .image-add{background-image:url("images/icons/image-add-16.png");}
+
+.document-lock-16{background-image:url("images/icons/permissions-16.png")}
 
 .dialog-information-48{background-image:url("images/icons/dialog-information-48.png")}
 .dialog-question-48{background-image:url("images/icons/dialog-question-48.png")}
