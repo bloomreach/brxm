@@ -16,14 +16,18 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,42 +48,73 @@ public abstract class AbstractDocumentListingPlugin extends AbstractListingPlugi
     }
 
     @Override
-    protected IDataProvider getRows() {
-        JcrNodeModel model = (JcrNodeModel) getModel();
-        final List<IModel> entries = new ArrayList<IModel>();
-        Node node = (Node) model.getNode();
-        try {
-            while (node != null) {
-                if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder"))
-                        && !node.isNodeType(HippoNodeType.NT_HANDLE) && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
-                        && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
-                    NodeIterator childNodesIterator = node.getNodes();
-                    while (childNodesIterator.hasNext()) {
-                        entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
+    protected ISortableDataProvider getDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel());
+    }
+
+    private class DocumentsProvider extends SortableDataProvider {
+        private static final long serialVersionUID = 1L;
+        private List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
+
+        public DocumentsProvider(JcrNodeModel model) {
+            Node node = (Node) model.getNode();
+            try {
+                while (node != null) {
+                    if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder"))
+                            && !node.isNodeType(HippoNodeType.NT_HANDLE)
+                            && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
+                            && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
+                        NodeIterator childNodesIterator = node.getNodes();
+                        while (childNodesIterator.hasNext()) {
+                            entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
+                        }
+                        break;
                     }
-                    break;
+                    if (!node.isNodeType("rep:root")) {
+                        model = model.getParentModel();
+                        node = model.getNode();
+                    } else {
+                        break;
+                    }
                 }
-                if (!node.isNodeType("rep:root")) {
-                    model = model.getParentModel();
-                    node = model.getNode();
-                } else {
-                    break;
-                }
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
             }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
         }
 
-        return new ListDataProvider(entries) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void detach() {
-                for (IModel entry : entries) {
-                    entry.detach();
+        public Iterator iterator(int first, int count) {
+            SortParam sortParam = getSort();
+            if (sortParam != null) {
+                String sortProperty = sortParam.getProperty();
+                if (sortProperty != null) {
+                    Comparator comparator = getTableDefinition().getComparator(sortProperty);
+                    if (comparator != null) {
+                        Collections.sort(entries, comparator);
+                        if (getSort().isAscending() == false) {
+                            Collections.reverse(entries);
+                        }
+                    }
                 }
-                super.detach();
             }
-        };
+            return Collections.unmodifiableList(entries.subList(first, first + count)).iterator();
+        }
+
+        public IModel model(Object object) {
+            return (JcrNodeModel) object;
+        }
+
+        public int size() {
+            return entries.size();
+        }
+
+        @Override
+        public void detach() {
+            for (IModel entry : entries) {
+                entry.detach();
+            }
+            super.detach();
+        }
+
     }
 
 }

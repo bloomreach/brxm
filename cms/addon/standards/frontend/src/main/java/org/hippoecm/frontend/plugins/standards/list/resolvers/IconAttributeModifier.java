@@ -48,7 +48,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             cssClass = "folder-16";
         }
         
-        return new AttributeModifier("class", true, new Model("icon-16 " + cssClass));
+        return new AttributeModifier("class", true, new Model(cssClass));
     }
     
 }

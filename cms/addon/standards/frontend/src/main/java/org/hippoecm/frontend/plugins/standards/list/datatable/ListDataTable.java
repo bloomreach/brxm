@@ -15,20 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import java.util.List;
-
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
@@ -43,16 +40,16 @@ public class ListDataTable extends DataTable {
 
     private ISortableDataProvider dataProvider;
 
-    public ListDataTable(String id, List<IStyledColumn> columns,
+    public ListDataTable(String id, TableDefinition columns,
             ISortableDataProvider dataProvider, int rowsPerPage) {
 
-        super(id, (IColumn[]) columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
+        super(id, columns.asArray(), dataProvider, rowsPerPage);
 
         setOutputMarkupId(true);
         setVersioned(false);
         this.dataProvider = dataProvider;
     }
-
+    
     @Override
     protected Item newRowItem(String id, int index, IModel model) {
         OddEvenItem item = new OddEvenItem(id, index, model);

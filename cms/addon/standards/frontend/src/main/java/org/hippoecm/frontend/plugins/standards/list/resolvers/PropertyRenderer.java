@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
@@ -45,24 +44,24 @@ public class PropertyRenderer extends AbstractNodeRenderer {
     private String getValue(HippoNode node) throws RepositoryException {
         Property p = node.getProperty(property);
         switch (p.getType()) {
-        case PropertyType.BINARY:
-            return "[binary data]";
-        case PropertyType.BOOLEAN:
-            return String.valueOf(p.getBoolean());
-        case PropertyType.DATE:
-            return String.valueOf(p.getDate());
-        case PropertyType.DOUBLE:
-            return String.valueOf(p.getDouble());
-        case PropertyType.LONG:
-            return String.valueOf(p.getLong());
-        case PropertyType.REFERENCE:
-            // do not show references
-        case PropertyType.PATH:
-            return String.valueOf(p.getPath());
-        case PropertyType.STRING:
+        case 1: //javax.jcr.PropertyType.STRING:
             return String.valueOf(p.getString());
-        case PropertyType.NAME:
+        case 2: //javax.jcr.PropertyType.BINARY:
+            return "[binary data]";
+        case 3: //javax.jcr.PropertyType.LONG:
+            return String.valueOf(p.getLong());
+        case 4: //javax.jcr.PropertyType.DOUBLE:
+            return String.valueOf(p.getDouble());
+        case 5: //javax.jcr.PropertyType.DATE:
+            return String.valueOf(p.getDate());
+        case 6: //javax.jcr.PropertyType.BOOLEAN:
+            return String.valueOf(p.getBoolean());
+        case 7: //javax.jcr.PropertyType.NAME:
             return String.valueOf(p.getName());
+        case 8: //javax.jcr.PropertyType.PATH:
+            return String.valueOf(p.getPath());
+        case 9: //javax.jcr.PropertyType.REFERENCE:
+            return "[reference]";
         default:
             throw new IllegalArgumentException("illegal internal value type");
         }

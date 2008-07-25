@@ -24,6 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,17 @@ public class ListCell extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(ListCell.class);
 
+    /**
+     * A ListCell constructed with a ListCellAction performs a custom operation when clicked on.
+     * Implement this interface if you want a ListCell that does something else then the
+     * default behavior. 
+     */
+    public interface IListCellAction {
+        void onClick(IModel model, AjaxRequestTarget target);
+    }
+
     public ListCell(String id, final IModel model, IListCellRenderer renderer,
-            IListCellAttributeModifier attributeModifier) {
+            IListCellAttributeModifier attributeModifier, final IListCellAction action) {
         super(id, model);
 
         add(new AjaxEventBehavior("onclick") {
@@ -47,20 +57,26 @@ public class ListCell extends Panel {
             protected void onEvent(AjaxRequestTarget target) {
                 RenderService plugin = (RenderService) findParent(RenderService.class);
                 try {
-                    if (model instanceof JcrNodeModel) {
+                    if (action == null && model instanceof JcrNodeModel) {
                         JcrNodeModel nodeModel = (JcrNodeModel) model;
                         if (nodeModel.getNode().getParent() != null) {
                             plugin.setModel(model);
                             return;
                         }
+                    } else {
+                        action.onClick(model, target);
                     }
                 } catch (RepositoryException ex) {
                 }
-                plugin.setModel(new JcrNodeModel((javax.jcr.Node) null));
             }
         });
 
-        add(renderer.getRenderer("renderer", model));
+        if (renderer == null) {
+            add(new NameRenderer().getRenderer("renderer", model));
+        } else {
+            add(renderer.getRenderer("renderer", model));
+        }
+
         if (attributeModifier != null) {
             add(attributeModifier.getAttributeModifier(model));
         }

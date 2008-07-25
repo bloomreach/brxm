@@ -16,9 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.management.users;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -30,18 +28,13 @@ import javax.jcr.query.QueryResult;
 import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
+import org.hippoecm.frontend.plugins.cms.management.AbstractManagementListingPlugin;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -49,7 +42,7 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GroupsListPlugin extends AbstractListingPlugin {
+public class GroupsListPlugin extends AbstractManagementListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -95,7 +88,7 @@ public class GroupsListPlugin extends AbstractListingPlugin {
     }
 
     @Override
-    protected IDataProvider getRows() {
+    protected List<IModel> getRows() {
         String queryString = "//element(*, hippo:group)[jcr:contains(@hippo:members, '" + getUsername() + "')]";
         String queryType = "xpath";
         final List<IModel> list = new ArrayList<IModel>();
@@ -115,31 +108,9 @@ public class GroupsListPlugin extends AbstractListingPlugin {
         } catch (RepositoryException e) {
             log.error("Error executing query[" + queryString + "]", e);
         }
-        return new ListDataProvider(list) {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void detach() {
-                for (IModel entry : list) {
-                    entry.detach();
-                }
-                super.detach();
-            }
-        };
+        return list;
     }
     
-    
-    @Override
-    protected List<IStyledColumn> getColumns() {
-        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
-        return columns;
-    }
-    
-    @Override
-    protected Map<String, Comparator> getComparators() {
-        return null;
-    }
-
     private String getUsername() {
         if (username == null) {
             JcrNodeModel nodeModel = (JcrNodeModel) getModel();
