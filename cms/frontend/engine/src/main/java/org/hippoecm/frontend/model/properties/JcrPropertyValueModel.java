@@ -81,8 +81,7 @@ public class JcrPropertyValueModel extends Model {
         return value;
     }
 
-    public void setValue(Value value)
-    {
+    public void setValue(Value value) {
         load();
 
         this.value = value;
@@ -108,8 +107,6 @@ public class JcrPropertyValueModel extends Model {
         }
     }
 
-
-
     @Override
     public Object getObject() {
         try {
@@ -124,8 +121,7 @@ public class JcrPropertyValueModel extends Model {
     }
 
     @Override
-    public void setObject(final Serializable object)
-    {
+    public void setObject(final Serializable object) {
         load();
         try {
             String string = object == null ? "" : object.toString();
@@ -179,12 +175,9 @@ public class JcrPropertyValueModel extends Model {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("property", propertyModel.getItemModel().getPath())
-            .append("index", index)
-            .append("value", value)
-            .toString();
-     }
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("property",
+                propertyModel.getItemModel().getPath()).append("index", index).append("value", value).toString();
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -195,7 +188,8 @@ public class JcrPropertyValueModel extends Model {
             return true;
         }
         JcrPropertyValueModel valueModel = (JcrPropertyValueModel) object;
-        return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).append(index, valueModel.index).isEquals();
+        return new EqualsBuilder().append(propertyModel, valueModel.propertyModel).append(index, valueModel.index)
+                .isEquals();
     }
 
     @Override
@@ -220,14 +214,16 @@ public class JcrPropertyValueModel extends Model {
         if (!loaded) {
             try {
                 Property prop = propertyModel.getProperty();
-                if (index == NO_INDEX) {
-                    value = prop.getValue();
-                } else {
-                    Value[] values = prop.getValues();
-                    if (index < values.length) {
-                        value = values[index];
+                if (prop != null) {
+                    if (index == NO_INDEX) {
+                        value = prop.getValue();
                     } else {
-                        value = null;
+                        Value[] values = prop.getValues();
+                        if (index < values.length) {
+                            value = values[index];
+                        } else {
+                            value = null;
+                        }
                     }
                 }
             } catch (RepositoryException ex) {

@@ -24,17 +24,17 @@ import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractNodeAttributeModifier implements IListCellAttributeModifier {
+public abstract class AbstractNodeAttributeModifier implements IListAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
 
-    public AttributeModifier getAttributeModifier(IModel model) {
+    public AttributeModifier getCellAttributeModifier(IModel model) {
         if (model instanceof JcrNodeModel) {
             try {
                 HippoNode node = (HippoNode) model.getObject();
                 if (node != null) {
-                    return getAttributeModifier(node);
+                    return getCellAttributeModifier(node);
                 } else {
                     log.warn("Cannot render a null node");
                 }
@@ -45,6 +45,25 @@ public abstract class AbstractNodeAttributeModifier implements IListCellAttribut
         return null;
     }
     
-    protected abstract AttributeModifier getAttributeModifier(HippoNode node) throws RepositoryException;
+    protected abstract AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException;
+
+
+    public AttributeModifier getColumnAttributeModifier(IModel model) {
+        if (model instanceof JcrNodeModel) {
+            try {
+                HippoNode node = (HippoNode) model.getObject();
+                if (node != null) {
+                    return getColumnAttributeModifier(node);
+                } else {
+                    log.warn("Cannot render a null node");
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        return null;
+    }
+
+    protected abstract AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException;
 
 }

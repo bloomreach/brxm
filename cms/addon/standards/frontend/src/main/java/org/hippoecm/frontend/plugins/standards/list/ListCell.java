@@ -17,12 +17,13 @@ package org.hippoecm.frontend.plugins.standards.list;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -47,7 +48,7 @@ public class ListCell extends Panel {
     }
 
     public ListCell(String id, final IModel model, IListCellRenderer renderer,
-            IListCellAttributeModifier attributeModifier, final IListCellAction action) {
+            IListAttributeModifier attributeModifier, final IListCellAction action) {
         super(id, model);
 
         add(new AjaxEventBehavior("onclick") {
@@ -78,7 +79,10 @@ public class ListCell extends Panel {
         }
 
         if (attributeModifier != null) {
-            add(attributeModifier.getAttributeModifier(model));
+            AttributeModifier cellModifier = attributeModifier.getCellAttributeModifier(model);
+            if (cellModifier != null) {
+                add(cellModifier);
+            }
         }
     }
 
