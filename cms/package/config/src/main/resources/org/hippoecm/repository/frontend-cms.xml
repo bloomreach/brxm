@@ -130,30 +130,21 @@
     </sv:property>
   </sv:node>
 
-  <!--  sv:node sv:name="shortcutsPlugin">
+  <sv:node sv:name="shortcutsPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin</sv:value>
     </sv:property>
-  </sv:node -->
-
-  <sv:node sv:name="galleryShortcut">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.shortcuts</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.path" sv:type="String">
-      <sv:value>/content/gallery</sv:value>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.workflow" sv:type="String">
-      <sv:value>internal</sv:value>
+    <sv:property sv:name="shortcuts.id" sv:type="String">
+      <sv:value>shortcuts.id</sv:value>
     </sv:property>
   </sv:node>
 

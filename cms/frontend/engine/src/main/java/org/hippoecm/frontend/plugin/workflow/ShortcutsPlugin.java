@@ -25,9 +25,14 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
@@ -36,15 +41,14 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, IDetachable {
+public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -60,6 +64,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
     private String factoryId;
     private Map<String, IPluginControl> plugins;
     private Map<String, ModelService> models;
+    private IModel model;
     private int pluginCount;
     private String pluginsQuery = "/jcr:root//element(*,frontend:plugin)[@wicket.id='shortcut']";
 
@@ -93,7 +98,13 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
     }
 
     public void updateModel(IModel imodel) {
+        setModel(imodel);
         closePlugins();
+        if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
+            model = new JcrNodeModel("/");
+        } else {
+            model = (JcrNodeModel) imodel;
+        }
         try {
             QueryManager qmgr = ((UserSession) getSession()).getJcrSession().getWorkspace().getQueryManager();
             Query query = qmgr.createQuery(pluginsQuery, Query.XPATH);
@@ -105,7 +116,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
                 String pluginId = config.getString(SHORTCUTS_ID) + (pluginCount++);
                 String modelId = pluginId + ".model";
 
-                IPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(pluginNode));
+                IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(new JcrNodeModel(pluginNode)));
                 pluginConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
                 pluginConfig.put(RenderService.MODEL_ID, modelId);
 
@@ -145,6 +156,10 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
             modelService.destroy();
         }
         models = new HashMap<String, ModelService>();
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        updateModel(model);
     }
 
     public void onDetach() {

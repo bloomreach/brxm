@@ -44,7 +44,7 @@ public class GalleryShortcutPlugin extends RenderPlugin {
                 while(path.startsWith("/"))
                     path = path.substring(1);
                 setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)));
-                // HREPTWO-1218 getModel returns null, whcih causes problems for the WizardDialog
+                // HREPTWO-1218 getModel returns null, which causes problems for the WizardDialog
 
                 AjaxLink link = new AjaxLink("link") {
                         private static final long serialVersionUID = 1L;
