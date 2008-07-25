@@ -135,7 +135,11 @@ public class WizardDialog extends WebPage {
             try {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
-                galleryTypes = workflow.getGalleryTypes();
+                if(workflow == null) {
+                    Gallery.log.error("No gallery workflow accessible");
+                } else {
+                    galleryTypes = workflow.getGalleryTypes();
+                }
             } catch (MappingException ex) {
                 System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);

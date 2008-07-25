@@ -19,11 +19,18 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class JavaPluginConfig extends ValueMap implements IPluginConfig {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+  @SuppressWarnings("unused")
+  private final static String SVN_ID = "$Id$";
+  private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+  public JavaPluginConfig() {
+    super();
+  }
 
-    public void detach() {
-    }
+  public JavaPluginConfig(IPluginConfig parentConfig) {
+    super(parentConfig);
+  }
+
+  public void detach() {
+  }
 }
