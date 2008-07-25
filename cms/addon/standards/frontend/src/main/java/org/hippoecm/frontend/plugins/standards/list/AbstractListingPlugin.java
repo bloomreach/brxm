@@ -59,6 +59,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     public void onModelChanged() {
         int currentPage = dataTable.getCurrentPage();
         dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
+        dataTable.setModel(getModel());
         dataTable.addTopColumnHeaders();
         dataTable.addBottomPaging();
                 
