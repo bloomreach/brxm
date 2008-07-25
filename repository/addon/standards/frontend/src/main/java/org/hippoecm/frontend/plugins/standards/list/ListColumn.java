@@ -21,9 +21,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugins.standards.list.ListCell.IListCellAction;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
 public class ListColumn extends AbstractColumn {
@@ -34,7 +33,7 @@ public class ListColumn extends AbstractColumn {
 
     private Comparator comparator;
     private IListCellRenderer renderer;
-    private IListCellAttributeModifier attributeModifier;
+    private IListAttributeModifier attributeModifier;
     private IListCellAction action;
 
     public ListColumn(IModel displayModel, String sortProperty) {
@@ -57,11 +56,11 @@ public class ListColumn extends AbstractColumn {
         return renderer;
     }
 
-    public void setAttributeModifier(IListCellAttributeModifier attributeModifier) {
+    public void setAttributeModifier(IListAttributeModifier attributeModifier) {
         this.attributeModifier = attributeModifier;
     }
 
-    public IListCellAttributeModifier getAttributeModifier() {
+    public IListAttributeModifier getAttributeModifier() {
         return attributeModifier;
     }
 
@@ -74,8 +73,11 @@ public class ListColumn extends AbstractColumn {
     }
 
     public void populateItem(Item item, String componentId, IModel model) {
-        if (getSortProperty().equals("icon")) {
-            item.add(new AttributeModifier("class", true, new Model("icon-16")));
+        if (attributeModifier != null) {
+            AttributeModifier columnModifier = attributeModifier.getColumnAttributeModifier(model);
+            if (columnModifier != null) {
+                item.add(columnModifier);
+            }
         }
         item.add(new ListCell(componentId, model, renderer, attributeModifier, action));
     }

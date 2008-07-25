@@ -28,7 +28,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected AttributeModifier getAttributeModifier(HippoNode node) throws RepositoryException {
+    protected AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
         String cssClass = null;
         String type = null;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -46,9 +46,13 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             }
         } else {
             cssClass = "folder-16";
-        }
-        
+        }       
         return new AttributeModifier("class", true, new Model(cssClass));
+    }
+
+    @Override
+    protected AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+        return new AttributeModifier("class", true, new Model("icon-16"));
     }
     
 }
