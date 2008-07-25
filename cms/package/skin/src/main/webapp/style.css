@@ -51,9 +51,9 @@ ul.highlight li,
 ul.highlight li a span,
 ul.hightlight li, 
 table tr.selected td, 
-table tr.selected td span,
+table tr.selected td,
 table tr.selected td a,
-.hightlight a { background: #00A2E3; color: white;}
+.hightlight a { background-color: #00A2E3; color: white;}
 /* Tabsplugin */
 /* ================================================ */
 .tabsplugin {position: absolute; top: 0px; left: 0px; padding-top: 75px; height: 100%}
@@ -212,11 +212,11 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 
 .icons-48 a{background-repeat: no-repeat;}
 .icons-24 a{background-repeat: no-repeat;}
-.icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px;s }
+.icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px; }
 
 /* mimetypes icons */
-.document-16{background-image:url("images/icons/document-16.png")}
-.folder-16{background-image:url("images/icons/folder-16.png")}
+table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
+table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
 
 .document_big_ico{background-image:url("images/icons/document-48.png")}
 .users_big_ico{background-image:url("images/icons/groups-48.png")}
@@ -414,7 +414,7 @@ div#templateitemedit input{width: 140px;}
 
 /* template model edit */
 .templatedetails div.templateItem,
-.editor div.renderItem div, .editor div.templateItem{padding: 8px; margin-bottom: 4px; position: relative;}
+.editor div.renderItem > div, .editor div.templateItem{padding: 8px; margin-bottom: 4px; position: relative;}
 
 .editor div.renderItem div div{padding: 0px; margin: 0px;}
 .editor div.renderItem div.renderItem{margin-bottom: 5px; background: none}
@@ -465,9 +465,7 @@ z-index: 5;
 .editor div.renderItem div select, .editor table.templateItemTable select{}
 .templatedetails div.templateItem textarea, .editor div.renderItem div textarea, .editor table.templateItemTable textarea{width: 100%; height: 300px}
  
-
 .editor div.renderItem div.datePicker input{width: 80px;}
-
 
 
 /* Xinha */
