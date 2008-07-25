@@ -16,12 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -29,11 +25,11 @@ import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator
 import org.hippoecm.frontend.plugins.cms.browse.list.resolvers.StateRenderer;
 import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
@@ -52,24 +48,30 @@ public class DocumentListingPlugin extends AbstractDocumentListingPlugin impleme
     }
 
     @Override
-    protected List<IStyledColumn> getColumns() {
-        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns.add(new ListColumn(new Model(""), "icon", new EmptyRenderer(), new IconAttributeModifier()));
-        columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
-        columns.add(new ListColumn(new Model("Type"), "type", new TypeRenderer()));
-        columns.add(new ListColumn(new Model("State"), "state", new StateRenderer()));
+    protected TableDefinition getTableDefinition() {
+        List<ListColumn> columns = new ArrayList<ListColumn>();
+        
+        ListColumn column = new ListColumn(new Model(""), "icon");
+        column.setComparator(new TypeComparator());
+        column.setRenderer(new EmptyRenderer());
+        column.setAttributeModifier(new IconAttributeModifier());
+        columns.add(column);
+        
+        column = new ListColumn(new Model("Name"), "name");
+        column.setComparator(new NameComparator());
+        columns.add(column);
 
-        return columns;
-    }
+        column = new ListColumn(new Model("Type"), "type");
+        column.setComparator(new TypeComparator());
+        column.setRenderer(new TypeRenderer());
+        columns.add(column);
 
-    @Override
-    protected Map<String, Comparator> getComparators() {
-        Map<String, Comparator> compare;
-        compare = new HashMap<String, Comparator>();
-        compare.put("name", new NameComparator());
-        compare.put("type", new TypeComparator());
-        compare.put("state", new StateComparator());
-        return compare;
+        column = new ListColumn(new Model("State"), "state");
+        column.setComparator(new StateComparator());
+        column.setRenderer(new StateRenderer());
+        columns.add(column);
+        
+        return new TableDefinition(columns);
     }
 
 }

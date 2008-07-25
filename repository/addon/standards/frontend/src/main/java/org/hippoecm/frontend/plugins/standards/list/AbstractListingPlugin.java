@@ -15,15 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,43 +33,41 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     private static final long serialVersionUID = 1L;
     protected static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
-    private int pageSize;
     private ISortableDataProvider dataProvider;
+    private int pageSize;
+    protected ListDataTable dataTable;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // register for flush notifications
         context.registerService(this, IJcrService.class.getName());
-        add(new EmptyPanel("table"));
-
-        pageSize = config.getInt("list.page.size", 15);
-        modelChanged();
+        
+        pageSize = config.getInt("list.page.size", 15);       
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
+        dataTable.addTopColumnHeaders();
+        dataTable.addBottomPaging();
+        
+        add(dataTable);
     }
 
-    protected abstract IDataProvider getRows();
+    protected abstract ISortableDataProvider getDataProvider();
 
-    protected abstract List<IStyledColumn> getColumns();
-
-    protected abstract Map<String, Comparator> getComparators();
+    protected abstract TableDefinition getTableDefinition();
 
     @Override
     public void onModelChanged() {
-        super.onModelChanged();
-
-        dataProvider = new SortableDataAdapter<IModel>(getRows(), getComparators());
-        List<IStyledColumn> columns = getColumns();
-
-        ListDataTable dataTable = new ListDataTable("table", columns, dataProvider, pageSize);
-
-        dataTable.setModel(getModel());
+        int currentPage = dataTable.getCurrentPage();
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
         dataTable.addTopColumnHeaders();
         dataTable.addBottomPaging();
-
+                
         replace(dataTable);
+        dataTable.setCurrentPage(currentPage);
+        
         redraw();
     }
-
+    
     public void onFlush(JcrNodeModel nodeModel) {
         if (nodeModel.getParentModel() != null) {
             String nodePath = nodeModel.getParentModel().getItemModel().getPath();

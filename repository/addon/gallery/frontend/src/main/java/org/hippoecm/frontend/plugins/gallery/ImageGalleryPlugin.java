@@ -16,10 +16,7 @@
 package org.hippoecm.frontend.plugins.gallery;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -27,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IStyledColumn;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,9 +31,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -55,20 +51,18 @@ public class ImageGalleryPlugin extends AbstractDocumentListingPlugin {
     }
 
     @Override
-    public List<IStyledColumn> getColumns() {
-        List<IStyledColumn> columns = new ArrayList<IStyledColumn>();
-        columns = new ArrayList<IStyledColumn>();
-        columns.add(new ListColumn(new Model("PrimaryItem"), "primaryitem", new PrimaryItemViewer()));
-        columns.add(new ListColumn(new Model("Name"), "name", new NameRenderer()));
-        return columns;
-    }
-    
-    @Override
-    protected Map<String, Comparator> getComparators() {
-        Map<String, Comparator> compare;
-        compare = new HashMap<String, Comparator>();
-        compare.put("name", new NameComparator());
-        return compare;
+    public TableDefinition getTableDefinition() {
+        List<ListColumn> columns = new ArrayList<ListColumn>();
+        
+        ListColumn column = new ListColumn(new Model("PrimaryItem"), null);
+        column.setRenderer(new PrimaryItemViewer());
+        columns.add(column);
+
+        column = new ListColumn(new Model("Name"), "name");
+        column.setComparator(new NameComparator());
+        columns.add(column);
+        
+        return new TableDefinition(columns);
     }
 
     private static class PrimaryItemViewer extends AbstractNodeRenderer {

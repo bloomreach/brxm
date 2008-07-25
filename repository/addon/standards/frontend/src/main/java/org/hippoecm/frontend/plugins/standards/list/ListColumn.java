@@ -15,9 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.Comparator;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugins.standards.list.ListCell.IListCellAction;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
@@ -27,22 +32,52 @@ public class ListColumn extends AbstractColumn {
 
     private static final long serialVersionUID = 1L;
 
+    private Comparator comparator;
     private IListCellRenderer renderer;
     private IListCellAttributeModifier attributeModifier;
+    private IListCellAction action;
 
-    public ListColumn(IModel displayModel, String sortProperty, IListCellRenderer resolver) {
-        this(displayModel, sortProperty, resolver, null);
+    public ListColumn(IModel displayModel, String sortProperty) {
+        super(displayModel, sortProperty);
     }
 
-    public ListColumn(IModel displayModel, String sortProperty, IListCellRenderer resolver,
-            IListCellAttributeModifier attributeModifier) {
-        super(displayModel, sortProperty);
-        this.renderer = resolver;
+    public void setComparator(Comparator comparator) {
+        this.comparator = comparator;
+    }
+
+    public Comparator getComparator() {
+        return comparator;
+    }
+
+    public void setRenderer(IListCellRenderer renderer) {
+        this.renderer = renderer;
+    }
+
+    public IListCellRenderer getRenderer() {
+        return renderer;
+    }
+
+    public void setAttributeModifier(IListCellAttributeModifier attributeModifier) {
         this.attributeModifier = attributeModifier;
     }
 
+    public IListCellAttributeModifier getAttributeModifier() {
+        return attributeModifier;
+    }
+
+    public void setAction(IListCellAction action) {
+        this.action = action;
+    }
+
+    public IListCellAction getAction() {
+        return action;
+    }
+
     public void populateItem(Item item, String componentId, IModel model) {
-        item.add(new ListCell(componentId, model, renderer, attributeModifier));
+        if (getSortProperty().equals("icon")) {
+            item.add(new AttributeModifier("class", true, new Model("icon-16")));
+        }
+        item.add(new ListCell(componentId, model, renderer, attributeModifier, action));
     }
 
 }
