@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.xinha.modal;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 
 public class XinhaModalWindow extends ModalWindow {
@@ -40,11 +41,13 @@ public class XinhaModalWindow extends ModalWindow {
             protected String getSelectedValue() {
                 return "{}";
             }
+
             @Override
             protected void onSubmitCreateLinks() {
             }
 
         });
+        add(HeaderContributor.forJavaScript(XinhaModalWindow.class, "xinha-modal.js"));
     }
 
     public void onSelect(AjaxRequestTarget target, String returnValue) {
