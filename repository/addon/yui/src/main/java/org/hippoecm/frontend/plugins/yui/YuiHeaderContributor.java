@@ -40,7 +40,6 @@ import org.onehippo.yui.YuiNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class YuiHeaderContributor extends AbstractHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -49,27 +48,26 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
 
     private static final Logger log = LoggerFactory.getLogger(YuiHeaderContributor.class);
 
-    public static final YuiNamespace HIPPO_NS = new HippoNamespace();
-    private static final YuiDependency HIPPO_LOG_DEPENDENCY = new YuiDependency(HIPPO_NS, "hippologger");
+    private static final YuiDependency HIPPO_LOG_DEPENDENCY = new YuiDependency(HippoNamespace.NS, "hippologger");
 
     private static final Map<String, ResourceReference> moduleCache = Collections
             .synchronizedMap(new HashMap<String, ResourceReference>());
     private static final Map<String, YuiHeaderContributor> modulesLoaded = Collections
-    .synchronizedMap(new HashMap<String, YuiHeaderContributor>());
+            .synchronizedMap(new HashMap<String, YuiHeaderContributor>());
 
     private static final YuiDependencyResolver dependencyResolver = new YuiDependencyResolver();
 
     private static final List<String> debugModules = Collections.synchronizedList(new ArrayList<String>());
-    
+
     private List<IHeaderContributor> contributors = new ArrayList<IHeaderContributor>();
-    
+
     //TODO: use thread_local for cache to implement a more decent mechanism than this
-    
+
     public YuiHeaderContributor() {
         //Make sure all Wicket javascript is loaded first (copied from AbstractDefaultAjaxBehavior)
         contributors.add(new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
-            
+
             public void renderHead(IHeaderResponse response) {
                 response.renderJavascriptReference(WicketEventReference.INSTANCE);
                 response.renderJavascriptReference(WicketAjaxReference.INSTANCE);
@@ -87,7 +85,6 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
                 }
 
             }
-
         });
     }
 
@@ -106,15 +103,15 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
     private void addModuleHeaderContributor(YuiDependency dependency) {
         contributors.add(new YuiModuleHeaderContributor(dependency));
     }
-    
+
     public static void debugModule(String module) {
-        if(!debugModules.contains(module)) {
+        if (!debugModules.contains(module)) {
             debugModules.add(module);
         }
     }
 
     public static void debugModules(String... modules) {
-        for(String s : modules) {
+        for (String s : modules) {
             debugModule(s);
         }
     }
@@ -161,7 +158,8 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
                 log.error("Unable to find source file for module " + dependency.getModule() + " in namespace "
                         + dependency.getNamespace());
             } else {
-                final boolean debug = log.isDebugEnabled() && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
+                final boolean debug = log.isDebugEnabled()
+                        && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
                 final String path = dependency.getRealModulePath() + ((debug) ? "-debug" : "") + ".js";
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
 

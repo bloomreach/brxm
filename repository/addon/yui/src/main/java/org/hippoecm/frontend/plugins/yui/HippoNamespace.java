@@ -23,6 +23,9 @@ public class HippoNamespace implements YuiNamespace {
 
     public static final HippoNamespace NS = new HippoNamespace();
 
+    private HippoNamespace() {
+    }
+
     public String getPath() {
         return "inc/hippo/2.5.2/";
     }
