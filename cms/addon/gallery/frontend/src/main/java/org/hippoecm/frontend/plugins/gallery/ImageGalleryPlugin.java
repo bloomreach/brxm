@@ -24,12 +24,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -39,7 +41,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
  
-public class ImageGalleryPlugin extends AbstractDocumentListingPlugin {
+public class ImageGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -63,6 +65,11 @@ public class ImageGalleryPlugin extends AbstractDocumentListingPlugin {
         columns.add(column);
         
         return new TableDefinition(columns);
+    }
+    
+    @Override
+    protected ISortableDataProvider getDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
     private static class PrimaryItemViewer extends AbstractNodeRenderer {
@@ -95,6 +102,5 @@ public class ImageGalleryPlugin extends AbstractDocumentListingPlugin {
             return new Label(id);
         }
     }
-
 
 }

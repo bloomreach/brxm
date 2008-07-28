@@ -13,18 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.datatable;
+package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
-import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.model.IModel;
 
-public class ListPagingLabelProvider implements IPagingLabelProvider {
+public class CssClassAppender extends AttributeModifier {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    public String getPageLabel(int page) {
-        return String.valueOf(page + 1);
+    public CssClassAppender(IModel model) {
+        super("class", true, model);
     }
-
+    
+    @Override
+    protected String newValue(final String currentValue, final String replacementValue) {
+        return currentValue + " " + replacementValue;
+    }
 }

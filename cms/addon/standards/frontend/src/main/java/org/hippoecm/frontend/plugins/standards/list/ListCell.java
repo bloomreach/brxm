@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListCell extends Panel {
+class ListCell extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,17 +34,7 @@ public class ListCell extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(ListCell.class);
 
-    /**
-     * A ListCell constructed with a ListCellAction performs a custom operation when clicked on.
-     * Implement this interface if you want a ListCell that does something else then the
-     * default behavior. 
-     */
-    public interface IListCellAction {
-        void onClick(IModel model, AjaxRequestTarget target);
-    }
-
-    public ListCell(String id, final IModel model, IListCellRenderer renderer,
-            IListAttributeModifier attributeModifier, final IListCellAction action) {
+    public ListCell(String id, final IModel model, IListCellRenderer renderer, IListAttributeModifier attributeModifier) {
         super(id, model);
 
         add(new AjaxEventBehavior("onclick") {
@@ -56,19 +42,8 @@ public class ListCell extends Panel {
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                RenderService plugin = (RenderService) findParent(RenderService.class);
-                try {
-                    if (action == null && model instanceof JcrNodeModel) {
-                        JcrNodeModel nodeModel = (JcrNodeModel) model;
-                        if (nodeModel.getNode().getParent() != null) {
-                            plugin.setModel(model);
-                            return;
-                        }
-                    } else {
-                        action.onClick(model, target);
-                    }
-                } catch (RepositoryException ex) {
-                }
+                AbstractListingPlugin plugin = (AbstractListingPlugin) findParent(AbstractListingPlugin.class);
+                plugin.selectionChanged(model);
             }
         });
 

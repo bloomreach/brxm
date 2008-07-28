@@ -23,6 +23,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.repository.api.HippoNode;
 
 public class PropertyRenderer extends AbstractNodeRenderer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private String property;

@@ -21,7 +21,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.list.ListCell.IListCellAction;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 
@@ -34,7 +33,6 @@ public class ListColumn extends AbstractColumn {
     private Comparator comparator;
     private IListCellRenderer renderer;
     private IListAttributeModifier attributeModifier;
-    private IListCellAction action;
 
     public ListColumn(IModel displayModel, String sortProperty) {
         super(displayModel, sortProperty);
@@ -64,13 +62,6 @@ public class ListColumn extends AbstractColumn {
         return attributeModifier;
     }
 
-    public void setAction(IListCellAction action) {
-        this.action = action;
-    }
-
-    public IListCellAction getAction() {
-        return action;
-    }
 
     public void populateItem(Item item, String componentId, IModel model) {
         if (attributeModifier != null) {
@@ -79,7 +70,7 @@ public class ListColumn extends AbstractColumn {
                 item.add(columnModifier);
             }
         }
-        item.add(new ListCell(componentId, model, renderer, attributeModifier, action));
+        item.add(new ListCell(componentId, model, renderer, attributeModifier));
     }
 
 }

@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractNodeAttributeModifier implements IListAttributeModifier {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractNodeAttributeModifier.class);
@@ -65,5 +68,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
     }
 
     protected abstract AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException;
-
+    
+    
 }
+

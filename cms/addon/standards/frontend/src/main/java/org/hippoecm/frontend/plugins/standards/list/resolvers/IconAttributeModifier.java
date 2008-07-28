@@ -25,6 +25,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class IconAttributeModifier extends AbstractNodeAttributeModifier {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -46,13 +49,13 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             }
         } else {
             cssClass = "folder-16";
-        }       
-        return new AttributeModifier("class", true, new Model(cssClass));
+        }
+        return new CssClassAppender(new Model(cssClass));
     }
 
     @Override
     protected AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
-        return new AttributeModifier("class", true, new Model("icon-16"));
+        return new CssClassAppender(new Model("icon-16"));
     }
-    
+
 }

@@ -42,12 +42,12 @@ public abstract class AbstractManagementListingPlugin extends AbstractListingPlu
     public AbstractManagementListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
-    
+
     @Override
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
         columns.add(new ListColumn(new Model("Name"), "name"));
-        return new TableDefinition(columns);
+        return new TableDefinition(columns, false);
     }
 
     @Override

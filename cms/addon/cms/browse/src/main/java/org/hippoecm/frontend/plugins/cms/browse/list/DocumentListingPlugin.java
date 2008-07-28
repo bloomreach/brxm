@@ -18,12 +18,15 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.cms.browse.list.resolvers.StateRenderer;
-import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -33,7 +36,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class DocumentListingPlugin extends AbstractDocumentListingPlugin implements ITitleDecorator {
+public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -72,6 +75,11 @@ public class DocumentListingPlugin extends AbstractDocumentListingPlugin impleme
         columns.add(column);
         
         return new TableDefinition(columns);
+    }
+
+    @Override
+    protected ISortableDataProvider getDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
 }
