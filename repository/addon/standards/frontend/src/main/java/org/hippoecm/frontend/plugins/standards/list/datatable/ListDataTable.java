@@ -70,8 +70,8 @@ public class ListDataTable extends DataTable {
 
     @Override
     public void onModelChanged() {
-        IModel model = getModel();
-        System.out.println(model.toString());
+        //TODO: select document in list
+        //TODO: jump to the right page
     }
 
 }
