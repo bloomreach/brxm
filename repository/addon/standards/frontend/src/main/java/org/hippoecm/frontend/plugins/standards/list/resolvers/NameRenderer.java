@@ -23,6 +23,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.ISO9075Helper;
 
 public class NameRenderer extends AbstractNodeRenderer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     @Override

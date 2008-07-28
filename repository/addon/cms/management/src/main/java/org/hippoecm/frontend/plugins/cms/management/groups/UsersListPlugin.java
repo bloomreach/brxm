@@ -79,14 +79,6 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         return list;
     }
 
-    @Override
-    public void onFlush(JcrNodeModel nodeModel) {
-        JcrNodeModel rootModel = (JcrNodeModel) getModel();
-        if (!rootModel.getNode().isNew() && getBehaviors(DropBehavior.class).size() == 0) {
-            add(new GroupDropBehavior(getPluginContext(), getPluginConfig()));
-            onModelChanged();
-        }
-    }
     
     private class GroupDropBehavior extends DropBehavior {
         private static final long serialVersionUID = 1L;

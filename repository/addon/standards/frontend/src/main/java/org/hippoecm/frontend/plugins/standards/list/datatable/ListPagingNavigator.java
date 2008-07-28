@@ -20,7 +20,7 @@ import org.apache.wicket.markup.html.navigation.paging.IPageable;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigation;
 
-public class ListPagingNavigator extends AjaxPagingNavigator{
+public class ListPagingNavigator extends AjaxPagingNavigator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -29,25 +29,10 @@ public class ListPagingNavigator extends AjaxPagingNavigator{
     public ListPagingNavigator(String id, IPageable pageable, IPagingLabelProvider labelProvider) {
         super(id, pageable, labelProvider);
     }
-    public ListPagingNavigator(String id, IPageable pageable) {
-        super(id, pageable);
-    }
 
-    /**
-     * Create a new PagingNavigation. May be subclassed to make us of specialized PagingNavigation.
-     *
-     * @param pageable
-     *            the pageable component
-     * @param labelProvider
-     *            The label provider for the link text.
-     * @return the navigation object
-     */
     @Override
-    protected PagingNavigation newNavigation(final IPageable pageable,
-            final IPagingLabelProvider labelProvider)
-    {
-        PagingNavigation pagingNavigation = new ListPagingNavigation("navigation", pageable, labelProvider);
-        return pagingNavigation;
+    protected PagingNavigation newNavigation(final IPageable pageable, final IPagingLabelProvider labelProvider) {
+        return new ListPagingNavigation("navigation", pageable, labelProvider);
     }
 
 }

@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.AbstractDocumentListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
+import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -34,7 +37,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class TypesListingPlugin extends AbstractDocumentListingPlugin implements ITitleDecorator {
+public class TypesListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: DocumentListingPlugin.java 12651 2008-07-18 11:59:05Z fvlankvelt $";
 
@@ -72,6 +75,11 @@ public class TypesListingPlugin extends AbstractDocumentListingPlugin implements
         columns.add(column);
         
         return new TableDefinition(columns);
+    }
+
+    @Override
+    protected ISortableDataProvider getDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
 }

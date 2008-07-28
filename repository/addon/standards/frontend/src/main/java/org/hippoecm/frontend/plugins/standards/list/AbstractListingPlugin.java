@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -23,31 +24,25 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    protected static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
-    private ISortableDataProvider dataProvider;
+    private ListDataTable dataTable;
     private int pageSize;
-    protected ListDataTable dataTable;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         // register for flush notifications
         context.registerService(this, IJcrService.class.getName());
-        
-        pageSize = config.getInt("list.page.size", 15);       
+
+        pageSize = config.getInt("list.page.size", 15);
         dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
-        dataTable.addTopColumnHeaders();
-        dataTable.addBottomPaging();
-        
+        dataTable.setModel(getModel());
         add(dataTable);
     }
 
@@ -55,38 +50,28 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     protected abstract TableDefinition getTableDefinition();
 
-    @Override
-    public void onModelChanged() {
-        int currentPage = dataTable.getCurrentPage();
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
-        dataTable.setModel(getModel());
-        dataTable.addTopColumnHeaders();
-        dataTable.addBottomPaging();
-                
-        replace(dataTable);
-        dataTable.setCurrentPage(currentPage);
-        
-        redraw();
-    }
+    private boolean newList = true;
     
-    public void onFlush(JcrNodeModel nodeModel) {
-        if (nodeModel.getParentModel() != null) {
-            String nodePath = nodeModel.getParentModel().getItemModel().getPath();
-            String myPath = ((JcrNodeModel) getModel()).getItemModel().getPath();
-            if (myPath.startsWith(nodePath)) {
-                modelChanged();
-            }
-        } else {
-            modelChanged();
-        }
+    public void selectionChanged(IModel model) {
+        newList = false;
+        dataTable.setModel(model);
+        setModel(model);
     }
 
     @Override
-    protected void onDetach() {
-        if (dataProvider != null) {
-            dataProvider.detach();
+    public void onModelChanged() {
+        if (newList) {
+            dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
+            dataTable.setModel(getModel());
+            replace(dataTable);
+        } else {
+            newList = true;
         }
-        super.onDetach();
+        redraw();
+    }
+
+    public void onFlush(JcrNodeModel nodeModel) {
+        modelChanged();
     }
 
 }

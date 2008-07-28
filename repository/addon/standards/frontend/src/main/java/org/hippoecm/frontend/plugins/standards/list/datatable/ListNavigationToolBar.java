@@ -21,65 +21,35 @@ import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
-import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.model.Model;
 
-public class ListNavigationToolBar extends AbstractToolbar{
+public class ListNavigationToolBar extends AbstractToolbar {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     public ListNavigationToolBar(DataTable table) {
-        this(table, null, null);
-     }
-
-    public ListNavigationToolBar(DataTable table, String prefix, String postfix) {
         super(table);
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
-        span.add(new AttributeModifier("colspan", true, new Model(String
-                .valueOf(table.getColumns().length))));
+        span.add(new AttributeModifier("colspan", true, new Model(String.valueOf(table.getColumns().length))));
 
-        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, prefix, postfix);
+        PagingNavigator pagingNavigator = newPagingNavigator("navigator", table);
         span.add(pagingNavigator);
-        span.add(newNavigatorLabel("navigatorLabel", table));
+        span.add(new NavigatorLabel("navigatorLabel", table));
     }
 
-    /**
-     * Factory method used to create the navigator label that will be used by the datatable
-     *
-     * @param navigatorId
-     *            component id navigator label should be created with
-     * @param table
-     *            dataview used by datatable
-     * @return navigator label that will be used to navigate the data table
-     *
-     */
-    protected WebComponent newNavigatorLabel(String navigatorId, final DataTable table)
-    {
-        WebComponent w = new NavigatorLabel(navigatorId, table);
-        return  w;
+    @Override
+    public boolean isVisible() {
+        return getTable().getPageCount() > 1;
     }
-
-
-    /**
-     * Factory method used to create the paging navigator that will be used by the datatable.
-     *
-     * @param navigatorId
-     *            component id the navigator should be created with
-     * @param table
-     *            dataview used by datatable
-     * @return paging navigator that will be used to navigate the data table
-     */
-    protected PagingNavigator newPagingNavigator(String navigatorId, final DataTable table, String prefix, String postfix)
-    {
-        return new ListPagingNavigator(navigatorId, table,
-                        new ListPagingLabelProvider(prefix,postfix))
-            {
+    
+    private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table) {
+        return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider()) {
             private static final long serialVersionUID = 1L;
 
             /**
@@ -89,21 +59,10 @@ public class ListNavigationToolBar extends AbstractToolbar{
              * @see AjaxPagingNavigator#onAjaxEvent(AjaxRequestTarget)
              */
             @Override
-            protected void onAjaxEvent(AjaxRequestTarget target)
-            {
+            protected void onAjaxEvent(AjaxRequestTarget target) {
                 target.addComponent(table);
             }
         };
     }
 
-    /**
-     * Hides this toolbar when there is only one page in the table
-     *
-     * @see org.apache.wicket.Component#isVisible()
-     */
-    @Override
-    public boolean isVisible()
-    {
-        return getTable().getPageCount() > 1;
-    }
 }
