@@ -33,9 +33,9 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     @Override
     protected AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
         String cssClass = null;
-        String type = null;
+        String type = node.getPrimaryNodeType().getName();
+        
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            type = node.getPrimaryNodeType().getName();
             NodeIterator nodeIt = node.getNodes();
             while (nodeIt.hasNext()) {
                 Node childNode = nodeIt.nextNode();
@@ -47,7 +47,11 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
             if (type.indexOf(":") > -1) {
                 cssClass = "document-16";
             }
-        } else {
+        }
+        if (cssClass == null && type.equals("hippo:templatetype")) {
+            cssClass = "document-16";
+        }
+        if (cssClass == null) {
             cssClass = "folder-16";
         }
         return new CssClassAppender(new Model(cssClass));
