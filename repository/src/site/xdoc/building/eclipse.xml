@@ -187,10 +187,10 @@
       </p>
       <ul>
         <li>
-          <p>Name is 'hippo-ecm-package-war'</p>
+          <p>Name is 'hippo-ecm-quickstart-war'</p>
         </li>
         <li>
-          <p>Project is 'hippo-ecm-package-war'</p>
+          <p>Project is 'hippo-ecm-quickstart-war'</p>
         </li>
         <li>
           <p>Webapp dir is 'src/main/webapp'</p>
@@ -209,7 +209,7 @@
       <p> You can now debug Hippo ECM within Eclipse: Set a breakpoint in the constructor
         of org.hippoecm.frontend.Home, start the Run-Jetty-Run launcher in debug mode,
         open your browser and go to <a href="http://localhost:8080/cms">http://localhost:8080/cms</a></p>
-      <br/>  
+      <br/>
     </section>
     
     <section name="Code formatting">

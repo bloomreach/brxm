@@ -122,6 +122,9 @@ hippo-ecm                    Pom       hippo-ecm
 |   |-- test                 Jar       hippo-ecm-package-test
 |   |-- ear                  Ear       hippo-ecm-package-ear
 |   `-- war                  War       hippo-ecm-package-war
+|-- quickstart               Pom       hippo-ecm-package
+|   |-- ear                  Ear       hippo-ecm-quickstart-ear
+|   `-- war                  War       hippo-ecm-quickstart-war
 |-- repository               Pom       hippo-ecm-repository
 |   |-- engine               Jar       hippo-ecm-repository-engine
 |   |-- connector            Jar       hippo-ecm-repository-connector
