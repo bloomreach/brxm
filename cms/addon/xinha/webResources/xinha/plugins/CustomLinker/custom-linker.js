@@ -1,4 +1,4 @@
-/** htmlArea - James' Fork - CustomLinker Plugin **/
+    /** htmlArea - James' Fork - CustomLinker Plugin **/
 CustomLinker._pluginInfo =
 {
   name     : "CustomLinker",
@@ -150,12 +150,12 @@ CustomLinker.prototype._createLink = function(a)
 
   this.a = a; // Why doesn't a get into the closure below, but if I set it as a property then it's fine?
 
-  var doOK = function()
+  var doOK = function(values)
   {
     //if(linker.a) alert(linker.a.tagName);
     var a = linker.a;
 
-    var values = linker._dialog.hide();
+    //var values = linker._dialog.hide();
     var atr =
     {
       href: '',
@@ -266,7 +266,16 @@ CustomLinker.prototype._createLink = function(a)
     linker.editor.updateToolbar();
   };
 
-  this._dialog.show(inputs, doOK);
+  ModalDialog.openModal(
+          this.lConfig.callbackUrl,
+          CustomLinker._pluginInfo.name,
+          this.editor.config.xinhaParamToken,
+          doOK,
+          inputs);
+  
+  for(var i in inputs) {
+      console.log('Into enum: ' + i + ' = ' + inputs[i]);
+  }
 
 };
 

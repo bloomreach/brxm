@@ -27,7 +27,13 @@ function ImagePicker(editor) {
       })
       cfg.addToolbarElement("imagepicker", "insertimage", 0);
 
-} 
+}
+
+Xinha.Config.prototype.ImagePicker =
+{
+  'callbackUrl' : null
+}
+
 
 ImagePicker.prototype._lc = function(string) {
     return Xinha._lc(string, 'ImagePicker');
@@ -158,8 +164,9 @@ Xinha.prototype._insertImage = function(image)
     };
   }
   ModalDialog.openModal(
-    editor.config.modalWindowScript,
+    editor.config.ImagePicker.callbackUrl,
     ImagePicker._pluginInfo.name,
+    editor.config.xinhaParamToken,
     function(param)
     {
       // user must have pressed Cancel
@@ -167,7 +174,6 @@ Xinha.prototype._insertImage = function(image)
       {
         return false;
       }
-      
       var img = image;
       if ( !img )
       {

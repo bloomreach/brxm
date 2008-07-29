@@ -14,33 +14,35 @@
   * limitations under the License.
 -->
 <wicket:panel>
- <form wicket:id="form">
-   <p class="statusMessage"><span wicket:id="exists" style="color:red" /></p>
- <table class="imagePicker">
-   <tr>
-     <td>
-      <label>Image Name</label>
-     </td>
-     <td>  
-      <input type="text" wicket:id="alt" />
-     </td>
-     <td> 
-      <img src="" wicket:id="selectedimg"/>
-     </td>
-     </tr>
- </table>
-      <div class="thumbnailScroll">
+  <form wicket:id="form">
+    <p class="statusMessage">
+      <span wicket:id="feedback">[ Feedback panel ]</span>
+    </p>
+    <table class="imagePicker">
+      <tr>
+        <td>
+          <label>Image Name</label>
+        </td>
+        <td>  
+          <input type="text" wicket:id="alt" />
+        </td>
+        <td> 
+          <img src="" wicket:id="selectedimg"/>
+        </td>
+      </tr>
+    </table>
+    <div class="thumbnailScroll">
       <div class="thumbnail" wicket:id="item">
         <a wicket:id="callback">
           <div wicket:id="entry" style="float:left; margin:5px;">
-              <img src="" wicket:id="thumbnail" />
+            <img src="" wicket:id="thumbnail" />
           </div>
         </a>
       </div>
-      </div>
-   <div class="dialogButtons">
-     <input type="button" wicket:id="ok" value = "OK"/>
-     <input type="button" wicket:id="close" value="Close" />
-   </div>
+    </div>
+    <div class="dialogButtons">
+      <input type="button" wicket:id="ok" value = "OK"/>
+      <input type="button" wicket:id="close" value="Close" />
+    </div>
   </form>
 </wicket:panel>

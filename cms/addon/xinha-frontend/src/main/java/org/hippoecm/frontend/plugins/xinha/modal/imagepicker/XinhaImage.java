@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.modal;
+package org.hippoecm.frontend.plugins.xinha.modal.imagepicker;
 
-public enum XinhaImageProperty {
+public enum XinhaImage {
     BASE ("f_base"),
     URL  ("f_url"),
     ALT  ("f_alt"),
@@ -29,8 +29,8 @@ public enum XinhaImageProperty {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    String value;
-    XinhaImageProperty(String val) {
+    private String value;
+    XinhaImage(String val) {
         this.value = val;
     }
     
