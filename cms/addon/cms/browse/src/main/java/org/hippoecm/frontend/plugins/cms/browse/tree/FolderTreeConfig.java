@@ -54,7 +54,9 @@ public class FolderTreeConfig implements IClusterable {
         ignorePaths = new HashSet<String>(Arrays.asList(new String[] {
                 "/jcr:system", "/hippo:configuration", "/hippo:namespaces" }));
 
-// FIXME: IPluginConfig doesn't support multivalue properties.
+// FIXME: (1) Move this to plugin configuration.
+// FIXME: (2) Invert the logic, specify what you want to see
+// instead of what not. 
         ignorePaths.add("/preview");
         ignorePaths.add("/live");
         ignorePaths.add("/hippo:namespaces/system");
@@ -62,6 +64,7 @@ public class FolderTreeConfig implements IClusterable {
         ignorePaths.add("/hippo:namespaces/hippostd");
         ignorePaths.add("/hippo:namespaces/hst");
         ignorePaths.add("/hippo:namespaces/reporting");
+        ignorePaths.add("/hippo:namespaces/frontend");
 //        List<String> ignored = parameters.get("ignored").getStrings();
 //        for (String path : ignored) {
 //            ignorePaths.add(path);

@@ -72,7 +72,7 @@ public class DocumentsProvider extends SortableDataProvider {
             log.error(e.getMessage());
         }
         Collections.sort(entries, new NameComparator());
-        Collections.sort(entries, new FolderOrDocumentComparator());
+        Collections.sort(entries, new FoldersFirstComparator());
     }
 
     public Iterator iterator(int first, int count) {
@@ -86,7 +86,7 @@ public class DocumentsProvider extends SortableDataProvider {
                     if (getSort().isAscending() == false) {
                         Collections.reverse(entries);
                     }
-                    Collections.sort(entries, new FolderOrDocumentComparator());
+                    Collections.sort(entries, new FoldersFirstComparator());
                 }
             }
         }
@@ -110,7 +110,7 @@ public class DocumentsProvider extends SortableDataProvider {
     }
     
     
-    private class FolderOrDocumentComparator implements Comparator<JcrNodeModel>, IClusterable {
+    private class FoldersFirstComparator implements Comparator<JcrNodeModel>, IClusterable {
         @SuppressWarnings("unused")
         private final static String SVN_ID = "$Id$";
 
