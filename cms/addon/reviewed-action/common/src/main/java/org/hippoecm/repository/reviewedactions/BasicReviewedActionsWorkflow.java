@@ -20,32 +20,14 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 
-public interface BasicReviewedActionsWorkflow extends Workflow {
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+
+public interface BasicReviewedActionsWorkflow extends Workflow, EditableWorkflow {
     final static String SVN_ID = "$Id$";
-
-    /**
-     * Request this editable copy of the document.
-     */
-    public Document obtainEditableInstance()
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    /**
-     * Request this editable copy of the document.
-     */
-    public void commitEditableInstance()
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    /**
-     * Do away with the editable copy of the document which was previously
-     * obtained.
-     */
-    public void disposeEditableInstance()
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request unpublication and deletion of document.

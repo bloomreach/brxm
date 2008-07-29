@@ -49,65 +49,67 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     transient Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
     Map<String, Set<String>> templates;
     Label folderName;
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         add(folderName = new Label("foldername"));
 
         DialogLink deleteLink;
         deleteLink = new DialogLink("delete-dialog", new Model("Delete folder"), new IDialogFactory() {
-                private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-                public AbstractDialog createDialog(IDialogService dialogService) {
-                    // FIXME: fixed (in code) dialog text
-                    String text = "Are you sure you want to delete ";
-                    try {
-                        text += "folder ";
-                        text += ((WorkflowsModel)FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
-                    } catch(RepositoryException ex) {
-                        text += "this folder";
-                    }
-                    text += " and all of its contents permanently?";
-                    return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
-                            protected void execute() throws Exception {
-                                // FIXME: this assumes that folders are always embedded in other folders
-                                // and there is some logic here to look up the parent.  The real solution is
-                                // in the visual component to merge two workflows.
-                                WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
-                                Node node = model.getNodeModel().getNode();
-                                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                                FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                                workflow.delete(node.getName());
-                            }
-                        };
+            public AbstractDialog createDialog(IDialogService dialogService) {
+                // FIXME: fixed (in code) dialog text
+                String text = "Are you sure you want to delete ";
+                try {
+                    text += "folder ";
+                    text += ((WorkflowsModel)FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
+                } catch (RepositoryException ex) {
+                    text += "this folder";
                 }
-            }, getDialogService());
+                text += " and all of its contents permanently?";
+                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
+                    protected void execute() throws Exception {
+                        // FIXME: this assumes that folders are always embedded in other folders
+                        // and there is some logic here to look up the parent.  The real solution is
+                        // in the visual component to merge two workflows.
+                        WorkflowsModel model = (WorkflowsModel)FolderWorkflowPlugin.this.getModel();
+                        Node node = model.getNodeModel().getNode();
+                        WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+                        FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                        workflow.delete(node.getName());
+                    }
+                };
+            }
+        }, getDialogService());
         add(deleteLink);
 
         final IDataProvider provider = new IDataProvider() {
             private static final long serialVersionUID = 1L;
 
             public IModel model(Object object) {
-                return new Model((String) object);
+                return new Model((String)object);
             }
 
             public int size() {
@@ -128,23 +130,23 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
             protected void populateItem(Item item) {
                 final IModel model = item.getModel();
                 // final String dialogTitle = "Add " + ((String) model.getObject());
-                final String dialogTitle = ((String) model.getObject());
+                final String dialogTitle = ((String)model.getObject());
                 CustomizableDialogLink link;
                 link = new CustomizableDialogLink("add-dialog", new Model(dialogTitle), new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
-                      if(dialogTitle.contains("New Smart Folder")) // FIXME very bad check on name
-                        return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
-                      else
-                        return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                        if (dialogTitle.contains("New Smart Folder")) // FIXME very bad check on name
+                            return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                        else
+                            return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
                     }
                 }, getDialogService());
 
                 // FIXME: proper procedure to get an icon
-                if(dialogTitle.contains("folder") || dialogTitle.contains("Folder")) {
+                if (dialogTitle.contains("folder") || dialogTitle.contains("Folder")) {
                     link.setIcon("addfolder_ico");
-                } else if(dialogTitle.contains("document") || dialogTitle.contains("Document")) {
+                } else if (dialogTitle.contains("document") || dialogTitle.contains("Document")) {
                     link.setIcon("adddocument_ico");
                 } else {
                     link.setIcon("addextended_ico");
@@ -171,18 +173,18 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
-        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+        WorkflowsModel model = (WorkflowsModel)FolderWorkflowPlugin.this.getModel();
+        WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
         try {
-            if(model.getNodeModel() != null) {
-                if(model.getNodeModel().getNode() != null) {
-                    folderName.setModel(new Model(((HippoNode)model.getNodeModel().getNode()).getDisplayName()));
+            if (model.getNodeModel() != null) {
+                if (model.getNodeModel().getNode() != null) {
+                    folderName.setModel(new Model((model.getNodeModel().getNode()).getDisplayName()));
                 }
             }
         } catch (RepositoryException ex) {
         }
         try {
-            FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(model.getWorkflowDescriptor());
+            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow(model.getWorkflowDescriptor());
             templates = workflow.list();
         } catch (MappingException ex) {
         } catch (WorkflowException ex) {
@@ -193,16 +195,47 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public void select(JcrNodeModel nodeModel) {
         IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-        if (browser != null) {
-            try {
-                if(nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) &&
-                   !nodeModel.getNode().isNodeType("hippostd:folder")) {
-                    browser.browse(nodeModel);
+        IEditService editor = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
+        try {
+            if (nodeModel.getNode() != null && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE))) {
+                if (!nodeModel.getNode().isNodeType("hippostd:folder")) {
+                    if (browser != null) {
+                        browser.browse(nodeModel);
+                    }
+                    if (editor != null) {
+                        JcrNodeModel editNodeModel = nodeModel;
+                        Node editNodeModelNode = nodeModel.getNode();
+                        if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
+                        }
+                        WorkflowManager workflowManager = ((UserSession)Session.get()).getWorkflowManager();
+                        Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
+                        try {
+                            if (workflow instanceof EditableWorkflow) {
+                                EditableWorkflow editableWorkflow = (EditableWorkflow)workflow;
+                                Document editableDocument = editableWorkflow.obtainEditableInstance();
+                                if (editableDocument != null) {
+                                    editNodeModel = new JcrNodeModel(((UserSession)Session.get()).getJcrSession().getNodeByUUID(editableDocument.getIdentity()));
+                                } else {
+                                    editNodeModel = null;
+                                }
+                            }
+                            if (editNodeModel != null) {
+                                editor.edit(editNodeModel);
+                            }
+                        } catch (WorkflowException ex) {
+                            log.error("Cannot auto-edit document", ex);
+                        } catch (RemoteException ex) {
+                            log.error("Cannot auto-edit document", ex);
+                        } catch (RepositoryException ex) {
+                            log.error("Cannot auto-edit document", ex);
+                        }
+                    }
                 }
-            } catch(RepositoryException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
             }
+        } catch (RepositoryException ex) {
+            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+            ex.printStackTrace(System.err);
         }
     }
 }
