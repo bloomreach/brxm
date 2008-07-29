@@ -17,6 +17,7 @@ import org.eclipse.core.internal.resources.Workspace;
 out.clear();
 println "$metadata.menuName started\n";
 
+addProjectDependency('hippo-ecm-quickstart-war', 'hippo-ecm-repository-application');
 addProjectDependency('hippo-ecm-package-war', 'hippo-ecm-repository-application');
 removeClasspathEntry('hippo-ecm-repository-engine', 'src/test/resources');
 removeClasspathEntry('hippo-ecm-addon-standards-frontend', 'src/test/resources');
