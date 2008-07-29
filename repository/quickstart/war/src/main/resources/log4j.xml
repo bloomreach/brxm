@@ -76,6 +76,10 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
+  <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
   <category additivity="false" name="org.hippoecm.repository.DerivedDataEngine">
     <level value="warn"/>
     <appender-ref ref="console"/>
