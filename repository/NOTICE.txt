@@ -10,4 +10,4 @@ conditions and agree upon them.
 
 This product uses the Yahoo! User Interface Library (YUI) developed by 
 Yahoo! (http://developer.yahoo.com/yui/).
-For more information see legal/yui-licence.txt
+For more information see addon/yui/yui-licence.txt
