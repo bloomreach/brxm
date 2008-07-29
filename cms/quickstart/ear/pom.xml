@@ -12,29 +12,26 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm-package</artifactId>
+    <artifactId>hippo-ecm-quickstart</artifactId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo ECM WAR package</name>
-  <description>Hippo ECM WAR package</description>
+  <name>Hippo ECM EAR quickstart</name>
+  <description>Hippo ECM EAR quickstart</description>
   <groupId>org.hippoecm</groupId>
-  <artifactId>hippo-ecm-package-war</artifactId>
-  <packaging>war</packaging>
+  <artifactId>hippo-ecm-quickstart-ear</artifactId>
+  <packaging>ear</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/war</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/war</developerConnection>
-    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/package/war</url>
+    <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/ear</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/ear</developerConnection>
+    <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/quickstart/ear</url>
   </scm>
 
   <dependencies>
@@ -211,6 +208,29 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+
+    <!-- default content addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-defaultcontent-repository</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
+    <!-- hst add-on -->
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.hippoecm.hst</groupId>
+      <artifactId>hippo-ecm-hst-sample-content</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -219,9 +239,10 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-alpha-1</version>
+        <artifactId>maven-ear-plugin</artifactId>
         <configuration>
+          <encoding>UTF-8</encoding>
+          <version>5</version>
           <manifest>
             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
           </manifest>
@@ -230,77 +251,60 @@
               <Implementation-Build>${buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
-          <overlays>
-            <!-- repeat this overlay for all applications that use the skin -->
-            <overlay>
+          <modules>
+            <webModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-package-skin</artifactId>
-              <targetPath>skin</targetPath>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-              </excludes>
-            </overlay>
-            <overlay>
+              <contextRoot>/skin</contextRoot>
+            </webModule>
+            <webModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-addon-xinha</artifactId>
-              <targetPath>xinha</targetPath>
-              <excludes>
-                <exclude>WEB-INF/web.xml</exclude>
-              </excludes>
-            </overlay>
-            <!-- FIXME: the jar shouldn't be in the war in the first place -->
-            <overlay>
+              <contextRoot>/xinha</contextRoot>
+            </webModule>
+            <webModule>
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-repository-application</artifactId>
-              <excludes>
-                <exclude>WEB-INF/lib/slf4j-jdk14-*.jar</exclude>
-              </excludes>
-            </overlay>
-          </overlays>
+              <contextRoot>/repository</contextRoot>
+            </webModule>
+            <webModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-frontend-application</artifactId>
+              <contextRoot>/</contextRoot>
+            </webModule>
+
+            <!-- jarModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-api</artifactId>
+              <excluded>true</excluded>
+            </jarModule>
+
+            <jarModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-addon-reviewed-action-common</artifactId>
+              <includeInApplicationXml>false</includeInApplicationXml>
+            </jarModule>
+            jarModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-addon-reviewed-action-repository</artifactId>
+              <includeInApplicationXml>false</includeInApplicationXml>
+            </jarModule>
+            <jarModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-addon-reviewed-action-frontend</artifactId>
+              <includeInApplicationXml>false</includeInApplicationXml>
+            </jarModule -->
+
+          </modules>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
-        <configuration>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>8080</port>
-            </connector>
-          </connectors>
-          <contextPath>/cms</contextPath>
-        </configuration>
-        <dependencies>
-          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-api</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions-jta</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>transactions</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.atomikos</groupId>
-            <artifactId>atomikos-util</artifactId>
-            <version>3.1.4</version>
-            <scope>runtime</scope>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>
+
+  <properties>
+    <netbeans.hint.useExternalMaven>true</netbeans.hint.useExternalMaven>
+    <netbeans.hint.deploy.server>J2EE</netbeans.hint.deploy.server>
+    <netbeans.hint.packaging>ear</netbeans.hint.packaging>
+  </properties>
 
 </project>

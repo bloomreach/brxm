@@ -102,8 +102,8 @@
         <source>
 ~/> cd hippo-ecm
 ~/hippo-ecm> mvn install
-~/hippo-ecm> cd package/war
-~/hippo-ecm/package/war> mvn clean jetty:run-war
+~/hippo-ecm> cd quickstart/war
+~/hippo-ecm/quickstart/war> mvn clean jetty:run-war
         </source>
         <p>
           The <code>mvn install</code> is required to put all project artifacts (jars, wars) in your local
@@ -113,6 +113,11 @@
           Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>,
           login as admin/admin.
         </p>
+	<p>
+	  Note that in the sample application started from the command line is a quickstart version of
+	  the Hippo ECM suite.  If you require a production build, want to extend Hippo ECM or just
+	  want a clean start you should use the hippo-ecm/package/war of hippo-ecm/package/ear project.
+	</p>
       </subsection>
 
     </section>
