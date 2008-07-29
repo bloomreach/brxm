@@ -56,33 +56,33 @@
   </category>
 
   <category additivity="false" name="org.apache.wicket">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
 
   <category additivity="false" name="org.hippoecm.repository.impl.WorkflowManagerImpl">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.ocm.FieldManagerImpl">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.ocm.StoreManagerImpl">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.ocm">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.DerivedDataEngine">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
 
   <root>
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>
