@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -24,12 +27,16 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
     private ListDataTable dataTable;
     private int pageSize;
@@ -51,7 +58,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     protected abstract TableDefinition getTableDefinition();
 
     private boolean newList = true;
-    
+
     public void selectionChanged(IModel model) {
         newList = false;
         dataTable.setModel(model);
@@ -61,8 +68,20 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     @Override
     public void onModelChanged() {
         if (newList) {
+            IModel newModel = getModel();
+            if (newModel instanceof JcrNodeModel) {
+                try {
+                    Node newNode = (Node) newModel.getObject();                
+                    if (newNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                        newModel = ((JcrNodeModel) getModel()).getParentModel();
+                    }
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
+            }
+
             dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
-            dataTable.setModel(getModel());
+            dataTable.setModel(newModel);
             replace(dataTable);
         } else {
             newList = true;
