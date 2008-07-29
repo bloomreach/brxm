@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Core developer information</title>
+    </properties>
+    <body>
+
+<section name="Performing a release of the Hippo-ECM suite">
+
+<p>
+This section described releasing a pre-initial version milestone of the
+Hippo-ECM suite.  This means releasing the project as a milestone build
+before a actual public release with a formal version number.
+</p>
+<p>
+The first formally released version must be 2.01.01 because of the current
+numbering scheme
+</p>
+
+<subsection name="Preparing a release">
+<p>
+Before doing a release you should make sure you have a Jira issue.
+Maintaining a release in Jira is not part of this description.
+</p>
+
+<p>
+Make sure you have an up-to-date, no changes, no unknown files trunk
+checkout of the full hippo-ecm suite.  In other words; do a clean
+checkout.  Remove any hippo-ecm targets from your local maven repository
+as well as any locally build targets that you have installed.
+Then do a full build installing everything and including unit tests
+(this is a must):
+</p>
+<source>
+svn checkout 'https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk' hippo-ecm
+cd hippo-ecm
+rm -rf ~/.m2/repository/org/hippoecm
+mvn install
+</source>
+
+<p>
+Then cleanup everything again.
+</p>
+<source>
+mvn clean
+</source>
+
+<div style="border:1px solid black; padding:1em;">
+At times, it is easier to manage to release from a branch than from the
+trunk in SVN.  In this case you should have a starting point with the
+to-be-released state of hippo-ecm in a branch that is named the same as
+the to be release version.<br/>
+In the description below the tag <code>Release-HREPTWO-v2_01_00_M0</code>
+is used with M0 replaced by a M followed by the milestone number where
+dots are replaced by underscores.  This means that if you want to
+release from a branch, then you should have your sources available at
+the following URL, and checkout those in stead of the trunk:<br/>
+<code>https://svn.hippocms.org/repos/hippo/hippo-ecm/branches/Release-HREPTWO-v2_01_00_M0</code>
+</div><br/><br/>
+
+</subsection>
+<subsection name="Releasing in subversion">
+
+<p>
+Now prepare for a release, which will enter the right version numbers in
+the pom.xml.  Initially this will be a dry-run and nothing will actually
+be committed.
+</p>
+
+<p>
+The following maven call will perform this release preparation.
+The argument given for the tag needs to be completed.  For
+pre-initial-release versions you only need to change the M0 to M in
+the string <code>Release-HREPTWO-v2_01_00_M0</code> followed by the
+milestone number.  You need to replace dots by an underscore sign.
+</p>
+
+<source>
+mvn release:prepare \
+    -DallowTimestampedSnapshots=true \
+    -DautoVersionSubmodules=true \
+    -Dtag=Release-HREPTWO-v2_01_00_M0 \
+    -DdryRun=true
+</source>
+
+<p>
+After some initial actions taken by this command, the release plugin
+will prompt you for the version number to be used in the release.
+For pre-initial-release versions we are using <code>2.01.00.</code>
+followed by the SVN revision number of the then current trunk.
+For example a version might be <code>2.01.00.13457</code> It will also
+ask for the next version to be used.  Enter <code>2.01.00-SNAPSHOT</code>
+for this on pre-initial-release milestone build.
+</p>
+
+<p>
+Make sure there where no errors.  If everything looks sound, cleanup
+and do the actual release preparation:
+</p>
+
+<source>
+mvn release:clean
+svn --recursive revert .
+mvn release:prepare \
+    -DallowTimestampedSnapshots=true \
+    -DautoVersionSubmodules=true \
+    -Dtag=Release-HREPTWO-v2_01_00_M0 \
+    -DscmCommentPrefix="HREPTWO-0: "
+</source>
+
+<p>
+Again release the tag should be set to the same value as before and
+while executing the same values need to be entered.  You should replace
+the number in <code>HREPTWO-0</code> with the Jira issue tag number you
+started out with in this description.
+</p>
+
+</subsection>
+<subsection name="Deploying the targets">
+
+<p>
+First checkout the tagged version of hippo-ecm:
+</p>
+
+<source>
+svn checkout 'https://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Release-HREPTWO-v2_01_00_M0' hippo-ecm-M0
+cd hippo-ecm-M0
+</source>
+
+Now do a full build, including running the unit tests:
+<source>
+mvn install
+</source>
+
+<p>
+Make sure that in your local maven settings.xml configuration file
+the upload ftp server is known and the credentials for uploading are
+set properly.  This means that your <code>~/.m2/settings.xml</code>
+file should contain a section similar to:
+</p>
+
+<source>
+&lt;settings&gt;
+  &lt;servers&gt;
+    &lt;server&gt;
+      &lt;id&gt;repository.hippocms.org&lt;/id&gt;
+      &lt;username&gt;repository&lt;/username&gt;
+      &lt;password&gt;????????&lt;/password&gt;
+    &lt;/server&gt;
+  &lt;/servers&gt;
+&lt;/settings&gt;
+</source>
+
+<p>
+You should replace <code>????????</code> with the password of the maven repository ftp
+server.
+</p>
+
+<p>
+Now deploy the build targets, i.e. upload to the public maven repository, using:
+</p>
+<source>
+mvn deploy:deploy
+</source>
+
+<p>
+All uploads should be performed without any timeouts in one go.  If the
+network connection is unstable, you have to restart the whole deploy
+procedure.
+</p>
+
+</subsection>
+</section>
+
+    </body>
+</document>
