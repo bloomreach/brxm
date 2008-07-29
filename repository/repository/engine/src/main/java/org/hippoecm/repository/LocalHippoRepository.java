@@ -257,10 +257,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 try {
                     InputStream configuration = getClass().getResourceAsStream("configuration.xml");
                     if (configuration != null) {
-                        initializeNodecontent(rootSession, "/", configuration);
+                        initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName()+".configuration.xml");
                         rootSession.save();
                     } else {
-                        log.warn("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
+                        log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                     }
                 } catch (AccessDeniedException ex) {
                     throw new RepositoryException("Could not initialize repository with configuration content", ex);
@@ -301,7 +301,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     log.info("Initializing additional configuration content from "+configurationURL);
                     try {
                         InputStream configurationStream = configurationURL.openStream();
-                        initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream);
+                        initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream, configurationURL.getPath());
                         Node mergeInitializationNode = rootSession.getRootNode().
                             getNode("hippo:configuration/hippo:temporary/hippo:initialize");
                         for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
@@ -452,13 +452,13 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                 try {
                                     cndStream = new BufferedInputStream(new FileInputStream(localFile));
                                 } catch (FileNotFoundException e) {
-                                    log.warn("Nodetypes initialization file not found: " + cndName, e);
+                                    log.error("Nodetypes initialization file not found: " + cndName, e);
                                 }
                             } else {
                                 cndStream = getClass().getResourceAsStream(cndName);
                             }
                             if (cndStream == null) {
-                                log.warn("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
+                                log.error("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
                             } else {
                                 log.info("Initializing nodetypes from: " + cndName);
                                 initializeNodetypes(workspace, cndStream, cndName);
@@ -475,7 +475,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             String cndName = "<<internal>>";
                             InputStream cndStream = p.getStream();
                             if (cndStream == null) {
-                                log.warn("Cannot get stream for nodetypes definition property.");
+                                log.error("Cannot get stream for nodetypes definition property.");
                             } else {
                                 log.info("Initializing nodetypes from nodetypes property.");
                                 initializeNodetypes(workspace, cndStream, cndName);
@@ -505,14 +505,14 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                 try {
                                     contentStream = new BufferedInputStream(new FileInputStream(localFile));
                                 } catch (FileNotFoundException e) {
-                                    log.warn("Content resource file not found: " + contentStream, e);
+                                    log.error("Content resource file not found: " + contentStream, e);
                                 }
                             } else {
                                 contentStream = getClass().getResourceAsStream(contentName);    
                             }
                                 
                             if (contentStream == null) {
-                                log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");
+                                log.error("Cannot locate content configuration '" + contentName + "', initialization skipped");
                             } else {
                                 String root = "/";
                                 Property rootProperty = null;
@@ -527,7 +527,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                     log.error("Refusing to extract content to " + root);
                                 } else {
                                     log.info("Initializing content from: " + contentName + " to " + root);
-                                    initializeNodecontent(rootSession, root, contentStream);
+                                    initializeNodecontent(rootSession, root, contentStream, contentName);
                                 }
                                 rootProperty.remove();
                                 contentProperty.remove();
@@ -543,12 +543,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             
                             Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
                             String contentName = contentProperty.getString();
-
                             contentName = "<<internal>>";
                             InputStream contentStream = contentProperty.getStream();
                                 
                             if (contentStream == null) {
-                                log.warn("Cannot locate content configuration '" + contentName + "', initialization skipped");
+                                log.error("Cannot locate content configuration '" + contentName + "', initialization skipped");
                             } else {
                                 String root = "/";
                                 Property rootProperty = null;
@@ -563,7 +562,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                     log.error("Refusing to extract content to " + root);
                                 } else {
                                     log.info("Initializing content from: " + contentName + " to " + root);
-                                    initializeNodecontent(rootSession, root, contentStream);
+                                    initializeNodecontent(rootSession, root, contentStream, contentName+":"+node.getPath());
                                 }
                                 rootProperty.remove();
                                 contentProperty.remove();
@@ -618,14 +617,14 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 }
                 String uriPrefix = currentURI.substring(0, currentURI.lastIndexOf("/") + 1);
                 if(!uriPrefix.equals(uri.substring(0,uri.lastIndexOf("/")+1))) {
-                    log.error("Prefix already used for different namespace");
+                    log.error("Prefix already used for different namespace: " + prefix + ":" + uri);
                     return;
                 }
                 String newPrefix = prefix + "_" + currentURI.substring(uriPrefix.length());
                 ((NamespaceRegistryImpl)nsreg).externalRemap(prefix, newPrefix, currentURI);
             } catch (NamespaceException ex) {
                 if (!ex.getMessage().endsWith("is not a registered namespace prefix.")) {
-                    log.warn(ex.getMessage());
+                    log.error(ex.getMessage() +" For: " + prefix + ":" + uri);
                 }
             }
 
@@ -635,7 +634,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             if (ex.getMessage().endsWith("mapping already exists")) {
                 log.error("Namespace already exists: " + prefix + ":" + uri);
             } else {
-                log.warn(ex.getMessage());
+                log.error(ex.getMessage()+" For: " + prefix + ":" + uri);
             }
         }
     }
@@ -662,23 +661,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
                 log.info("Added NodeType: " + ntd.getName().getLocalName());
             } catch (NamespaceException ex) {
-                log.warn(ex.getMessage());
+                log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
             } catch (InvalidNodeTypeDefException ex) {
                 if (ex.getMessage().endsWith("already exists")) {
-                    log.debug(ex.getMessage());
+                    log.warn(ex.getMessage() +". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
                 } else {
-                    log.warn(ex.getMessage());
+                    log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
                 }
             } catch (RepositoryException ex) {
                 if (!ex.getMessage().equals("not yet implemented")) {
-                    log.warn(ex.getMessage());
+                    log.warn(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
                     ex.printStackTrace();
                 }
             }
         }
     }
 
-    private void initializeNodecontent(Session session, String absPath, InputStream istream) {
+    private void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
         try {
             String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
@@ -686,21 +685,21 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             }
             session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
         } catch (IOException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (PathNotFoundException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (ItemExistsException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (ConstraintViolationException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (VersionException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (InvalidSerializedDataException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (LockException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (RepositoryException ex) {
-            log.error("Error initializing content in '" + absPath + "' : " + ex.getMessage(), ex);
+            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         }
     }
 
