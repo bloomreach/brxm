@@ -15,66 +15,110 @@
  */
 package org.hippoecm.frontend.plugins.xinha.modal;
 
+import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.yui.util.JavascriptUtil;
 
-public abstract class XinhaContentPanel extends Panel {
+public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     final protected Form form;
-    final protected Map<String, String> parameters;
+    final protected EnumMap<K, String> values;
     final protected AjaxButton ok;
-    
-    public XinhaContentPanel(final XinhaModalWindow modal, Map<String, String> parameters) {
-        super(modal.getContentId());
-        this.parameters = parameters;
 
+    public XinhaContentPanel(final XinhaModalWindow modal, final EnumMap<K, String> values) {
+        super(modal.getContentId());
+        this.values = values;
         add(form = new Form("form"));
 
         ok = new AjaxButton("ok", form) {
             private static final long serialVersionUID = 1L;
+
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                onSubmitCreateLinks();
+                onOk();
                 modal.onSelect(target, getSelectedValue());
             }
         };
-        
+
         form.add(ok);
 
         form.add(new AjaxButton("close", form) {
             private static final long serialVersionUID = 1L;
 
             public void onSubmit(AjaxRequestTarget target, Form form) {
+                onCancel();
                 modal.onCancel(target);
             }
         });
 
     }
 
-    protected abstract String getSelectedValue();
-    
-    protected abstract void onSubmitCreateLinks();
+    protected EnumModel<K> newEnumModel(Enum<K> e) {
+        return new EnumModel<K>(values, e);
+    }
 
-    String MapToJavascriptObject(Map<String, String> map) {
-        StringBuilder sb = new StringBuilder(map.size() * 20);
+    protected String getSelectedValue() {
+        StringBuilder sb = new StringBuilder(values.size() * 20);
         sb.append('{');
-        Iterator<String> it = map.keySet().iterator();
+
+        Iterator<K> it = values.keySet().iterator();
         while (it.hasNext()) {
-            String key = it.next();
-            sb.append(key).append(": '").append(map.get(key)).append('\'');
+            K key = it.next();
+            sb.append(getXinhaParameterName(key)).append(": ").append(JavascriptUtil.serialize2JS(values.get(key)));
             if (it.hasNext())
                 sb.append(',');
         }
         sb.append('}');
+
         return sb.toString();
     }
 
+    protected void onOk() {
+    }
+
+    protected void onCancel() {
+    }
+
+    /**
+     * Return the Xinha parameter name encoded in enumeration K
+     * @param k
+     * @return
+     */
+    abstract protected String getXinhaParameterName(K k);
+
+}
+
+class EnumModel<K extends Enum<K>> implements IModel {
+    private static final long serialVersionUID = 1L;
+
+    private EnumMap<K, String> values;
+    private Enum<K> e;
+
+    public EnumModel(EnumMap<K, String> values, Enum<K> e) {
+        this.e = e;
+        this.values = values;
+    }
+
+    public Object getObject() {
+        return values.get(e);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void setObject(Object object) {
+        if (object == null)
+            return;
+        values.put((K) e, (String) object);
+    }
+
+    public void detach() {
+    }
 }

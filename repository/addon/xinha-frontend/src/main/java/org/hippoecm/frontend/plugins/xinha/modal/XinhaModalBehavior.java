@@ -23,21 +23,17 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private final static Logger log = LoggerFactory.getLogger(XinhaModalBehavior.class);
-
     private static final long serialVersionUID = 1L;
-    
-    XinhaModalWindow modalWindow;
-    
+
+    protected XinhaModalWindow modalWindow;
+
     public XinhaModalBehavior(XinhaModalWindow modalWindow) {
-        if(modalWindow == null)
+        if (modalWindow == null)
             throw new IllegalArgumentException("XinaModalWindow cannot be null");
         this.modalWindow = modalWindow;
     }
@@ -51,8 +47,8 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String> requestParams = request.getRequestParameters().getParameters();
         for (String key : requestParams.keySet()) {
-            if (key.startsWith("ModalDialogParam-")) {
-                params.put(key.substring("ModalDialogParam-".length()), request.getParameter(key));
+            if (key.startsWith(XinhaPlugin.XINHA_PARAM_PREFIX)) {
+                params.put(key.substring(XinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));
             }
         }
 
@@ -61,6 +57,6 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
         modalWindow.show(target);
     }
 
-    abstract XinhaContentPanel createContentPanel(Map<String, String> params);
+    protected abstract XinhaContentPanel<?> createContentPanel(Map<String, String> params);
 
 }

@@ -18,16 +18,15 @@ ModalDialogImpl = function() {
 };
 
 ModalDialogImpl.prototype = {
-    MODAL_DIALOG_PARAM: 'ModalDialogParam-',
-    modalAction: null,
-    
-    openModal: function(componentUrl, plugin, action, init) {
+    modalAction :null,
+
+    openModal : function(componentUrl, plugin, paramToken, action, init) {
         var str = componentUrl.indexOf('?') > -1 ? "&" : "?";
         str += 'pluginName=' + plugin;
-        for(var i in init) {
-            str += encodeURI(('&' + this.MODAL_DIALOG_PARAM + i + '=' + init[i]));
+        for ( var i in init) {
+            str += encodeURI(('&' + paramToken + i + '=' + init[i]));
         }
-        if(str.length > 1)
+        if (str.length > 1)
             componentUrl += str;
         var _this = this;
         var func = function() {
@@ -35,16 +34,16 @@ ModalDialogImpl.prototype = {
         }
         wicketAjaxGet(componentUrl, func, null, null);
     },
-    
-    closeModal: function(value) {
-        if(this.modalAction != null) {
+
+    closeModal : function(value) {
+        if (this.modalAction != null) {
             this.modalAction(value);
         }
         this.modalAction = null;
     },
-    
-    cancelModal: function() {
-        this.modalAction = null;        
+
+    cancelModal : function() {
+        this.modalAction = null;
     }
 }
 

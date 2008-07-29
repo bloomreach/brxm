@@ -13,13 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.modal;
+package org.hippoecm.frontend.plugins.xinha.modal.linkpicker;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 
-public class XinhaImagePickerBehavior extends XinhaModalBehavior {
+public class LinkPickerBehavior extends XinhaModalBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -27,14 +31,18 @@ public class XinhaImagePickerBehavior extends XinhaModalBehavior {
 
     private JcrNodeModel nodeModel;
 
-    public XinhaImagePickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
+    public LinkPickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
         super(modalWindow);
         nodeModel = model;
     }
 
     @Override
-    XinhaContentPanel createContentPanel(Map<String, String> params) {
-        return new ImagePickerContentPanel(modalWindow, nodeModel, params);    
+    protected XinhaContentPanel<XinhaLink> createContentPanel(Map<String, String> params) {
+        EnumMap<XinhaLink, String> enums = new EnumMap<XinhaLink, String>(XinhaLink.class);
+        for (XinhaLink xl : XinhaLink.values()) {
+            enums.put(xl, params.get(xl.getValue()));
+        }
+        return new LinkPickerContentPanel(modalWindow, nodeModel, enums);
     }
 
 }

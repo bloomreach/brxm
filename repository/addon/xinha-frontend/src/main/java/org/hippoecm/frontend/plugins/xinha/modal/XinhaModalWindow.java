@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.xinha.modal;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
+import org.apache.wicket.markup.html.panel.Panel;
 
 public class XinhaModalWindow extends ModalWindow {
     @SuppressWarnings("unused")
@@ -34,19 +35,7 @@ public class XinhaModalWindow extends ModalWindow {
         setResizable(true);
 
         setTitle("ModalWindow");
-        setContent(new XinhaContentPanel(this, null) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String getSelectedValue() {
-                return "{}";
-            }
-
-            @Override
-            protected void onSubmitCreateLinks() {
-            }
-
-        });
+        setContent(new Panel(this.getContentId()));
         add(HeaderContributor.forJavaScript(XinhaModalWindow.class, "xinha-modal.js"));
     }
 

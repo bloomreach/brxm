@@ -47,8 +47,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
+import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.linkpicker.LinkPickerBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -67,6 +68,7 @@ public class XinhaPlugin extends RenderPlugin {
 
     private static final String BINARIES_PREFIX = "binaries";
     public static final String XINHA_SAVED_FLAG = "XINHA_SAVED_FLAG";
+    public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
 
     // hardcoded ignore path set
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
@@ -76,8 +78,10 @@ public class XinhaPlugin extends RenderPlugin {
     private TextArea editor;
     private Configuration configuration;
     private AbstractDefaultAjaxBehavior postBehavior;
-    private AbstractDefaultAjaxBehavior imagePickerBehavior;
+
     private XinhaModalWindow modalWindow;
+    private LinkPickerBehavior linkPickerBehavior;
+    private ImagePickerBehavior imagePickerBehavior;
 
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -90,13 +94,14 @@ public class XinhaPlugin extends RenderPlugin {
             fragment.add(createEditor(config));
             configuration = new Configuration(config);
             context.registerService(configuration, Configuration.class.getName());
-            
+
             JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             JcrNodeModel nodeModel = new JcrNodeModel(nodePath);
 
             fragment.add(modalWindow = new XinhaModalWindow("modalwindow"));
-            fragment.add(imagePickerBehavior = new XinhaImagePickerBehavior(modalWindow, nodeModel));
+            fragment.add(imagePickerBehavior = new ImagePickerBehavior(modalWindow, nodeModel));
+            fragment.add(linkPickerBehavior = new LinkPickerBehavior(modalWindow, nodeModel));
         } else {
             fragment.add(new WebMarkupContainer("value", getModel()) {
                 private static final long serialVersionUID = 1L;
@@ -116,13 +121,22 @@ public class XinhaPlugin extends RenderPlugin {
         if (configuration != null) {
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
-            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG); 
-            configuration.addProperty("modalWindowScript", imagePickerBehavior.getCallbackUrl().toString());
-            
+            configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
+            configuration.addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
+
+            if (configuration.getPluginConfiguration("ImagePicker") != null) {
+                configuration.getPluginConfiguration("ImagePicker").addProperty("callbackUrl",
+                        imagePickerBehavior.getCallbackUrl().toString());
+            }
+            if (configuration.getPluginConfiguration("CustomLinker") != null) {
+                configuration.getPluginConfiguration("CustomLinker").addProperty("callbackUrl",
+                        linkPickerBehavior.getCallbackUrl().toString());
+            }
+
             JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             configuration.addProperty("jcrNodePath", BINARIES_PREFIX + nodePath);
-            
+
             IPluginContext context = getPluginContext();
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),
                     XinhaEditorBehavior.class);
