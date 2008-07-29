@@ -60,9 +60,6 @@
 // FIXME: THESE TYPES ARE EXAMPLES ONLY AND SHOULD BE REMOVED BEFORE RELEASE
 // DO NOT USE THESE TYPES IN JAVA CODE!
 
-[hippostd:gallery] > hippostd:folder
-// the children of this node are supposed to be images
-// ie. children conform to
 
 [hippostd:exampleImageSet] > hippo:document
 + hippostd:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
