@@ -2,22 +2,16 @@
 # This script assumes that it's located in the hippo-ecm/tools/eclipse directory. 
  
 cd $(dirname $0) 
- 
 cd ../..
 
-cd package/war/src/main/webapp
-ln -s -v ../../../../skin/src/main/webapp skin
-ln -s -v ../../../../../addon/xinha/src/main/webapp xinha
+ln -s package/skin/src/main/webapp  package/war/src/main/webapp/skin
+ln -s addon/xinha/src/main/webapp   package/war/src/main/webapp/xinha
 
-cd ../../../../../quickstart/war/src/main/webapp
-ln -s -v ../../../../../package/skin/src/main/webapp skin
-ln -s -v ../../../../../addon/xinha/src/main/webapp xinha
+ln -s package/skin/src/main/webapp  quickstart/war/src/main/webapp/skin
+ln -s addon/xinha/src/main/webapp   quickstart/war/src/main/webapp/xinha
 
-cd ../../../../../addon/xinha/src/main/webapp/xinha/plugins
-ln -s -v ../../../../../webResources/xinha/plugins/AutoSave AutoSave
-ln -s -v ../../../../../webResources/xinha/plugins/AutoResize AutoResize
-ln -s -v ../../../../../webResources/xinha/plugins/CustomLinker CustomLinker
-ln -s -v ../../../../../webResources/xinha/plugins/ImagePicker ImagePicker
-
-cd ../skins
-ln -s -v ../../../../../webResources/xinha/skins/hippo-gray hippo-gray
+ln -s addon/xinha/webResources/xinha/plugins/AutoSave     addon/xinha/src/main/webapp/xinha/plugins/AutoSave
+ln -s addon/xinha/webResources/xinha/plugins/AutoResize   addon/xinha/src/main/webapp/xinha/plugins/AutoResize
+ln -s addon/xinha/webResources/xinha/plugins/CustomLinker addon/xinha/src/main/webapp/xinha/plugins/CustomLinker
+ln -s addon/xinha/webResources/xinha/plugins/ImagePicker  addon/xinha/src/main/webapp/xinha/plugins/ImagePicker
+ln -s addon/xinha/webResources/xinha/skins/hippo-gray     addon/xinha/src/main/webapp/xinha/skins/hippo-gray
