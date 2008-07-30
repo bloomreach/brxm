@@ -110,7 +110,7 @@
           maven repository, as required by the maven-jetty-plugin.
         </p>
         <p>
-          Open a web browser and go to <a href="http://localhost:8080">http://localhost:8080</a>,
+          Open a web browser and go to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>,
           login as admin/admin.
         </p>
 	<p>

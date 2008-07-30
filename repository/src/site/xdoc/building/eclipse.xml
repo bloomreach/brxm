@@ -59,8 +59,9 @@
       </p>
       <source>~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:add-maven-repo</source>
       <p> 
-        Import the Eclipse update site bookmarks file <b>~/hippo-ecm/tools/eclipse/bookmarks.xml</b>
-        using <i>Help -> Software Updates -> Available Software -> Manage Sites -> Import</i>
+        Import the Eclipse update site bookmarks file 
+        <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/bookmark.xml"><b>
+        ~/hippo-ecm/tools/eclipse/bookmark.xml</b></a> using the Eclipse update manager.
         <br/><br/>
         This will add update sites for the following Eclipse plugins which need to be installed:
       </p>
@@ -113,17 +114,24 @@
       <ul>
         <li>
           <p>
-            <b>Windows: </b> Open a command shell, go to the <b>~\hippo-ecm\tools\eclipse</b> directory and run the <b>createlinks.bat</b> script.
+            <b>Windows: </b> Open a command shell, go to the <b>~\hippo-ecm\tools\eclipse</b> directory and run the 
+            <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.bat"><b>
+            createlinks.bat</b></a> script.
           </p>
           <p>
             <b>Note:</b> Although it is not possible to create symbolic links with the tools that are provided by
             default by Windows, they do exist. This script uses one of the Microsoft supplied tools for this:
             <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.
+            If you prefer not to install junction the alternative is to manually copy the linked directories,
+            please note that this has to be done every time there is an update in the linked directory. See
+            the script for what needs to be done.
           </p>
         </li>
         <li>
           <p>
-            <b>Unix: </b> Open a command shell, go to the <b>~/hippo-ecm/tools/eclipse</b> directory and run the <b>createlinks.sh</b> script.
+            <b>Unix: </b> Open a command shell, go to the <b>~/hippo-ecm/tools/eclipse</b> directory and run the 
+            <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.sh"><b>
+            createlinks.sh</b></a> script.
           </p>
         </li>
       </ul>
@@ -173,10 +181,15 @@
         </li>
       </ol>     
       <p>
-        As a final step you need to run the
-        <b>"Prepare Hippo ECM projects"</b> script from the <i>Groovy Monkey</i> Eclipse menu.
+        As a final step you need to run the 
+        <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/monkey/prepareProjects.gm">
+        <b>prepareProjects.gm</b></a> script that you can find under
+        the <i>Prepare Hippo ECM projects</i> menu item in the <i>Groovy Monkey</i> Eclipse menu.
         This script will fix some project dependencies that were not set correctly by
-        the 'mvn eclipse:eclipse' step above.
+        the 'mvn eclipse:eclipse' step above. If the script fails with a ClassNotFoundException
+        or a MethodNotFoundException you are probably using an older or 'light' version of Eclipse,
+        consider upgrading to the 3.4 'Classic' or 'EE' editions. If this is not an option you can fix
+        the projects by hand, see the script for what it does.  
         <br/><br/>
       </p>      
     </section>
@@ -225,10 +238,10 @@
     <section name="Keeping up">
       <p>
         Hippo ECM is a very active project with many updates every day. 'Ordinary' updates can be digested
-        by using the Eclipse Synchronization perspective and simple version updates can be fixed
+        by using the Eclipse Synchronization perspective and simple dependency changes can be fixed
         maually by using the Eclipse project properties "Build Path" dialog.
         <br/><br/>
-        When your Eclipse projects are too much broken due to version changes to be fixed manually 
+        When your Eclipse projects are too much broken due to dependency changes to be fixed manually 
         the most straightforward (although not most elegant) way out is to regenerate all Eclipse
         project information:
       </p>
