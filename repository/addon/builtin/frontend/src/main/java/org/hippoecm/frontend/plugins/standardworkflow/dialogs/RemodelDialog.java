@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -56,6 +57,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         super(plugin, dialogWindow, "Update content");
 
         this.jcrServiceRef = jcrService;
+        add(new Label("message", "Updating all content to match the updated types might take a long time and is irreversible. Are you sure you want to proceed?"));
 
         if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
             ok.setVisible(false);
