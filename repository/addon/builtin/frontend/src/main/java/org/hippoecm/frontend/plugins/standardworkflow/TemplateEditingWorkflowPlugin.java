@@ -15,10 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -29,8 +34,6 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.repository.api.Workflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")

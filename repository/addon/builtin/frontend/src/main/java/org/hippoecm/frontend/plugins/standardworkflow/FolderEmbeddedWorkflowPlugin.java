@@ -48,8 +48,6 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         super(context, config);
         item = (String) config.get(EmbedWorkflowPlugin.ITEM_ID);
 
-        //add(new Label("delete-dialog", "delete"));
-
         add(new DialogLink("delete-dialog", new Model("Delete"), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -88,13 +86,13 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         }
 
         @Override
-            protected void execute() throws Exception {
+        protected void execute() throws Exception {
             FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
             workflow.delete(item);
         }
 
         @Override
-            public void cancel() {
+        public void cancel() {
         }
     }
 }

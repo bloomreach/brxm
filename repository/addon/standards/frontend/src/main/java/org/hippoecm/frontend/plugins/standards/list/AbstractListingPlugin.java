@@ -90,7 +90,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        modelChanged();
+        if(nodeModel != null && nodeModel.getNode() != null) {
+            modelChanged();
+        }
     }
 
 }

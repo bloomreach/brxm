@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -23,8 +30,6 @@ import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -48,6 +53,13 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
         });
         addWorkflowAction("revert", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.refresh(false);
+                handleNode.getSession().refresh(true);
+            }
 
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;

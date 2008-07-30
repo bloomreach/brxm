@@ -15,11 +15,23 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.IClusterable;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.Workflow;
 
-public interface WorkflowAction extends IClusterable {
+public abstract class WorkflowAction implements IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public void execute(Workflow workflow) throws Exception;
+    protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+        // save the handle so that the workflow uses the correct content
+        Node handleNode = handleModel.getNode();
+        handleNode.save();
+        handleNode.getSession().refresh(true);
+    }
+
+    public abstract void execute(Workflow workflow) throws Exception;
 }
