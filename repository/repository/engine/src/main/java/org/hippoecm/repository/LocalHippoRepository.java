@@ -310,7 +310,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                                                   n.getName())) {
                                 rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
                             } else {
-                                log.warn("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
+                                log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                             }
                         }
                         mergeInitializationNode.remove();
@@ -664,7 +664,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
             } catch (InvalidNodeTypeDefException ex) {
                 if (ex.getMessage().endsWith("already exists")) {
-                    log.warn(ex.getMessage() +". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
+                    log.info(ex.getMessage() +". In " + cndName +" for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
                 } else {
                     log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName());
                 }
