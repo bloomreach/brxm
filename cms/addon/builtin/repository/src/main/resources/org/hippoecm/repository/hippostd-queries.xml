@@ -33,7 +33,7 @@
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>//element(*,hippo:templatetype)/hippo:prototype/hippo:prototype</sv:value>
+      <sv:value>//element(*,hippo:namespacefolder)/element(*,mix:referenceable)/element(*,hippo:templatetype)/hippo:prototype/hippo:prototype</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
