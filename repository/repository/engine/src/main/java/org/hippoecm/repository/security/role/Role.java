@@ -15,13 +15,18 @@
  */
 package org.hippoecm.repository.security.role;
 
-import org.hippoecm.repository.security.AAContext;
+import org.hippoecm.repository.security.ManagerContext;
 
 /**
  * A role a user has on a domain.
  */
 public interface Role {
     final static String SVN_ID = "$Id$";
+
+    /**
+     * NONE JCR permission constant
+     */
+    static final int NONE = 0;
 
     /**
      * READ JCR permission constant
@@ -42,21 +47,26 @@ public interface Role {
      * Initialize the role from the backend
      * @param context the context containing params needed by the backend
      * @param roleId the unique role id
-     * @throws RoleNotFoundException
+     * @throws RoleException
      */
-    public void init(AAContext context, String roleId) throws RoleNotFoundException;
+    public void init(ManagerContext context, String roleId) throws RoleException;
 
     /**
      * Get the unique role id
      * @return the unique role id string
-     * @throws RoleNotFoundException
+     * @throws RoleException
      */
-    public String getRoleId() throws RoleNotFoundException;
+    public String getRoleId() throws RoleException;
 
     /**
      * Get the JCR permissions assigned to the current role
      * @return
-     * @throws RoleNotFoundException
+     * @throws RoleException
      */
-    public int getJCRPermissions() throws RoleNotFoundException;
+    public int getJCRPermissions() throws RoleException;
+    /**
+     * Helper method for pretty printing the requested permission
+     * @param permissions
+     * @return the 'unix' style permissions string
+     */
 }

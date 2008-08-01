@@ -13,13 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security;
+package org.hippoecm.repository.security.group;
 
+import org.hippoecm.repository.security.ManagerContext;
 
-/**
- * Authentication and Authorization context
- *
- */
-public interface AAContext {
+public class DummyGroupManager extends AbstractGroupManager {
+
+    @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
+
+    public static final String PROVIDER_ID = "<dummyProvider>";
+
+    public DummyGroupManager() {
+        providerId = PROVIDER_ID;
+    }
+    
+    public void initManager(ManagerContext context) {
+        initialized = true;
+    }
 }

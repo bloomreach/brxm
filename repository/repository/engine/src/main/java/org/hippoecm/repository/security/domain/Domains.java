@@ -24,8 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
+import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ public class Domains {
     /**
      * The AAContext
      */
-    private RepositoryAAContext context;
+    private ManagerContext context;
 
     /**
      * The system/root session
@@ -62,7 +61,7 @@ public class Domains {
     /**
      * The current groups
      */
-    private Set<Domain> domains = new HashSet<Domain>();
+    private final Set<Domain> domains = new HashSet<Domain>();
 
     /**
      * Logger
@@ -76,10 +75,10 @@ public class Domains {
      * @param node the node holding the configuration
      * @throws RepositoryException
      */
-    public void init(AAContext aacontext) {
-        context = (RepositoryAAContext) aacontext;
-        session = context.getRootSession();
-        domainsPath = context.getPath();
+    public void init(ManagerContext context) {
+        this.context = context;
+        this.session = context.getSession();
+        this.domainsPath = context.getPath();
         loadDomains();
         initialized = true;
     }

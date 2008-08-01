@@ -30,7 +30,7 @@
   -->
   <Security appName="Jackrabbit">
     <AccessManager class="org.hippoecm.repository.security.SimpleAccessManager"/>
-    <LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/>
+    <LoginModule class="org.hippoecm.repository.security.HippoLoginModule"/>
   </Security>
 
 

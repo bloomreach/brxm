@@ -110,14 +110,14 @@
     &lt;AccessManager
         class="org.hippoecm.repository.security.SimpleAccessManager"&gt;
     &lt;/AccessManager&gt;
-    &lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"&gt;
+    &lt;LoginModule class="org.hippoecm.repository.security.HippoLoginModule"&gt;
         &lt;param name="anonymousId" value="anonymous"/&gt;
     &lt;/LoginModule&gt;
 &lt;/Security&gt;
 </source>
                 <p>
                     SimpleAccessManager is the Hippo Repository default access manager implementation, and
-                    <a href="authentication.html">RepositoryLoginModule</a>
+                    <a href="authentication.html">HippoLoginModule</a>
                     the default login implementation.
                 </p>
                 <p>

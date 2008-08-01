@@ -21,8 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
+import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,9 +73,9 @@ public class RepositoryRole implements Role {
     /**
      * {@inheritDoc}
      */
-    public void init(AAContext context, String roleId) throws RoleNotFoundException {
-        this.session = ((RepositoryAAContext) context).getRootSession();
-        this.rolePath = ((RepositoryAAContext) context).getPath();
+    public void init(ManagerContext context, String roleId) throws RoleException {
+        this.session = context.getSession();
+        this.rolePath = context.getPath();
         this.roleId = roleId;
         loadRole();
         initialized = true;
@@ -85,7 +84,7 @@ public class RepositoryRole implements Role {
     /**
      * {@inheritDoc}
      */
-    public String getRoleId() throws RoleNotFoundException {
+    public String getRoleId() throws RoleException {
         if (!initialized) {
             throw new IllegalStateException("Not initialized.");
         }
@@ -95,7 +94,7 @@ public class RepositoryRole implements Role {
     /**
      * {@inheritDoc}
      */
-    public int getJCRPermissions() throws RoleNotFoundException {
+    public int getJCRPermissions() throws RoleException {
         if (!initialized) {
             throw new IllegalStateException("Not initialized.");
         }
@@ -105,9 +104,9 @@ public class RepositoryRole implements Role {
     //  ------------------------< Private Helper methods >--------------------------//
     /**
      * Load the role from the repository and fetch the permissions for the role
-     * @throws RoleNotFoundException
+     * @throws RoleException
      */
-    private void loadRole() throws RoleNotFoundException {
+    private void loadRole() throws RoleException {
         permissions = 0;
         log.debug("Searching for role: {}", roleId);
         String path = rolePath + "/" + roleId;
@@ -143,7 +142,7 @@ public class RepositoryRole implements Role {
             }
         } catch (RepositoryException e) {
             log.debug("Role not found: {}", path);
-            throw new RoleNotFoundException("Role not found: {}" + path);
+            throw new RoleException("Role not found: {}" + path);
         }
     }
 }
