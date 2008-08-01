@@ -16,10 +16,13 @@
 
 package org.hippoecm.repository;
 
+import java.security.AccessControlException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -44,12 +47,13 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.ext.DerivedDataFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DerivedDataEngine {
     @SuppressWarnings("unused")
@@ -130,8 +134,10 @@ public class DerivedDataEngine {
                 throw new RepositoryException("Internal error "+HippoNodeType.NT_DERIVED+" not found");
             }
 
-            if(logger.isDebugEnabled())
-                logger.debug("Derived engine found "+recomputeSet.size()+" nodes to be evaluated in " + (System.currentTimeMillis() - start) + " ms");
+            if(logger.isDebugEnabled()) {
+                logger.debug("Derived engine found " + recomputeSet.size() + " nodes to be evaluated in " +
+                             (System.currentTimeMillis() - start) + " ms");
+            }
 
                 
             if(recomputeSet.size() == 0)
@@ -142,8 +148,7 @@ public class DerivedDataEngine {
                 if(!modified.isCheckedOut()) {
                     modified.checkout();
                 }
-                modified.setProperty(HippoNodeType.HIPPO_RELATED, new Value[0]);
-                Set<String> dependencies = new HashSet<String>();
+                SortedSet<String> dependencies = new TreeSet<String>();
 
                 for(NodeIterator funcIter = derivatesFolder.getNodes();
                     funcIter.hasNext(); ) {
@@ -151,8 +156,10 @@ public class DerivedDataEngine {
                     try {
                         String nodetypeName = function.getProperty(HippoNodeType.HIPPO_NODETYPE).getString();
                         if(modified.isNodeType(nodetypeName)) {
-                            if(logger.isDebugEnabled())
-                                logger.debug("Derived node "+modified.getPath()+" is of derived type as defined in "+function.getPath());
+                            if(logger.isDebugEnabled()) {
+                                logger.debug("Derived node " + modified.getPath() + " is of derived type as defined in " +
+                                             function.getPath());
+                            }
                             /* preparation: build the map of parameters to be fed to
                              * the function and instantiate the class containing the
                              * compute function.
@@ -245,7 +252,7 @@ public class DerivedDataEngine {
                                     StringBuffer sb = null;
                                     if(logger.isDebugEnabled()) {
                                         sb = new StringBuffer();
-                                        sb.append("Derived property ");
+                                        sb.append("derived property ");
                                         sb.append(propertyPath);
                                         sb.append(" in ");
                                         sb.append(modified.getPath());
@@ -258,27 +265,71 @@ public class DerivedDataEngine {
                                         if(!property.getDefinition().isMultiple()) {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
-                                                property.setValue(values[0]);
-                                                if(logger.isDebugEnabled()) {
-                                                    sb.append(values[0].getString());
-                                                    sb.append(" overwritten");
+                                                if(!property.getValue().equals(values[0])) {
+                                                    try {
+                                                        property.getSession().checkPermission(property.getPath(), "set_property");
+                                                        property.setValue(values[0]);
+                                                        if(logger.isDebugEnabled()) {
+                                                            sb.append(values[0].getString());
+                                                            sb.append(" overwritten");
+                                                        }
+                                                    } catch(AccessControlException ex) {
+                                                        logger.warn("cannot update "+new String(sb));
+                                                        sb.append(" failed");
+                                                    }
+                                                } else {
+                                                    if(logger.isDebugEnabled()) {
+                                                        sb.append(values[0].getString());
+                                                        sb.append(" unchanged");
+                                                    }
                                                 }
                                             } else {
-                                                property.remove();
-                                                if(logger.isDebugEnabled()) {
-                                                    sb.append(" removed");
+                                                try {
+                                                    property.getSession().checkPermission(property.getPath(), "remove");
+                                                    property.remove();
+                                                    if(logger.isDebugEnabled()) {
+                                                        sb.append(" removed");
+                                                    }
+                                                } catch(AccessControlException ex) {
+                                                    logger.warn("cannot update "+new String(sb));
+                                                    sb.append(" failed");
                                                 }
                                             }
                                         } else {
                                             Value[] values = parameters.get(propName);
-                                            property.setValue(parameters.get(propName));
+                                            boolean changed = false;
+                                            if(values.length == property.getValues().length) {
+                                                Value[] oldValues = property.getValues();
+                                                for(int i=0; i<values.length; i++)
+                                                    if(values[i].equals(oldValues[i])) {
+                                                        changed = true;
+                                                        break;
+                                                    }
+                                            } else
+                                                changed = true;
                                             if(logger.isDebugEnabled()) {
                                                 sb.append("{");
                                                 for(int i=0; i<values.length; i++) {
                                                     sb.append(i==0 ? " " : ", ");
                                                     sb.append(values[i].getString());
                                                 }
-                                                sb.append(" } overwritten");
+                                                sb.append(" }");
+                                            }
+                                            if(changed) {
+                                                try {
+                                                    property.getSession().checkPermission(property.getPath(), "set_property");
+                                                    property.setValue(parameters.get(propName));
+                                                    if(logger.isDebugEnabled()) {
+                                                        sb.append(" overwritten");
+                                                    }
+                                                } catch(AccessControlException ex) {
+                                                    logger.warn("cannot update "+new String(sb));
+                                                    sb.append(" failed");
+                                                }
+                                            } else {
+                                                if(logger.isDebugEnabled()) {
+                                                    sb.append(" unchanged");
+                                                }
                                             }
                                         }
                                     } else {
@@ -286,11 +337,18 @@ public class DerivedDataEngine {
                                         if(!derivedPropDef.isMultiple()) {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
-                                                modified.setProperty(propertyPath, values[0]);
-                                                if(logger.isDebugEnabled()) {
-                                                    sb.append(values[0].getString());
-                                                    sb.append(" created");
-                                                }
+                                                    try {
+                                                        modified.getSession().checkPermission(modified.getPath()+"/"+propertyPath,
+                                                                                              "set_property");
+                                                        modified.setProperty(propertyPath, values[0]);
+                                                        if(logger.isDebugEnabled()) {
+                                                            sb.append(values[0].getString());
+                                                            sb.append(" created");
+                                                        }
+                                                    } catch(AccessControlException ex) {
+                                                        logger.warn("cannot update "+new String(sb));
+                                                        sb.append(" failed");
+                                                    }
                                             } else {
                                                 if(logger.isDebugEnabled()) {
                                                     sb.append(" skipped");
@@ -298,14 +356,23 @@ public class DerivedDataEngine {
                                             }
                                         } else {
                                             Value[] values = parameters.get(propName);
-                                            modified.setProperty(propertyPath, values);
                                             if(logger.isDebugEnabled()) {
                                                 sb.append("{");
                                                 for(int i=0; i<values.length; i++) {
                                                     sb.append(i==0 ? " " : ", ");
                                                     sb.append(values[i].getString());
                                                 }
-                                                sb.append(" } created");
+                                                sb.append(" }");
+                                            }
+                                            try {
+                                                modified.getSession().checkPermission(modified.getPath()+"/"+propertyPath, "set_property");
+                                                modified.setProperty(propertyPath, values);
+                                                if(logger.isDebugEnabled()) {
+                                                    sb.append(" created");
+                                                }
+                                            } catch(AccessControlException ex) {
+                                                logger.warn("cannot update "+new String(sb));
+                                                sb.append(" failed");
                                             }
                                         }
                                     }
@@ -319,38 +386,24 @@ public class DerivedDataEngine {
                             }
                         }
                     } catch(AccessDeniedException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // should not be possible
                     } catch(ItemNotFoundException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     } catch(PathNotFoundException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     } catch(ValueFormatException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     } catch(ClassNotFoundException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     } catch(InstantiationException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     } catch(IllegalAccessException ex) {
-                        // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                        // ex.printStackTrace(System.err);
                         logger.error(ex.getClass().getName()+": "+ex.getMessage());
                         throw new RepositoryException(ex); // impossible
                     }
@@ -362,7 +415,22 @@ public class DerivedDataEngine {
                 for(String dependency : dependencies) {
                     dependenciesValues[i++] = valueFactory.createValue(dependency, PropertyType.REFERENCE);
                 }
-                modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
+                Value[] oldDependenciesValues = null;
+                if(modified.hasProperty(HippoNodeType.HIPPO_RELATED)) {
+                    oldDependenciesValues = modified.getProperty(HippoNodeType.HIPPO_RELATED).getValues();
+                }
+                boolean changed = false;
+                if(oldDependenciesValues != null && dependenciesValues.length == oldDependenciesValues.length) {
+                    for(i=0; i<dependenciesValues.length; i++)
+                        if(!dependenciesValues[i].equals(oldDependenciesValues[i])) {
+                            changed = true;
+                            break;
+                        }
+                } else
+                    changed = true;
+                if(changed) {
+                    modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
+                }
             }
         } catch(ConstraintViolationException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
@@ -422,5 +490,4 @@ public class DerivedDataEngine {
             return parameters;
         }
     }
-
 }
