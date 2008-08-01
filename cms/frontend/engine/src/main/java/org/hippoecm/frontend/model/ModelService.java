@@ -67,7 +67,6 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
 
     public void resetModel() {
         for (Object listener : listeners.toArray()) {
-            System.err.println("BERRY reset model "+listener.getClass().getName());
             ((IModelListener)listener).updateModel(model);
         }
     }
