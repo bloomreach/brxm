@@ -49,6 +49,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 }
                 draft.state = PublishableDocument.DRAFT;
                 draft.setOwner(getWorkflowContext().getUsername());
+                if(unpublished != null) {
+                    unpublished.setOwner(getWorkflowContext().getUsername());
+                }
+                if(published != null) {
+                    published.setOwner(getWorkflowContext().getUsername());
+                }
+                username = getWorkflowContext().getUsername();
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
