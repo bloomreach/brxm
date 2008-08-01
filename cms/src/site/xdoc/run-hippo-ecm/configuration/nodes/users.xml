@@ -29,7 +29,7 @@
                 A user node has the following configuration:
             </p>
             <p>
-                The users configuration is used by the <a href="../repository/authentication.html">RepositoryLoginModule</a>.
+                The users configuration is used by the <a href="../repository/authentication.html">HippoLoginModule</a>.
             </p>
         </section>
         <section name="Structure">

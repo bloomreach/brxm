@@ -48,6 +48,7 @@
     <module>sample</module>
     <module>defaultcontent</module>
     <module>versioning</module>
+    <module>ldap</module>
   </modules>
 
   <build>

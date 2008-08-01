@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
@@ -34,25 +35,13 @@ import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
 import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.UserPrincipal;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.domain.Domain;
-import org.hippoecm.repository.security.domain.Domains;
-import org.hippoecm.repository.security.group.Group;
-import org.hippoecm.repository.security.group.GroupException;
-import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.group.RepositoryGroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
-import org.hippoecm.repository.security.role.RepositoryRole;
-import org.hippoecm.repository.security.role.Role;
-import org.hippoecm.repository.security.role.RoleNotFoundException;
-import org.hippoecm.repository.security.user.RepositoryUser;
-import org.hippoecm.repository.security.user.User;
-import org.hippoecm.repository.security.user.UserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RepositoryLoginModule implements LoginModule {
+public class HippoLoginModule implements LoginModule {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
@@ -69,42 +58,26 @@ public class RepositoryLoginModule implements LoginModule {
 
     // configurable JAAS options
     @SuppressWarnings("unused")
-    private boolean debug = false;
+    private final boolean debug = false;
 
-    private boolean tryFirstPass = false;
-    private boolean useFirstPass = false;
-    private boolean storePass = false;
-    private boolean clearPass = false;
+    private final boolean tryFirstPass = false;
+    private final boolean useFirstPass = false;
+    private final boolean storePass = false;
+    private final boolean clearPass = false;
 
     // local authentication state:
     // the principals, i.e. the authenticated identities
     private final Set<Principal> principals = new HashSet<Principal>();
 
-    // contexts
-    // TODO: Add option to configure different user and group backends (ie ldap)
-    private AAContext userContext;
-    private AAContext groupContext;
-    private AAContext domainContext;
-    private AAContext roleContext;
-
-    private GroupManager groupManager = new RepositoryGroupManager();
-
     // the rootSession
     private Session rootSession;
 
-    // the user
-    private User user = new RepositoryUser();
+    private SecurityManager securityManager;
 
     /**
      * Get Logger
      */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * Constructor
-     */
-    public RepositoryLoginModule() {
-    }
 
     //----------------------------------------------------------< LoginModule >
     /**
@@ -120,6 +93,7 @@ public class RepositoryLoginModule implements LoginModule {
         this.options = options;
 
         // fetch default JAAS parameters
+        /* disable for now untill we have real jaas support
         debug = "true".equalsIgnoreCase((String) options.get("debug"));
         tryFirstPass = "true".equalsIgnoreCase((String) options.get("tryFirstPass"));
         useFirstPass = "true".equalsIgnoreCase((String) options.get("useFirstPass"));
@@ -127,12 +101,13 @@ public class RepositoryLoginModule implements LoginModule {
         clearPass = "true".equalsIgnoreCase((String) options.get("clearPass"));
 
         if (log.isDebugEnabled()) {
-            log.debug("RepositoryLoginModule JAAS config:");
+            log.debug("HippoLoginModule JAAS config:");
             log.debug("* tryFirstPass   : " + tryFirstPass);
             log.debug("* useFirstPass   : " + useFirstPass);
             log.debug("* storePass      : " + storePass);
             log.debug("* clearPass      : " + clearPass);
         }
+        */
     }
 
     /**
@@ -148,13 +123,16 @@ public class RepositoryLoginModule implements LoginModule {
             CredentialsCallback ccb = new CredentialsCallback();
             callbackHandler.handle(new Callback[] { ccb });
             SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
+
+            // TODO: impersonate from rootSession -> systemSession
             rootSession = (Session) creds.getAttribute("rootSession");
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
             }
 
-            // set the Contexts
-            createContexts();
+            // get securityManager
+            securityManager = SecurityManager.getInstance();
+            securityManager.init(rootSession);
 
             // check for impersonation
             Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
@@ -173,7 +151,7 @@ public class RepositoryLoginModule implements LoginModule {
                     return false;
                 }
 
-                Principal iup = (Principal) impersonator.getPrincipals(UserPrincipal.class).iterator().next();
+                Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
                 String impersonarorId = iup.getName();
                 // TODO: check somehow if the user is allowed to imporsonate
 
@@ -206,7 +184,7 @@ public class RepositoryLoginModule implements LoginModule {
                 log.info("NOT Authenticated as {}", creds.getUserID());
                 // authentication failed: clean out state
                 principals.clear();
-                throw new FailedLoginException();
+                throw new FailedLoginException("Wrong username or password.");
             }
         } catch (ClassCastException e) {
             log.error("Error during login", e);
@@ -217,6 +195,9 @@ public class RepositoryLoginModule implements LoginModule {
         } catch (UnsupportedCallbackException e) {
             log.error("Error during login", e);
             throw new LoginException(e.getCallback().toString() + " not available");
+        } catch (RepositoryException e) {
+            log.error("Error during login", e);
+            throw new LoginException(e.getMessage());
         }
     }
 
@@ -255,21 +236,7 @@ public class RepositoryLoginModule implements LoginModule {
     }
 
     /**
-     * Create user and group context
-     * TODO: The context impl should be configurable and depend on the backend (eg JCR, LDAP)
-     */
-    private void createContexts() {
-        String usersPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH;
-        String groupsPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.GROUPS_PATH;
-        String rolesPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.ROLES_PATH;
-        String domainsPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.DOMAINS_PATH;
-        userContext = new RepositoryAAContext(rootSession, usersPath);
-        groupContext = new RepositoryAAContext(rootSession, groupsPath);
-        domainContext = new RepositoryAAContext(rootSession, domainsPath);
-        roleContext = new RepositoryAAContext(rootSession, rolesPath);
-    }
-
-    /**
+     * TODO: move to authentication manager?
      * Authenticate the user against the cache or the repository
      * @param session A privileged session which can read usernames and passwords
      * @param userId
@@ -277,28 +244,20 @@ public class RepositoryLoginModule implements LoginModule {
      * @return true when authenticated
      */
     private boolean authenticate(String userId, char[] password) {
-        try {
-            // check for anonymous user
-            if (userId == null && password == null) {
-                principals.add(new AnonymousPrincipal());
-                log.debug("Authenticated as Anonymous user.");
-                return true;
-            }
+        // check for anonymous user
+        if (userId == null && password == null) {
+            principals.add(new AnonymousPrincipal());
+            log.debug("Authenticated as Anonymous user.");
+            return true;
+        }
 
-            // basic security check
-            if (userId == null || "".equals(userId) || password == null || password.length == 0) {
-                log.debug("Empty username or password not allowed.");
-                return false;
-            }
-
-            // check the password
-            user.init(userContext, userId);
-            return user.checkPassword(password) && user.isActive();
-        } catch (UserException e) {
-            log.info("Unable to authenticate user: {}", userId);
-            log.debug("Unable to authenticate user: ", e);
+        // basic security check
+        if (userId == null || "".equals(userId) || password == null || password.length == 0) {
+            log.debug("Empty username or password not allowed.");
             return false;
         }
+
+        return securityManager.authenticate(userId, password);
     }
 
     private void setUserPrincipals(String userId) {
@@ -312,33 +271,21 @@ public class RepositoryLoginModule implements LoginModule {
     }
 
     private void setGroupPrincipals(String userId) {
-        try {
-            groupManager.init(groupContext);
-            Set<Group> memberships = groupManager.listMemeberships(userId);
-            for (Group group : memberships) {
-                try {
-                    GroupPrincipal groupPrincipal = new GroupPrincipal(group.getGroupId());
-                    principals.add(groupPrincipal);
-                    log.debug("Adding principal: {}", groupPrincipal);
-                } catch (GroupException e) {
-                    log.warn("Error while adding group principals", e);
-                }
-            }
-        } catch (GroupException e) {
-            log.error("Error while adding GroupPrincipals", e);
+        Set<String> memberships = securityManager.getMemeberships(userId);
+        for (String groupId : memberships) {
+            GroupPrincipal groupPrincipal = new GroupPrincipal(groupId);
+            principals.add(groupPrincipal);
+            log.debug("Adding principal: {}", groupPrincipal);
         }
     }
 
     private void setFacetAuthPrincipals(String userId) {
-        Domains domains = new Domains();
-        domains.init(domainContext);
-
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();
-        userDomains.addAll(domains.getDomainsForUser(userId));
-        for(Principal principal : principals) {
+        userDomains.addAll(securityManager.getDomainsForUser(userId));
+        for (Principal principal : principals) {
             if (principal instanceof GroupPrincipal) {
-                userDomains.addAll(domains.getDomainsForGroup(principal.getName()));
+                userDomains.addAll(securityManager.getDomainsForGroup(principal.getName()));
             }
         }
 
@@ -349,7 +296,7 @@ public class RepositoryLoginModule implements LoginModule {
             log.debug("User {} has domain {}", userId, domain.getName());
             Set<String> roles = new HashSet<String>();
             roles.addAll(domain.getRolesForUser(userId));
-            for(Principal principal : principals) {
+            for (Principal principal : principals) {
                 if (principal instanceof GroupPrincipal) {
                     roles.addAll(domain.getRolesForGroup(principal.getName()));
                 }
@@ -358,16 +305,9 @@ public class RepositoryLoginModule implements LoginModule {
             // merge permissions for the roles for a domain
             int perms = 0;
             for (String roleId : roles) {
-                try {
-                    Role role = new RepositoryRole();
-                    role.init(roleContext, roleId);
-                    // perms are bit sets. Use OR to merge permissions
-                    perms |= role.getJCRPermissions();
-                } catch (RoleNotFoundException e) {
-                    log.warn("Role {} used in domain {} not found", roleId, domain.getName());
-                }
+                perms |= securityManager.getJCRPermissionsForRole(roleId);
             }
-            log.trace("User {} has perms {} for domain {} ", new Object[]{userId, perms, domain});
+            log.info("User {} has perms {} for domain {} ", new Object[] { userId, perms, domain.getName() });
 
             // create and add facet auth principal
             FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, perms);

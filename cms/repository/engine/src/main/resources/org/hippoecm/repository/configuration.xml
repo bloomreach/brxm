@@ -80,6 +80,54 @@
     </sv:node>
   </sv:node>
 
+
+  <sv:node sv:name="hippo:security">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:securityfolder</sv:value>
+    </sv:property>
+    
+    <sv:property sv:name="hippo:userspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:groupspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:rolespath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:roles</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:domainspath" sv:type="String">
+      <sv:value>hippo:configuration/hippo:domains</sv:value>
+    </sv:property>
+    
+    <!-- internal/repository security  provider -->
+    <sv:node sv:name="internal">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:securityprovider</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.security.RepositorySecurityProvider</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:userprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:userprovider</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hippo:groupprovider">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:groupprovider</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    
+    <!-- access manager configuration -->
+    <sv:node sv:name="hippo:accessmanager">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:accessmanager</sv:value>
+      </sv:property>  
+    </sv:node>
+    
+  </sv:node>
+  
   <sv:node sv:name="hippo:users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:userfolder</sv:value>
@@ -119,9 +167,6 @@
       <sv:property sv:name="hippo:members" sv:type="String">
         <sv:value>admin</sv:value>
         <sv:value>workflowuser</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:description" sv:type="String">
-        <sv:value/>
       </sv:property>
     </sv:node>
   </sv:node>

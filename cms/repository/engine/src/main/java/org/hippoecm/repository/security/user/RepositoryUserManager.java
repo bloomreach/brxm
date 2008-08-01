@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.security.user;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,110 +24,101 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.transaction.NotSupportedException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
-import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.PasswordHelper;
+import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * UserManager backend that stores the users inside the JCR repository
  */
-public class RepositoryUserManager implements UserManager {
+public class RepositoryUserManager extends AbstractUserManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     /**
-     * The current context
-     */
-    private RepositoryAAContext context;
-
-    /**
-     * The system/root session
-     */
-    private Session session;
-
-    /**
-     * The path from the root containing the groups
-     */
-    private String usersPath;
-
-    /**
-     * Is the class initialized
-     */
-    private boolean initialized = false;
-
-
-    /**
-     * The current groups
-     */
-    private Set<User> users = new HashSet<User>();
-
-    /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-
     //------------------------< Interface Impl >--------------------------//
+
     /**
      * {@inheritDoc}
      */
-    public void init(AAContext aacontext) throws UserException {
-        context = (RepositoryAAContext) aacontext;
-        session = context.getRootSession();
-        usersPath = context.getPath();
-        loadUsers();
+    public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set<User> listUsers() throws UserException {
-        if (!initialized) {
+    @Override
+    public boolean authenticate(String userId, char[] password) throws RepositoryException {
+        if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        return Collections.unmodifiableSet(users);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean addUser(User user) throws NotSupportedException, UserException {
-        throw new NotSupportedException("Not implemented");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean deleteUser(User user) throws NotSupportedException, UserException {
-        throw new NotSupportedException("Not implemented");
-    }
-
-
-    //------------------------< Private Helper methods >--------------------------//
-    /**
-     * Load all the users from the repository. All users are added to the Set of users
-     * @see User
-     */
-    private void loadUsers() {
-        log.debug("Searching for users path: {}", usersPath);
         try {
-            Node usersPathNode = session.getRootNode().getNode(usersPath);
-            log.debug("Found users node: {}", usersPath);
-            NodeIterator groupIter = usersPathNode.getNodes();
-            while (groupIter.hasNext()) {
-                User user = new RepositoryUser();
-                user.init(context, groupIter.nextNode().getName());
-                users.add(user);
+            return PasswordHelper.checkHash(new String(password), getPasswordHash(getUserNode(userId)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RepositoryException("Unknown algorithm found when authenticating user: " + userId, e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RepositoryException("Unsupported encoding found when authenticating user: " + userId, e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> listUsers() throws RepositoryException {
+        if (!isInitialized()) {
+            throw new IllegalStateException("Not initialized.");
+        }
+
+        // find users managed by this provider as sub nodes off the users path
+        StringBuffer statement = new StringBuffer();
+        statement.append("SELECT * FROM ").append(HippoNodeType.NT_USER);
+        statement.append(" WHERE ");
+        statement.append("  jcr:path LIKE '").append(usersPath).append("/%").append("'");
+        statement.append(" AND jcr:PrimaryType = '").append(HippoNodeType.NT_USER).append("')");
+
+        //log.debug("Searching for users: {}", statement);
+
+        Set<String> userIds = new HashSet<String>();
+
+        // find users managed by this provider
+        QueryManager qm;
+        try {
+            qm = session.getWorkspace().getQueryManager();
+            Query q = qm.createQuery(statement.toString(), Query.SQL);
+            QueryResult result = q.execute();
+            NodeIterator iter = result.getNodes();
+            while (iter.hasNext()) {
+                userIds.add(iter.nextNode().getName());
             }
         } catch (RepositoryException e) {
             log.warn("Exception while parsing users from path: {}", usersPath);
         }
+        return Collections.unmodifiableSet(userIds);
     }
+
+    //------------------------< Private Helper methods >--------------------------//
+
+    /**
+     * Get the (optionally) hashed password of the user
+     * @return the password hash
+     * @throws RepositoryException
+     */
+    private String getPasswordHash(Node user) throws RepositoryException {
+        return user.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+    }
+
 }

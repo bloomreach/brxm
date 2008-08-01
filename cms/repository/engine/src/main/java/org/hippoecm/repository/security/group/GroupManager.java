@@ -17,9 +17,11 @@ package org.hippoecm.repository.security.group;
 
 import java.util.Set;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.transaction.NotSupportedException;
 
-import org.hippoecm.repository.security.AAContext;
+import org.hippoecm.repository.security.ManagerContext;
 
 /**
  * Interface for managing groups in the backend
@@ -30,44 +32,73 @@ public interface GroupManager {
     /**
      * Initialize the backend with the given context and load the groups
      * @param context the context with the params needed by the backend
-     * @throws GroupException
-     * @see AAContext
+     * @throws RepositoryException
+     * @see ManagerContext
      */
-    public void init(AAContext context) throws GroupException;
-
+    public void init(ManagerContext context) throws RepositoryException;
 
     /**
-     * List the groups in the backend
-     * @return the Set of Groups
-     * @throws GroupException
-     * @see Group
+     * Check if the manager is configured and initialized
+     * @return true if initialized otherwise false
      */
-    public Set<Group> listGroups() throws GroupException;
+    public boolean isInitialized();
 
     /**
-     * List the groups of which the user with userId is a memeber
-     * @param userId the userId of the user
-     * @return A set with groups of which the user is a member
-     * @throws GroupException
+     * Initialization hook for the security managers. This method gets 
+     * called after the init which is handled by the {@link AbstractUserManager}
+     * @param context The {@link ManagerContext} with params for the backend
+     * @throws RepositoryException
+     * @See ManagerContext
      */
-    public Set<Group> listMemeberships(String userId) throws GroupException;
+    public void initManager(ManagerContext context) throws RepositoryException;
+    
+    /**
+     * List the groupIds currently managed by the backend
+     * @return the Set of GroupIds
+     * @throws RepositoryException
+     */
+    public Set<String> listGroups() throws RepositoryException;
 
+    /**
+     * Get the node for the group with the given groupId
+     * @param groupId
+     * @return the user node
+     * @throws RepositoryException
+     */
+    public Node getGroupNode(String groupId) throws RepositoryException;
+
+    /**
+     * Create a (skeleton) node for the group in the repository
+     * @param groupId
+     * @param the nodeType for the group. This must be a derivative of hippo:group
+     * @return the newly created user node
+     * @throws RepositoryException
+     */
+    public Node createGroupNode(String groupId, String nodeType) throws RepositoryException;
+    
+
+    /**
+     * Hook for the provider to sync from the backend with the repository.
+     * @param userId
+     */
+    public void syncGroup(String groupId);
+    
     /**
      * Add a group to the backend
-     * @param group the group
+     * @param groupId
      * @return true if the group is successful added in the backend
      * @throws NotSupportedException
-     * @throws GroupException
+     * @throws RepositoryException
      */
-    public boolean addGroup(Group group) throws NotSupportedException, GroupException;
+    public boolean addGroup(String groupId) throws NotSupportedException, RepositoryException;
 
     /**
      * Delete a group from the backend
-     * @param group
+     * @param groupId
      * @return true if the group is successful removed in the backend
      * @throws NotSupportedException
-     * @throws GroupException
+     * @throws RepositoryException
      */
-    public boolean deleteGroup(Group group) throws NotSupportedException, GroupException;
+    public boolean deleteGroup(String groupId) throws NotSupportedException, RepositoryException;
 
 }

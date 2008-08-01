@@ -19,128 +19,72 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.transaction.NotSupportedException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
-import org.hippoecm.repository.security.AAContext;
-import org.hippoecm.repository.security.RepositoryAAContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The GroupManager that stores the groups in the JCR Repository
  */
-public class RepositoryGroupManager implements GroupManager {
+public class RepositoryGroupManager extends AbstractGroupManager {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     /**
-     * The current context
-     */
-    private RepositoryAAContext context;
-
-    /**
-     * The jcr system/root session
-     */
-    private Session session;
-
-    /**
-     * The path from the root containing the groups
-     */
-    private String groupsPath;
-
-    /**
-     * Is the class initialized
-     */
-    private boolean initialized = false;
-
-
-    /**
-     * The current groups
-     */
-    private Set<Group> groups = new HashSet<Group>();
-
-    /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
 
     //------------------------< Interface Impl >--------------------------//
     /**
      * {@inheritDoc}
      */
-    public void init(AAContext aacontext) throws GroupException {
-        context = (RepositoryAAContext) aacontext;
-        session = context.getRootSession();
-        groupsPath = context.getPath();
-        loadGroups();
+    public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set<Group> listGroups() throws GroupException {
-        if (!initialized) {
+    @Override
+    public Set<String> listGroups() throws RepositoryException {
+        if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        return Collections.unmodifiableSet(groups);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Set<Group> listMemeberships(String userId) throws GroupException {
-        if (!initialized) {
-            throw new IllegalStateException("Not initialized.");
-        }
-        Set<Group> memberships = new HashSet<Group>();
-        for (Group group : groups) {
-            if (group.isMemeber(userId)) {
-                memberships.add(group);
-            }
-        }
-        return Collections.unmodifiableSet(memberships);
-    }
+        // find users managed by this provider as sub nodes off the users path
+        StringBuffer statement = new StringBuffer();
+        statement.append("SELECT * FROM ").append(HippoNodeType.NT_GROUP);
+        statement.append(" WHERE ");
+        statement.append("  jcr:path LIKE '").append(groupsPath).append("/%").append("'");
+        statement.append(" AND jcr:PrimaryType = '").append(HippoNodeType.NT_GROUP).append("')");
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean addGroup(Group group) throws NotSupportedException, GroupException {
-        throw new NotSupportedException("Not implemented");
-    }
+        //log.debug("Searching for groups: {}", statement);
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean deleteGroup(Group group) throws NotSupportedException, GroupException {
-        throw new NotSupportedException("Not implemented");
-    }
+        Set<String> groupIds = new HashSet<String>();
 
-
-    //------------------------< Private Helper methods >--------------------------//
-    /**
-     * Load all groups from the repository and add them to the groups set
-     */
-    private void loadGroups() {
-        log.debug("Searching for groups node: {}", groupsPath);
+        // find users managed by this provider
+        QueryManager qm;
         try {
-            Node groupsNode = session.getRootNode().getNode(groupsPath);
-            log.debug("Found groups node: {}", groupsPath);
-            NodeIterator groupIter = groupsNode.getNodes();
-            while (groupIter.hasNext()) {
-                Group group = new RepositoryGroup();
-                group.init(context, groupIter.nextNode().getName());
-                groups.add(group);
+            qm = session.getWorkspace().getQueryManager();
+            Query q = qm.createQuery(statement.toString(), Query.SQL);
+            QueryResult result = q.execute();
+            NodeIterator iter = result.getNodes();
+            while (iter.hasNext()) {
+                groupIds.add(iter.nextNode().getName());
             }
         } catch (RepositoryException e) {
             log.warn("Exception while parsing groups from path: {}", groupsPath);
         }
+        return Collections.unmodifiableSet(groupIds);
     }
 }

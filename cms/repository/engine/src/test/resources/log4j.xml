@@ -90,7 +90,7 @@
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>
-  <category additivity="true" name="org.hippoecm.repository.security.RepositoryLoginModule">
+  <category additivity="true" name="org.hippoecm.repository.security.HippoLoginModule">
     <level value="warn"/>
     <appender-ref ref="root"/>
   </category>

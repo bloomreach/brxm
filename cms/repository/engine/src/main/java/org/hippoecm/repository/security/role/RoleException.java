@@ -13,24 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.user;
+package org.hippoecm.repository.security.role;
 
 import javax.jcr.RepositoryException;
 
-public class UserException extends RepositoryException {
+/**
+ * This exception is thrown when a role is reference that cannot be found in the repository
+ */
+public class RoleException extends RepositoryException {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    /** Serial id */
     private static final long serialVersionUID = 1L;
 
     /**
      * Constructs a new instance of this class with <code>null</code> as its
      * detail message.
      */
-    public UserException() {
+    public RoleException() {
         super();
     }
 
@@ -41,7 +43,7 @@ public class UserException extends RepositoryException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public UserException(String message) {
+    public RoleException(String message) {
         super(message);
     }
 
@@ -53,7 +55,7 @@ public class UserException extends RepositoryException {
      *                  later retrieval by the {@link #getMessage()} method.
      * @param rootCause root failure cause
      */
-    public UserException(String message, Throwable rootCause) {
+    public RoleException(String message, Throwable rootCause) {
         super(message, rootCause);
     }
 
@@ -62,7 +64,7 @@ public class UserException extends RepositoryException {
      *
      * @param rootCause root failure cause
      */
-    public UserException(Throwable rootCause) {
+    public RoleException(Throwable rootCause) {
         super(rootCause);
     }
 

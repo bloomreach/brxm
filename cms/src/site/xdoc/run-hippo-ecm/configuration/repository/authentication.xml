@@ -25,10 +25,11 @@
         <section name="Repository based authentication">
         <p>
             The repository stores the users and groups as nodes inside the repository itself.
-            The RepositoryLoginModule is configured in
+            The HippoLoginModule is configured in
             <a href="index.html#Security element"><code>repository.xml</code></a> in the Security section and is enabled be default.
+        </p>
 <source>
-&lt;LoginModule class="org.hippoecm.repository.security.RepositoryLoginModule"/&gt;
+&lt;LoginModule class="org.hippoecm.repository.security.HippoLoginModule"/&gt;
 </source>
         </p>
         <p>

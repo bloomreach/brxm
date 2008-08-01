@@ -68,7 +68,6 @@ import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * HippoAccessManager based on facet authorization. A subject (user)
  * has a set of {@link FacetAuth}s which hold the domain configuration
@@ -115,7 +114,7 @@ public class HippoAccessManager implements AccessManager {
      * NamespaceResolver
      */
     private NamespaceResolver nsRes;
-    
+
     /**
      * NameResolver
      */
@@ -156,8 +155,7 @@ public class HippoAccessManager implements AccessManager {
      * TODO: handle multiple users, multiple session (perhaps move to ISM?)
      */
     private PermissionLRUCache readAccessCache;
-    
-    
+
     private static final int DEFAULT_PERM_CACHE_SIZE = 2000;
 
     /**
@@ -180,15 +178,15 @@ public class HippoAccessManager implements AccessManager {
      */
     private String userId;
 
-    private List<String> groupIds = new ArrayList<String>();
-    private List<String> currentDomainRoleIds = new ArrayList<String>();
-    
+    private final List<String> groupIds = new ArrayList<String>();
+    private final List<String> currentDomainRoleIds = new ArrayList<String>();
+
     /**
      * A ItemId->ItemState cache that is only valid during a single isGranted.
      * Some property states are resolved many times and this can be expensive 
      * especially for states from the attic.
      */
-    private HashMap<ItemId, ItemState> requestItemStateCache = new HashMap<ItemId, ItemState>();
+    private final HashMap<ItemId, ItemState> requestItemStateCache = new HashMap<ItemId, ItemState>();
 
     /**
      * The logger
@@ -225,7 +223,6 @@ public class HippoAccessManager implements AccessManager {
         isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
         isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
         isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
-        
 
         // prefetch userId
         if (isSystem) {
@@ -244,7 +241,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // cache root NodeId
-        rootNodeId = (NodeId) hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
+        rootNodeId = hierMgr.resolveNodePath(PathFactoryImpl.getInstance().getRootPath());
 
         hippoHandle = nRes.getQName(HippoNodeType.NT_HANDLE);
         hippoFacetSearch = nRes.getQName(HippoNodeType.NT_FACETSEARCH);
@@ -257,7 +254,7 @@ public class HippoAccessManager implements AccessManager {
         }
         log.debug("Setting cache size: {}", cacheSize);
         readAccessCache = new PermissionLRUCache(cacheSize);
-        
+
         // we're done
         initialized = true;
     }
@@ -280,26 +277,26 @@ public class HippoAccessManager implements AccessManager {
     private int getPermCacheSize() {
         try {
             PathResolver resolver = new ParsingPathResolver(PathFactoryImpl.getInstance(), nRes);
-            Path path = resolver.getQPath("/" + HippoNodeType.CONFIGURATION_PATH + "/"
-                    + HippoNodeType.ACCESSMANAGER_PATH + "/" + HippoNodeType.HIPPO_PERMCACHESIZE);
+            Path path = resolver.getQPath("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH
+                    + "/" + HippoNodeType.ACCESSMANAGER_PATH + "" + HippoNodeType.HIPPO_PERMISSIONCACHESIZE);
             PropertyId confId = hierMgr.resolvePropertyPath(path);
             if (confId != null) {
                 PropertyState state = (PropertyState) getItemState(confId);
                 InternalValue[] iVals = state.getValues();
-                if (iVals.length > 0 && ((int)iVals[0].getLong()) > 0) {
+                if (iVals.length > 0 && ((int) iVals[0].getLong()) > 0) {
                     return (int) iVals[0].getLong();
                 }
             }
-        } catch (NoSuchItemStateException e ) {
+        } catch (NoSuchItemStateException e) {
             // not configured, expected
-        } catch (ItemStateException e ) {
+        } catch (ItemStateException e) {
             // too bad.. no correct config found
         } catch (RepositoryException e) {
             // too bad.. no correct config found
         }
         return -1;
     }
-    
+
     /**
      * Check whether a user can access the NodeState with the requested permissions
      * @param nodeState the state of the node to check
@@ -309,8 +306,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws ItemStateException
      * @throws NoSuchItemStateException
      */
-    protected boolean canAccessNode(NodeState nodeState, int permissions) throws RepositoryException,
-            NoSuchItemStateException, ItemStateException {
+    protected boolean canAccessNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
         // system and admin have all permissions
         if (isSystem) {
             return true;
@@ -363,8 +359,7 @@ public class HippoAccessManager implements AccessManager {
         for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
 
             if (log.isDebugEnabled()) {
-                log.debug("Checking [" + pString(permissions) + "] : " + nodeState.getId()
-                        + " against FacetAuthPrincipal: " + fap);
+                log.debug("Checking [" + pString(permissions) + "] : " + nodeState.getId() + " against FacetAuthPrincipal: " + fap);
             }
 
             // Does the user has the correct permissions for the Domain
@@ -372,8 +367,7 @@ public class HippoAccessManager implements AccessManager {
                 // is the node part of one of the domain rules
                 if (isNodeInDomain(nodeState, fap)) {
                     allowed = true;
-                    log.info("Permissions [{}] for {} for: {} found for domain {}", new Object[] { pString(permissions),
-                            userId, nodeState.getId(), fap });
+                    log.info("Permissions [{}] for {} for: {} found for domain {}", new Object[] { pString(permissions), userId, nodeState.getId(), fap });
                     break;
                 }
             }
@@ -469,15 +463,13 @@ public class HippoAccessManager implements AccessManager {
         return false;
     }
 
-
     /**
      * Check if a user has the requested permissions on the item.
      * @param id the item id to check
      * @param permissions the requested permissions
      * @throws AccessDeniedException if the user doesn't have the requested permissions on the item
      */
-    public void checkPermission(ItemId id, int permissions) throws AccessDeniedException, ItemNotFoundException,
-            RepositoryException {
+    public void checkPermission(ItemId id, int permissions) throws AccessDeniedException, ItemNotFoundException, RepositoryException {
         // just use the isGranted method
         if (!isGranted(id, permissions)) {
             throw new AccessDeniedException();
@@ -500,7 +492,7 @@ public class HippoAccessManager implements AccessManager {
             }
             return true;
         }
-        
+
         // handle properties
         if (!id.denotesNode()) {
             if ((permissions & REMOVE) == REMOVE) {
@@ -528,14 +520,14 @@ public class HippoAccessManager implements AccessManager {
         synchronized (requestItemStateCache) {
             requestItemStateCache.clear();
         }
-        
+
         try {
             NodeState nodeState = (NodeState) getItemState(id);
             if (nodeState == null) {
                 log.error("NodeState not found for ItemId: " + id);
                 throw new RepositoryException("NodeState not found for ItemId : " + id);
             }
-            
+
             // do check
             boolean isGranted = canAccessNode(nodeState, permissions);
 
@@ -545,14 +537,14 @@ public class HippoAccessManager implements AccessManager {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Permissions [" + pString(permissions) + "] for: " + id + " -> " + id + " granted: "
-                        + isGranted);
+                log.debug("Permissions [" + pString(permissions) + "] for: " + id + " -> " + id + " granted: " + isGranted);
             }
-            
+
             if (!isGranted) {
                 if (log.isInfoEnabled()) {
                     PathResolver resolver = new ParsingPathResolver(PathFactoryImpl.getInstance(), nRes);
-                    log.info("[" + pString(permissions) + "] DENIED for " + userId + " state("+nodeState.getStatus()+") for: " + id + " -> " + resolver.getJCRPath(hierMgr.getPath(id)));
+                    log.info("[" + pString(permissions) + "] DENIED for " + userId + " state(" + nodeState.getStatus() + ") for: " + id + " -> "
+                            + resolver.getJCRPath(hierMgr.getPath(id)));
                 }
             }
             return isGranted;
@@ -590,7 +582,7 @@ public class HippoAccessManager implements AccessManager {
                 ItemState itemState = itemMgr.getAtticItemState(id);
                 requestItemStateCache.put(id, itemState);
                 return itemState;
-            }   
+            }
         }
         throw new NoSuchItemStateException("Item state not found in normal, transient or attic: " + id);
     }
@@ -603,7 +595,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws NoSuchItemStateException when the state cannot be found
      * @throws ItemStateException when something goes wrong while fetching the state
      */
-    public NodeState getParentState(NodeState nodeState) throws NoSuchItemStateException, ItemStateException  {
+    public NodeState getParentState(NodeState nodeState) throws NoSuchItemStateException, ItemStateException {
         if (rootNodeId.equals(nodeState.getId())) {
             throw new NoSuchItemStateException("RootNode doesn't have a parent state.");
         }
@@ -611,7 +603,7 @@ public class HippoAccessManager implements AccessManager {
             // for nodeState's from the attic the parentId() is null, so use path resolving to find parent
             return (NodeState) getItemState(hierMgr.resolveNodePath(hierMgr.getPath(nodeState.getId()).getAncestor(1)));
         } catch (RepositoryException e) {
-            throw new NoSuchItemStateException("Unable to find parent nodeState of node: " + nodeState.getId(),e);
+            throw new NoSuchItemStateException("Unable to find parent nodeState of node: " + nodeState.getId(), e);
         }
     }
 
@@ -664,8 +656,7 @@ public class HippoAccessManager implements AccessManager {
      * @return boolean
      * @throws NoSuchNodeTypeException
      */
-    private boolean isInstanceOfType(NodeState nodeState, String nodeType) throws NamespaceException,
-            NoSuchNodeTypeException, RepositoryException {
+    private boolean isInstanceOfType(NodeState nodeState, String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         // create NodeType of nodeState's primaryType
         String nodeStateType = nRes.getJCRName(nodeState.getNodeTypeName());
 
@@ -708,7 +699,7 @@ public class HippoAccessManager implements AccessManager {
      * @see FacetRule
      */
     private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
-        
+
         // jcr:primaryType isn't really a property
         if (rule.getFacetName().equals(NameConstants.JCR_PRIMARYTYPE)) {
             // WILDCARD match, jcr:primaryType == *
@@ -722,8 +713,7 @@ public class HippoAccessManager implements AccessManager {
         }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
-        if (!nodeState.hasPropertyName(rule.getFacetName())
-                && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
+        if (!nodeState.hasPropertyName(rule.getFacetName()) && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
             return false;
         }
@@ -832,24 +822,21 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException 
      * @throws NamespaceException 
      */
-    private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException,
-            NamespaceException, RepositoryException {
+    private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException, NamespaceException, RepositoryException {
 
         if (log.isTraceEnabled()) {
-            log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName()
-                    + " for being part of a document model.");
+            log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName() + " for being part of a document model.");
         }
         // check if this is already the root of a document
         if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT) || nodeState.getNodeTypeName().equals(hippoHandle)
-                || nodeState.getNodeTypeName().equals(hippoFacetSearch)
-                || nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
+                || nodeState.getNodeTypeName().equals(hippoFacetSearch) || nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
             if (log.isDebugEnabled()) {
                 log.debug("Node is already document root: " + nodeState.getNodeTypeName());
             }
             return null;
         }
         // walk up in the hierarchy
-        while (!rootNodeId.equals((NodeId) nodeState.getId())) {
+        while (!rootNodeId.equals(nodeState.getId())) {
             // shift one up in hierarchy
             nodeState = getParentState(nodeState);
             if (nodeState.getNodeTypeName().equals(hippoHandle)) {
@@ -889,7 +876,7 @@ public class HippoAccessManager implements AccessManager {
          * Set size to zero to disable cache
          */
         private boolean enabled = true;
-        
+
         /**
          * The cache map
          */
@@ -921,7 +908,7 @@ public class HippoAccessManager implements AccessManager {
             hit = 0;
             miss = 0;
             total = 0;
-            if (size == 0) { 
+            if (size == 0) {
                 enabled = false;
                 return;
             }

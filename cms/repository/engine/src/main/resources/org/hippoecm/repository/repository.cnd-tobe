@@ -19,6 +19,7 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.hippoecm.org/nt/1.0'>
+<frontend='http://www.hippoecm.org/frontend/nt/1.0'>
 
 // define the jarFile nodetype; it is required for the
 // repository class loader.  JR usually loads it lazily
@@ -191,7 +192,6 @@
 
 [hippo:domainfolder] > nt:base
 + * (hippo:domain) = hippo:domain
-
 
 [hippocms:remodel] mixin
 - hippocms:remodel (string) mandatory < 'current', 'draft', 'error', 'old'
