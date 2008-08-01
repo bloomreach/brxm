@@ -34,7 +34,7 @@ body, table tr td, table tr th{
 font-family: tahoma, arial,sans-serif,helvetica;
 font-size: 11px;
 vertical-align: top;
-overflow: hidden;
+/*overflow: hidden;*/
 }
 
 a {color: #00A2E3;}
@@ -574,7 +574,8 @@ tr.even td{background-color: #f7f7f7}
 tr.odd td { padding: 5px; }
 
 .Doclist table tr td a{color: black}
-.Doclist{ height: 45%; overflow: auto}
+/*.Doclist{ height: 100%;}*/
+/*overflow: auto}*/
 
 table tr td.icon-16{width: 15px}
 table tr td.icon-16 span {display: block; height: 16px;}

@@ -58,13 +58,10 @@ public class EditPerspective extends Perspective implements IEditService {
         
         YuiWireframeBehavior wireframe = new YuiWireframeBehavior("editor-perspective-wrapper", true);
         Map<String, String> optsRight = new HashMap<String, String>();
-        optsRight.put("width", "200");
-        optsRight.put("id", "editor-perspective-right");
-        optsRight.put("resize", "true");
-        optsRight.put("scroll", "true");
-        optsRight.put("gutter", "0px 0px 0px 5px");
-        wireframe.addUnit("right", optsRight);
-        wireframe.addUnit("center", "id=editor-perspective-center");
+        optsRight.put("height", "30");
+        optsRight.put("id", "editor-perspective-top");
+        wireframe.addUnit("top", optsRight);
+        wireframe.addUnit("center", "id=editor-perspective-center", "scroll=true", "body=editor-perspective-center-body", "gutter=0px 10px 0px 0px");
         add(wireframe);
         
         onModelChanged();

@@ -15,14 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div id="editor-perspective-wrapper">
-      <div class="panelcontainer" id="editor-perspective-center">
-        <div class="templatetitle">
-          <div class="iconactions" wicket:id="extension.workflow">workflow here</div>
-          <div class="iconactions" wicket:id="extension.helpers">helpers here</div>
-        </div>
-        <div class="editor" wicket:id="extension.editor"></div>
+    <div class="panelcontainer" id="editor-perspective-wrapper">
+      <div class="templatetitle" id="editor-perspective-top">
+        <div class="iconactions" wicket:id="extension.workflow">workflow here</div>
+        <div class="iconactions" wicket:id="extension.helpers">helpers here</div>
       </div>
-    </div>  
+      <div id="editor-perspective-center">
+        <div id="editor-perspective-center-body">
+          <div class="editor" wicket:id="extension.editor"></div>
+        </div>  
+      </div>  
+    </div>
   </wicket:panel>
 </html>

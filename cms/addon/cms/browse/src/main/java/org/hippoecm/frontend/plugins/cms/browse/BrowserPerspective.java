@@ -86,29 +86,32 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
 
         // model didn't exist for super constructor, so set it explicitly
         updateModel(modelService.getModel());
-        
+
         Map<String, String> optsLeft = new HashMap<String, String>();
         optsLeft.put("width", "200");
         optsLeft.put("id", "browse-perspective-left");
+        optsLeft.put("body", "browse-perspective-left-body");
         optsLeft.put("resize", "true");
         optsLeft.put("scroll", "true");
         optsLeft.put("minWidth", "150");
         optsLeft.put("gutter", "0px 5px 0px 3px");
 
-        Map<String, String> optsRight= new HashMap<String, String>();
-        optsRight.put("width", "200");
-        optsRight.put("id", "browse-perspective-right");
-        optsRight.put("resize", "true");
-        optsRight.put("scroll", "true");
-        optsRight.put("gutter", "0px 3px 0px 5px");
+//        Map<String, String> optsBottom = new HashMap<String, String>();
+//        optsBottom.put("height", "1");
+//        optsBottom.put("id", "versioningWidget");
+//        optsBottom.put("body", "versioningWidget-body");
+//        optsBottom.put("resize", "true");
+//        optsBottom.put("collapse", "true");
 
-        Map<String, String> optsCenter= new HashMap<String, String>();
+        Map<String, String> optsCenter = new HashMap<String, String>();
         optsCenter.put("id", "browse-perspective-center");
+        optsCenter.put("body", "browse-perspective-center-body");
         optsCenter.put("minWidth", "200");
-        //optsCenter.put("minHeight", "200");
         optsCenter.put("scroll", "true");
+        optsCenter.put("gutter", "0px 3px 0px 0px");
 
-       add(new YuiWireframeBehavior("browse-perspective-wrapper", true).addUnit("left", optsLeft).addUnit("right", optsRight).addUnit("center", optsCenter));
+        add(new YuiWireframeBehavior("browse-perspective-wrapper", true).addUnit("left", optsLeft).addUnit("center",
+                optsCenter));
     }
 
     public void browse(IModel model) {
@@ -127,7 +130,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                 boolean shown = false;
                 do {
                     shown = showNode(node, viewers);
-                    if(!node.isSame(root)) {
+                    if (!node.isSame(root)) {
                         node = node.getParent();
                     } else {
                         break;
