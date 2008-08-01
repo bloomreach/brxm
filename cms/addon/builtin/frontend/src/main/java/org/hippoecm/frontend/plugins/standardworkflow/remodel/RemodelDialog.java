@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
+package org.hippoecm.frontend.plugins.standardworkflow.remodel;
 
 import java.util.Map;
 
@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Session;
+import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -45,9 +46,7 @@ import org.slf4j.LoggerFactory;
 public class RemodelDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
     private IServiceReference<IJcrService> jcrServiceRef;
@@ -57,11 +56,20 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         super(plugin, dialogWindow, "Update content");
 
         this.jcrServiceRef = jcrService;
-        add(new Label("message", "Updating all content to match the updated types might take a long time and is irreversible. Are you sure you want to proceed?"));
 
         if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
-            ok.setVisible(false);
+            add(new Label("wizard"));
+        } else {
+            Wizard wizard = new RemodelWizard("wizard", dialogWindow);
+            add(wizard);
         }
+
+        ok.setVisible(false);
+        cancel.setVisible(false);
+    }
+    
+    void remodel() throws Exception {
+        ok();
     }
 
     @Override
