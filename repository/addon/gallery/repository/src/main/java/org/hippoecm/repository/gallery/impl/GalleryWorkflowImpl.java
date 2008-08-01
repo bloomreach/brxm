@@ -28,6 +28,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.InternalWorkflow;
@@ -90,6 +91,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         }
         folder.save();
 
+        name = ISO9075Helper.encodeLocalName(name);
         node = node.addNode(name, "hippo:handle");
         node.addMixin("hippo:hardhandle");
         node.setProperty("hippo:discriminator", new Value[0]);
