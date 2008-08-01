@@ -53,7 +53,6 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -68,14 +67,15 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final long serialVersionUID = 1L;
     transient Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
     Map<String, Set<String>> templates;
-    Label folderName;
+    private Label folderName;
+    private AbstractView addListing;
+    private DialogLink deleteLink;
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(folderName = new Label("foldername"));
 
-        DialogLink deleteLink;
         deleteLink = new DialogLink("delete-dialog", new Model("Delete folder"), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -123,7 +123,7 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
             public void detach() {
             }
         };
-        add(new AbstractView("items", provider) {
+        add(addListing = new AbstractView("items", provider) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -155,8 +155,6 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                 item.add(link);
             }
         });
-
-        onModelChanged();
     }
 
     private void writeObject(ObjectOutputStream out)
@@ -184,13 +182,15 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         } catch (RepositoryException ex) {
         }
         try {
-            FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow(model.getWorkflowDescriptor());
-            templates = workflow.list();
+            Workflow workflow = manager.getWorkflow(model.getWorkflowDescriptor());
+            FolderWorkflow folderWorkflow = (FolderWorkflow)workflow;
+            templates = folderWorkflow.list();
         } catch (MappingException ex) {
         } catch (WorkflowException ex) {
         } catch (RepositoryException ex) {
         } catch (RemoteException ex) {
         }
+        redraw();
     }
 
     public void select(JcrNodeModel nodeModel) {

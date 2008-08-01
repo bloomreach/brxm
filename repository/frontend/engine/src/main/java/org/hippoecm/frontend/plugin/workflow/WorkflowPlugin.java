@@ -96,13 +96,12 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
     }
 
     // implement IModelListener
-
     public void updateModel(IModel imodel) {
         closeWorkflows();
-        if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
+        if (imodel == null || ((JcrNodeModel)imodel).getNode() == null) {
             return;
         }
-        model = (JcrNodeModel) imodel;
+        model = (JcrNodeModel)imodel;
         try {
             List<String> cats = new LinkedList<String>();
             for (String category : categories) {
@@ -151,8 +150,10 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         ModelService modelService = new ModelService(modelId, model);
         modelService.init(context);
         models.put(workflowId, modelService);
-
+        
         IPluginControl plugin = context.start(clusterConfig);
+
+        modelService.resetModel();
 
         // look up render service
         String controlId = context.getReference(plugin).getServiceId();
@@ -175,7 +176,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
     private void closeWorkflows() {
         for (Map.Entry<String, IPluginControl> entry : workflows.entrySet()) {
             String controlId = entry.getKey();
-
             // unregister as the factory for the render service
             IRenderService renderer = context.getService(controlId, IRenderService.class);
             context.registerService(this, context.getReference(renderer).getServiceId());
