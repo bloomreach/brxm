@@ -29,7 +29,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.RemodelDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog;
 import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
