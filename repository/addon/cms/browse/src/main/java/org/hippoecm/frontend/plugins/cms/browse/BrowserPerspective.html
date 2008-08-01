@@ -18,34 +18,38 @@
   <wicket:panel>
     <div id="browse-perspective-wrapper">
       <div class="panelcontainer" id="browse-perspective-left">
-        <div class="panelHead">
-          &nbsp;
-        </div>
-        <div class="panel nopadding">
-          <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
+        <div id="browse-perspective-left-body">
+          <div class="panelHead">
+            &nbsp;
+          </div>
+          <div class="panel nopadding">
+            <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
+          </div>
         </div>
       </div>
       <div class="panelcontainer" id="browse-perspective-center">
-        <div class="panelHead">
-          <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
-          <div wicket:id="extension.versionToggle">&#160;</div>
-        </div>
-        <h2 class="hideme">
-          <span class="documents" wicket:id="listing.title">title listing here</span>
-        </h2>
-        <div class="panel nopadding">
+        <div id="browse-perspective-center-body">
+          <div class="panelHead">
+            <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
+            <div wicket:id="extension.versionToggle">&#160;</div>
+          </div>
+          <h2 class="hideme">
+            <span class="documents" wicket:id="listing.title">title listing here</span>
+          </h2>
+          <div class="panel nopadding">
             <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
+          </div>
+          <div id="versioningWidget"> 
+            <div class="slidercontrol">
+              <a href="#">&nbsp;</a>
+            </div>
+            <div class="panel nopadding">
+              <div class="plugin versioning">
+	            <div wicket:id="extension.version"> </div>
+              </div>
+            </div>
+	      </div>
         </div>
-        <div id="versioningWidget"> 
-          <div class="slidercontrol">
-            <a href="#">&nbsp;</a>
-	      </div>
-  	      <div class="panel nopadding">
-	        <div class="plugin versioning">
-	          <div wicket:id="extension.version"> </div>
-	        </div>
-	      </div>
-	    </div>
 	  </div>  
     </div>
   </wicket:panel>

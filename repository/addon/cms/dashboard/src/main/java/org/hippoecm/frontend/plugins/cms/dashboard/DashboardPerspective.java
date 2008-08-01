@@ -36,13 +36,14 @@ public class DashboardPerspective extends Perspective {
         Map<String, String> optsLeft = new HashMap<String, String>();
         optsLeft.put("width", "50%");
         optsLeft.put("id", "lefthalf");
+        optsLeft.put("body", "lefthalf-body");
         optsLeft.put("resize", "true");
         optsLeft.put("scroll", "true");
         optsLeft.put("gutter", "0px 5px 0px 0px");
         wireframe.addUnit("left", optsLeft);
         
         wireframe.addUnit("top", "height=200", "id=welcomepanel", "resize=true", "gutter=0px 0px 5px 0px");
-        wireframe.addUnit("center", "id=righthalf");
+        wireframe.addUnit("center", "id=righthalf", "scroll=true", "body=righthalf-body");
         add(wireframe);
     }
 }

@@ -22,7 +22,7 @@ function AutoResize(editor) {
             if(isTemplate) {
                 w -= (parseInt(w*0.1) + 43);
             }
-            w -= 20;
+            w -= 30;
         } 
         if(YAHOO.lang.isNumber(h)) {
             h =parseInt(h/3);
