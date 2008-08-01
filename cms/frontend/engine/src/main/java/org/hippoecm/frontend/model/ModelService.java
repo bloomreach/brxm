@@ -60,8 +60,15 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
         if (model != this.model) {
             this.model = model;
             for (Object listener : listeners.toArray()) {
-                ((IModelListener) listener).updateModel(model);
+                ((IModelListener)listener).updateModel(model);
             }
+        }
+    }
+
+    public void resetModel() {
+        for (Object listener : listeners.toArray()) {
+            System.err.println("BERRY reset model "+listener.getClass().getName());
+            ((IModelListener)listener).updateModel(model);
         }
     }
 
@@ -74,11 +81,10 @@ public class ModelService<T extends IModel> extends ServiceTracker<IModelListene
     protected void onRemoveService(IModelListener service, String name) {
         listeners.remove(service);
     }
-    
+
     public void detach() {
-        if(model != null) {
-           model.detach();
+        if (model != null) {
+            model.detach();
         }
     }
-
 }
