@@ -24,10 +24,15 @@
           <label>Image Name</label>
         </td>
         <td>  
-          <input type="text" wicket:id="alt" />
+          <input type="text" wicket:id="url" />
         </td>
         <td> 
-          <img src="" wicket:id="selectedimg"/>
+          <img src="" wicket:id="selectedimg"/> <br/>
+            <label>Choose Version</label>  
+            <select wicket:id="resourcenodes">
+              <option>thumbnail</option>
+              <option>picture</option>
+            </select>
         </td>
       </tr>
     </table>
