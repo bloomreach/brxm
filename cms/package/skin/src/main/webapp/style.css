@@ -313,7 +313,7 @@ div.dialog table.imagePicker{margin-bottom: 15px}
 
 /* Image gallery Popup */
 /* ================================================ */
-div.thumbnailScroll{width: 400px; overflow: auto; white-space: nowrap; border:1px solid #CCCCCC; background: url("images/panelBack.png") repeat-x; border-top: none;}
+div.thumbnailScroll{width: 250px; overflow: auto; white-space: nowrap; border:1px solid #CCCCCC; background: url("images/panelBack.png") repeat-x; border-top: none;}
 
 /* Breadcrumbs */
 /* ================================================ */
