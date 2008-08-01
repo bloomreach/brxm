@@ -274,8 +274,10 @@ public class DerivedDataEngine {
                                                             sb.append(" overwritten");
                                                         }
                                                     } catch(AccessControlException ex) {
-                                                        logger.warn("cannot update "+new String(sb));
-                                                        sb.append(" failed");
+                                                        logger.warn("cannot update "+(sb!=null?new String(sb):modified.getPath()));
+                                                        if(logger.isDebugEnabled()) {
+                                                            sb.append(" failed");
+                                                        }
                                                     }
                                                 } else {
                                                     if(logger.isDebugEnabled()) {
@@ -291,8 +293,10 @@ public class DerivedDataEngine {
                                                         sb.append(" removed");
                                                     }
                                                 } catch(AccessControlException ex) {
-                                                    logger.warn("cannot update "+new String(sb));
-                                                    sb.append(" failed");
+                                                    logger.warn("cannot update "+(sb!=null?new String(sb):modified.getPath()));
+                                                    if(logger.isDebugEnabled()) {
+                                                        sb.append(" failed");
+                                                    }
                                                 }
                                             }
                                         } else {
@@ -323,8 +327,10 @@ public class DerivedDataEngine {
                                                         sb.append(" overwritten");
                                                     }
                                                 } catch(AccessControlException ex) {
-                                                    logger.warn("cannot update "+new String(sb));
-                                                    sb.append(" failed");
+                                                    logger.warn("cannot update "+(sb!=null?new String(sb):modified.getPath()));
+                                                    if(logger.isDebugEnabled()) {
+                                                        sb.append(" failed");
+                                                    }
                                                 }
                                             } else {
                                                 if(logger.isDebugEnabled()) {
@@ -346,8 +352,10 @@ public class DerivedDataEngine {
                                                             sb.append(" created");
                                                         }
                                                     } catch(AccessControlException ex) {
-                                                        logger.warn("cannot update "+new String(sb));
-                                                        sb.append(" failed");
+                                                        logger.warn("cannot update "+(sb!=null?new String(sb):modified.getPath()));
+                                                        if(logger.isDebugEnabled()) {
+                                                            sb.append(" failed");
+                                                        }
                                                     }
                                             } else {
                                                 if(logger.isDebugEnabled()) {
@@ -371,8 +379,10 @@ public class DerivedDataEngine {
                                                     sb.append(" created");
                                                 }
                                             } catch(AccessControlException ex) {
-                                                logger.warn("cannot update "+new String(sb));
-                                                sb.append(" failed");
+                                                logger.warn("cannot update "+(sb!=null?new String(sb):modified.getPath()));
+                                                if(logger.isDebugEnabled()) {
+                                                    sb.append(" failed");
+                                                }
                                             }
                                         }
                                     }
