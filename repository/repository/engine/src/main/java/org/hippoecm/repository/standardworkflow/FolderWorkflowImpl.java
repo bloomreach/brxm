@@ -160,7 +160,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     result = target.addNode(name, "hippo:handle");
                     result.addMixin("hippo:hardhandle");
                     renames.put("./_name", new String[] { name });
-                    /* Node doc = */ copy(prototypeNode, result, renames, ".");
+                    result = copy(prototypeNode, result, renames, ".");
                     break;
                 }
             } else if (prototypeNode.getName().equals(template)) {
