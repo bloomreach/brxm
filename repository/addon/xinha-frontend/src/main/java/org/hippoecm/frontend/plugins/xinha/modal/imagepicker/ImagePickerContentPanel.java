@@ -19,12 +19,16 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -33,16 +37,18 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +62,16 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     private FeedbackPanel feedback;
     private JcrNodeModel nodeModel;
     private String uuid = null;
-    private String altName = null;
-    private String selectedimg = "";
+    private String urlValue = null;
+    private String selectedimg = "/skin/images/empty.gif";
+    
+    /*
+     * Image resource nodes various formats
+     */ 
+    private String selectedRN;
+   
 
-    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel, EnumMap<XinhaImage, String> values) {
+    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel,final EnumMap<XinhaImage, String> values) {
         super(modal, values);
 
         this.nodeModel = nodeModel;
@@ -67,24 +79,83 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         ok.setEnabled(false);
         form.add(feedback = new FeedbackPanel("feedback"));
         feedback.setOutputMarkupId(true);
-
-        final TextField alt = new TextField("alt", newEnumModel(XinhaImage.ALT));
-        alt.add(new OnChangeAjaxBehavior() {
+        
+        urlValue = values.get(XinhaImage.URL);
+       
+        if(urlValue != null && urlValue.startsWith("binaries")) {
+            // find the nodename of the facetselect
+            String resourcePath = urlValue.substring("binaries".length());
+            Item resourceItem;
+            try {
+                resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
+                if(resourceItem.isNode() && ((Node)resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                    // now get the facetselect
+                    Node facetSelect = resourceItem.getParent().getParent();
+                    values.put(XinhaImage.URL, facetSelect.getName());
+                    // and get the thumbnail
+                    selectedimg = "binaries" + resourceItem.getParent().getPath()+"/"+resourceItem.getParent().getPrimaryItem().getName();
+                }
+            } catch (PathNotFoundException e) {
+                log.warn("resourcePath not found: " + resourcePath);
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+            
+        }
+        // input text field for the image name, which also becomes a facetselect 
+        final TextField url = new TextField("url", newEnumModel(XinhaImage.URL));
+        url.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                altName = alt.getInput();
-                if (isValidName(altName) && uuid != null) {
+                urlValue = url.getInput();
+                if (isValidName(urlValue) && uuid != null) {
                     target.addComponent(ok.setEnabled(true));
                 } else {
                     target.addComponent(ok.setEnabled(false));
                 }
+                values.put(XinhaImage.URL,url.getInput());
                 target.addComponent(feedback);
             }
         });
-        form.add(alt);
+        url.setEnabled(false);
+        form.add(url);
+        // ******************************************************************
+        
+        // Image resource nodes various formats
+        final List<String> resourceNodes = new ArrayList<String>();
+        final FormComponent dropdown = new DropDownChoice("resourcenodes", new PropertyModel(this, "selectedRN"), resourceNodes) {
+            private static final long serialVersionUID = 1L;
 
+            @Override
+            protected boolean wantOnSelectionChangedNotifications() {
+                return true;
+            }
+
+            @Override
+            protected void onSelectionChanged(Object newSelection) {
+                selectedRN = ((String) newSelection);
+            }
+        };
+        dropdown.setOutputMarkupId(true);
+        dropdown.setEnabled(false);
+        
+        dropdown.add(new OnChangeAjaxBehavior() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                if(selectedRN != null) {
+                    target.addComponent(ok.setEnabled(true));
+                }
+            }
+        });
+        form.add(dropdown);
+
+        // ******************************************************************
+        
+        // preview of the selected image
         final Label selectedLabel = new Label("selectedimg") {
             private static final long serialVersionUID = 1L;
 
@@ -97,7 +168,9 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         };
         selectedLabel.setOutputMarkupId(true);
         form.add(selectedLabel);
-
+        // ******************************************************************
+        
+        // image listing
         final List<ImageItem> items = getImageItems(nodeModel);
         form.add(new ListView("item", items) {
             private static final long serialVersionUID = 1L;
@@ -112,7 +185,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
                     @Override
                     protected void onComponentTag(ComponentTag tag) {
-                        tag.put("src", ((ImageItem) item.getModelObject()).getUrl());
+                        tag.put("src", ((ImageItem) item.getModelObject()).getPrimaryUrl());
                         tag.put("width", "50");
                         super.onComponentTag(tag);
                     }
@@ -125,11 +198,38 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        uuid = ((ImageItem) item.getModelObject()).getUuid();
-                        selectedimg = ((ImageItem) item.getModelObject()).getUrl();
+                        ImageItem imgItem = ((ImageItem) item.getModelObject()) ;
+                        uuid = imgItem.getUuid();
+                        selectedimg = imgItem.getPrimaryUrl();
                         target.addComponent(selectedLabel);
 
-                        if (isValidName(altName) && uuid != null) {
+                        resourceNodes.clear();
+                        List<String> resourceDefinitions = imgItem.getResourceDefinitions();
+                        boolean needsToChoose = false;
+                        if(resourceDefinitions.size() > 1) {
+                            resourceNodes.addAll(resourceDefinitions);
+                            dropdown.setEnabled(true);
+                            target.addComponent(dropdown);
+                            selectedRN = null;
+                            needsToChoose = true;
+                        }
+                        else if(dropdown.isEnabled()){
+                            dropdown.setEnabled(false);
+                            target.addComponent(dropdown);
+                        } 
+                        
+                        if(resourceDefinitions.size() == 1) {
+                            selectedRN = resourceDefinitions.get(0);
+                        } 
+                        if(resourceDefinitions.size() == 0) {
+                            selectedRN = null;
+                        } 
+                        
+                         values.put(XinhaImage.URL, imgItem.getNodeName());
+                         urlValue = imgItem.getNodeName();
+                         target.addComponent(url);
+                        
+                        if (isValidName(urlValue) && uuid != null && !needsToChoose) {
                             target.addComponent(ok.setEnabled(true));
                         } else {
                             target.addComponent(ok.setEnabled(false));
@@ -142,7 +242,9 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
             }
         });
-
+        // ******************************************************************
+        
+        
     }
 
     @Override
@@ -152,14 +254,6 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     private boolean isValidName(String input) {
         if (input != null && !"".equals(input)) {
-            try {
-                if (nodeModel.getNode().hasNode(input)) {
-                    error("Name already exists in area. Choose other");
-                    return false;
-                }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
             return true;
         }
         error("Name is not allowed to be empty");
@@ -171,13 +265,16 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         if (uuid == null) {
             return;
         }
-
-        String link = values.get(XinhaImage.ALT);
-        link = ISO9075Helper.encodeLocalName(link);
-        values.put(XinhaImage.ALT, link);
-
+        
+        String link = values.get(XinhaImage.URL);
+        values.put(XinhaImage.URL, link);
+         
         Node node = nodeModel.getNode();
+        
         try {
+            if(node.hasNode(link)) {
+                return;
+            }
             Node facetselect = node.addNode(link, HippoNodeType.NT_FACETSELECT);
             //todo fetch corresponding uuid of the chosen imageset
             facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
@@ -193,9 +290,12 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     @Override
     protected String getSelectedValue() {
-        String alt = values.get(XinhaImage.ALT);
+        String url = values.get(XinhaImage.URL);
         try {
-            String imageUrl = "binaries" + nodeModel.getNode().getPath() + "/" + alt;
+            String imageUrl = "binaries" + nodeModel.getNode().getPath() + "/" + url;
+            if(selectedRN != null && !selectedRN.equals("")) {
+                imageUrl += "/"+url+"/"+selectedRN;
+            }
             values.put(XinhaImage.URL, imageUrl);
             return super.getSelectedValue();
         } catch (RepositoryException e) {
@@ -223,8 +323,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
                     try {
                         canonical.getPrimaryItem().getName();
 
-                        items.add(new ImageItem(canonical.getParent().getUUID(), "binaries" + canonical.getPath() + "/"
-                                + canonical.getPrimaryItem().getName()));
+                        items.add(new ImageItem(canonical));
                     } catch (ItemNotFoundException e) {
                         log.error("gallery node does not have a primary item: skipping node: " + canonical.getPath());
                     }
@@ -241,12 +340,25 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     public static class ImageItem implements IClusterable {
         private static final long serialVersionUID = 1L;
 
-        public String url;
-        public String uuid;
+        private String path;
+        private String uuid;
+        private String nodeName;
+        private String primaryItemName;
+        private List<String> resourceDefinitions;
 
-        public ImageItem(String uuid, String url) {
-            this.url = url;
-            this.uuid = uuid;
+        public ImageItem(Node canonical) throws UnsupportedRepositoryOperationException, ItemNotFoundException, AccessDeniedException, RepositoryException {
+            this.path = canonical.getPath();
+            this.uuid = canonical.getParent().getUUID();
+            this.primaryItemName = canonical.getPrimaryItem().getName();
+            this.nodeName = canonical.getName();
+            this.resourceDefinitions = new ArrayList<String>();
+            NodeDefinition[] childDefs = canonical.getPrimaryNodeType().getChildNodeDefinitions();
+            for (int i = 0; i < childDefs.length; i++) {
+                if (!childDefs[i].getName().equals(primaryItemName) && childDefs[i].getDefaultPrimaryType() != null
+                        && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                    resourceDefinitions.add(childDefs[i].getName());
+                }
+            }
         }
 
         public String getUuid() {
@@ -257,12 +369,20 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
             this.uuid = uuid;
         }
 
-        public String getUrl() {
-            return url;
+        public String getPath() {
+            return path;
+        }
+        
+        public String getPrimaryUrl() {
+            return "binaries" + path + "/" + primaryItemName;
         }
 
-        public void setUrl(String url) {
-            this.url = url;
+        public List<String> getResourceDefinitions(){
+            return resourceDefinitions;
+        }
+        
+        public String getNodeName() {
+            return nodeName;
         }
     }
 
