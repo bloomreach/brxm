@@ -18,6 +18,7 @@ package org.hippoecm.repository.decorating.server;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
 import javax.jcr.Workspace;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -40,15 +41,22 @@ import org.hippoecm.repository.api.WorkflowManager;
 
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
+import org.hippoecm.repository.decorating.remote.RemoteRepository;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
+    
     public ServerServicingAdapterFactory() {
     }
 
+    @Override
+    public RemoteRepository getRemoteRepository(Repository repository) throws RemoteException {
+        return new ServerRepository(repository, this);
+    }
+ 
+    @Override
     public RemoteSession getRemoteSession(Session session) throws RemoteException {
         if (session instanceof XASession) {
             return new ServerServicingXASession((XASession) session, this);
@@ -57,6 +65,7 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
         }
     }
 
+    @Override
     public RemoteWorkspace getRemoteWorkspace(Workspace workspace) throws RemoteException {
         if (workspace instanceof HippoWorkspace)
             return new ServerServicingWorkspace((HippoWorkspace) workspace, this);
@@ -64,6 +73,7 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
             return super.getRemoteWorkspace(workspace);
     }
 
+    @Override
     public RemoteNode getRemoteNode(Node node) throws RemoteException {
         if (node instanceof HippoNode)
             return new ServerServicingNode((HippoNode) node, this);
