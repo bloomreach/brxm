@@ -18,9 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -61,11 +59,6 @@ public class WizardDialog extends WebPage {
     protected AjaxLink submit;
     private IServiceReference<IDialogService> windowRef;
     private String exception = "";
-
-    private static final Set<String> supportRescaleMimeTypes = new HashSet<String>();
-    {
-        supportRescaleMimeTypes.add("image/jpeg");
-    }
 
     public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
             IDialogService dialogWindow) {
@@ -135,22 +128,16 @@ public class WizardDialog extends WebPage {
             try {
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(workflowCategory, galleryNode);
-                if(workflow == null) {
+                if (workflow == null) {
                     Gallery.log.error("No gallery workflow accessible");
                 } else {
                     galleryTypes = workflow.getGalleryTypes();
                 }
             } catch (MappingException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
             } catch (RepositoryException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
             } catch (RemoteException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 Gallery.log.error(ex.getMessage(), ex);
             }
             if (galleryTypes != null && galleryTypes.size() > 0) {
@@ -215,20 +202,14 @@ public class WizardDialog extends WebPage {
                             IJcrService jcrService = jcrServiceRef.getService();
                             jcrService.flush(model);
                         } catch (MappingException ex) {
-                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                            ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
                             exception = "Workflow error: " + ex.getMessage();
                         } catch (RepositoryException ex) {
-                            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                            ex.printStackTrace(System.err);
                             Gallery.log.error(ex.getMessage());
                             exception = "Workflow error: " + ex.getMessage();
                         }
                     }
                 } catch (IOException ex) {
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
                     Gallery.log.info("upload of image truncated");
                     exception = "Upload failed: " + ex.getMessage();
                 }
@@ -238,23 +219,10 @@ public class WizardDialog extends WebPage {
         }
     }
 
-    protected void makeThumbnail(Node resource, InputStream istream, String mimeType) {
-        int maxWidthThumbnail = 100;
-        if (supportRescaleMimeTypes.contains(mimeType)) {
-            try {
-                String scaledMimeType = mimeType;
-                InputStream thumbStream = null;
-                try {
-                    thumbStream = JpegImageResizer.resizeImage(istream, maxWidthThumbnail);
-                } catch (IOException e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                    e.printStackTrace(System.err);
-                    return;
-                }
-                resource.setProperty("jcr:data", thumbStream);
-                resource.setProperty("jcr:mimeType", scaledMimeType);
-            } catch (RepositoryException ex) {
-            }
-        }
+    private void makeThumbnail(Node resource, InputStream image, String mimeType) throws RepositoryException {
+        int width = 100;
+        InputStream thumbNail = ImageUtils.createThumbnail(image, width, mimeType);
+        resource.setProperty("jcr:data", thumbNail);
+        resource.setProperty("jcr:mimeType", mimeType);
     }
 }

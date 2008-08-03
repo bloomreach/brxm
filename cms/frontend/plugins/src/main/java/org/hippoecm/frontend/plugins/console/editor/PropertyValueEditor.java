@@ -59,7 +59,8 @@ public class PropertyValueEditor extends DataView {
 
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
             if (isBinary) {
-                Label label = new Label("value", "(binary)");
+                int size = valueModel.getObject().toString().length();
+                Label label = new Label("value", "binary data (" + size + " bytes)");
                 item.add(label);
             } else if (isProtected) {
                 Label label = new Label("value", valueModel);
