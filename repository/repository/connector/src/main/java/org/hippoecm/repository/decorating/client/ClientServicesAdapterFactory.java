@@ -38,6 +38,7 @@ import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
+import org.hippoecm.repository.decorating.remote.RemoteRepository;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
     @SuppressWarnings("unused")
@@ -46,6 +47,12 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
     public ClientServicesAdapterFactory() {
     }
 
+    @Override
+    public Repository getRepository(org.apache.jackrabbit.rmi.remote.RemoteRepository remote) {
+        return new ClientRepository((RemoteRepository)remote, this);
+    }
+    
+    @Override
     public Session getSession(Repository repository, RemoteSession remote) {
         if (remote instanceof RemoteXASession) {
             return new ClientServicingXASession(repository, (RemoteServicingXASession) remote, this);
@@ -54,6 +61,7 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
         }
      }
 
+    @Override
     public Workspace getWorkspace(Session session, RemoteWorkspace remote) {
         if (remote instanceof RemoteServicingWorkspace)
             return new ClientServicingWorkspace(session, (RemoteServicingWorkspace) remote, this);
@@ -61,6 +69,7 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
             return super.getWorkspace(session, remote);
     }
 
+    @Override
     public Node getNode(Session session, RemoteNode remote) {
         if (remote instanceof RemoteServicingNode)
             return new ClientServicingNode(session, (RemoteServicingNode) remote, this);

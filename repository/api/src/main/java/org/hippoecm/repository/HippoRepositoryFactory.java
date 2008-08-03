@@ -32,7 +32,7 @@ public class HippoRepositoryFactory {
     private static HippoRepository defaultRepository = null;
 
     public static void setDefaultRepository(String location) {
-        if(!location.equals(defaultLocation)) {
+        if(location == null || !location.equals(defaultLocation)) {
             defaultLocation = location;
             defaultRepository = null;
         }
@@ -81,42 +81,11 @@ public class HippoRepositoryFactory {
             try {
                 defaultLocation = location;
                 try {
-                    return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
-                } catch(ClassNotFoundException ex) {
-                    throw new RepositoryException(ex);
-                } catch(NoSuchMethodException ex) {
-                    throw new RepositoryException(ex);
-                } catch(IllegalAccessException ex) {
-                    throw new RepositoryException(ex);
-                } catch(InvocationTargetException ex) {
-                    if(ex.getCause() instanceof RemoteException)
-                        throw (RemoteException) ex.getCause();
-                    else if(ex.getCause() instanceof NotBoundException)
-                        throw (NotBoundException) ex.getCause();
-                    else if(ex.getCause() instanceof MalformedURLException)
-                        throw (MalformedURLException) ex.getCause();
-                    else if(ex.getCause() instanceof RepositoryException)
-                        throw (RepositoryException) ex.getCause();
-                    else
-                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
-                }
-            } catch (RemoteException ex) {
-                return null;
-                // FIXME
-            } catch (NotBoundException ex) {
-                return null;
-                // FIXME
-            } catch (MalformedURLException ex) {
-                return null;
-                // FIXME
-            }
-        }
-
-        if (location.startsWith("spi://")) {
-            try {
-                defaultLocation = location;
-                try {
-                    return (HippoRepository) Class.forName("org.hippoecm.repository.SPIHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+                    if(!location.endsWith("/spi")) {
+                        return (HippoRepository) Class.forName("org.hippoecm.repository.RemoteHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+                    } else {
+                        return (HippoRepository) Class.forName("org.hippoecm.repository.SPIHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+                    }
                 } catch(ClassNotFoundException ex) {
                     throw new RepositoryException(ex);
                 } catch(NoSuchMethodException ex) {
@@ -133,16 +102,23 @@ public class HippoRepositoryFactory {
                     else if(ex.getCause() instanceof RepositoryException)
                         throw (RepositoryException) ex.getCause();
                     else {
+                        ex.getCause().printStackTrace(System.err);
                         throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
                     }
                 }
             } catch (RemoteException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
                 return null;
                 // FIXME
             } catch (NotBoundException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
                 return null;
                 // FIXME
             } catch (MalformedURLException ex) {
+                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+                ex.printStackTrace(System.err);
                 return null;
                 // FIXME
             }

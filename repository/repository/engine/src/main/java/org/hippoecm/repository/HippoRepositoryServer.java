@@ -27,11 +27,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
-import org.apache.jackrabbit.spi.RepositoryService;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi2jcr.BatchReadConfig;
-import org.apache.jackrabbit.spi2jcr.RepositoryServiceImpl;
-
 public class HippoRepositoryServer extends LocalHippoRepository {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -68,15 +63,11 @@ public class HippoRepositoryServer extends LocalHippoRepository {
     }
 
     public void run(String name, boolean background) throws RemoteException, AlreadyBoundException {
-        boolean runAsService = false;
         if (name == null || name.equals(""))
             name = "rmi://" + RMI_HOST + ":" + RMI_PORT + "/" + RMI_NAME;
         String host = null;
         int port = 0;
-        if (name.startsWith("spi://")) {
-            runAsService = true;
-        }
-        if (name.startsWith("rmi://") || name.startsWith("spi://")) {
+        if (name.startsWith("rmi://")) {
             if (name.indexOf('/', 6) >= 0) {
                 if (name.indexOf(':', 6) >= 0 && name.indexOf(':', 6) < name.indexOf('/', 6)) {
                     port = Integer.parseInt(name.substring(name.indexOf(':', 6) + 1, name.indexOf('/', name.indexOf(
@@ -100,29 +91,16 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 else
                     registry = LocateRegistry.getRegistry();
             }
-            if (log.isDebugEnabled())
+            if (log.isDebugEnabled()) {
                 log.debug("Using rmiregistry on " + host + " port " + port);
+            }
         }
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 close();
             }
         });
-        Remote remote;
-        if(runAsService) {
-	/*
-            BatchReadConfig cfg = new BatchReadConfig();
-            cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), -1);
-            cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), -1);
-            cfg.setDepth(NameFactoryImpl.getInstance().create("nt", "unstructured"), -1);
-            RepositoryService repositoryService = new RepositoryServiceImpl(repository, cfg);
-            ServerRepositoryService serverService = new ServerRepositoryService(repositoryService);
-            remote = serverService;
-	*/
-	remote = null;
-        } else {
-            remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
-        }
+        Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
         System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
         try {
@@ -140,7 +118,9 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 try {
                     Thread.sleep(333);
                 } catch (InterruptedException ex) {
-                    System.err.println(ex);
+                    if(log.isDebugEnabled()) {
+                        log.debug("Interrupted option", ex);
+                    }
                 }
             }
         }

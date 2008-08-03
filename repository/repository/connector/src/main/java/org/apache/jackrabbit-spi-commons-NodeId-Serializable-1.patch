@@ -1,0 +1,72 @@
+Index: jackrabbit-spi-commons/src/main/java/org/apache/jackrabbit/spi/commons/identifier/AbstractIdFactory.java
+===================================================================
+--- jackrabbit-spi-commons/src/main/java/org/apache/jackrabbit/spi/commons/identifier/AbstractIdFactory.java	(revision 668230)
++++ jackrabbit-spi-commons/src/main/java/org/apache/jackrabbit/spi/commons/identifier/AbstractIdFactory.java	(working copy)
+@@ -16,17 +16,19 @@
+  */
+ package org.apache.jackrabbit.spi.commons.identifier;
+ 
++import java.io.Serializable;
++
++import javax.jcr.RepositoryException;
++
+ import org.apache.jackrabbit.spi.IdFactory;
+-import org.apache.jackrabbit.spi.PropertyId;
+-import org.apache.jackrabbit.spi.NodeId;
+ import org.apache.jackrabbit.spi.ItemId;
+ import org.apache.jackrabbit.spi.Name;
++import org.apache.jackrabbit.spi.NodeId;
+ import org.apache.jackrabbit.spi.Path;
+ import org.apache.jackrabbit.spi.PathFactory;
++import org.apache.jackrabbit.spi.PropertyId;
++import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+ 
+-import javax.jcr.RepositoryException;
+-import java.io.Serializable;
+-
+ /**
+  * <code>AbstractIdFactory</code>...
+  */
+@@ -80,7 +82,7 @@
+     }
+ 
+     //------------------------------------------------------< Inner classes >---
+-    private abstract class ItemIdImpl implements ItemId, Serializable {
++    private static abstract class ItemIdImpl implements ItemId, Serializable {
+ 
+         private final String uniqueID;
+         private final Path path;
+@@ -170,9 +172,14 @@
+             }
+             return b.toString();
+         }
++        
++        protected PathFactory getPathFactory() {
++            return PathFactoryImpl.getInstance();
++        }
++
+     }
+ 
+-    private class NodeIdImpl extends ItemIdImpl implements NodeId {
++    private static class NodeIdImpl extends ItemIdImpl implements NodeId {
+ 
+         public NodeIdImpl(String uniqueID) {
+             super(uniqueID, null);
+@@ -183,7 +190,7 @@
+         }
+ 
+         public NodeIdImpl(NodeId parentId, Path path) throws RepositoryException {
+-            super(parentId.getUniqueID(), (parentId.getPath() != null) ? getPathFactory().create(parentId.getPath(), path, true) : path);
++            super(parentId.getUniqueID(), (parentId.getPath() != null) ? PathFactoryImpl.getInstance().create(parentId.getPath(), path, true) : path);
+         }
+ 
+         public boolean denotesNode() {
+@@ -201,7 +208,7 @@
+         }
+     }
+ 
+-    private class PropertyIdImpl extends ItemIdImpl implements PropertyId {
++    private static class PropertyIdImpl extends ItemIdImpl implements PropertyId {
+ 
+         private final NodeId parentId;
+ 

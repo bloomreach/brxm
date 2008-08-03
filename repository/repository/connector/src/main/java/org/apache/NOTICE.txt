@@ -1,0 +1,13 @@
+Note that this directory contains parts of source code of a sandbox
+Apache JackRabbit project.
+
+Only slight modifications have been done in order to allow this source
+to be run with JackRabbit 1.4, in combination with the patch which is
+also here and is part of the sandbox project.
+
+Both a update ot JackRabbit trunk and a release of the spi-rmi project
+are required to move this source out of Hippo ECM source basis.
+
+Copied have been made from
+  http://svn.apache.org/repos/asf/jackrabbit/sandbox/spi/spi-rmi/src/main/java/org/apache
+with SVN revision 682125.
