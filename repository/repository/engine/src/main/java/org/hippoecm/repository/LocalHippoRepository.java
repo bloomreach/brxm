@@ -468,7 +468,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             } else {
                                 if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
                                     URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                                    resource = new URL(resource, (cndName.startsWith("/") ? cndName : "../" + cndName));
+                                    resource = new URL(resource, cndName);
                                     cndName = resource.toString();
                                     cndStream = resource.openStream();
                                 } else {
@@ -528,7 +528,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             } else {
                                 if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
                                     URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                                    resource = new URL(resource, (contentName.startsWith("/") ? contentName : "../" + contentName));
+                                    resource = new URL(resource, contentName);
                                     contentName = resource.toString();
                                     contentStream = resource.openStream();
                                 } else {
