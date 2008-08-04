@@ -61,7 +61,7 @@ public class EditPerspective extends Perspective implements IEditService {
         optsRight.put("height", "30");
         optsRight.put("id", "editor-perspective-top");
         wireframe.addUnit("top", optsRight);
-        wireframe.addUnit("center", "id=editor-perspective-center", "scroll=true", "body=editor-perspective-center-body", "gutter=0px 10px 0px 0px");
+        wireframe.addUnit("center", "id=editor-perspective-center", "scroll=true", "body=editor-perspective-center-body");
         add(wireframe);
         
         onModelChanged();

@@ -18,7 +18,7 @@ function AutoResize(editor) {
         var w= args[0].body.w ? parseInt(args[0].body.w) : null;
         var h= args[0].body.h ? parseInt(args[0].body.h) : null;
         if(YAHOO.lang.isNumber(w)) {
-            w -= isTemplateEditor ? 78 : 26;
+            w -= isTemplateEditor ? 73 : 30;
         } 
         if(YAHOO.lang.isNumber(h)) {
             h =parseInt(h*(4/9));
