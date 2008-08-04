@@ -18,10 +18,19 @@
     <table class="linkPicker">
       <tr>
         <td>
-          <label>URL</label>
-        </td>
-        <td>  
-          <input type="text" wicket:id="url" />
+          <span wicket:id="jcrpath">[path]</span>
+        </td> 
+      </tr>
+      <tr>
+        <td>
+          <div wicket:id="wrapper">
+            <div wicket:id="item">
+              <a wicket:id="callback">
+                <img src="" wicket:id="icon"/>
+                <span wicket:id="linktest">[link to handle]</span>
+              </a>
+            </div>
+          </div>
         </td>
       </tr>
     </table>
