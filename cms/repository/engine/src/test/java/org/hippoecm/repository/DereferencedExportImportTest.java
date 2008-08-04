@@ -73,6 +73,7 @@ public class DereferencedExportImportTest extends TestCase {
         session.save();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -113,6 +114,7 @@ public class DereferencedExportImportTest extends TestCase {
         session.save();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         cleanup();
@@ -138,9 +140,69 @@ public class DereferencedExportImportTest extends TestCase {
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         session.save();
-        Node node = testImport.getNode(TEST_EXPORT_NODE);
-        assertNotNull(node);
+        assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
     }
+
+    @Test
+    public void testNodeEncoding() throws RepositoryException, IOException {
+        testExport.addNode("node with space",  "hippo:ntunstructured");
+        testExport.addNode("node_x0020_with_x0020_encoded",  "hippo:ntunstructured");
+        testExport.save();
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
+        InputStream in = new ByteArrayInputStream(out.toByteArray());
+        
+        int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
+        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
+        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
+        session.save();
+        assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
+        
+        Node node = testImport.getNode(TEST_EXPORT_NODE);
+        assertTrue("Import of node with spaces failed", node.hasNode("node with space"));
+        assertTrue("Import of node with encoded spaces failed", node.hasNode("node_x0020_with_x0020_encoded"));
+    }
+
+    @Test
+    public void testPropertyEncoding() throws RepositoryException, IOException {
+        Node encode = testExport.addNode("encode_propery_test",  "hippo:ntunstructured");
+        encode.setProperty("value_with_space", "my value");
+        encode.setProperty("value_with_xml", "</sv:value></sv:property></sv:node>");
+        encode.setProperty("value_with_encoded_space", "my_x0020_value");
+        encode.setProperty("property with space", "dummy");
+        encode.setProperty("property_with_xml_<xml>", "dummy");
+        encode.setProperty("property_x0020_with_x0020_encoded space", "dummy");
+        
+        testExport.save();
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
+        InputStream in = new ByteArrayInputStream(out.toByteArray());
+        
+        int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
+        int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
+        ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior,
+                mergeBehavior);
+        session.save();
+        assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
+
+        Node node = testImport.getNode(TEST_EXPORT_NODE);
+        assertTrue("Import of property encoding test node failed", node.hasNode("encode_propery_test"));
+
+        encode = node.getNode("encode_propery_test");
+        assertTrue("Property value with space not found", encode.hasProperty("value_with_space"));
+        assertTrue("Property value with encoded space not found", encode.hasProperty("value_with_encoded_space"));
+        assertTrue("Property with space not found", encode.hasProperty("property with space"));
+        assertTrue("Property with encoded space not found", encode
+                .hasProperty("property_x0020_with_x0020_encoded space"));
+
+        assertEquals("my value", encode.getProperty("value_with_space").getString());
+        assertEquals("my_x0020_value", encode.getProperty("value_with_encoded_space").getString());
+        assertEquals("dummy", encode.getProperty("property with space").getString());
+        assertEquals("dummy", encode.getProperty("property_x0020_with_x0020_encoded space").getString());
+    }
+    
 
     @Test
     public void testReferenceFailImport() throws RepositoryException, IOException {
