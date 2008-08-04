@@ -1,7 +1,7 @@
 
-function doFindDisplayTable(el) {
+function _isTemplateEditor(el) {
     while (el != null && el != document.body) {
-        if (YAHOO.util.Dom.hasClass(el, 'displaytable')) {
+        if (YAHOO.util.Dom.hasClass(el, 'templateItemTable')) {
             return true;
         }
         el = el.parentNode;
@@ -11,21 +11,17 @@ function doFindDisplayTable(el) {
 
 function AutoResize(editor) {
     this.editor = editor;
-    this.templateStyle = false;
     
-    var isTemplate = doFindDisplayTable(this.editor._textArea);
-    
+    var isTemplateEditor = _isTemplateEditor(this.editor._textArea);
+
     YAHOO.hippo.LayoutManager.registerResizeListener(this.editor._textArea, this.editor, function(type, args, me) {
         var w= args[0].body.w ? parseInt(args[0].body.w) : null;
         var h= args[0].body.h ? parseInt(args[0].body.h) : null;
         if(YAHOO.lang.isNumber(w)) {
-            if(isTemplate) {
-                w -= (parseInt(w*0.1) + 43);
-            }
-            w -= 30;
+            w -= isTemplateEditor ? 78 : 26;
         } 
         if(YAHOO.lang.isNumber(h)) {
-            h =parseInt(h/3);
+            h =parseInt(h*(4/9));
         }
         doAutoResize(me, w, h);
     });
