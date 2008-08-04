@@ -145,7 +145,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                         
                     }
                 };
-                link.add(new Label("linktest", nodeItem.getDisplayName()));
+                link.add(new Label("linkname", nodeItem.getDisplayName()));
                 
                 final Label icon = new Label("icon") {
                     private static final long serialVersionUID = 1L;
