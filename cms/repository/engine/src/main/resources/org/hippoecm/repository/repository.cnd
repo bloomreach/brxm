@@ -114,6 +114,7 @@
 + * (nt:query) = hippo:ocmquery
 
 [hippo:initializeitem] > nt:base
+- hippo:extensionsource (string)
 - hippo:sequence (double)
 - hippo:namespace (string)
 - hippo:nodetypesresource (string)
