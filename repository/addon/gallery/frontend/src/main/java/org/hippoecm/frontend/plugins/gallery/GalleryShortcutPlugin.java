@@ -18,10 +18,13 @@ package org.hippoecm.frontend.plugins.gallery;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.Model;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.basic.Label;
+
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -39,6 +42,13 @@ public class GalleryShortcutPlugin extends RenderPlugin {
         super(context, config);
 
         String path = config.getString("gallery.path");
+        String galleryText = config.getString("gallery.text");
+        if(galleryText != null) {
+            galleryText = galleryText.trim();
+            if(galleryText.equals("")) {
+                galleryText = null;
+            }
+        }
         if(path != null) {
             try {
                 while(path.startsWith("/"))
@@ -58,8 +68,14 @@ public class GalleryShortcutPlugin extends RenderPlugin {
                                                                 dialogService));
                         }
                     };
-
                 add(link);
+
+                Label label = new Label("label");
+                if(galleryText != null) {
+                    label.setModel(new Model(galleryText));
+                }
+                link.add(label);
+
             } catch(PathNotFoundException ex) {
                 Gallery.log.warn("No image gallery present");
                 path = null; // force adding empty panel
@@ -70,6 +86,7 @@ public class GalleryShortcutPlugin extends RenderPlugin {
         }
         if(path == null) {
             add(new EmptyPanel("link"));
+            add(new EmptyPanel("label"));
         }
     }
 }

@@ -47,20 +47,11 @@
 - hippostd:modify (string) multiple
 + hippostd:templates (hippostd:templates) = hippostd:templates
 
-// FIXME: THE FOLLOWING HAVE NOT MATURED OR AGREED UPON
-
 [hippostd:html] > nt:base
 - hippostd:content (string) primary mandatory
 + * (hippo:facetselect)
 
 [hippostd:gallery] > hippostd:folder
-// the children of this node are supposed to be images
+// the children of this node are supposed to be images or other binary assets
 // ie. children conform to
 
-// FIXME: THESE TYPES ARE EXAMPLES ONLY AND SHOULD BE REMOVED BEFORE RELEASE
-// DO NOT USE THESE TYPES IN JAVA CODE!
-
-
-[hippostd:exampleImageSet] > hippo:document
-+ hippostd:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
-+ hippostd:picture (hippo:resource) = hippo:resource

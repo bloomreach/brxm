@@ -130,6 +130,21 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="shortcutsListPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.dashboard.shortcuts</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="shortcutsPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -138,7 +153,7 @@
       <sv:value>org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.dashboard.shortcuts</sv:value>
+      <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.node</sv:value>

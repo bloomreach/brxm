@@ -24,7 +24,7 @@
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
 
-  <sv:node sv:name="galleryShortcut">
+  <sv:node sv:name="imageGalleryShortcut">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -39,6 +39,30 @@
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
       <sv:value>internal</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.text" sv:type="String">
+      <sv:value>Add an image to the gallery</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="assetGalleryShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.path" sv:type="String">
+      <sv:value>/content/assets</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.workflow" sv:type="String">
+      <sv:value>internal</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.text" sv:type="String">
+      <sv:value>Add an asset to the store</sv:value>
     </sv:property>
   </sv:node>
 
