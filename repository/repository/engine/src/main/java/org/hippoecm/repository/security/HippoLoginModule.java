@@ -34,6 +34,7 @@ import javax.security.auth.spi.LoginModule;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.CredentialsCallback;
 import org.apache.jackrabbit.core.security.SecurityConstants;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -130,9 +131,6 @@ public class HippoLoginModule implements LoginModule {
                 throw new LoginException("RootSession not set.");
             }
 
-            // get securityManager
-            securityManager = SecurityManager.getInstance();
-            securityManager.init(rootSession);
 
             // check for impersonation
             Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
@@ -143,6 +141,13 @@ public class HippoLoginModule implements LoginModule {
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
                     log.info("Denied Anymous impersonating as {}", creds.getUserID());
                     return false;
+                }
+                
+                // system session impersonate
+                if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
+                    log.debug("SystemSession impersonating to new SystemSession");
+                    principals.add(new SystemPrincipal());
+                    return true;
                 }
 
                 // check for valid user
@@ -156,11 +161,20 @@ public class HippoLoginModule implements LoginModule {
                 // TODO: check somehow if the user is allowed to imporsonate
 
                 log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
+
+                // get securityManager
+                securityManager = SecurityManager.getInstance();
+                securityManager.init(rootSession);
+                
                 setUserPrincipals(creds.getUserID());
                 setGroupPrincipals(creds.getUserID());
                 setFacetAuthPrincipals(creds.getUserID());
                 return !principals.isEmpty();
             }
+
+            // get securityManager
+            securityManager = SecurityManager.getInstance();
+            securityManager.init(rootSession);
 
             // check for anonymous login
             if (creds == null || creds.getUserID() == null) {
