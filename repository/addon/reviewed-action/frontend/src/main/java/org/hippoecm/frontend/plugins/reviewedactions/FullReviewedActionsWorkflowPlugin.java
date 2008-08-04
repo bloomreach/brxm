@@ -79,7 +79,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
@@ -103,7 +107,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.publish();
@@ -118,7 +126,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.depublish();
@@ -128,7 +140,11 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowDialog("delete-dialog", "Delete", "Delete", "Are you sure you want to delete this document?",
                           new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();

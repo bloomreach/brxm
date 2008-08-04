@@ -77,7 +77,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
@@ -100,7 +104,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestPublication();
@@ -115,7 +123,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDepublication();
@@ -130,7 +142,11 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-
+            // Workaround for HREPTWO-1328
+            protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
+                Node handleNode = handleModel.getNode();
+                handleNode.getSession().refresh(false);
+            }
             public void execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.requestDeletion();
