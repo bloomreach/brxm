@@ -27,8 +27,8 @@ public class TemplateTypeLayout extends RenderPlugin {
         super(context, config);
 
         YuiWireframeBehavior wireframe = new YuiWireframeBehavior("template-type-wrapper", true);
-        wireframe.addUnit("center", "id=template-type-center");
-        wireframe.addUnit("right", "id=template-type-right", "width=200");
+        wireframe.addUnit("center", "id=template-type-center", "body=template-type-center-body", "scroll=true");
+        wireframe.addUnit("right", "id=template-type-right", "width=250", "resize=true", "body=template-type-right-body", "scroll=true");
         add(wireframe);
     }
 
