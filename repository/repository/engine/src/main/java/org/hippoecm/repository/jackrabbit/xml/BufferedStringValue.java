@@ -15,20 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.util.Base64;
-import org.apache.jackrabbit.util.TransientFileFactory;
-import org.apache.jackrabbit.value.ValueHelper;
-import org.apache.jackrabbit.value.ValueFactoryImpl;
-import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
-import org.apache.jackrabbit.core.xml.TextValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,6 +25,21 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.core.xml.TextValue;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
+import org.apache.jackrabbit.util.Base64;
+import org.apache.jackrabbit.util.TransientFileFactory;
+import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.apache.jackrabbit.value.ValueHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>BufferedStringValue</code> represents an appendable
@@ -184,6 +185,7 @@ class BufferedStringValue implements TextValue {
                 tmpFile = fileFactory.createTransientFile("txt", null, null);
                 final FileOutputStream fout = new FileOutputStream(tmpFile);
                 writer = new OutputStreamWriter(fout) {
+                    @Override
                     public void flush() throws IOException {
                         // flush this writer
                         super.flush();
@@ -265,7 +267,8 @@ class BufferedStringValue implements TextValue {
                 }
             } else {
                 // all other types
-                return ValueHelper.deserialize(retrieve(), targetType, true, ValueFactoryImpl.getInstance());
+                // don't replace _X0020_ with spaces. See: HREPTWO-1266.
+                return ValueHelper.deserialize(retrieve(), targetType, false, ValueFactoryImpl.getInstance());
             }
         } catch (IOException e) {
             String msg = "failed to retrieve serialized value";
@@ -346,6 +349,7 @@ class BufferedStringValue implements TextValue {
             out.reset();
         }
 
+        @Override
         public int read() throws IOException {
             if (remaining == 0) {
                 fillBuffer();
