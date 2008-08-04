@@ -51,16 +51,12 @@
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.editor</sv:value>
       <sv:value>extension.workflow</sv:value>
-      <sv:value>extension.helpers</sv:value>
     </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>${cluster.id}.editor</sv:value>
     </sv:property>
     <sv:property sv:name="extension.workflow" sv:type="String">
       <sv:value>${cluster.id}.workflows</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.helpers" sv:type="String">
-      <sv:value>${cluster.id}.helpers</sv:value>
     </sv:property>
   </sv:node>
 
@@ -76,9 +72,6 @@
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${cluster.id}.model</sv:value>
-    </sv:property>
-    <sv:property sv:name="builder.helpers" sv:type="String">
-      <sv:value>${cluster.id}.helpers.helper</sv:value>
     </sv:property>
   </sv:node>
 
@@ -119,21 +112,6 @@
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>editing</sv:value>
       <sv:value>modelling</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="helperListPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>${cluster.id}.helpers</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>${cluster.id}.helpers.helper</sv:value>
     </sv:property>
   </sv:node>
 

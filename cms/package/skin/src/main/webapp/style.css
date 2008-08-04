@@ -400,12 +400,16 @@ margin-right: 2px;
 }
 
 /* temp icon hack */
-ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; margin-bottom: 2px;}
+ul.fieldtypes{background: #f2f2f2;}
+ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; padding-top: 4px; padding-bottom: 2px; padding-left: 20px;}
 
 /* edit template item */
 div#templateitemedit{background: none;width: 200px;}
-div#templateitemedit h3{font-size: 12px; margin-bottom: 10px;}
-body div#templateitemedit .renderItem h3{color: #666666}
+div#templateitemedit .renderItem{height: auto; background: transparent;}
+div#templateitemedit .actionspanel{background: #f2f2f2; margin: 5px;}
+div#templateitemedit .actionspanel h3{font-size: 14px; margin-top: 10px; margin-bottom: 6px; display: block; color: #666666;}
+div#templateitemedit .actionspanel div {width: 100%;}
+div#templateitemedit .actionspanel div div h3{font-size: 12px; margin-top: 6px; margin-bottom: 4px;}
 div.fieldedit table{margin-top: 4px;}
 div.fieldedit table tr td{padding:3px;}
 

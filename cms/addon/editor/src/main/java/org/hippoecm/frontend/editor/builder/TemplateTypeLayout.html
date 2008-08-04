@@ -14,11 +14,14 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:panel>
-    <ul class="fieldtypes">
-      <li wicket:id="templates">
-        <a wicket:id="template" href="#"><span wicket:id="template-name"></span></a>
-      </li>
-    </ul>
+  <wicket:panel>
+    <div class="panelcontainer" id="template-type-wrapper">
+      <div id="template-type-center">
+        <div wicket:id="extension.form">[ form here ]</div>
+      </div>
+      <div id="template-type-right">
+        <div wicket:id="extension.helpers">[ helpers here ]</div>
+      </div>  
+    </div>
 </wicket:panel>
 </html>
