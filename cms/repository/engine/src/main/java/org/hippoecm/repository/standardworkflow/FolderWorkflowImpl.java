@@ -46,9 +46,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private Session userSession;
-    private Session rootSession;
-    private Node subject;
+    private final Session userSession;
+    private final Session rootSession;
+    private final Node subject;
 
     private final String ATTIC_PATH = "/content/attic"; // FIXME
 
@@ -100,7 +100,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     Set<String> prototypes = new TreeSet<String>();
                     if (foldertype.isNodeType("nt:query")) {
                         Query query = qmgr.getQuery(foldertype);
-                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString().replaceAll(" ","_x0020_"), query.getLanguage()); // HREPTWO-1266
+                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                             Node typeNode = iter.nextNode();
@@ -144,7 +144,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
         Node foldertype = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);
         Query query = qmgr.getQuery(foldertype);
-        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString().replaceAll(" ","_x0020_"), query.getLanguage()); // HREPTWO-1266
+        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage());
         QueryResult rs = query.execute();
         Node result = null;
         Node target = userSession.getRootNode();
