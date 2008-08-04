@@ -261,6 +261,13 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     }
 
     @Override
+    protected void onDetach() {
+        this.nodeModel.detach();
+        super.onDetach();
+    }
+
+    
+    @Override
     protected void onOk() {
         if (uuid == null) {
             return;
@@ -364,11 +371,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         public String getUuid() {
             return uuid;
         }
-
-        public void setUuid(String uuid) {
-            this.uuid = uuid;
-        }
-
+        
         public String getPath() {
             return path;
         }
