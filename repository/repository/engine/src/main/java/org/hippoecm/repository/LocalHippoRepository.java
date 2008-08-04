@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -311,6 +312,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             getNode("hippo:configuration/hippo:temporary/hippo:initialize");
                         for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
                             Node n = mergeIter.nextNode();
+                            if("hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
+                                           ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
+                                           : configurationURL.getFile())) {
+                                n.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+                            }
                             if(!rootSession.getRootNode().hasNode("hippo:configuration/hippo:initialize/" +
                                                                   n.getName())) {
                                 rootSession.move(n.getPath(), "/hippo:configuration/hippo:initialize/" + n.getName());
@@ -424,7 +430,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     log.info("Initializing configuration from " + node.getName());
                     try {
                         
-                        // NAMESPACE
+                        // Namespace
                         if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Found namespace configuration");
@@ -437,7 +443,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             p.remove();
                         }
 
-                        // NODETYPES FROM FILE
+                        // Nodetypes from FILE
                         if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
                             if (log.isDebugEnabled()) { 
                                 log.debug("Found nodetypes resource configuration");
@@ -460,7 +466,14 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                     log.error("Nodetypes initialization file not found: " + cndName, e);
                                 }
                             } else {
-                                cndStream = getClass().getResourceAsStream(cndName);
+                                if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
+                                    URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
+                                    resource = new URL(resource, (cndName.startsWith("/") ? cndName : "../" + cndName));
+                                    cndName = resource.toString();
+                                    cndStream = resource.openStream();
+                                } else {
+                                    cndStream = getClass().getResourceAsStream(cndName);
+                                }
                             }
                             if (cndStream == null) {
                                 log.error("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
@@ -471,7 +484,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             }
                         }
                         
-                        // NODETYPES FROM NODE
+                        // Nodetypes from node
                         if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
                             if (log.isDebugEnabled()) { 
                                 log.debug("Found nodetypes configuration");
@@ -488,7 +501,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             }
                         }
                         
-                        // CONTENT FROM FILE
+                        // Content from file
                         if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Found content resource configuration");
@@ -513,7 +526,14 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                                     log.error("Content resource file not found: " + contentStream, e);
                                 }
                             } else {
-                                contentStream = getClass().getResourceAsStream(contentName);    
+                                if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
+                                    URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
+                                    resource = new URL(resource, (contentName.startsWith("/") ? contentName : "../" + contentName));
+                                    contentName = resource.toString();
+                                    contentStream = resource.openStream();
+                                } else {
+                                    contentStream = getClass().getResourceAsStream(contentName);    
+                                }
                             }
                                 
                             if (contentStream == null) {
@@ -574,6 +594,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             }
                         }
                         rootSession.save();
+                    } catch (MalformedURLException ex) {
+                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                    } catch (IOException ex) {
+                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
                     } catch (ParseException ex) {
                         log.error("configuration at specified by " + node.getPath() + " failed", ex);
                     } catch (AccessDeniedException ex) {
