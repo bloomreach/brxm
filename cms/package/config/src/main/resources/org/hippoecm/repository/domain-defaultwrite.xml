@@ -131,7 +131,7 @@
                 <sv:value>Name</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippostd:exampleImageSet</sv:value>
+                <sv:value>hippogallery:exampleImageSet</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
