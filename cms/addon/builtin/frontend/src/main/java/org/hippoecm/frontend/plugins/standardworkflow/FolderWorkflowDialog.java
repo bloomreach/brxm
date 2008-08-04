@@ -19,6 +19,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import java.util.LinkedList;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
@@ -54,8 +55,9 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
         } else {
             ok.setEnabled(true);
         }
-
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+        
+        TextFieldWidget text;
+        add(text = new TextFieldWidget("name", new PropertyModel(this, "name")));
 
         if(folderWorkflowPlugin.templates.get(category).size() > 1) {
             DropDownChoice folderChoice;
@@ -78,17 +80,29 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             folderChoice.setRequired(true);
             // while not a prototype chosen, disable ok button
             ok.setEnabled(false);
+            Component notypes;
+            add(notypes = new EmptyPanel("notypes"));
+            notypes.setVisible(false);
             
         } else if(folderWorkflowPlugin.templates.get(category).size() == 1) {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
             prototype = (String) folderWorkflowPlugin.templates.get(category).iterator().next();
+            Component notypes;
+            add(notypes = new EmptyPanel("notypes"));
+            notypes.setVisible(false);
         } else {
+            // if the folderWorkflowPlugin.templates.get(category).size() = 0 you cannot add this
+            // category currently. 
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
             prototype = null;
+            add(new Label("notypes","There are no types available for : [" + category +
+            		"] First create document types please."));
+            ok.setEnabled(false);
+            text.setVisible(false);
         }
     }
 
