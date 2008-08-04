@@ -15,11 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
+import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 
 public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
@@ -28,9 +38,22 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+
+    private boolean cancelable = true;
+
     public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        addWorkflowAction("cancelRequest-dialog", new WorkflowAction() {
+
+        onModelChanged();
+
+        addWorkflowAction("cancelRequest-dialog", new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return cancelable;
+            }
+        }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             public void execute(Workflow wf) throws Exception {
@@ -38,5 +61,44 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.cancelRequest();
             }
         });
+    }
+
+    @Override
+    public void onModelChanged() {
+        super.onModelChanged();
+        WorkflowsModel model = (WorkflowsModel) getModel();
+        try {
+            Node node = model.getNodeModel().getNode();
+            Node child = null;
+            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = node.getParent();
+            }
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (NodeIterator iter = node.getNodes(HippoNodeType.NT_REQUEST); iter.hasNext(); ) {
+                    child = iter.nextNode();
+                    if(child.isNodeType(HippoNodeType.NT_REQUEST)) {
+                        node = child;
+                        if(child.hasProperty("type") && !child.getProperty("type").getString().equals("rejected")) {
+                            break;
+                        }
+                    } else {
+                        child = null;
+                    }
+                }
+            }
+            if(node == null || !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+                node = null;
+                cancelable = false;
+            } else {
+                if(node.hasProperty("username") && node.getProperty("username").getString().equals(node.getSession().getUserID())) {
+                    cancelable = true;
+                } else {
+                    cancelable = false;
+                }
+            }
+        } catch (RepositoryException ex) {
+            // status unknown, maybe there are legit reasons for this, so don't emit a warning
+            log.info(ex.getClass().getName()+": "+ex.getMessage());
+        }
     }
 }
