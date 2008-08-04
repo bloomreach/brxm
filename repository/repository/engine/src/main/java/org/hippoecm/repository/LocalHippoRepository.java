@@ -45,6 +45,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
@@ -68,6 +69,9 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
@@ -96,13 +100,16 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
+    /** hippo decorated root session */
+    private HippoSession rootSession;
+    
     protected final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
     private JackrabbitRepository jackrabbitRepository = null;
     private DecoratorFactoryImpl hippoRepositoryFactory;
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
-    private boolean dump = false;
+    private final boolean dump = false;
 
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
@@ -124,10 +131,12 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             return new LocalHippoRepository(location);
     }
 
+    @Override
     public String getLocation() {
         return super.getLocation();
     }
 
+    @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
@@ -217,13 +226,12 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
 
         try {
-            // get the current root/system session for the default workspace
-            Session rootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
-            Workspace workspace = rootSession.getWorkspace();
-            NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
+            // get the current root/system session for the default workspace for namespace and nodetypes init
+            Session jcrRootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
 
             try {
-                initializeNamespace(nsreg, NAMESPACE_PREFIX, NAMESPACE_URI);
+                log.info("Initializing hippo namespace");
+                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
             } catch (UnsupportedRepositoryOperationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
@@ -233,8 +241,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             try {
                 String cndName = "repository.cnd";
                 log.info("Initializing nodetypes from: " + cndName);
-                initializeNodetypes(workspace, getClass().getResourceAsStream(cndName), cndName);
-                rootSession.save();
+                initializeNodetypes(jcrRootSession.getWorkspace(), getClass().getResourceAsStream(cndName), cndName);
+                jcrRootSession.save();
             } catch (ConstraintViolationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             } catch (InvalidItemStateException ex) {
@@ -253,6 +261,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             }
 
+            // After initializing namespaces and nodetypes switch to the decorated session.
+            rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            
+            
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
                 try {
@@ -345,14 +357,14 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
-
+            
             refresh();
 
             /* Register a listener for the initialize node.  Whenever a node
              * or property is added, refresh the tree.  Processed properties
              * are deleted, so they will not be processed more than once.
              */
-            ObservationManager obMgr = workspace.getObservationManager();
+            ObservationManager obMgr = rootSession.getWorkspace().getObservationManager();
             listener = new EventListener() {
                 public void onEvent(EventIterator events) {
                     refresh();
@@ -371,10 +383,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
      */
     private void refresh() {
         try {
-            Session rootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-
+            
+            
             Node configurationNode = rootSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
             if (configurationNode.hasNode(HippoNodeType.INITIALIZE_PATH)) {
                 Node initializationNode = null;
@@ -712,7 +724,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
-            session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            
+            ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_SKIP);
+
         } catch (IOException ex) {
             log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (PathNotFoundException ex) {
@@ -732,6 +747,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
+    @Override
     public synchronized void close() {
         Session session = null;
         if (dump && repository != null) {
