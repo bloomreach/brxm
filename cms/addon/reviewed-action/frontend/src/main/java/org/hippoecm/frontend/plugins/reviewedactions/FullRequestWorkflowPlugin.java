@@ -48,13 +48,5 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                         workflow.rejectRequest(""); // FIXME
                     }
         });
-        addWorkflowAction("cancelRequest-dialog", new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
-
-            public void execute(Workflow wf) throws Exception {
-                FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                workflow.cancelRequest();
-            }
-        });
     }
 }
