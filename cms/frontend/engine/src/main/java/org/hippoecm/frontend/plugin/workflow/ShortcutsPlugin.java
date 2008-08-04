@@ -66,7 +66,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
     private Map<String, ModelService> models;
     private IModel model;
     private int pluginCount;
-    private String pluginsQuery = "/jcr:root//element(*,frontend:plugin)[@wicket.id='shortcut']";
+    private String pluginsQuery = "/jcr:root/hippo:configuration/hippo:frontend/shortcuts/node()";
 
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
         super("id"); 
