@@ -28,6 +28,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     final static String SVN_ID = "$Id$";
 
     private static long lastUpdate = 0;
+    private static boolean syncRunning = false;
     private final static Object mutex = new Object();
 
     private static long cacheTime;
@@ -100,24 +101,29 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     @Override
     public void sync() {
         synchronized (mutex) {
-            cacheTime = DEFAULT_CACHE_TIME;
-            try {
-                if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
-                    cacheTime = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
-                }
-            } catch (RepositoryException e) {
-                log.info("No refresh time found using default of: {} ms.", cacheTime);
-            }
-            if ((System.currentTimeMillis() - lastUpdate) < cacheTime) {
-                // keep using cache
+            if (syncRunning) {
                 return;
             }
-            log.debug("Start ldap sync");
-            ((LdapUserManager) userManager).updateUsers();
-            ((LdapGroupManager) groupManager).updateGroups();
-            lastUpdate = System.currentTimeMillis();
-            log.info("Ldap users and groups synced.");
+            syncRunning = true;
         }
+        cacheTime = DEFAULT_CACHE_TIME;
+        try {
+            if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
+                cacheTime = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
+            }
+        } catch (RepositoryException e) {
+            log.info("No refresh time found using default of: {} ms.", cacheTime);
+        }
+        if ((System.currentTimeMillis() - lastUpdate) < cacheTime) {
+            // keep using cache
+            return;
+        }
+        log.debug("Start ldap sync");
+        ((LdapUserManager) userManager).updateUsers();
+        ((LdapGroupManager) groupManager).updateGroups();
+        lastUpdate = System.currentTimeMillis();
+        log.info("Ldap users and groups synced.");
+        syncRunning = false;
     }
     
     @Override
