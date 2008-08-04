@@ -15,26 +15,28 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-   <div class="actionspanel">
-     <h3 class="documentInfo">
-       <span class="documentLocked document-lock-16" wicket:id="locked"/>
-       <span class="documentCaption" wicket:id="caption"/>
-       <span class="documentStatus" wicket:id="status"/>
-    </h3>
-    <ul>
-      <li>
-        <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
-      </li>
-      <li>
-        <a class="reqpublish_ico" wicket:id="requestPublication-dialog">Publish (request)</a>
-      </li>
-      <li>
-        <a class="reqdepublish_ico" wicket:id="requestDePublication-dialog">Take offline (request)</a>
-      </li>
-      <li>
-        <a class="reqdelete_ico" wicket:id="requestDeletion-dialog">Delete (request)</a>
-      </li>
-    </ul>
+    <div class="actionspanel">
+      <ul>
+        <li>
+          <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
+        </li>
+        <li>
+          <a class="reqpublish_ico" wicket:id="requestPublication-dialog">Publish (request)</a>
+        </li>
+        <li>
+          <a class="reqdepublish_ico" wicket:id="requestDePublication-dialog">Take offline (request)</a>
+        </li>
+        <li>
+          <a class="reqdelete_ico" wicket:id="requestDeletion-dialog">Delete (request)</a>
+        </li>
+      </ul>
+    </div>
+    <div class="actionspanel2">
+      <h3 class="documentInfo">
+        <span class="documentLocked document-lock-16" wicket:id="locked"/>
+        <span class="documentCaption" wicket:id="caption"/>
+        <span class="documentStatus" wicket:id="status"/>
+      </h3>
     </div>
   </wicket:panel>
 </html>
