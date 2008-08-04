@@ -194,12 +194,14 @@ public class DereferencedExportImportTest extends TestCase {
         assertTrue("Property value with space not found", encode.hasProperty("value_with_space"));
         assertTrue("Property value with encoded space not found", encode.hasProperty("value_with_encoded_space"));
         assertTrue("Property with space not found", encode.hasProperty("property with space"));
+        assertTrue("Property with space not found", encode.hasProperty("property_with_xml_<xml>"));
         assertTrue("Property with encoded space not found", encode
                 .hasProperty("property_x0020_with_x0020_encoded space"));
 
         assertEquals("my value", encode.getProperty("value_with_space").getString());
         assertEquals("my_x0020_value", encode.getProperty("value_with_encoded_space").getString());
         assertEquals("dummy", encode.getProperty("property with space").getString());
+        assertEquals("dummy", encode.getProperty("property_with_xml_<xml>").getString());
         assertEquals("dummy", encode.getProperty("property_x0020_with_x0020_encoded space").getString());
     }
     
