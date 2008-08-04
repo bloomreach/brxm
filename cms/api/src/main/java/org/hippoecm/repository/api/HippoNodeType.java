@@ -113,6 +113,7 @@ public interface HippoNodeType {
     final public static String HIPPO_DOCUMENTS = "hippo:documents";
     final public static String HIPPO_DOMAINSPATH = "hippo:domainspath";
     final public static String HIPPO_EQUALS = "hippo:equals";
+    final public static String HIPPO_EXTENSIONSOURCE = "hippo:extensionsource";
     final public static String HIPPO_FACET = "hippo:facet";
     final public static String HIPPO_FACETS = "hippo:facets";
     final public static String HIPPO_FIELD = "hippo:field";
