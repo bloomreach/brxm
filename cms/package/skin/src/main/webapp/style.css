@@ -162,6 +162,8 @@ div.slidercontrol a:hover{cursor: s-resize}
 .panelcontainer h2 span{font-family: arial, helvetica, sans-serif; display: block; padding: 4px; background-position: left right; background-repeat: no-repeat; font-size: 18px; color: #666666; font-weight: normal}
 
 .panelHead{background: url("images/inactiveView.gif") repeat-x top left; height: 30px;}
+#browse-perspective-center-body .panelHead{background: url("images/inactiveView.gif") top left; height: 60px;}
+
 body div.actionspanel{
 padding: 6px;
 }
@@ -173,11 +175,21 @@ div.iconactions div.renderItem{float: left; background: url("images/devider.png"
 
 /* action titles and documentInfo */
 div.iconactions h3{color: white; display: none;}
-div.iconactions h3.documentInfo{display: block; float: left; color: #666666; padding-top: 2px; margin-right: 15px; background: url("images/devider.png") no-repeat center right; padding-right: 15px;}
+div.iconactions h3.documentInfo{display: block; float: left; color: #666666; padding-top: 0px; margin-right: 15px; background: url("images/devider.png") no-repeat center right; padding-right: 15px;}
 div.iconactions h3.documentInfo span.documentLocked{color: black; display: block; float: left; background-repeat: no-repeat; background-position: center center; margin-right: 10px; height: 16px; width: 16px;}
 div.iconactions h3.documentInfo span.documentStatus{padding-left: 5px; display; block;}
 div.iconactions h3.documentInfo span.documentCaption{display; block}
 
+.actionspanel2 {
+  margin-left: -120px;
+  padding-top: 24px;    
+}
+
+.versionToggle {
+  position:relative;
+  float:left;
+  clear: both;
+}
 
 div.actionspanel ul{float: left}
 div.actionspanel ul li{margin-right: 15px; float: left;}
@@ -375,7 +387,7 @@ div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: bl
 #editor-perspective-wrapper div.panelcontainer{border-top: none; background: white;}
 
 div.editor{
-padding:4px;
+padding:0px;
 background: url("images/panelBack.png") repeat-x;
 }
 
@@ -404,17 +416,17 @@ ul.fieldtypes{background: #f2f2f2;}
 ul.fieldtypes li {background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat; padding-top: 4px; padding-bottom: 2px; padding-left: 20px;}
 
 /* edit template item */
-div#templateitemedit{background: none;width: 200px;}
+div#templateitemedit{background: none;/*width: 200px;*/}
 div#templateitemedit .renderItem{height: auto; background: transparent;}
-div#templateitemedit .actionspanel{background: #f2f2f2; margin: 5px;}
+div#templateitemedit .actionspanel{background: #f2f2f2; margin: 5px; padding-left:4px;padding-right:4px;}
 div#templateitemedit .actionspanel h3{font-size: 14px; margin-top: 10px; margin-bottom: 6px; display: block; color: #666666;}
-div#templateitemedit .actionspanel div {width: 100%;}
+div#templateitemedit .actionspanel div {width: auto;}
 div#templateitemedit .actionspanel div div h3{font-size: 12px; margin-top: 6px; margin-bottom: 4px;}
 div.fieldedit table{margin-top: 4px;}
 div.fieldedit table tr td{padding:3px;}
 
 div#templateitemedit h3.name {color: black; margin-bottom: 4px;}
-div#templateitemedit input{width: 140px;}
+div#templateitemedit input{width: 100%;}
 
 /* template model edit */
 .templatedetails div.templateItem,
