@@ -76,6 +76,14 @@ the following URL, and checkout those in stead of the trunk:<br/>
 <code>https://svn.hippocms.org/repos/hippo/hippo-ecm/branches/Release-HREPTWO-v2_01_00_M0</code>
 </div><br/><br/>
 
+<p>
+At this time, make sure that any versions referenced in the documentation
+are up-to-date.  In the pre-release milestones, the downloadable WARs and
+EARs are referenced in the documentation and include the svn revision
+number.  Check, change and commit (in the branch if created a branch) the
+updated links in the documentation.
+</p>
+
 </subsection>
 <subsection name="Releasing in subversion">
 
@@ -130,7 +138,9 @@ mvn release:prepare \
 Again release the tag should be set to the same value as before and
 while executing the same values need to be entered.  You should replace
 the number in <code>HREPTWO-0</code> with the Jira issue tag number you
-started out with in this description.
+started out with in this description.  Note that you cannot use
+spaces in the scmCommentPrefix due to limitations of the maven release
+plugin.
 </p>
 
 </subsection>
@@ -143,11 +153,6 @@ First checkout the tagged version of hippo-ecm:
 <source>
 svn checkout 'https://svn.hippocms.org/repos/hippo/hippo-ecm/tags/Release-HREPTWO-v2_01_00_M0' hippo-ecm-M0
 cd hippo-ecm-M0
-</source>
-
-Now do a full build, including running the unit tests:
-<source>
-mvn install
 </source>
 
 <p>
@@ -178,7 +183,7 @@ server.
 Now deploy the build targets, i.e. upload to the public maven repository, using:
 </p>
 <source>
-mvn deploy:deploy
+mvn deploy
 </source>
 
 <p>
