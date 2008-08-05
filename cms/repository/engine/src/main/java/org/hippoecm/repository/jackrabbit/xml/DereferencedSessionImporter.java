@@ -63,9 +63,9 @@ public class DereferencedSessionImporter implements Importer {
     private long startTime;
 
     /** Keep a list of nodeId's that need revisiting for dereferencing */
-    private Map<NodeId, Reference> derefNodes = new HashMap<NodeId, Reference>();
+    private final Map<NodeId, Reference> derefNodes = new HashMap<NodeId, Reference>();
 
-    private Stack<NodeImpl> parents;
+    private final Stack<NodeImpl> parents;
 
     /**
      * Creates a new <code>SessionImporter</code> instance.
@@ -182,8 +182,9 @@ public class DereferencedSessionImporter implements Importer {
 
         if (def.isAutoCreated() && conflicting.isNodeType(ntName)) {
             // this node has already been auto-created, no need to create it
-            log.debug("skipping autocreated node " + conflicting.safeGetJCRPath());
-            return null;
+            log.debug("Overwriting autocreated node " + conflicting.safeGetJCRPath());
+            conflicting.remove();
+            return nodeInfo;
         }
         if (mergeBehavior == ImportMergeBehavior.IMPORT_MERGE_SKIP) {
             String msg = "Import merge skip node " + conflicting.safeGetJCRPath();
@@ -290,7 +291,7 @@ public class DereferencedSessionImporter implements Importer {
      * {@inheritDoc}
      */
     public void startNode(NodeInfo nodeInfo, List propInfos) throws RepositoryException {
-        NodeImpl parent = (NodeImpl) parents.peek();
+        NodeImpl parent = parents.peek();
 
         // process node
         NodeImpl node = null;
@@ -379,7 +380,7 @@ public class DereferencedSessionImporter implements Importer {
     public void end() throws RepositoryException {
         // loop over all nodeIds with references
         for (Iterator<Map.Entry<NodeId, Reference>> it = derefNodes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<NodeId, Reference> nodeRef = (Map.Entry<NodeId, Reference>) it.next();
+            Map.Entry<NodeId, Reference> nodeRef = it.next();
             NodeImpl node = session.getNodeById(nodeRef.getKey());
             Reference ref = nodeRef.getValue();
 
