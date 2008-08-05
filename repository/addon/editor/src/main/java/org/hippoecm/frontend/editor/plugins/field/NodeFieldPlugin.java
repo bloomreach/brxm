@@ -58,7 +58,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
         NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, type, nodeModel.getItemModel());
-        if (!descriptor.isMultiple() && provider.size() == 0) {
+        if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
             provider.addNew();
         }
         return provider;
@@ -72,7 +72,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrNodeModel model = (JcrNodeModel) findModel(renderer);
+        final JcrNodeModel model = findModel(renderer);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
