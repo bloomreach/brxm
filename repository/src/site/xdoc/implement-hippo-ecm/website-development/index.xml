@@ -30,24 +30,7 @@
           Toolkit. This section describes helps you get started with the Hippo Site Toolkit, and develop
           your own websites in a Hippo ECM enviroment.
         </p>
-        
-
-        <ul>
-          <li>
-            <a href="getting-started.html">Getting Started</a>
-            - Learn how to get up and running with your own project
-          </li>
-          <li>
-            <a href="hello-world.html">Hello World</a>
-            - See a trivial example of a Hippo ECM based website
-          </li>
-          <li>
-            <a href="navigation.html">Navigation</a>
-            - Add a navigation to your website
-          </li>
-        </ul>
-              
-
+    
       </section>
     </body>
 </document>
