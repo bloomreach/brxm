@@ -153,9 +153,9 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                     @Override
                     protected void onComponentTag(ComponentTag tag) {
                         if(nodeItem.isHandle()) {
-                            tag.put("src", "/skin/images/icons/document-16.png");
+                            tag.put("src", "skin/images/icons/document-16.png");
                         } else {
-                            tag.put("src", "/skin/images/icons/folder-16.png");
+                            tag.put("src", "skin/images/icons/folder-16.png");
                         }
                         super.onComponentTag(tag);
                     }
