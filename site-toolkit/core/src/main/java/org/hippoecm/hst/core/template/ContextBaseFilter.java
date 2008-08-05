@@ -26,7 +26,9 @@ public class ContextBaseFilter extends HstFilterBase implements Filter {
 	private String contextBasePath;
 	private String requestAttributeName;
 	
+	
 	public void init(FilterConfig filterConfig) throws ServletException {
+		super.init(filterConfig);
 		urlPrefix = getInitParameter(filterConfig, URLBASE_INIT_PARAMETER);
 		contextBasePath = getInitParameter(filterConfig, REPOSITORYLOCATION_INIT_PARAMETER);
 		requestAttributeName = getInitParameter(filterConfig, ATTRIBUTENAME_INIT_PARAMETER);		

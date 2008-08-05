@@ -32,11 +32,18 @@ public abstract class HstFilterBase implements Filter {
 	
 	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/";
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
-	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:configuration/hst:sitemap";	
+	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:sitemap";
+	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
+	
+	private String hstConfigurationUrl;
 	
 	private String [] ignoreList = {".gif", ".jpg"};
 	
 	private static final Logger log = LoggerFactory.getLogger(HstFilterBase.class);
+	
+	public void init(FilterConfig filterConfig) throws ServletException {		
+		hstConfigurationUrl = getInitParameter(filterConfig, HSTCONFIGURATION_LOCATION_PARAMETER);
+	}
 	
 	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
@@ -79,7 +86,7 @@ public abstract class HstFilterBase implements Filter {
 		Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
 		
 		
-		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
+		Node siteMapRootNode = templateContextBase.getRelativeNode(hstConfigurationUrl+SITEMAP_RELATIVE_LOCATION);
 		 
 	    NodeIterator subNodes =  siteMapRootNode.getNodes();
 	    while  (subNodes.hasNext()) {

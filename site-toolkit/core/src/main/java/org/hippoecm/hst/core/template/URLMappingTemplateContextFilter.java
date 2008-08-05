@@ -41,35 +41,20 @@ import org.slf4j.LoggerFactory;
 
 
 public class URLMappingTemplateContextFilter extends HstFilterBase implements Filter {
-	/* use this if relative paths are used in the configuration
-	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration";
-	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
-	
-	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration";
-	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
-	*/
-	
-	
-	
 
 	public static final String SITEMAP_CONTEXTBASE_NAME = "siteMapContextBase";
-	
-	//public static final String NAVIGATION_LOCATION = "/hst:configuration/hst:navigation";
-	//public static final String CONTENT_LOCATION = "";
 	
 	public static final String PAGENODE_REQUEST_ATTRIBUTE = "pageNode";
 	public static final String JCRSESSION_REQUEST_ATTRIBUTE = "jcrSession";
 	public static final String NAVIGATION_REQUEST_ATTRIBUTE = "hstNavigationMapLocation";
 	
 	public static final String NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE = "navigationContextBase";
-	public static final String NAVIGATION_CONTEXTBASE_LOCATION = "/hst:configuration/hst:navigation";
-	public static final String NAVIGATION_CONTEXTBASE_NAME = "navigationContext";
-	
+	public static final String NAVIGATION_CONTEXTBASE_NAME = "navigationContext";	
 	
 	private static final Logger log = LoggerFactory.getLogger(URLMappingTemplateContextFilter.class);
 	
-	
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig filterConfig) throws ServletException {
+		super.init(filterConfig);
 	}
 	  
 	public void destroy() {
@@ -107,7 +92,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            	
 	            	HttpServletRequestWrapper wrappedRequest = urlTokenizer.getWrappedRequest(request);
 	            	//get navigation contextBase
-	            	//ContextBase navigationContextBase = new ContextBase(NAVIGATION_CONTEXTBASE_NAME, NAVIGATION_CONTEXTBASE_LOCATION, request);
 	            	
 	            	//set attributes
 	            	wrappedRequest.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
@@ -162,31 +146,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	}
 	
 	/**
-	 * 
-	 * @param request
-	 * @return
-	 * @throws ServletException
-	 */
-	/*private ContextBase getContextBase(HttpServletRequest request) throws ServletException {
-		
-		String currentContextAttributeName = (String) request.getAttribute(HstFilterBase.CURRENT_CONTEXT_ATTRIBUTE);
-		if (currentContextAttributeName != null) {
-		   ContextBase base = (ContextBase) request.getAttribute(currentContextAttributeName);
-		   if (base != null) {
-			   return base;
-		   }
-		}
-		try {
-			return ContextBase.getDefaultContextBase(request);
-		} catch (PathNotFoundException e) {		
-			throw new ServletException("No valid ContextBase available", e);			
-		} catch (RepositoryException e) {		
-			throw new ServletException("No valid ContextBase available", e);			
-		}
-	}*/
-	
-	
-	/**
 	 * Determines if the parameter is a 'real' pattern or just a regular String.
 	 * (only checks for + and * for now...)
 	 * @param s
@@ -196,20 +155,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 		return s.contains("+") ||
 		       s.contains("*");
 	}
-	
-	/*public static Map <String, PageNode> getPageNodes(ContextBase templateContextBase) throws RepositoryException {
-		Map<String, PageNode> pageNodes = new HashMap<String, PageNode>();
-		Node siteMapRootNode =  templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
-		  NodeIterator subNodes =  siteMapRootNode.getNodes();
-		    while (subNodes.hasNext()) {
-		    	PageNode n = new PageNode(templateContextBase, (Node) subNodes.next());
-		    	pageNodes.put(n.getURLMappingValue(), n);
-		    	
-		    }
-		return pageNodes;
-	}*/
-	
-	
 	
 	private static Node getNodeByAbsolutePath(final Session session, final String path) throws PathNotFoundException, RepositoryException{
 		String relPath = path.startsWith("/") ? path.substring(1) : path;
