@@ -20,14 +20,23 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 
 public interface RemoteQuery extends org.apache.jackrabbit.rmi.remote.RemoteQuery, Remote, Serializable {
     final static String SVN_ID = "$Id$";
 
+    public String storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException,
+            VersionException, ConstraintViolationException, LockException, UnsupportedRepositoryOperationException,
+            RepositoryException, RemoteException;
     public String[] getArguments() throws RepositoryException, RemoteException;
     public int getArgumentCount() throws RepositoryException, RemoteException;
     public RemoteQueryResult execute(Map<String,String> arguments) throws RepositoryException, RemoteException;

@@ -17,15 +17,25 @@ package org.hippoecm.repository.api;
 
 import java.util.Map;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 
 public interface HippoQuery extends Query {
     final static String SVN_ID = "$Id$";
 
     public static final String HIPPOQL = "HIPPOQL";
+
+    public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException;
 
     public String[] getArguments() throws RepositoryException;
 
