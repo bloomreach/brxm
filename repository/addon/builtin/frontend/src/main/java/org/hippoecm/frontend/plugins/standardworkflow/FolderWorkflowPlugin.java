@@ -183,8 +183,10 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         }
         try {
             Workflow workflow = manager.getWorkflow(model.getWorkflowDescriptor());
-            FolderWorkflow folderWorkflow = (FolderWorkflow)workflow;
-            templates = folderWorkflow.list();
+            if(workflow instanceof FolderWorkflow) {
+                FolderWorkflow folderWorkflow = (FolderWorkflow)workflow;
+                templates = folderWorkflow.list();
+            }
         } catch (MappingException ex) {
         } catch (WorkflowException ex) {
         } catch (RepositoryException ex) {
