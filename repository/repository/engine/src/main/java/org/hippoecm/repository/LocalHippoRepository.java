@@ -267,28 +267,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
-                try {
-                    InputStream configuration = getClass().getResourceAsStream("configuration.xml");
-                    if (configuration != null) {
-                        initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName()+".configuration.xml");
-                        rootSession.save();
-                    } else {
-                        log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
-                    }
-                } catch (AccessDeniedException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (ConstraintViolationException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (InvalidItemStateException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (ItemExistsException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (LockException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (NoSuchNodeTypeException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
-                } catch (VersionException ex) {
-                    throw new RepositoryException("Could not initialize repository with configuration content", ex);
+                InputStream configuration = getClass().getResourceAsStream("configuration.xml");
+                if (configuration != null) {
+                    initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
+                } else {
+                    log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                 }
             } else {
                 log.info("Initial configuration content already present");
@@ -313,6 +296,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                  *         URL configurationURL = (URL) iter.nextElement();
                  *         extensions.addend(configurationURL);
                  *     }
+                 * TODO: Use merge behavior from dereferenced import? [BvdS]    
                  */
                 for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
                     URL configurationURL = (URL) iter.next();
@@ -381,7 +365,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /**
      * TODO: Needs refactoring! Move to separate class
      */
-    private void refresh() {
+    private synchronized void refresh() {
         try {
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
@@ -724,10 +708,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
-            
             ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                     ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_SKIP);
-
+            session.save();
         } catch (IOException ex) {
             log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (PathNotFoundException ex) {
@@ -744,6 +727,12 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
         } catch (RepositoryException ex) {
             log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+        } finally {
+            try {
+                session.refresh(false);
+            } catch (RepositoryException ex) {
+                log.error("Error refreshing session while initilizing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            }
         }
     }
 
