@@ -63,7 +63,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     private JcrNodeModel nodeModel;
     private String uuid = null;
     private String urlValue = null;
-    private String selectedimg = "/skin/images/empty.gif";
+    private String selectedimg = "skin/images/empty.gif";
     
     /*
      * Image resource nodes various formats
