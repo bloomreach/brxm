@@ -18,12 +18,20 @@ package org.hippoecm.repository.decorating.client;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
+
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.remote.RemoteQuery;
 
@@ -38,6 +46,22 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
         super(session, remote, factory);
         this.session = session;
         this.remote = remote;
+    }
+
+    public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
+        try {
+            String path = remote.storeAsNode(absPath, type);
+            if(path != null && path.length() > 0) {
+                if(path.equals("/"))
+                    return session.getRootNode();
+                else 
+                    return session.getRootNode().getNode(path.substring(1));
+            } else
+                return null;
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
     }
 
     public String[] getArguments() throws RepositoryException {

@@ -28,6 +28,7 @@ import javax.jcr.query.QueryResult;
 
 import junit.framework.TestCase;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 
 public class HippoQueryTest extends TestCase {
@@ -61,55 +62,27 @@ public class HippoQueryTest extends TestCase {
         server.close();
     }
 
-    public void testMangle() throws RepositoryException {
+    public void testStoreAsNodeWithType() throws RepositoryException {
         Query query;
-        Node node;
+        Node node, parent;
 
-        query = qmgr.createQuery("foo//bar$x/qux", Query.XPATH);
+        query = qmgr.createQuery("//node()", Query.XPATH);
         node = query.storeAsNode("/test/query");
-        assertEquals("foo//barMAGICxCIGAM/qux",node.getProperty("jcr:statement").getString());
+        parent = node.getParent();
+        parent.save();
+        assertTrue(node.isNodeType("nt:query"));
+        assertFalse(node.isNodeType(HippoNodeType.NT_QUERY));
         node.remove();
+        parent.save();
 
-        query = qmgr.createQuery("foo//bar[@x='$']/qux", Query.XPATH);
-        node = query.storeAsNode("/test/query");
-        assertEquals("foo//bar[@x='$']/qux",node.getProperty("jcr:statement").getString());
+        query = qmgr.createQuery("//node()", Query.XPATH);
+        assertTrue(query instanceof HippoQuery);
+        node = ((HippoQuery)query).storeAsNode("/test/query", HippoNodeType.NT_QUERY);
+        parent = node.getParent();
+        parent.save();
+        assertTrue(node.isNodeType("nt:query"));
+        assertTrue(node.isNodeType(HippoNodeType.NT_QUERY));
         node.remove();
-    }
-
-    public void testSimple() throws RepositoryException {
-        Query query = qmgr.createQuery("test//$which[p='x']", Query.XPATH);
-        query.storeAsNode("/test/query");
-        Node queryNode = session.getRootNode().getNode("test/query");
-        query = qmgr.getQuery(queryNode);
-        HippoQuery advancedQuery = (HippoQuery) query;
-
-        assertEquals(1, advancedQuery.getArgumentCount());
-        String[] queryArguments = advancedQuery.getArguments();
-        assertNotNull(queryArguments);
-        assertEquals(1, queryArguments.length);
-        assertEquals("which", queryArguments[0]);
-        Map<String,String> arguments = new TreeMap<String,String>();
-        arguments.put("which","test1");
-        QueryResult result = advancedQuery.execute(arguments);
-        int count = 0;
-        for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-            ++count;
-            Node node = iter.nextNode();
-            assertEquals("/test/docs/test1", node.getPath());
-        }
-        assertEquals(1, count);
-    }
-
-    public void testReverseMangle() throws RepositoryException {
-        Query query;
-        Node node;
-
-        query = qmgr.createQuery("//$a", Query.XPATH);
-        node = query.storeAsNode("/test/query");
-        assertEquals("//MAGICaCIGAM",node.getProperty("jcr:statement").getString());
-        query = qmgr.getQuery(node);
-        assertEquals(Query.XPATH, query.getLanguage());
-        assertEquals("//$a", query.getStatement());
-        node.remove();
+        parent.save();
     }
 }

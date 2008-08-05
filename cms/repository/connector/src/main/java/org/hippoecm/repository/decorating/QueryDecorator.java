@@ -82,7 +82,18 @@ public abstract class QueryDecorator extends AbstractDecorator implements HippoQ
     public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         Node node = query.storeAsNode(absPath);
-        return factory.getNodeDecorator(session, node);
+	return node;
+    }
+
+    public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
+            ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
+        if(!absPath.startsWith("/")) {
+                throw new RepositoryException(absPath + " is not an absolute path");
+        }
+        Node queryNode = session.getRootNode().addNode(absPath.substring(1), type);
+        queryNode.setProperty("jcr:language", getLanguage());
+        queryNode.setProperty("jcr:statement", getStatement());
+        return factory.getNodeDecorator(session, queryNode);
     }
 
     /**

@@ -18,11 +18,19 @@ package org.hippoecm.repository.decorating.server;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.ItemExistsException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteQueryResult;
 import org.apache.jackrabbit.rmi.server.ServerQueryResult;
+
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.remote.RemoteQuery;
 
@@ -35,6 +43,13 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
     public ServerQuery(HippoQuery query, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(query, factory);
         this.query = query;
+    }
+
+    public String storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException,
+            VersionException, ConstraintViolationException, LockException, UnsupportedRepositoryOperationException,
+            RepositoryException, RemoteException {
+        Node node = query.storeAsNode(absPath, type);
+        return node.getPath();
     }
 
     public String[] getArguments() throws RepositoryException {
