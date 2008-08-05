@@ -162,7 +162,7 @@ div.slidercontrol a:hover{cursor: s-resize}
 .panelcontainer h2 span{font-family: arial, helvetica, sans-serif; display: block; padding: 4px; background-position: left right; background-repeat: no-repeat; font-size: 18px; color: #666666; font-weight: normal}
 
 .panelHead{background: url("images/inactiveView.gif") repeat-x top left; height: 30px;}
-#browse-perspective-center-body .panelHead{background: url("images/inactiveView.gif") top left; height: 60px;}
+#browse-perspective-center-body div.panelHead{background: url("images/inactiveView.gif") top left; height: 60px;}
 
 body div.actionspanel{
 padding: 6px;
