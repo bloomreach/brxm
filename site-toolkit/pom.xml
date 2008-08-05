@@ -18,19 +18,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- when moved into hippoecm this needs to be switched on -->
-  <!--<parent>
-    <groupId>org.hippoecm</groupId>
-    <artifactId>hippo-ecm</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
-    <relativePath>..</relativePath>
-  </parent>-->
-
   <name>Hippo Site Toolkit ECM edition</name>
   <description>Hippo Site Toolkit ECM edition</description>
   <groupId>org.hippoecm.hst</groupId>
   <artifactId>hippo-ecm-hst</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
+  <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -40,8 +32,8 @@
   </scm>
 
   <modules>
-    <!--<module>core</module>
-    <module>taglib</module>-->
+    <module>core</module>
+    <!--<module>taglib</module>-->
     <module>addon</module>
     <!--<module>skeleton</module>
     <module>sample</module>-->
