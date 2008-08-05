@@ -37,4 +37,6 @@ public interface ITemplateEngine extends IClusterable {
 
     IClusterConfig getTemplate(ITypeDescriptor type, String mode);
 
+    IModel getPrototype(ITypeDescriptor type);
+
 }

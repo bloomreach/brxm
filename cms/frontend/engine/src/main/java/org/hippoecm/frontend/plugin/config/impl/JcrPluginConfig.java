@@ -176,7 +176,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
                     }
                     return result;
                 } else {
-                    log.warn("Property is not multiple");
+                    return new String[] { property.getValue().getString() };
                 }
             }
         } catch (RepositoryException ex) {

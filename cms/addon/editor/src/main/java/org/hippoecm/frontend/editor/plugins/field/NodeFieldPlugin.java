@@ -57,7 +57,8 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     @Override
     protected AbstractProvider<JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
             JcrNodeModel nodeModel) {
-        NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, type, nodeModel.getItemModel());
+        JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
+        NodeTemplateProvider provider = new NodeTemplateProvider(descriptor, prototype, nodeModel.getItemModel());
         if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
             provider.addNew();
         }

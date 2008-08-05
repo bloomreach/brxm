@@ -22,14 +22,14 @@ import java.util.Set;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +42,12 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
     private static final Logger log = LoggerFactory.getLogger(NodeTemplateProvider.class);
 
     private IFieldDescriptor descriptor;
-    private ITypeDescriptor type;
+    private JcrNodeModel prototype;
 
-    public NodeTemplateProvider(IFieldDescriptor descriptor, ITypeDescriptor type, JcrItemModel itemModel) {
+    public NodeTemplateProvider(IFieldDescriptor descriptor, JcrNodeModel prototype, JcrItemModel itemModel) {
         super(itemModel);
         this.descriptor = descriptor;
-        this.type = type;
+        this.prototype = prototype;
     }
 
     public IFieldDescriptor getDescriptor() {
@@ -57,7 +57,9 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
     @Override
     public void detach() {
         descriptor.detach();
-        type.detach();
+        if (prototype != null) {
+            prototype.detach();
+        }
         super.detach();
     }
 
@@ -65,12 +67,17 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
     public void addNew() {
         load();
 
-        try {
-            Node parent = (Node) getItemModel().getObject();
-            Node node = parent.addNode(descriptor.getPath(), type.getType());
-            elements.addLast(new JcrNodeModel(node));
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        if (prototype != null) {
+            try {
+                Node parent = (Node) getItemModel().getObject();
+                HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
+                Node node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
+                elements.addLast(new JcrNodeModel(node));
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.warn("No prototype available to initialize child node");
         }
     }
 
@@ -144,21 +151,13 @@ public class NodeTemplateProvider extends AbstractProvider<JcrNodeModel> {
         elements = new LinkedList<JcrNodeModel>();
         try {
             Node node = (Node) getItemModel().getObject();
-            if (type.isNode()) {
-                // expand the name-pattern
-                NodeIterator iterator = node.getNodes(descriptor.getPath());
-                while (iterator.hasNext()) {
-                    Node child = iterator.nextNode();
-                    // add child if it is not excluded.
-                    // TODO: filter on node type
-                    addTemplate(new JcrItemModel(child));
-                }
-            } else {
-                PropertyIterator iterator = node.getProperties(descriptor.getPath());
-                while (iterator.hasNext()) {
-                    Property property = iterator.nextProperty();
-                    addTemplate(new JcrItemModel(property));
-                }
+            // expand the name-pattern
+            NodeIterator iterator = node.getNodes(descriptor.getPath());
+            while (iterator.hasNext()) {
+                Node child = iterator.nextNode();
+                // add child if it is not excluded.
+                // TODO: filter on node type
+                addTemplate(new JcrItemModel(child));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
