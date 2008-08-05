@@ -37,6 +37,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,8 +144,12 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
              */
             getModel().detach();
             queryNode.remove();
-            query.storeAsNode(parentNode.getPath() + "/" + nodeName);
-
+            if(query instanceof HippoQuery ) {
+                ((HippoQuery)query).storeAsNode(parentNode.getPath() + "/" + nodeName, HippoNodeType.NT_QUERY);
+            } else {
+                query.storeAsNode(parentNode.getPath() + "/" + nodeName);
+            }
+            
             incorrectquery = "";
             target.addComponent(incorrectqueryLabel);
 
