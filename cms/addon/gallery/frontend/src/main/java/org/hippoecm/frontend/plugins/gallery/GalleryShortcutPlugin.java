@@ -85,9 +85,21 @@ public class GalleryShortcutPlugin extends RenderPlugin {
             }
         }
         if(path == null) {
-            Panel link = new EmptyPanel("link");
-            link.add(new EmptyPanel("label"));
-            add(link);
+                AjaxLink link = new AjaxLink("link") {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void onClick(AjaxRequestTarget target) {
+                        }
+                    };
+                add(link);
+                link.setVisible(false);
+
+                Label label = new Label("label");
+                if(galleryText != null) {
+                    label.setModel(new Model(""));
+                }
+                link.add(label);
         }
     }
 }
