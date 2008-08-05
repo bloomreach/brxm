@@ -66,7 +66,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
         if (!descriptor.getPath().equals("*")) {
             JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + descriptor.getPath());
             ValueTemplateProvider provider = new ValueTemplateProvider(descriptor, type, itemModel);
-            if (!descriptor.isMultiple() && provider.size() == 0) {
+            if (ITemplateEngine.EDIT_MODE.equals(mode) && !descriptor.isMultiple() && provider.size() == 0) {
                 provider.addNew();
             }
             return provider;
@@ -82,7 +82,7 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
 
     @Override
     protected void onAddRenderService(Item item, IRenderService renderer) {
-        final JcrPropertyValueModel model = (JcrPropertyValueModel) findModel(renderer);
+        final JcrPropertyValueModel model = findModel(renderer);
 
         MarkupContainer remove = new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
