@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hst:configuration"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    xmlns:rep="internal"
+    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:hardhandle</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:configuration">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:configuration</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:paths" sv:type="String"/>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>unpublished</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+        </sv:property>
+        <sv:node sv:name="hst:modules">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:modules</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:paths" sv:type="String"/>
+        </sv:node>
+        <sv:node sv:name="hst:sitemap">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:sitemap</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:paths" sv:type="String"/>
+        </sv:node>
+        <sv:node sv:name="hst:navigation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:navigation</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:paths" sv:type="String"/>
+        </sv:node>
+        <sv:node sv:name="hst:layouts">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hst:layouts</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+                <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:paths" sv:type="String"/>
+        </sv:node>
+    </sv:node>
+    
+</sv:node>
