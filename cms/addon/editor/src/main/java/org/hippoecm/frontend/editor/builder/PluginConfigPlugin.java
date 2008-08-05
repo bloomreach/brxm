@@ -213,7 +213,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         IPluginConfig config = getPluginConfig();
         final IPluginContext context = getPluginContext();
         final ITemplateEngine origEngine = context.getService(config.getString("engine"), ITemplateEngine.class);
-        final ITemplateEngine engine = new TemplateEngine(context, new ITypeStore() {
+        final TemplateEngine engine = new TemplateEngine(context, new ITypeStore() {
             private static final long serialVersionUID = 1L;
 
             public ITypeDescriptor getTypeDescriptor(String type) {
@@ -232,6 +232,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         });
         final String engineId = getExtensionId(extension + ".engine");
         context.registerService(engine, engineId);
+        engine.setId(engineId);
 
         IClusterConfig templateConfig = new ClusterConfigDecorator(templateStore.getTemplate(typeDescriptor, "edit"),
                 newId());
