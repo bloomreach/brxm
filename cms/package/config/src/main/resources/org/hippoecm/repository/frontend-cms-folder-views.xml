@@ -18,10 +18,69 @@
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"
   xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+  xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.0"
   xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:clusterfolder</sv:value>
   </sv:property>
+
+<sv:node sv:name="hippogallery:stdImageGallery">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+
+  <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:value>wicket.id</sv:value>
+    <sv:value>wicket.model</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="root">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${wicket.id}</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
+    <sv:property sv:name="list.page.size" sv:type="String">
+      <sv:value>5</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
+
+<sv:node sv:name="hippogallery:stdAssetGallery">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+
+  <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:value>wicket.id</sv:value>
+    <sv:value>wicket.model</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="root">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DocumentListingPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${wicket.id}</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
+    <sv:property sv:name="list.page.size" sv:type="String">
+      <sv:value>15</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
 
 <sv:node sv:name="hippostd:gallery">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -68,6 +127,32 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.TypesListingPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>${wicket.id}</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${wicket.model}</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>
+
+<sv:node sv:name="hippo:namespacefolder">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+
+  <sv:property sv:name="frontend:overrides" sv:type="String">
+    <sv:value>wicket.id</sv:value>
+    <sv:value>wicket.model</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="root">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.empty.EmptyPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${wicket.id}</sv:value>

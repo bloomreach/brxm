@@ -52,6 +52,12 @@
 + * (hippo:facetselect)
 
 [hippostd:gallery] > hippostd:folder
-// the children of this node are supposed to be images or other binary assets
-// ie. children conform to
+// the children of this node are supposed to be images or other assets
 
+// FIXME: these should be moved into seperate namespace
+
+[hippo:namespace] > hippostd:folder
++ * (hippo:templatetype) = hippo:templatetype
+
+[hippo:namespacefolder] > hippostd:folder
++ * (hippo:namespace) = hippo:namespace
