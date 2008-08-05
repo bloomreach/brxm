@@ -709,7 +709,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 session.getRootNode().addNode(relpath);
             }
             ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_SKIP);
+                    ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
             session.save();
         } catch (IOException ex) {
             log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
