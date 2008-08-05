@@ -700,16 +700,26 @@ public class HippoAccessManager implements AccessManager {
      */
     private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
 
+        boolean match = false;
+        
         // jcr:primaryType isn't really a property
         if (rule.getFacetName().equals(NameConstants.JCR_PRIMARYTYPE)) {
             // WILDCARD match, jcr:primaryType == *
             if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
-                return true;
+                match = true;
             }
-            if (nodeState.getNodeTypeName().equals(rule.getValueName())) {
-                return true;
+            else if (nodeState.getNodeTypeName().equals(rule.getValueName())) {
+                match = true;
+            } else {
+                match = false;
             }
-            return false;
+
+            // invert match on inequality
+            if (rule.isEqual()) {
+                return match;
+            } else {
+                return !match;
+            }
         }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
@@ -720,7 +730,6 @@ public class HippoAccessManager implements AccessManager {
         HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), rule.getFacetName());
         PropertyState state = (PropertyState) getItemState(propertyId);
         InternalValue[] iVals = state.getValues();
-        boolean match = false;
 
         for (InternalValue iVal : iVals) {
             // types must match
