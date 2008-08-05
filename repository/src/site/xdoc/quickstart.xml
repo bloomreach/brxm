@@ -29,22 +29,31 @@ Even when adding additional functionalities to Hippo ECM, you normally don't
 need to rebuild Hippo ECM.  This because more functionality can be added by
 simply adding the JARs containing the add-ons to the already packaged product,
 or uploading them into the running packaged product. Therefore, there is no
-need to do a rebuild from all the sources, one of the two pre-built packages can
+need to do a rebuild from all the sources, one of the pre-built packages can
 always be customized.
-
-The quickstart packages contain all the core packaged products, but have been pre-configured with a number of modules and
-settings, to give you a quick overview of the product, without having the
-laborious tasks to first enter content, create users, etcetera.
-
-Hippo ECM is a web-based application, and therefor is intended to run inside a servlet or application container.  These containers accept pre-built applications in the form of a WAR or EAR archive package, and provide basic functions to Hippo ECM and management of your application.
-To get you started quickly, first determine the platform you wish to use to run Hippo ECM.  Then;
+</p>
+<p>
+The quickstart packages contain all the core packaged products, but have been
+pre-configured with a number of modules and settings, to give you a quick
+overview of the product without having the laborious tasks to first enter
+content, create users, etcetera.
+</p>
+<p>
+Hippo ECM is a web-based application, and therefor is intended to run inside a
+servlet or application container.  These containers accept pre-built
+applications in the form of a WAR or EAR archive package, and provide basic
+functions to Hippo ECM and management of your application.
+<br/>
+To get you started quickly, first determine the application container platform
+you wish to use to run Hippo ECM.  Then;
 </p>
 <subsection name="Download">
 <p>
 Download either the WAR or EAR package.  For deployment in Tomcat or Jetty,
 use the WAR package. The EARs need less configuration and can grow with your needs, 
 but require an application container to run in.
-
+</p>
+<p>
 Notice: Hippo ECM has not been released.  The following downloads
 are snapshots of the current build.
 </p>
@@ -56,23 +65,86 @@ are snapshots of the current build.
   </blockquote>
 
 </subsection>
-<!-- below commented because not yet documented -->
-<!--subsection name="Deploy the application in the container">
-<p>
-Now follow the guidelines for the platform you are using:
-</p>
-<ul>
-  <li><a href="quickstart-tomcat.html">Deploy WAR in Tomcat</a></li>
-  <li><a href="quickstart-jetty.html">Deploy WAR in Jetty</a></li>
-  <li><a href="run-hippo-ecm/deploying-the-wars.html">Deploy EAR or WAR in glassfish</a></li>
-</ul>
-<p>
-Hippo ECM can also be deployed in other servlet or application containers.  Select the closest resembling container above and
-repoduce the steps adapted for your other container if your container is not
-listed above.
-</p>
-</subsection-->
 
+<subsection name="Deploy, run and access">
+
+<p>
+Below you find how to deploy the application in Tomcat, GlassFish or other
+application contains.  Once the application has been deployed and started, you
+can access the Hippo CMS under the URL:
+</p>
+
+  <source>
+http://localhost:8080/cms/
+  </source>
+<p>
+The port number may change if you configured you application or servlet
+container to run with a different port.  When deploy the application on a
+machine other than your local machine you need to change &quot;localhost&quot;
+to the correct machine name.
+</p>
+
+            <subsection name="Deploying in Tomcat 6.0">
+                <ol>
+                    <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
+                    <li>Unpack the zip</li>
+                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
+                    <li>Copy the WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
+                    <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
+                    <li>Open your browser and surf to http://localhost:8080/cms/</li>
+                </ol>
+            </subsection>
+
+            <subsection name="Deploying in Glassfish or other application servers">
+                <p>
+                  Once your have obtained the sample EAR and have started and configured your application
+                  server, you can proceed with deploying the EAR in the application server.  This procedure
+                  depends on the application server.  Hippo ECM does not require any special application
+                  dependent deployment procedure, nor does it dictate which application server environment
+                  is required.  As example we provide the procedure for
+                  <a href="http://glassfish.dev.java.net/">GlassFish</a>. Although the procedure
+                  is similar for other application servers, it does differ, so check the
+                  documentation of your application server.
+                </p>
+                <p>
+                  Go to the administration console of your GlassFish installation, once glassfish is running
+                  by accessing the following URL in your browser on the machine that runs the GlassFish
+                  instance:
+                </p>
+<source>
+http://localhost:4848/
+</source>
+                <p>
+                  Login using the username and password of the administrator you had selected during
+                  installation (default username is <code>admin</code> and default password is
+                  <code>adminadmin</code>.
+                </p>
+                <p>
+                  Select in the left pane &quot;Enterprise applications&quot;
+                </p>
+                <img src="images/glassfish1.gif" alt=""/>
+                <p>
+                  Then in the main pane select the button &quot;Deploy&quot;
+                </p>
+                <p>
+                  When the page has loaded make sure the &quot;Packaged file to be uploaded to the
+                  server&quot; is checked and use the browse button to select the build or downloaded EAR file
+                  of Hippo ECM.  Then just choose &quot;Ok&quot; to perform the deployment.
+                </p>
+                <img src="images/glassfish2.gif" alt=""/>
+                <p>
+                  Once the server has finished, the application is now available on your server on the
+                  configured hostname and portname, which is by default:
+                </p>
+<source>
+http://localhost:8080/
+</source>
+                <p>
+                  Note that the deployed location does not end with <code>/cms</code>
+                </p>
+            </subsection>
+            
+ </subsection>
  </section>
 
     </body>

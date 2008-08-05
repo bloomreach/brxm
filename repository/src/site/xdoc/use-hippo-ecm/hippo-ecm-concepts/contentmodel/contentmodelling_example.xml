@@ -49,7 +49,7 @@ site-myproject
 jcr:primaryType: hippo:facetselect
 hippo:facets: {language,state}
 hippo:values: {nl,published}
-hippo:modes:  {select,select}
+hippo:modes:  {select,prefer}
 hippo:docbase: <code>UUID of {/content-myproject}</code>
                   </source>
 
