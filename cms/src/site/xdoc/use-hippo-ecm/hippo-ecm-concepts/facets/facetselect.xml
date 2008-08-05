@@ -109,6 +109,16 @@ IsLarge
 `-- dog4                     Dog       Large     Adult
        </source>
         <p>
+          A facet select can have different modes.  Normally you use the mode
+          &quot;select&quot; which filters out any documents which contain the facet,
+          but the right one.  There is also a mode &quot;prefer&quot; which does not
+          filter the documents, but reorders them such that the matching document is the
+          first document in the list.  This way you can build a site which normally
+          displays localized documents, but falls back to the english version of the
+          document if no translation is available.  A &quot;prefer-single&quot; will
+          return only the first (i.e. best matching) document.
+        </p>
+        <p>
           You can even have a facet select, which filters a hierarchical tree which contains in turn another facet select. So, you can have facet selects in facet selects.
           Instead of a facetselect in a facetselect, you can have a <a href="/site/use-hippo-ecm/facets/facetsearch.html">facetsearch</a> node <b>inside</b> the result of a facetselect node!
           From this facetsearch node on, faceted navigation will be displayed.
