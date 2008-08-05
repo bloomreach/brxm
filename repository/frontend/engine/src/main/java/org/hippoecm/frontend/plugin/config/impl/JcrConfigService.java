@@ -15,16 +15,12 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,48 +42,7 @@ public class JcrConfigService implements IPluginConfigService {
     public IClusterConfig getCluster(String key) {
         IClusterConfig cluster;
         try {
-            if (key.indexOf('/') > 0) {
-                String provider = key.substring(0, key.indexOf('/'));
-                if ("template".equals(provider)) {
-                    String type = key.substring(key.indexOf('/') + 1);
-                    final String mode;
-                    int idx;
-                    if ((idx = type.indexOf('/')) > 0) {
-                        mode = type.substring(idx + 1);
-                        type = type.substring(0, idx);
-                    } else {
-                        mode = "edit";
-                    }
-                    Node templateNode = getTemplateNode(type);
-                    if (templateNode != null) {
-                        cluster = new JcrClusterConfig(new JcrNodeModel(templateNode)) {
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public Object get(Object key) {
-                                if ("mode".equals(key)) {
-                                    return mode;
-                                }
-                                return super.get(key);
-                            }
-
-                            @Override
-                            public Object put(Object key, Object value) {
-                                if ("mode".equals(key)) {
-                                    log.warn("Illegal attempt to persist template mode");
-                                    return null;
-                                }
-                                return super.put(key, value);
-                            }
-                        };
-                    } else {
-                        cluster = null;
-                    }
-                } else {
-                    cluster = null;
-                    log.warn("Unknown provider " + provider);
-                }
-            } else if (model.getNode().hasNode(key)) {
+            if (model.getNode().hasNode(key)) {
                 Node clusterNode = model.getNode().getNode(key);
                 JcrNodeModel clusterNodeModel = new JcrNodeModel(clusterNode);
                 cluster = new JcrClusterConfig(clusterNodeModel);
@@ -107,48 +62,6 @@ public class JcrConfigService implements IPluginConfigService {
 
     public void detach() {
         model.detach();
-    }
-
-    private Node getTemplateNode(String type) {
-        try {
-            HippoSession session = (HippoSession) model.getNode().getSession();
-            NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
-
-            String prefix = "system";
-            String subType = type;
-            if (type.indexOf(':') > 0) {
-                prefix = type.substring(0, type.indexOf(':'));
-                subType = type.substring(type.indexOf(':') + 1);
-            }
-            String uri = "internal";
-            if (!"system".equals(prefix)) {
-                uri = nsReg.getURI(prefix);
-            }
-
-            String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-            if (prefix.length() > nsVersion.length()
-                    && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-                prefix = prefix.substring(0, prefix.length() - nsVersion.length());
-            } else {
-                uri = nsReg.getURI("rep");
-            }
-
-            String path = HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
-                    + HippoNodeType.HIPPO_TEMPLATE;
-            Node node = session.getRootNode().getNode(path);
-            if (node != null) {
-                NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-                while (nodes.hasNext()) {
-                    Node template = nodes.nextNode();
-                    if (template.isNodeType("frontend:plugincluster")) {
-                        return template;
-                    }
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
     }
 
 }

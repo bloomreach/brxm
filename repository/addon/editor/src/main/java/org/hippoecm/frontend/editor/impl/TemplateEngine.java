@@ -19,19 +19,19 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateEngine implements ITemplateEngine {
+public class TemplateEngine implements ITemplateEngine, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -39,17 +39,21 @@ public class TemplateEngine implements ITemplateEngine {
 
     private static Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
-    private IPluginContext context;
     private ITypeStore typeStore;
+    private JcrTemplateStore templateStore;
+    private JcrPrototypeStore prototypeStore;
     private String serviceId;
 
     public TemplateEngine(IPluginContext context, ITypeStore typeStore) {
-        this.context = context;
         this.typeStore = typeStore;
+
+        this.templateStore = new JcrTemplateStore();
+        this.prototypeStore = new JcrPrototypeStore();
     }
 
     public void setId(String serviceId) {
         this.serviceId = serviceId;
+        templateStore.setId(serviceId);
     }
 
     public ITypeDescriptor getType(String type) {
@@ -89,13 +93,20 @@ public class TemplateEngine implements ITemplateEngine {
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
-        IPluginConfigService configService = context.getService(IPluginConfigService.class.getName(),
-                IPluginConfigService.class);
-        IClusterConfig cluster = configService.getCluster("template/" + type.getName() + "/" + mode);
+        IClusterConfig cluster = templateStore.getCluster(type.getName() + "/" + mode);
         if (cluster != null) {
             cluster.put(ITemplateEngine.ENGINE, serviceId);
         }
         return cluster;
+    }
+
+    public IModel getPrototype(ITypeDescriptor type) {
+        return prototypeStore.getPrototype(type.getName(), false);
+    }
+
+    public void detach() {
+        templateStore.detach();
+        prototypeStore.detach();
     }
 
 }
