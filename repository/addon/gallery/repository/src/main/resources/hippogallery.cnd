@@ -31,3 +31,7 @@
 [hippogallery:stdgalleryset] > hippo:document
 + hippogallery:thumbnail (hippo:resource) = hippo:resource primary mandatory autocreated
 + hippogallery:picture (hippo:resource) = hippo:resource
+
+[hippogallery:stdImageGallery] > hippostd:gallery
+
+[hippogallery:stdAssetGallery] > hippostd:gallery

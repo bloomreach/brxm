@@ -310,7 +310,7 @@
   </sv:node>
   <sv:node sv:name="gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:gallery</sv:value>
+      <sv:value>hippogallery:stdImageGallery</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -327,7 +327,7 @@
   </sv:node>
   <sv:node sv:name="assets">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:gallery</sv:value>
+      <sv:value>hippogallery:stdAssetGallery</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>

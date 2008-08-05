@@ -55,13 +55,15 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
                 return;
             }
             Node ancestor = node.getParent();
-            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && ancestor.isNodeType(HippoNodeType.NT_HANDLE)) {
-                ancestor = ancestor.getParent();
-            }
-            if(!node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                item = null;
-                super.updateModel(new JcrNodeModel((Node) null));
-                return;
+            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if(ancestor.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    ancestor = ancestor.getParent();
+                }
+                if(!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    item = null;
+                    super.updateModel(new JcrNodeModel((Node) null));
+                    return;
+                }
             }
             while (ancestor != null && !ancestor.isNodeType(HippoNodeType.NT_HANDLE) &&
                                        !ancestor.isNodeType(HippoNodeType.NT_DOCUMENT) &&
