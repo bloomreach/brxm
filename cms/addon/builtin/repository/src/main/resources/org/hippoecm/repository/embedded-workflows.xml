@@ -46,6 +46,31 @@
       </sv:property>
     </sv:node>
   </sv:node>
+  <sv:node sv:name="gallery">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetype" sv:type="String">
+      <sv:value>hippostd:gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>author</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:display" sv:type="String">
+      <sv:value>Workflow on documents in galleries</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:types">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:types</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
   <sv:node sv:name="embed">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
