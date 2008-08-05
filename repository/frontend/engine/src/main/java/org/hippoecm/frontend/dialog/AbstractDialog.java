@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
@@ -35,6 +37,7 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
 
     protected AjaxLink ok;
     protected AjaxLink cancel;
+    protected WicketAjaxIndicatorAppender indicator;
     private IServiceReference<IDialogService> windowRef;
 
     private String exception = "";
@@ -55,6 +58,15 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
         } else {
             add(new Label("text"));
         }
+        
+        add(indicator = new WicketAjaxIndicatorAppender() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected String getSpanClass() {
+                return "wicket-ajax-indicator-dialog";
+            }
+        });
 
         ok = new AjaxLink("ok") {
             private static final long serialVersionUID = 1L;
@@ -74,6 +86,30 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
                     target.addComponent(exceptionLabel);
                     e.printStackTrace();
                 }
+            }
+            
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new IAjaxCallDecorator() {
+                    private static final long serialVersionUID = 1L;
+
+                    public CharSequence decorateOnFailureScript(CharSequence script) {
+                        return getScript("none") + script; 
+                    }
+
+                    public CharSequence decorateOnSuccessScript(CharSequence script) {
+                        return getScript("none") + script;
+                    }
+
+                    public CharSequence decorateScript(CharSequence script) {
+                        return getScript("block") + script;
+                    }
+                    
+                    private String getScript(String state) {
+                        String id = indicator.getMarkupId();
+                        return "document.getElementById('" + id + "').style.display = '" + state  + "';";
+                    }
+                };
             }
         };
         add(ok);
