@@ -49,6 +49,12 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
         add(new NonCachingImage("image", new JcrResource(resource)));
     }
 
+    @Override
+    public void onDetach() {
+        resource.detach();
+        super.onDetach();
+    }
+
     public void onFlush(JcrNodeModel newModel) {
         String path = newModel.getItemModel().getPath();
         String target = ((JcrNodeModel) getModel()).getItemModel().getPath();
