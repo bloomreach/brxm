@@ -42,4 +42,4 @@
 [defaultcontent:overview] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:introduction (string)
-+ defaultcontent:query (nt:query)
++ defaultcontent:query (hippo:query)
