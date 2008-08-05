@@ -33,16 +33,16 @@
 - hippoldap:multi (boolean) = 'false' mandatory autocreated
 
 [hippoldap:userprovider] > hippo:userprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping
-+ hippoldap:search (hippoldap:search) = hippoldap:search
++ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
++ hippoldap:search (hippoldap:search) = hippoldap:search multiple
 
 [hippoldap:groupprovider] > hippo:groupprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping
-+ hippoldap:search (hippoldap:search) = hippoldap:search
++ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
++ hippoldap:search (hippoldap:search) = hippoldap:search multiple
 
 [hippoldap:roleprovider] > hippo:roleprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping
-+ hippoldap:search (hippoldap:search) = hippoldap:search
++ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
++ hippoldap:search (hippoldap:search) = hippoldap:search multiple
 
 [hippoldap:securityprovider] > hippo:securityprovider
 - hippoldap:providerurl (string) mandatory
