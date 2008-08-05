@@ -63,13 +63,19 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         try {
             QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
             Vector<Node> foldertypes = new Vector<Node>();
+            Node templates = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
             Value[] foldertypeRefs = null;
             if (subject.hasProperty("hippostd:foldertype")) {
                 try {
                     foldertypeRefs = subject.getProperty("hippostd:foldertype").getValues();
                     if (foldertypeRefs.length > 0) {
                         for (int i = 0; i < foldertypeRefs.length; i++) {
-                            foldertypes.add(rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(foldertypeRefs[i].getString()));
+                            String foldertype = foldertypeRefs[i].getString();
+                            if (templates.hasNode(foldertype)) {
+                                foldertypes.add(templates.getNode(foldertype));
+                            } else {
+                                System.err.println("Unknown folder type " + foldertype);
+                            }
                         }
                     } else {
                         foldertypeRefs = null;
@@ -86,7 +92,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
             }
             if (foldertypeRefs == null) {
                 try {
-                    for (NodeIterator iter = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNodes(); iter.hasNext();) {
+                    for (NodeIterator iter = templates.getNodes(); iter.hasNext();) {
                         foldertypes.add(iter.nextNode());
                     }
                 } catch (PathNotFoundException ex) {
