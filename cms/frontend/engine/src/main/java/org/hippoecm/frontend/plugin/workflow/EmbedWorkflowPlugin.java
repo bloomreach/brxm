@@ -20,17 +20,17 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class EmbedWorkflowPlugin extends WorkflowPlugin {
+public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -39,6 +39,7 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
     public static final String ITEM_ID = "workflow.item";
 
     private String item;
+    private JcrNodeModel subModel;
 
     public EmbedWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -46,8 +47,8 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
 
     @Override
     public void updateModel(IModel model) {
-        JcrNodeModel nodeModel = (JcrNodeModel) model;
-        Node node = nodeModel.getNode();
+        subModel = (JcrNodeModel) model;
+        Node node = subModel.getNode();
         try {
             if(node == null) {
                 item = null;
@@ -93,4 +94,18 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin {
         wflConfig.put(ITEM_ID, item);
         return wflConfig;
     }
+
+    @Override
+    public void onFlush(JcrNodeModel nodeModel) {
+        if (subModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+            updateModel(subModel);
+        }
+    }
+
+    @Override
+    public void detach() {
+        subModel.detach();
+        super.detach();
+    }
+
 }
