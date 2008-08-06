@@ -53,16 +53,16 @@
                 <sv:value>hippo:facetrule</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:facet" sv:type="String">
-                <sv:value>nodetype</sv:value>
+                <sv:value>jcr:primaryType</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:type" sv:type="String">
                 <sv:value>Name</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:document</sv:value>
+                <sv:value>hippo:namespacefolder</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
-                <sv:value>true</sv:value>
+                <sv:value>false</sv:value>
             </sv:property>
         </sv:node>
     </sv:node>
