@@ -110,6 +110,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
         } else {
             log.warn("No engine found to display new model");
         }
+
+        setVisible(field != null);
     }
 
     protected abstract AbstractProvider<C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, P parentModel);
