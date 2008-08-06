@@ -73,17 +73,17 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-api</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.12907</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-connector</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.12907</version>
     </dependency>
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-repository-engine</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.12907</version>
     </dependency>
   </dependencies>
 
