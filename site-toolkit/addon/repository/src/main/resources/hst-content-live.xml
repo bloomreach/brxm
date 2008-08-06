@@ -39,7 +39,7 @@
       <sv:value>published</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:modes" sv:type="String">
-      <sv:value>select</sv:value>
+      <sv:value>single</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
