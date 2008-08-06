@@ -46,7 +46,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         add(new Label("name", caption));
 
         Label required = new Label("required", "*");
-        if (!field.isMandatory()) {
+        if (field != null && !field.isMandatory()) {
             required.setVisible(false);
         }
         add(required);
