@@ -65,7 +65,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
         String jcrStartBrowsePath = null;
         
         String currentLink = values.get(XinhaLink.HREF);
-        if(currentLink != null) {
+        if(currentLink != null && !"".equals(currentLink)) {
             try {
                 if(nodeModel.getNode().hasNode(currentLink)) {
                     Node currentLinkNode = nodeModel.getNode().getNode(currentLink);
