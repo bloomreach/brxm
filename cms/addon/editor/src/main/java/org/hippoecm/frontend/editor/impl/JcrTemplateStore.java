@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.impl;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -129,6 +130,8 @@ public class JcrTemplateStore implements IPluginConfigService {
                     }
                 }
             }
+        } catch (PathNotFoundException ex) {
+            log.info("Path not found: " + ex.getMessage());
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
