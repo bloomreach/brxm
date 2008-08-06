@@ -97,14 +97,16 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
 
     @Override
     public void onFlush(JcrNodeModel nodeModel) {
-        if (subModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+        if (subModel != null && subModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
             updateModel(subModel);
         }
     }
 
     @Override
     public void detach() {
-        subModel.detach();
+        if (subModel != null) {
+            subModel.detach();
+        }
         super.detach();
     }
 
