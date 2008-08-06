@@ -40,7 +40,7 @@
       <sv:value>unpublished</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:modes" sv:type="String">
-      <sv:value>single</sv:value>
+      <sv:value>prefer-single</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
