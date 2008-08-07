@@ -20,23 +20,47 @@
 
 // TYPES SHOULD EVOLVE DURING HST DEVELOPMENT
 
+
+[hst:module] > hippo:document
+- hst:template (string)
+- hst:contentlocation (string)
+- hst:action (string)
+
 [hst:modules] > hippo:document
-+ *
-- *
++ * (hst:module) = hst:module 
+
+[hst:sitemapmodule] > hippo:document
+- hst:module (string)
+
+[hst:sitemaplayout]> hippo:document
+- hst:layoutAttribute (string)
++ * (hst:sitemapmodule) = hst:sitemapmodule
+
+[hst:sitemapitem] > hippo:document
+- hst:urlmapping (string)
+- hst:pageLayout (string)
++ * (hst:sitemaplayout) = hst:sitemaplayout
 
 [hst:sitemap] > hippo:document
-+ *
-- *
++ * (hst:sitemapitem) = hst:sitemapitem
 
 [hst:navigation] > hippo:document
 + *
 - *
+
+[hst:layoutitem] > hippo:document
+
+[hst:layout] > hippo:document
+- hst:template (string)
++ * (hst:layoutitem) = hst:layoutitem
+
 [hst:layouts] >  hippo:document
-+ *
-- *
++ * (hst:layout) = hst:layout
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 + hst:modules (hst:modules) = hst:modules mandatory 
 + hst:sitemap (hst:sitemap) = hst:sitemap mandatory 
 + hst:navigation (hst:navigation) = hst:navigation mandatory 
 + hst:layouts (hst:layouts) = hst:layouts mandatory 
+
+
