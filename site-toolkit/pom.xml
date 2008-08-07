@@ -31,6 +31,14 @@
     <url>https://svn.hippocms.org/repos/hippo/experimental/hst2/trunk</url>
   </scm>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>repository.hippocms.org</id>
+      <url>ftp://repository.hippocms.org/maven2</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+
   <modules>
     <module>core</module>
     <!--<module>taglib</module>-->
@@ -102,7 +110,19 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
     <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
