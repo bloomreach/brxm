@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.gallery;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -32,7 +33,15 @@ public class ImageContainer extends Panel {
         super(wicketId, model);
 
         stream = new JcrResourceStream((Node) model.getNode());
-        add(new NonCachingImage("image", new JcrResource(stream)));
+        add(new NonCachingImage("image", new JcrResource(stream)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onComponentTag(ComponentTag tag) {
+                super.onComponentTag(tag);
+                tag.put("width", ThumbnailConstants.THUMBNAIL_WIDTH);
+            }
+        });
     }
 
     @Override
