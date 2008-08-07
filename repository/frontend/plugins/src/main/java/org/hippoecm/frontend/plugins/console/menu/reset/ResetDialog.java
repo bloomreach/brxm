@@ -35,7 +35,7 @@ public class ResetDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private IServiceReference<MenuPlugin> pluginRef;
+    private final IServiceReference<MenuPlugin> pluginRef;
 
     public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
@@ -62,8 +62,7 @@ public class ResetDialog extends AbstractDialog {
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-                message = new Label("message", "There are no pending changes");
-                ok.setVisible(false);
+                message = new Label("message", "There are no pending changes, reset anyway?");
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
