@@ -53,8 +53,9 @@ public class ImageUtils {
 
             Iterator writers = ImageIO.getImageWritersByMIMEType(mimeType);
             if (writers == null || !writers.hasNext()) {
-                log.warn("Unsupported mimetype, cannot write: " + mimeType);
-                return new ByteArrayInputStream(new byte[] {});
+                log.info("Unsupported mimetype, cannot write: " + mimeType);
+                // return original stream for thumbnail
+                return imageData;
             }
             ImageWriter writer = (ImageWriter) writers.next();
 
