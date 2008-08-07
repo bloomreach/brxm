@@ -1,0 +1,66 @@
+<assembly>
+  <formats>
+    <format>zip</format>
+    <format>tar.gz</format>
+        <!-- format>jar</format -->
+  </formats>
+  <archive>
+    <manifest>
+      <mainClass>org.hippoecm.Main</mainClass>
+    </manifest>
+  </archive>
+    <!-- fileSets>
+        <fileSet>
+            <directory>src/main/assembly</directory>
+            <outputDirectory></outputDirectory>
+            <excludes>
+                <exclude>src.xml</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets -->
+  <fileSets>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory></outputDirectory>
+      <lineEnding>unix
+      </lineEnding>
+      <fileMode>755</fileMode>
+      <includes>
+        <include>startup.sh</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/assembly</directory>
+      <outputDirectory></outputDirectory>
+      <lineEnding>dos
+      </lineEnding>
+      <includes>
+        <include>startup.bat</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib/classes</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.hippoecm:hippo-ecm-quickstart-bin:jar:*</include>
+      </includes>
+      <excludes>
+        <exclude>*:sources</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <unpack>false</unpack>
+      <includes>
+        <include>*:war</include>
+        <include>*:jar:*</include>
+      </includes>
+      <excludes>
+        <exclude>*:sources</exclude>
+        <exclude>org.hippoecm:hippo-ecm-quickstart-bin:jar:*</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
