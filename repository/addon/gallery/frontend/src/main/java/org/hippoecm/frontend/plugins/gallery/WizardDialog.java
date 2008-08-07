@@ -220,8 +220,7 @@ public class WizardDialog extends WebPage {
     }
 
     private void makeThumbnail(Node resource, InputStream image, String mimeType) throws RepositoryException {
-        int width = 100;
-        InputStream thumbNail = ImageUtils.createThumbnail(image, width, mimeType);
+        InputStream thumbNail = ImageUtils.createThumbnail(image, ThumbnailConstants.THUMBNAIL_WIDTH, mimeType);
         resource.setProperty("jcr:data", thumbNail);
         resource.setProperty("jcr:mimeType", mimeType);
     }
