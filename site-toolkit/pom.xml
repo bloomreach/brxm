@@ -46,7 +46,11 @@
     <!--<module>skeleton</module>
     <module>sample</module>-->
   </modules>
-
+  
+  <properties>
+    <hippoecm.version>2.01.00.12907</hippoecm.version>
+  </properties>
+  
   <repositories>
     <repository>
       <id>hippoecm</id>
