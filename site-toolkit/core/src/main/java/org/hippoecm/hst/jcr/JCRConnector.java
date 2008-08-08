@@ -64,8 +64,10 @@ public class JCRConnector {
             }
             wrapper.refresh(httpSession);
         } catch (LoginException e) {
+        	e.printStackTrace();
             throw new JCRConnectionException("Failed to login to repository");
         } catch (RepositoryException e) {
+        	e.printStackTrace();
             throw new JCRConnectionException("Failed to initialize repository");
         }
         return result;
