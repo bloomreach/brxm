@@ -24,8 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
-import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -74,7 +74,7 @@ public class PluginFactory implements IClusterable {
                 String markup = StringUtils.replace(className, ".", "/") + ".html";
                 if (loader.getResourceAsStream(markup) != null) {
                     markup = loader.getResource(markup).toExternalForm();
-                    
+
                     config.put("pluginfactory.markup", markup);
                     plugin = new LayoutPlugin(context, config);
                 } else {
@@ -83,8 +83,7 @@ public class PluginFactory implements IClusterable {
                 }
 
             } catch (InvocationTargetException e) {
-                message = e.getTargetException().getClass().getName() + ": "
-                        + e.getTargetException().getMessage();
+                message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
                 log.error(e.getMessage());
             } catch (Exception e) {
                 message = e.getClass().getName() + ": " + e.getMessage();
@@ -92,8 +91,8 @@ public class PluginFactory implements IClusterable {
             }
         }
         if (plugin == null && message != null) {
-            message +=  "\nFailed to instantiate plugin '" + className +
-            "' for id '" + config.getString(RenderService.WICKET_ID) + "'.";
+            message += "\nFailed to instantiate plugin '" + className + "' for id '"
+                    + config.getString(RenderService.WICKET_ID) + "'.";
 
             IPluginConfig errorConfig = new JavaPluginConfig();
             errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
@@ -103,41 +102,32 @@ public class PluginFactory implements IClusterable {
         return plugin;
     }
 
-    private class LayoutPlugin extends RenderPlugin implements IMarkupResourceStreamProvider {
+    private class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
-        private IResourceStream markupStream;
+        private String markup;
 
         public LayoutPlugin(IPluginContext context, IPluginConfig config) {
             super(context, config);
 
-            String markup = config.getString("pluginfactory.markup");
-            if (markup != null) {
-                try {
-                    markupStream = new UrlResourceStream(new URL(markup));
-                } catch (MalformedURLException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage());
-                }
-            }
+            markup = config.getString("pluginfactory.markup");
         }
 
-        @Override
-        //HACK: This effectively disables the markup cache for this plugin (the boolean true parameter
-        //for getMarkupStream stands for 'enforceReload'). This is nessessary because the component
-        //(plugin) classname is used as cachekey and it is not possible to define your own cachekey.
-        public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
-            try {
-                return getApplication().getMarkupSettings().getMarkupCache().
-                    getMarkupStream(this, true, throwException);
-            } catch (Exception ex) {
-                return super.getAssociatedMarkupStream(throwException);
-            }
+        public String getCacheKey(MarkupContainer container, Class containerClass) {
+            return markup;
         }
 
-        
         // implement IMarkupResourceStreamProvider.
         public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
-            return markupStream;
+            try {
+                if (markup != null) {
+                    return new UrlResourceStream(new URL(markup));
+                }
+            } catch (MalformedURLException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage());
+            }
+            return null;
         }
     }
+
 }
