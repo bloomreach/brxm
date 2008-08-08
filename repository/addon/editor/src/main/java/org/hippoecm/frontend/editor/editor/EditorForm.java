@@ -44,7 +44,6 @@ public class EditorForm extends Form {
     private static final long serialVersionUID = 1L;
 
     private IPluginContext context;
-    private IPluginConfig config;
 
     private IPluginControl template;
     private ModelService modelService;
@@ -59,7 +58,6 @@ public class EditorForm extends Form {
         super(wicketId, model);
 
         this.context = context;
-        this.config = config;
 
         add(new EmptyPanel("template"));
 
@@ -103,6 +101,11 @@ public class EditorForm extends Form {
             template.stopPlugin();
             modelService.destroy();
         }
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
     }
 
     @Override

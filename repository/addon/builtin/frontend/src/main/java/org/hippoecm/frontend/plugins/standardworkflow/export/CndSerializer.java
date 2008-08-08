@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +138,7 @@ public class CndSerializer implements IClusterable {
                 int twoVersion = Integer.parseInt(twoVersions[i]);
                 if (oneVersion > twoVersion) {
                     return true;
-                } else if(oneVersion < twoVersion) {
+                } else if (oneVersion < twoVersion) {
                     return false;
                 }
             } else {
@@ -189,7 +190,7 @@ public class CndSerializer implements IClusterable {
         }
 
         if (field.getPath() != null) {
-            output.append(" " + field.getPath());
+            output.append(" " + encode(field.getPath()));
         } else {
             output.append(" *");
         }
@@ -215,7 +216,7 @@ public class CndSerializer implements IClusterable {
 
     private void renderType(StringBuffer output, ITypeDescriptor typeDescriptor) {
         String type = typeDescriptor.getType();
-        output.append("[" + type + "]");
+        output.append("[" + encode(type) + "]");
 
         List<String> superFields = new LinkedList<String>();
         Iterator<String> superTypes = typeDescriptor.getSuperTypes().iterator();
@@ -267,6 +268,14 @@ public class CndSerializer implements IClusterable {
 
     private void sortTypes() {
         types = new SortContext(types).sort();
+    }
+
+    private static String encode(String name) {
+        int colon = name.indexOf(':');
+        if (colon > 0) {
+            return name.substring(0, colon + 1) + ISO9075Helper.encodeLocalName(name.substring(colon + 1));
+        }
+        return name;
     }
 
     class SortContext {

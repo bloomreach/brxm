@@ -34,6 +34,7 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
@@ -102,7 +103,8 @@ public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
         if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
             throw new MappingException("invalid node type for EditmodelWorkflow");
 
-        Node type = subject.addNode(name, HippoNodeType.NT_TEMPLATETYPE);
+        String encoded = ISO9075Helper.encodeLocalName(name);
+        Node type = subject.addNode(encoded, HippoNodeType.NT_TEMPLATETYPE);
         type.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
         Node node = type.addNode(HippoNodeType.HIPPO_NODETYPE, HippoNodeType.NT_HANDLE);
@@ -138,7 +140,6 @@ public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
             for (int i = 0; iter.hasNext(); i++) {
                 paths[i] = iter.nextNode().getPath();
             }
-            session.save();
             return paths;
         } catch (NamespaceException ex) {
             throw new RepositoryException(ex);
