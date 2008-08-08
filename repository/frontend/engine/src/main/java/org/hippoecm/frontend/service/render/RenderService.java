@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -49,6 +50,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
     public static final String SKIN_ID = "wicket.skin";
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String CSS_ID = "wicket.css";
+    public static final String FEEDBACK = "wicket.feedback";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -110,6 +112,12 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
             if(sb != null) {
                 cssClasses = new String(sb);
             }
+        }
+
+        if (config.getString(FEEDBACK) != null) {
+            context.registerService(new ContainerFeedbackMessageFilter(this), config.getString(FEEDBACK));
+        } else {
+            log.debug("No feedback id {} defined to register message filter", FEEDBACK);
         }
 
         context.registerService(this, wicketServiceId);
@@ -182,8 +190,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     public void render(PluginRequestTarget target) {
         if (redraw) {
-            PluginRequestTarget pluginTarget = (PluginRequestTarget) target;
-            pluginTarget.addComponent(this);
+            target.addComponent(this);
             redraw = false;
         }
         for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {

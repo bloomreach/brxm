@@ -17,21 +17,16 @@ package org.hippoecm.frontend.plugin.workflow;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -43,12 +38,15 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AbstractWorkflowPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -124,44 +122,23 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                try {
-                    // before saving (which possibly means deleting), find the handle
-                    final WorkflowsModel workflowModel = (WorkflowsModel) AbstractWorkflowPlugin.this.getModel();
-                    JcrNodeModel handle = workflowModel.getNodeModel();
-                    while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        handle = handle.getParentModel();
+                boolean submit = true;
+
+                IPluginConfig config = getPluginConfig();
+                if (config.getString(IValidateService.VALIDATE_ID) != null) {
+                    List<IValidateService> validators = getPluginContext().getServices(
+                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                    for (IValidateService validator : validators) {
+                        validator.validate();
+                        if (validator.hasError()) {
+                            submit = false;
+                        }
                     }
-                    action.prepareSession(handle);
-
-                    Workflow workflow = null;
-                    try {
-                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                        workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
-                    } catch (MappingException e) {
-                        log.error(e.getMessage());
-                    } catch (RepositoryException e) {
-                        log.error(e.getMessage());
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
-                    }
-
-                    action.execute(workflow);
-
-                    ((UserSession) Session.get()).getJcrSession().refresh(true);
-
-                    IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(),
-                            IJcrService.class);
-                    if (jcrService != null) {
-                        jcrService.flush(handle);
-                    }
-                } catch (RepositoryException ex) {
-                    log.error("Invalid data to save", ex);
-                    showException(ex);
-                } catch (Exception ex) {
-                    log.error(ex.getMessage());
-                    showException(ex);
                 }
 
+                if (submit) {
+                    execute(action);
+                }
             }
         };
         add(link);
@@ -203,7 +180,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     @Override
-    public void onModelChanged() {
+    protected void onModelChanged() {
         super.onModelChanged();
         updateActions();
     }
@@ -215,4 +192,44 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
             dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, ex.getMessage()));
         }
     }
+
+    private void execute(WorkflowAction action) {
+        try {
+            // before saving (which possibly means deleting), find the handle
+            final WorkflowsModel workflowModel = (WorkflowsModel) getModel();
+            JcrNodeModel handle = workflowModel.getNodeModel();
+            while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                handle = handle.getParentModel();
+            }
+            action.prepareSession(handle);
+
+            Workflow workflow = null;
+            try {
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                workflow = manager.getWorkflow(workflowModel.getWorkflowDescriptor());
+            } catch (MappingException e) {
+                log.error(e.getMessage());
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
+            action.execute(workflow);
+
+            ((UserSession) Session.get()).getJcrSession().refresh(true);
+
+            IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+            if (jcrService != null) {
+                jcrService.flush(handle);
+            }
+        } catch (RepositoryException ex) {
+            log.error("Invalid data to save", ex);
+            showException(ex);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            showException(ex);
+        }
+    }
+
 }
