@@ -34,9 +34,6 @@ public class ManagementEditorPlugin extends EditorPlugin {
     public ManagementEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(feedback = new FeedbackPanel("feedback"));
-        feedback.setOutputMarkupId(true);
-        
         add(new YuiUnitBehavior("center", "gutter=0px 5px 0px 0px", "scroll=true"));
     }
 

@@ -40,6 +40,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
     private IPluginContext context;
     private IPluginConfig config;
     private String[] categories;
-    private String factoryId;
     private JcrNodeModel model;
     private Map<String, IPluginControl> workflows;
     private Map<String, ModelService> models;
@@ -83,7 +83,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
                 log.debug(new String(sb));
             }
         } else {
-            log.warn("No categories ({}) defined for {}", CATEGORIES, factoryId);
+            log.warn("No categories ({}) defined", CATEGORIES);
         }
 
         if (config.getString(RenderService.MODEL_ID) != null) {
@@ -142,6 +142,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         IPluginConfig wflConfig = new JavaPluginConfig();
         wflConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
         wflConfig.put(RenderService.MODEL_ID, modelId);
+        wflConfig.put(RenderService.FEEDBACK, config.get(RenderService.FEEDBACK));
         wflConfig = configureWorkflow(wflConfig, model);
 
         JavaClusterConfig clusterConfig = new JavaClusterConfig();
@@ -170,6 +171,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         wflConfig.put(IPlugin.CLASSNAME, className);
         wflConfig.put(IEditService.EDITOR_ID, config.get(IEditService.EDITOR_ID));
         wflConfig.put(IBrowseService.BROWSER_ID, config.get(IBrowseService.BROWSER_ID));
+        wflConfig.put(IValidateService.VALIDATE_ID, config.get(IValidateService.VALIDATE_ID));
         return wflConfig;
     }
 

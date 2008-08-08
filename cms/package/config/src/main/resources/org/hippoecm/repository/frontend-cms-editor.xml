@@ -73,6 +73,12 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.feedback" sv:type="String">
+      <sv:value>${cluster.id}.feedback</sv:value>
+    </sv:property>
+    <sv:property sv:name="validator.id" sv:type="String">
+      <sv:value>${cluster.id}.validate</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="workflowListPlugin">
@@ -103,6 +109,9 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>${cluster.id}.model</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.feedback" sv:type="String">
+      <sv:value>${cluster.id}.feedback</sv:value>
+    </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
       <sv:value>${cluster.id}.workflows.id</sv:value>
     </sv:property>
@@ -112,6 +121,9 @@
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>editing</sv:value>
       <sv:value>modelling</sv:value>
+    </sv:property>
+    <sv:property sv:name="validator.id" sv:type="String">
+      <sv:value>${cluster.id}.validate</sv:value>
     </sv:property>
   </sv:node>
 

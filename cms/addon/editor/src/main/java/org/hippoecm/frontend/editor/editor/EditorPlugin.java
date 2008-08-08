@@ -15,27 +15,68 @@
  */
 package org.hippoecm.frontend.editor.editor;
 
+import java.util.List;
+
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class EditorPlugin extends RenderPlugin {
+public class EditorPlugin extends RenderPlugin implements IValidateService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private EditorForm form;
+    private static final Logger log = LoggerFactory.getLogger(EditorPlugin.class);
 
-    public EditorPlugin(IPluginContext context, IPluginConfig properties) {
-        super(context, properties);
+    private EditorForm form;
+    private FeedbackPanel feedback;
+    private boolean validated = false;
+    private transient boolean isvalid = false;
+
+    public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
+        super(context, config);
+
         add(form = newForm());
+
+        feedback = new FeedbackPanel("feedback", new IFeedbackMessageFilter() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean accept(FeedbackMessage message) {
+                if (config.getString(RenderService.FEEDBACK) != null) {
+                    List<IFeedbackMessageFilter> filters = context.getServices(config.getString(RenderService.FEEDBACK),
+                            IFeedbackMessageFilter.class);
+                    for (IFeedbackMessageFilter filter : filters) {
+                        if (filter.accept(message)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+        feedback.setOutputMarkupId(true);
+        add(feedback);
+
+        if (config.getString(IValidateService.VALIDATE_ID) != null) {
+            context.registerService(this, config.getString(IValidateService.VALIDATE_ID));
+        } else {
+            log.info("No validator id {} specified", IValidateService.VALIDATE_ID);
+        }
     }
 
     @Override
     public void onModelChanged() {
+        validated = false;
         form.destroy();
         replace(form = newForm());
     }
@@ -43,6 +84,7 @@ public class EditorPlugin extends RenderPlugin {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
+        target.addComponent(feedback);
         if (form != null) {
             form.render(target);
         }
@@ -51,4 +93,22 @@ public class EditorPlugin extends RenderPlugin {
     protected EditorForm newForm() {
         return new EditorForm("form", (JcrNodeModel) getModel(), this, getPluginContext(), getPluginConfig());
     }
+
+    public boolean hasError() {
+        if (!validated) {
+            validate();
+        }
+        return !isvalid;
+    }
+
+    public void validate() {
+        isvalid = true;
+        form.getRootForm().onFormSubmitted();
+        if (!form.isSubmitted()) {
+            return;
+        }
+        validated = true;
+        isvalid = !form.hasError();
+    }
+
 }
