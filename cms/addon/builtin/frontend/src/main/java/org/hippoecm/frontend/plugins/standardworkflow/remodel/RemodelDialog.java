@@ -38,6 +38,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         Map<String, TypeUpdate> update = updater.getUpdate(namespace);
         for (Map.Entry<String, TypeUpdate> entry : update.entrySet()) {
             String typeName = entry.getKey();
-            Node typeNode = node.getNode(typeName.substring(typeName.indexOf(':') + 1));
+            Node typeNode = node.getNode(ISO9075Helper.encodeLocalName(typeName.substring(typeName.indexOf(':') + 1)));
             if (typeNode.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
                 Node handle = typeNode.getNode(HippoNodeType.HIPPO_PROTOTYPE);
                 NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);

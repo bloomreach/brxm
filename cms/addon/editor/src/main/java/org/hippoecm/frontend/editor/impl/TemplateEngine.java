@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,8 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
                         Node parent = node.getParent();
                         while (parent != null) {
                             if (parent.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                                return getType(parent.getParent().getName() + ":" + parent.getName());
+                                return getType(parent.getParent().getName() + ":"
+                                        + ISO9075Helper.decodeLocalName(parent.getName()));
                             }
                             parent = parent.getParent();
                         }

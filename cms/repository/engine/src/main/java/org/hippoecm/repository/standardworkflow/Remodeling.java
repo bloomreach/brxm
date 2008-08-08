@@ -56,6 +56,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
+import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.value.ReferenceValue;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -572,17 +573,19 @@ public class Remodeling {
 
             // convert draft
             NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
-            NodeType newType = ntMgr.getNodeType(newPrefix + ":" + node.getName());
+            NodeType newType = ntMgr.getNodeType(newPrefix + ":" + ISO9075.decode(node.getName()));
             if (newType != null) {
                 Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
-                traverse(draft, true, newChild);
 
                 // prepare workflow mixins
                 if (newChild.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     newChild.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                    newChild.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
                 } else if (newChild.isNodeType(HippoNodeType.NT_REQUEST)) {
                     newChild.addMixin(JcrConstants.MIX_REFERENCEABLE);
                 }
+
+                traverse(draft, true, newChild);
             }
         }
     }
@@ -683,7 +686,8 @@ public class Remodeling {
 
         // push new node type definition such that it will be loaded
         try {
-            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd), "remodeling input stream");
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd),
+                    "remodeling input stream");
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
 
             String newNamespaceURI = mapping.getURI(prefix);
@@ -705,6 +709,8 @@ public class Remodeling {
             Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, updates);
             remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
+
+            session.save();
 
             nsreg.externalRemap(prefix, oldPrefix, oldNamespaceURI);
             nsreg.externalRemap(newPrefix, prefix, newNamespaceURI);

@@ -40,8 +40,6 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
     private EditorForm form;
     private FeedbackPanel feedback;
-    private boolean validated = false;
-    private transient boolean isvalid = false;
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -76,7 +74,6 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
 
     @Override
     public void onModelChanged() {
-        validated = false;
         form.destroy();
         replace(form = newForm());
     }
@@ -95,20 +92,11 @@ public class EditorPlugin extends RenderPlugin implements IValidateService {
     }
 
     public boolean hasError() {
-        if (!validated) {
-            validate();
-        }
-        return !isvalid;
+        return form.hasError();
     }
 
     public void validate() {
-        isvalid = true;
-        form.getRootForm().onFormSubmitted();
-        if (!form.isSubmitted()) {
-            return;
-        }
-        validated = true;
-        isvalid = !form.hasError();
+        form.validate();
     }
 
 }
