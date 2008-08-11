@@ -40,9 +40,11 @@ public class ModuleNode extends TemplateNode {
     }
 
     public String getPropertyValue(String propertyName) {
+        String containerModuleNodePath = "";
         try {
             if (pageContainerModuleNode != null) {
                 Property property;
+                containerModuleNodePath = pageContainerModuleNode.getJcrNode().getPath();
                 property = pageContainerModuleNode.getJcrNode().getProperty(propertyName);
                 if (property != null) {
                     return property.getString();
@@ -50,11 +52,9 @@ public class ModuleNode extends TemplateNode {
                 return null;
             }
         } catch (PathNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("PathNotFoundException for pageContainerModuleNode " + containerModuleNodePath + " : " + e.getMessage());
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("RepositoryException: ", e);
         }
         //try to get property from the moduleNode
         return super.getPropertyValue(propertyName);
