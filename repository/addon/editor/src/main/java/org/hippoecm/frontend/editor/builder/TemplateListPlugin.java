@@ -37,6 +37,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
+import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -178,8 +179,20 @@ public class TemplateListPlugin extends RenderPlugin {
 
             IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
             jcrService.flush((JcrNodeModel) getModel());
+
+            // update helper model
+            select(new JcrNodeModel(itemNode));
+
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+    }
+
+    private void select(JcrNodeModel model) {
+        IModelService helperModel = getPluginContext().getService(getPluginConfig().getString("helper.model"),
+                IModelService.class);
+        if (helperModel != null) {
+            helperModel.setModel(model);
         }
     }
 }
