@@ -24,20 +24,11 @@ public class WebFormModule extends ModuleBase {
 
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {		
 		
-		System.out.println("*********************************************");
 		Enumeration attribEnum = request.getAttributeNames();
-		while (attribEnum.hasMoreElements()) {
-			System.out.println("ATTRIB " +  attribEnum.nextElement());
-		}
 		
 		Map parameterMap = request.getParameterMap();
 		Iterator i = parameterMap.keySet().iterator();
-		while (i.hasNext()) {
-			String s =(String) i.next();
-			System.out.println("P " +  s + " value=" + request.getParameter(s));
-		}
-		//;		
-		
+	
 		String action = getPropertyValueFromModuleNode("action");
 		WebFormBean formBean = new WebFormBean();
 		formBean.setAction(action);

@@ -31,7 +31,6 @@ public class LoginModule extends ModuleBase {
 		
 		String logout = request.getParameter("logout");
 		if (logout != null) {
-			System.out.println("LOGOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUT");
 			request.getSession().invalidate();
 		}
 		return null;

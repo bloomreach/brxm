@@ -18,7 +18,9 @@ import org.hippoecm.hst.core.template.node.PageNode;
 
 public class ModuleRenderTag extends TagSupport {
 	
-	private String name;
+    private static final long serialVersionUID = 1L;
+    
+    private String name;
 	private String className;
 	private boolean doExecute = false;
 	private boolean doRender = true;
@@ -56,7 +58,6 @@ public class ModuleRenderTag extends TagSupport {
 		 if (moduleMap == null) {
 			 moduleMap = new HashMap();
 		 }
-		 System.out.println("+++++++++++++++++++++++" + name + "   " + value);
 		 moduleMap.put(name, value);
 		 request.getSession().setAttribute(Module.REQUEST_MODULEMAP_ATTRIBUTE, moduleMap);	
 	}

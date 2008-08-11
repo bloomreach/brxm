@@ -8,7 +8,6 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +43,10 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			    	String moduleName = (String) moduleKeyIterator.next();
 			    	String moduleClassName = (String) moduleMap.get(moduleName);
 					if (moduleName != null) {
-						log.info("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" + moduleName);
 						try {
 							Module module = getModule(moduleClassName);
-							
 							PageNode pageNode = getPageNode(request);
-							System.out.println("pageNode " + pageNode);
 							ModuleNode moduleNode = pageNode.getModuleNodeByName(moduleName);
-							System.out.println("setModuleNode " + moduleName + " " + moduleNode.getJcrNode().getPath());
 							module.setModuleNode(moduleNode);
 							forward = module.execute((HttpServletRequest) request, (HttpServletResponse) response);						
 						} catch (Exception e) {
@@ -64,7 +58,6 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			}
 			request.getSession().removeAttribute(Module.REQUEST_MODULEMAP_ATTRIBUTE);
 			if (forward != null) {
-				log.info("FOORRRRWAAARD" + forward);
 				chain.doFilter(new RequestWrapper((HttpServletRequest) request, forward), response);
 			} else {
 			    chain.doFilter(request, response);

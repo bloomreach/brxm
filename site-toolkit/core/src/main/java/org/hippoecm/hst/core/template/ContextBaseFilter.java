@@ -92,7 +92,6 @@ class URLBaseHttpRequestServletWrapper extends HttpServletRequestWrapper {
 	}
 	
 	private String stripUrlPrefix(String original) {
-		int idx = original.indexOf(urlPrefix);
 		String result = original.replaceFirst(urlPrefix, "");
 		log.info("strip result=" + result);
 		return result;

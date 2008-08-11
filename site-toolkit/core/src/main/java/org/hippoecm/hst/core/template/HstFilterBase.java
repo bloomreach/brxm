@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.template;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +11,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.servlet.Filter;
-import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
@@ -67,7 +61,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	protected boolean ignoreMapping(HttpServletRequest request) {
 		for (int i=0; i < ignoreList.length; i++) {
-			System.out.println("compare ignore " + request.getRequestURI() + " with " + ignoreList[i] + " result " + request.getRequestURI().toLowerCase().endsWith(ignoreList[i]));
+		    log.info("compare ignore " + request.getRequestURI() + " with " + ignoreList[i] + " result " + request.getRequestURI().toLowerCase().endsWith(ignoreList[i]));
 			if (request.getRequestURI().toLowerCase().endsWith(ignoreList[i])) {
 				return true;
 			}

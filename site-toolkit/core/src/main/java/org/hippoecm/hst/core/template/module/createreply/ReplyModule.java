@@ -1,51 +1,50 @@
 package org.hippoecm.hst.core.template.module.createreply;
 
-import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.template.ContextBaseFilter;
 import org.hippoecm.hst.core.template.TemplateException;
-import org.hippoecm.hst.core.template.module.Module;
+import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.form.el.WebFormBean;
-import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
-import org.hippoecm.hst.core.template.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReplyModule extends ModuleBase {
 
+    private static final Logger log = LoggerFactory.getLogger(ReplyModule.class);
+    
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
-		System.out.println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
 		if (request.getParameter("MODULE_NAME") != null) {
-			System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
 		String name = request.getParameter("name");
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		
 		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
 		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;
-		System.out.println(" urlPrefix " + urlPrefix);
+		log.debug(" urlPrefix " + urlPrefix);
 		
-		System.out.println("NAME=" + name);
-		System.out.println("TITLE=" + title);
-		System.out.println("CONTENT=" + content);
+		log.debug("NAME=" + name);
+		log.debug("TITLE=" + title);
+		log.debug("CONTENT=" + content);
 		
 		Enumeration en = request.getParameterNames();
-		while (en.hasMoreElements()) {
-			System.out.println(" PRM " + en.nextElement());
+		if(log.isDebugEnabled()) { 
+    		while (en.hasMoreElements()) {
+    			log.debug(" PRM " + en.nextElement());
+    		}
 		}
 		
 		String action = getPropertyValueFromModuleNode("action");
-		System.out.println("ACTION+++" + action);
+		log.debug("ACTION: " + action);
 		WebFormBean formBean = new WebFormBean();
 		
 		PageNode node = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
@@ -55,10 +54,10 @@ public class ReplyModule extends ModuleBase {
 		
 		String documentNodeUUID = (String) request.getSession().getAttribute("UUID");
 		//verify that there is a 'current'document and that a form is submitted
-		System.out.println("submit="  +  request.getParameter("submit") + "documentNodeUUID=" + documentNodeUUID);
+		log.debug("submit="  +  request.getParameter("submit") + "documentNodeUUID=" + documentNodeUUID);
 		if (request.getParameter("submit") != null && documentNodeUUID != null) {
 		    try {
-		    	System.out.println("WRITE DOCUMENT=");
+		        log.debug("WRITE DOCUMENT");
 				writeNode(request, name, title, content, documentNodeUUID);
 			} catch (Exception e) {
 				throw new TemplateException(e);
@@ -86,7 +85,6 @@ public class ReplyModule extends ModuleBase {
 		
 		//create the reply node, giving it the next number as name
 		long size = documentReplyParentNode.getNodes().getSize();
-		System.out.println("SIZE=" + size);
 		
 		Node newNode = rootNode.addNode(parentNodeLocation + "/" + size);
 		newNode.setProperty("name", name);
@@ -110,6 +108,5 @@ public class ReplyModule extends ModuleBase {
 		formBean.setAction(urlPrefix + action); // + "/"); node.getRelativeContentPath());
 		pageContext.getRequest().setAttribute("webform", formBean);
 		
-		System.out.println("0000000000000000000000000000000000");
 	}
 }
