@@ -15,11 +15,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<web-app id="hippo-ecm-repository-application">
+<web-app id="hippo-ecm-repository">
 
   <!-- General configuration -->
-  <display-name>Hippo ECM minimal repository</display-name>
-  <description>An empty repository that binds to the RMI registry.</description>
+  <display-name>Hippo ECM repository</display-name>
+  <description>Hippo ECM repository accessible as remote service to other applications.</description>
 
   <!--
   Rmi registration
@@ -34,9 +34,15 @@
   </context-param>
 
   <servlet>
+    <servlet-name>StatusServlet</servlet-name>
+    <servlet-class>org.hippoecm.repository.StatusServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet>
     <servlet-name>LoggingServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.LoggingServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
+    <load-on-startup>3</load-on-startup>
   </servlet>
 
   <servlet>
@@ -51,10 +57,16 @@
       <param-name>repository-config</param-name>
       <param-value>repository.xml</param-value>
       <description>The location of the repository configuration file. Unless the location
-      starts with file://, the location is retreived with getResourceAsStream().</description>
+      starts with file://, the location is retreived from within the application package as
+      resource.</description>
     </init-param>
-    <load-on-startup>3</load-on-startup>
+    <load-on-startup>4</load-on-startup>
   </servlet>
+
+  <servlet-mapping>
+    <servlet-name>StatusServlet</servlet-name>
+    <url-pattern>/status/*</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>LoggingServlet</servlet-name>
