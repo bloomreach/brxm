@@ -105,8 +105,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     public WorkflowManager getWorkflowManager() throws RepositoryException {
         if (workflowManager == null) {
-            workflowDocumentManager = new DocumentManagerImpl(rootSession);
-            workflowManager = new WorkflowManagerImpl(session, workflowDocumentManager);
+            workflowManager = new WorkflowManagerImpl(session, rootSession);
         }
         return workflowManager;
     }
