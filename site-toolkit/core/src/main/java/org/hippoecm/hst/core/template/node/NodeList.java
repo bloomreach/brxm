@@ -13,8 +13,6 @@ import org.hippoecm.hst.core.template.ContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.corba.se.spi.activation.Repository;
-
 public class NodeList<E extends TemplateNode> {
     
     private Logger log = LoggerFactory.getLogger(NodeList.class);
