@@ -1,13 +1,18 @@
 package org.hippoecm.hst.core.template.tag;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.Module;
+import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.template.node.PageNode;
 
 
 
@@ -29,7 +34,8 @@ public class ModuleRenderTag extends TagSupport {
 		
 		if (doRender) {
 		   try {
-			Module module = getModule();
+			   Module module = getModule();
+			   module.setModuleNode(getModuleNode(request, getName()));
 			   module.render(pageContext);
 			} catch (Exception e) {
 				throw new JspException(e);
@@ -37,6 +43,12 @@ public class ModuleRenderTag extends TagSupport {
 		}
 		
 		return SKIP_BODY;
+	}
+	
+	private ModuleNode getModuleNode(HttpServletRequest request, String moduleName) throws RepositoryException {
+		PageNode currentPageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+		ModuleNode moduleNode = currentPageNode.getModuleNodeByName(moduleName);
+		return moduleNode;
 	}
 	
 	private void addModuleMapAttribute(HttpServletRequest request, String name, Object value) {

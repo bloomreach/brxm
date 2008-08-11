@@ -57,6 +57,7 @@ public class ContextBaseFilter extends HstFilterBase implements Filter {
 		prefixStrippedRequest.setAttribute(requestAttributeName, contextBase);	
 	    prefixStrippedRequest.setAttribute(URLBASE_INIT_PARAMETER, urlPrefix);
 		//prefixStrippedRequest.setAttribute(CO, requestAttributeName);
+	    prefixStrippedRequest.setAttribute(CONTENT_CONTEXT_REQUEST_ATTRIBUTE, contextBase);
 		
 		filterChain.doFilter(prefixStrippedRequest, response);
 	}
@@ -96,11 +97,5 @@ class URLBaseHttpRequestServletWrapper extends HttpServletRequestWrapper {
 		log.info("strip result=" + result);
 		return result;
 	}
-	
-	
-	
-	
-	
-	
 	
 }

@@ -30,14 +30,14 @@ import org.slf4j.LoggerFactory;
 public abstract class HstFilterBase implements Filter {
 	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = "contentContext";
 	
-	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/";
+	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
 	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
 	
 	private String hstConfigurationUrl;
 	
-	private String [] ignoreList = {".gif", ".jpg"};
+	private String [] ignoreList = {".gif", ".jpg", ".css", ".js"};
 	
 	private static final Logger log = LoggerFactory.getLogger(HstFilterBase.class);
 	
@@ -80,13 +80,15 @@ public abstract class HstFilterBase implements Filter {
 		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
 		URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
        	return getPageNode(request, urlTokenizer, templateContextBase);
-	}
+	} 
+	
+	
 	
 	protected Map <String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
 		Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
 		
 		
-		Node siteMapRootNode = templateContextBase.getRelativeNode(hstConfigurationUrl+SITEMAP_RELATIVE_LOCATION);
+		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
 		 
 	    NodeIterator subNodes =  siteMapRootNode.getNodes();
 	    while  (subNodes.hasNext()) {

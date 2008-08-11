@@ -60,7 +60,7 @@ public class ContextBase {
 	}
 	
 	public Node getRelativeNode(String path) throws PathNotFoundException, RepositoryException {
-		log.info("get RelativeNode=" + path);
+		log.info("get RelativeNode with rootNode" + contextRootNode.getPath() + " path=" + path);
 		return contextRootNode.getNode(stripFirstSlash(path));
 	}
 	

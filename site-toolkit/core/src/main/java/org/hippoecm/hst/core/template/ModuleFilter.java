@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -49,7 +50,9 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 							Module module = getModule(moduleClassName);
 							
 							PageNode pageNode = getPageNode(request);
+							System.out.println("pageNode " + pageNode);
 							ModuleNode moduleNode = pageNode.getModuleNodeByName(moduleName);
+							System.out.println("setModuleNode " + moduleName + " " + moduleNode.getJcrNode().getPath());
 							module.setModuleNode(moduleNode);
 							forward = module.execute((HttpServletRequest) request, (HttpServletResponse) response);						
 						} catch (Exception e) {
@@ -67,6 +70,12 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			    chain.doFilter(request, response);
 			}
 		}
+	}
+	
+	public static ModuleNode getModuleNode(HttpServletRequest request, String moduleName) throws RepositoryException {
+		PageNode currentPageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+		ModuleNode moduleNode = currentPageNode.getModuleNodeByName(moduleName);
+		return moduleNode;
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {

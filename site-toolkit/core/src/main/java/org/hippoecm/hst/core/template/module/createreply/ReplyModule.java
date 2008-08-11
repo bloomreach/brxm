@@ -103,7 +103,13 @@ public class ReplyModule extends ModuleBase {
 
 	public void render(PageContext pageContext) throws TemplateException {
 		PageNode node = (PageNode) pageContext.getRequest().getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
-	
+		WebFormBean formBean = new WebFormBean();
+		String urlPrefix = (String) pageContext.getRequest().getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
+		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;
+		String action = getPropertyValueFromModuleNode("action");
+		formBean.setAction(urlPrefix + action); // + "/"); node.getRelativeContentPath());
+		pageContext.getRequest().setAttribute("webform", formBean);
+		
 		System.out.println("0000000000000000000000000000000000");
 	}
 }

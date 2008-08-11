@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.template.ContextBaseFilter;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.template.*;
+import org.hippoecm.hst.core.*;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.slf4j.Logger;
@@ -37,11 +37,16 @@ public class ListDisplayModule extends ModuleBase {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		String urlPrefix = (String) pageContext.getRequest().getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);		    
 		ModuleNode currNode = (ModuleNode) request.getAttribute("currentModuleNode");
-		 System.out.println("MMMMMMMMMMMMMMMMMMMMMMNODE" + request.getAttribute("currentModuleNode"));
+	
 		 
 	    List wrappedNodes = new ArrayList();
 	    try {
-			Node n = currNode.getContentLocation();      
+	    	System.out.println("MMMMMMMMMMMMMMMMMMMMMMNODE" + currNode.getJcrNode().getPath());
+	    	String contentLocation = currNode.getPropertyValue(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);	    	
+	    	ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+	    	System.out.println("ListDisplayModule > " + contentLocation + " base=" + contentContextBase);
+			Node n = contentContextBase.getRelativeNode(contentLocation); //currNode.getContentLocation();     
+			    System.out.println("ListDisplayModule.execute() --> " + n.getPath());
 			    NodeIterator subNodes =  n.getNodes();
 			    while (subNodes.hasNext()) {     
 			      Node subNode = (Node) subNodes.next();

@@ -48,8 +48,8 @@ public class ModuleNode extends TemplateNode {
 				  }
 			   }
 			} catch (Exception e) {			
-				log.error("Cannot get property from paren PageContainerModuleNode", e);
-				e.printStackTrace();
+				log.error("Cannot get property " + propertyName + " from " + pageContainerModuleNode.getJcrNode().getPath());
+				//e.printStackTrace();
 			}
 		
 			//try to get property from the moduleNode

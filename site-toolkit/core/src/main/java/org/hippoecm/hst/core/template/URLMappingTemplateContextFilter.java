@@ -51,10 +51,15 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	public static final String NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE = "navigationContextBase";
 	public static final String NAVIGATION_CONTEXTBASE_NAME = "navigationContext";	
 	
+	public static final String REPOSITORY_LOCATION_FILTER_PARAM = "hstConfigurationUrl";
+	
 	private static final Logger log = LoggerFactory.getLogger(URLMappingTemplateContextFilter.class);
+	
+	private String repositoryTemplateContextLocation = null;
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		super.init(filterConfig);
+		repositoryTemplateContextLocation = getInitParameter(filterConfig, REPOSITORY_LOCATION_FILTER_PARAM);
 	}
 	  
 	public void destroy() {
@@ -77,7 +82,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 			log.info("URI" + request.getRequestURI());
 			//get mapping		
 			try {
-				ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
+				ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, repositoryTemplateContextLocation, request, session);
 			
 				//find 
 				URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
