@@ -58,9 +58,14 @@ public class ContextBase {
 	    }  
 	}
 	
-	public Node getRelativeNode(String path) throws PathNotFoundException, RepositoryException {
-		log.info("get RelativeNode with rootNode" + contextRootNode.getPath() + " path=" + path);
-		return contextRootNode.getNode(stripFirstSlash(path));
+	public Node getRelativeNode(String path){
+		try {
+            log.info("get RelativeNode with rootNode" + contextRootNode.getPath() + " path=" + path);
+            return contextRootNode.getNode(stripFirstSlash(path));
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
 	}
 	
 	public static ContextBase getDefaultContextBase(HttpServletRequest request) throws PathNotFoundException, RepositoryException {

@@ -21,16 +21,8 @@ public abstract class ModuleBase implements Module {
 	}
 	
 	public String getPropertyValueFromModuleNode(String propertyName) throws TemplateException {
-		String action = null;
-		try {
-			action = moduleNode.getPropertyValue(propertyName);						
-			return action;
-		} catch (PathNotFoundException e) {
-			throw new TemplateException(e.getMessage());
-			
-		} catch (RepositoryException e) {
-			throw new TemplateException(e.getMessage());
-		}	
+		String action = moduleNode.getPropertyValue(propertyName);						
+		return action;
 	}
 
 }

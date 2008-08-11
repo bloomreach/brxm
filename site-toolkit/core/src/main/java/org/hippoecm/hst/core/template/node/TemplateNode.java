@@ -47,8 +47,17 @@ public class TemplateNode extends AbstractELNode {
 		return contentContextBase.getRelativeNode(relativePath);
 	}
 	
-	public String getPropertyValue(String propertyName) throws PathNotFoundException, ValueFormatException, RepositoryException {
-		return jcrNode.getProperty(propertyName).getString();
+	public String getPropertyValue(String propertyName) {
+		try {
+            return jcrNode.getProperty(propertyName).getString();
+        } catch (ValueFormatException e) {
+            e.printStackTrace();
+        } catch (PathNotFoundException e) {
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
 	}
 
 	/**
@@ -62,14 +71,13 @@ public class TemplateNode extends AbstractELNode {
 		try {
 			log.info("retrieving property " + propertyName + " of node " + jcrNode.getPath());
 			Property layoutProperty = jcrNode.getProperty(propertyName);	
-			log.info("RRRR "+ contextBase + " rest " + layoutProperty.getValue().getString());
 			return contextBase.getRelativeNode(layoutProperty.getValue().getString());
 		} catch (PathNotFoundException e) {
-			log.error(e.getMessage());
-			throw new RepositoryException(e.getMessage());
+			log.error("PathNotFoundException: " +e.getMessage());
+			throw e;
 		} catch (ValueFormatException e) {
-			log.error(e.getMessage());
-			throw new RepositoryException(e.getMessage());
+			log.error("ValueFormatException: " + e.getMessage());
+			throw e;
 		} 
 	}
 	
