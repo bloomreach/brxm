@@ -14,24 +14,24 @@ import org.hippoecm.hst.core.template.node.el.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemplateNode implements ELNode {
+public class TemplateNode extends AbstractELNode {
 	private Logger log = LoggerFactory.getLogger(TemplateNode.class);	
 	
-	protected Node jcrNode;	
 	protected String relativePath;	
 	protected ContextBase contextBase;
 	
 	protected String relativeContentPath;
 	
 	public TemplateNode(ContextBase contextBase, Node jcrNode) {
+        super(jcrNode);
 		this.contextBase = contextBase;
 		this.jcrNode = jcrNode;
 	}
 	
 	public TemplateNode(ContextBase contextBase, String relativePath) throws RepositoryException {
-		this.contextBase = contextBase;
+	    super(contextBase, relativePath);
+	    this.contextBase = contextBase;
 		this.relativePath = relativePath;
-		jcrNode = contextBase.getRelativeNode(relativePath);
 	}
 
 	public Node getJcrNode() {
@@ -81,25 +81,5 @@ public class TemplateNode implements ELNode {
 		this.relativeContentPath = relativeContentPath;
 	}
 
-	/* EL stuff */
 	
-
-	public Map getProperty() {
-        return new ELPseudoMap() {
-            public Object get(Object propertyName) {
-            	try {
-					return jcrNode.getProperty((String) propertyName).getValue().getString();
-				} catch (ValueFormatException e) {					
-					e.printStackTrace();
-				} catch (IllegalStateException e) {					
-					e.printStackTrace();
-				} catch (PathNotFoundException e) {				
-					e.printStackTrace();
-				} catch (RepositoryException e) {				
-					e.printStackTrace();
-				}
-				return "";
-            }
-        };
-    }
 }
