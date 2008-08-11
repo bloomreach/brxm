@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -105,14 +106,6 @@ public class PreviewPluginPlugin extends RenderPlugin {
                 }
             }
         });
-        add(new AjaxLink("edit") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                PreviewPluginPlugin.this.setModel(pluginNodeModel);
-            }
-        });
         add(new AjaxLink("remove") {
             private static final long serialVersionUID = 1L;
 
@@ -160,6 +153,15 @@ public class PreviewPluginPlugin extends RenderPlugin {
             }
         });
 
+        add(new AjaxEventBehavior("onclick") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onEvent(AjaxRequestTarget target) {
+                PreviewPluginPlugin.this.setModel(pluginNodeModel);
+            }
+            
+        });
         addExtensionPoint("preview");
     }
 
