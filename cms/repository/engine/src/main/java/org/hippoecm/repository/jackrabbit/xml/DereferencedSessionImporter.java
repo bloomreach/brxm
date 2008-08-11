@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,6 @@ import java.util.Stack;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -63,7 +63,7 @@ public class DereferencedSessionImporter implements Importer {
     private long startTime;
 
     /** Keep a list of nodeId's that need revisiting for dereferencing */
-    private final Map<NodeId, Reference> derefNodes = new HashMap<NodeId, Reference>();
+    private final Map<NodeId, List<Reference>> derefNodes = new HashMap<NodeId, List<Reference>>();
 
     private final Stack<NodeImpl> parents;
 
@@ -86,7 +86,7 @@ public class DereferencedSessionImporter implements Importer {
 
         isRootReferenceable = false;
         try {
-            isRootReferenceable =((NodeImpl)session.getRootNode()).isNodeType(NameConstants.MIX_REFERENCEABLE);
+            isRootReferenceable = ((NodeImpl)session.getRootNode()).isNodeType(NameConstants.MIX_REFERENCEABLE);
         } catch (RepositoryException e) {
             // guess not..
         }
@@ -242,7 +242,7 @@ public class DereferencedSessionImporter implements Importer {
     /**
      * resolveReferenceConflict
      */
-    public void resolveReferenceConflict(NodeImpl node, String name, String path, boolean isMulti) throws RepositoryException {
+    public String resolveReferenceConflict(NodeImpl node, String name, String path) throws RepositoryException {
         StringBuffer buf = new StringBuffer();
         buf.append("Reference not found for property ");
         buf.append('\'').append(node.safeGetJCRPath()).append('/').append(name).append('\'');
@@ -250,7 +250,7 @@ public class DereferencedSessionImporter implements Importer {
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE) {
             buf.append("skipping.");
             log.warn(buf.toString());
-            return;
+            return null;
         }
         if (referenceBehavior == ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW) {
             buf.append("throw error.");
@@ -262,9 +262,7 @@ public class DereferencedSessionImporter implements Importer {
             if (isRootReferenceable) {
                 buf.append("trying to set reference to root node.");
                 log.warn(buf.toString());
-                String[] rootUUIDs = new String[] { session.getRootNode().getUUID() };
-                addOrCreateReference(node, name, rootUUIDs, isMulti);
-                return;
+                return session.getRootNode().getUUID();
             } else {
                 buf.append("root not referenceable.");
                 log.warn(buf.toString());
@@ -352,7 +350,6 @@ public class DereferencedSessionImporter implements Importer {
         }
 
         // process properties
-        // TODO: optimize, directly dereference when reference path is relative within import
         Iterator iter = propInfos.iterator();
         while (iter.hasNext()) {
             PropInfo propInfo = (PropInfo) iter.next();
@@ -379,32 +376,40 @@ public class DereferencedSessionImporter implements Importer {
      */
     public void end() throws RepositoryException {
         // loop over all nodeIds with references
-        for (Iterator<Map.Entry<NodeId, Reference>> it = derefNodes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<NodeId, Reference> nodeRef = it.next();
+        for (Iterator<Map.Entry<NodeId, List<Reference>>> it = derefNodes.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<NodeId, List<Reference>> nodeRef = it.next();
             NodeImpl node = session.getNodeById(nodeRef.getKey());
-            Reference ref = nodeRef.getValue();
-
-            // do the actual resolving
-            ref.setBasePath(importPath);
-            ref.resolveUUIDs(session);
-
-            // create empty multi value if needed
-            if (ref.isMulti()) {
-                if (!node.hasProperty(ref.getPropertyName())) {
-                    node.setProperty(ref.getPropertyName(), new Value[]{});
-                }
-            }
             
-            // set the references
-            String[] uuids = ref.getUUIDs();
-            String[] paths = ref.getPaths();
-            for (int i = 0; i < paths.length; i++) {
-                if (uuids[i] == null) {
-                    // reference was not found, resolve
-                    log.warn("Unable to find uuid for path '" + ref.getBasePath() + paths[i] + "', trying to resolve.");
-                    resolveReferenceConflict(node, ref.getPropertyName(), paths[i], ref.isMulti());
+            // loop over all the references for this node
+            List<Reference> references = nodeRef.getValue();
+            for(Reference ref : references) {
+                ref.setBasePath(importPath);
+                ref.resolveUUIDs(session);
+                
+                // set the references
+                String[] uuids = ref.getUUIDs();
+                String[] paths = ref.getPaths();
+                List<Value> vals = new ArrayList<Value>(paths.length);
+                for (int i = 0; i < uuids.length; i++) {
+                    if (uuids[i] == null) {
+                        String uuid = resolveReferenceConflict(node, ref.getPropertyName(), paths[i]);
+                        if (uuid == null) {
+                            //skip
+                        } else {
+                            vals.add(session.getValueFactory().createValue(uuid, PropertyType.REFERENCE));
+                        }
+                    } else {
+                        vals.add(session.getValueFactory().createValue(uuids[i], PropertyType.REFERENCE));
+                    }
+                }
+                
+                // set property
+                if (ref.isMulti()) {
+                    node.setProperty(ref.getName(), vals.toArray(new Value[vals.size()]));
                 } else {
-                    addOrCreateReference(node, ref.getPropertyName(), ref.getUUIDs(), ref.isMulti());
+                    if (vals.size() > 0) {
+                        node.setProperty(ref.getName(), vals.get(0));
+                    }
                 }
             }
         }
@@ -413,37 +418,6 @@ public class DereferencedSessionImporter implements Importer {
         derefNodes.clear();
         if (log.isDebugEnabled()) {
             log.debug("end(), import ran for " + (System.currentTimeMillis() - startTime) + " ms.");
-        }
-    }
-
-    private void addOrCreateReference(NodeImpl node, String name, String[] stringVals, boolean isMulti)
-            throws RepositoryException {
-
-        if (node.hasProperty(name)) {
-            Property p = node.getProperty(name);
-            // add to existing multi value
-            if (p.getDefinition().isMultiple()) {
-                Value[] oldValues = p.getValues();
-                Value[] newValues = new Value[oldValues.length + stringVals.length];
-                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
-                for (int i = 0; i < stringVals.length; i++) {
-                    newValues[oldValues.length + i] = session.getValueFactory().createValue(stringVals[i],
-                            PropertyType.REFERENCE);
-                }
-                node.setProperty(name, newValues);
-            }
-        }
-
-        // create new or replace existing
-        if (isMulti) {
-            Value[] vals = new Value[stringVals.length];
-            for (int i = 0; i < stringVals.length; i++) {
-                vals[i] = session.getValueFactory().createValue(stringVals[i], PropertyType.REFERENCE);
-            }
-            node.setProperty(name, vals);
-        } else {
-            Value value = session.getValueFactory().createValue(stringVals[0], PropertyType.REFERENCE);
-            node.setProperty(name, value);
         }
     }
 }

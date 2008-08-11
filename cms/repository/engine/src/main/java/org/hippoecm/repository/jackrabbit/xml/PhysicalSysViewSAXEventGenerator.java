@@ -20,7 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.core.xml.SysViewSAXEventGenerator;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.xml.sax.ContentHandler;

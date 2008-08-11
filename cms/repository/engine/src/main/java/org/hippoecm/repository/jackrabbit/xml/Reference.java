@@ -22,23 +22,18 @@ import javax.jcr.Value;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
 import org.apache.jackrabbit.spi.Path;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 
 public class Reference {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
-    private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
     
     /** this implementation requires a property that can be set on a parent node.  Because this
      * node isn't actually persisted, there will be no constraint violation, but this property
      * may not clash with any property in the parent node. (FIXME)
      */
-    static final String PROPERTY_STRING = "hippo:pathreference";
-    static final Name PROPERTY_NAME = FACTORY.create("http://www.hippoecm.org/nt/1.0", "pathreference");
+    static final String REFERENCE_SUFFIX = "___pathreference";
     
     /**
      * sv:value
@@ -53,38 +48,19 @@ public class Reference {
     /** indicate whether original reference property was a single valued property */
     final static String SINGLE_VALUE = "s";
 
-    private boolean isMulti;
+    private final boolean isMulti;
 
     private String propName;
     
+    private Name name;
+    
     private String basePath;
 
-    private String[] paths;
+    private final String[] paths;
 
-    private String[] uuids;
-    
-    private String pathString = null;
-
+    private final String[] uuids;
 
     //-------------------------------------------------------------< Instantiators >
-    Reference(String basePath, String uuidString, String propName) {
-        setBasePath(basePath);
-        setPropertyName(propName);
-        this.uuids = new String[1];
-        this.paths = new String[1];
-        this.uuids[0] = uuidString;
-        this.isMulti = false;
-    }
-
-    Reference(String basePath, Value uuidVal, String propName) throws RepositoryException {
-        setBasePath(basePath);
-        setPropertyName(propName);
-        this.uuids = new String[1];
-        this.paths = new String[1];
-        this.uuids[0] = uuidVal.getString();
-        this.isMulti = false;
-    }
-
     Reference(String basePath, Value[] uuidVals, String propName) throws RepositoryException {
         setBasePath(basePath);
         setPropertyName(propName);
@@ -96,14 +72,22 @@ public class Reference {
         this.isMulti = true;
     }
     
-    Reference(String pathString) throws RepositoryException {
-        this.pathString = pathString;
-        parsePathString();
+    Reference(Name name, Value[] paths, boolean isMulti) throws RepositoryException {
+        this.name = name;
+        this.isMulti = isMulti;
+        this.uuids = new String[paths.length];
+        this.paths = new String[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            this.paths[i] = paths[i].getString();
+        }
     }
 
     //-------------------------------------------------------------< Getters & Setters >
     String getPropertyName() {
         return propName;
+    }
+    Name getName() {
+        return name;
     }
     String getBasePath() {
         return basePath;
@@ -125,76 +109,19 @@ public class Reference {
     }
     
 
-    //-------------------------------------------------------------< Reference path parsers >
-    /**
-     * Create path string uuid 
-     * @param session
-     * @return
-     * @throws RepositoryException
-     */
-    String createPathString(Session session) throws RepositoryException {
-        if (pathString != null) {
-            return pathString;
-        }
+    Value[] getPathValues(Session session) throws RepositoryException  {
+        Value[] vals = new Value[paths.length];
         resolvePaths(session);
-        StringBuffer buf = new StringBuffer();
-        if (isMulti) {
-            buf.append(MULTI_VALUE);
-        } else {
-            buf.append(SINGLE_VALUE);
+        for (int i = 0; i < paths.length; i++) {
+            vals[i] =  session.getValueFactory().createValue(paths[i]);
         }
-            
-        buf.append(SEPARATOR);
-        buf.append(propName);
-        for (String p : paths) {
-            buf.append(SEPARATOR);
-            buf.append(p);
-        }
-        pathString = buf.toString();
-        return pathString;
+        return vals;
     }
-    
 
-    // format ([MULTI_VALUE|SINGLE_VALUE]+SEPARATOR+propName+SEPARATOR+path)
-    void parsePathString() throws RepositoryException {
-        isMulti = false;
-        
-        String[] parts = pathString.split("\\" + SEPARATOR);
-        
-        if (parts.length < 3) {
-            throw new RepositoryException("Invalid pathreference string: " + pathString);
-        }
-        
-        if (parts[0].length() != 1) {
-            throw new RepositoryException("Invalid pathreference string, first part too long: " + pathString);
-        }
-        
-        if (MULTI_VALUE.equals(parts[0])) {
-            isMulti = true;
-        } else if (SINGLE_VALUE.equals(parts[0])) {
-            isMulti = false;
-        } else {
-            throw new RepositoryException("Invalid pathreference string, first part not valid: " + pathString);
-        }
-        
-        if (pathString.startsWith(MULTI_VALUE)) {
-            isMulti = true;
-        } else if (pathString.startsWith(SINGLE_VALUE)) {
-            isMulti = false;
-        } else {
-            throw new RepositoryException("Invalid pathString format: " + pathString);
-        }
 
-        propName = parts[1];
-        paths = new String[parts.length - 2];
-        uuids = new String[parts.length - 2];
-        for (int i = 2; i < parts.length; i++) {
-            paths[i-2] = parts[i];
-        }
-    }
 
     //-------------------------------------------------------------< Resolvers >
-    void resolveUUIDs(SessionImpl sessionImpl) throws RepositoryException {
+    void resolveUUIDs(SessionImpl sessionImpl) {
         for (int i = 0; i < paths.length; i++) {
             try {
                 String path = paths[i];
@@ -218,15 +145,26 @@ public class Reference {
      * @param session
      * @throws RepositoryException
      */
-    void resolvePaths(Session session) throws RepositoryException {
-        Node base = session.getRootNode().getNode(getBasePath().substring(1)); // remove starting slash
+    private void resolvePaths(Session session) throws RepositoryException {
+        Node base;
+        if (getBasePath().startsWith("/")) {
+            base = session.getRootNode().getNode(getBasePath().substring(1)); // remove starting slash
+        } else {
+            base = session.getRootNode().getNode(getBasePath()); // remove starting slash
+        }
         Node parent;
         if (base.getDepth() == 0) {
             parent = base;
         } else {
             parent = base.getParent();
         }
-        int len = parent.getPath().length() + 1; // +1 is trailing slash
+        int len = 0;
+        if (parent.getDepth() == 0) {
+            // subnode of root node
+            len = parent.getPath().length();
+        } else {
+            len = parent.getPath().length() + 1; // +1 is trailing slash
+        }
         String path;
         for (int i = 0; i < uuids.length; i++) {
             path = session.getNodeByUUID(uuids[i]).getPath();
