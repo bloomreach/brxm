@@ -321,6 +321,9 @@
     <sv:property sv:name="extension.display" sv:type="String">
       <sv:value>service.browse.version.view</sv:value>
     </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>BrowserPerspective</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="versionTogglePlugin">

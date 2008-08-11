@@ -40,6 +40,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
@@ -203,6 +204,20 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
                     workflow.revert(entry.getKey());
                     redraw();
+                    /* [BvH] Below is a forcefully refresh of the selected
+                     * node, without the node being deselected (as with a
+                     * flush of the parent).  This because the node is no
+                     * longer valid, as it is replaced by an older version
+                     * from the version store.  The node however still has the
+                     * same UUID and path, just the current instance can no
+                     * longer be persisted (but can be read).
+                     */
+                    IPluginContext context = getPluginContext();
+                    IBrowseService browseService = context.getService(IBrowseService.class.getName(), IBrowseService.class);
+                    if (browseService != null) {
+                        browseService.browse(new JcrNodeModel("/"));
+                        browseService.browse(new JcrNodeModel(model.getNode().getPath()));
+                    }
                 }
             } catch (WorkflowException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
