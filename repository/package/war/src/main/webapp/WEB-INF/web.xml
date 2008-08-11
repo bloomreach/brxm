@@ -60,7 +60,7 @@
         <init-param>
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
-		</init-param>
+        </init-param>
     </filter>
 
     <filter-mapping>
@@ -74,9 +74,15 @@
     </filter-mapping>
     
     <servlet>
+        <servlet-name>StatusServlet</servlet-name>
+        <servlet-class>org.hippoecm.repository.StatusServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>LoggingServlet</servlet-name>
         <servlet-class>org.hippoecm.repository.LoggingServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
     <!-- Repository -->
@@ -95,8 +101,18 @@
             starts with file://, the location is retrieved from within the application package as
             resource.</description>
         </init-param>
-        <load-on-startup>3</load-on-startup>
+        <load-on-startup>4</load-on-startup>
     </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StatusServlet</servlet-name>
+        <url-pattern>/status/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>LoggingServlet</servlet-name>
+        <url-pattern>/logging/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>Repository</servlet-name>

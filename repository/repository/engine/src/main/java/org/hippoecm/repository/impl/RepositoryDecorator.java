@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.io.IOException;
+import java.util.jar.Manifest;
+
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.NoSuchWorkspaceException;
@@ -65,4 +68,23 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
         return login(null, null);
     }
 
+    @Override
+    public String getDescriptor(String key) {
+        if(REP_NAME_DESC.equals(key)) {
+            return "Hippo ECM Repository";
+        } else if(REP_VENDOR_DESC.equals(key)) {
+            return "Hippo B.V.";
+        } else if(REP_VENDOR_URL_DESC.equals(key)) {
+            return "http://www.onehippo.org/";
+        } else if(REP_VERSION_DESC.equals(key)) {
+            try {
+                Manifest manifest = new Manifest(getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"));
+                return manifest.getMainAttributes().getValue("Implementation-Version");
+            } catch(IOException ex) {
+                return null;
+            }
+        } else {
+            return super.getDescriptor(key);
+        }
+    }
 }
