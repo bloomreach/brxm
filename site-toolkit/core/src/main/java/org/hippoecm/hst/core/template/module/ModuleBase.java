@@ -5,12 +5,14 @@ import org.hippoecm.hst.core.template.node.ModuleNode;
 
 public abstract class ModuleBase implements Module {
 	private ModuleNode moduleNode = null;
-	private String varName = null;
+	private String varName = "result";
 	
 	//public abstract String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
 	
 	public void setVarName(String name) {
-		this.varName = name;
+		if(name!=null){
+			this.varName = name;	
+		}
 	}
 	
 	public String getVarName() {

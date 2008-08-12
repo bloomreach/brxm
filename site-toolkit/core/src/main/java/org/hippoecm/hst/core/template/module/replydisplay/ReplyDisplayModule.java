@@ -81,9 +81,5 @@ public class ReplyDisplayModule extends ModuleBase {
 		
 	}
 
-	public String getVariableName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
 

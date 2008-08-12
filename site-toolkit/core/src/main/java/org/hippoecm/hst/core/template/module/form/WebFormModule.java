@@ -45,9 +45,4 @@ public class WebFormModule extends ModuleBase {
 		// TODO Auto-generated method stub
 	}
 
-	public String getVariableName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
