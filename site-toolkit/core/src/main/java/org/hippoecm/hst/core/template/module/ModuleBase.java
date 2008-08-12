@@ -13,8 +13,13 @@ import org.hippoecm.hst.core.template.node.ModuleNode;
 
 public abstract class ModuleBase implements Module {
 	private ModuleNode moduleNode = null;
+	private String variableName = null;
 	
 	//public abstract String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
+	
+	public void setVariableName(String name) {
+		this.variableName = name;
+	}
 	
 	public void setModuleNode(ModuleNode node) {
 		this.moduleNode = node;

@@ -48,6 +48,11 @@ public class LoginModule extends ModuleBase {
 			bean.setUserId(jcrSession.getUserID());
 		}
 		pageContext.setAttribute("loginBean", bean);
+	}
+
+	public String getVariableName() {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 }
 

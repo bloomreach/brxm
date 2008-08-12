@@ -22,6 +22,7 @@ public class ModuleRenderTag extends TagSupport {
     
     private String name;
 	private String className;
+	private String varName;
 	private boolean doExecute = false;
 	private boolean doRender = true;
 	
@@ -36,7 +37,8 @@ public class ModuleRenderTag extends TagSupport {
 		
 		if (doRender) {
 		   try {
-			   Module module = getModule();
+			Module module = getModule();
+			   module.setVariableName(varName);
 			   module.setModuleNode(getModuleNode(request, getName()));
 			   module.render(pageContext);
 			} catch (Exception e) {
@@ -88,6 +90,14 @@ public class ModuleRenderTag extends TagSupport {
 
 	public void setExecute(String execute) {
 		doExecute = execute.toLowerCase().trim().equals("true");
+	}
+	
+	public String getVariableName() {
+		return varName;
+	}
+
+	public void setVariableName(String varName) {
+		this.varName = varName;
 	}
 
 	public String getClassName() {

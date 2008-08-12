@@ -32,7 +32,6 @@ public class ListDisplayModule extends ModuleBase {
 		// TODO Auto-generated method stub
 	}
 	
-
 	public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		ModuleNode currNode = (ModuleNode) request.getAttribute("currentModuleNode");
@@ -64,6 +63,11 @@ public class ListDisplayModule extends ModuleBase {
 		}
 		
 		pageContext.setAttribute("items", wrappedNodes);
+	}
+
+	public String getVariableName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

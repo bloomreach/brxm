@@ -37,6 +37,7 @@ public class LayoutModulesTag extends SimpleTagSupport {
         //getModules
         NodeList<PageContainerModuleNode> pcNodeModules = null;
         try {
+        	System.out.println("pcNode: " + pcNode);
 			pcNodeModules = pcNode.getModules();
 		} catch (RepositoryException e) {
 			log.error("Cannot get modules", e);

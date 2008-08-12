@@ -109,4 +109,10 @@ public class ReplyModule extends ModuleBase {
 		pageContext.getRequest().setAttribute("webform", formBean);
 		
 	}
+
+
+	public String getVariableName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

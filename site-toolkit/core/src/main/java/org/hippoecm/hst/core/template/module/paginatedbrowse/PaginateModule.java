@@ -34,6 +34,11 @@ public class PaginateModule extends ModuleBase {
 		int pageId = 0;
 		pageId = Integer.parseInt(pageContext.getRequest().getParameter("pageId"));
 		
+	}
+
+	public String getVariableName() {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 
 }

@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.template.module;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -15,4 +14,6 @@ public interface Module {
     public void render(PageContext pageContext) throws TemplateException;
     public void init(HttpServletRequest request);
     public void setModuleNode(ModuleNode node);
+    public void setVariableName(String name);
+    public String getVariableName();
 }
