@@ -87,9 +87,9 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
         if(current != null)
-            throw new WorkflowException("cannot publish document with pending publication request");
+            throw new WorkflowException("cannot depublish document with pending publication request");
         if(current2 != null)
-            throw new WorkflowException("cannot publish document with pending depublication request");
+            throw new WorkflowException("cannot depublish document with pending depublication request");
         doDepublish();
     }
 
