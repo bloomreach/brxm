@@ -15,6 +15,7 @@ import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class ListDisplayModule extends ModuleBase {
 	public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		ModuleNode currNode = (ModuleNode) request.getAttribute("currentModuleNode");
-	    List<ListDisplayItem> wrappedNodes = new ArrayList<ListDisplayItem>();
+	    List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 	    try {
 	    	log.info("currentModuleNode path: " + currNode.getJcrNode().getPath());
 	    	String contentLocation = currNode.getPropertyValue(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);	    	
@@ -59,7 +60,7 @@ public class ListDisplayModule extends ModuleBase {
 			    }
 		} catch (RepositoryException e) {
 			log.error(e.getMessage(), e);
-			wrappedNodes = new ArrayList<ListDisplayItem>();
+			wrappedNodes = new ArrayList<ELNode>();
 		}
 		
 		pageContext.setAttribute("items", wrappedNodes);

@@ -9,6 +9,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,4 +52,31 @@ public abstract class AbstractELNode implements ELNode{
             }
         };
     }
+      
+      public String getDecodedName() {
+          try {
+              return ISO9075Helper.decodeLocalName(jcrNode.getName());
+          } catch (Exception e) {
+              log.error(e.getMessage(), e);
+              return "";
+          }
+      }
+
+      public String getName() {
+          try {
+              return jcrNode.getName();
+          } catch (Exception e) {
+              log.error(e.getMessage(), e);
+              return "";
+          }
+      }
+
+      public String getPath() {
+          try {
+              return jcrNode.getPath();
+          } catch (RepositoryException e) {
+              log.error(e.getMessage(), e);
+              return "";
+          }
+      }
 }
