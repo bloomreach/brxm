@@ -92,11 +92,11 @@ public class ModuleRenderTag extends TagSupport {
 		doExecute = execute.toLowerCase().trim().equals("true");
 	}
 	
-	public String getVariableName() {
+	public String getVarName() {
 		return varName;
 	}
 
-	public void setVariableName(String varName) {
+	public void setVarName(String varName) {
 		this.varName = varName;
 	}
 
