@@ -14,6 +14,6 @@ public interface Module {
     public void render(PageContext pageContext) throws TemplateException;
     public void init(HttpServletRequest request);
     public void setModuleNode(ModuleNode node);
-    public void setVariableName(String name);
-    public String getVariableName();
+    public void setVarName(String name);
+    public String getVarName();
 }

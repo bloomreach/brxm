@@ -38,7 +38,7 @@ public class ModuleRenderTag extends TagSupport {
 		if (doRender) {
 		   try {
 			Module module = getModule();
-			   module.setVariableName(varName);
+			   module.setVarName(varName);
 			   module.setModuleNode(getModuleNode(request, getName()));
 			   module.render(pageContext);
 			} catch (Exception e) {
