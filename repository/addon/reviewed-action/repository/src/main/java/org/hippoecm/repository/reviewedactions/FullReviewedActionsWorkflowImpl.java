@@ -40,6 +40,10 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot delete document with pending depublication request");
         if(published != null)
             throw new WorkflowException("cannot delete published document");
+        doDelete();
+    }
+
+    public void doDelete() throws WorkflowException {
         unpublished = draft = null;
     }
 
@@ -52,6 +56,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 throw new WorkflowException("Document has already been published");
             }
         }
+        if(current != null)
+            throw new WorkflowException("cannot publish document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot publish document with pending depublication request");
+        doPublish();
+    }
+
+    public void doPublish() throws WorkflowException, MappingException {
         published = null;
         unpublished.setState(PublishableDocument.PUBLISHED);
         try {
@@ -74,6 +86,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void depublish() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication on document ");
+        if(current != null)
+            throw new WorkflowException("cannot publish document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot publish document with pending depublication request");
+        doDepublish();
+    }
+
+    void doDepublish() throws WorkflowException {
         try {
             if(unpublished == null) {
                 unpublished = (PublishableDocument) published.clone();

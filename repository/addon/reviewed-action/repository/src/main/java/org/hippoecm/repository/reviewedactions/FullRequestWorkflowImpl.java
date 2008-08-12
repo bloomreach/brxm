@@ -41,21 +41,21 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             if (publishedWorkflow != null) {
                 throw new WorkflowException("cannot delete document when still published");
             }
-            unpublishedWorkflow.delete();
+            unpublishedWorkflow.doDelete();
             request = null;
         } else if(PublicationRequest.PUBLISH.equals(requestType)) {
             if (unpublishedWorkflow == null) {
                 throw new WorkflowException("cannot publish document when no changes present");
             }
             unpublishedWorkflow.setWorkflowContext(getWorkflowContext()); // FIXME; should use workflow chaining
-            unpublishedWorkflow.publish();
+            unpublishedWorkflow.doPublish();
             request = null;
         } else if(PublicationRequest.DEPUBLISH.equals(requestType)) {
             if (publishedWorkflow == null) {
                 throw new WorkflowException("cannot depublish document when not published");
             }
             publishedWorkflow.setWorkflowContext(getWorkflowContext()); // FIXME; should use workflow chaining
-            publishedWorkflow.depublish();
+            publishedWorkflow.doDepublish();
             request = null;
         } else if(PublicationRequest.REJECTED.equals(requestType)) {
             throw new WorkflowException("request has already been rejected");
