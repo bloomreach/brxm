@@ -54,16 +54,12 @@ public class WizardDialog extends WebPage {
     private final static String SVN_ID = "$Id$";
 
     private IServiceReference<IJcrService> jcrServiceRef;
-    private WizardForm form;
     private String workflowCategory;
     protected AjaxLink submit;
-    private IServiceReference<IDialogService> windowRef;
     private String exception = "";
 
     public WizardDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
             IDialogService dialogWindow) {
-        this.windowRef = context.getReference(dialogWindow);
-
         try {
             String path = config.getString("gallery.path");
             if (path != null) {
@@ -87,7 +83,7 @@ public class WizardDialog extends WebPage {
         jcrServiceRef = context.getReference(service);
 
         workflowCategory = config.getString("gallery.workflow");
-        add(form = new WizardForm("form", model));
+        add(new WizardForm("form", model));
     }
 
     public String getException() {
@@ -219,9 +215,13 @@ public class WizardDialog extends WebPage {
         }
     }
 
-    private void makeThumbnail(Node resource, InputStream image, String mimeType) throws RepositoryException {
-        InputStream thumbNail = ImageUtils.createThumbnail(image, ThumbnailConstants.THUMBNAIL_WIDTH, mimeType);
-        resource.setProperty("jcr:data", thumbNail);
-        resource.setProperty("jcr:mimeType", mimeType);
+    private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
+        if (mimeType.startsWith("image")) {
+            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, ThumbnailConstants.THUMBNAIL_WIDTH, mimeType);
+            node.setProperty("jcr:data", thumbNail);
+        } else {
+            node.setProperty("jcr:data", resourceData);
+        }
+        node.setProperty("jcr:mimeType", mimeType);
     }
 }

@@ -44,20 +44,19 @@ public class ImageUtils {
             return new ByteArrayInputStream(new byte[] {});
         }
         try {
-            Iterator readers = ImageIO.getImageReadersByMIMEType(mimeType);
+            Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(mimeType);
             if (readers == null || !readers.hasNext()) {
                 log.warn("Unsupported mimetype, cannot read: " + mimeType);
-                return new ByteArrayInputStream(new byte[] {});
-            }
-            ImageReader reader = (ImageReader) readers.next();
-
-            Iterator writers = ImageIO.getImageWritersByMIMEType(mimeType);
-            if (writers == null || !writers.hasNext()) {
-                log.info("Unsupported mimetype, cannot write: " + mimeType);
-                // return original stream for thumbnail
                 return imageData;
             }
-            ImageWriter writer = (ImageWriter) writers.next();
+            ImageReader reader = readers.next();
+
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mimeType);
+            if (writers == null || !writers.hasNext()) {
+                log.warn("Unsupported mimetype, cannot write: " + mimeType);
+                return imageData;
+            }
+            ImageWriter writer = writers.next();
 
             reader.setInput(new MemoryCacheImageInputStream(imageData));
             double originalWidth = reader.getWidth(0);
@@ -92,7 +91,7 @@ public class ImageUtils {
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            return new ByteArrayInputStream(new byte[] {});
+            return imageData;
         }
     }
 }
