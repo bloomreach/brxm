@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.cnd;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import javax.jcr.Node;
@@ -28,7 +28,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.file.Folder;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -80,27 +79,11 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
             add(fileUploadField = new FileUploadField("fileInput"));
         }
 
+        @Override
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
-                // create temporary file
-                File newFile;
-                try {
-                    newFile = File.createTempFile(upload.getClientFileName(), ".cnd", getUploadFolder() );
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to create temp file");
-                }
-                msgText.setObject("created temp file: " + upload.getClientFileName());
-                
-                // upload to temp file
-                try {
-                    upload.writeTo(newFile);
-                    log.info("saved file: " + newFile.getAbsolutePath());
-                } catch (IOException e) {
-                    throw new IllegalStateException("Unable to write to temp file");
-                }
-
-                msgText.setObject("file uploaded.");
+                msgText.setObject("File uploaded.");
                 
                 // create initialize node
                 try {
@@ -111,27 +94,20 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
                         initNode.getNode("import-cnd").remove();
                     }
                     Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
-                    node.setProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE, "file://" + newFile.getAbsolutePath());
-                    rootNode.getSession().save();
                     
-                    msgText.setObject("initialize node saved.");
+                    try {
+                        node.setProperty(HippoNodeType.HIPPO_CONTENT, new BufferedInputStream(upload.getInputStream()));
+                        rootNode.getSession().save();
+                        msgText.setObject("initialize node saved.");
+                    } catch (IOException e) {
+                        msgText.setObject("initialize node saved.");
+                        
+                    }
                 } catch (RepositoryException e) {
                     log.error("Error while creating nodetypes initialization node: ", e);
                     throw new RuntimeException(e.getMessage());
                 }
-                
             }
-        }
-
-        private Folder getUploadFolder() {
-            Folder uploadFolder = new Folder(System.getProperty("java.io.tmpdir"), "wicket-uploads");
-            // Ensure folder exists
-            if (!uploadFolder.mkdirs()) {
-                if (!uploadFolder.exists()) {
-                    throw new RuntimeException("Unable to create upload folder: " + uploadFolder.getPath());
-                }
-            }
-            return uploadFolder;
         }
     }
 
