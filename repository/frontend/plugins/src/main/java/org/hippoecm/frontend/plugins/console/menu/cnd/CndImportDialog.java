@@ -96,7 +96,7 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
                     Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
                     
                     try {
-                        node.setProperty(HippoNodeType.HIPPO_CONTENT, new BufferedInputStream(upload.getInputStream()));
+                        node.setProperty(HippoNodeType.HIPPO_NODETYPES, new BufferedInputStream(upload.getInputStream()));
                         rootNode.getSession().save();
                         msgText.setObject("initialize node saved.");
                     } catch (IOException e) {
