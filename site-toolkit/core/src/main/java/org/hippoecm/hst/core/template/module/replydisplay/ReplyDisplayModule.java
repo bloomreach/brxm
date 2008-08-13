@@ -5,17 +5,13 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 
 public class ReplyDisplayModule extends ModuleBase {
@@ -49,10 +45,6 @@ public class ReplyDisplayModule extends ModuleBase {
 		
 	}
 
-	public void init(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void render(PageContext pageContext) {
 		Session session = JCRConnectorWrapper.getJCRSession(pageContext.getSession());				

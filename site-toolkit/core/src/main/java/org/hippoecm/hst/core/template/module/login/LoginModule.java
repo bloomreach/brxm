@@ -1,7 +1,6 @@
 package org.hippoecm.hst.core.template.module.login;
 
 import javax.jcr.Session;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -34,9 +33,6 @@ public class LoginModule extends ModuleBase {
 			request.getSession().invalidate();
 		}
 		return null;
-	}
-
-	public void init(HttpServletRequest request) {
 	}
 
 	public void render(PageContext pageContext) {

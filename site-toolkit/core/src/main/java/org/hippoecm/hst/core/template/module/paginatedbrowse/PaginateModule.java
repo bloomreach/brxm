@@ -1,6 +1,5 @@
 package org.hippoecm.hst.core.template.module.paginatedbrowse;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -20,11 +19,6 @@ public class PaginateModule extends ModuleBase {
 			throws TemplateException {
 		String pageId = request.getParameter("pageId");		
 		return null;
-		
-	}
-
-	public void init(HttpServletRequest request) {
-		// TODO Auto-generated method stub
 		
 	}
 

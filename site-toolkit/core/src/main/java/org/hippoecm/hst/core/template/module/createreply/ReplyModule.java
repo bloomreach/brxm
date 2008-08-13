@@ -94,11 +94,6 @@ public class ReplyModule extends ModuleBase {
 	}
 
 
-	public void init(HttpServletRequest request) {
-	
-	}
-
-
 	public void render(PageContext pageContext) throws TemplateException {
 		PageNode node = (PageNode) pageContext.getRequest().getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
 		WebFormBean formBean = new WebFormBean();

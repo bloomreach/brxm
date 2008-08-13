@@ -4,19 +4,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.TemplateException;
-import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.form.el.WebFormBean;
-import org.hippoecm.hst.core.template.node.ModuleNode;
 
 
 
@@ -35,14 +28,6 @@ public class WebFormModule extends ModuleBase {
 		request.setAttribute("webform", formBean);
 		
 		return null;
-	}
-
-	public void init(HttpServletRequest request) {
-		// TODO Auto-generated method stub
-	}
-
-	public void render(PageContext pageContext) {
-		// TODO Auto-generated method stub
 	}
 
 }
