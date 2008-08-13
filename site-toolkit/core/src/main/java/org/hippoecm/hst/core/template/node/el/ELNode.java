@@ -6,6 +6,7 @@ import javax.jcr.Node;
 
 public interface ELNode {
     public Map getProperty();
+    public Map getResourceUrl();
     public Node getJcrNode();
     public String getDecodedName();
     public String getName();

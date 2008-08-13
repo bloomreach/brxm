@@ -9,6 +9,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ public abstract class AbstractELNode implements ELNode{
           return jcrNode;
       }
       
-      public Map getProperty() {
+    public Map getProperty() {
         if(jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
@@ -51,8 +53,43 @@ public abstract class AbstractELNode implements ELNode{
                 return "";
             }
         };
+     }
+    
+    public Map getResourceUrl() {
+        if(jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            private String DEFAULT_RESOURCE = "";
+            @Override
+            public Object get(Object resource) {
+                String resourceName = (String)resource;
+                try {
+                    if(jcrNode.hasNode(resourceName)){
+                        Node resourceNode = jcrNode.getNode(resourceName);
+                        if(resourceNode.isNodeType(HippoNodeType.NT_RESOURCE)){
+                           if(resourceNode instanceof HippoNode && ((HippoNode)resourceNode).getCanonicalNode() != null) {
+                               Node canonical = ((HippoNode)resourceNode).getCanonicalNode();
+                               log.info("resource location = " + "/binaries"+canonical.getPath());
+                               return "/binaries"+canonical.getPath();
+                           } else {
+                               log.info("resource location = " + "/binaries"+resourceNode.getPath());
+                               return "/binaries"+resourceNode.getPath();
+                           }
+                        } else {
+                            log.error(resourceName + "not of type hippo:resource. Returning default value");
+                            return DEFAULT_RESOURCE;
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException while looking for resource " + resourceName + "  :" + e.getMessage());
+                }
+                return DEFAULT_RESOURCE;
+            }
+        };
     }
-      
+    
       public String getDecodedName() {
           try {
               return ISO9075Helper.decodeLocalName(jcrNode.getName());
