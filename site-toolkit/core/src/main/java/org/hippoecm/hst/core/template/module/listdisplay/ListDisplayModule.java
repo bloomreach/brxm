@@ -62,7 +62,7 @@ public class ListDisplayModule extends ModuleBase {
 			wrappedNodes = new ArrayList<ELNode>();
 		}
 		
-		pageContext.setAttribute("items", wrappedNodes);
+		pageContext.setAttribute(getVar(), wrappedNodes);
 	}
 
 
