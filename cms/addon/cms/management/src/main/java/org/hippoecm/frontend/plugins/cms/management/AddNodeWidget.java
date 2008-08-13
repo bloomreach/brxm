@@ -18,10 +18,19 @@ package org.hippoecm.frontend.plugins.cms.management;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxEditableLabel;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.convert.IConverter;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
@@ -56,6 +65,23 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
         label = (String) getModel().getObject();
         setModel(new Model(""));
         super.onEdit(target);
+    }
+    
+    @Override
+    protected Component newLabel(MarkupContainer parent, String componentId, IModel model)
+    {
+        Button but = new Button(componentId, model){
+            private static final long serialVersionUID = 1L;
+            
+            @Override
+            public IConverter getConverter(Class type) {
+                IConverter c = AddNodeWidget.this.getConverter(type);
+                return c != null ? c : super.getConverter(type);
+            }
+        };
+        but.setOutputMarkupId(true);
+        but.add(new LabelAjaxBehavior(getLabelAjaxEvent()));
+        return but;
     }
 
     @Override
