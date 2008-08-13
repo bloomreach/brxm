@@ -49,7 +49,7 @@ public class ContentExportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private IServiceReference<MenuPlugin> pluginRef;
+    private final IServiceReference<MenuPlugin> pluginRef;
 
     private boolean skipBinary = true;
     
@@ -59,7 +59,7 @@ public class ContentExportDialog extends AbstractDialog {
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Model skipBinaryModel = new Model(skipBinary);
-        CheckBox includeBinaries = new CheckBox("skip-binaries",skipBinaryModel) {
+        CheckBox includeBinaries = new CheckBox("skip-binaries", skipBinaryModel) {
 
             private static final long serialVersionUID = 1L;
 
