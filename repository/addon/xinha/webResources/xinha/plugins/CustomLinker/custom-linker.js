@@ -170,7 +170,8 @@ CustomLinker.prototype._createLink = function(a) {
 
         if (a && a.tagName.toLowerCase() == 'a') {
             if (!atr.href) {
-                if (confirm(linker._dialog._lc('Are you sure you wish to remove this link?'))) {
+                //if (confirm(linker._lc('Are you sure you wish to remove this link?'))) {
+                if(true) {
                     var p = a.parentNode;
                     while (a.hasChildNodes()) {
                         p.insertBefore(a.removeChild(a.childNodes[0]), a);
