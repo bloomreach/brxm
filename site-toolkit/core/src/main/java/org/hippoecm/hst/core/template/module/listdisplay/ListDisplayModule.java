@@ -65,9 +65,5 @@ public class ListDisplayModule extends ModuleBase {
 		pageContext.setAttribute("items", wrappedNodes);
 	}
 
-	public String getVariableName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
