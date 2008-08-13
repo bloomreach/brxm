@@ -19,34 +19,26 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.nodetype.NodeDefinition;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
+import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -59,73 +51,24 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     private static final long serialVersionUID = 1L;
 
-    private FeedbackPanel feedback;
-    private JcrNodeModel nodeModel;
-    private String uuid = null;
-    private String urlValue = null;
-    private String selectedimg = "skin/images/empty.gif";
-    
-    /*
-     * Image resource nodes various formats
-     */ 
-    private String selectedRN;
-   
+    private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
 
-    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel,final EnumMap<XinhaImage, String> values) {
-        super(modal, values);
+    private ImageItemFactory imageItemFactory;
+    private ImageItem selectedItem;
 
-        this.nodeModel = nodeModel;
+    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel,
+            final EnumMap<XinhaImage, String> values) {
+        super(modal, nodeModel, values);
+
+        imageItemFactory = new ImageItemFactory(nodeModel, values, "binaries");
+        selectedItem = imageItemFactory.createImageItem();
 
         ok.setEnabled(false);
-        form.add(feedback = new FeedbackPanel("feedback"));
-        feedback.setOutputMarkupId(true);
-        
-        urlValue = values.get(XinhaImage.URL);
-       
-        if(urlValue != null && urlValue.startsWith("binaries")) {
-            // find the nodename of the facetselect
-            String resourcePath = urlValue.substring("binaries".length());
-            Item resourceItem;
-            try {
-                resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
-                if(resourceItem.isNode() && ((Node)resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                    // now get the facetselect
-                    Node facetSelect = resourceItem.getParent().getParent();
-                    values.put(XinhaImage.URL, facetSelect.getName());
-                    // and get the thumbnail
-                    selectedimg = "binaries" + resourceItem.getParent().getPath()+"/"+resourceItem.getParent().getPrimaryItem().getName();
-                }
-            } catch (PathNotFoundException e) {
-                log.warn("resourcePath not found: " + resourcePath);
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-            
-        }
-        // input text field for the image name, which also becomes a facetselect 
-        final TextField url = new TextField("url", newEnumModel(XinhaImage.URL));
-        url.add(new OnChangeAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                urlValue = url.getInput();
-                if (isValidName(urlValue) && uuid != null) {
-                    target.addComponent(ok.setEnabled(true));
-                } else {
-                    target.addComponent(ok.setEnabled(false));
-                }
-                values.put(XinhaImage.URL,url.getInput());
-                target.addComponent(feedback);
-            }
-        });
-        url.setEnabled(false);
-        form.add(url);
         // ******************************************************************
-        
         // Image resource nodes various formats
-        final List<String> resourceNodes = new ArrayList<String>();
-        final FormComponent dropdown = new DropDownChoice("resourcenodes", new PropertyModel(this, "selectedRN"), resourceNodes) {
+        final FormComponent dropdown = new DropDownChoice("resourcenodes", new PropertyModel(this,
+                "selectedItem.selectedResourceDefinition"), selectedItem.getResourceDefinitions()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -135,18 +78,18 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
             @Override
             protected void onSelectionChanged(Object newSelection) {
-                selectedRN = ((String) newSelection);
+                selectedItem.setSelectedResourceDefinition((String) newSelection);
             }
         };
         dropdown.setOutputMarkupId(true);
         dropdown.setEnabled(false);
-        
+
         dropdown.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if(selectedRN != null) {
+                if (selectedItem.getSelectedResourceDefinition() != null) {
                     target.addComponent(ok.setEnabled(true));
                 }
             }
@@ -154,22 +97,13 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         form.add(dropdown);
 
         // ******************************************************************
-        
         // preview of the selected image
-        final Label selectedLabel = new Label("selectedimg") {
-            private static final long serialVersionUID = 1L;
+        final PreviewImage selectedImagePreview = new PreviewImage("selectedImagePreview", new PropertyModel(this,
+                "selectedItem.primaryUrl"), DEFAULT_THUMBNAIL_WIDTH, null);
+        selectedImagePreview.setOutputMarkupId(true);
+        form.add(selectedImagePreview);
 
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                tag.put("src", selectedimg);
-                tag.put("width", "50");
-                super.onComponentTag(tag);
-            }
-        };
-        selectedLabel.setOutputMarkupId(true);
-        form.add(selectedLabel);
         // ******************************************************************
-        
         // image listing
         final List<ImageItem> items = getImageItems(nodeModel);
         form.add(new ListView("item", items) {
@@ -178,62 +112,28 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
             @Override
             protected void populateItem(final ListItem item) {
 
+                final ImageItem imageItem = (ImageItem) item.getModelObject();
+
                 WebMarkupContainer entry = new WebMarkupContainer("entry");
-                entry.add(new Label("thumbnail") {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onComponentTag(ComponentTag tag) {
-                        tag.put("src", ((ImageItem) item.getModelObject()).getPrimaryUrl());
-                        tag.put("width", "50");
-                        super.onComponentTag(tag);
-                    }
-
-                });
+                entry.add(new PreviewImage("thumbnail", imageItem.getPrimaryUrl(), DEFAULT_THUMBNAIL_WIDTH, null));
 
                 final AjaxLink link = new AjaxLink("callback") {
-
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        ImageItem imgItem = ((ImageItem) item.getModelObject()) ;
-                        uuid = imgItem.getUuid();
-                        selectedimg = imgItem.getPrimaryUrl();
-                        target.addComponent(selectedLabel);
+                        selectedItem = imageItem;
+                        target.addComponent(selectedImagePreview);
 
-                        resourceNodes.clear();
-                        List<String> resourceDefinitions = imgItem.getResourceDefinitions();
-                        boolean needsToChoose = false;
-                        if(resourceDefinitions.size() > 1) {
-                            resourceNodes.addAll(resourceDefinitions);
-                            dropdown.setEnabled(true);
-                            target.addComponent(dropdown);
-                            selectedRN = null;
-                            needsToChoose = true;
+                        if (selectedItem.getResourceDefinitions().size() > 1) {
+                            target.addComponent(dropdown.setEnabled(true));
+                            //TODO: maybe no reset?
+                            //selectedImage.setSelectedResourceDefinition(null);
+                        } else if (dropdown.isEnabled()) {
+                            target.addComponent(dropdown.setEnabled(false));
                         }
-                        else if(dropdown.isEnabled()){
-                            dropdown.setEnabled(false);
-                            target.addComponent(dropdown);
-                        } 
-                        
-                        if(resourceDefinitions.size() == 1) {
-                            selectedRN = resourceDefinitions.get(0);
-                        } 
-                        if(resourceDefinitions.size() == 0) {
-                            selectedRN = null;
-                        } 
-                        
-                         values.put(XinhaImage.URL, imgItem.getNodeName());
-                         urlValue = imgItem.getNodeName();
-                         target.addComponent(url);
-                        
-                        if (isValidName(urlValue) && uuid != null && !needsToChoose) {
-                            target.addComponent(ok.setEnabled(true));
-                        } else {
-                            target.addComponent(ok.setEnabled(false));
-                        }
+
+                        target.addComponent(ok.setEnabled(selectedItem.isValid()));
                         target.addComponent(feedback);
                     }
                 };
@@ -242,22 +142,11 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
             }
         });
-        // ******************************************************************
-        
-        
     }
-
+    
     @Override
     protected String getXinhaParameterName(XinhaImage k) {
         return k.getValue();
-    }
-
-    private boolean isValidName(String input) {
-        if (input != null && !"".equals(input)) {
-            return true;
-        }
-        error("Name is not allowed to be empty");
-        return false;
     }
 
     @Override
@@ -266,48 +155,31 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         super.onDetach();
     }
 
-    
     @Override
     protected void onOk() {
-        if (uuid == null) {
+        if (selectedItem.getUuid() == null) {
             return;
         }
-        
-        String link = values.get(XinhaImage.URL);
-        values.put(XinhaImage.URL, link);
-         
+        values.put(XinhaImage.URL, selectedItem.getUrl());
+
         Node node = nodeModel.getNode();
-        
+        String nodeName = selectedItem.getNodeName();
         try {
-            if(node.hasNode(link)) {
+            if (node.hasNode(nodeName)) {
                 return;
             }
-            Node facetselect = node.addNode(link, HippoNodeType.NT_FACETSELECT);
+            Node facetselect = node.addNode(nodeName, HippoNodeType.NT_FACETSELECT);
             //todo fetch corresponding uuid of the chosen imageset
-            facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
+            facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, selectedItem.getUuid());
             facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
             facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
             facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
             // need a node save (the draft so no problem) to visualize images
             node.save();
         } catch (RepositoryException e) {
-            log.error("An error occured while trying to save new image facetSelect[" + uuid + "]", e);
-        }
-    }
-
-    @Override
-    protected String getSelectedValue() {
-        String url = values.get(XinhaImage.URL);
-        try {
-            String imageUrl = "binaries" + nodeModel.getNode().getPath() + "/" + url;
-            if(selectedRN != null && !selectedRN.equals("")) {
-                imageUrl += "/"+url+"/"+selectedRN;
-            }
-            values.put(XinhaImage.URL, imageUrl);
-            return super.getSelectedValue();
-        } catch (RepositoryException e) {
-            log.error("An error occured while trying to get image path", e);
-            return "{}";
+            log
+                    .error("An error occured while trying to save new image facetSelect[" + selectedItem.getUuid()
+                            + "]", e);
         }
     }
 
@@ -327,10 +199,9 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
                 }
                 Node canonical = imageNode.getCanonicalNode();
                 if (canonical != null && canonical.getParent().isNodeType("mix:referenceable")) {
-                    try {
+                    try { //test if canonical node has a primaryItem
                         canonical.getPrimaryItem().getName();
-
-                        items.add(new ImageItem(canonical));
+                        items.add(imageItemFactory.createImageItem(canonical));
                     } catch (ItemNotFoundException e) {
                         log.error("gallery node does not have a primary item: skipping node: " + canonical.getPath());
                     }
@@ -343,50 +214,4 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         }
         return items;
     }
-
-    public static class ImageItem implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        private String path;
-        private String uuid;
-        private String nodeName;
-        private String primaryItemName;
-        private List<String> resourceDefinitions;
-
-        public ImageItem(Node canonical) throws UnsupportedRepositoryOperationException, ItemNotFoundException, AccessDeniedException, RepositoryException {
-            this.path = canonical.getPath();
-            this.uuid = canonical.getParent().getUUID();
-            this.primaryItemName = canonical.getPrimaryItem().getName();
-            this.nodeName = canonical.getName();
-            this.resourceDefinitions = new ArrayList<String>();
-            NodeDefinition[] childDefs = canonical.getPrimaryNodeType().getChildNodeDefinitions();
-            for (int i = 0; i < childDefs.length; i++) {
-                if (!childDefs[i].getName().equals(primaryItemName) && childDefs[i].getDefaultPrimaryType() != null
-                        && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                    resourceDefinitions.add(childDefs[i].getName());
-                }
-            }
-        }
-
-        public String getUuid() {
-            return uuid;
-        }
-        
-        public String getPath() {
-            return path;
-        }
-        
-        public String getPrimaryUrl() {
-            return "binaries" + path + "/" + primaryItemName;
-        }
-
-        public List<String> getResourceDefinitions(){
-            return resourceDefinitions;
-        }
-        
-        public String getNodeName() {
-            return nodeName;
-        }
-    }
-
 }

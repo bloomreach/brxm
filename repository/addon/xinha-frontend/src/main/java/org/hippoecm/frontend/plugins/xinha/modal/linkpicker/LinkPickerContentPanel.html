@@ -14,29 +14,40 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <form wicket:id="form">
-    <table class="linkPicker" style="background: #F2F2F2; width: 100%;">
-      <tr>
-        <td>
-          <span wicket:id="jcrpath" style="padding-left: 5px;">[path]</span>
-        </td> 
-      </tr>
-      <tr>
-        <td>
-          <div wicket:id="wrapper">
-            <div wicket:id="item" style="padding-left: 5px;">
-              <a wicket:id="callback">
-                <img src="" wicket:id="icon"/>
-                <span wicket:id="linkname">[link to handle]</span>
-              </a>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-    <div class="dialogButtons">
-      <input type="button" wicket:id="ok" value = "OK"/>
-      <input type="button" wicket:id="close" value="Close" />
+  <wicket:extend>
+    <div>
+      <select wicket:id="linkTypeDropDown">[ LinkTypeDropDown ]</select>
     </div>
-  </form>
+    <div style="margin:5px;">
+      <wicket:panel wicket:id="linkPickerWidget">[ LinkPickerWidget ]</wicket:panel>
+    </div>  
+
+    <wicket:fragment wicket:id="externalLink">
+      
+      <h3>Type a url</h3>
+      <input type="text" wicket:id="externalLinkUrl" />
+    </wicket:fragment>
+    
+    <wicket:fragment wicket:id="internalLink">
+      <table class="linkPicker" style="background: #F2F2F2; width: 100%;">
+        <tr>
+          <td>
+            <span wicket:id="pathLabel" style="padding-left: 5px;">[ pathLabel ]</span>
+          </td> 
+        </tr>
+        <tr>
+          <td>
+            <div wicket:id="wrapper">
+              <div wicket:id="item" style="padding-left: 5px;">
+                <a wicket:id="callback">
+                  <img src="" wicket:id="icon"/>
+                  <span wicket:id="linkname">[link to handle]</span>
+                </a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </wicket:fragment>  
+  </wicket:extend>
 </wicket:panel>

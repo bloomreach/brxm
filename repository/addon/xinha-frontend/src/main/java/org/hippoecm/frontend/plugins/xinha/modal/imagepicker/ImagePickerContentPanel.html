@@ -14,20 +14,14 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <form wicket:id="form">
-    <p class="statusMessage">
-      <span wicket:id="feedback">[ Feedback panel ]</span>
-    </p>
+  <wicket:extend>
     <table class="imagePicker">
       <tr>
         <td>
           <label>Image Name</label>
         </td>
-        <td>  
-          <input type="text" wicket:id="url" />
-        </td>
         <td> 
-          <img src="" wicket:id="selectedimg"/> <br/>
+          <img wicket:id="selectedImagePreview"/><br/>
             <!-- <label>Choose Version</label> --> 
             <select wicket:id="resourcenodes" style="display: none;">
               <option>thumbnail</option>
@@ -45,9 +39,5 @@
         </a>
       </div>
     </div>
-    <div class="dialogButtons">
-      <input type="button" wicket:id="ok" value = "OK"/>
-      <input type="button" wicket:id="close" value="Close" />
-    </div>
-  </form>
+  </wicket:extend>  
 </wicket:panel>
