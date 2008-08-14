@@ -122,23 +122,15 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                boolean submit = true;
-
+                List<IValidateService> validators = null;
                 IPluginConfig config = getPluginConfig();
                 if (config.getString(IValidateService.VALIDATE_ID) != null) {
-                    List<IValidateService> validators = getPluginContext().getServices(
-                            config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
-                    for (IValidateService validator : validators) {
-                        validator.validate();
-                        if (validator.hasError()) {
-                            submit = false;
-                        }
+                    validators = getPluginContext().getServices(config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                    if (validators != null && !action.validateSession(validators)) {
+                        return;
                     }
                 }
-
-                if (submit) {
-                    execute(action);
-                }
+                execute(action);
             }
         };
         add(link);
@@ -201,6 +193,7 @@ public class AbstractWorkflowPlugin extends RenderPlugin {
             while (handle.getParentModel() != null && !handle.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
                 handle = handle.getParentModel();
             }
+
             action.prepareSession(handle);
 
             Workflow workflow = null;

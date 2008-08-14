@@ -65,6 +65,7 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("editModel-action", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void execute(Workflow workflow) throws Exception {
                 EditmodelWorkflow emWorkflow = (EditmodelWorkflow) workflow;
                 if (emWorkflow != null) {
