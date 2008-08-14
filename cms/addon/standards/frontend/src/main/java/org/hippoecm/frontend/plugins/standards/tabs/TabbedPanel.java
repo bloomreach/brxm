@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,9 +25,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.plugins.yui.layout.YuiUnitBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeConfig;
 
 public class TabbedPanel extends AjaxTabbedPanel {
     @SuppressWarnings("unused")
@@ -44,20 +39,7 @@ public class TabbedPanel extends AjaxTabbedPanel {
         this.plugin = plugin;
         setOutputMarkupId(true);
         setVersioned(false);
-        
-        add(new YuiWireframeBehavior("tabbed-panel-layout", true).registerUnitElement("top", "tabbed-panel-layout-top").registerUnitElement("center", "tabbed-panel-layout-center"));
-        
-        visitChildren(new IVisitor() {
-            public Object component(Component component) {
-                if(component.getId().equals("tabs-container")) {
-                    component.setOutputMarkupId(true);
-                    component.add(new YuiUnitBehavior(YuiWireframeConfig.Unit.TOP, "height=70"));
-                    return STOP_TRAVERSAL;
-                } 
-                return CONTINUE_TRAVERSAL;
-            }            
-        });
-
+        get("tabs-container").setOutputMarkupId(true);
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +43,6 @@ public class ManagementPerspective extends Perspective {
         } else {
             log.error("no model service specified");
         }
-        
-        YuiWireframeBehavior wireframe = new YuiWireframeBehavior("management-perspective-wrapper", true);
-        wireframe.addUnit("left", "width=200", "id=management-perspective-left", "resize=true", "gutter=0px 5px 0px 3px");
-        wireframe.registerUnitElement("center", "management-perspective-center");
-        add(wireframe);
         
     }
 

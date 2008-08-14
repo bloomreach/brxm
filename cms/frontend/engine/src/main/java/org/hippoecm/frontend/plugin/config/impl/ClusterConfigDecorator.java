@@ -43,8 +43,22 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                 @Override
                 public Object get(Object key) {
                     Object obj = conf.get(key);
-                    if ((obj != null) && (obj instanceof String)) {
-                        return filter((String) obj);
+                    if (obj != null) {
+                        if (obj instanceof String) {
+                            return filter((String) obj);
+                        } else if (obj.getClass().isArray()) {
+                            Object[] list = (Object[]) obj;
+                            Object[] result = new Object[list.length];
+                            int i = 0;
+                            for (Object item : list) {
+                                if (item != null && item instanceof String) {
+                                    result[i++] = filter((String) item);
+                                } else {
+                                    result[i++] = item;
+                                }
+                            }
+                            return result;
+                        }
                     }
                     return obj;
                 }

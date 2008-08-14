@@ -117,7 +117,6 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
             IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString(CLUSTER));
             String editorId = clusterConfig.getString(EDITOR_ID);
 
-            clusterConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
             IPluginControl plugin = context.start(clusterConfig);
 
             IEditService editService = context.getService(editorId, IEditService.class);
