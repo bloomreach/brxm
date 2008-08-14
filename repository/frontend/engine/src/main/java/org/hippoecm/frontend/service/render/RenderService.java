@@ -31,6 +31,7 @@ import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBehaviorService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -51,6 +52,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String CSS_ID = "wicket.css";
     public static final String FEEDBACK = "wicket.feedback";
+    public static final String BEHAVIOR = "wicket.behavior";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -87,7 +89,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
                 context.registerService(this, modelId);
             }
         }
-        
+
         String[] extensions = config.getStringArray(EXTENSIONS_ID);
         if (extensions != null) {
             for (String extension : extensions) {
@@ -109,7 +111,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
                 }
                 sb.append(cssClass);
             }
-            if(sb != null) {
+            if (sb != null) {
                 cssClasses = new String(sb);
             }
         }
@@ -118,6 +120,44 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
             context.registerService(new ContainerFeedbackMessageFilter(this), config.getString(FEEDBACK));
         } else {
             log.debug("No feedback id {} defined to register message filter", FEEDBACK);
+        }
+
+        if (config.getStringArray(BEHAVIOR) != null) {
+            ServiceTracker<IBehaviorService> tracker = new ServiceTracker<IBehaviorService>(IBehaviorService.class) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onServiceAdded(IBehaviorService behavior, String name) {
+                    String path = behavior.getComponentPath();
+                    if (path != null) {
+                        Component component = get(path);
+                        if (component != null) {
+                            component.add(behavior);
+                        } else {
+                            log.warn("No component found under {}", path);
+                        }
+                    } else {
+                        add(behavior);
+                    }
+                }
+
+                @Override
+                public void onRemoveService(IBehaviorService behavior, String name) {
+                    String path = behavior.getComponentPath();
+                    if (path != null) {
+                        Component component = get(behavior.getComponentPath());
+                        if (component != null) {
+                            component.remove(behavior);
+                        }
+                    } else {
+                        remove(behavior);
+                    }
+                }
+            };
+
+            for (String name : config.getStringArray(BEHAVIOR)) {
+                context.registerTracker(tracker, name);
+            }
         }
 
         context.registerService(this, wicketServiceId);
@@ -172,7 +212,7 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
     }
 
     // allow styling
-    
+
     @Override
     public void onComponentTag(final ComponentTag tag) {
         super.onComponentTag(tag);

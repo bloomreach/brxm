@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
@@ -26,7 +23,6 @@ import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -55,15 +51,7 @@ public class EditPerspective extends Perspective implements IEditService {
         if (config.getString(IEditService.EDITOR_ID) != null) {
             context.registerService(this, config.getString(IEditService.EDITOR_ID));
         }
-        
-        YuiWireframeBehavior wireframe = new YuiWireframeBehavior("editor-perspective-wrapper", true);
-        Map<String, String> optsRight = new HashMap<String, String>();
-        optsRight.put("height", "30");
-        optsRight.put("id", "editor-perspective-top");
-        wireframe.addUnit("top", optsRight);
-        wireframe.addUnit("center", "id=editor-perspective-center", "scroll=true", "body=editor-perspective-center-body");
-        add(wireframe);
-        
+
         onModelChanged();
     }
 

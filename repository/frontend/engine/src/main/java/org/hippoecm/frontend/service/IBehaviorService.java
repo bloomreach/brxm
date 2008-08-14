@@ -13,19 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.dashboard;
+package org.hippoecm.frontend.service;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.apache.wicket.behavior.IBehavior;
 
-public class DashboardPerspective extends Perspective {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+public interface IBehaviorService extends IBehavior {
 
-    private static final long serialVersionUID = 1L;
+    String ID = "behavior.id";
+    String PATH = "behavior.path";
 
-    public DashboardPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-    }
+    String getComponentPath();
 }

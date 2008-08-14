@@ -100,7 +100,7 @@ public class YuiWireframeConfig implements Serializable {
 
         public Unit(Map<String, String> options) {
             if (options == null)
-                options = new HashMap<String, String>();
+                this.options = new HashMap<String, String>();
             else
                 this.options = options;
         }
@@ -126,7 +126,7 @@ public class YuiWireframeConfig implements Serializable {
                 if (unit != null) {
                     config.append("    { position: '").append(unitKey).append("'");
                     if (unit.options != null) {
-                        Map<String, String> options = units.get(unitKey).options;
+                        Map<String, String> options = unit.options;
                         for (String optionsKey : options.keySet()) {
                             config.append(", ").append(optionsKey).append(": ").append(
                                     JavascriptUtil.serialize2JS(options.get(optionsKey)));

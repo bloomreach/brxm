@@ -17,7 +17,6 @@ package org.hippoecm.frontend.editor.builder;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class TemplateTypeLayout extends RenderPlugin {
@@ -25,11 +24,6 @@ public class TemplateTypeLayout extends RenderPlugin {
 
     public TemplateTypeLayout(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        YuiWireframeBehavior wireframe = new YuiWireframeBehavior("template-type-wrapper", true);
-        wireframe.addUnit("center", "id=template-type-center", "body=template-type-center-body", "scroll=true");
-        wireframe.addUnit("right", "id=template-type-right", "width=250", "resize=true", "body=template-type-right-body", "scroll=true");
-        add(wireframe);
     }
 
 }

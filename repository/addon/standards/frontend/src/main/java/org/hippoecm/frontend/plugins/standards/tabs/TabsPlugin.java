@@ -21,14 +21,11 @@ import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.layout.YuiUnitBehavior;
-import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeConfig;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -59,7 +56,7 @@ public class TabsPlugin extends RenderPlugin {
         super(context, properties);
 
         tabs = new ArrayList<Tab>();
-        add(new EmptyPanel("tabs"));
+        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
 
         selectCount = 0;
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
@@ -70,10 +67,6 @@ public class TabsPlugin extends RenderPlugin {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 Tab tabbie = new Tab(service);
-                if (tabs.size() == 0) {
-                    tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs);
-                    replace(tabbedPanel);
-                }
                 tabs.add(tabbie);
                 redraw();
             }
@@ -85,20 +78,11 @@ public class TabsPlugin extends RenderPlugin {
                     tabs.remove(tabbie);
                     tabbie.destroy();
                     service.unbind();
-                    if (tabs.size() == 0) {
-                        replace(new EmptyPanel("tabs"));
-                        tabbedPanel = null;
-                    }
                     redraw();
                 }
             }
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
-
-        if (tabs.size() > 0) {
-            tabbedPanel = new TabbedPanel("tabs", this, tabs);
-            replace(tabbedPanel);
-        }
     }
 
     @Override
@@ -157,8 +141,6 @@ public class TabsPlugin extends RenderPlugin {
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
-            Panel fo = (Panel) renderer;
-            fo.add(new YuiUnitBehavior(YuiWireframeConfig.Unit.CENTER, "height=1000"));
         }
 
         void destroy() {
