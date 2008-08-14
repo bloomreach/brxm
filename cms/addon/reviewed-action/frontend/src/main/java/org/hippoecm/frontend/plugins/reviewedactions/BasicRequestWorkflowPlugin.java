@@ -56,6 +56,7 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void execute(Workflow wf) throws Exception {
                 BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
                 workflow.cancelRequest();

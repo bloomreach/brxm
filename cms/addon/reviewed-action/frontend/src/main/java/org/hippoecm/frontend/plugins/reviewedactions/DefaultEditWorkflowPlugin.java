@@ -60,6 +60,7 @@ public class DefaultEditWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("edit-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void execute(Workflow wf) throws Exception {
                 Node docNode = ((WorkflowsModel)DefaultEditWorkflowPlugin.this.getModel()).getNodeModel().getNode();
                 IEditService viewer = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);

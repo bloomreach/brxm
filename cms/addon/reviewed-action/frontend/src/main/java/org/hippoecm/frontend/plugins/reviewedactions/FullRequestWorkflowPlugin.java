@@ -33,6 +33,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("acceptRequest-dialog", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void execute(Workflow wf) throws Exception {
                 FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
                 workflow.acceptRequest();
@@ -43,6 +44,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 new WorkflowAction() {
                     private static final long serialVersionUID = 1L;
 
+                    @Override
                     public void execute(Workflow wf) throws Exception {
                         FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
                         workflow.rejectRequest(""); // FIXME

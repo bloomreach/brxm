@@ -40,6 +40,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
         addWorkflowAction("save", new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void execute(Workflow wf) throws Exception {
                 close();
             }
