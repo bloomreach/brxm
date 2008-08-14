@@ -18,8 +18,8 @@ package org.hippoecm.frontend.editor.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
+import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 
 public class MixedTypeStore implements ITypeStore {
     @SuppressWarnings("unused")

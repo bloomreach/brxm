@@ -25,13 +25,9 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -47,6 +43,8 @@ import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
     @SuppressWarnings("unused")
@@ -103,7 +101,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
         if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
             model = new JcrNodeModel("/");
         } else {
-            model = (JcrNodeModel) imodel;
+            model = imodel;
         }
         try {
             QueryManager qmgr = ((UserSession) getSession()).getJcrSession().getWorkspace().getQueryManager();
@@ -162,6 +160,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
         updateModel(model);
     }
 
+    @Override
     public void onDetach() {
         config.detach();
         super.onDetach();

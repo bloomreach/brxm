@@ -82,7 +82,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             node = rootNode.getTreeModel().lookup(model);
 
             if (node != null) {
-                TreeNode parentNode = (AbstractTreeNode) node.getParent();
+                TreeNode parentNode = node.getParent();
                 while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
                     tree.getTreeState().expandNode(parentNode);
                     parentNode = parentNode.getParent();

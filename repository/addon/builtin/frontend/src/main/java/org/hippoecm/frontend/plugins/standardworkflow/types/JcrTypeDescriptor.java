@@ -79,8 +79,8 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
             List<String> superTypes = new LinkedList<String>();
             if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
                 Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                for (int i = 0; i < values.length; i++) {
-                    superTypes.add(values[i].getString());
+                for (Value value : values) {
+                    superTypes.add(value.getString());
                 }
             }
             return superTypes;

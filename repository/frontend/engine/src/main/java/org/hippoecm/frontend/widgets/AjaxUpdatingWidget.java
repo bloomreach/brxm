@@ -17,11 +17,12 @@ package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.markup.html.form.FormComponent;
 
 public abstract class AjaxUpdatingWidget extends Panel {
+    private static final long serialVersionUID = 1L;
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

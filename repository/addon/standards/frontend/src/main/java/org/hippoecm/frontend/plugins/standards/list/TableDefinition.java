@@ -48,7 +48,7 @@ public class TableDefinition {
     }
 
     public ListColumn[] getColumns() {
-        return (ListColumn[])(columns.toArray(new ListColumn[columns.size()]));
+        return (columns.toArray(new ListColumn[columns.size()]));
     }
         
     public boolean showColumnHeaders() {

@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeNode {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

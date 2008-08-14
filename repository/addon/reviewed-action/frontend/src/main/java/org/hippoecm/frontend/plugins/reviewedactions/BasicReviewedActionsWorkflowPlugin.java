@@ -19,16 +19,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.WebComponent;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.markup.html.panel.Panel;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,6 +35,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {

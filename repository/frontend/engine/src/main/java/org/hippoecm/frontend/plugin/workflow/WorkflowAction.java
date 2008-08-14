@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.repository.api.Workflow;

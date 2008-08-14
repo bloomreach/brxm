@@ -43,6 +43,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -56,6 +57,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -75,7 +78,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.get(RenderPlugin.MODEL_ID) != null) {
+        if (config.get(RenderService.MODEL_ID) != null) {
             subModel = new ModelService(config.getString("wicket.submodel"), null);
             subModel.init(context);
         } else {
@@ -90,6 +93,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         add(expiredComponent = new Label("expired"));
         add(labeledComponent = new Label("labeled"));
         add(restoreComponent = new AjaxLink("restore") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 restoreVersion();
@@ -103,6 +108,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         });*/
 
         add(olderComponent = new AjaxLink("older") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 browseVersion(-1);
@@ -110,6 +117,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         });
 
         add(newerComponent = new AjaxLink("newer") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 browseVersion(+1);

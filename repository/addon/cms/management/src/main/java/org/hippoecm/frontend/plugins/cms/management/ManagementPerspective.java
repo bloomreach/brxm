@@ -20,7 +20,7 @@ import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +37,8 @@ public class ManagementPerspective extends Perspective {
     public ManagementPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.getString(RenderPlugin.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderPlugin.MODEL_ID), new JcrNodeModel("/"));
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
             modelService.init(context);
         } else {
             log.error("no model service specified");

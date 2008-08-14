@@ -38,7 +38,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +61,8 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.getString(RenderPlugin.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderPlugin.MODEL_ID), new JcrNodeModel("/"));
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
             modelService.init(context);
         } else {
             log.error("no model service specified");
