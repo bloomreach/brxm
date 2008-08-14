@@ -20,6 +20,7 @@ import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 
 public class RootPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -30,8 +31,8 @@ public class RootPlugin extends RenderPlugin {
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.getString(RenderPlugin.MODEL_ID) != null) {
-            String modelId = config.getString(RenderPlugin.MODEL_ID);
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            String modelId = config.getString(RenderService.MODEL_ID);
             ModelService modelService = new ModelService(modelId, new JcrNodeModel("/"));
             modelService.init(context);
             // unregister: don't repaint root plugin when model changes.

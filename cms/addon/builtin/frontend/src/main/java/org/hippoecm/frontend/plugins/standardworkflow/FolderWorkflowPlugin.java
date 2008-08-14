@@ -24,23 +24,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Node;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.markup.html.basic.Label;
-
-import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.CustomizableDialogLink;
+import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -60,6 +56,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -90,6 +88,7 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                 }
                 text += " and all of its contents permanently?";
                 return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
+                    @Override
                     protected void execute() throws Exception {
                         // FIXME: this assumes that folders are always embedded in other folders
                         // and there is some logic here to look up the parent.  The real solution is
