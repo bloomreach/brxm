@@ -25,7 +25,6 @@ import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
-
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -82,7 +81,7 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
-            prototype = (String) folderWorkflowPlugin.templates.get(category).iterator().next();
+            prototype = folderWorkflowPlugin.templates.get(category).iterator().next();
         } else {
             Component component;
             add(component = new EmptyPanel("prototype"));

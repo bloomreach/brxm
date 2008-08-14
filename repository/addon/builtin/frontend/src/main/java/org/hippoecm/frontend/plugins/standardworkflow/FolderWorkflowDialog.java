@@ -131,7 +131,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
-            prototype = (String) folderWorkflowPlugin.templates.get(category).iterator().next();
+            prototype = folderWorkflowPlugin.templates.get(category).iterator().next();
             Component notypes;
             add(notypes = new EmptyPanel("notypes"));
             notypes.setVisible(false);

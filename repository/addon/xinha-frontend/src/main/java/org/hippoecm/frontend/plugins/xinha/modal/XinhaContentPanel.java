@@ -52,6 +52,7 @@ public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
         ok = new AjaxButton("ok", form) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 onOk();
                 modal.onSelect(target, getSelectedValue());
@@ -63,6 +64,7 @@ public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
         form.add(cancel = new AjaxButton("close", form) {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public void onSubmit(AjaxRequestTarget target, Form form) {
                 onCancel();
                 modal.onCancel(target);
