@@ -42,7 +42,25 @@
         <init-param>
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
-		</init-param>
+        </init-param>
+    </filter>
+
+    <!--CMS deque console-->
+    <filter>
+        <filter-name>Deque</filter-name>
+        <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+        <init-param>
+            <param-name>applicationClassName</param-name>
+            <param-value>org.hippoecm.frontend.Main</param-value>
+        </init-param>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>cms-deque</param-value>
+        </init-param>
+        <init-param>
+            <param-name>configuration</param-name>
+            <param-value>deployment</param-value>
+        </init-param>
     </filter>
 
     <!--Builtin console-->
@@ -66,6 +84,11 @@
     <filter-mapping>
         <filter-name>CMS</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>Deque</filter-name>
+        <url-pattern>/deque/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
