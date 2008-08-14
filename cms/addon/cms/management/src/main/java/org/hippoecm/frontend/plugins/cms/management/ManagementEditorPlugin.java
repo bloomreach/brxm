@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.management;
 
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -27,8 +26,6 @@ public class ManagementEditorPlugin extends EditorPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private FeedbackPanel feedback;
 
     public ManagementEditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

@@ -21,6 +21,8 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
 public abstract class ItemModelWrapper implements IChainingModel {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

@@ -23,19 +23,19 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ViewPane extends RenderPlugin {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -55,6 +55,7 @@ public class ViewPane extends RenderPlugin {
         log = LoggerFactory.getLogger(ViewPane.class);
     }
 
+    @Override
     protected void onBeforeRender() {
         Component contentComponent = get("extension.content");
         Component alternateComponent = get("alternate");

@@ -95,7 +95,7 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {
-        return (T) manager.getService(name, clazz);
+        return manager.getService(name, clazz);
     }
 
     public <T extends IClusterable> List<T> getServices(String name, Class<T> clazz) {

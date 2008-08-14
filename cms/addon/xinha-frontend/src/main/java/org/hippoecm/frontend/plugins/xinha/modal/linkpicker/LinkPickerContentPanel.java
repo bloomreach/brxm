@@ -183,7 +183,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
 
     @Override
     protected void onOk() {
-        IValidLinkProvider linkProvider = (IValidLinkProvider) linkPicker;
+        IValidLinkProvider linkProvider = linkPicker;
         values.put(XinhaLink.HREF, linkProvider.createValidLink());
     }
 

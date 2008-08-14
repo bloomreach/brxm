@@ -65,7 +65,7 @@ public class TabsPlugin extends RenderPlugin {
             @Override
             public void onServiceAdded(IRenderService service, String name) {
                 // add the plugin
-                service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
+                service.bind(TabsPlugin.this, org.apache.wicket.extensions.markup.html.tabs.TabbedPanel.TAB_PANEL_ID);
                 Tab tabbie = new Tab(service);
                 tabs.add(tabbie);
                 redraw();
@@ -179,7 +179,7 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         public Panel getPanel(String panelId) {
-            assert (panelId.equals(TabbedPanel.TAB_PANEL_ID));
+            assert (panelId.equals(org.apache.wicket.extensions.markup.html.tabs.TabbedPanel.TAB_PANEL_ID));
 
             return (Panel) renderer;
         }

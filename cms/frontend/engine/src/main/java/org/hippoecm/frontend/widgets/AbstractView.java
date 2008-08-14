@@ -27,6 +27,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 
 public abstract class AbstractView extends DataView {
+    private static final long serialVersionUID = 1L;
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

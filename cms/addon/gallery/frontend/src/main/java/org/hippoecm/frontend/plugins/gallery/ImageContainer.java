@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.gallery;
 
-import javax.jcr.Node;
-
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -32,7 +30,7 @@ public class ImageContainer extends Panel {
     public ImageContainer(String wicketId, JcrNodeModel model) {
         super(wicketId, model);
 
-        stream = new JcrResourceStream((Node) model.getNode());
+        stream = new JcrResourceStream(model.getNode());
         add(new NonCachingImage("image", new JcrResource(stream)) {
             private static final long serialVersionUID = 1L;
 

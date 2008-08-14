@@ -122,7 +122,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
             IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");
             cluster.put(ITemplateEngine.ENGINE, engineId);
             cluster.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
-            cluster.put(RenderPlugin.WICKET_ID, getPluginConfig().getString("template"));
+            cluster.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
 
             String modelId = cluster.getString(RenderService.MODEL_ID);
             JcrNodeModel prototypeModel = typeHelper.getPrototype();

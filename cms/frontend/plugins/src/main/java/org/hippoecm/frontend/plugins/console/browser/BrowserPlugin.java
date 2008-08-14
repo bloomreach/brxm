@@ -83,7 +83,7 @@ public class BrowserPlugin extends RenderPlugin implements IJcrNodeModelListener
             node = rootNode.getTreeModel().lookup(model);
 
             if (node != null) {
-                TreeNode parentNode = (AbstractTreeNode) node.getParent();
+                TreeNode parentNode = node.getParent();
                 while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
                     tree.getTreeState().expandNode(parentNode);
                     parentNode = parentNode.getParent();

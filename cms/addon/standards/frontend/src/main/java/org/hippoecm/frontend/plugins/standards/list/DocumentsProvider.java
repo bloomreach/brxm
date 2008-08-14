@@ -49,7 +49,7 @@ public class DocumentsProvider extends SortableDataProvider {
 
     public DocumentsProvider(JcrNodeModel model, Map<String, Comparator> comparators) {
         this.comparators = comparators;
-        Node node = (Node) model.getNode();
+        Node node = model.getNode();
         try {
             while (node != null) {
                 if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder"))

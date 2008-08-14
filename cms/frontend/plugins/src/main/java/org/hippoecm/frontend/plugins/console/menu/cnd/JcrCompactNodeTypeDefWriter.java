@@ -173,9 +173,9 @@ public class JcrCompactNodeTypeDefWriter {
     private void writeRequiredTypes(NodeType[] reqTypes) throws IOException {
         if (reqTypes != null && reqTypes.length > 0) {
             String delim = " (";
-            for (int i = 0; i < reqTypes.length; i++) {
+            for (NodeType reqType : reqTypes) {
                 out.write(delim);
-                out.write(resolve(reqTypes[i].getName()));
+                out.write(resolve(reqType.getName()));
                 delim = ", ";
             }
             out.write(")");
@@ -273,12 +273,12 @@ public class JcrCompactNodeTypeDefWriter {
     private void writeDefaultValues(Value[] dva) throws IOException {
         if (dva != null && dva.length > 0) {
             String delim = " = '";
-            for (int i = 0; i < dva.length; i++) {
+            for (Value element : dva) {
                 out.write(delim);
                 try {
-                    out.write(escape(dva[i].getString()));
+                    out.write(escape(element.getString()));
                 } catch (RepositoryException e) {
-                    out.write(escape(dva[i].toString()));
+                    out.write(escape(element.toString()));
                 }
                 out.write("'");
                 delim = ", '";
