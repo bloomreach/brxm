@@ -1,7 +1,23 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.core.template.tag;
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
@@ -9,13 +25,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.template.ModuleRenderAttributes;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
+import org.hippoecm.hst.core.template.node.PageContainerNode;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 
-
+/**
+ * The tag class that performs the render() and or execute() methods in a module template (JSP).
+ *
+ */
 public class ModuleRenderTag extends TagSupport {
 	
     private static final long serialVersionUID = 1L;
@@ -32,14 +55,22 @@ public class ModuleRenderTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		if (doExecute) {
 			//set trigger for filter
-		   addModuleMapAttribute(request, getName(), className);
+		   try {
+			   PageContainerNode pcNode = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);
+			   PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+			   ModuleRenderAttributes attributes = new ModuleRenderAttributes(pageNode.getName(), pcNode.getJcrNode().getName(), getName(), getClassName());
+			   addModuleMapAttribute(request, attributes);
+			} catch (RepositoryException e) {
+				throw new JspException("Cannot get the name of the PageContainerNode's jcrNode");
+			}
 		}
 		
 		if (doRender) {
 		   try {
 			Module module = getModule();
 			   module.setVar(var);
-			   module.setModuleNode(getModuleNode(request, getName()));
+			 
+			   module.setPageModuleNode(getPageModuleNode(request, getName()));
 			   module.render(pageContext);
 			} catch (Exception e) {
 				throw new JspException(e);
@@ -49,19 +80,19 @@ public class ModuleRenderTag extends TagSupport {
 		return SKIP_BODY;
 	}
 	
-	private ModuleNode getModuleNode(HttpServletRequest request, String moduleName) throws RepositoryException {
-		PageNode currentPageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
-		ModuleNode moduleNode = currentPageNode.getModuleNodeByName(moduleName);
-		return moduleNode;
+	private PageContainerModuleNode getPageModuleNode(HttpServletRequest request, String moduleName)  throws RepositoryException {
+		PageContainerNode pcn = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);	
+		return pcn.getContainerModuleNodeByName(moduleName);
 	}
 	
-	private void addModuleMapAttribute(HttpServletRequest request, String name, Object value) {
-		 Map moduleMap = (Map) request.getAttribute(Module.REQUEST_MODULEMAP_ATTRIBUTE);
-		 if (moduleMap == null) {
-			 moduleMap = new HashMap();
+	private void addModuleMapAttribute(HttpServletRequest request, ModuleRenderAttributes renderAttributes) {
+		 List moduleList = (List) request.getSession().getAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
+		 if (moduleList == null) {
+			 moduleList = new ArrayList();
 		 }
-		 moduleMap.put(name, value);
-		 request.getSession().setAttribute(Module.REQUEST_MODULEMAP_ATTRIBUTE, moduleMap);	
+		
+		 moduleList.add(renderAttributes);
+		 request.getSession().setAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE, moduleList);	
 	}
 		 
 	

@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.hst.core.template;
 
 import java.util.HashMap;
@@ -21,13 +36,21 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Base class for HST related filters.
+ *
+ */
 public abstract class HstFilterBase implements Filter {
-	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = "contentContext";
 	
 	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
 	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
+	
+	//request attributes
+	public static final String PAGENODE_REQUEST_ATTRIBUTE = "pageNode";
+	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = "contentContext";
+	public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
 	
 	private String hstConfigurationUrl;
 	
@@ -43,7 +66,6 @@ public abstract class HstFilterBase implements Filter {
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
 		
 		log.info("URI" + request.getRequestURI());
-			//find 
 			
 			PageNode matchPageNode = null;
             if (urlTokenizer.isMatchingTemplateFound()) {
@@ -56,7 +78,6 @@ public abstract class HstFilterBase implements Filter {
             	}
             }
             return matchPageNode;
-            
 	}
 	
 	protected boolean ignoreMapping(HttpServletRequest request) {
@@ -69,12 +90,37 @@ public abstract class HstFilterBase implements Filter {
 		return false;
 	}
 	
+	protected String getUrlPrefix(HttpServletRequest request) {
+		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.ATTRIBUTENAME_INIT_PARAMETER);
+    	urlPrefix = (urlPrefix == null) ? "" : urlPrefix;
+    	return urlPrefix;
+	}
+	
 	public PageNode getPageNode(HttpServletRequest request) throws TemplateException, RepositoryException {
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
 		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
 		URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
        	return getPageNode(request, urlTokenizer, templateContextBase);
 	} 
+	
+	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
+		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
+		Node siteMapNodes = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
+		NodeIterator siteMapItemIterator = siteMapNodes.getNodes();
+		if (siteMapItemIterator == null) {
+			return null;
+		} else {
+			while (siteMapItemIterator.hasNext()) {
+				Node siteMapItem = siteMapItemIterator.nextNode();
+				log.debug("looking for " + pageNodeName + " with location"  + siteMapItem.getPath() + " and name " + siteMapItem.getName());
+				if (siteMapItem.getName().equals(pageNodeName)) {
+					return new PageNode(templateContextBase, siteMapItem);
+				}
+			}
+		}
+		return null;
+	}
 	
 	
 	
