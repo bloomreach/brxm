@@ -57,8 +57,7 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 			    log.error("No " + ModuleNode.TEMPLATE_PROPERTY_NAME+ " property in current node " + jcrNode.getPath());
 			    return null;
 			}
-		} else {
-			System.out.println("trying to get templatepage from node " + getModuleNode().getPath());
+		} else {			
 			return getModuleNode().getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
 		}
 				

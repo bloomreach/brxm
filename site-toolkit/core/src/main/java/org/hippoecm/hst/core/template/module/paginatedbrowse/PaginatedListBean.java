@@ -2,8 +2,8 @@ package org.hippoecm.hst.core.template.module.paginatedbrowse;
 
 import java.util.List;
 
-public class PageBean {
-    private int total;
+public class PaginatedListBean {
+    private long total;
 	private int pageSize;
 	private int pageId;
 	private int itemsInPage;
@@ -11,11 +11,11 @@ public class PageBean {
 	private boolean hasPrevious;
 	private boolean hasNext;
 
-	public int getTotal() {
+	public long getTotal() {
 		return total;
 	}
 
-	public void setTotal(int total) {
+	public void setTotal(long total) {
 		this.total = total;
 	}
 

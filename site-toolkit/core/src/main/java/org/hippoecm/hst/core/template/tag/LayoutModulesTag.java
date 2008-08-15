@@ -65,13 +65,8 @@ public class LayoutModulesTag extends SimpleTagSupport {
     
         for (int index=0; index < pcmList.size(); index++) {
         	try {
-        		PageContainerModuleNode pcm = pcmList.get(index);
-				//ModuleNode moduleNode = pcm.getModuleNode();
-				//moduleNode.setPageContainerModuleNode(pcm);				
-				//request.setAttribute("currentModuleNode", moduleNode);
-				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);
-				System.out.println("PCM=" + pcm);
-				System.out.println("PCM2=" + pcm.getTemplatePage());
+        		PageContainerModuleNode pcm = pcmList.get(index);				
+				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);			
 				pageContext.include(pcm.getTemplatePage());
 			} catch (RepositoryException e) {
 				log.error("RepositoryException:", e);
