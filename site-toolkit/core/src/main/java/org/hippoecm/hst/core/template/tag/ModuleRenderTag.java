@@ -33,6 +33,8 @@ import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
 import org.hippoecm.hst.core.template.node.PageNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -42,6 +44,7 @@ import org.hippoecm.hst.core.template.node.PageNode;
 public class ModuleRenderTag extends TagSupport {
 	
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ModuleRenderTag.class);
     
     private String name;
 	private String className;
@@ -98,10 +101,11 @@ public class ModuleRenderTag extends TagSupport {
 	
 	private Module getModule() throws Exception {
 		Object o = null;
-			o = Class.forName(getClassName()).newInstance();
-			if (!Module.class.isInstance(o)) {
-				throw new Exception(getClassName() + " does not implement the interface " + Module.class.getName());
-			}
+	    log.info("Create instance of class " + getClassName());
+		o = Class.forName(getClassName()).newInstance();
+		if (!Module.class.isInstance(o)) {
+			throw new Exception(getClassName() + " does not implement the interface " + Module.class.getName());
+		}
 		return (Module) o;
 	}
 	

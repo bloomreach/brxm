@@ -72,7 +72,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 							Module module = getModule(moduleRenderAttributes.getClassName());
 							PageNode pageNode = getPageNode(request, moduleRenderAttributes.getPageName());
 
-							PageContainerNode containerNode = pageNode.getContainerNodeByName(moduleRenderAttributes.getContainerName()); 
+							PageContainerNode containerNode = pageNode.getPageContainerNode(moduleRenderAttributes.getContainerName()); 
 							if (log.isDebugEnabled() && containerNode != null) {
 						    	log.debug("containerNode=" + containerNode.getJcrNode().getPath());
 							}

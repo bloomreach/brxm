@@ -43,7 +43,7 @@ public class LayoutAttributeTag extends TagSupport {
     	HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    
         PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
         NodeList<PageContainerNode> containerList = pageNode.getContainers();
-        PageContainerNode pcNode = pageNode.getContainerNodeByName(getName());
+        PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
         //getModules
         NodeList<PageContainerModuleNode> pcNodeModules = null;

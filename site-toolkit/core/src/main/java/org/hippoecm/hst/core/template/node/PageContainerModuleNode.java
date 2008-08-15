@@ -49,12 +49,19 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 	}
 	
 	
-	public String getTemplatePage() throws RepositoryException {
-	   try {
-	       return getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);		
-	   } catch (Exception e) {
-		   return getModuleNode().getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
-	   }
+	public String getTemplatePage() throws RepositoryException {	
+		if (jcrNode.hasProperty(ModuleNode.TEMPLATE_PROPERTY_NAME)) {
+			try {
+				return getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
+			} catch (TemplateException e) {
+			    log.error("No " + ModuleNode.TEMPLATE_PROPERTY_NAME+ " property in current node " + jcrNode.getPath());
+			    return null;
+			}
+		} else {
+			System.out.println("trying to get templatepage from node " + getModuleNode().getPath());
+			return getModuleNode().getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
+		}
+				
 	}
 	   
 	public Node getContentLocation() throws RepositoryException {	   

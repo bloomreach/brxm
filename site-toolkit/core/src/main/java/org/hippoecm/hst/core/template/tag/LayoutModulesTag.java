@@ -49,7 +49,7 @@ public class LayoutModulesTag extends SimpleTagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	    	
         PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
         NodeList<PageContainerNode> containerList = pageNode.getContainers();
-        PageContainerNode pcNode = pageNode.getContainerNodeByName(getName());
+        PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
         request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE, pcNode);
         
@@ -70,6 +70,8 @@ public class LayoutModulesTag extends SimpleTagSupport {
 				//moduleNode.setPageContainerModuleNode(pcm);				
 				//request.setAttribute("currentModuleNode", moduleNode);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);
+				System.out.println("PCM=" + pcm);
+				System.out.println("PCM2=" + pcm.getTemplatePage());
 				pageContext.include(pcm.getTemplatePage());
 			} catch (RepositoryException e) {
 				log.error("RepositoryException:", e);

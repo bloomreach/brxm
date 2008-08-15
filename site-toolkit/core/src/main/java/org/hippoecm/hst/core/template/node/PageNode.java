@@ -73,19 +73,34 @@ public class PageNode extends TemplateNode{
 	   return null;
    }
    
-   public PageContainerNode getContainerNodeByName(String layoutAttributeName) {
+   public PageContainerNode getPageContainerNode(String layoutAttributeName) {
+	 //  try {
+		for (PageContainerNode containerNode : containerNodes.getItems()) {
+			log.debug("name=" + layoutAttributeName + " value=" + containerNode.getName());
+			   if (containerNode.getName().equals(layoutAttributeName)) {
+				   return containerNode;
+			   }
+		   }
+	/*} catch (RepositoryException e) {
+	    log.error("No containerNode with layoutAttribute " + layoutAttributeName);
+	}*/
+	   return null;
+   }
+   
+   
+   public PageContainerNode getContainerNode(String containerName) {
 	   try {
 		for (PageContainerNode containerNode : containerNodes.getItems()) {
-			   if (containerNode.getLayoutAttributeValue().equals(layoutAttributeName)) {
+			log.debug("name=" + containerName + " value=" + containerNode.getLayoutAttributeValue());
+			   if (containerNode.getLayoutAttributeValue().equals(containerName)) {
 				   return containerNode;
 			   }
 		   }
 	} catch (RepositoryException e) {
-	    log.error("No containerNode with layoutAttribute " + layoutAttributeName);
+	    log.error("No containerNode with name " + containerName);
 	}
 	   return null;
    }
-   
 
    
    
