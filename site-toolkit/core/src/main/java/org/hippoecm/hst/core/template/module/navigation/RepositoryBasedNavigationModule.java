@@ -11,6 +11,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
+import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.slf4j.Logger;
@@ -30,7 +31,13 @@ public class RepositoryBasedNavigationModule extends ModuleBase {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         ModuleNode currNode = (ModuleNode) request.getAttribute("currentModuleNode");
 
-        String path = currNode.getPropertyValue("hst:contentlocation");
+        String path = null;
+        try {
+        	path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);	    	
+		} catch (TemplateException e) {				
+			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
+		}
+		
         if(path == null) {
             pageContext.setAttribute(getVar(),new ArrayList<NavigationItem>());
             return;
