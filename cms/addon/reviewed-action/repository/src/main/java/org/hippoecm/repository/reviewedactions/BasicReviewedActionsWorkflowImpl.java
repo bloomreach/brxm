@@ -16,11 +16,19 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.HashMap;
+
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements BasicReviewedActionsWorkflow {
     @SuppressWarnings("unused")
@@ -140,6 +148,24 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             return rejected;
         } catch(CloneNotSupportedException ex) {
             throw new WorkflowException("document is not a publishable document");
+        }
+    }
+
+    public void restore(Calendar historic) throws WorkflowException {
+        if(unpublished != null || published == null) {
+            throw new WorkflowException("Unable to retrieve historic version of document when document not in live state");
+        }
+        try {
+            Map replacements = new TreeMap(); // note not to use JDK1.5 types here, BCEL does not support them
+            replacements.put("./hippostd:state", new String[] { "unpublished" });
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", published);
+            versionWorkflow.restore(historic, replacements);
+        } catch(MappingException ex) {
+            throw new WorkflowException("Restore historic document failed");
+        } catch(RemoteException ex) {
+            throw new WorkflowException("Restore historic document failed");
+        } catch(RepositoryException ex) {
+            throw new WorkflowException("Restore historic document failed");
         }
     }
 }

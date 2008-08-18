@@ -31,6 +31,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -52,9 +55,8 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     private static final long serialVersionUID = 1L;
@@ -68,6 +70,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     Label createdComponent;
     Label expiredComponent;
     Label labeledComponent;
+    Label infoComponent;
     AjaxLink testComponent;
     AjaxLink restoreComponent;
     AjaxLink compareComponent;
@@ -88,10 +91,11 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
         context.registerService(this, IJcrService.class.getName());
 
         add(documentComponent = new Label("document"));
-        add(versionComponent = new Label("version"));
         add(createdComponent = new Label("created"));
         add(expiredComponent = new Label("expired"));
         add(labeledComponent = new Label("labeled"));
+        add(versionComponent = new Label("version"));
+        add(infoComponent = new Label("info"));
         add(restoreComponent = new AjaxLink("restore") {
             private static final long serialVersionUID = 1L;
 
@@ -100,13 +104,6 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                 restoreVersion();
             }
         });
-
-        /*add(compareComponent = new AjaxLink("compare") {
-        @Override
-        public void onClick(AjaxRequestTarget target) {
-        }
-        });*/
-
         add(olderComponent = new AjaxLink("older") {
             private static final long serialVersionUID = 1L;
 
@@ -115,7 +112,6 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                 browseVersion(-1);
             }
         });
-
         add(newerComponent = new AjaxLink("newer") {
             private static final long serialVersionUID = 1L;
 
@@ -159,7 +155,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                 }
                 if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     documentComponent.setModel(new Model(ISO9075Helper.decodeLocalName(modelNode.getName())));
-                    versionComponent.setModel(new Model("current"));
+                    infoComponent.setModel(new Model("This is the current document"));
+                    versionComponent.setModel(new Model(""));
                     subModel.setModel(new JcrNodeModel(modelNode));
                     createdComponent.setModel(new Model(""));
                     expiredComponent.setModel(new Model(""));
@@ -211,7 +208,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     for (int i = 0; i < currentVersion; i++)
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
-                    workflow.revert(entry.getKey());
+                    BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("reviewed-action", document);
+                    restoreWorkflow.restore(entry.getKey());
                     redraw();
                     /* [BvH] Below is a forcefully refresh of the selected
                      * node, without the node being deselected (as with a
@@ -265,6 +263,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     }
                 }
             } catch (RepositoryException ex) {
+                log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
             Node document = modelNode;
             try {
@@ -302,19 +301,21 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     }
                     labeledComponent.setModel(new Model(new String(labels)));
                     Document historicDocument = workflow.retrieve(entry.getKey());
-                    subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(
-                            historicDocument.getIdentity())));
+                    if(historicDocument == null) {
+                        infoComponent.setModel(new Model("There was no document published during this period"));
+                        subModel.setModel(null);
+                    } else {
+                        infoComponent.setModel(new Model(""));
+                        subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(historicDocument.getIdentity())));
+                    }
                     redraw();
                 }
             } catch (WorkflowException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
             } catch (RemoteException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
             } catch (RepositoryException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
             }
         }
     }
