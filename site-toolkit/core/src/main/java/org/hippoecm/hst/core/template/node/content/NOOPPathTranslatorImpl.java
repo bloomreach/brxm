@@ -15,6 +15,18 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
+import javax.jcr.Node;
 
-public interface PathTranslator extends PathToHrefTranslator, PathToSrcTranslator{
+
+public class NOOPPathTranslatorImpl implements PathTranslator {
+
+    public String documentPathToHref(Node node, String documentPath) {
+        return documentPath;
+    }
+
+    public String documentPathToSrc(Node node, String documentPath) {
+        return documentPath;
+    }
+
+  
 }

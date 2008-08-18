@@ -88,12 +88,12 @@ public abstract class AbstractELNode implements ELNode {
                         		" All properties will now be returned appended into a single String");
                         StringBuffer sb = new StringBuffer("");
                         for (Value val : jcrNode.getProperty(prop).getValues()) {
-                            sb.append(value2String(val));
+                            sb.append(value2String(jcrNode,prop,val));
                             sb.append(" ");
                         }
                         return sb;
                     } else {
-                        return value2String(jcrNode.getProperty(prop).getValue());
+                        return value2String(jcrNode,prop,jcrNode.getProperty(prop).getValue());
                     }
 
                 } catch (PathNotFoundException e) {
@@ -106,7 +106,7 @@ public abstract class AbstractELNode implements ELNode {
         };
     }
 
-    private String value2String(Value val) {
+    private String value2String(Node node, String prop,Value val) {
         try {
             switch (val.getType()) {
             case PropertyType.BINARY:
@@ -127,7 +127,18 @@ public abstract class AbstractELNode implements ELNode {
                 // TODO return what?
                 break;
             case PropertyType.STRING:
-                return val.getString();
+                /*
+                 * Default String values are parsed for src and href attributes because these need
+                 * translation
+                 */ 
+                if(sourceRewriter == null ){
+                    log.warn("sourceRewriter is null. No linkrewriting or srcrewriting will be done");
+                    return val.getString();   
+                } else {
+                    log.debug("parsing string property for source rewriting for property: " + prop);
+                    return sourceRewriter.replace(node, val.getString());
+                }
+                
             case PropertyType.NAME:
                 // TODO what to return
                 break;

@@ -15,6 +15,6 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
-
-public interface PathTranslator extends PathToHrefTranslator, PathToSrcTranslator{
+public interface Translator {
+    public static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:"};
 }

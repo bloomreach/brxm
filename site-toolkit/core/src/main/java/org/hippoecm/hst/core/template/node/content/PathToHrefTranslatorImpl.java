@@ -15,6 +15,27 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
+import javax.jcr.Node;
 
-public interface PathTranslator extends PathToHrefTranslator, PathToSrcTranslator{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
+
+    /*
+     * log all rewriting to the SourceRewriter interface
+     */
+    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
+    
+    public String documentPathToHref(Node node, String documentPath) {
+        
+        for(String prefix: Translator.EXTERNALS){
+            if(documentPath.startsWith(prefix)) {
+                return documentPath;
+            }
+        }
+        // TODO translate document path
+        return documentPath;
+    }
+
 }

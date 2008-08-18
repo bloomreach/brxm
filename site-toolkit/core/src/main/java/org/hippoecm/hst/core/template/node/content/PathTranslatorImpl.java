@@ -17,10 +17,41 @@ package org.hippoecm.hst.core.template.node.content;
 
 import javax.jcr.Node;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PathTranslatorImpl implements PathTranslator {
 
-    public String documentPathToURL(Node node, String documentPath) {
-        return null;
+    /*
+     * log all rewriting to the SourceRewriter interface
+     */
+    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
+    
+    private PathToHrefTranslator pathToHrefTranslator;
+    private PathToSrcTranslator pathToSrcTranslator;
+    
+    public PathTranslatorImpl(PathToHrefTranslator pathToHrefTranslator, PathToSrcTranslator pathToSrcTranslator) {
+        this.pathToHrefTranslator = pathToHrefTranslator;
+        this.pathToSrcTranslator = pathToSrcTranslator;
+    }
+    
+    public String documentPathToHref(Node node, String documentPath) {
+        if(pathToHrefTranslator == null) {
+            log.debug("pathToHrefTranslator is null, returning untranslated href");
+            return documentPath;
+        } else {
+           return pathToHrefTranslator.documentPathToHref(node, documentPath);
+        }
+        
+    }
+
+    public String documentPathToSrc(Node node, String documentPath) {
+        if(pathToSrcTranslator == null) {
+            log.debug("pathToSrcTranslator is null, returning untranslated href");
+            return documentPath;
+        } else {
+            return pathToSrcTranslator.documentPathToSrc(node, documentPath);
+        }
     }
 
 }

@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.jcr.Node;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Object that searches for HTML links in a content string and replaces
@@ -29,23 +29,32 @@ public class SourceRewriterImpl implements SourceRewriter {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final Pattern HREF_PATTERN = Pattern.compile("((?:<a\\s.*?href=\"))([^:]*?)(\".*?>)");
-    private static final Pattern SRC_PATTERN = Pattern.compile("((?:<img\\s.*?src=\"))([^:]*?)(\".*?>)");
+    /*
+     * log all rewriting to the SourceRewriter interface
+     */
+    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
+    
+    private final String LINK_TAG = "<a";
+    private final String IMG_TAG = "<img";
+    private final String END_TAG = ">";
+    private final String HREF_ATTR_NAME = "href=\"";
+    private final String SRC_ATTR_NAME = "src=\"";
+    private final String ATTR_END = "\"";
+    private PathTranslator pathTranslator;
 
-    private PathTranslator urlPathTranslator;
-
+    
     /*
      * constructor with default URLPathTranslatorImpl();
      */
     public SourceRewriterImpl() {
-        this.urlPathTranslator = new PathTranslatorImpl();
+        this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(), new PathToSrcTranslatorImpl());
     }
     
     /*
      * constructor with custom URLPathTranslatorImpl();
      */
-    public SourceRewriterImpl(PathTranslator urlPathTranslator) {
-        this.urlPathTranslator = urlPathTranslator ;
+    public SourceRewriterImpl(PathTranslator pathTranslator) {
+        this.pathTranslator = pathTranslator ;
     }
 
     /* (non-Javadoc)
@@ -55,39 +64,91 @@ public class SourceRewriterImpl implements SourceRewriter {
 
         // only create if really needed
         StringBuffer sb = null;
-
-        Matcher hrefPatt = HREF_PATTERN.matcher(content);
-        hrefPatt.reset();
-        while (hrefPatt.find()) {
+        
+        int globalOffset = 0;
+        while (content.indexOf(LINK_TAG, globalOffset) > -1) {
+            int offset = content.indexOf(LINK_TAG, globalOffset);
+         
+            int hrefIndexStart = content.indexOf(HREF_ATTR_NAME, offset);
+            if(hrefIndexStart == -1) {
+                break;
+            }
+            
             if (sb == null) {
                 sb = new StringBuffer(content.length());
             }
-            String documentPath = hrefPatt.group(2);
-            String url = urlPathTranslator.documentPathToURL(node, documentPath);
-            hrefPatt.appendReplacement(sb, hrefPatt.group(1) + url + hrefPatt.group(3));
+            
+            hrefIndexStart += HREF_ATTR_NAME.length(); 
+            offset = hrefIndexStart;
+            int endTag = content.indexOf(END_TAG, offset);
+            boolean appended = false;
+            if(hrefIndexStart < endTag) {
+                int hrefIndexEnd = content.indexOf(ATTR_END, hrefIndexStart);
+                if(hrefIndexEnd > hrefIndexStart) {
+                    String documentPath = content.substring(hrefIndexStart, hrefIndexEnd);
+                    log.debug("trying to translate document path : " + documentPath );
+                    String url = pathTranslator.documentPathToHref(node, documentPath);
+                    log.debug("translated '" + documentPath + "' --> '" + url +"'");
+                    offset = endTag; 
+                    sb.append(content.substring(globalOffset, hrefIndexStart));
+                    sb.append(url);
+                    sb.append(content.substring(hrefIndexEnd, endTag));
+                    appended = true;
+                }
+            }
+            if(!appended && offset > globalOffset) {
+               sb.append(content.substring(globalOffset, offset)); 
+            }
+            globalOffset = offset;
         }
         
         if (sb != null) {
-            hrefPatt.appendTail(sb);
+            sb.append(content.substring(globalOffset, content.length()));
             content = String.valueOf(sb);
             sb = null;
         }
         
-        Matcher srcPatt = SRC_PATTERN.matcher(content);
-        srcPatt.reset();
-        while (srcPatt.find()) {
+        globalOffset = 0;
+        while (content.indexOf(IMG_TAG, globalOffset) > -1) {
+            int offset = content.indexOf(IMG_TAG, globalOffset);
+            
+            int srcIndexStart = content.indexOf(SRC_ATTR_NAME, offset);
+           
+            if(srcIndexStart == -1) {
+                break;
+            }
+            
             if (sb == null) {
                 sb = new StringBuffer(content.length());
             }
-            String documentPath = srcPatt.group(2);
-            String url = urlPathTranslator.documentPathToURL(node, documentPath);
-            srcPatt.appendReplacement(sb, srcPatt.group(1) + url + srcPatt.group(3));
+            srcIndexStart += SRC_ATTR_NAME.length(); 
+            offset = srcIndexStart;
+            int endTag = content.indexOf(END_TAG, offset);
+            boolean appended = false;
+            if(srcIndexStart < endTag) {
+                int srcIndexEnd = content.indexOf(ATTR_END, srcIndexStart);
+                if(srcIndexEnd > srcIndexStart) {
+                    String documentPath = content.substring(srcIndexStart, srcIndexEnd);
+                    log.debug("translating document path : " + documentPath );
+                    String src = pathTranslator.documentPathToSrc(node, documentPath);
+                    log.debug("translated '" + documentPath + "' --> '" + src +"'");
+                    offset = endTag;
+                    sb.append(content.substring(globalOffset, srcIndexStart));
+                    sb.append(src);
+                    sb.append(content.substring(srcIndexEnd, endTag));
+                    appended = true;
+                }
+            }
+            if(!appended && offset > globalOffset) {
+               sb.append(content.substring(globalOffset, offset)); 
+            }
+            globalOffset = offset;
         }
-
+        
         if (sb == null) {
             return content;
         } else {
-            srcPatt.appendTail(sb);
+            sb.append(content.substring(globalOffset, content.length()));
             return sb.toString();
         }
     }
