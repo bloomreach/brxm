@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
-import javax.jcr.Session;
+import javax.jcr.Node;
 
-public interface URLPathTranslator {
+public class PathTranslatorImpl implements PathTranslator {
 
-    public String documentPathToURL(Session jcrSession, String documentPath);
+    public String documentPathToURL(Node node, String documentPath) {
+        return null;
+    }
+
 }

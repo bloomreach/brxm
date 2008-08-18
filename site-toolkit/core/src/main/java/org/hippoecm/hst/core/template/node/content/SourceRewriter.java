@@ -15,13 +15,13 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
-import javax.jcr.Session;
+import javax.jcr.Node;
 
 public interface SourceRewriter {
 
     /**
      * Search content for hrefs/src's and replace them with a translated value
      */
-    public String replace(final Session jcrSession, String content);
+    public String replace(Node node, String content);
 
 }

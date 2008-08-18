@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.template.node.content;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.jcr.Session;
+import javax.jcr.Node;
 
 /**
  * Object that searches for HTML links in a content string and replaces
@@ -32,26 +32,26 @@ public class SourceRewriterImpl implements SourceRewriter {
     private static final Pattern HREF_PATTERN = Pattern.compile("((?:<a\\s.*?href=\"))([^:]*?)(\".*?>)");
     private static final Pattern SRC_PATTERN = Pattern.compile("((?:<img\\s.*?src=\"))([^:]*?)(\".*?>)");
 
-    private URLPathTranslator urlPathTranslator;
+    private PathTranslator urlPathTranslator;
 
     /*
      * constructor with default URLPathTranslatorImpl();
      */
-    SourceRewriterImpl() {
-        this.urlPathTranslator = new URLPathTranslatorImpl();
+    public SourceRewriterImpl() {
+        this.urlPathTranslator = new PathTranslatorImpl();
     }
     
     /*
      * constructor with custom URLPathTranslatorImpl();
      */
-    SourceRewriterImpl(URLPathTranslator urlPathTranslator) {
+    public SourceRewriterImpl(PathTranslator urlPathTranslator) {
         this.urlPathTranslator = urlPathTranslator ;
     }
 
     /* (non-Javadoc)
      * @see org.hippoecm.hst.core.template.node.content.SourceRewriter#replace(javax.jcr.Session, java.lang.String)
      */
-    public String replace(final Session jcrSession,String content) {
+    public String replace(final Node node,String content) {
 
         // only create if really needed
         StringBuffer sb = null;
@@ -63,7 +63,7 @@ public class SourceRewriterImpl implements SourceRewriter {
                 sb = new StringBuffer(content.length());
             }
             String documentPath = hrefPatt.group(2);
-            String url = urlPathTranslator.documentPathToURL(jcrSession, documentPath);
+            String url = urlPathTranslator.documentPathToURL(node, documentPath);
             hrefPatt.appendReplacement(sb, hrefPatt.group(1) + url + hrefPatt.group(3));
         }
         
@@ -80,7 +80,7 @@ public class SourceRewriterImpl implements SourceRewriter {
                 sb = new StringBuffer(content.length());
             }
             String documentPath = srcPatt.group(2);
-            String url = urlPathTranslator.documentPathToURL(jcrSession, documentPath);
+            String url = urlPathTranslator.documentPathToURL(node, documentPath);
             srcPatt.appendReplacement(sb, srcPatt.group(1) + url + srcPatt.group(3));
         }
 

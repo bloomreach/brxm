@@ -26,6 +26,9 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.template.node.content.PathTranslator;
+import org.hippoecm.hst.core.template.node.content.SourceRewriter;
+import org.hippoecm.hst.core.template.node.content.SourceRewriterImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
@@ -35,20 +38,38 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractELNode implements ELNode {
 
     private Logger log = LoggerFactory.getLogger(AbstractELNode.class);
+    
     protected Node jcrNode;
+    private SourceRewriter sourceRewriter;
 
     public AbstractELNode(Node node) {
-        this.jcrNode = node;
+        this(node,new SourceRewriterImpl());
     }
 
     public AbstractELNode(ContextBase contextBase, String relativePath) throws RepositoryException {
-        this.jcrNode = contextBase.getRelativeNode(relativePath);
+        this(contextBase.getRelativeNode(relativePath),new SourceRewriterImpl());
     }
 
+    /*
+     * If you want a custom source rewriter, use this constructor
+     */
+    public AbstractELNode(Node node, SourceRewriter sourceRewriter){
+        this.sourceRewriter = sourceRewriter;
+        this.jcrNode = node;
+    }
+    
+    /*
+     * If you want a custom source source translater, use this constructor
+     */
+    public AbstractELNode(Node node, PathTranslator pathTranslator){
+        this.sourceRewriter = new SourceRewriterImpl(pathTranslator);
+        this.jcrNode = node;
+    }
+    
     public Node getJcrNode() {
         return jcrNode;
     }
-
+    
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -63,6 +84,8 @@ public abstract class AbstractELNode implements ELNode {
                         return "";
                     }
                     if (jcrNode.getProperty(prop).getDefinition().isMultiple()) {
+                        log.warn("The property is a multivalued property. Use .... if you want the collection." +
+                        		" All properties will now be returned appended into a single String");
                         StringBuffer sb = new StringBuffer("");
                         for (Value val : jcrNode.getProperty(prop).getValues()) {
                             sb.append(value2String(val));
