@@ -27,12 +27,12 @@
                     <h3 class="documentlabel" wicket:id="document"></h3>
                     <table class="versiondetails">
                         <tr>
-                            <td>Created: </td>
+                            <td>Published from: </td>
                             <td wicket:id="created"></td>
                         </tr>
                         <tr>
-                            <td wicket:id="expired">Expired: </td>
-                            <td></td>
+                            <td>Published until: </td>
+                            <td wicket:id="expired"></td>
                         </tr>
                         <tr>
                             <td>Tags: </td>
@@ -42,9 +42,11 @@
                 </td>
                 <td>
                     <div style="margin-bottom: 4px;">
-                        <span>Version: </span><span wicket:id="version">456</span>
+                        <span>Version: </span><span wicket:id="version"></span>
                     </div>
-                    <!-- <li><div wicket:id="compare">compare with other version</div></li> -->
+                    <div style="margin-bottom: 4px;">
+                        <span wicket:id="info"></span>
+                    </div>
                     <input type="submit" value="Restore this version" wicket:id="restore" />
                 </td>
                 <td style="width: 60px; text-align: right">

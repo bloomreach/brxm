@@ -31,6 +31,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -238,47 +240,57 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         }
     }
 
-    Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
-        String[] values;
+    static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
+        String[] renamed;
+        Value[] values;
         String name = source.getName();
         if (renames.containsKey(path+"/_name")) {
-            values = renames.get(path+"/_name");
-            if (values.length > 0) {
-                name = values[0];
+            renamed = renames.get(path+"/_name");
+            if (renamed.length > 0) {
+                name = renamed[0];
             }
         }
 
-        String type = source.getPrimaryNodeType().getName();
+        String primaryType = source.getPrimaryNodeType().getName();
         if (renames.containsKey(path+"/jcr:primaryType")) {
-            values = renames.get(path+"/jcr:primaryType");
-            if (values.length > 0) {
-                type = values[0];
-                if (type.equals("")) {
-                    type = null;
+            renamed = renames.get(path+"/jcr:primaryType");
+            if (renamed.length > 0) {
+                primaryType = expand(renamed, source)[0].getString();
+                if (primaryType.equals("")) {
+                    primaryType = null;
                 }
             } else {
-                type = null;
+                primaryType = null;
             }
         }
 
-        if (type != null) {
-            target = target.addNode(name, type);
+        if (primaryType != null) {
+            target = target.addNode(name, primaryType);
         } else {
             target = target.addNode(name);
         }
+        
         if(source.hasProperty("jcr:mixinTypes")) {
             Value[] mixins = source.getProperty("jcr:mixinTypes").getValues();
             for(int i=0; i<mixins.length; i++) {
                 target.addMixin(mixins[i].getString());
             }
         }
+
         if (renames.containsKey(path+"/jcr:mixinTypes")) {
-            values = renames.get(path+"/jcr:mixinTypes");
+            values = expand(renames.get(path+"/jcr:mixinTypes"), source);
             for (int i = 0; i < values.length; i++) {
-                if (!target.isNodeType(values[i])) {
-                    target.addMixin(values[i]);
+                if (!target.isNodeType(values[i].getString())) {
+                    target.addMixin(values[i].getString());
                 }
             }
+        }
+
+        NodeType[] mixinNodeTypes = target.getMixinNodeTypes();
+        NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
+        nodeTypes[0] = target.getPrimaryNodeType();
+        if(mixinNodeTypes.length > 0) {
+            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
         }
 
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
@@ -294,15 +306,60 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            if (!prop.getDefinition().isProtected()) {
-                if (prop.getDefinition().isMultiple()) {
-                    target.setProperty(prop.getName(), prop.getValues());
-                } else {
-                    target.setProperty(prop.getName(), prop.getValue());
+            if (prop.getDefinition().isMultiple()) {
+                boolean isProtected = true;
+                for(int i=0; i<nodeTypes.length; i++) {
+                    if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValues())) {
+                        isProtected = false;
+                        break; 
+                    }
+                }
+                if (!isProtected) {
+                    if(renames.containsKey(path+"/"+prop.getName())) {
+                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source));
+                    } else {
+                        target.setProperty(prop.getName(), prop.getValues());
+                    }
+                }
+            } else {
+                boolean isProtected = true;
+                for(int i=0; i<nodeTypes.length; i++) {
+                    if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
+                        isProtected = false;
+                        break; 
+                    }
+                }
+                if (!isProtected) {
+                    if(renames.containsKey(path+"/"+prop.getName())) {
+                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source)[0]);
+                    } else {
+                        target.setProperty(prop.getName(), prop.getValue());
+                    }
                 }
             }
         }
 
         return target;
+    }
+
+    static private Value[] expand(String[] values, Node source) throws RepositoryException {
+        Vector<Value> newValues = new Vector<Value>();
+        for(int i=0; i<values.length; i++) {
+            String value = values[i];
+            if(value.startsWith("${") && value.endsWith("}")) {
+                value = value.substring(2,value.length()-1);
+                Property p = source.getProperty(value);
+                if(p.getDefinition().isMultiple()) {
+                    Value[] referencedValues = p.getValues();
+                    for(int j=0; j<referencedValues.length; j++)
+                        newValues.add(referencedValues[j]);
+                } else {
+                    newValues.add(p.getValue());
+                }
+            } else {
+                newValues.add(source.getSession().getValueFactory().createValue(value));
+            }
+        }
+        return newValues.toArray(new Value[newValues.size()]);
     }
 }

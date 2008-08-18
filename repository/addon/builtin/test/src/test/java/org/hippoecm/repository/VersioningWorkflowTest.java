@@ -167,12 +167,15 @@ public class VersioningWorkflowTest extends TestCase {
         int count = 0;
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             document = versionwf.retrieve(entry.getKey());
-            Node version = session.getNodeByUUID(document.getIdentity());
-            if (count > 0) {
-                assertEquals("admin" + "...........".substring(1, count++), version.getProperty("hippostd:holder").getString());
-            } else {
+            if(document != null) {
+                Node version = session.getNodeByUUID(document.getIdentity());
+                if (count > 0) {
+                    assertEquals("admin" + "...........".substring(1, count++), version.getProperty("hippostd:holder").getString());
+                } else {
+                    ++count;
+                }
+            } else
                 ++count;
-            }
         }
         assertEquals(5, count);
     }

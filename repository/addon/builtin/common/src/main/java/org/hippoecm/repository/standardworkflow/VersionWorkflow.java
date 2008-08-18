@@ -15,9 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.util.SortedMap;
-import java.util.Set;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
@@ -32,10 +33,19 @@ public interface VersionWorkflow extends Workflow {
 
     public Document version()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
     public Document revert(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public Document restore(Calendar historic)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public Document restore(Calendar historic, Map<String, String[]> replacements)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
     public SortedMap<Calendar,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
     public Document retrieve(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

@@ -37,8 +37,6 @@ import javax.jcr.version.VersionIterator;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
@@ -68,6 +66,14 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                                 !node.getProperty(key).getString().equals(subject.getProperty(key).getString())) {
                                 return false;
                             }
+                        }
+                    }
+                } else if(subject.isNodeType("hippostd:publishable")) {
+                    String key = "hippostd:state";
+                    if (subject.hasProperty(key)) {
+                        if (!node.hasProperty(key) ||
+                            !node.getProperty(key).getString().equals(subject.getProperty(key).getString())) {
+                            return false;
                         }
                     }
                 }
@@ -202,6 +208,39 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
             return null;
         }
+    }
+
+    public Document restore(Calendar historic) throws WorkflowException, RepositoryException {
+        return restore(historic, null);
+    }
+
+    public Document restore(Calendar historic, Map<String, String[]> providedReplacements)
+            throws WorkflowException, RepositoryException {
+        Map<String, String[]> replacements = new TreeMap<String, String[]>();
+        if(providedReplacements != null) {
+            replacements.putAll(providedReplacements);
+        }
+        replacements.put("./_name", new String[] { subject.getName() });
+        replacements.put("./jcr:primaryType", new String[] { "${jcr:frozenPrimaryType}" });
+        replacements.put("./jcr:mixinTypes", new String[] { "${jcr:frozenMixinTypes}" });
+
+        Version version = lookup(historic, false);
+        if(version == null)
+            throw new WorkflowException("No such historic version");
+        Node handle = subject.getParent();
+        if(!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+            throw new WorkflowException("version never existed");
+        }
+        for(NodeIterator iter = handle.getNodes(handle.getName()); iter.hasNext(); ) {
+            Node child = iter.nextNode();
+            if(child.getProperty("hippostd:state").getString().equals("unpublished"))
+                child.remove();
+        }
+        handle.checkout();
+        Node restoredDocument = FolderWorkflowImpl.copy(version.getNode("jcr:frozenNode"), handle, replacements, ".");
+        restoredDocument.getParent().save();
+        restoredDocument.checkin();
+        return new Document(restoredDocument.getUUID());
     }
 
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RepositoryException {
