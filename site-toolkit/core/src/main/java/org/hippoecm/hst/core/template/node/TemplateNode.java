@@ -49,10 +49,6 @@ public class TemplateNode extends AbstractELNode {
 	    this.contextBase = contextBase;
 		this.relativePath = relativePath;
 	}
-
-	public Node getJcrNode() {
-		return jcrNode;
-	}
 	
 	public void setContextBase(ContextBase contextBase) {
 		this.contextBase = contextBase;
