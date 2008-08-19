@@ -89,7 +89,7 @@
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</developerConnection>
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</url>
- </scm>
+  </scm>
 
   <distributionManagement>
     <site>
@@ -109,7 +109,7 @@
   <ciManagement>
     <system>Bamboo</system>
     <url>http://bamboo-intern.hippocms.org/</url>
- </ciManagement>
+  </ciManagement>
 
   <issueManagement>
     <system>Jira</system>
@@ -235,46 +235,70 @@
       <id>hippoecm</id>
       <name>Hippo ECM maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <layout>default</layout>
     </repository>
     <repository>
       <id>hippoecm.legacy</id>
       <name>Hippo ECM Maven 1 repository.</name>
       <url>http://repository.hippocms.org/maven/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <layout>legacy</layout>
     </repository>
     <repository>
       <id>codehaus</id>
       <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
     <repository>
       <id>jpox.legacy</id>
       <name>JPOX Maven 1 repository.</name>
       <url>http://www.jpox.org/downloads/maven/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <layout>legacy</layout>
     </repository>
     <repository>
       <id>glassfish</id>
       <name>Glassfish maven repository</name>
       <url>http://download.java.net/maven/glassfish</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
     <repository>
       <id>openqa</id>
       <name>OpenQA Repository</name>
       <url>http://maven.openqa.org</url>
       <layout>default</layout>
-      <snapshots><enabled>false</enabled></snapshots>
-      <releases><enabled>true</enabled></releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
 
@@ -284,8 +308,12 @@
       <name>JPOX maven 2 plugin repository.</name>
       <url>http://www.jpox.org/downloads/maven2/</url>
       <layout>default</layout>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </pluginRepository>
   </pluginRepositories>
 
@@ -306,38 +334,6 @@
       </plugin>
       <plugin>
         <inherited>true</inherited>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>id1</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>id2</id>
-            <phase>install</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>id3</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -349,25 +345,6 @@
               <Implementation-Build>${buildNumber}</Implementation-Build>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <inherited>false</inherited>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>.</directory>
-              <includes>
-                <include>**/*~</include>
-                <include>**/derby.log</include>
-                <include>**/tmlog*</include>
-                <include>**/tm.*</include>
-                <include>**/.lock</include>
-                <include>**/atomikos</include>
-              </includes>
-            </fileset>
-          </filesets>
         </configuration>
       </plugin>
       <plugin>
@@ -664,7 +641,7 @@
         <reportSets>
           <reportSet>
             <reports>
-               <report>javadoc</report>
+              <report>javadoc</report>
             </reports>
           </reportSet>
         </reportSets>
@@ -698,5 +675,84 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>netbeans</id>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>true</skipTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>clean</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>id1</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>id2</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>id3</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <doCheck>false</doCheck>
+              <doUpdate>false</doUpdate>
+            </configuration>
+          </plugin>
+          <plugin>
+            <inherited>false</inherited>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>.</directory>
+                  <includes>
+                    <include>**/*~</include>
+                    <include>**/derby.log</include>
+                    <include>**/tmlog*</include>
+                    <include>**/tm.*</include>
+                    <include>**/.lock</include>
+                    <include>**/atomikos</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
