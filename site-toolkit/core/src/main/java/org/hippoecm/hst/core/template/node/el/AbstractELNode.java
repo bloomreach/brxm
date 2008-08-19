@@ -77,6 +77,7 @@ public abstract class AbstractELNode implements ELNode {
         }
         return new ELPseudoMap() {
             public Object get(Object propertyName) {
+                System.out.println("propertyNamepropertyNamepropertyName " + propertyName );
                 String prop = (String) propertyName;
                 try {
                     if (!jcrNode.hasProperty(prop)) {
@@ -88,12 +89,12 @@ public abstract class AbstractELNode implements ELNode {
                         		" All properties will now be returned appended into a single String");
                         StringBuffer sb = new StringBuffer("");
                         for (Value val : jcrNode.getProperty(prop).getValues()) {
-                            sb.append(value2String(jcrNode,prop,val));
+                            sb.append(value2Object(jcrNode,prop,val));
                             sb.append(" ");
                         }
                         return sb;
                     } else {
-                        return value2String(jcrNode,prop,jcrNode.getProperty(prop).getValue());
+                        return value2Object(jcrNode,prop,jcrNode.getProperty(prop).getValue());
                     }
 
                 } catch (PathNotFoundException e) {
@@ -106,20 +107,20 @@ public abstract class AbstractELNode implements ELNode {
         };
     }
 
-    private String value2String(Node node, String prop,Value val) {
+    private Object value2Object(Node node, String prop,Value val) {
         try {
             switch (val.getType()) {
             case PropertyType.BINARY:
                 break;
             case PropertyType.BOOLEAN:
-                return String.valueOf(val.getBoolean());
+                return val.getBoolean();
             case PropertyType.DATE:
                 // todo : format date
-                return val.getDate().toString();
+                return val.getDate();
             case PropertyType.DOUBLE:
-                return String.valueOf(val.getDouble());
+                return val.getDouble();
             case PropertyType.LONG:
-                return String.valueOf(val.getLong());
+                return val.getLong();
             case PropertyType.REFERENCE:
                 // TODO return path of referenced node?
                 break;
