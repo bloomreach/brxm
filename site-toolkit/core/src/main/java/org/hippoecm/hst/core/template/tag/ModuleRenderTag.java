@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * The tag class that performs the render() and or execute() methods in a module template (JSP).
  *
  */
-public class ModuleRenderTag extends TagSupport {
+public class ModuleRenderTag extends BodyTagSupport {
 	
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ModuleRenderTag.class);
@@ -52,8 +53,13 @@ public class ModuleRenderTag extends TagSupport {
 	private boolean doExecute = false;
 	private boolean doRender = true;
 	
+	private Map <String, String> parameters;
+	
+	public int doStartTag() throws JspException {		
+	    return EVAL_BODY_BUFFERED;
+	}
 
-	@Override
+
 	public int doEndTag() throws JspException {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		if (doExecute) {
@@ -80,7 +86,7 @@ public class ModuleRenderTag extends TagSupport {
 			}
 		}
 		
-		return SKIP_BODY;
+		return EVAL_PAGE;
 	}
 	
 	private PageContainerModuleNode getPageModuleNode(HttpServletRequest request, String moduleName)  throws RepositoryException {
@@ -152,5 +158,44 @@ public class ModuleRenderTag extends TagSupport {
 	}
 	
 	
+	protected final void addParameter(String name, String value) {
+		if (parameters == null) {
+			parameters = new HashMap<String, String>();
+		}
+		parameters.put(name, value);
+	}
+	
+	protected String getParameter(String name) {
+		if (parameters != null) {
+		   return parameters.get(name);
+		}
+		return null;
+	}
 
+}
+
+class ParameterBean {
+	String name;
+	String value;
+	
+	public ParameterBean(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

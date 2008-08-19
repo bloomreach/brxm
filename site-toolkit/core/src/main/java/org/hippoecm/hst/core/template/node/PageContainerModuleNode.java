@@ -82,7 +82,6 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 				} catch (RepositoryException e1) {
 					throw new TemplateException(e);
 				}
-
 			}
 	   }
 }

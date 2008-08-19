@@ -98,6 +98,22 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>moduleParameter</name>
+        <tagclass>org.hippoecm.hst.core.template.tag.ModuleParameterTag</tagclass>
+        <body-content>JSP</body-content>
+        <attribute>            
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>            
+            <name>value</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
     
 </taglib>
