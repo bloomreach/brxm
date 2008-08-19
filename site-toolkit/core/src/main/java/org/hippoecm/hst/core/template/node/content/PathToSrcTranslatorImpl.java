@@ -73,20 +73,20 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                     }
 
                 } else {
-                    // log error
+                    log.warn("Expected node of nodetype " + HippoNodeType.NT_FACETSELECT +". Cannot translate binary link");
                 }
             } else {
-                // log error
+                log.warn("Expected to find facetselect node '" +pathEls[0] + "' but not found. Unable to translate binary link" );
             }
         } catch (PathNotFoundException e) {
-            // also not possible because test for hasNode first
+            // not possible because test for hasNode first
             log.error("Node not found " + e.getMessage());
         } catch (ValueFormatException e) {
             // cannot happen in principal
             log.error("ValueFormatException for docbase, expecting String value " + e.getMessage());
         } catch (ItemNotFoundException e) {
             // when this happens, the resource does not exist anymore in the repository
-            log.error("The binary does not exist (anymore). " + e.getMessage());
+            log.warn("The binary does not exist (anymore). " + e.getMessage());
         } catch (RepositoryException e) {
             log.error("RepositoryException " + e.getMessage());
         }
