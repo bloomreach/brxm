@@ -36,14 +36,16 @@ import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
+import org.hippoecm.frontend.plugins.console.menu.sorter.Sorter;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
+    
+    private Sorter sorter;
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -158,7 +160,6 @@ public class MenuPlugin extends RenderPlugin {
                 return new CndExportDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        
         add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
 
         
@@ -169,8 +170,20 @@ public class MenuPlugin extends RenderPlugin {
                 return new NamespaceDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        
         add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
+        
+        sorter = new Sorter("sorter-panel");
+        add(sorter);
+    }
+    
+    @Override
+    public void onModelChanged() {
+        sorter.setModel(getModel());
+    }
+    
+    @Override
+    public void redraw() {
+        super.redraw();
     }
 
     public void flushNodeModel(JcrNodeModel nodeModel) {
