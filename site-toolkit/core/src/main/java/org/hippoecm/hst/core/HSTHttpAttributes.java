@@ -16,6 +16,9 @@
 package org.hippoecm.hst.core;
 
 public interface HSTHttpAttributes {
+	//filter request attributes
+	public static final String CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.content";
+	public static final String CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.hstconfiguration";
 	
 	//request attributes
     public static final String CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE = "currentPageContainer";

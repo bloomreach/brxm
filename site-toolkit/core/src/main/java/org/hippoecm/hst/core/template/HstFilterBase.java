@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.template;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -30,6 +32,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -46,20 +49,35 @@ public abstract class HstFilterBase implements Filter {
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
 	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
+
 	
 	//request attributes
 	public static final String PAGENODE_REQUEST_ATTRIBUTE = "pageNode";
-	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = "contentContext";
-	public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
+	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE;
+	//public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
 	
-	private String hstConfigurationUrl;
+	//filter init-parameter
+	protected static final String IGNORETYPES_FILTER_INIT_PARAM = "ignoreTypes"; //comma separated list with ignoretype suffixes
 	
-	private String [] ignoreList = {".gif", ".jpg", ".css", ".js"};
+	private List ignoreTypesList = null;
 	
 	private static final Logger log = LoggerFactory.getLogger(HstFilterBase.class);
 	
 	public void init(FilterConfig filterConfig) throws ServletException {		
-		hstConfigurationUrl = getInitParameter(filterConfig, HSTCONFIGURATION_LOCATION_PARAMETER);
+		//hstConfigurationUrl = getInitParameter(filterConfig, HSTCONFIGURATION_LOCATION_PARAMETER);
+		initIgnoreTypes(filterConfig);
+	}
+	
+	protected void initIgnoreTypes(FilterConfig filterConfig) {
+		String ignoreTypesString = filterConfig.getInitParameter(IGNORETYPES_FILTER_INIT_PARAM);
+		ignoreTypesList = new ArrayList();
+		if (ignoreTypesString != null) {	
+		    String [] items = ignoreTypesString.split(",");
+		    for (int i=0; i < items.length; i++) {
+		    	log.debug("filter configured with ignoretype ." + items[i]);
+		    	ignoreTypesList.add("." + items[i].trim());
+		    }
+		}
 	}
 	
 	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
@@ -80,21 +98,24 @@ public abstract class HstFilterBase implements Filter {
             return matchPageNode;
 	}
 	
-	protected boolean ignoreMapping(HttpServletRequest request) {
-		for (int i=0; i < ignoreList.length; i++) {
-		    log.info("compare ignore " + request.getRequestURI() + " with " + ignoreList[i] + " result " + request.getRequestURI().toLowerCase().endsWith(ignoreList[i]));
-			if (request.getRequestURI().toLowerCase().endsWith(ignoreList[i])) {
-				return true;
-			}
+	
+	protected boolean ignoreType(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		int lastDot = requestURI.lastIndexOf(".");
+		if (lastDot != -1) {
+			String suffix = requestURI.substring(lastDot).toLowerCase();
+			return ignoreTypesList.contains(suffix);
 		}
 		return false;
 	}
+	
 	
 	protected String getUrlPrefix(HttpServletRequest request) {
 		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.ATTRIBUTENAME_INIT_PARAMETER);
     	urlPrefix = (urlPrefix == null) ? "" : urlPrefix;
     	return urlPrefix;
 	}
+	
 	
 	public PageNode getPageNode(HttpServletRequest request) throws TemplateException, RepositoryException {
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
@@ -151,6 +172,7 @@ public abstract class HstFilterBase implements Filter {
 		
 		return siteMapNodes;
 	}
+	
 
 	protected void verifyInitParameterHasValue(FilterConfig filterConfig, String param) throws ServletException {
 	  if (filterConfig.getInitParameter(param) == null) {
@@ -158,10 +180,11 @@ public abstract class HstFilterBase implements Filter {
       }
 	}
 	
-	protected String getInitParameter(FilterConfig filterConfig, String param)
+	
+	protected String getInitParameter(FilterConfig filterConfig, String param, boolean required)
 			throws ServletException {
 		String parameterValue = filterConfig.getInitParameter(param);
-		if (parameterValue == null) {
+		if (parameterValue == null && required) {
 			throw new ServletException("Missing init-param " + param);
 		}
 		return parameterValue;

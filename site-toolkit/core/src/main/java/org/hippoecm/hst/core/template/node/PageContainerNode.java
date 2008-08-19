@@ -37,14 +37,27 @@ public class PageContainerNode extends TemplateNode {
     	return jcrNode.getProperty(LAYOUT_ATTRIBUTE_PROPERTY).getValue().getString();
     }
     
-    public PageContainerModuleNode getContainerModuleNodeByName(String name) throws RepositoryException {
+    public PageContainerModuleNode getContainerModuleNodeByModuleName(String moduleName) throws RepositoryException {
     	NodeList<PageContainerModuleNode> modules = getModules();
     	PageContainerModuleNode node = null; 
     	
     	/* search for the pagecontainernode that refers to the modulenode with the name to search for */
     	for (PageContainerModuleNode item : modules.getItems()) {		
     		ModuleNode moduleNode = item.getModuleNode();    		
-			if (moduleNode.getJcrNode().getName().equals(name)) {
+			if (moduleNode.getJcrNode().getName().equals(moduleName)) {
+				return item;
+			}
+		}
+		return null;
+    }
+    
+    public PageContainerModuleNode getContainerModuleNodeByName(String name) throws RepositoryException {
+    	NodeList<PageContainerModuleNode> modules = getModules();
+    	PageContainerModuleNode node = null; 
+    	
+    	/* search for the pagecontainernode that refers to the modulenode with the name to search for */
+    	for (PageContainerModuleNode item : modules.getItems()) {		    				
+			if (item.getJcrNode().getName().equals(name)) {
 				return item;
 			}
 		}

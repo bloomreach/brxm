@@ -74,7 +74,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		super.init(filterConfig);
-		repositoryTemplateContextLocation = getInitParameter(filterConfig, REPOSITORY_LOCATION_FILTER_PARAM);
+		repositoryTemplateContextLocation = getInitParameter(filterConfig, REPOSITORY_LOCATION_FILTER_PARAM, true);
 	}
 	  
 	public void destroy() {
@@ -89,7 +89,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignoreMapping(request)) {
+		if (ignoreType(request)) {
 			log.info("IGNORE " + request.getRequestURI());
 			filterChain.doFilter(request, response);
 		} else {

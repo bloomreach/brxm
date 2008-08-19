@@ -62,24 +62,25 @@ public class ModuleRenderTag extends BodyTagSupport {
 
 	public int doEndTag() throws JspException {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		PageContainerModuleNode pcm = null;
+		if (doExecute || doRender) {
+			pcm = (PageContainerModuleNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE);
+		}
 		if (doExecute) {
 			//set trigger for filter
-		   try {
+		   
 			   PageContainerNode pcNode = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);
-			   PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
-			   ModuleRenderAttributes attributes = new ModuleRenderAttributes(pageNode.getName(), pcNode.getJcrNode().getName(), getName(), getClassName());
+			   PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);			   
+			   ModuleRenderAttributes attributes = new ModuleRenderAttributes(pageNode.getName(), pcNode.getName(), pcm.getName(), getClassName());
 			   addModuleMapAttribute(request, attributes);
-			} catch (RepositoryException e) {
-				throw new JspException("Cannot get the name of the PageContainerNode's jcrNode");
-			}
+			
 		}
 		
 		if (doRender) {
 		   try {
 			Module module = getModule();
 			   module.setVar(var);
-			 
-			   module.setPageModuleNode(getPageModuleNode(request, getName()));
+			   module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
 			   module.render(pageContext);
 			} catch (Exception e) {
 				throw new JspException(e);

@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -56,7 +57,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignoreMapping(request)) {
+		if (ignoreType(request)) {
 			chain.doFilter(request, response);
 		} else {
 			String forward = null; 
@@ -93,7 +94,9 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			}
 			request.getSession().removeAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
 			if (forward != null) {
-				chain.doFilter(new RequestWrapper((HttpServletRequest) request, forward), response);
+				RequestDispatcher rd = request.getRequestDispatcher(forward);
+				rd.forward(new RequestWrapper((HttpServletRequest) request, forward), response);
+				//chain.doFilter(new RequestWrapper((HttpServletRequest) request, forward), response);
 			} else {
 			    chain.doFilter(request, response);
 			}
@@ -107,6 +110,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
+		super.init(filterConfig);
 	}
 	
 	private Module getModule(String className) throws Exception {
