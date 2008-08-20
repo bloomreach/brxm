@@ -17,12 +17,14 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -322,18 +324,15 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public Set entrySet() {
-        HashSet<Map.Entry<String, Object>> entries = new HashSet<Map.Entry<String, Object>>();
+        LinkedHashSet<Map.Entry<String, Object>> entries = new LinkedHashSet<Map.Entry<String, Object>>();
         for (final String key : (Set<String>) keySet()) {
             entries.add(new Map.Entry<String, Object>() {
-
                 public String getKey() {
                     return key;
                 }
-
                 public Object getValue() {
                     return get(key);
                 }
-
                 public Object setValue(Object value) {
                     return put(key, value);
                 }
@@ -341,6 +340,43 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         }
         return entries;
     }
+
+    public IPluginConfig getPluginConfig(Object key) {
+        if (overrides != null && overrides.containsKey(key)) {
+            return overrides.getPluginConfig(key);
+        }
+        if (key instanceof String) {
+            String strKey = (String) key;
+            try {
+                Node node = getNodeModel().getNode();
+                if (node.hasNode(strKey)) {
+                    Node child = node.getNode(strKey);
+                    return new JcrPluginConfig(new JcrNodeModel(child), overrides == null);
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.warn("Key " + key + " is not a String");
+        }
+        return null;
+    }
+
+    public Set<IPluginConfig> getPluginConfigSet() {
+        Set<IPluginConfig> configs = new LinkedHashSet<IPluginConfig>();
+        try {
+            NodeIterator children = getNodeModel().getNode().getNodes();
+            for (int i=0; children.hasNext(); i++) {
+                Node child = children.nextNode();
+                if (child != null) {
+                    configs.add(new JcrPluginConfig(new JcrNodeModel(child), overrides == null));
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+       }
+       return configs;
+     }
 
     public Object get(Object key) {
         if (overrides != null && overrides.containsKey(key)) {
@@ -378,14 +414,14 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
                     }
                 } else if (node.hasNode(strKey)) {
                     NodeIterator children = node.getNodes(strKey);
-                    Object[] result = new JcrPluginConfig[(int) children.getSize()];
-
-                    int i = 0;
+                    Vector<JcrPluginConfig> result = new Vector<JcrPluginConfig>();
                     while (children.hasNext()) {
                         Node child = children.nextNode();
-                        result[i++] = new JcrPluginConfig(new JcrNodeModel(child), overrides == null);
+                          if (child != null) {
+                              result.add(new JcrPluginConfig(new JcrNodeModel(child)));
+                          }
                     }
-                    return result;
+                    return result.toArray(new JcrPluginConfig[result.size()]);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
@@ -401,7 +437,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public Set keySet() {
-        HashSet<String> result = new HashSet<String>();
+        LinkedHashSet<String> result = new LinkedHashSet<String>();
         try {
             Node node = getNodeModel().getNode();
             if (node != null) {
@@ -427,7 +463,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
         try {
             Node node = getNodeModel().getNode();
             if (node != null) {
-                HashSet<String> names = new HashSet<String>();
+                LinkedHashSet<String> names = new LinkedHashSet<String>();
                 NodeIterator nodes = node.getNodes();
                 while (nodes.hasNext()) {
                     Node child = nodes.nextNode();
@@ -442,7 +478,7 @@ public class JcrPluginConfig extends NodeModelWrapper implements IPluginConfig {
     }
 
     public Collection values() {
-        HashSet<Object> result = new HashSet<Object>();
+        LinkedHashSet<Object> result = new LinkedHashSet<Object>();
         try {
             Node node = getNodeModel().getNode();
             if (node != null) {

@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IOverridable;
@@ -52,4 +54,11 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
         return overrides;
     }
 
+    public Set<IPluginConfig> getPluginConfigSet() {
+        return new TreeSet(configs);
+    }
+    
+    public IPluginConfig getPluginConfig(Object key) {
+        return new JavaPluginConfig();
+    }
 }

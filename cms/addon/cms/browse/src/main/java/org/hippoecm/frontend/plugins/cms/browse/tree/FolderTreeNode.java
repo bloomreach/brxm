@@ -40,8 +40,6 @@ public class FolderTreeNode extends AbstractTreeNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String ROOT_NODE_DISPLAYNAME = "CMS space";
-
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
@@ -141,13 +139,8 @@ public class FolderTreeNode extends AbstractTreeNode {
         String result = "null";
         if (node != null) {
             try {
-                if (node.isSame(node.getAncestor(0))) {
-                    return ROOT_NODE_DISPLAYNAME;
-                }
-                result = config.getShortcut(node.getPath());
-                if (result != null)
-                    return result;
-                result = ISO9075Helper.decodeLocalName(node.getDisplayName());
+                result = config.getDisplayName(node);
+                result = ISO9075Helper.decodeLocalName(result);
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
@@ -166,55 +159,14 @@ public class FolderTreeNode extends AbstractTreeNode {
                 .toString();
     }
 
-    // privates
-
     private List<Node> subNodes(Node node) throws RepositoryException {
         List<Node> result = new ArrayList<Node>();
 
-        if (config.areChildrenIgnored(node.getPath())) {
-            return result;
-        }
-
-        NodeType nt = node.getPrimaryNodeType();
-        if (config.isNodeTypeIgnored(nt)) {
-            return result;
-        }
-        for (NodeType mixin : node.getMixinNodeTypes()) {
-            if (config.isNodeTypeIgnored(mixin)) {
-                return result;
-            }
-        }
-
-        if (node.isSame(node.getAncestor(0))) {
-            // node is rootNode, so add shortcut paths
-            for (String path : config.getShortcuts()) {
-                try {
-                    if (path.startsWith("/")) {
-                        path = path.substring(1);
-                    }
-                    result.add(node.getNode(path));
-                } catch (PathNotFoundException e) {
-                    log.info("shortcut path not found: " + e.getMessage());
-                }
-            }
-        }
-
-        NodeIterator subNodes = node.getNodes();
+        NodeIterator subNodes = config.filter(node, node.getNodes());
         while (subNodes.hasNext()) {
             Node subNode = subNodes.nextNode();
-            if (config.isPathIgnored(subNode.getPath()) || subNode.isNodeType(HippoNodeType.NT_LOGFOLDER)) {
-                continue;
-            }
-            if (!subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                result.add(subNode);
-            } else if (((HippoNode) subNode).getCanonicalNode() == null
-                    || !((HippoNode) subNode).getCanonicalNode().isSame(subNode)) {
-                // in the virtual tree we show everything
-                result.add(subNode);
-            }
-
+            result.add(subNode);
         }
         return result;
     }
-
 }

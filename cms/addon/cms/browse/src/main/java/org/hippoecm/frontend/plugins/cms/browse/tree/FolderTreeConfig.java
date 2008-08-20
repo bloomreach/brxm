@@ -15,99 +15,178 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Vector;
 
-import javax.jcr.nodetype.NodeType;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class FolderTreeConfig implements IClusterable {
+class FolderTreeConfig implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
+    
     private static final long serialVersionUID = 1L;
+    
+    String currentState = "";
 
-    // hardcoded ignore path set
-    private Set<String> ignorePaths;
+    private static class FilterDefinition implements Serializable {
+        String state;
+        String path;
+        String parent;
+        String child;
+        String targetState;
+        boolean targetDisplay;
+        String targetName;
 
-    // ignore nodes below these types
-    private String[] ignoreNodesBelowType = new String[] { HippoNodeType.NT_DOCUMENT, HippoNodeType.NT_NAMESPACE };
+        FilterDefinition(String state, String path, String parent, String child, String targetState, boolean targetDisplay, String targetName) {
+            this.state = state;
+            this.path = path;
+            this.parent = parent;
+            this.child = child;
+            this.targetState = targetState;
+            this.targetDisplay = targetDisplay;
+            this.targetName = targetName;
+        }
 
-    // ignore nodes below these types
-    private String[] ignoreNodesBelowPath;
+        boolean match(String currentState, Node node) throws RepositoryException {
+            if (!currentState.equals("") && !state.equals("") && !currentState.equals(state))
+                return false;
+            if (!path.equals("")) {
+                if (path.startsWith("/")) {
+                    if (!path.equals(node.getPath()))
+                        return false;
+                } else {
+                    if (!path.equals(node.getName()))
+                        return false;
+                }
+            }
+            if (!parent.equals("") && (node.getDepth() == 0 || !node.getParent().isNodeType(parent)))
+                return false;
+            if (!child.equals("") && !node.isNodeType(child))
+                return false;
+            return true;
+        }
+    }
 
-    // shortcut paths shown as root folders + the name how to show them
-    private Map<String, String> shortCutInfo;
+    Vector<FilterDefinition> filters;
 
     public FolderTreeConfig(IPluginConfig config) {
-        shortCutInfo = new HashMap<String, String>();
-        shortCutInfo.put("/hippo:namespaces", "document types");
+        filters = new Vector<FilterDefinition>();
 
-        ignoreNodesBelowPath = new String[] { };
-
-        ignorePaths = new HashSet<String>(Arrays.asList(new String[] {
-                "/jcr:system", "/hippo:configuration", "/hippo:namespaces" }));
-
-// FIXME: (1) Move this to plugin configuration.
-// FIXME: (2) Invert the logic, specify what you want to see
-// instead of what not. 
-        ignorePaths.add("/preview");
-        ignorePaths.add("/live");
-        ignorePaths.add("/hippo:namespaces/system");
-        ignorePaths.add("/hippo:namespaces/hippo");
-        ignorePaths.add("/hippo:namespaces/hippostd");
-        ignorePaths.add("/hippo:namespaces/hst");
-        ignorePaths.add("/hippo:namespaces/reporting");
-        ignorePaths.add("/hippo:namespaces/frontend");
-//        List<String> ignored = parameters.get("ignored").getStrings();
-//        for (String path : ignored) {
-//            ignorePaths.add(path);
-//        }
-    }
-
-    public String getShortcut(String path) {
-        if (shortCutInfo.containsKey(path)) {
-            return shortCutInfo.get(path);
+        for (IPluginConfig filter : config.getPluginConfig("filters").getPluginConfigSet()) {
+            filters.add(new FilterDefinition(filter.getString("state", ""),
+                                            filter.getString("path", ""),
+                                            filter.getString("parent", ""),
+                                            filter.getString("child", ""),
+                                            filter.getString("target", ""),
+                                            filter.containsKey("display") ? filter.getBoolean("display") : true,
+                                            filter.getString("name", "")));
         }
-        return null;
-    }
 
-    public boolean isNodeTypeIgnored(NodeType nt) {
-        if(nt.isNodeType("hippostd:folder"))
-            return false;
-        for (String type : ignoreNodesBelowType) {
-            if (nt.isNodeType(type)) {
-                return true;
+        if(FolderTreePlugin.log.isDebugEnabled()) {
+            FolderTreePlugin.log.debug("Filter definitions are:");
+            for(FilterDefinition def : filters) {
+                FolderTreePlugin.log.debug("  ("+def.state+","+def.path+","+def.parent+","+def.child+","+def.targetState+","+def.targetDisplay+","+def.targetName+")");
             }
         }
-        return false;
     }
 
-    public boolean isPathIgnored(String nodePath) {
-        for (String path : ignorePaths) {
-            if (nodePath.equals(path)) {
+    public FolderTreeConfig(FolderTreeConfig parent, String state) {
+        filters = parent.filters;
+        currentState = state;
+    }
+
+    public NodeIterator filter(Node current, final NodeIterator iter) {
+        return new NodeIterator() {
+            private int index = 0;
+            private Node nextNode;
+
+            private void fillNextNode() {
+                nextNode = null;
+                try {
+                    while (iter.hasNext() && nextNode == null) {
+                        Node candidate = iter.nextNode();
+                        for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
+                            FilterDefinition def = iter.next();
+                            if (def.match(currentState, candidate)) {
+                                if (!def.targetDisplay)
+                                    candidate = null;
+                                break;
+                            }
+                        }
+                        if (candidate != null)
+                            nextNode = candidate;
+                    }
+                } catch (RepositoryException ex) {
+                    // delibate ignore
+                }
+            }
+
+            public Node nextNode() {
+                if (nextNode == null) {
+                    fillNextNode();
+                    if (nextNode == null)
+                        throw new NoSuchElementException();
+                }
+                Node rtValue = nextNode;
+                nextNode = null;
+                return rtValue;
+            }
+
+            public long getPosition() {
+                return index;
+            }
+
+            public long getSize() {
+                return -1;
+            }
+
+            public void skip(long count) {
+                while (count-- > 0)
+                    nextNode();
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+            public Object next() {
+                return nextNode();
+            }
+
+            public boolean hasNext() {
+                if (nextNode == null) {
+                    fillNextNode();
+                    if (nextNode == null)
+                        return false;
+                }
                 return true;
             }
-        }
-        return false;
+        };
     }
 
-    public boolean areChildrenIgnored(String nodePath) {
-        for (String path : ignoreNodesBelowPath) {
-            if (nodePath.equals(path)) {
-                return true;
+    public String getDisplayName(Node node) throws RepositoryException {
+        String displayName = ((HippoNode)node).getDisplayName();
+        if (node == null) {
+            displayName = node.getName();
+        }
+        for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
+            FilterDefinition def = iter.next();
+            if (def.match(currentState, node)) {
+                if (!def.targetName.equals(""))
+                    displayName = def.targetName;
+                break;
             }
         }
-        return false;
-    }
-
-    public Set<String> getShortcuts() {
-        return shortCutInfo.keySet();
+        return displayName;
     }
 }
