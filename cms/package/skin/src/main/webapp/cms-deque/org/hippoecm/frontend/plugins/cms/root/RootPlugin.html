@@ -18,6 +18,15 @@
         <title>Hippo CMS 7</title>
     </wicket:head>
     <wicket:panel>
+        <div id="root-layout-header">
+            <div class="headerplugin" wicket:id="extension.header">[header here]</div>
+        </div>    
+        <div id="root-layout-center">
+            <div class="centerplugin" wicket:id="extension.center">[center here]</div>
+        </div>  
+        <div id="root-layout-footer">
+            <div class="footerplugin" wicket:id="extension.footer">[footer here]</div>
+        </div>
         <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>
