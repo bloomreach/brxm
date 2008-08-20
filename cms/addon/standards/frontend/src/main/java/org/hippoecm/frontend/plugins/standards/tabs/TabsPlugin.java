@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -84,7 +85,7 @@ public class TabsPlugin extends RenderPlugin {
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
     }
-
+    
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);

@@ -15,20 +15,13 @@
  */
 package org.hippoecm.frontend.plugin.workflow;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     @SuppressWarnings("unused")
@@ -39,51 +32,9 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
     public static final String ITEM_ID = "workflow.item";
 
     private String item;
-    private JcrNodeModel subModel;
 
     public EmbedWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-    }
-
-    @Override
-    public void updateModel(IModel model) {
-        subModel = (JcrNodeModel) model;
-        Node node = subModel.getNode();
-        try {
-            if(node == null) {
-                item = null;
-                super.updateModel(new JcrNodeModel((Node) null));
-                return;
-            }
-            Node ancestor = node.getParent();
-            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                if(ancestor.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    ancestor = ancestor.getParent();
-                }
-                if(!node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    item = null;
-                    super.updateModel(new JcrNodeModel((Node) null));
-                    return;
-                }
-            }
-            while (ancestor != null && !ancestor.isNodeType(HippoNodeType.NT_HANDLE) &&
-                                       !ancestor.isNodeType(HippoNodeType.NT_DOCUMENT) &&
-                                       !ancestor.isNodeType("rep:root")) {
-                ancestor = ancestor.getParent();
-            }
-            if (ancestor != null && ancestor.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                item = node.getPath().substring(ancestor.getPath().length());
-                if(item.startsWith("/")) // always the case except when ancestor is the root node
-                    item = item.substring(1);
-                super.updateModel(new JcrNodeModel(ancestor));
-                return;
-            }
-        } catch (ItemNotFoundException ex) {
-        } catch (AccessDeniedException ex) {
-        } catch (RepositoryException ex) {
-        }
-        item = null;
-        super.updateModel(new JcrNodeModel((Node) null));
     }
 
     @Override
@@ -97,17 +48,10 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
 
     @Override
     public void onFlush(JcrNodeModel nodeModel) {
-        if (subModel != null && subModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
-            updateModel(subModel);
+        JcrNodeModel myModel = getNodeModel();
+        if (myModel != null && myModel.getItemModel().hasAncestor(nodeModel.getItemModel())) {
+            updateModel(myModel);
         }
-    }
-
-    @Override
-    public void detach() {
-        if (subModel != null) {
-            subModel.detach();
-        }
-        super.detach();
     }
 
 }

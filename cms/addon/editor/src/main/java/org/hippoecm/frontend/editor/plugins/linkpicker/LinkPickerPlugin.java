@@ -88,7 +88,7 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        if (valueModel.getJcrPropertymodel().getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+        if (valueModel.getJcrPropertymodel().getItemModel().hasAncestor(nodeModel.getItemModel())) {
             valueModel.detach();
             modelChanged();
         }

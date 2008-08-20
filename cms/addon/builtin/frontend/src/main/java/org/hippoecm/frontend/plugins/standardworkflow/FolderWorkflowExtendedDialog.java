@@ -46,12 +46,10 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     private String docbase;
     private String facet;
     private String value;
-    private FolderWorkflowPlugin folderWorkflowPlugin;
 
     public FolderWorkflowExtendedDialog(FolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow, String category) {
         super(folderWorkflowPlugin, dialogWindow, "Add " + category);
         this.category = category;
-        this.folderWorkflowPlugin = folderWorkflowPlugin;
 
         WorkflowsModel model = (WorkflowsModel)folderWorkflowPlugin.getModel();
         if (model.getNodeModel().getNode() == null) {
@@ -94,6 +92,7 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow)getWorkflow();
         if (workflow != null) {
+            FolderWorkflowPlugin folderWorkflowPlugin = (FolderWorkflowPlugin) getPlugin();
             if (!folderWorkflowPlugin.templates.get(category).contains(prototype)) {
                 log.error("unknown folder type " + prototype);
                 return;

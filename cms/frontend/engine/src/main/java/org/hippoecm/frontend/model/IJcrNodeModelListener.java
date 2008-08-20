@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.model;
 
-public interface IJcrNodeModelListener extends IModelListener {
+import org.apache.wicket.IClusterable;
+
+public interface IJcrNodeModelListener extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     void onFlush(JcrNodeModel nodeModel);

@@ -228,8 +228,8 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
     public void onFlush(JcrNodeModel nodeModel) {
         // if anything above us or below us changed, refresh
         JcrNodeModel myModel = (JcrNodeModel) getModel();
-        if (myModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())
-                || nodeModel.getItemModel().getPath().startsWith(myModel.getItemModel().getPath())) {
+        if (myModel.getItemModel().hasAncestor(nodeModel.getItemModel())
+                || nodeModel.getItemModel().hasAncestor(myModel.getItemModel())) {
             typeStore.detach();
             onModelChanged();
         }

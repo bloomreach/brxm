@@ -30,34 +30,36 @@ public class ToggleVersionPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public ToggleVersionPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         add(new Label("toggleLabel"));
-        if(getModel() != null) {
-            onModelChanged();
-        }
+        modelChanged();
     }
-    
+
     @Override
     protected void onModelChanged() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        try {
-            Node node = model.getNode().getCanonicalNode();
-            if(node == null) {
-                // virtual node not having canonical equivalent
-                return;
+        if (model != null && model.getNode() != null) {
+            try {
+                Node node = model.getNode().getCanonicalNode();
+                if (node == null) {
+                    // virtual node not having canonical equivalent
+                    return;
+                }
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    replace(new ToggleVersionPanel("toggleLabel"));
+                } else {
+                    replace(new Label("toggleLabel"));
+                }
+            } catch (RepositoryException e) {
+                e.printStackTrace();
             }
-            if(node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                replace(new ToggleVersionPanel("toggleLabel"));
-            } else {
-                replace(new Label("toggleLabel"));
-            }
-        } catch (RepositoryException e) {
-            e.printStackTrace();
+        } else {
+            replace(new Label("toggleLabel"));
         }
         redraw();
     }
-    
+
 }
