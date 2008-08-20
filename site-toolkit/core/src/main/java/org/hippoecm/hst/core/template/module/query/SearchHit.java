@@ -26,7 +26,6 @@ public class SearchHit extends AbstractELNode {
     
     public SearchHit(Node node, int hitPosition, double score) {
         super(node);
-        System.out.println(hitPosition);
         this.hitPosition = hitPosition;
         this.score = score;
     }
