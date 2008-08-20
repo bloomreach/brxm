@@ -24,6 +24,8 @@ public interface HSTHttpAttributes {
     public static final String CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE = "currentPageContainer";
     public static final String CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE = "currentPageModule";
     
+    public static final String ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE = "original.requestURI";
+    
     //session attributes
     public static final String MODULE_RENDER_MAP_SESSION_ATTRIBUTE = "";
     

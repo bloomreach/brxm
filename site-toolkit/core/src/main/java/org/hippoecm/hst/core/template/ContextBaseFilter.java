@@ -28,6 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +79,7 @@ public class ContextBaseFilter extends HstFilterBase implements Filter {
 	    prefixStrippedRequest.setAttribute(URLBASE_INIT_PARAMETER, urlPrefix);
 		//prefixStrippedRequest.setAttribute(CO, requestAttributeName);
 	    prefixStrippedRequest.setAttribute(CONTENT_CONTEXT_REQUEST_ATTRIBUTE, contextBase);
+	    prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, request.getServletPath());
 		
 		filterChain.doFilter(prefixStrippedRequest, response);
 	}
