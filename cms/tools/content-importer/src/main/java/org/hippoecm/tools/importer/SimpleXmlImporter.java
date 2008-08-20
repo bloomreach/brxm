@@ -167,7 +167,7 @@ public class SimpleXmlImporter implements ContentImporter {
         // set initial workflow state
         document.setProperty("hippostd:state", "unpublished");
         
-        return handle;
+        return document;
     }
 
     /**
