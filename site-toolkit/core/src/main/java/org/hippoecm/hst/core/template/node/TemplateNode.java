@@ -41,7 +41,6 @@ public class TemplateNode extends AbstractELNode {
 	public TemplateNode(ContextBase contextBase, Node jcrNode) {
         super(jcrNode);
 		this.contextBase = contextBase;
-		this.jcrNode = jcrNode;
 	}
 	
 	public TemplateNode(ContextBase contextBase, String relativePath) throws RepositoryException {
