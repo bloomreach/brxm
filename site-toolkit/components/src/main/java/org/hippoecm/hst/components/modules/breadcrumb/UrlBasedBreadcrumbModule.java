@@ -28,7 +28,7 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
 	public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
-        String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
+        String urlPrefix = (String) request.getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 
     	//TODO:Re-enable this once the original requestURI is available from the request.
         String originalRequest = (String) request.getAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE);

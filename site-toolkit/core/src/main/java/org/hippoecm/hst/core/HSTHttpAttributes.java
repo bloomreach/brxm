@@ -19,7 +19,7 @@ public interface HSTHttpAttributes {
 	//filter request attributes
 	public static final String CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.content";
 	public static final String CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.hstconfiguration";
-	public static final String URI_PREFIX_REQ_ATTRIBUTE = "current.urlbase";
+	public static final String URI_PREFIX_REQ_ATTRIBUTE = "currentUrlbase";
 	
 	//request attributes
     public static final String CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE = "currentPageContainer";
