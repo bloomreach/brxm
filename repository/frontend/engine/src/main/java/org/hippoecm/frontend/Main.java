@@ -80,7 +80,7 @@ public class Main extends WebApplication {
                 return true;
             }
         });
-        
+
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
@@ -96,7 +96,8 @@ public class Main extends WebApplication {
         });
 
         IResourceSettings resourceSettings = getResourceSettings();
-        
+
+        final String app = getConfigurationParameter("config", null);
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
@@ -113,7 +114,7 @@ public class Main extends WebApplication {
                     }
                 }
                 try {
-                    URL url = getServletContext().getResource("/skin/" + path);
+                    URL url = getServletContext().getResource("/skin/" + (app != null ? app + "/" : "") + path);
                     if (url != null) {
                         return new UrlResourceStream(url);
                     }
@@ -130,13 +131,12 @@ public class Main extends WebApplication {
                 String path = requestParameters.getPath().substring("binaries/".length());
                 path = urlDecodePathComponent(path);
                 try {
-                    UserSession session = (UserSession) Session.get(); 
+                    UserSession session = (UserSession) Session.get();
                     Node node = session.getJcrSession().getRootNode().getNode(path);
                     return new JcrResourceRequestTarget(new JcrNodeModel(node));
                 } catch (PathNotFoundException e) {
                     log.error("binary not found " + e.getMessage());
-                } 
-                catch(RepositoryException ex) {
+                } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
                 }
                 return null;
