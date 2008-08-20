@@ -22,9 +22,7 @@
 
 
 [hst:module] > hippo:document
-- hst:template (string)
-- hst:contentlocation (string)
-- hst:action (string)
+- * (string)
 
 [hst:modules] > hippo:document
 + * (hst:module) = hst:module 
@@ -39,6 +37,9 @@
 [hst:sitemapitem] > hippo:document
 - hst:urlmapping (string)
 - hst:pageLayout (string)
+- hst:prefixlinkrewrite (string)
+- hst:cndbasedlinkrewriter (string) multiple
+- hst:pathbasedlinkrewriter (string) multiple
 + * (hst:sitemaplayout) = hst:sitemaplayout
 
 [hst:sitemap] > hippo:document
