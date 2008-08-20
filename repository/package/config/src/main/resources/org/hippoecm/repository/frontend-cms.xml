@@ -308,9 +308,6 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
-    </sv:property>
     <sv:property sv:name="shortcuts.id" sv:type="String">
       <sv:value>shortcuts.id</sv:value>
     </sv:property>
