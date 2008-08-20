@@ -29,10 +29,14 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
 
         ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
         String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
-        String originalRequest = (String) request.getAttribute(ContextBaseFilter.ORIGINAL_REQUEST_URL);
-        String selectedLocation= originalRequest.substring(urlPrefix.length());
+
+    	//TODO:Re-enable this once the original requestURI is available from the request.
+        /*String originalRequest = (String) request.getAttribute(ContextBaseFilter.ORIGINAL_REQUEST_URL);
+        String selectedLocation= originalRequest.substring(urlPrefix.length());*/        
     	
     	ArrayList<String> selectedItemsList = new ArrayList<String>();
+ 
+    	/*
     	if(selectedLocation!=null){
     	  String [] selectedItems = selectedLocation.split("/");	    	  
     	  for(int i=0;i<selectedItems.length;i++){
@@ -40,7 +44,8 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
                 selectedItemsList.add(selectedItems[i]);
     		  }
     	  }
-    	}    	
+    	} 
+    	*/   	
 
 		pageContext.setAttribute(getVar(), selectedItemsList);
 
