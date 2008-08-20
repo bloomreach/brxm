@@ -1,0 +1,85 @@
+package org.hippoecm.hst.components.modules.breadcrumb;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import org.hippoecm.hst.components.modules.navigation.SubNavigationModule;
+import org.hippoecm.hst.components.modules.navigation.NavItem;
+
+import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.template.HstFilterBase;
+import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.template.module.navigation.RepositoryBasedNavigationModule;
+import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.template.node.PageNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
+
+	private static final Logger log = LoggerFactory.getLogger(SubNavigationModule.class);
+
+	public void render(PageContext pageContext) {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		PageNode pn = (PageNode)pageContext.getRequest().getAttribute("pageNode");
+
+        String path = null;
+        try {
+        	path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+		} catch (TemplateException e) {
+			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
+		}
+
+        if(path == null) {
+            pageContext.setAttribute(getVar(),new ArrayList<NavItem>());
+            return;
+        }
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+
+	    List<NavItem> wrappedNodes = new ArrayList<NavItem>();
+	    try {
+
+	    	String currentLocation = path;
+	    	String selectedLocation = null;
+	    	if(pn.getRelativeContentPath()!=null){
+	    		selectedLocation = pn.getRelativeContentPath().substring(currentLocation.length());	
+	    	}
+	    	
+	    	ArrayList<String> selectedItemsList = new ArrayList<String>();
+	    	if(selectedLocation!=null){
+	    	  String [] selectedItems = selectedLocation.split("/");	    	  
+	    	  for(int i=0;i<selectedItems.length;i++){
+                selectedItemsList.add(selectedItems[i]);
+	    	  }
+	    	}
+
+	    	Node n = ctxBase.getRelativeNode(path);
+	    	Node subNode = null;
+	    	for(int i=0;i<selectedItemsList.size();i++){
+	    		if(subNode==null){
+	    			subNode = n.getNode(selectedItemsList.get(i).toString());
+	    		}
+	    		else {
+	    			subNode = subNode.getNode(selectedItemsList.get(i).toString());
+	    		}
+	    		if(!subNode.isNodeType(HippoNodeType.NT_HANDLE)){
+	    			wrappedNodes.add(new NavItem(subNode,true));
+	    		}
+	    	}
+
+		} catch (RepositoryException e) {
+			log.error(e.getMessage(), e);
+			wrappedNodes = new ArrayList<NavItem>();
+		}
+
+		pageContext.setAttribute(getVar(), wrappedNodes);
+
+	}
+
+}
