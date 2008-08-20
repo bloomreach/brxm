@@ -77,7 +77,6 @@ public abstract class AbstractELNode implements ELNode {
         }
         return new ELPseudoMap() {
             public Object get(Object propertyName) {
-                System.out.println("propertyNamepropertyNamepropertyName " + propertyName );
                 String prop = (String) propertyName;
                 try {
                     if (!jcrNode.hasProperty(prop)) {
