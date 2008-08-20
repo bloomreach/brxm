@@ -147,29 +147,21 @@ public abstract class HstFilterBase implements Filter {
 	
 	protected Map <String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
 		Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
-		
-		
-		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
-		 
+	
+		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);	 
 	    NodeIterator subNodes =  siteMapRootNode.getNodes();
 	    while  (subNodes.hasNext()) {
 	    	Node subNode = (Node) subNodes.next();
-	    	log.info("Subnode" + subNode.getName());
-	    	if (subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-	    	   log.info("NT_HANDLE");
+	    	if(subNode == null) {
+	    	    continue;
 	    	}
-	    	PropertyIterator propIter = subNode.getProperties();
-	    	while (propIter.hasNext()) {
-	    		Property prop = (Property) propIter.next();
-	    		Value propValue = prop.getValue();
-	    		log.info("  propertyname " + prop.getName() + " value=" + propValue.getString());
-	    		
+	    	if(subNode.hasProperty("hst:urlmapping")) {
+	    	    Property urlMappingProperty = subNode.getProperty("hst:urlmapping");
+	            siteMapNodes.put(urlMappingProperty.getValue().getString(), new PageNode(templateContextBase, subNode));
+	    	} else {
+	    	    log.warn("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. Disregard item in the url mappings");
 	    	}
-	    	Property urlMappingProperty = subNode.getProperty("hst:urlmapping");
-	    	log.info(">>>>>="+ urlMappingProperty.getValue().getString());
-	    	siteMapNodes.put(urlMappingProperty.getValue().getString(), new PageNode(templateContextBase, subNode));
 	    }
-		
 		return siteMapNodes;
 	}
 	
