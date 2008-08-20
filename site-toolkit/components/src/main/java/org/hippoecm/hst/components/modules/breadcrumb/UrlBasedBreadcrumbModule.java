@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.ContextBaseFilter;
 import org.hippoecm.hst.core.template.HstFilterBase;
@@ -27,16 +28,15 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
 	public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
         String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
 
     	//TODO:Re-enable this once the original requestURI is available from the request.
-        /*String originalRequest = (String) request.getAttribute(ContextBaseFilter.ORIGINAL_REQUEST_URL);
-        String selectedLocation= originalRequest.substring(urlPrefix.length());*/        
+        String originalRequest = (String) request.getAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE);
+        String selectedLocation= originalRequest.substring(urlPrefix.length());        
     	
     	ArrayList<String> selectedItemsList = new ArrayList<String>();
  
-    	/*
+    	
     	if(selectedLocation!=null){
     	  String [] selectedItems = selectedLocation.split("/");	    	  
     	  for(int i=0;i<selectedItems.length;i++){
@@ -45,7 +45,7 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
     		  }
     	  }
     	} 
-    	*/   	
+    	   	
 
 		pageContext.setAttribute(getVar(), selectedItemsList);
 
