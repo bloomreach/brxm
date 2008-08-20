@@ -43,6 +43,7 @@
     <module>core</module>
     <!--<module>taglib</module>-->
     <module>addon</module>
+    <module>components</module>
     <!--<module>skeleton</module>
     <module>sample</module>-->
   </modules>
