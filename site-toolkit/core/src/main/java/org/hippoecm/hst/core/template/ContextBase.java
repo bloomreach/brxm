@@ -87,7 +87,7 @@ public class ContextBase {
 		return new ContextBase(DEFAULT_CONTEXT_NAME, DEFAULT_CONTENT_LOCATION, request);
 	}
 	
-	private String stripFirstSlash(String s) {
+	public static String stripFirstSlash(String s) {
 		return s.startsWith("/") ? s.substring(1) : s;
 	}
 	

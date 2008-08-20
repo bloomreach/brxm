@@ -33,10 +33,13 @@ public class PageNode extends TemplateNode{
    public static final String LAYOUTPAGE_PROPERTY_NAME = "hst:pageLayout";
    public static final String URLMAPPING_PROPERTY_NAME = "hst:urlmapping";
    
+   String x;
+   
    private NodeList<PageContainerNode> containerNodes;
    
    public PageNode(ContextBase contextBase, Node jcrNode) throws RepositoryException {
 	   super(contextBase, jcrNode);
+	   x = jcrNode.getPath();
 	   containerNodes = new NodeList(contextBase, getJcrNode(), PageContainerNode.class);
    }
    
@@ -51,6 +54,8 @@ public class PageNode extends TemplateNode{
    }
    
    public String getURLMappingValue() throws RepositoryException {
+	   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + jcrNode.getSession());
+	   
 	   return jcrNode.getProperty(URLMAPPING_PROPERTY_NAME).getValue().getString();
    }
   

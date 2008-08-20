@@ -94,8 +94,10 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			}
 			request.getSession().removeAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
 			if (forward != null) {
-				RequestDispatcher rd = request.getRequestDispatcher(forward);
-				rd.forward(new RequestWrapper((HttpServletRequest) request, forward), response);
+				//RequestDispatcher rd = request.getRequestDispatcher(forward);
+				//rd.forward(new RequestWrapper((HttpServletRequest) request, forward), response);
+				HttpServletResponse resp = (HttpServletResponse) response;
+				resp.sendRedirect(forward);
 				//chain.doFilter(new RequestWrapper((HttpServletRequest) request, forward), response);
 			} else {
 			    chain.doFilter(request, response);

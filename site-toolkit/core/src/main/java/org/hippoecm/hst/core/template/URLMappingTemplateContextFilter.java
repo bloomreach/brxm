@@ -44,6 +44,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.node.LayoutNode;
 import org.hippoecm.hst.core.template.node.NavigationNode;
 import org.hippoecm.hst.core.template.node.PageNode;
@@ -94,13 +95,12 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 			filterChain.doFilter(request, response);
 		} else {
 			log.info("NO IGNORE " + request.getRequestURI());
-			Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+		
 			
 			log.info("URI" + request.getRequestURI());
 			//get mapping		
 			try {
-				ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, repositoryTemplateContextLocation, request, session);
-			
+				ContextBase templateContextBase = getHstConfigurationContextBase(request, repositoryTemplateContextLocation);
 				//find 
 				URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
 	           	PageNode matchPageNode = getPageNode(request, urlTokenizer, templateContextBase);
@@ -115,7 +115,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            
 	            	//set attributes
 	            	wrappedRequest.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
-	            	wrappedRequest.setAttribute(JCRSESSION_REQUEST_ATTRIBUTE, session);
+	            	wrappedRequest.setAttribute(JCRSESSION_REQUEST_ATTRIBUTE, JCRConnectorWrapper.getTemplateJCRSession(request.getSession()));
 	            	//wrappedRequest.setAttribute(NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE, navigationContextBase);
 	            	
 	    			dispatcher.forward(wrappedRequest, response);
@@ -133,5 +133,20 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 
 	
 	
+	/**
+	 * Determines if the parameter is a 'real' pattern or just a regular String.
+	 * (only checks for + and * for now...)
+	 * @param s
+	 * @return
+	 */
+	private boolean isPattern(String s) {
+		return s.contains("+") ||
+		       s.contains("*");
+	}
+	
+	private static Node getNodeByAbsolutePath(final Session session, final String path) throws PathNotFoundException, RepositoryException{
+		String relPath = path.startsWith("/") ? path.substring(1) : path;
+		return session.getRootNode().getNode(relPath);
+	}
 
 }

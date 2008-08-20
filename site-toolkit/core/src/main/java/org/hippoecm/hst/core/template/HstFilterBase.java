@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -100,11 +101,18 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	protected boolean ignoreType(HttpServletRequest request) {
+		if (request.getAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE) != null) {
+			return true;
+		}
 		String requestURI = request.getRequestURI();
 		int lastDot = requestURI.lastIndexOf(".");
 		if (lastDot != -1) {
 			String suffix = requestURI.substring(lastDot).toLowerCase();
-			return ignoreTypesList.contains(suffix);
+			boolean ignore = ignoreTypesList.contains(suffix);
+			if (ignore) {
+				request.setAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE, "true");				
+			}
+			return ignore;
 		}
 		return false;
 	}
@@ -117,17 +125,19 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	
-	public PageNode getPageNode(HttpServletRequest request) throws TemplateException, RepositoryException {
+	/*public PageNode getPageNode(HttpServletRequest request) throws TemplateException, RepositoryException {
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
 		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
 		URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
        	return getPageNode(request, urlTokenizer, templateContextBase);
-	} 
+	} */
 	
 	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
-		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
-		Node siteMapNodes = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
+		
+		ContextBase hstConfigurationContextBase = getHstConfigurationContextBase(request, TEMPLATE_CONFIGURATION_LOCATION);
+			
+		Node siteMapNodes = hstConfigurationContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
 		NodeIterator siteMapItemIterator = siteMapNodes.getNodes();
 		if (siteMapItemIterator == null) {
 			return null;
@@ -136,7 +146,7 @@ public abstract class HstFilterBase implements Filter {
 				Node siteMapItem = siteMapItemIterator.nextNode();
 				log.debug("looking for " + pageNodeName + " with location"  + siteMapItem.getPath() + " and name " + siteMapItem.getName());
 				if (siteMapItem.getName().equals(pageNodeName)) {
-					return new PageNode(templateContextBase, siteMapItem);
+					return new PageNode(hstConfigurationContextBase, siteMapItem);
 				}
 			}
 		}
@@ -180,5 +190,22 @@ public abstract class HstFilterBase implements Filter {
 			throw new ServletException("Missing init-param " + param);
 		}
 		return parameterValue;
+	}
+	
+	protected ContextBase getHstConfigurationContextBase(HttpServletRequest request, String hstConfigurationLocation) throws TemplateException {
+		ContextBase hstConfigurationContextBase = null;
+		if (request.getAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE) == null) {
+			Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+			try {
+				hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, hstConfigurationLocation, request, session);
+			} catch (PathNotFoundException e) {
+				throw new TemplateException(e);
+			} catch (RepositoryException e) {
+				throw new TemplateException(e);
+			}
+		} else {
+			hstConfigurationContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE);
+		}
+		return hstConfigurationContextBase;
 	}
 }

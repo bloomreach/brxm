@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,8 @@ public class PreviewLiveContextBaseFilter extends HstFilterBase implements Filte
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		request.getRequestURI();
+		
+		// todo: prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, requestURI);
 		
 		
 	}

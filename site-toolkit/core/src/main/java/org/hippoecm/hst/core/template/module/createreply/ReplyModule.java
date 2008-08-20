@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBaseFilter;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
@@ -43,7 +44,7 @@ public class ReplyModule extends ModuleBase {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		
-		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
+		String urlPrefix = (String) request.getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;
 		log.debug(" urlPrefix " + urlPrefix);
 		
@@ -79,7 +80,8 @@ public class ReplyModule extends ModuleBase {
 			}
 		}
 		
-		return action;
+		log.debug("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR: " + urlPrefix + action);
+		return urlPrefix + action;
 		}
 		return null;
 	}
@@ -112,7 +114,7 @@ public class ReplyModule extends ModuleBase {
 	public void render(PageContext pageContext) throws TemplateException {
 		PageNode node = (PageNode) pageContext.getRequest().getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
 		WebFormBean formBean = new WebFormBean();
-		String urlPrefix = (String) pageContext.getRequest().getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
+		String urlPrefix = (String) pageContext.getRequest().getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;
 		String action = getPropertyValueFromModuleNode("action");
 		formBean.setAction(urlPrefix + action); // + "/"); node.getRelativeContentPath());

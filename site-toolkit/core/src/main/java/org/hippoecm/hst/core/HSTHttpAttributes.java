@@ -19,12 +19,15 @@ public interface HSTHttpAttributes {
 	//filter request attributes
 	public static final String CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.content";
 	public static final String CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.hstconfiguration";
+	public static final String URI_PREFIX_REQ_ATTRIBUTE = "current.urlbase";
 	
 	//request attributes
     public static final String CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE = "currentPageContainer";
     public static final String CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE = "currentPageModule";
     
     public static final String ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE = "original.requestURI";
+    
+    public static final String REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE = "ignore.hst.proccessing";
     
     //session attributes
     public static final String MODULE_RENDER_MAP_SESSION_ATTRIBUTE = "";

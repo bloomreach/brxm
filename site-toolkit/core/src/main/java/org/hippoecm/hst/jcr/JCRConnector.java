@@ -230,8 +230,8 @@ public class JCRConnector {
 
         void refresh(HttpSession httpSession) throws RepositoryException {
             if(httpSession.getMaxInactiveInterval() >= 0 &&
-               System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {
-                jcrSession.refresh(false); // NOTICE: never keep changes
+               System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {            
+            	//jcrSession.refresh(false); // NOTICE: never keep changes
                 logger.info("refreshing session");
                 lastRefreshed = System.currentTimeMillis();
             }
