@@ -132,53 +132,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	}
 
 	
-	/**
-	 * Finds a template string 
-	 * @param request
-	 * @return
-	 */
-	private PageNode getPageNode(HttpServletRequest request, Map<String, PageNode> urlMappingToPageNodeMap) {
-		String requestURI = request.getRequestURI();
-		log.info("requestURI=" + requestURI);
-		
-		PageNode templateNode = null;
-		Iterator<String> mappingIter = urlMappingToPageNodeMap.keySet().iterator();
-		while (mappingIter.hasNext()) {
-			String regex = mappingIter.next();
-			if (isPattern(regex)) {
-			   //the match string is a 'real'pattern			
-				Pattern pattern = Pattern.compile(regex);
-				Matcher matcher = pattern.matcher(requestURI);
-				if (matcher.matches()) {
-				   templateNode = urlMappingToPageNodeMap.get(regex);
-				   //found a match, but continue loop because there may be
-				   //a perfect match (i.e. a regex string that equals the URI)
-				}
-			} else {
-			    //the match string is a normal string 
-				if (requestURI.equals(regex)) {
-				   //a perfect match, so return this mapping
-					return urlMappingToPageNodeMap.get(regex);
-				}
-			}
-		}
-		return templateNode;
-	}
 	
-	/**
-	 * Determines if the parameter is a 'real' pattern or just a regular String.
-	 * (only checks for + and * for now...)
-	 * @param s
-	 * @return
-	 */
-	private boolean isPattern(String s) {
-		return s.contains("+") ||
-		       s.contains("*");
-	}
-	
-	private static Node getNodeByAbsolutePath(final Session session, final String path) throws PathNotFoundException, RepositoryException{
-		String relPath = path.startsWith("/") ? path.substring(1) : path;
-		return session.getRootNode().getNode(relPath);
-	}
 
 }
