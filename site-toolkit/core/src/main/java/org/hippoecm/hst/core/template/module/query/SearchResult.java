@@ -20,12 +20,31 @@ import java.util.List;
 public class SearchResult {
     List<SearchHit> hits;
     private long size;
+    private int offset;
+    private int pagesize;
     private String didyoumean;
 
     public SearchResult(List<SearchHit> hits) {
         this.hits = hits;
     }
 
+    public long getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public long getPagesize() {
+        return pagesize;
+    }
+
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
+    }
+
+    
     public void setDidyoumean(String didyoumean) {
        this.didyoumean = didyoumean;
     }

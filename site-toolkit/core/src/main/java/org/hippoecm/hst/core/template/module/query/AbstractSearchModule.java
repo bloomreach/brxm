@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.template.module.query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -36,8 +37,6 @@ import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-import org.hippoecm.hst.core.template.module.listdisplay.ListDisplayModule;
-import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +55,10 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
     private boolean excerptNeeded = DEFAULT_EXCERPTNEEDED;
     private boolean similarNeeded = DEFAULT_SIMILARNEEDED;
 
+    
+    /**
+     * this render is a final, since it is delegate code, and is not meant for extending
+     */
     @Override
     public final void render(PageContext pageContext) throws TemplateException {
 
@@ -93,12 +96,28 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
 
             start = System.currentTimeMillis();
             RowIterator rows = queryResult.getRows();
+            
             searchResult.setSize(rows.getSize());
+            searchResult.setOffset(offset);
+            searchResult.setPagesize(limit);
+            
+            try {
+                rows.skip(offset);
+            } catch (NoSuchElementException e ) {
+                log.debug("offset is larger then the number of results");
+                return;
+            }
+            int counter = 0; 
             while (rows.hasNext()) {
+                counter++;
+                if(counter > limit) {
+                    break;
+                }
                 Row row = rows.nextRow();
                 try {
                     Node node = (Node) jcrSession.getItem(row.getValue("jcr:path").getString());
-                    SearchHit searchHit = new SearchHit(node);
+                    double score = row.getValue("jcr:score").getDouble();
+                    SearchHit searchHit = new SearchHit(node, (counter+offset), score);
                     if (isExcerptNeeded()) {
                         searchHit.setExcerpt(row.getValue("rep:excerpt(.)").getString());
                     }
@@ -106,6 +125,7 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
                 } catch (ItemNotFoundException e) {
                     log.error("Unable to get search hit. Item might be removed. Continue with next " + e.getMessage());
                 }
+                
             }
             if (isDidYouMeanNeeded() && querytext != null && !querytext.equals("")
                     && (searchResult.getSize() < getDidYouMeanThreshold())) {
@@ -116,7 +136,6 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
                             .getRows().nextRow().getValue("rep:spellcheck()");
                     log.debug("Getting 'didyoumean' took " + (System.currentTimeMillis() - start) + " ms to complete.");
                     if (v != null) {
-                        System.out.println("getString " + v.getString());
                         searchResult.setDidyoumean(v.getString());
                     }
                 } catch (RepositoryException e) {

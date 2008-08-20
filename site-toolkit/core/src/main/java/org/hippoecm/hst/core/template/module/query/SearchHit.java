@@ -21,9 +21,22 @@ import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 
 public class SearchHit extends AbstractELNode {
     private String excerpt;
-
-    public SearchHit(Node node) {
+    private int hitPosition;
+    private double score;
+    
+    public SearchHit(Node node, int hitPosition, double score) {
         super(node);
+        System.out.println(hitPosition);
+        this.hitPosition = hitPosition;
+        this.score = score;
+    }
+
+    public int getHitPosition() {
+        return hitPosition;
+    }
+
+    public void setHitPosition(int hitPosition) {
+        this.hitPosition = hitPosition;
     }
 
     public void setExcerpt(String excerpt) {
@@ -32,5 +45,13 @@ public class SearchHit extends AbstractELNode {
 
     public String getExcerpt() {
         return excerpt;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 }
