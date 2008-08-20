@@ -329,7 +329,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
 
     public void onFlush(JcrNodeModel nodeModel) {
         JcrNodeModel myModel = (JcrNodeModel) getModel();
-        if (myModel.getItemModel().getPath().startsWith(nodeModel.getItemModel().getPath())) {
+        if (myModel != null && myModel.getItemModel().hasAncestor(nodeModel.getItemModel())) {
             modelChanged();
         }
     }

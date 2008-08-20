@@ -101,6 +101,15 @@ public class JcrItemModel extends LoadableDetachableModel {
         }
     }
 
+    public boolean hasAncestor(JcrItemModel model) {
+        if (getPath() != null) {
+            if (model.getPath() != null) {
+                return getPath().startsWith(model.getPath());
+            }
+        }
+        return false;
+    }
+
     // LoadableDetachableModel
 
     @Override

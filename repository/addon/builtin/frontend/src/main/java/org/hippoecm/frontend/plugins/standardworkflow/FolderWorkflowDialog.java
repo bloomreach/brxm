@@ -43,12 +43,10 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private String category;
     private String prototype;
     private String name;
-    private FolderWorkflowPlugin folderWorkflowPlugin;
 
     public FolderWorkflowDialog(FolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow, String category) {
         super(folderWorkflowPlugin, dialogWindow, "Add " + category);
         this.category = category;
-        this.folderWorkflowPlugin = folderWorkflowPlugin;
 
         WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
         if (model.getNodeModel().getNode() == null) {
@@ -118,6 +116,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             throw new WorkflowException("You need to select a type");
         }
         if (workflow != null) {
+            FolderWorkflowPlugin folderWorkflowPlugin = (FolderWorkflowPlugin) getPlugin();
             if (!folderWorkflowPlugin.templates.get(category).contains(prototype)) {
                 log.error("unknown folder type " + prototype);
                 throw new WorkflowException("Unknown folder type " + prototype);

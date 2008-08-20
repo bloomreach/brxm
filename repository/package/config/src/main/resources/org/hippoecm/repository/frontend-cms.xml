@@ -384,8 +384,11 @@
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.browser</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+    <sv:property sv:name="model.folder" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.document" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>Browse</sv:value>
@@ -459,7 +462,7 @@
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.folder</sv:value>
     </sv:property>
   </sv:node>
 
@@ -474,7 +477,7 @@
       <sv:value>service.browse.version</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.content</sv:value>
@@ -495,7 +498,7 @@
       <sv:value>service.browse.version.content</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.submodel" sv:type="String">
       <sv:value>version.model</sv:value>
@@ -522,7 +525,7 @@
       <sv:value>service.browse.versiontoggle</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.document</sv:value>
     </sv:property>
   </sv:node>
 
@@ -555,7 +558,22 @@
       <sv:value>service.browse.workflows</sv:value>
     </sv:property>
     <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
+      <sv:value>service.browse.workflows.category</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="embedWorkflowList">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.browse.workflows.category.embed</sv:value>
     </sv:property>
   </sv:node>
 
@@ -567,23 +585,38 @@
       <sv:value>org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
+      <sv:value>service.browse.workflows.category.embed</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflows.id</sv:value>
+      <sv:value>workflow.embedded.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>embedded</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="workflowPlugin">
+  <sv:node sv:name="internalWorkflowList">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.browse.workflows.category.internal</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="internalWorkflowPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -591,10 +624,10 @@
       <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
+      <sv:value>service.browse.workflows.category.internal</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.browse.folder</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
@@ -603,10 +636,51 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflows.id</sv:value>
+      <sv:value>workflow.internal.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>internal</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="reviewedActionWorkflowList">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.browse.workflows.category.reviewed-action</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="reviewedActionWorkflowPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category.reviewed-action</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>BrowserPerspective</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.id" sv:type="String">
+      <sv:value>workflow.reviewed-action.id</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>reviewed-action</sv:value>
     </sv:property>
   </sv:node>

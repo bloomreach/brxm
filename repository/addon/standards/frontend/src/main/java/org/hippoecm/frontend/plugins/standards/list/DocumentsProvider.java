@@ -125,7 +125,7 @@ public class DocumentsProvider extends SortableDataProvider {
                         return 0;
                     }
                     return 1;
-                } else if (o2 == null) {
+                } else if (n2 == null) {
                     return -1;
                 }
                 String label1 = folderOrDocument(n1);

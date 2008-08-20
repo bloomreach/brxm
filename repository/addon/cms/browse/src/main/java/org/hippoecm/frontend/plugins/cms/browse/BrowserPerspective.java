@@ -27,6 +27,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -38,8 +39,8 @@ import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,9 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
 
     public static final String VIEWERS = "browser.viewers";
 
-    private ModelService modelService;
+    private IModel folder;
+    private ModelService folderService;
+    private DocumentModelService documentService;
     private String viewerName;
     private IPluginControl viewer;
     private String listingTitle = "documents";
@@ -61,11 +64,29 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.getString(RenderService.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
-            modelService.init(context);
+        if (config.getString("model.document") != null) {
+            documentService = new DocumentModelService(config);
+            documentService.init(context);
         } else {
-            log.error("no model service specified");
+            log.error("no document model service (model.document) specified");
+        }
+
+        if (config.getString("model.folder") != null) {
+            folderService = new ModelService(config.getString("model.folder"), new JcrNodeModel("/"));
+            folderService.init(context);
+            context.registerService(new IModelListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void updateModel(IModel model) {
+                    selectFolder(model);
+                }
+
+            }, config.getString("model.folder"));
+
+            // model didn't exist for super constructor, so set it explicitly
+            selectFolder(folderService.getModel());
+        } else {
+            log.error("no folder model service (model.folder) specified");
         }
 
         if (config.getString(IBrowseService.BROWSER_ID) != null) {
@@ -81,44 +102,77 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                 tag.put("class", listingTitle);
             }
         });
-
-        // model didn't exist for super constructor, so set it explicitly
-        updateModel(modelService.getModel());
     }
 
     public void browse(IModel model) {
-        modelService.setModel(model);
-        focus(null);
-    }
-
-    @Override
-    public void onModelChanged() {
-        IModel model = getModel();
-        if (model != null && model instanceof JcrNodeModel) {
+        if (model instanceof JcrNodeModel) {
+            JcrNodeModel nodeModel = (JcrNodeModel) model;
             try {
-                Node node = ((JcrNodeModel) model).getNode();
-                Node root = node.getSession().getRootNode();
-                Map<String, IClusterConfig> viewers = getViewers();
-                boolean shown = false;
-                do {
-                    shown = showNode(node, viewers);
-                    if (!node.isSame(root)) {
-                        node = node.getParent();
-                    } else {
-                        break;
-                    }
-                } while (!shown);
+                Node node = nodeModel.getNode();
+                // walk up until a folder or a handle has been found
+                while (!node.isNodeType("hippostd:folder") && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    node = node.getParent();
+                    nodeModel = new JcrNodeModel(node);
+                }
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    folderService.setModel(nodeModel.getParentModel());
+                    documentService.updateModel(nodeModel);
+                } else {
+                    folderService.setModel(nodeModel);
+                }
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-        } else {
-            if (viewer != null) {
-                viewer.stopPlugin();
-                viewer = null;
-                viewerName = null;
+        }
+        focus(null);
+    }
+
+    public void selectFolder(IModel model) {
+        if (model != null && !model.equals(folder)) {
+            folder = model;
+            if (model instanceof JcrNodeModel) {
+                boolean shown = false;
+                try {
+                    Node node = ((JcrNodeModel) model).getNode();
+                    Node root = node.getSession().getRootNode();
+                    Map<String, IClusterConfig> viewers = getViewers();
+                    do {
+                        shown = showNode(node, viewers);
+                        if (!node.isSame(root)) {
+                            node = node.getParent();
+                        } else {
+                            break;
+                        }
+                    } while (!shown);
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+
+                documentService.updateModel(new JcrNodeModel((Node) null));
+            } else {
+                if (viewer != null) {
+                    viewer.stopPlugin();
+                    viewer = null;
+                    viewerName = null;
+                }
             }
             redraw();
         }
+    }
+
+    public void selectDocument(IModel model) {
+        JcrNodeModel nodeModel = (JcrNodeModel) model;
+        if (model != null && nodeModel.getNode() != null) {
+            try {
+                if (nodeModel.getNode().isNodeType("hippostd:folder")) {
+                    folderService.setModel(model);
+                    return;
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        documentService.updateModel(model);
     }
 
     protected boolean showNode(Node node, Map<String, IClusterConfig> viewers) throws RepositoryException {
@@ -138,7 +192,8 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     IClusterConfig cluster = entry.getValue();
                     IClusterConfig decorated = new ClusterConfigDecorator(cluster, myId + ".viewer");
                     decorated.put("wicket.id", config.getString("extension.list"));
-                    decorated.put("wicket.model", config.getString("wicket.model"));
+                    decorated.put("model.folder", config.getString("model.folder"));
+                    decorated.put("model.document", config.getString("model.document"));
                     viewer = context.start(decorated);
                     viewerName = type;
 
@@ -178,6 +233,23 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
             }
         }
         return viewers;
+    }
+
+    private class DocumentModelService extends ModelService {
+        private static final long serialVersionUID = 1L;
+
+        DocumentModelService(IPluginConfig config) {
+            super(config.getString("model.document"), new JcrNodeModel((Node) null));
+        }
+
+        public void updateModel(IModel model) {
+            super.setModel(model);
+        }
+
+        @Override
+        public void setModel(IModel model) {
+            selectDocument(model);
+        }
     }
 
 }

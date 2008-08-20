@@ -27,9 +27,7 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
-import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -46,7 +44,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
+public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelListener, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -62,7 +60,6 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
     private String factoryId;
     private Map<String, IPluginControl> plugins;
     private Map<String, ModelService> models;
-    private IModel model;
     private int pluginCount;
     private String pluginsQuery = "/jcr:root/hippo:configuration/hippo:frontend/shortcuts/node()";
 
@@ -71,9 +68,6 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
 
         this.context = context;
         this.config = config;
-
-        IModel model = new JcrNodeModel("/");
-        setModel(model);
 
         plugins = new HashMap<String, IPluginControl>();
         models = new HashMap<String, ModelService>();
@@ -85,24 +79,13 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
             log.warn("No query defined for {}", factoryId);
         }
 
-        if (config.getString(RenderService.MODEL_ID) != null) {
-            context.registerService(this, config.getString(RenderService.MODEL_ID));
-        } else {
-            log.warn("");
-        }
-
         context.registerService(this, IJcrService.class.getName());
-        updateModel(model);
+
+        refresh();
     }
 
-    public void updateModel(IModel imodel) {
-        setModel(imodel);
+    public void refresh() {
         closePlugins();
-        if (imodel == null || ((JcrNodeModel) imodel).getNode() == null) {
-            model = new JcrNodeModel("/");
-        } else {
-            model = imodel;
-        }
         try {
             QueryManager qmgr = ((UserSession) getSession()).getJcrSession().getWorkspace().getQueryManager();
             Query query = qmgr.createQuery(pluginsQuery, Query.XPATH);
@@ -157,7 +140,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        updateModel(model);
+        refresh();
     }
 
     @Override
@@ -165,4 +148,5 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IModelListener, I
         config.detach();
         super.onDetach();
     }
+
 }

@@ -35,10 +35,15 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.service.PluginRequestTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -53,13 +58,13 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
     @Override
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
-        
+
         ListColumn column = new ListColumn(new Model(""), "icon");
         column.setComparator(new TypeComparator());
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
-        
+
         column = new ListColumn(new Model("Name"), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
@@ -73,7 +78,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
         column.setComparator(new StateComparator());
         column.setRenderer(new StateRenderer());
         columns.add(column);
-        
+
         return new TableDefinition(columns);
     }
 

@@ -15,19 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
+import org.hippoecm.frontend.model.IModelListener;
+import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,50 +45,74 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         // register for flush notifications
         context.registerService(this, IJcrService.class.getName());
 
+        if (config.getString("model.document") != null) {
+            context.registerService(new IModelListener() {
+                private static final long serialVersionUID = 1L;
+
+                public void updateModel(IModel model) {
+                    updateSelection(model);
+                }
+
+            }, config.getString("model.document"));
+        } else {
+            log.warn("No document model service configured (model.document)");
+        }
+
         pageSize = config.getInt("list.page.size", 15);
+
         dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
-        dataTable.setModel(getModel());
         add(dataTable);
+
+        modelChanged();
     }
 
     protected abstract ISortableDataProvider getDataProvider();
 
     protected abstract TableDefinition getTableDefinition();
 
-    private boolean newList = true;
-
     public void selectionChanged(IModel model) {
-        newList = false;
+        IPluginConfig config = getPluginConfig();
+        if (config.getString("model.document") != null) {
+            IModelService documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelService.class);
+            if (documentService != null) {
+                documentService.setModel(model);
+            } else {
+                updateSelection(model);
+            }
+        } else {
+            updateSelection(model);
+        }
+    }
+
+    private void updateSelection(IModel model) {
         dataTable.setModel(model);
-        setModel(model);
+        redraw();
+
+        onSelectionChanged(model);
+    }
+
+    protected void onSelectionChanged(IModel model) {
     }
 
     @Override
     public void onModelChanged() {
-        if (newList) {
-            IModel newModel = getModel();
-            if (newModel instanceof JcrNodeModel) {
-                try {
-                    Node newNode = (Node) newModel.getObject();                
-                    if (newNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        newModel = ((JcrNodeModel) getModel()).getParentModel();
-                    }
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
-                }
+        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize));
+        IPluginConfig config = getPluginConfig();
+        if (config.getString("model.document") != null) {
+            IModelService documentService = getPluginContext().getService(config.getString("model.document"),
+                    IModelService.class);
+            if (documentService != null) {
+                dataTable.setModel(documentService.getModel());
             }
-
-            dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
-            dataTable.setModel(newModel);
-            replace(dataTable);
-        } else {
-            newList = true;
         }
         redraw();
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        if(nodeModel != null && nodeModel.getNode() != null) {
+        JcrNodeModel myModel = (JcrNodeModel) getModel();
+        if (myModel == null || myModel.getItemModel().hasAncestor(nodeModel.getItemModel())
+                || myModel.equals(nodeModel.getParentModel())) {
             modelChanged();
         }
     }

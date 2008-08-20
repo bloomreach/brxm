@@ -199,10 +199,10 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         IEditService editor = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
         try {
             if (nodeModel.getNode() != null && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE))) {
+                if (browser != null) {
+                    browser.browse(nodeModel);
+                }
                 if (!nodeModel.getNode().isNodeType("hippostd:folder")) {
-                    if (browser != null) {
-                        browser.browse(nodeModel);
-                    }
                     if (editor != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();
