@@ -55,6 +55,50 @@
       <sv:value>service.footer</sv:value>
     </sv:property>
   </sv:node>
+
+  <sv:node sv:name="rootLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.root</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value></sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>false</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.units" sv:type="String">
+      <sv:value>top</sv:value>
+      <sv:value>center</sv:value>
+      <sv:value>bottom</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>id=root-layout-header,height=1</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>id=root-layout-center,gutter=0 0px 0 0px</sv:value>
+    </sv:property>
+    <sv:property sv:name="bottom" sv:type="String">
+      <sv:value>id=root-layout-footer,height=0</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="ajaxIndicator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.root</sv:value>
+    </sv:property>
+  </sv:node>
   
   <sv:node sv:name="headerPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -73,7 +117,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.deque.DequePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.center</sv:value>
@@ -81,8 +125,84 @@
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.center</sv:value>
     </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.deque.item</sv:value>
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="tabs" sv:type="String">
+      <sv:value>service.tab</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="tabUnit">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.position" sv:type="String">
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.options" sv:type="String">
+      <sv:value>height=1000</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="tabLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value>tabbed-panel-layout</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.wrappers" sv:type="String">
+      <sv:value>top</sv:value>
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>tabbed-panel-layout-top</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>tabbed-panel-layout-center</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="tabTopUnit">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>tabs:tabs-container</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.position" sv:type="String">
+      <sv:value>top</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.options" sv:type="String">
+      <sv:value>height=70</sv:value>
     </sv:property>
   </sv:node>
 
@@ -106,7 +226,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.deque.item</sv:value>
+      <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
@@ -128,6 +248,38 @@
     </sv:property>
     <sv:property sv:name="extension.todo" sv:type="String">
       <sv:value>service.dashboard.todo</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="dashboardLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.dashboard</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value>dashboard-perspective-wrapper</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.units" sv:type="String">
+      <sv:value>left</sv:value>
+      <sv:value>center</sv:value>
+      <sv:value>top</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>id=welcomepanel,height=200,resize=true,gutter=0px 0px 5px 0px</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>id=righthalf,scroll=true,body=righthalf-body</sv:value>
+    </sv:property>
+    <sv:property sv:name="left" sv:type="String">
+      <sv:value>id=lefthalf,width=50%,body=lefthalf-body,resize=true,scroll=true,gutter=0px 5px 0px 0px</sv:value>
     </sv:property>
   </sv:node>
 
@@ -157,7 +309,7 @@
       <sv:value>service.dashboard.shortcuts.shortcut</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.node</sv:value>
+      <sv:value>model.§e.node</sv:value>
     </sv:property>
     <sv:property sv:name="shortcuts.id" sv:type="String">
       <sv:value>shortcuts.id</sv:value>
@@ -217,6 +369,8 @@
       <sv:value>model.report.todo</sv:value>
     </sv:property>
   </sv:node>
+  
+  
 
   <sv:node sv:name="browserPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -226,17 +380,14 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.deque.item</sv:value>
+      <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.browser</sv:value>
     </sv:property>
-    <sv:property sv:name="model.folder" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>Browse</sv:value>
@@ -253,6 +404,7 @@
       <sv:value>extension.workflows</sv:value>
       <sv:value>extension.version</sv:value>
       <sv:value>extension.versionToggle</sv:value>
+      <sv:value>extension.editor</sv:value>
     </sv:property>
     <sv:property sv:name="extension.browser" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
@@ -269,6 +421,41 @@
     <sv:property sv:name="extension.versionToggle" sv:type="String">
       <sv:value>service.browse.versiontoggle</sv:value>
     </sv:property>
+    <sv:property sv:name="extension.editor" sv:type="String">
+      <sv:value>service.browse.editor</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="browserLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.browser</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value>browse-perspective-wrapper</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.units" sv:type="String">
+      <sv:value>left</sv:value>
+      <sv:value>center</sv:value>
+      <sv:value>right</sv:value>
+    </sv:property>
+    <sv:property sv:name="left" sv:type="String">
+      <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=true,minWidth=150,width=200,gutter=0px 5px 0px 3px</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=200,scroll=true,gutter=0px 3px 0px 0px</sv:value>
+    </sv:property>
+    <sv:property sv:name="right" sv:type="String">
+      <sv:value>id=browse-perspective-right,body=browse-perspective-right-body,minWidth=200,width=200,scroll=true,resize=true</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="browserPlugin">
@@ -282,7 +469,7 @@
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
   </sv:node>
 
@@ -297,7 +484,7 @@
       <sv:value>service.browse.version</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.content</sv:value>
@@ -318,7 +505,7 @@
       <sv:value>service.browse.version.content</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.submodel" sv:type="String">
       <sv:value>version.model</sv:value>
@@ -345,7 +532,7 @@
       <sv:value>service.browse.versiontoggle</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
   </sv:node>
 
@@ -393,20 +580,20 @@
       <sv:value>service.browse.workflows.workflow</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflow.embedded.id</sv:value>
+      <sv:value>workflows.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>embedded</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="internalWorkflowPlugin">
+  <sv:node sv:name="workflowPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -417,7 +604,7 @@
       <sv:value>service.browse.workflows.workflow</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
+      <sv:value>model.browse.node</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
@@ -426,58 +613,11 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflow.internal.id</sv:value>
+      <sv:value>workflows.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>internal</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="reviewedActionWorkflowPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflow.reviewed-action.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>reviewed-action</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="editorTabsPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.deque.item</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.logout</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.logout" sv:type="String">
-      <sv:value>service.logout</sv:value>
-    </sv:property>
-    <sv:property sv:name="tabs" sv:type="String">
-      <sv:value>service.tab</sv:value>
     </sv:property>
   </sv:node>
 
@@ -489,7 +629,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.management.ManagementPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.deque.item</sv:value>
+      <sv:value>service.tab</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>service.management.node</sv:value>
@@ -522,6 +662,36 @@
     </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>service.management.editor</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="managementLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.management</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value>management-perspective-wrapper</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.units" sv:type="String">
+      <sv:value>left</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.wrappers" sv:type="String">
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="left" sv:type="String">
+      <sv:value>id=management-perspective-left,width=200,resize=true,gutter=0px 5px 0px 3spx</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>management-perspective-center</sv:value>
     </sv:property>
   </sv:node>
 
@@ -645,6 +815,130 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="managementEditorUnit">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.management.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.position" sv:type="String">
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.options" sv:type="String">
+      <sv:value>gutter=0px 5px 0px 0px,scroll=true</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="tabbedEditorEditperspective">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.editor.TabsPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="tabs" sv:type="String">
+      <sv:value>service.editor.tab</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.behavior" sv:type="String">
+      <sv:value>service.behavior.editor.tabs</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="tabbedEditorLayout">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.editor.tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.root" sv:type="String">
+      <sv:value>tabbed-editor-panel-layout</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.linked" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.wrappers" sv:type="String">
+      <sv:value>top</sv:value>
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="top" sv:type="String">
+      <sv:value>tabbed-editor-panel-layout-top</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>tabbed-editor-panel-layout-center</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="editorTabUnit">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.editor.tabs.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>tabs:tabs-container</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.position" sv:type="String">
+      <sv:value>center</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.options" sv:type="String">
+      <sv:value>height=1000</sv:value>
+    </sv:property>
+  </sv:node>
+  
+  <sv:node sv:name="editorTabTopUnit">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.path" sv:type="String">
+      <sv:value>editortabs:tabs-container</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.editor.tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.position" sv:type="String">
+      <sv:value>top</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.options" sv:type="String">
+      <sv:value>height=70</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="emptyTab">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.editor.EmptyTab</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.editor.tab</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.behavior" sv:type="String">
+      <sv:value>service.behavior.editor.tabs.center</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="documentEditorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -653,13 +947,25 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.MultiEditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-editor</sv:value>
+      <sv:value>cms-deque-editor</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.behavior" sv:type="String">
+      <sv:value>service.behavior.editor.tabs.center</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="logoutPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.root.LogoutPlugin</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
+      <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>
 
