@@ -26,16 +26,18 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DocumentsProvider extends SortableDataProvider {
     @SuppressWarnings("unused")
@@ -57,7 +59,10 @@ public class DocumentsProvider extends SortableDataProvider {
                         && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
                     NodeIterator childNodesIterator = node.getNodes();
                     while (childNodesIterator.hasNext()) {
-                        entries.add(new JcrNodeModel(childNodesIterator.nextNode()));
+                        Node childNode = childNodesIterator.nextNode();
+                        if(childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNode.hasNode(childNode.getName()))
+                            continue;
+                        entries.add(new JcrNodeModel(childNode));
                     }
                     break;
                 }

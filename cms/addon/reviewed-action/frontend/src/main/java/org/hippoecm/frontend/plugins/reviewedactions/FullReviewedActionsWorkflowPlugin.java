@@ -19,6 +19,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
@@ -28,18 +31,14 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -151,50 +150,6 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();
-
-                WorkflowsModel model = (WorkflowsModel) getModel();
-
-                    Node node = model.getNodeModel().getNode();
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT))
-                        node = node.getParent();
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        /* FIXME: It requires a discussion if this is truely an operation which we want.  An actual document
-                         * delete is not an operation on the document itself, so nothing for the reviewed-actions workflow.
-                         * In itself the procedure below looks sound, call archive on the document, however it leads to
-                         * undesirable events if this user is allowed to delete the document (based on the embedded
-                         * workflow) but is not allowed to see the presence of other variants (such as other languages).
-                         * This somewhat seems to be undesirable situation anyway.
-                         */
-                        boolean isEmpty = true;
-                        for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
-                            Node child = iter.nextNode();
-                            if(child.isNodeType(HippoNodeType.NT_DOCUMENT))
-                                isEmpty = false;
-                            break;
-                        }
-                        if(isEmpty) {
-                            Node ancestor = node.getParent();
-                            while (ancestor != null && !ancestor.isNodeType(HippoNodeType.NT_HANDLE) &&
-                                                       !ancestor.isNodeType(HippoNodeType.NT_DOCUMENT) &&
-                                                       !ancestor.isNodeType("rep:root")) {
-                                ancestor = ancestor.getParent();
-                            }
-                            if (ancestor != null && ancestor.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                                String relPath = node.getPath().substring(ancestor.getPath().length()+1);
-                                HippoWorkspace workspace = (HippoWorkspace) ancestor.getSession().getWorkspace();
-                                Workflow ancestorWorkflow = workspace.getWorkflowManager().getWorkflow("embedded", ancestor);
-                                if(ancestorWorkflow instanceof FolderWorkflow) {
-                                    ((FolderWorkflow)ancestorWorkflow).archive(relPath);
-                                }
-                                // now make the browser select this folder
-                                IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(
-                                                                               IBrowseService.BROWSER_ID), IBrowseService.class);
-                                if (browser != null) {
-                                    browser.browse(new JcrNodeModel(ancestor));
-                                }
-                            }
-                        }
-                    }
             }});
     }
 
@@ -236,6 +191,5 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
             log.info(ex.getClass().getName()+": "+ex.getMessage());
         }
-
     }
 }
