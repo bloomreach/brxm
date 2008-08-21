@@ -34,7 +34,11 @@
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 - hippostd:content (string) primary mandatory
 
-[hippostd:folder] > hippo:document
+[hippostd:directory] > hippo:document
+- hippostd:foldertype (string) multiple copy
++ * = hippostd:folder
+
+[hippostd:folder] > hippo:document orderable
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder
 
@@ -50,6 +54,9 @@
 [hippostd:html] > nt:base
 - hippostd:content (string) primary mandatory
 + * (hippo:facetselect)
+
+[hippostd:taggable] mixin
+- hippostd:tags (string) multiple
 
 [hippostd:gallery] > hippostd:folder
 // the children of this node are supposed to be images or other assets
