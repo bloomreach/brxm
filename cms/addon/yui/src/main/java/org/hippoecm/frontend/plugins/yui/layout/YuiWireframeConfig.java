@@ -20,11 +20,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugins.yui.util.JavascriptUtil;
 import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
-public class YuiWireframeConfig implements Serializable {
+public class YuiWireframeConfig implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -87,7 +88,7 @@ public class YuiWireframeConfig implements Serializable {
         return rootElementId;
     }
 
-    public class Unit implements Serializable {
+    public static class Unit implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         public final static String TOP = "top";
@@ -127,9 +128,9 @@ public class YuiWireframeConfig implements Serializable {
                     config.append("    { position: '").append(unitKey).append("'");
                     if (unit.options != null) {
                         Map<String, String> options = unit.options;
-                        for (String optionsKey : options.keySet()) {
-                            config.append(", ").append(optionsKey).append(": ").append(
-                                    JavascriptUtil.serialize2JS(options.get(optionsKey)));
+                        for (Map.Entry<String, String> entry : options.entrySet()) {
+                            config.append(", ").append(entry.getKey()).append(": ").append(
+                                    JavascriptUtil.serialize2JS(entry.getValue()));
                         }
                     }
                     config.append("}");

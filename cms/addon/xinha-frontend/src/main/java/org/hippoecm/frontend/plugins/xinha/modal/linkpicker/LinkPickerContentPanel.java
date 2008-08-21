@@ -443,49 +443,49 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
             }
             return validLink;
         }
-
-        class NodeItem implements IClusterable {
-            private static final long serialVersionUID = 1L;
-
-            private String path;
-            private String uuid;
-            private String displayName;
-            private boolean isHandle;
-
-            public NodeItem(Node listNode) throws RepositoryException {
-                this(listNode, null);
-            }
-
-            public NodeItem(Node listNode, String displayName) throws RepositoryException {
-                this.path = listNode.getPath();
-                this.displayName = (displayName == null) ? listNode.getName() : displayName;
-                if (listNode.isNodeType("mix:referenceable")) {
-                    this.uuid = listNode.getUUID();
-                }
-                if (listNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    isHandle = true;
-                }
-            }
-
-            public String getUuid() {
-                return uuid;
-            }
-
-            public String getPath() {
-                return path;
-            }
-
-            public boolean isHandle() {
-                return isHandle;
-            }
-
-            public String getDisplayName() {
-                return displayName;
-            }
-        }
     }
 
-    class HtmlLinkValidator {
+    private static class NodeItem implements IClusterable {
+        private static final long serialVersionUID = 1L;
+
+        private String path;
+        private String uuid;
+        private String displayName;
+        private boolean isHandle;
+
+        public NodeItem(Node listNode) throws RepositoryException {
+            this(listNode, null);
+        }
+
+        public NodeItem(Node listNode, String displayName) throws RepositoryException {
+            this.path = listNode.getPath();
+            this.displayName = (displayName == null) ? listNode.getName() : displayName;
+            if (listNode.isNodeType("mix:referenceable")) {
+                this.uuid = listNode.getUUID();
+            }
+            if (listNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                isHandle = true;
+            }
+        }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public boolean isHandle() {
+            return isHandle;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+    
+    private static class HtmlLinkValidator {
 
         private String validLink;
         private boolean alreadyPresent;

@@ -157,7 +157,7 @@ public class XinhaPlugin extends RenderPlugin {
             Page page = (Page) findParent(Page.class);
             if (page == null) {
                 // FIXME: add logic to clean up on the client (delete Xinha.config)
-                editor.setMarkupId("xinha" + new Integer(Session.get().nextSequenceValue()));
+                editor.setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
             }
         }
         super.render(target);
@@ -289,7 +289,7 @@ public class XinhaPlugin extends RenderPlugin {
         private String skin;
 
         public Configuration(IPluginConfig config) {
-            toolbarItems = new ArrayList();
+            toolbarItems = new ArrayList<String>();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
             if (values != null) {
                 for (String item : values) {
@@ -297,7 +297,7 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             }
 
-            styleSheets = new ArrayList();
+            styleSheets = new ArrayList<String>();
             values = config.getStringArray(XINHA_CSS);
             if (values != null) {
                 for (String item : values) {
@@ -428,8 +428,8 @@ public class XinhaPlugin extends RenderPlugin {
 
         //merge properties
         public void addProperties(Map<String, String> properties) {
-            for (String key : properties.keySet()) {
-                addProperty(key, properties.get(key));
+            for(Map.Entry<String,String> entry : properties.entrySet()) {
+                addProperty(entry.getKey(), entry.getValue());
             }
         }
 
