@@ -133,7 +133,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 //Create global Xinha configuration
                 sb.append("  xinha_config = xinha_config ? xinha_config() : new Xinha.Config();\n");
-
+                
+                //sb.append("  xinha_config.fullScreenSizeDownMethod = 'restore';");
+                
                 //collect all stylesheets and add to global Xinha configuration
                 boolean hasCss = false;
                 for (XinhaPlugin.Configuration config : configurations) {
@@ -214,9 +216,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             }
 
             private void appendProperties(StringBuffer sb, String prefix, Map<String, String> properties) {
-                for (String key : properties.keySet()) {
+                for (Map.Entry<String, String> entry : properties.entrySet()) {
                     sb.append(prefix);
-                    sb.append(key).append(" = ").append(serialize2JS(properties.get(key)));
+                    sb.append(entry.getKey()).append(" = ").append(serialize2JS(entry.getValue()));
                     sb.append(";\n");
                 }
             }

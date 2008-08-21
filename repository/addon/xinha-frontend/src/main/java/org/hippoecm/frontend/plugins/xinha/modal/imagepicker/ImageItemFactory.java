@@ -83,8 +83,8 @@ public class ImageItemFactory implements IClusterable {
                 resourceDefinitions.add(nd.getName());
             }
         }
-        return new ImageItem(node.getPath(), node.getParent().getUUID(), node.getPrimaryItem().getName(), node.getName(),
-                resourceDefinitions, nodeModel.getNode().getPath());
+        return new ImageItem(node.getPath(), node.getParent().getUUID(), node.getPrimaryItem().getName(), node
+                .getName(), resourceDefinitions, nodeModel.getNode().getPath());
     }
 
     public static class ImageItem implements IClusterable {
@@ -99,7 +99,7 @@ public class ImageItemFactory implements IClusterable {
                 return DEFAULT_EMPTY_THUMBNAIL;
             }
         };
-        
+
         private String parentPath;
         private String path;
         private String uuid;
@@ -120,8 +120,8 @@ public class ImageItemFactory implements IClusterable {
             this.nodeName = nodeName;
             this.parentPath = nodePath;
             this.resourceDefinitions = resourceDefinitions != null ? resourceDefinitions : new ArrayList<String>();
-            if (resourceDefinitions.size() == 1) {
-                selectedResourceDefinition = resourceDefinitions.get(0);
+            if (this.resourceDefinitions.size() == 1) {
+                selectedResourceDefinition = this.resourceDefinitions.get(0);
             }
         }
 
