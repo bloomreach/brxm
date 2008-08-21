@@ -47,33 +47,32 @@ public class GalleryShortcutPlugin extends RenderPlugin {
                 galleryText = null;
             }
         }
+        AjaxLink link = new AjaxLink("link") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                    public void onClick(AjaxRequestTarget target) {
+                    IDialogService dialogService = getDialogService();
+                    dialogService.show(new WizardDialog(GalleryShortcutPlugin.this,
+                                                        GalleryShortcutPlugin.this.getPluginContext(),
+                                                        GalleryShortcutPlugin.this.getPluginConfig(),
+                                                        dialogService));
+                }
+            };
+        add(link);
+
+        Label label = new Label("label");
+        if(galleryText != null) {
+            label.setModel(new Model(galleryText));
+        }
+        link.add(label);
+
         if(path != null) {
             try {
                 while(path.startsWith("/"))
                     path = path.substring(1);
                 setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)));
                 // HREPTWO-1218 getModel returns null, which causes problems for the WizardDialog
-
-                AjaxLink link = new AjaxLink("link") {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void onClick(AjaxRequestTarget target) {
-                            IDialogService dialogService = getDialogService();
-                            dialogService.show(new WizardDialog(GalleryShortcutPlugin.this,
-                                                                GalleryShortcutPlugin.this.getPluginContext(),
-                                                                GalleryShortcutPlugin.this.getPluginConfig(),
-                                                                dialogService));
-                        }
-                    };
-                add(link);
-
-                Label label = new Label("label");
-                if(galleryText != null) {
-                    label.setModel(new Model(galleryText));
-                }
-                link.add(label);
-
             } catch(PathNotFoundException ex) {
                 Gallery.log.warn("No image gallery present");
                 path = null; // force adding empty panel
@@ -83,21 +82,8 @@ public class GalleryShortcutPlugin extends RenderPlugin {
             }
         }
         if(path == null) {
-                AjaxLink link = new AjaxLink("link") {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public void onClick(AjaxRequestTarget target) {
-                        }
-                    };
-                add(link);
-                link.setVisible(false);
-
-                Label label = new Label("label");
-                if(galleryText != null) {
-                    label.setModel(new Model(""));
-                }
-                link.add(label);
+            link.setVisible(false);
+            label.setVisible(false);
         }
     }
 }
