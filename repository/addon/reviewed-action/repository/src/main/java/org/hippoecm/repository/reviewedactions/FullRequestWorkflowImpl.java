@@ -41,6 +41,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             if (publishedWorkflow != null) {
                 throw new WorkflowException("cannot delete document when still published");
             }
+            unpublishedWorkflow.setWorkflowContext(getWorkflowContext()); // FIXME; should use workflow chaining
             unpublishedWorkflow.doDelete();
             request = null;
         } else if(PublicationRequest.PUBLISH.equals(requestType)) {

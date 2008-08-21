@@ -36,11 +36,11 @@
 
 [hippostd:directory] > hippo:document
 - hippostd:foldertype (string) multiple copy
-+ * = hippostd:folder
++ * = hippostd:folder multiple
 
 [hippostd:folder] > hippo:document orderable
 - hippostd:foldertype (string) multiple copy
-+ * = hippostd:folder
++ * = hippostd:folder multiple
 
 [hippostd:templates] > nt:base
 + *
