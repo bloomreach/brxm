@@ -30,23 +30,27 @@ public class NameComparator implements Comparator<JcrNodeModel>, IClusterable {
     private static final long serialVersionUID = 1L;
 
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
+        int result;
         try {
             HippoNode n1 = o1.getNode();
             HippoNode n2 = o2.getNode();
             if (n1 == null) {
                 if (n2 == null) {
-                    return 0;
+                    result = 0;
                 }
-                return 1;
+                result = 1;
             } else if (o2 == null) {
-                return -1;
+                result = -1;
             }
             String name1 = n1.getName();
             String name2 = n2.getName();
-            return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
+            if((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
+                result = n1.getIndex() - n2.getIndex();
+            }
         } catch (RepositoryException e) {
-            return 0;
+            result = 0;
         }
+        return result;
     }
 
 }
