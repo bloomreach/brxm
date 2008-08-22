@@ -15,24 +15,18 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div id="tabbed-editor-panel-layout">
-      <div id="tabbed-editor-panel-layout-top">
-        <div wicket:id="tabs-container">
-          <ul class="tabs">
-            <li wicket:id="tabs">
-              <span wicket:id="container">
-                <a href="#" wicket:id="close" class="close">X</a>
-                <a href="#" wicket:id="link">
-                  <span wicket:id="title">[[tab title]]</span>
-                </a>
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div id="tabbed-editor-panel-layout-center">
-        <div wicket:id="panel">[panel]</div>
-      </div>
-    </div>    
+    <div wicket:id="tabs-container">
+      <ul class="tabs">
+        <li wicket:id="tabs">
+          <span wicket:id="container">
+            <a href="#" wicket:id="close" class="close">X</a>
+            <a href="#" wicket:id="link">
+              <span wicket:id="title">[[tab title]]</span>
+            </a>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div wicket:id="panel">[panel]</div>
   </wicket:panel>
 </html>
