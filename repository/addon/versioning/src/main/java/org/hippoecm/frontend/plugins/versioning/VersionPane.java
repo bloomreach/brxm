@@ -31,9 +31,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -46,7 +44,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -57,6 +54,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     private static final long serialVersionUID = 1L;
@@ -77,11 +76,12 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     AjaxLink olderComponent;
     AjaxLink newerComponent;
     ModelService subModel;
+    boolean visible = false;
 
     public VersionPane(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.get(RenderService.MODEL_ID) != null) {
+        if (config.get("wicket.submodel") != null) {
             subModel = new ModelService(config.getString("wicket.submodel"), null);
             subModel.init(context);
         } else {
@@ -132,9 +132,19 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
     }
 
     @Override
+    public Component getComponent() {
+        if (visible) {
+            return this;
+        } else {
+            return new Label(getId(), "No document selected");
+        }
+    }
+
+    @Override
     public void onModelChanged() {
         super.onModelChanged();
         JcrNodeModel model = (JcrNodeModel) getModel();
+        visible = false;
         if (model != null && model.getNode() != null) {
             try {
                 Node modelNode = model.getNode();
@@ -153,7 +163,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                         }
                     }
                 }
-                if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT) && !modelNode.isNodeType("hippostd:folder")) {
                     documentComponent.setModel(new Model(ISO9075Helper.decodeLocalName(modelNode.getName())));
                     infoComponent.setModel(new Model("This is the current document"));
                     versionComponent.setModel(new Model(""));
@@ -161,10 +171,15 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     createdComponent.setModel(new Model(""));
                     expiredComponent.setModel(new Model(""));
                     labeledComponent.setModel(new Model(""));
+                    visible = true;
+                } else {
+                    subModel.setModel(new JcrNodeModel((Node) null));
                 }
             } catch (RepositoryException ex) {
             }
         }
+        reregister();
+        redraw();
     }
 
     private void restoreVersion() {
@@ -208,7 +223,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     for (int i = 0; i < currentVersion; i++)
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
-                    BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("reviewed-action", document);
+                    BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager
+                            .getWorkflow("reviewed-action", document);
                     restoreWorkflow.restore(entry.getKey());
                     redraw();
                     /* [BvH] Below is a forcefully refresh of the selected
@@ -220,7 +236,8 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                      * longer be persisted (but can be read).
                      */
                     IPluginContext context = getPluginContext();
-                    IBrowseService browseService = context.getService(IBrowseService.class.getName(), IBrowseService.class);
+                    IBrowseService browseService = context.getService(IBrowseService.class.getName(),
+                            IBrowseService.class);
                     if (browseService != null) {
                         browseService.browse(new JcrNodeModel("/"));
                         browseService.browse(new JcrNodeModel(model.getNode().getPath()));
@@ -301,12 +318,13 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     }
                     labeledComponent.setModel(new Model(new String(labels)));
                     Document historicDocument = workflow.retrieve(entry.getKey());
-                    if(historicDocument == null) {
+                    if (historicDocument == null) {
                         infoComponent.setModel(new Model("There was no document published during this period"));
                         subModel.setModel(null);
                     } else {
                         infoComponent.setModel(new Model(""));
-                        subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(historicDocument.getIdentity())));
+                        subModel.setModel(new JcrNodeModel(document.getSession().getNodeByUUID(
+                                historicDocument.getIdentity())));
                     }
                     redraw();
                 }
@@ -318,6 +336,13 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
+    }
+
+    private void reregister() {
+        IPluginContext context = getPluginContext();
+        String id = getPluginConfig().getString(RenderPlugin.WICKET_ID);
+        context.unregisterService(this, id);
+        context.registerService(this, id);
     }
 
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {

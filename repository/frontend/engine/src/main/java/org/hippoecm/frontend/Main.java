@@ -97,29 +97,42 @@ public class Main extends WebApplication {
 
         IResourceSettings resourceSettings = getResourceSettings();
 
-        final String app = getConfigurationParameter("config", null);
+        String app = getConfigurationParameter("config", null);
+        final String[] layouts;
+        if (app == null) {
+            layouts = new String[] { "/WEB-INF/layouts/default" };
+        } else {
+            layouts = new String[] { "/WEB-INF/layouts/" + app, "/WEB-INF/layouts/default" };
+        }
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
             public IResourceStream locate(final Class clazz, final String path) {
                 ServletContext skinContext = getServletContext().getContext("/skin");
                 if (skinContext != null) {
-                    try {
-                        URL url = skinContext.getResource("/" + path);
-                        if (url != null) {
-                            return new UrlResourceStream(url);
+                    // EAR packaging
+                    for (String prefix : layouts) {
+                        try {
+                            URL url = skinContext.getResource(prefix + "/" + path);
+                            if (url != null) {
+                                return new UrlResourceStream(url);
+                            }
+                        } catch (MalformedURLException ex) {
+                            log.warn("malformed url for skin override " + ex.getMessage());
                         }
-                    } catch (MalformedURLException ex) {
-                        log.warn("malformed url for skin override " + ex.getMessage());
                     }
-                }
-                try {
-                    URL url = getServletContext().getResource("/skin/" + (app != null ? app + "/" : "") + path);
-                    if (url != null) {
-                        return new UrlResourceStream(url);
+                } else {
+                    // WAR packaging
+                    for (String prefix : layouts) {
+                        try {
+                            URL url = getServletContext().getResource("/skin" + prefix + "/" + path);
+                            if (url != null) {
+                                return new UrlResourceStream(url);
+                            }
+                        } catch (MalformedURLException ex) {
+                            log.warn("malformed url for skin override " + ex.getMessage());
+                        }
                     }
-                } catch (MalformedURLException ex) {
-                    log.warn("malformed url for skin override " + ex.getMessage());
                 }
                 return oldLocator.locate(clazz, path);
             }

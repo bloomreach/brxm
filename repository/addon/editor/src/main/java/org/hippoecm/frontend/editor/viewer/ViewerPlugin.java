@@ -79,7 +79,7 @@ public class ViewerPlugin extends RenderPlugin {
 
     protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        if (model != null) {
+        if (model != null && model.getNode() != null) {
             ITypeDescriptor type = engine.getType(model);
             IPluginContext context = getPluginContext();
 

@@ -61,7 +61,7 @@
                 <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.current.CurrentActivityPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
-                <sv:value>service.report.current</sv:value>
+                <sv:value>service.dashboard.current</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.model" sv:type="String">
                 <sv:value>model.report.current</sv:value>
@@ -106,7 +106,7 @@
                 <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.todo.TodoPlugin</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.id" sv:type="String">
-                <sv:value>service.report.todo</sv:value>
+                <sv:value>service.dashboard.todo</sv:value>
             </sv:property>
             <sv:property sv:name="wicket.model" sv:type="String">
                 <sv:value>model.report.todo</sv:value>

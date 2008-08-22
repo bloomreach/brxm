@@ -60,7 +60,8 @@ public class ListDataTable extends DataTable {
     protected Item newRowItem(String id, int index, final IModel model) {
         OddEvenItem item = new OddEvenItem(id, index, model);
 
-        if (getModel().equals(model)) {
+        IModel selected = getModel();
+        if (selected != null && selected.equals(model)) {
             item.add(new AttributeAppender("class", new Model("selected"), " "));
         }
 

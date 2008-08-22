@@ -17,9 +17,9 @@ package org.hippoecm.frontend.plugins.standards.tabs.editor;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class EmptyTab extends RenderService {
+public class EmptyTab extends RenderPlugin {
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
