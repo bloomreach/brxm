@@ -37,42 +37,67 @@
 
   <!-- Example of one HST filter pointing to a preview path in the repository. -->
   <filter>
-    <filter-name>previewContext</filter-name>
-    <filter-class>org.hippoecm.hst.core.URLMappingContextFilter</filter-class>
-    <!-- to omit URL mapping functionality use:  
-      <filter-class>org.hippoecm.hst.core.ContextFilter</filter-class> 
-    -->
-    <init-param>
-      <description>
-        The name of the context object created in the request scope. 
-        Defaults to 'context'.
-      </description>
+    <filter-name>TemplateContext</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.URLMappingTemplateContextFilter</filter-class>    
+    <init-param>      
       <param-name>attributeName</param-name>
-      <param-value>context</param-value>
+      <param-value>context</param-value>    
     </init-param>
-    <init-param>
-      <description>
-        The part of the url this filter matches to, so must match 
-        the actual url-pattern of the filter-mapping below.
-      </description>      
-      <param-name>urlBasePath</param-name>
-      <param-value>/preview</param-value>
+    <init-param>      
+      <param-name>hstConfigurationUrl</param-name>
+      <param-value>/hst:configuration/hst:configuration</param-value>    
     </init-param>
-    <init-param>
-      <description>
-        The repository base path to bind the context to. 
-        Defaults to the same value as urlBasePath.
-      </description>      
-      <param-name>repositoryBaseLocation</param-name>
-      <param-value>/preview</param-value>
+    <init-param>      
+      <param-name>repositoryLocation</param-name>
+      <param-value>/</param-value>    
     </init-param>
   </filter>
-  
+
+  <filter>
+    <filter-name>PreviewContext</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.ContextBaseFilter</filter-class>
+    <init-param>      
+      <param-name>attributeName</param-name>
+      <param-value>contentContext</param-value>
+    </init-param>
+    <init-param>      
+      <param-name>repositoryLocation</param-name>
+      <param-value>/</param-value>
+    </init-param>
+    <init-param>   
+      <param-name>urlBase</param-name>
+      <param-value>/preview</param-value>
+    </init-param>
+    <init-param>      
+      <param-name>hstConfigurationUrl</param-name>
+      <param-value>/hst:configuration/hst:configuration</param-value>    
+    </init-param>
+    
+  </filter>
+
+  <filter>
+    <filter-name>ModuleFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.ModuleFilter</filter-class>   
+  </filter> 
+
   <filter-mapping>
     <filter-name>previewContext</filter-name>
     <url-pattern>/preview/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>ModuleFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping> 
+  
+  <filter-mapping>
+    <filter-name>TemplateContext</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping> 
+
   
   <!-- Installation of a servlet serving binaries from repository. -->
   <servlet>

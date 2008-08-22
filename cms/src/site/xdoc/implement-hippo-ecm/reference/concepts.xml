@@ -24,22 +24,39 @@
     <body>
         <section name="Concepts">
 
-            <p>TODO</p>
+            <p>The initial idea behind the HST 2 is to create a set of components that allow
+                developers to create web application with Hippo ECM.
+                It's has now grown to a modular set of components that allow the web developer to create a
+                web application based on layouts and modules.
+            </p>
+            <ul>
+                <li>Sitemap</li>
+                <li>Modules</li>
+                <li>Layouts</li>
+            </ul>
             
             <subsection name="Sitemap">
-                <p>TODO</p>
+                <p>The sitemap is the main controller of the HST2. This is where you can configure your URL space, 
+                    attach layouts to a page and attached modules to the containers on your layout.                                        
+                </p>
             </subsection>
 
-            <subsection name="Template">
-                <p>TODO</p>
+            <subsection name="Modules">
+                <p>A webpage can contain multiple pieces of functionality on one single page. 
+                    For instance a homepage that contains a list of news articles, some banners and some text. 
+                    Each single element can be split up into a HST2 module. 
+                    For a news module, the module will consist of 2 things:
+                </p>
+                <ul>
+                    <li>a template file, for intance a JSP file that renders the news content</li>
+                    <li>a contentlocation, which specifies where the news content comes from</li>
+                </ul>
             </subsection>
 
-            <subsection name="Module">
-                <p>TODO</p>
-            </subsection>
-
-            <subsection name="Layout">
-                <p>TODO</p>
+            <subsection name="Layouts">
+                <p>Each page of a website or web application has it's own layout. 
+                    Withing the HST2 configuration you are be able to define the layout that belongs to a certain page. 
+                    Each specific layout can contain different placeholders that belong to that page(top, bottom, left, right).</p>
             </subsection>
 
         </section>

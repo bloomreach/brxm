@@ -24,13 +24,13 @@
   <body>
     <section name="The JSP tag library">
       <subsection name="Importing the taglib">
-        <p>The taglib definition file is present as <code>/META-INF/hst.tld</code> within the
+        <p>The taglib definition file is present as <code>/META-INF/hst-template.tld</code> within the
           included HST jar file (see <a href="getting.html">getting the HST packages</a>) and
           should be found by your web server. The URI of the taglib is
-          <code>http://www.hippoecm.org/jsp/hst</code> so to import the taglib in your jsp use the
-          piece of code below. As prefix we recommend <code>hst</code>, as a simple <code>h</code>
+          <code>http://www.hippoecm.org/jsp/hst-template</code> so to import the taglib in your jsp use the
+          piece of code below. As prefix we recommend <code>hst-tmpl</code>, as a simple <code>h</code>
           is commonly used for jsf html tags.</p>
-        <source><![CDATA[<%@ taglib uri="http://www.hippoecm.org/jsp/hst" prefix="hst" %>]]></source>
+        <source><![CDATA[<%@taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>]]></source>
       </subsection>
       <subsection name="Tags">
         <p>The following tags are available:</p>
@@ -38,58 +38,22 @@
           <tr>
             <th>Tag</th>
             <th>Description</th>
-            <th>Uses URL mapping?</th>
           </tr>
           <tr>
-            <td><pre><a href="tag/content-tag.html">&lt;hst:content&gt;</a></pre></td>
-            <td>Gets the value of a property from a context object.</td>
-            <td>No</td>
+            <td><pre><a href="tag/container-tag.html">&lt;hst-tmpl:container&gt;</a></pre></td>
+            <td>Used in template definition JSP file. It defines the containers/placeholders on the layout page.</td>
           </tr>
           <tr>
-            <td><pre><a href="tag/context-tag.html">&lt;hst:context&gt;</a></pre></td>
-            <td>Creates a new context object from an existing one and a location.</td>
-            <td>No</td>
+            <td><pre><a href="tag/node-tag.html">&lt;hst-tmpl:node&gt;</a></pre></td>
+            <td>Exposes the current pageNode (selected document) to the JSP file.</td>
           </tr>
           <tr>
-            <td><pre><a href="tag/encodeurl-tag.html">&lt;hst:encodeURL&gt;</a></pre></td>
-            <td>Encodes a repository path location to a URL valid for URL mapping.</td>
-            <td>Yes</td>
+            <td><pre><a href="tag/module-tag.html">&lt;hst-tmpl:module&gt;</a></pre></td>
+            <td>Uses the module definined in the className attribute of this tag to fetch content or execute some businesslogic.</td>
           </tr>
           <tr>
-            <td><pre><a href="tag/include-tag.html">&lt;hst:include&gt;</a></pre></td>
-            <td>Includes in the page the output for a certain repository location, as found via
-              the URL mapping functionality.</td>
-            <td>Yes</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/documents-tag.html">&lt;hst:documents&gt;</a></pre></td>
-            <td>Show a list of documents from a repository location.</td>
-            <td>Yes, overridable</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/documents-tag.html">&lt;hst:news&gt;</a></pre></td>
-            <td>Show a list of news items from a repository location.</td>
-            <td>Yes, overridable</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/documents-tag.html">&lt;hst:events&gt;</a></pre></td>
-            <td>Show a list of events from a repository location.</td>
-            <td>Yes, overridable</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/documents-tag.html">&lt;hst:articles&gt;</a></pre></td>
-            <td>Show a list of articles from a repository location.</td>
-            <td>Yes, overridable</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/menu-tag.html">&lt;hst:menu&gt;</a></pre></td>
-            <td>Shows a dynamic menu as read from content in the repository.</td>
-            <td>Yes, overridable</td>
-          </tr>
-          <tr>
-            <td><pre><a href="tag/sitemap-tag.html">&lt;hst:siteMap&gt;</a></pre></td>
-            <td>Shows a dynamic site map as read from content in the repository.</td>
-            <td>Yes, overridable</td>
+            <td><pre><a href="tag/moduleParameter-tag.html">&lt;hst-tmpl:moduleParameter&gt;</a></pre></td>
+            <td>Uses the module definined in the className attribute of this tag to fetch content or execute some businesslogic.</td>
           </tr>
         </table>
       </subsection>
