@@ -42,6 +42,10 @@
       <sv:value>extension.header</sv:value>
       <sv:value>extension.center</sv:value>
       <sv:value>extension.footer</sv:value>
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
     </sv:property>
     <sv:property sv:name="extension.header" sv:type="String">
       <sv:value>service.header</sv:value>
@@ -118,12 +122,6 @@
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.center</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.logout</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.logout" sv:type="String">
-      <sv:value>service.logout</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
@@ -305,18 +303,6 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.reporting.ReportPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.dashboard.current</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.report</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.report" sv:type="String">
-      <sv:value>service.report.current</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
-    </sv:property>
     <sv:property sv:name="report.input.node" sv:type="String">
       <sv:value>426c67c6-4591-4cdf-92c8-19b7dd0b1c39</sv:value>
     </sv:property>
@@ -330,18 +316,6 @@
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.reporting.ReportPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.dashboard.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.report</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.report" sv:type="String">
-      <sv:value>service.report.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="report.input.node" sv:type="String">
       <sv:value>f2e7cb32-081a-4679-8bed-0fec3ef9a132</sv:value>
@@ -385,6 +359,7 @@
       <sv:value>extension.workflows</sv:value>
       <sv:value>extension.version</sv:value>
       <sv:value>extension.versionToggle</sv:value>
+      <sv:value>extension.versionDisplay</sv:value>
     </sv:property>
     <sv:property sv:name="extension.browser" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
@@ -400,6 +375,9 @@
     </sv:property>
     <sv:property sv:name="extension.versionToggle" sv:type="String">
       <sv:value>service.browse.versiontoggle</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.versionDisplay" sv:type="String">
+      <sv:value>service.browse.version.view</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="browserLayout">
@@ -1074,26 +1052,6 @@
       -->
     </sv:node>
   </sv:node>
-  <sv:node sv:name="viewPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.versioning.ViewPane</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.version</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.content</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.content" sv:type="String">
-      <sv:value>service.browse.version.content</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="versioningPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1102,19 +1060,13 @@
       <sv:value>org.hippoecm.frontend.plugins.versioning.VersionPane</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.version.content</sv:value>
+      <sv:value>service.browse.version</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.submodel" sv:type="String">
       <sv:value>version.model</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.display</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.display" sv:type="String">
-      <sv:value>service.browse.version.view</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
