@@ -19,8 +19,10 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
@@ -34,15 +36,22 @@ public class ListDataTable extends DataTable {
 
     private static final long serialVersionUID = 1L;
 
-    public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider, int rowsPerPage) {
-
+    public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
+            int rowsPerPage, final boolean triState) {
         super(id, tableDefinition.getColumns(), dataProvider, rowsPerPage);
-
         setOutputMarkupId(true);
         setVersioned(false);
 
         if (tableDefinition.showColumnHeaders()) {
-            addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider));
+            addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected WebMarkupContainer newSortableHeader(String borderId, String property,
+                        ISortStateLocator locator) {
+                    return new ListTableHeader(borderId, property, locator, ListDataTable.this, triState);
+                }
+            });
         }
         addBottomToolbar(new ListNavigationToolBar(this));
     }
@@ -66,12 +75,6 @@ public class ListDataTable extends DataTable {
         });
 
         return item;
-    }
-
-    @Override
-    public void onModelChanged() {
-        //TODO: select document in list
-        //TODO: jump to the right page
     }
 
 }

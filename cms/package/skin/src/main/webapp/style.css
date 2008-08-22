@@ -586,6 +586,21 @@ table.dataview th a {color: #666666;}
   padding-top: 2px;
 }
 
+tr.headers th.orderAscending {
+  background-color: #DFDFFF;
+  background-image: url('images/controls/down-control.gif');
+  background-position:center; 
+  background-repeat: no-repeat;
+}
+tr.headers th.orderDescending {
+  background-color: #DFDFFF;
+  background-image: url('images/controls/up-control.gif');
+  background-position:center; 
+  background-repeat: no-repeat;
+}
+tr.headers th.orderNone {
+}
+
 tr.even td{background-color: #f7f7f7}
 tr.odd td { padding: 5px; }
 

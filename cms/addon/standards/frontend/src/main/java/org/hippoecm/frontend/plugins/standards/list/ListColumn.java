@@ -30,7 +30,7 @@ public class ListColumn extends AbstractColumn {
 
     private static final long serialVersionUID = 1L;
 
-    private Comparator comparator;
+    private Comparator<IModel> comparator;
     private IListCellRenderer renderer;
     private IListAttributeModifier attributeModifier;
 
@@ -38,11 +38,11 @@ public class ListColumn extends AbstractColumn {
         super(displayModel, sortProperty);
     }
 
-    public void setComparator(Comparator comparator) {
+    public void setComparator(Comparator<IModel> comparator) {
         this.comparator = comparator;
     }
 
-    public Comparator getComparator() {
+    public Comparator<IModel> getComparator() {
         return comparator;
     }
 

@@ -21,12 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.model.IModel;
+
 public class TableDefinition {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private List<ListColumn> columns;
-    private Map<String, Comparator> comparators;
+    private Map<String, Comparator<IModel>> comparators;
     private boolean showColumnHeaders;
      
     public TableDefinition(List<ListColumn> columnList) {
@@ -35,7 +37,7 @@ public class TableDefinition {
     
     public TableDefinition(List<ListColumn> columnList, boolean showColumnHeaders) {
         columns = new ArrayList<ListColumn>();
-        comparators = new HashMap<String, Comparator>();
+        comparators = new HashMap<String, Comparator<IModel>>();
         for (ListColumn column: columnList) {
             columns.add(column);
             comparators.put(column.getSortProperty(), column.getComparator());
@@ -43,7 +45,7 @@ public class TableDefinition {
         this.showColumnHeaders = showColumnHeaders;
     }
     
-    public Map<String, Comparator> getComparators() {
+    public Map<String, Comparator<IModel>> getComparators() {
         return comparators;
     }
 
