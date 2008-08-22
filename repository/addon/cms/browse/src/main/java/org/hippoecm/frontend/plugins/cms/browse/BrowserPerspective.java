@@ -55,7 +55,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     public static final String VIEWERS = "browser.viewers";
 
     private IModel folder;
-    private ModelService folderService;
+    private ModelService<IModel> folderService;
     private DocumentModelService documentService;
     private String viewerName;
     private IPluginControl viewer;
@@ -164,7 +164,8 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
         JcrNodeModel nodeModel = (JcrNodeModel) model;
         if (model != null && nodeModel.getNode() != null) {
             try {
-                if (nodeModel.getNode().isNodeType("hippostd:folder")) {
+                if (nodeModel.getNode().isNodeType("hippostd:folder")
+                        || nodeModel.getNode().isNodeType("hippostd:directory")) {
                     folderService.setModel(model);
                     return;
                 }

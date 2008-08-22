@@ -15,39 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.comparators;
 
-import javax.jcr.RepositoryException;
+import java.util.Comparator;
 
+import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNode;
 
-public class NameComparator extends NodeComparator {
+public abstract class NodeComparator implements Comparator<IModel>, IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public int compare(JcrNodeModel o1, JcrNodeModel o2) {
-        int result;
-        try {
-            HippoNode n1 = o1.getNode();
-            HippoNode n2 = o2.getNode();
-            if (n1 == null) {
-                if (n2 == null) {
-                    result = 0;
-                }
-                result = 1;
-            } else if (o2 == null) {
-                result = -1;
-            }
-            String name1 = n1.getName();
-            String name2 = n2.getName();
-            if((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
-                result = n1.getIndex() - n2.getIndex();
-            }
-        } catch (RepositoryException e) {
-            result = 0;
+    public int compare(IModel o1, IModel o2) {
+        if (!(o1 instanceof JcrNodeModel) || !(o2 instanceof JcrNodeModel)) {
+            return 0;
         }
-        return result;
+        return compare((JcrNodeModel)o1, (JcrNodeModel)o2);
     }
+
+    public abstract int compare(JcrNodeModel node1, JcrNodeModel node2);
 
 }

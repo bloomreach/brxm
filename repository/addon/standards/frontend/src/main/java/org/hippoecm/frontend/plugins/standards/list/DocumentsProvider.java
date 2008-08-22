@@ -26,18 +26,15 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
+import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
+import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentsProvider extends SortableDataProvider {
     @SuppressWarnings("unused")
@@ -45,24 +42,31 @@ public class DocumentsProvider extends SortableDataProvider {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentsProvider.class);
-    
-    private List<JcrNodeModel> entries = new ArrayList<JcrNodeModel>();
-    private Map<String, Comparator> comparators;
 
-    public DocumentsProvider(JcrNodeModel model, Map<String, Comparator> comparators) {
+    private List<IModel> entries;
+    private Map<String, Comparator<IModel>> comparators;
+
+    public DocumentsProvider(JcrNodeModel model, Map<String, Comparator<IModel>> comparators) {
         this.comparators = comparators;
         Node node = model.getNode();
         try {
+            List<IModel> documents = new ArrayList<IModel>();
             while (node != null) {
-                if (!(node.isNodeType(HippoNodeType.NT_DOCUMENT) && !node.isNodeType("hippostd:folder"))
-                        && !node.isNodeType(HippoNodeType.NT_HANDLE) && !node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)
-                        && !node.isNodeType(HippoNodeType.NT_REQUEST) && !node.isNodeType("rep:root")) {
+                boolean isHandle = node.isNodeType(HippoNodeType.NT_HANDLE);
+                boolean isTemplateType = node.isNodeType(HippoNodeType.NT_TEMPLATETYPE);
+                boolean isRequest = node.isNodeType(HippoNodeType.NT_REQUEST);
+                boolean isFolder = node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory");
+                boolean isDocument = node.isNodeType(HippoNodeType.NT_DOCUMENT);
+                boolean isRoot = node.isNodeType("rep:root");
+                
+                if (!(isDocument && !isFolder) && !isHandle && !isTemplateType && !isRequest && !isRoot) {
                     NodeIterator childNodesIterator = node.getNodes();
                     while (childNodesIterator.hasNext()) {
                         Node childNode = childNodesIterator.nextNode();
-                        if(childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNode.hasNode(childNode.getName()))
+                        if (childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNode.hasNode(childNode.getName())) {
                             continue;
-                        entries.add(new JcrNodeModel(childNode));
+                        }
+                        documents.add(new JcrNodeModel(childNode));
                     }
                     break;
                 }
@@ -73,54 +77,50 @@ public class DocumentsProvider extends SortableDataProvider {
                     break;
                 }
             }
+            entries = Collections.unmodifiableList(documents);
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        Collections.sort(entries, new NameComparator());
-        Collections.sort(entries, new FoldersFirstComparator());
+
     }
 
-    public Iterator iterator(int first, int count) {
-        SortParam sortParam = getSort();
-        if (sortParam != null) {
-            String sortProperty = sortParam.getProperty();
+    public Iterator<IModel> iterator(int first, int count) {
+        List<IModel> displayedList = new ArrayList<IModel>(entries);
+        SortState sortState = getSortState();
+        if (sortState != null && sortState.isSorted()) {
+            String sortProperty = sortState.getProperty();
             if (sortProperty != null) {
-                Comparator comparator = comparators.get(sortProperty);
+                Comparator<IModel> comparator = comparators.get(sortProperty);
                 if (comparator != null) {
-                    Collections.sort(entries, comparator);
-                    if (getSort().isAscending() == false) {
-                        Collections.reverse(entries);
+                    Collections.sort(displayedList, comparator);
+                    if (sortState.isDescending()) {
+                        Collections.reverse(displayedList);
                     }
-                    Collections.sort(entries, new FoldersFirstComparator());
+                    Collections.sort(displayedList, new FoldersFirstComparator());
                 }
             }
         }
-        return Collections.unmodifiableList(entries.subList(first, first + count)).iterator();
+        return displayedList.subList(first, first + count).iterator();
     }
 
     public IModel model(Object object) {
-        return (JcrNodeModel) object;
+        return (IModel) object;
     }
 
     public int size() {
         return entries.size();
     }
 
-    @Override
     public void detach() {
         for (IModel entry : entries) {
             entry.detach();
         }
-        super.detach();
     }
-    
-    
-    private class FoldersFirstComparator implements Comparator<JcrNodeModel>, IClusterable {
-        @SuppressWarnings("unused")
-        private final static String SVN_ID = "$Id$";
 
+    private class FoldersFirstComparator extends NodeComparator {
         private static final long serialVersionUID = 1L;
 
+        @Override
         public int compare(JcrNodeModel o1, JcrNodeModel o2) {
             try {
                 HippoNode n1 = o1.getNode();
@@ -130,7 +130,7 @@ public class DocumentsProvider extends SortableDataProvider {
                         return 0;
                     }
                     return 1;
-                } else if (n2 == null) {
+                } else if (o2 == null) {
                     return -1;
                 }
                 String label1 = folderOrDocument(n1);
@@ -140,7 +140,7 @@ public class DocumentsProvider extends SortableDataProvider {
                 return 0;
             }
         }
-        
+
         private String folderOrDocument(HippoNode node) throws RepositoryException {
             String type = "";
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -163,4 +163,3 @@ public class DocumentsProvider extends SortableDataProvider {
         }
     }
 }
-

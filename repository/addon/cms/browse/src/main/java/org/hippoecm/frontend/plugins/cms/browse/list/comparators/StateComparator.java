@@ -15,21 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list.comparators;
 
-import java.util.Comparator;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.repository.api.HippoNode;
 
-public class StateComparator implements Comparator<JcrNodeModel>, IClusterable {
+public class StateComparator extends NodeComparator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
+    @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         try {
             HippoNode n1 = o1.getNode();

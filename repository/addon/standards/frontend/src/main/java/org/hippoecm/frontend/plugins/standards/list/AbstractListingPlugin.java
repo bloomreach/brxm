@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -38,6 +41,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     private ListDataTable dataTable;
     private int pageSize;
+    private boolean triState;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -59,8 +63,17 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         }
 
         pageSize = config.getInt("list.page.size", 15);
-
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize);
+        
+        IModel model = getModel();
+        if (model instanceof JcrNodeModel) {
+            try {
+                Node node = (Node) model.getObject();
+                triState = node.getPrimaryNodeType().hasOrderableChildNodes();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize, triState);
         add(dataTable);
 
         modelChanged();
@@ -73,7 +86,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     public void selectionChanged(IModel model) {
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
-            IModelService documentService = getPluginContext().getService(config.getString("model.document"),
+            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
                     IModelService.class);
             if (documentService != null) {
                 documentService.setModel(model);
@@ -97,10 +110,10 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     @Override
     public void onModelChanged() {
-        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize));
+        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize, triState));
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
-            IModelService documentService = getPluginContext().getService(config.getString("model.document"),
+            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
                     IModelService.class);
             if (documentService != null) {
                 dataTable.setModel(documentService.getModel());
