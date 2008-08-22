@@ -35,15 +35,15 @@
           </li>
           <li>
             <a href="configuration.html">Configuration</a>
-            - Learn how to configure the Hippo Site Toolkit
+            - Learn how to configure the Hippo Site Toolkit 2
           </li>
           <li>
             <a href="jsp-taglib.html">JSP Tag Library</a>
-            - 
+            - Learn which default tags are available in the Hippo Site Toolkit 2
           </li>
           <li>
             <a href="jsp-taglib.html">Expression Language</a>
-            - 
+            - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2
           </li>
         </ul>
 

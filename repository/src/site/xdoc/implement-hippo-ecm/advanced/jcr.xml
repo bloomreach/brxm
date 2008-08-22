@@ -29,8 +29,8 @@
           the repository. As the repository is Java Content Repository (JCR) compliant,
           Java clients using this standard can communicate with the repository.
           Besides that, Hippo has developed a library on top of the JCR layer
-          that is called the <code>Hippo Site Toolkit</code>, which is targeted at JSP clients,
-          for easy website development, see the <a href="index.html">Hippo Site Toolkit</a>.
+          that is called the <code>Hippo Site Toolkit 2</code>, which is targeted at JSP clients,
+          for easy website development, see the <a href="index.html">Hippo Site Toolkit 2</a>.
         </p>
 
         <subsection name="The JCR Interface">

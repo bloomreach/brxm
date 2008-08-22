@@ -23,14 +23,12 @@
     </properties>
     <body>
       <section name="Website Development">
-
         <p>
           Ultimately you will want to publish your content to a website, intranet or extranet. Hippo ECM
           comes with a set of tools and components to allow rapid development of websites, the Hippo Site
-          Toolkit. This section describes helps you get started with the Hippo Site Toolkit, and develop
+          Toolkit 2. This section helps you get started with the Hippo Site Toolkit 2, and develop
           your own websites in a Hippo ECM enviroment.
-        </p>
-    
+        </p>    
       </section>
     </body>
 </document>
