@@ -34,11 +34,11 @@
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 - hippostd:content (string) primary mandatory
 
-[hippostd:directory] > hippo:document
+[hippostd:folder] > hippo:document orderable
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder multiple
 
-[hippostd:folder] > hippo:document orderable
+[hippostd:directory] > hippo:document
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder multiple
 
