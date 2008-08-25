@@ -62,23 +62,41 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     @Test
-    public void testTemplateFolder() throws RepositoryException, WorkflowException, RemoteException {
+    public void testOrderableFolder() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:folder");
         node.addMixin("hippo:harddocument");
         session.save();
         WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,String[]> renames = new TreeMap<String,String[]>();
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
         assertTrue(types.containsKey("New Folder"));
-        assertTrue(types.get("New Folder").contains("document folder"));
-        String path = workflow.add("New Folder", "document folder", "d");
+        assertTrue(types.get("New Folder").contains("orderable folder"));
+        String path = workflow.add("New Folder", "orderable folder", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:folder"));
+    }
+    
+    @Test
+    public void testSimpleFolder() throws RepositoryException, WorkflowException, RemoteException {
+        Node node = root.addNode("f","hippostd:directory");
+        node.addMixin("hippo:harddocument");
+        session.save();
+        WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
+        assertNotNull(workflow);
+        Map<String,Set<String>> types = workflow.list();
+        assertNotNull(types);
+        assertTrue(types.containsKey("New Folder"));
+        assertTrue(types.get("New Folder").contains("simple folder"));
+        String path = workflow.add("New Folder", "simple folder", "d");
+        assertNotNull(path);
+        node = session.getRootNode().getNode(path.substring(1));
+        assertEquals("/test/f/d",node.getPath());
+        assertTrue(node.isNodeType("hippostd:directory"));
     }
 
     @Ignore
