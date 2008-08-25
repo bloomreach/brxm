@@ -29,10 +29,6 @@
 
 [hippo:query] > nt:query
 
-[hippo:implementation] mixin
-- hippo:classname (string) mandatory
-- hippo:serialver (long)
-
 [hippo:mirror]
 - hippo:docbase (string) mandatory
 + * multiple

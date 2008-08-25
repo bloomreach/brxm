@@ -162,16 +162,6 @@ public interface DecoratorFactory {
     Query getQueryDecorator(Session session, Query query);
 
     /**
-     * Creates a query decorator.
-     *
-     * @param session the session (decorator) instance used to create the query
-     *                decorator.
-     * @param query   the underlying query instance.
-     * @return query decorator.
-     */
-    Query getQueryDecorator(Session session, Query query, Node node);
-
-    /**
      * Creates a query result decorator.
      *
      * @param session the session (decorator) instance used to create the query

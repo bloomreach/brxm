@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.repository.standardworkflow.TemplateEngineRemodel.TypeUpdate;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class NamespaceUpdater {
     @SuppressWarnings("unused")

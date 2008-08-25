@@ -35,13 +35,7 @@ public interface RemodelWorkflow extends Workflow {
      * Instruct the repository to apply the new node definition overriding the
      * earlier node definition.
      */
-    public String[] updateModel(String prefix, String cnd) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
-    /**
-     * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.
-     */
-    public String[] updateModel(String prefix, String cnd, String contentUpdater, Object contentUpdaterCargo) throws WorkflowException, MappingException,
+    public String[] remodel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
             RepositoryException, RemoteException;
 
     /**
@@ -49,4 +43,47 @@ public interface RemodelWorkflow extends Workflow {
      */
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
             RepositoryException, RemoteException;
+
+    /**
+     * Create a new node type definition
+     * FIXME: also create a template and return its path
+     */
+    public void createType(String name) throws WorkflowException, MappingException, RepositoryException,
+            RemoteException;
+
+    // BIG FIXME: no such classes should be here, this cannot be done in a generic way, it should be dropped.
+
+    public final class TypeUpdate implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public String newName;
+
+        public String prototype;
+
+        public Map<FieldIdentifier, FieldIdentifier> renames;
+    }
+
+    public final class FieldIdentifier implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public String path;
+
+        public String type;
+
+        @Override
+        public boolean equals(Object object) {
+            if (object != null) {
+                if (object instanceof FieldIdentifier) {
+                    FieldIdentifier id = (FieldIdentifier) object;
+                    return id.path.equals(path) && id.type.equals(type);
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return (path.hashCode() * type.hashCode()) % 1001;
+        }
+    }
 }

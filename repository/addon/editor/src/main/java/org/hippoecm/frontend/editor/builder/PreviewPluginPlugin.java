@@ -63,7 +63,6 @@ public class PreviewPluginPlugin extends RenderPlugin {
                         if (next.isNodeType("frontend:plugin")) {
                             if (next.isSame(pluginNode)) {
                                 if (previous != null) {
-                                    // FIXME: should not change plugin ordering !!!
                                     pluginNode.getParent().orderBefore(
                                             pluginNode.getName() + "[" + pluginNode.getIndex() + "]",
                                             previous.getName() + "[" + previous.getIndex() + "]");

@@ -17,13 +17,19 @@ package org.hippoecm.repository.impl;
 
 import java.util.WeakHashMap;
 
+import javax.jcr.Item;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
+import javax.jcr.lock.Lock;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
@@ -103,11 +109,6 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
     public Query getQueryDecorator(Session session, Query query) {
         return new QueryDecorator(this, session, query);
     }
-
-    public Query getQueryDecorator(Session session, Query query, Node node) {
-        return new QueryDecorator(this, session, query, node);
-    }
-
 
     public QueryManager getQueryManagerDecorator(Session session,
                                                  QueryManager queryManager) {

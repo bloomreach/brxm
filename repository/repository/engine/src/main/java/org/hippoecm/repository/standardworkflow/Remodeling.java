@@ -15,7 +15,8 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.Reader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,7 +60,8 @@ import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.value.ReferenceValue;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +83,10 @@ public class Remodeling {
      */
     private Map<NodeType, NodeType> conversion;
 
+    /** field renames
+     */
+    private Map<String, TypeUpdate> updates;
+
     /** namespace registry
      */
     private NamespaceRegistry nsRegistry;
@@ -97,15 +103,11 @@ public class Remodeling {
      */
     transient Session session;
 
-    Remodeling(Session session, String newPrefix, String oldUri)
-            throws RepositoryException {
-        this(session, newPrefix, oldUri, null, null);
-    }
-
-    Remodeling(Session session, String newPrefix, String oldUri, String contentUpdater, Object contentUpdaterCargo)
+    Remodeling(Session session, String newPrefix, String oldUri, Map<String, TypeUpdate> updates)
             throws RepositoryException {
         this.session = session;
         this.newPrefix = newPrefix;
+        this.updates = updates;
 
         conversion = new HashMap<NodeType, NodeType>();
 
@@ -312,6 +314,134 @@ public class Remodeling {
         }
     }
 
+    private void copyType(Node source, Node target, NodeType sourceType, List<PropertyDefinition> propDefs,
+            List<NodeDefinition> nodeDefs) throws RepositoryException {
+        TypeUpdate typeUpdate = updates.get(sourceType.getName());
+
+        for (PropertyDefinition definition : sourceType.getPropertyDefinitions()) {
+            if (!definition.isProtected()) {
+                String name = definition.getName();
+
+                if (name.equals("*")) {
+                    PropertyIterator properties = source.getProperties(name);
+                    while (properties.hasNext()) {
+                        Property property = properties.nextProperty();
+                        if (property.getDefinition().equals(definition)) {
+                            copyProperty(target, property, getNewName(property.getName()), propDefs);
+                        }
+                    }
+                } else {
+                    if (source.hasProperty(name)) {
+                        Property property = source.getProperty(definition.getName());
+                        if (typeUpdate != null) {
+                            FieldIdentifier fieldId = new FieldIdentifier();
+                            fieldId.path = name;
+                            fieldId.type = PropertyType.nameFromValue(definition.getRequiredType());
+
+                            FieldIdentifier newId = typeUpdate.renames.get(fieldId);
+                            if (newId != null && !newId.path.equals("*")) {
+                                name = newId.path;
+                            }
+                        }
+                        copyProperty(target, property, getNewName(name), propDefs);
+                    }
+                }
+            }
+        }
+
+        for (NodeDefinition definition : sourceType.getChildNodeDefinitions()) {
+            if (!definition.isProtected()) {
+                NodeIterator nodes = source.getNodes(definition.getName());
+                while (nodes.hasNext()) {
+                    Node node = nodes.nextNode();
+                    if (definition.getName().equals("*")) {
+                        if (node.getDefinition().equals(definition)) {
+                            copyNode(target, node, getNewName(node.getName()), nodeDefs);
+                        }
+                    } else {
+                        String name = definition.getName();
+                        NodeType oldType = node.getPrimaryNodeType();
+                        NodeType newType = conversion.get(oldType);
+                        if (newType != null) {
+                            if (typeUpdate != null) {
+                                FieldIdentifier fieldId = new FieldIdentifier();
+                                fieldId.path = name;
+                                fieldId.type = getOldName(newType.getName());
+
+                                FieldIdentifier newId = typeUpdate.renames.get(fieldId);
+                                if (newId != null && !newId.path.equals("*")) {
+                                    name = newId.path;
+                                }
+                            }
+
+                            copyNode(target, node, getNewName(name), nodeDefs);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void copyPrototype(Node target, NodeType type) throws RepositoryException {
+        TypeUpdate typeUpdate = updates.get(getOldName(type.getName()));
+        if (typeUpdate != null && typeUpdate.prototype != null) {
+            Node prototype = (Node) session.getNodeByUUID(typeUpdate.prototype);
+
+            // copy properties
+            for (PropertyDefinition propDef : type.getPropertyDefinitions()) {
+                if (!propDef.getName().equals("*")) {
+                    if (propDef.isMandatory()) {
+                        if (!target.hasProperty(propDef.getName())) {
+                            Property property = prototype.getProperty(getOldName(propDef.getName()));
+                            if (propDef.isMultiple()) {
+                                target.setProperty(propDef.getName(), property.getValues());
+                            } else {
+                                target.setProperty(propDef.getName(), property.getValue());
+                            }
+                        }
+                    }
+                }
+            }
+
+            // copy nodes
+            for (NodeDefinition nodeDef : type.getChildNodeDefinitions()) {
+                if (!nodeDef.getName().equals("*")) {
+                    if (nodeDef.isMandatory()) {
+                        if (!target.getNodes(nodeDef.getName()).hasNext()) {
+                            if (nodeDef.allowsSameNameSiblings()) {
+                                NodeIterator siblings = prototype.getNodes(getOldName(nodeDef.getName()));
+                                while (siblings.hasNext()) {
+                                    Node node = siblings.nextNode();
+                                    NodeType newType = conversion.get(node.getPrimaryNodeType());
+                                    if (newType != null) {
+                                        Node copy = target.addNode(nodeDef.getName(), newType.getName());
+                                        traverse(node, true, copy);
+                                    } else {
+                                        log.warn("removing node " + node.getPath()
+                                                + " as there is no new type defined for type "
+                                                + node.getPrimaryNodeType().getName());
+                                    }
+                                }
+                            } else {
+                                Node node = prototype.getNode(getOldName(nodeDef.getName()));
+                                log.info("pri type: " + node.getPrimaryNodeType().getName());
+                                NodeType newType = conversion.get(node.getPrimaryNodeType());
+                                if (newType != null) {
+                                    Node copy = target.addNode(nodeDef.getName(), newType.getName());
+                                    visit(node, copy);
+                                } else {
+                                    log.warn("removing node " + node.getPath()
+                                            + " as there is no new type defined for type "
+                                            + node.getPrimaryNodeType().getName());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private boolean isType(Node target, NodeType targetType) throws RepositoryException {
         PropertyDefinition[] targets = targetType.getPropertyDefinitions();
         for (PropertyDefinition definition : targets) {
@@ -326,6 +456,94 @@ public class Remodeling {
             }
         }
         return true;
+    }
+
+    private void visit(Node source, Node target) throws ValueFormatException, VersionException, LockException,
+            ConstraintViolationException, RepositoryException {
+
+        List<PropertyDefinition> propDefs = new LinkedList<PropertyDefinition>();
+        List<NodeDefinition> nodeDefs = new LinkedList<NodeDefinition>();
+
+        // copy primary type
+        NodeType targetType = target.getPrimaryNodeType();
+        for (PropertyDefinition def : targetType.getPropertyDefinitions()) {
+            propDefs.add(def);
+        }
+        for (NodeDefinition def : targetType.getChildNodeDefinitions()) {
+            nodeDefs.add(def);
+        }
+
+        NodeType[] sourceTypes = source.getMixinNodeTypes();
+        for (int i = 0; i < sourceTypes.length; i++) {
+            NodeType newType = conversion.get(sourceTypes[i]);
+            if (newType != null) {
+                for (PropertyDefinition def : newType.getPropertyDefinitions()) {
+                    propDefs.add(def);
+                }
+                for (NodeDefinition def : newType.getChildNodeDefinitions()) {
+                    nodeDefs.add(def);
+                }
+            }
+        }
+
+        NodeType sourceType = source.getPrimaryNodeType();
+        copyType(source, target, sourceType, propDefs, nodeDefs);
+
+        // copy mixin types
+        sourceTypes = source.getMixinNodeTypes();
+        for (int i = 0; i < sourceTypes.length; i++) {
+            NodeType newType = conversion.get(sourceTypes[i]);
+            if (newType != null) {
+                target.addMixin(newType.getName());
+
+                copyType(source, target, sourceTypes[i], propDefs, nodeDefs);
+            }
+        }
+
+        // copy mandatory properties and child nodes from prototype into target
+        copyPrototype(target, targetType);
+
+        NodeType[] targetTypes = target.getMixinNodeTypes();
+        for (int i = 0; i < targetTypes.length; i++) {
+            copyPrototype(target, targetTypes[i]);
+        }
+
+        // validate types
+        if (!isType(target, targetType)) {
+            throw new ConstraintViolationException("Unable to convert node " + source.getPath() + " to type "
+                    + targetType.getName());
+        }
+        for (int i = 0; i < targetTypes.length; i++) {
+            if (!isType(target, targetTypes[i])) {
+                throw new ConstraintViolationException("Unable to convert node " + source.getPath() + " to type "
+                        + targetTypes[i].getName());
+            }
+        }
+
+        // update references
+        if (source.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+            PropertyIterator propIter = source.getReferences();
+            ReferenceValue origValue = ReferenceValue.valueOf(source.getUUID());
+            ReferenceValue newValue = new ReferenceValue(target);
+            while (propIter.hasNext()) {
+                Property property = propIter.nextProperty();
+                if (!property.getDefinition().isProtected()) {
+                    if (property.getDefinition().isMultiple()) {
+                        Value[] values = property.getValues();
+                        for (int i = 0; i < values.length; i++) {
+                            if (values[i].equals(origValue)) {
+                                values[i] = newValue;
+                            }
+                        }
+                        property.setValue(values);
+                    } else {
+                        property.setValue(new ReferenceValue(target));
+                    }
+                } else {
+                    log.warn("Unable to update protected reference");
+                }
+            }
+        }
     }
 
     private void visitTemplateType(Node node) throws RepositoryException {
@@ -406,7 +624,7 @@ public class Remodeling {
 
         if (copy) {
             // copy mixin types and properties
-            // BERRY visit(node, target);
+            visit(node, target);
             node.remove();
         } else {
             if (checkin) {
@@ -456,12 +674,8 @@ public class Remodeling {
             visitTemplateType(node);
         }
     }
-   
-        public static Remodeling remodel(Session session, String prefix, Reader cnd)
-            throws NamespaceException, RepositoryException {
-        return remodel(session, prefix, cnd, null, null);
-        }
-    public static Remodeling remodel(Session session, String prefix, Reader cnd, String contentUpdater, Object contentUpdaterCargo)
+
+    public static Remodeling remodel(Session session, String prefix, InputStream cnd, Map<String, TypeUpdate> updates)
             throws NamespaceException, RepositoryException {
         Workspace workspace = session.getWorkspace();
         NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) workspace.getNamespaceRegistry();
@@ -472,7 +686,8 @@ public class Remodeling {
 
         // push new node type definition such that it will be loaded
         try {
-            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(cnd, "remodeling input stream");
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd),
+                    "remodeling input stream");
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
 
             String newNamespaceURI = mapping.getURI(prefix);
@@ -491,7 +706,7 @@ public class Remodeling {
                 /* EffectiveNodeType effnt = */ntreg.registerNodeType(ntd);
             }
 
-            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI);
+            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, updates);
             remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
 

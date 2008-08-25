@@ -178,7 +178,7 @@ public class RedefineNodetypeTest extends TestCase {
         Workflow wf = wfmgr.getWorkflow("internal", nsNode);
         assertNotNull(wf);
         assertTrue(wf instanceof RemodelWorkflow);
-        String[] nodes = ((RemodelWorkflow)wf).updateModel("hippotest2", cnd2);
+        String[] nodes = ((RemodelWorkflow)wf).remodel(cnd2, new HashMap());
         assertNotNull(nodes);
 
         session.logout();
