@@ -54,8 +54,6 @@ public class PageNode extends TemplateNode{
    }
    
    public String getURLMappingValue() throws RepositoryException {
-	   System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + jcrNode.getSession());
-	   
 	   return jcrNode.getProperty(URLMAPPING_PROPERTY_NAME).getValue().getString();
    }
   
