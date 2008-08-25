@@ -18,5 +18,20 @@
     <title>Hippo ECM Console</title>
   </wicket:head>
   <wicket:panel>
+    <table width="99%">
+      <tr valign="top">
+        <td align="left">
+          <div wicket:id="extension.breadcrumb"/>
+          <div wicket:id="extension.menu"/>
+        </td>
+        <td align="right">
+          <div wicket:id="extension.logout"/>
+        </td>
+      </tr>
+    </table>
+    <hr/>
+    <div style="max-height: 800px; overflow: auto; float: left; width: 360px;"
+      wicket:id="extension.browser"/>
+    <div style="max-height: 800px; overflow: auto;" wicket:id="extension.editor"/>
   </wicket:panel>
 </html>
