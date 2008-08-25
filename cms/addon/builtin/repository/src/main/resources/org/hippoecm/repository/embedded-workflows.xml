@@ -60,7 +60,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderEmbeddedWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on documents in galleries</sv:value>
