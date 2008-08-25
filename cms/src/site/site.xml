@@ -125,6 +125,7 @@
             <item name="hst.properties" href="/implement-hippo-ecm/reference/configuration-hstproperties.html"/>
             <item name="web.xml" href="/implement-hippo-ecm/reference/configuration-webxml.html"/>
           </item>
+          <item name="Filters" href="/implement-hippo-ecm/reference/filters.html"/>
           <item name="JSP Taglib" href="/implement-hippo-ecm/reference/jsp-taglib.html"/>
           <item name="Expression Language" href="/implement-hippo-ecm/reference/el-index.html"/>
           <item name="URL Mapping" href="/implement-hippo-ecm/reference/url-mapping.html"/>
