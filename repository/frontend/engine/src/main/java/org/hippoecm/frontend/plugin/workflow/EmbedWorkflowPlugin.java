@@ -35,6 +35,7 @@ public class EmbedWorkflowPlugin extends WorkflowPlugin implements IDetachable {
 
     public EmbedWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+// andere model ook listen
     }
 
     @Override

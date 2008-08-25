@@ -232,7 +232,6 @@
             </sv:node>
         </sv:node>
     </sv:node>
-<!--
     <sv:node sv:name="defaultedit">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:workflow</sv:value>
@@ -258,5 +257,4 @@
             </sv:property>
         </sv:node>
     </sv:node>
--->
 </sv:node>

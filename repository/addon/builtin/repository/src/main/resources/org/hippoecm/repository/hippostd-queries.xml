@@ -43,7 +43,6 @@
     </sv:property>
   </sv:node>
 
-<!--
   <sv:node sv:name="simple">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
@@ -101,7 +100,6 @@
       <sv:value>adddocument_ico</sv:value>
     </sv:property>
   </sv:node>
--->
 
   <sv:node sv:name="New Folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -155,7 +153,6 @@
     </sv:property>
   </sv:node>
 
-<!--
   <sv:node sv:name="generic folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
@@ -225,6 +222,5 @@
       </sv:node>
     </sv:node>
   </sv:node>
--->
 
 </sv:node>

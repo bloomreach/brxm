@@ -130,7 +130,7 @@ svn --recursive revert .
 mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
-    -Dtag=Release-HREPTWO-v2_01_00_M0 \
+    -Dtag=Release-HREPTWO-v2_01_00-M0 \
     -DscmCommentPrefix="HREPTWO-0:"
 </source>
 

@@ -70,6 +70,7 @@ public class PluginFactory implements IClusterable {
                 plugin = (IPlugin) constructor.newInstance(actualArgs);
 
             } catch (ClassNotFoundException e) {
+		System.err.println(e.getMessage()); e.printStackTrace(System.err);
                 //TODO: use the standard wicket resource locating mechanism for this.
                 String markup = StringUtils.replace(className, ".", "/") + ".html";
                 if (loader.getResourceAsStream(markup) != null) {
@@ -83,9 +84,11 @@ public class PluginFactory implements IClusterable {
                 }
 
             } catch (InvocationTargetException e) {
+		System.err.println(e.getMessage()); e.printStackTrace(System.err);
                 message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
                 log.error(e.getMessage());
             } catch (Exception e) {
+		System.err.println(e.getMessage()); e.printStackTrace(System.err);
                 message = e.getClass().getName() + ": " + e.getMessage();
                 log.error(e.getMessage());
             }
