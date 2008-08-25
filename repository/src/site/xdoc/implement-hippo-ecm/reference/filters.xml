@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>HST2 Filters</title>
+    </properties>
+    <body>
+      <section name="HST2 Filters">
+        <subsection name="ModuleFilter">
+          <p>The purpose of the ModuleFilter is to execute any bussineslogic defined in the module class.
+             A module Class can have a specific method called <code>execute()</code>  that contains the businesslogic of that specific module.
+             Setting the <code>execute</code> attribute on the module definition to <code>true</code> will trigger the ModuleRenderTag to set the Module in the ModuleRegistry. Once the action on the page is performed, the request will be handled by the ModuleFilter, which in it's turn will trigger the <code>execute</code> method of that specific module.
+          </p>
+          <source><![CDATA[<hst-tmpl:module name="contactform" className="some.package.ContactModule" execute="true" render="false"/>]]></source>
+        </subsection>
+        <subsection name="URLMappingTemplateContextFilter">
+          <p>
+            The URLMappingTemplateContextFilter will examine the current request and will try to resolve the current pageNode. The pageNode contains all information on the current request and will gather all information about it's sub elements on the current page:            
+          </p>
+          <ul>
+            <li>container nodes</li>
+            <li>module nodes with their information</li>            
+          </ul>
+        </subsection>
+        <subsection name="URIFragmentContextBaseFilter">
+          <p>
+            The URIFragmentContextBaseFilter will determine the contextBase of the site that has been requested. 
+            It will parse the request and search for the hst configuration accordingly.
+          </p>
+        </subsection>
+      </section>
+    </body>
+</document>
