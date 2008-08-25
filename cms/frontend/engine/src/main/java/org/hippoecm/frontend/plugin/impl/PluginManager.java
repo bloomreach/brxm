@@ -62,7 +62,7 @@ public class PluginManager implements IDetachable {
         }
     }
 
-    Home page;
+    private Home page;
     private PluginFactory factory;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;

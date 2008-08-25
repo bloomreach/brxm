@@ -22,8 +22,8 @@ import java.util.Map;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.repository.standardworkflow.TemplateEngineRemodel.FieldIdentifier;
-import org.hippoecm.repository.standardworkflow.TemplateEngineRemodel.TypeUpdate;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
+import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
 
 public class TypeConversion implements Serializable {
     @SuppressWarnings("unused")

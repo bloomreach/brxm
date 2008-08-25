@@ -136,22 +136,17 @@ public class WizardDialog extends WebPage {
             } catch (RemoteException ex) {
                 Gallery.log.error(ex.getMessage(), ex);
             }
-            if (galleryTypes != null && galleryTypes.size() > 1) {
+            if (galleryTypes != null && galleryTypes.size() > 0) {
                 DropDownChoice folderChoice;
                 type = galleryTypes.get(0);
                 add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes));
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
-            } else if (galleryTypes != null && galleryTypes.size() == 1) {
-                type = galleryTypes.get(0);
-                Component component;
-                add(component = new Label("type", type));
-                component.setVisible(false);
             } else {
-                type = null;
                 Component component;
                 add(component = new Label("type", "default"));
                 component.setVisible(false);
+                type = null;
             }
         }
 

@@ -20,13 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.IClusterable;
-
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
@@ -34,6 +28,8 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginContext implements IPluginContext, IClusterable {
     @SuppressWarnings("unused")
@@ -95,25 +91,6 @@ public class PluginContext implements IPluginContext, IClusterable {
         log.debug("cluster {} started cluster {}", this.controlId, controlId);
 
         children.add(control);
-
-                manager.page.visitChildren(Component.class, new IVisitor() {
-                public Object component(Component component) {
-                    String markupId = component.getMarkupId(false);
-                    if(markupId == null) {
-                    if (component instanceof org.hippoecm.frontend.plugin.IPlugin) {
-                        markupId = component.getClass().getName();
-         //component.setMarkupId(markupId);
-                    } else {
-                        markupId = component.getParent().getMarkupId() + "_" + component.getId();
-                    }
-                    System.err.println("BERRY\t"+component.getParent().getMarkupId()+"\t"+markupId+"\t"+component.getMarkupId()+"\t"+component.getPageRelativePath()+"\t" +component.getPath()+"\t"+component.getId());
-                    component.setMarkupId(markupId);
-                    //component.setMarkupId(component.getPageRelativePath());
-                    }
-                    return null;
-                }
-            });
-
         return control;
     }
 

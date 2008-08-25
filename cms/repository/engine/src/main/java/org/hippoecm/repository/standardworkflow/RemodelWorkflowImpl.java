@@ -15,8 +15,9 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.StringReader;
+import java.io.StringBufferInputStream;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -24,16 +25,23 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.JcrConstants;
+import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
+/**
+ * @deprecated
+ */
 public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -50,9 +58,17 @@ public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
 
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
             RepositoryException {
+        if (!subject.isNodeType(HippoNodeType.NT_NAMESPACEFOLDER))
+            throw new MappingException("invalid node type for RemodelWorkflow");
+
+        Node node = subject.addNode(prefix, HippoNodeType.NT_NAMESPACE);
+        node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        subject.save();
+
+        // push new node type definition such that it will be loaded
         try {
-           // push new node type definition such that it will be loaded
-           Node node, base = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.INITIALIZE_PATH);
+            Node base = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).getNode(
+                    HippoNodeType.INITIALIZE_PATH);
             if (base.hasNode(prefix)) {
                 node = base.getNode(prefix);
             } else {
@@ -83,29 +99,42 @@ public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
         }
     }
 
-    public String[] updateModel(String prefix, String cnd) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException
-    {
-         try {
-            StringReader istream = new StringReader(cnd);
-            Remodeling remodel = Remodeling.remodel(session, prefix, istream);
-            NodeIterator iter = remodel.getNodes();
-            String[] paths = new String[(int) iter.getSize()];
-            for (int i = 0; iter.hasNext(); i++) {
-                paths[i] = iter.nextNode().getPath();
-            }
-            return paths;
-        } catch (NamespaceException ex) {
-            throw new RepositoryException(ex);
-        }
-   }
+    public void createType(String name) throws WorkflowException, MappingException, RepositoryException {
+        if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
+            throw new MappingException("invalid node type for EditmodelWorkflow");
 
-    public String[] updateModel(String prefix, String cnd, String contentUpdater, Object contentUpdaterCargo) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException
-    {
+        String encoded = ISO9075Helper.encodeLocalName(name);
+        Node type = subject.addNode(encoded, HippoNodeType.NT_TEMPLATETYPE);
+        type.addMixin(JcrConstants.MIX_REFERENCEABLE);
+
+        Node node = type.addNode(HippoNodeType.HIPPO_NODETYPE, HippoNodeType.NT_HANDLE);
+        node = node.addNode(HippoNodeType.HIPPO_NODETYPE, HippoNodeType.NT_NODETYPE);
+        node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        node.setProperty(HippoNodeType.HIPPO_TYPE, subject.getName() + ":" + name);
+        node.setProperty(HippoNodeType.HIPPO_NODE, true);
+        node.setProperty(HippoNodeType.HIPPO_SUPERTYPE, new Value[] { new StringValue(HippoNodeType.NT_DOCUMENT),
+                new StringValue("hippostd:publishable"), new StringValue("hippostd:publishableSummary") });
+
+        node = type.addNode(HippoNodeType.HIPPO_PROTOTYPE, HippoNodeType.NT_HANDLE);
+        node = node.addNode(HippoNodeType.HIPPO_PROTOTYPE, JcrConstants.NT_UNSTRUCTURED);
+        node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        node.addMixin("hippostd:publishable");
+        node.addMixin("hippostd:publishableSummary");
+        node.setProperty("hippostd:state", "unpublished");
+
+        subject.save();
+    }
+
+    public String[] remodel(String cnd, Map<String, TypeUpdate> update) throws WorkflowException, MappingException,
+            RepositoryException {
+        if (!subject.isNodeType(HippoNodeType.NT_NAMESPACE))
+            throw new MappingException("invalid node type for RemodelWorkflow");
+
         try {
-            StringReader istream = new StringReader(cnd);
-            Remodeling remodel = Remodeling.remodel(session, prefix, istream, contentUpdater, contentUpdaterCargo);
+            String prefix = subject.getName();
+
+            StringBufferInputStream istream = new StringBufferInputStream(cnd);
+            Remodeling remodel = Remodeling.remodel(session, prefix, istream, update);
             NodeIterator iter = remodel.getNodes();
             String[] paths = new String[(int) iter.getSize()];
             for (int i = 0; iter.hasNext(); i++) {
@@ -116,4 +145,5 @@ public class RemodelWorkflowImpl implements RemodelWorkflow, InternalWorkflow {
             throw new RepositoryException(ex);
         }
     }
+
 }
