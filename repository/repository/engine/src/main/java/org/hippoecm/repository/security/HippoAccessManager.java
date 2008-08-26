@@ -18,6 +18,7 @@ package org.hippoecm.repository.security;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -152,12 +153,16 @@ public class HippoAccessManager implements AccessManager {
 
     /**
      * SuperSimpleLRUCache
-     * TODO: handle multiple users, multiple session (perhaps move to ISM?)
      */
     private PermissionLRUCache readAccessCache;
 
-    private static final int DEFAULT_PERM_CACHE_SIZE = 2000;
+    private static final int DEFAULT_PERM_CACHE_SIZE = 20000;
 
+    /**
+     * Cache for determining if a type is a instance of another type
+     */
+    private final NodeTypeInstanceOfCache ntIOCache = new NodeTypeInstanceOfCache(20);
+    
     /**
      * Flag whether current user is anonymous
      */
@@ -649,7 +654,6 @@ public class HippoAccessManager implements AccessManager {
     /**
      * Helper function to check if a nodeState is of a node type or a
      * instance of the node type (sub class)
-     * TODO: Very expensive function, probably needs some caching
      *
      * @param nodeState the node to check
      * @param nodeTypeName the node type name
@@ -667,6 +671,11 @@ public class HippoAccessManager implements AccessManager {
             return true;
         }
 
+        Boolean isInstance = ntIOCache.get(nodeStateType,nodeType);
+        if (isInstance != null) {
+            return isInstance.booleanValue();
+        }
+        
         // get iterator over all types
         NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
         NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
@@ -681,11 +690,13 @@ public class HippoAccessManager implements AccessManager {
                 // check if one of the superTypes matches the nodeType
                 for (NodeType type : superTypes) {
                     if (type.getName().equals(nodeType)) {
+                        ntIOCache.put(nodeStateType, nodeType, true);
                         return true;
                     }
                 }
             }
         }
+        ntIOCache.put(nodeStateType, nodeType, false);
         return false;
     }
 
@@ -1022,6 +1033,161 @@ public class HippoAccessManager implements AccessManager {
                 return 0;
             }
             return map.maxSize();
+        }
+    }
+    
+
+    /**
+     * Simple Cache for <<String,String>,Boolean> key-value pairs
+     */
+    private class NodeTypeInstanceOfCache {
+
+        /**
+         * Set size to zero to disable cache
+         */
+        private boolean enabled = true;
+
+        /**
+         * The cache map
+         */
+        private Map<String, Map<String, Boolean>> map = null;
+
+        /**
+         * Local counter for cache hits
+         */
+        private long hit;
+
+        /**
+         * Local counter for cache misses
+         */
+        private long miss;
+
+        /**
+         * Local counter for total number of cache access
+         */
+        private long total;
+
+        /**
+         * Create a new LRU cache
+         * @param size max number of cache objects
+         */
+        public NodeTypeInstanceOfCache(int size) {
+            if (size < 0) {
+                throw new IllegalArgumentException("size < 0");
+            }
+            hit = 0;
+            miss = 0;
+            total = 0;
+            if (size == 0) {
+                enabled = false;
+                return;
+            }
+            map = new HashMap<String,Map<String, Boolean>>(size);
+        }
+
+        /**
+         * Fetch cache value
+         * @param 
+         * @return cached value or null when not in cache
+         */
+        synchronized public Boolean get(String type, String instanceOfType) {
+            if (!enabled) {
+                return null;
+            }
+            Boolean bool = null;
+            total++;
+            Map<String, Boolean> typeMap = map.get(instanceOfType);
+            if (typeMap != null) {
+                bool = typeMap.get(type);
+            }
+            if (bool == null) {
+                miss++;
+            } else {
+                hit++;
+            }
+            return bool;
+        }
+
+        /**
+         * Store key-value in cache
+         * @param id ItemId the key
+         * @param isGranted the value
+         */
+        synchronized public void put(String type, String instanceOfType, boolean isInstanceOf) {
+            if (!enabled) {
+                return;
+            }
+
+            Map<String, Boolean> typeMap = map.get(instanceOfType);
+            if (typeMap == null) {
+                typeMap = new HashMap<String, Boolean>();
+            }
+            typeMap.put(type, isInstanceOf);
+            map.put(instanceOfType, typeMap);
+        }
+
+        /**
+         * Remove key-value from cache
+         * @param id ItemId the key
+         */
+        synchronized public void remove(String type, String instanceOfType) {
+            if (!enabled) {
+                return;
+            }
+
+            Map<String, Boolean> typeMap = map.get(instanceOfType);
+            if (typeMap == null) {
+                return;
+            }
+            
+            if (typeMap.containsKey(type)) {
+                map.remove(type);
+            }
+        }
+
+        /**
+         * Clear the cache
+         */
+        synchronized public void clear() {
+            if (!enabled) {
+                return;
+            }
+            map.clear();
+        }
+
+        /**
+         * Total number of times this cache is accessed
+         * @return long
+         */
+        public long getTotalAccess() {
+            return total;
+        }
+
+        /**
+         * Total number of cache hits
+         * @return long
+         */
+        public long getHits() {
+            return hit;
+        }
+
+        /**
+         * Total number of cache misses
+         * @return long
+         */
+        public long getMisses() {
+            return miss;
+        }
+
+        /**
+         * The current size of the cache
+         * @return int
+         */
+        public int getSize() {
+            if (!enabled) {
+                return 0;
+            }
+            return map.size();
         }
     }
 }
