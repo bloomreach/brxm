@@ -188,7 +188,7 @@ public class HippoLoginModule implements LoginModule {
             }
 
             log.debug("Trying to authenticate as {}", creds.getUserID());
-            if (authenticate(creds.getUserID(), creds.getPassword())) {
+            if (authenticate(creds)) {
                 log.info("Authenticated as {}", creds.getUserID());
                 setUserPrincipals(creds.getUserID());
                 setGroupPrincipals(creds.getUserID());
@@ -250,28 +250,26 @@ public class HippoLoginModule implements LoginModule {
     }
 
     /**
-     * TODO: move to authentication manager?
      * Authenticate the user against the cache or the repository
      * @param session A privileged session which can read usernames and passwords
-     * @param userId
-     * @param password
+     * @param creds Credentials
      * @return true when authenticated
      */
-    private boolean authenticate(String userId, char[] password) {
+    private boolean authenticate(SimpleCredentials creds) {
         // check for anonymous user
-        if (userId == null && password == null) {
+        if (creds.getUserID() == null && creds.getPassword() == null) {
             principals.add(new AnonymousPrincipal());
             log.debug("Authenticated as Anonymous user.");
             return true;
         }
 
         // basic security check
-        if (userId == null || "".equals(userId) || password == null || password.length == 0) {
+        if (creds.getUserID() == null || "".equals(creds.getUserID()) || creds.getPassword() == null || creds.getPassword().length == 0) {
             log.debug("Empty username or password not allowed.");
             return false;
         }
 
-        return securityManager.authenticate(userId, password);
+        return securityManager.authenticate(creds);
     }
 
     private void setUserPrincipals(String userId) {

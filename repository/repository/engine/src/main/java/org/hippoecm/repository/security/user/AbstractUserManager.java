@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -78,10 +79,21 @@ public abstract class AbstractUserManager implements UserManager {
     /**
      * {@inheritDoc}
      */
-    public boolean authenticate(String userId, char[] password) throws RepositoryException {
+    public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public final boolean hasUserNode(String userId) throws RepositoryException {
+        if (!isInitialized()) {
+            throw new IllegalStateException("Not initialized.");
+        }
+        log.trace("Looking for user: {} in path: {}", userId, usersPath);
+        return session.getRootNode().hasNode(usersPath + "/" + userId);
+    }
+    
     /**
      * {@inheritDoc}
      */

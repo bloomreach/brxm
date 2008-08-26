@@ -133,12 +133,12 @@ public class PasswordHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static String getDigest(String alogrithm, String plainText, byte[] salt) throws NoSuchAlgorithmException,
+    public static String getDigest(String alogrithm, char[] plainText, byte[] salt) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
 
         // the null encryption :(
         if (alogrithm == null || alogrithm.length() == 0 || alogrithm.endsWith("plain")) {
-            return plainText;
+            return new String(plainText);
         }
 
         MessageDigest md = MessageDigest.getInstance(alogrithm);
@@ -149,8 +149,9 @@ public class PasswordHelper {
         if (salt != null && salt.length > 0) {
             md.update(salt);
         }
-        digest = md.digest(plainText.getBytes(FIXED_ENCODING));
-
+        
+        digest = md.digest(new String(plainText).getBytes(FIXED_ENCODING));
+        
         // iterating
         for (int i = 0; i < DIGEST_ITERATIONS; i++) {
             md.reset();
@@ -171,11 +172,11 @@ public class PasswordHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static String getHash(String plainText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String getHash(char[] plainText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
         // the null encryption :(
         if (hashingAlogrithm == null || hashingAlogrithm.length() == 0 || hashingAlogrithm.endsWith("plain")) {
-            return plainText;
+            return new String(plainText);
         }
         byte[] salt = getSalt();
         return buildHashString(hashingAlogrithm, plainText, salt);
@@ -190,7 +191,7 @@ public class PasswordHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static String buildHashString(String algorithm, String plainText, byte[] salt)
+    public static String buildHashString(String algorithm, char[] plainText, byte[] salt)
             throws NoSuchAlgorithmException, UnsupportedEncodingException {
         return "$" + algorithm + "$" + byteToBase64(salt) + "$" + getDigest(algorithm, plainText, salt);
     }
@@ -203,11 +204,11 @@ public class PasswordHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    synchronized public static boolean checkHash(String password, String hash) throws NoSuchAlgorithmException,
+    synchronized public static boolean checkHash(char[] password, String hash) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
 
         // don't allow empty passwords
-        if (password == null || hash == null || "".equals(password) || "".equals(hash)) {
+        if (password == null || hash == null || password.length == 0 || "".equals(hash)) {
             throw new IllegalArgumentException("Empty username's and password are not allowed");
         }
 
