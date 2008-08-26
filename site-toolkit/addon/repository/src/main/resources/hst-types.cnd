@@ -38,8 +38,8 @@
 - hst:urlmapping (string)
 - hst:pageLayout (string)
 - hst:prefixlinkrewrite (string)
-- hst:cndbasedlinkrewriter (string) multiple
-- hst:pathbasedlinkrewriter (string) multiple
+- hst:nodetype (string) multiple
+- hst:nodepath (string) multiple
 + * (hst:sitemaplayout) = hst:sitemaplayout
 
 [hst:sitemap] > hippo:document
