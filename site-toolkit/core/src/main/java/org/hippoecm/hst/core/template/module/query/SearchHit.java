@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.template.module.query;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 
 public class SearchHit extends AbstractELNode {
@@ -24,8 +25,8 @@ public class SearchHit extends AbstractELNode {
     private int hitPosition;
     private double score;
     
-    public SearchHit(Node node, int hitPosition, double score) {
-        super(node);
+    public SearchHit(ContextBase ctxBase, Node node, int hitPosition, double score) {
+        super(ctxBase, node);
         this.hitPosition = hitPosition;
         this.score = score;
     }

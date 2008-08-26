@@ -21,6 +21,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,8 @@ public class ContextBase {
 	private String contextName;
 	private Node contextRootNode;
 	private Session jcrSession;
+	private URLMapping urlMapping;
+    
 	
 	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
 		this(contextName, repositoryPath, request, JCRConnectorWrapper.getJCRSession(request.getSession()));
@@ -41,7 +45,11 @@ public class ContextBase {
 	public ContextBase (String contextName, String repositoryPath, HttpServletRequest request, Session session) throws PathNotFoundException, RepositoryException {
 		this.contextName = contextName;	
 		this.jcrSession = session;
+    		
 		String relativePath = stripFirstSlash(repositoryPath);
+		
+		this.urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+		
 		log.info("constructor() with repositoryPath= " + relativePath);
 		if (relativePath.trim().length() == 0) {
 			this.contextRootNode = session.getRootNode();
@@ -62,6 +70,14 @@ public class ContextBase {
 		return jcrSession;
 	}
 	
+//	public void setUrlMapping(URLMapping urlMapping) {
+//        this.urlMapping = urlMapping;
+//    }
+    
+    public URLMapping getUrlMapping() {
+       return this.urlMapping;
+    }
+	 
 	public ContextBase getRelativeContextBase(String name, String relativePath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
 	    String contextRootPath = stripFirstSlash(contextRootNode.getPath());
 	    String relativeContextRootPath = contextRootPath + (contextRootPath.endsWith("/") ? "" : "/") + stripFirstSlash(relativePath);
@@ -104,6 +120,7 @@ public class ContextBase {
 		sb.append("]");
 		return sb.toString();
 	}
+
 	
 	
      

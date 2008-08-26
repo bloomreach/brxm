@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.mapping.URLMappingImpl;
+import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +47,20 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignoreType(request)) {
+		if (ignorePath(request)) {
 			filterChain.doFilter(request, response);			
 		} else {
 			String requestURI = request.getRequestURI();
 			
 			String uriPrefix = getLevelPrefix(requestURI, uriLevels);
-			log.info("uriPrefix: " + uriPrefix);
+			log.debug("uriPrefix: " + uriPrefix);
 			
+			long start = System.nanoTime();
+            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
+           
+            log.debug("creating mapping took " + (System.nanoTime() - start) / 1000000 + " ms.");
+            request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
+            
 			//content configuration contextbase
 			ContextBase contentContextBase = null;
 			try {
@@ -74,6 +82,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			}
 			
 			HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request, uriPrefix);
+           
 			prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE, contentContextBase);
 		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE, hstConfigurationContextBase);
 		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, requestURI);

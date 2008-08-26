@@ -48,7 +48,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
-	public static final String SITEMAP_RELATIVE_LOCATION = "/hst:sitemap";
+	public static final String SITEMAP_RELATIVE_LOCATION = "hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
 
 	
@@ -58,9 +58,9 @@ public abstract class HstFilterBase implements Filter {
 	//public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
 	
 	//filter init-parameter
-	protected static final String IGNORETYPES_FILTER_INIT_PARAM = "ignoreTypes"; //comma separated list with ignoretype suffixes
+	protected static final String IGNOREPATHS_FILTER_INIT_PARAM = "ignorePaths"; //comma separated list with ignore path prefixes
 	
-	private List ignoreTypesList = null;
+	private List<String> ignorePathsList = null;
 	
 	private static final Logger log = LoggerFactory.getLogger(HstFilterBase.class);
 	
@@ -70,13 +70,13 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	protected void initIgnoreTypes(FilterConfig filterConfig) {
-		String ignoreTypesString = filterConfig.getInitParameter(IGNORETYPES_FILTER_INIT_PARAM);
-		ignoreTypesList = new ArrayList();
-		if (ignoreTypesString != null) {	
-		    String [] items = ignoreTypesString.split(",");
+		String ignorePathsString = filterConfig.getInitParameter(IGNOREPATHS_FILTER_INIT_PARAM);
+		ignorePathsList = new ArrayList<String>();
+		if (ignorePathsString != null) {	
+		    String [] items = ignorePathsString.split(",");
 		    for (int i=0; i < items.length; i++) {
-		    	log.debug("filter configured with ignoretype ." + items[i]);
-		    	ignoreTypesList.add("." + items[i].trim());
+		    	log.debug("filter configured with ignorepath ." + items[i]);
+		    	ignorePathsList.add(items[i].trim());
 		    }
 		}
 	}
@@ -100,19 +100,16 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	
-	protected boolean ignoreType(HttpServletRequest request) {
+	protected boolean ignorePath(HttpServletRequest request) {
 		if (request.getAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE) != null) {
 			return true;
 		}
 		String requestURI = request.getRequestURI();
-		int lastDot = requestURI.lastIndexOf(".");
-		if (lastDot != -1) {
-			String suffix = requestURI.substring(lastDot).toLowerCase();
-			boolean ignore = ignoreTypesList.contains(suffix);
-			if (ignore) {
-				request.setAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE, "true");				
-			}
-			return ignore;
+		for(String prefix : ignorePathsList) {
+		    if(requestURI.startsWith(prefix)) {
+		        request.setAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE, "true");
+		        return true;
+		    }
 		}
 		return false;
 	}

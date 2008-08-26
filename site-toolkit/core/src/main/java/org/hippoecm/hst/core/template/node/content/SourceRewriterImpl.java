@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.template.node.content;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +42,12 @@ public class SourceRewriterImpl implements SourceRewriter {
     private final String SRC_ATTR_NAME = "src=\"";
     private final String ATTR_END = "\"";
     private PathTranslator pathTranslator;
-
     
     /*
      * constructor with default URLPathTranslatorImpl();
      */
-    public SourceRewriterImpl() {
-        this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(), new PathToSrcTranslatorImpl());
+    public SourceRewriterImpl(URLMapping mapping) {
+        this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(mapping), new PathToSrcTranslatorImpl());
     }
     
     /*

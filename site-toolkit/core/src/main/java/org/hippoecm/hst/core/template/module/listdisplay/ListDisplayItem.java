@@ -10,7 +10,7 @@ public class ListDisplayItem extends AbstractELNode{
 	private static final Logger log = LoggerFactory.getLogger(ListDisplayItem.class);
 	
     public ListDisplayItem(Node node) {
-    	super(node); 
+    	super(null, node); 
     }
     
 }

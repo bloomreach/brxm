@@ -75,8 +75,7 @@ public class URLMappingTokenizer {
 		
 		while (patternIter.hasNext() && !patternFound) {
 			String pagePattern = patternIter.next();
-			log.info("trying to match " + pagePattern + " with " + requestURI);
-			
+			log.debug("trying to match " + pagePattern + " with " + requestURI);
 			//try to find a mapping that matches the requestURI
 			Pattern pattern = Pattern.compile(pagePattern); 
 			Matcher parameterMatcher = pattern.matcher(requestURI);

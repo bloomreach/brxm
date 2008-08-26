@@ -57,7 +57,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignoreType(request)) {
+		if (ignorePath(request)) {
 			chain.doFilter(request, response);
 		} else {
 			String forward = null; 

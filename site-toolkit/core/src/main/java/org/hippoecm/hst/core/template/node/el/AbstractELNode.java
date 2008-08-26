@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.node.content.PathTranslator;
 import org.hippoecm.hst.core.template.node.content.SourceRewriter;
@@ -40,23 +41,31 @@ public abstract class AbstractELNode implements ELNode {
     private Logger log = LoggerFactory.getLogger(AbstractELNode.class);
     
     protected Node jcrNode;
+    protected ContextBase contextBase;
     private SourceRewriter sourceRewriter;
-
-    public AbstractELNode(Node node) {
-        this(node,new SourceRewriterImpl());
-    }
-
-    public AbstractELNode(ContextBase contextBase, String relativePath) throws RepositoryException {
-        this(contextBase.getRelativeNode(relativePath),new SourceRewriterImpl());
-    }
-
+    
     /*
      * If you want a custom source rewriter, use this constructor
      */
-    public AbstractELNode(Node node, SourceRewriter sourceRewriter){
+    public AbstractELNode(ContextBase contextBase, Node node, SourceRewriter sourceRewriter){
         this.sourceRewriter = sourceRewriter;
+        this.contextBase = contextBase;
         this.jcrNode = node;
     }
+    
+    public AbstractELNode(ContextBase contextBase, String relativePath) throws RepositoryException {   
+        this.sourceRewriter =  new SourceRewriterImpl(contextBase.getUrlMapping());
+        this.contextBase = contextBase;
+        this.jcrNode = contextBase.getRelativeNode(relativePath); 
+    } 
+    
+    public AbstractELNode(ContextBase contextBase, Node jcrNode) {
+        this.sourceRewriter =  new SourceRewriterImpl(contextBase.getUrlMapping());
+        this.jcrNode = jcrNode; 
+        this.contextBase = contextBase;
+    }
+
+    
     
     /*
      * If you want a custom source source translater, use this constructor
@@ -66,6 +75,8 @@ public abstract class AbstractELNode implements ELNode {
         this.jcrNode = node;
     }
     
+    
+
     public Node getJcrNode() {
         return jcrNode;
     }
@@ -186,8 +197,7 @@ public abstract class AbstractELNode implements ELNode {
                         }
                     }
                 } catch (RepositoryException e) {
-                    log
-                            .error("RepositoryException while looking for resource " + resourceName + "  :"
+                    log.error("RepositoryException while looking for resource " + resourceName + "  :"
                                     + e.getMessage());
                 }
                 return DEFAULT_RESOURCE;

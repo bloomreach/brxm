@@ -36,17 +36,14 @@ public abstract class ModuleBase implements Module {
 
 	public String execute(HttpServletRequest request,
 			HttpServletResponse response) throws TemplateException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void init(HttpServletRequest request) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void render(PageContext pageContext) throws TemplateException {
-		// TODO Auto-generated method stub
 		
 	}
 

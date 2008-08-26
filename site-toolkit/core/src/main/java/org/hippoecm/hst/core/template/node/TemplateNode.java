@@ -15,18 +15,15 @@
  */
 package org.hippoecm.hst.core.template.node;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.TemplateException;
-import org.hippoecm.hst.core.template.node.el.*;
+import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,23 +31,17 @@ public class TemplateNode extends AbstractELNode {
 	private Logger log = LoggerFactory.getLogger(TemplateNode.class);	
 	
 	protected String relativePath;	
-	protected ContextBase contextBase;
+	
 	
 	protected String relativeContentPath;
 	
 	public TemplateNode(ContextBase contextBase, Node jcrNode) {
-        super(jcrNode);
-		this.contextBase = contextBase;
+        super(contextBase, jcrNode);
 	}
 	
 	public TemplateNode(ContextBase contextBase, String relativePath) throws RepositoryException {
 	    super(contextBase, relativePath);
-	    this.contextBase = contextBase;
 		this.relativePath = relativePath;
-	}
-	
-	public void setContextBase(ContextBase contextBase) {
-		this.contextBase = contextBase;
 	}
 
 	public Node getNode(ContextBase contentContextBase, String relativePath) throws PathNotFoundException, RepositoryException {		
