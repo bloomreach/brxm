@@ -43,7 +43,7 @@ public class DocumentsProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentsProvider.class);
 
-    private List<IModel> entries;
+    protected List<IModel> entries;
     private Map<String, Comparator<IModel>> comparators;
 
     public DocumentsProvider(JcrNodeModel model, Map<String, Comparator<IModel>> comparators) {

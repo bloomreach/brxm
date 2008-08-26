@@ -14,22 +14,7 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
-    <div class="actionspanel">
-      <h3><span wicket:id="foldername"></span>&nbsp;folder</h3>
-      <ul wicket:id="items">
-        <li>
-          <span wicket:id="add-dialog"></span>
-        </li>
-      </ul>
-      <ul>
-        <li>
-          <span class="editmodel_ico" wicket:id="delete-dialog">Delete folder</span>
-        </li>
-        <li>
-          <span wicket:id="reorder-dialog">Reorder folder</span>
-        </li>
-      </ul>
-    </div>
-  </wicket:panel>
+  <wicket:extend>
+    <span wicket:id="reorder-panel"/>
+  </wicket:extend>
 </html>

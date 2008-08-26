@@ -20,6 +20,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
@@ -29,9 +30,7 @@ import org.slf4j.LoggerFactory;
 class ListCell extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(ListCell.class);
 
     public ListCell(String id, final IModel model, IListCellRenderer renderer, IListAttributeModifier attributeModifier) {
@@ -42,8 +41,8 @@ class ListCell extends Panel {
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                AbstractListingPlugin plugin = (AbstractListingPlugin) findParent(AbstractListingPlugin.class);
-                plugin.selectionChanged(model);
+                ListDataTable dataTable = (ListDataTable) findParent(ListDataTable.class);
+                dataTable.getSelectionListener().selectionChanged(model);
             }
         });
 

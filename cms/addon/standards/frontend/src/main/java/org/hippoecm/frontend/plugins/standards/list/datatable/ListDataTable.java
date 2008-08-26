@@ -27,21 +27,27 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
+    private TableSelectionListener selectionListener;
+    
+    public interface TableSelectionListener {
+        public void selectionChanged(IModel model);
+    }
+
     public ListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
-            int rowsPerPage, final boolean triState) {
+            TableSelectionListener selectionListener, int rowsPerPage, final boolean triState) {
         super(id, tableDefinition.getColumns(), dataProvider, rowsPerPage);
         setOutputMarkupId(true);
         setVersioned(false);
 
+        this.selectionListener = selectionListener;
+        
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
                 private static final long serialVersionUID = 1L;
@@ -70,12 +76,15 @@ public class ListDataTable extends DataTable {
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                AbstractListingPlugin plugin = (AbstractListingPlugin) findParent(AbstractListingPlugin.class);
-                plugin.selectionChanged(model);
+                selectionListener.selectionChanged(model);
             }
         });
 
         return item;
     }
+
+    public TableSelectionListener getSelectionListener() {
+        return selectionListener;
+    } 
 
 }

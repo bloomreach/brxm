@@ -31,7 +31,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
         String cssClass = null;
         String type = node.getPrimaryNodeType().getName();
         
@@ -58,7 +58,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     }
 
     @Override
-    protected AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
+    public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
         return new CssClassAppender(new Model("icon-16"));
     }
 

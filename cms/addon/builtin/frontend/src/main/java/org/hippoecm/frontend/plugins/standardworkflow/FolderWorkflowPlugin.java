@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
@@ -42,10 +43,13 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standardworkflow.reorder.ReorderDialog;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.Document;
@@ -64,10 +68,11 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     transient Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
+
     Map<String, Set<String>> templates;
     private Label folderName;
-    private AbstractView addListing;
     private DialogLink deleteLink;
+    private DialogLink reorderLink;
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -82,7 +87,7 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                 String text = "Are you sure you want to delete ";
                 try {
                     text += "folder ";
-                    text += ((WorkflowsModel)FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
+                    text += ((WorkflowsModel) FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
                 } catch (RepositoryException ex) {
                     text += "this folder";
                 }
@@ -93,10 +98,10 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                         // FIXME: this assumes that folders are always embedded in other folders
                         // and there is some logic here to look up the parent.  The real solution is
                         // in the visual component to merge two workflows.
-                        WorkflowsModel model = (WorkflowsModel)FolderWorkflowPlugin.this.getModel();
+                        WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
                         Node node = model.getNodeModel().getNode();
-                        WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
-                        FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("embedded", node.getParent());
+                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                         workflow.delete(node.getName());
                     }
                 };
@@ -104,41 +109,65 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         }, getDialogService());
         add(deleteLink);
 
+        Node node = (Node) getModel().getObject();
+        try {
+            if (node.isNodeType("hippostd:folder")) {
+                IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
+                final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
+                
+                reorderLink = new DialogLink("reorder-dialog", new Model("Reorder documents"), new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+                    public AbstractDialog createDialog(IDialogService dialogService) {
+                        return new ReorderDialog(FolderWorkflowPlugin.this, dialogService, jcrRef);
+                    }
+                }, getDialogService());
+                add(reorderLink);
+            } else {
+                add(new EmptyPanel("reorder-dialog"));
+            }
+        } catch (RepositoryException e) {
+            add(new EmptyPanel("reorder-dialog"));
+            log.error(e.getMessage(), e);
+        }
+
         final IDataProvider provider = new IDataProvider() {
             private static final long serialVersionUID = 1L;
 
             public IModel model(Object object) {
-                return new Model((String)object);
+                return new Model((String) object);
             }
 
             public int size() {
                 return templates != null ? templates.size() : 0;
             }
 
-            public Iterator iterator(int skip, int count) {
+            public Iterator<String> iterator(int skip, int count) {
                 return templates != null ? templates.keySet().iterator() : new TreeSet<String>().iterator();
             }
 
             public void detach() {
             }
         };
-        add(addListing = new AbstractView("items", provider) {
+        add(new AbstractView("items", provider) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(Item item) {
                 final IModel model = item.getModel();
                 // final String dialogTitle = "Add " + ((String) model.getObject());
-                final String dialogTitle = ((String)model.getObject());
+                final String dialogTitle = ((String) model.getObject());
                 CustomizableDialogLink link;
                 link = new CustomizableDialogLink("add-dialog", new Model(dialogTitle), new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
                         if (dialogTitle.contains("New Smart Folder")) // FIXME very bad check on name
-                            return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                            return new FolderWorkflowExtendedDialog(FolderWorkflowPlugin.this, dialogService,
+                                    ((String) model.getObject()));
                         else
-                            return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String)model.getObject()));
+                            return new FolderWorkflowDialog(FolderWorkflowPlugin.this, dialogService, ((String) model
+                                    .getObject()));
                     }
                 }, getDialogService());
 
@@ -156,13 +185,11 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         });
     }
 
-    private void writeObject(ObjectOutputStream out)
-            throws IOException {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
 
-    private void readObject(ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
     }
@@ -170,8 +197,8 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        WorkflowsModel model = (WorkflowsModel)FolderWorkflowPlugin.this.getModel();
-        WorkflowManager manager = ((UserSession)Session.get()).getWorkflowManager();
+        WorkflowsModel model = (WorkflowsModel) FolderWorkflowPlugin.this.getModel();
+        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
         try {
             if (model.getNodeModel() != null) {
                 if (model.getNodeModel().getNode() != null) {
@@ -182,8 +209,8 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         }
         try {
             Workflow workflow = manager.getWorkflow(model.getWorkflowDescriptor());
-            if(workflow instanceof FolderWorkflow) {
-                FolderWorkflow folderWorkflow = (FolderWorkflow)workflow;
+            if (workflow instanceof FolderWorkflow) {
+                FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
                 templates = folderWorkflow.list();
             }
         } catch (MappingException ex) {
@@ -194,11 +221,16 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
         redraw();
     }
 
+    @SuppressWarnings("unchecked")
     public void select(JcrNodeModel nodeModel) {
-        IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
-        IEditService editor = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
+        IBrowseService browser = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID),
+                IBrowseService.class);
+        IEditService editor = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID),
+                IEditService.class);
         try {
-            if (nodeModel.getNode() != null && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(HippoNodeType.NT_HANDLE))) {
+            if (nodeModel.getNode() != null
+                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
+                            HippoNodeType.NT_HANDLE))) {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
@@ -209,14 +241,15 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
                         }
-                        WorkflowManager workflowManager = ((UserSession)Session.get()).getWorkflowManager();
+                        WorkflowManager workflowManager = ((UserSession) Session.get()).getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
                         try {
                             if (workflow instanceof EditableWorkflow) {
-                                EditableWorkflow editableWorkflow = (EditableWorkflow)workflow;
+                                EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
-                                    editNodeModel = new JcrNodeModel(((UserSession)Session.get()).getJcrSession().getNodeByUUID(editableDocument.getIdentity()));
+                                    editNodeModel = new JcrNodeModel(((UserSession) Session.get()).getJcrSession()
+                                            .getNodeByUUID(editableDocument.getIdentity()));
                                 } else {
                                     editNodeModel = null;
                                 }
