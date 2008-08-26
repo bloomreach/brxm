@@ -19,23 +19,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.rmi.RemoteException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class FolderWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
@@ -62,7 +63,7 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     @Test
-    public void testOrderableFolder() throws RepositoryException, WorkflowException, RemoteException {
+    public void testFolder() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:folder");
         node.addMixin("hippo:harddocument");
         session.save();
@@ -81,7 +82,7 @@ public class FolderWorkflowTest extends TestCase {
     }
     
     @Test
-    public void testSimpleFolder() throws RepositoryException, WorkflowException, RemoteException {
+    public void testDirectory() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:directory");
         node.addMixin("hippo:harddocument");
         session.save();
@@ -99,6 +100,7 @@ public class FolderWorkflowTest extends TestCase {
         assertTrue(node.isNodeType("hippostd:directory"));
     }
 
+    @Test
     @Ignore
     public void testTemplateDocument() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:folder");
@@ -119,6 +121,56 @@ public class FolderWorkflowTest extends TestCase {
         assertTrue(node.isNodeType("hippo:handle"));
         assertTrue(node.hasNode(node.getName()));
         assertTrue(node.getNode(node.getName()).isNodeType("hippostd:document"));
+    }
+    
+    @Test
+    public void testReorderFolder() throws RepositoryException, WorkflowException, RemoteException {
+        Node node = root.addNode("f","hippostd:folder");
+        node.addMixin("hippo:harddocument");
+        node.addNode("aap");
+        node.addNode("noot");
+        node.addNode("mies");
+        node.addNode("zorro");
+        node.addNode("foo");
+        node.addNode("bar");
+        session.save();
+
+        NodeIterator it = node.getNodes();
+        assertEquals("aap", it.nextNode().getName());
+        assertEquals("noot", it.nextNode().getName());
+        assertEquals("mies", it.nextNode().getName());
+        assertEquals("zorro", it.nextNode().getName());
+        assertEquals("foo", it.nextNode().getName());
+        assertEquals("bar", it.nextNode().getName());
+        
+        WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);        
+
+        /*
+         * aap      aap
+         * noot     bar
+         * mies     foo
+         * zorro => mies
+         * foo      noot
+         * bar      zorro
+         */
+        LinkedHashMap<String, String> mapping = new LinkedHashMap<String, String>();
+        mapping.put("aap", "bar");
+        mapping.put("bar", "foo");
+        mapping.put("foo", "mies");
+        mapping.put("mies", "noot");
+        mapping.put("noot", "zorro");
+        mapping.put("zorro", null);
+          
+        workflow.reorder(mapping);
+        it = node.getNodes();
+        assertEquals("aap", it.nextNode().getName());
+        assertEquals("bar", it.nextNode().getName());
+        assertEquals("foo", it.nextNode().getName());
+        assertEquals("mies", it.nextNode().getName());
+        assertEquals("noot", it.nextNode().getName());
+        assertEquals("zorro", it.nextNode().getName());
+
     }
 
     /* The following two tests can only be executed if repository is run

@@ -16,6 +16,10 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -32,7 +36,6 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -238,6 +241,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
             offspring.remove();
             folder.save();
         }
+    }
+    
+    public void reorder(LinkedHashMap<String, String> mapping) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+       List<String> list = new ArrayList<String>(mapping.keySet());
+       Collections.reverse(list);
+       for (String srcChildRelPath: list) {
+           String destChildRelPath = mapping.get(srcChildRelPath);
+           subject.orderBefore(srcChildRelPath, destChildRelPath);
+       }
+       subject.save();
     }
 
     static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
