@@ -27,16 +27,16 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener {
+public abstract class AbstractListingPlugin extends RenderPlugin implements IJcrNodeModelListener, TableSelectionListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(AbstractListingPlugin.class);
 
     private ListDataTable dataTable;
@@ -73,7 +73,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
                 log.error(e.getMessage());
             }
         }
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize, triState);
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, triState);
         add(dataTable);
 
         modelChanged();
@@ -83,6 +83,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     protected abstract TableDefinition getTableDefinition();
 
+    @SuppressWarnings("unchecked")
     public void selectionChanged(IModel model) {
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
@@ -109,8 +110,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onModelChanged() {
-        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), pageSize, triState));
+        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, triState));
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
             IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
