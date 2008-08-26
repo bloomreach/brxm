@@ -19,6 +19,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.security.ManagerContext;
@@ -56,12 +57,11 @@ public interface UserManager {
 
     /**
      * Authenticate the user with the current provider's user manager
-     * @param userId
-     * @param password
+     * @param creds SimpleCredentials
      * @return true when successfully authenticate
      * @throws RepositoryException
      */
-    public boolean authenticate(String userId, char[] password) throws RepositoryException;
+    public boolean authenticate(SimpleCredentials creds) throws RepositoryException;
 
     /**
      * Get a list of userIds managed by the backend
@@ -69,6 +69,14 @@ public interface UserManager {
      * @throws RepositoryException
      */
     public Set<String> listUsers() throws RepositoryException;
+
+    /**
+     * Check if the user with the given userId exists in the repository
+     * @param userId
+     * @return the user node
+     * @throws RepositoryException
+     */
+    public boolean hasUserNode(String userId) throws RepositoryException;
 
     /**
      * Get the node for the user with the given userId

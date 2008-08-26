@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -55,6 +56,11 @@ public class LdapUserManager extends AbstractUserManager {
     private final static String SVN_ID = "$Id$";
 
     /**
+     * On sync save every after every SAVE_INTERVAL changes
+     */
+    private final static int SAVE_INTERVAL = 2500;
+    
+    /**
      * The initialized ldap context factory
      */
     private LdapContextFactory lcf;
@@ -73,6 +79,7 @@ public class LdapUserManager extends AbstractUserManager {
      * Logger
      */
     private final static Logger log = LoggerFactory.getLogger(LdapUserManager.class);
+    
 
     //------------------------< Interface Impl >--------------------------//
     /**
@@ -92,7 +99,7 @@ public class LdapUserManager extends AbstractUserManager {
     }
 
     @Override
-    public boolean authenticate(String userId, char[] password) throws RepositoryException {
+    public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
@@ -100,18 +107,18 @@ public class LdapUserManager extends AbstractUserManager {
         // fetch (cached) dn
         String dn;
         try {
-            dn = getUserNode(userId).getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
+            dn = getUserNode(creds.getUserID()).getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
         } catch (PathNotFoundException e) {
-            log.warn("Dn for ldap backed user '{}' not found: {}", userId, e.getMessage());
+            log.warn("Dn for ldap backed user '{}' not found: {}", creds.getUserID(), e.getMessage());
             return false;
         }
 
         LdapContext ctx = null;
         try {
-            ctx = lcf.getLdapContext(dn, password);
+            ctx = lcf.getLdapContext(dn, creds.getPassword());
             return true;
         } catch (NamingException e) {
-            log.debug("Exception while trying to authenticate user {} : {}", userId, e.getMessage());
+            log.debug("Exception while trying to authenticate user {} : {}", creds.getUserID(), e.getMessage());
         } finally {
             LdapUtils.closeContext(ctx);
         }
@@ -166,7 +173,7 @@ public class LdapUserManager extends AbstractUserManager {
                 }
             }
             user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
-            user.save();
+            user.getParent().save();
         } catch (RepositoryException e) {
             log.error("Unable to get or create user node: " + userId, e);
         } catch (NamingException e) {
@@ -193,7 +200,7 @@ public class LdapUserManager extends AbstractUserManager {
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-            //
+            int count = 0;
             for (LdapSearch search : searches) {
                 results = ldapContext.search(search.getBaseDn(), search.getFilter(), ctls);
                 while (results.hasMore()) {
@@ -205,43 +212,65 @@ public class LdapUserManager extends AbstractUserManager {
                     if (uidAttr == null) {
                         log.warn("Skipping dn='" + sr.getName() + "' because the uid attribute is not found.");
                     } else {
-                        createUserIfNotExists((String) uidAttr.get(), dn);
+                        if (createUserIfNotExists((String) uidAttr.get(), dn)) {
+                            count++;
+                            if (count == SAVE_INTERVAL) {
+                                count = 0;
+                                try {
+                                    session.getRootNode().getNode(usersPath).save();
+                                } catch (RepositoryException e) {
+                                    log.error("Error while saving users node: " + usersPath, e);
+                                }
+                            }
+                        }
                     }
                 }
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
         }
+
+        // save remaining unsaved user nodes
+        try {
+            session.getRootNode().getNode(usersPath).save();
+        } catch (RepositoryException e) {
+            log.error("Error while saving users node: " + usersPath, e);
+        }
     }
 
-    private void createUserIfNotExists(String userId, String dn) {
+    /**
+     * Create a user when needed. 
+     * @param userId
+     * @param dn
+     * @return true when a new user is created
+     */
+    private boolean createUserIfNotExists(String userId, String dn) {
         log.trace("Checking user: {} for dn: {}", userId, dn);
-        Node user;
 
         try {
-            user = getUserNode(userId);
-            // user exists, don't mess with it.
-            return;
-        } catch (PathNotFoundException e) {
-            // fall through, create new user
+            if (hasUserNode(userId)) {
+                // user exists, don't mess with it.
+                return false;
+            }
         } catch (RepositoryException e) {
+            // something is wrong with the user node, log and leave it
             log.error("Failed to lookup user " + userId, e);
-            return;
+            return false;
         }
 
         try {
             // user does not exist, create
-            user = createUserNode(userId, HippoNodeType.NT_EXTERNALUSER);
+            Node user = createUserNode(userId, HippoNodeType.NT_EXTERNALUSER);
             user.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
             user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
             user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-            // save is needed on the parent
-            user.getParent().save();
-            log.info("User: {} created by by {} ", userId, providerId);
+            // log to debug level. Logging 10.000+ user imports is a performance hit.
+            log.debug("User: {} created by by {} ", userId, providerId);
+            return true;
         } catch (RepositoryException e) {
             log.error("Failed to create user " + userId, e);
+            return false;
         }
-        return;
     }
 
     private void loadSearches(Node providerNode) throws RepositoryException {

@@ -11,6 +11,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -88,8 +89,16 @@ public class SecurityManager {
         }
     }
 
-    public boolean authenticate(String userId, char[] password) {
+    /**
+     * Try to authenticate the user
+     * @param userId
+     * @param password
+     * @return
+     */
+    public boolean authenticate(SimpleCredentials creds) {
+        String userId = creds.getUserID();
         try {
+            
             // does the user already exists
             log.trace("Looking for user: {} in path: {}", userId, usersPath);
             String path = usersPath + "/" + userId;
@@ -116,7 +125,7 @@ public class SecurityManager {
             UserManager userMgr = providers.get(providerName).getUserManger();
 
             // check the password
-            if (!userMgr.authenticate(userId, password)) {
+            if (!userMgr.authenticate(creds)) {
                 log.debug("Invalid username or password: {}", userId);
                 return false;
             }

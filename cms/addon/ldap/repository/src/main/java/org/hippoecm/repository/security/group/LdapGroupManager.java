@@ -58,6 +58,11 @@ public class LdapGroupManager extends AbstractGroupManager {
     private final static String SVN_ID = "$Id$";
 
     /**
+     * On sync save every after every SAVE_INTERVAL changes
+     */
+    private final static int SAVE_INTERVAL = 2500;
+    
+    /**
      * The initialized ldap context factory
      */
     private LdapContextFactory lcf;
@@ -121,8 +126,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
             group.setProperty(HippoNodeType.HIPPO_MEMBERS, uids.toArray(new String[uids.size()]));
             group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
-            group.save();
-            log.info("Updated members of for group: {}", dn);
+            log.debug("Updated members of for group: {}", dn);
         } catch (RepositoryException e) {
             log.warn("Unable to update members of group {} : {}", dn, e.getMessage());
         }
@@ -152,9 +156,6 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.debug("Skipping attribute for group unable to get/create property: {} : {}", mapping.getTarget(), e.getMessage());
                 }
             }
-            group.save();
-        } catch (RepositoryException e) {
-            log.error("Unable sync group node attributes: {}", e.getMessage());
         } catch (NamingException e) {
             log.error("Unable to sync group attributes: {}", e.getMessage());
         } finally {
@@ -178,7 +179,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-            //
+            int count = 0;
             for (LdapSearch search : searches) {
                 results = ldapContext.search(search.getBaseDn(), search.getFilter(), ctls);
                 while (results.hasMore()) {
@@ -193,6 +194,15 @@ public class LdapGroupManager extends AbstractGroupManager {
                         List<String> members = LdapUtils.getAllAttributeValues(attrs.get(search.getMemberAttr()));
                         if (group != null) {
                             setGroup(group, dn, members, search.getMemberNameAttr());
+                            count++;
+                            if (count == SAVE_INTERVAL) {
+                                count = 0;
+                                try {
+                                    session.getRootNode().getNode(groupsPath).save();
+                                } catch (RepositoryException e) {
+                                    log.error("Error while saving groups node: " + groupsPath, e);
+                                }
+                            }
                         } else {
                             log.debug("Not updating group {}, because it is not managed by this provider: {}", dn, providerId);
                         }
@@ -201,6 +211,13 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
+        }
+
+        // save remaining unsaved group nodes
+        try {
+            session.getRootNode().getNode(groupsPath).save();
+        } catch (RepositoryException e) {
+            log.error("Error while saving groups node: " + groupsPath, e);
         }
     }
 
@@ -230,9 +247,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             group.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
             group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
             group.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-            // save is needed on the parent
-            group.getParent().save();
-            log.info("Group: {} created by by {} ", groupId, providerId);
+            log.debug("Group: {} created by by {} ", groupId, providerId);
         } catch (RepositoryException e) {
             log.error("Failed to create group " + groupId, e);
             return null;

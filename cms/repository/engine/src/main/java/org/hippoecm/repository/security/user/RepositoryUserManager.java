@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -61,16 +62,16 @@ public class RepositoryUserManager extends AbstractUserManager {
      * {@inheritDoc}
      */
     @Override
-    public boolean authenticate(String userId, char[] password) throws RepositoryException {
+    public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
         try {
-            return PasswordHelper.checkHash(new String(password), getPasswordHash(getUserNode(userId)));
+            return PasswordHelper.checkHash(creds.getPassword(), getPasswordHash(getUserNode(creds.getUserID())));
         } catch (NoSuchAlgorithmException e) {
-            throw new RepositoryException("Unknown algorithm found when authenticating user: " + userId, e);
+            throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
         } catch (UnsupportedEncodingException e) {
-            throw new RepositoryException("Unsupported encoding found when authenticating user: " + userId, e);
+            throw new RepositoryException("Unsupported encoding found when authenticating user: " + creds.getUserID(), e);
         }
     }
 
