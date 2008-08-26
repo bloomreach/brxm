@@ -7,6 +7,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -22,12 +23,12 @@ public class NavigationItem extends AbstractELNode {
 
     Boolean selected = false;
 
-    public NavigationItem(Node node) {
-        super(node);
+    public NavigationItem(ContextBase ctxBase, Node node) {
+        super(ctxBase, node);
     }
 
-    public NavigationItem(Node node,Boolean selected) {
-        super(node);
+    public NavigationItem(ContextBase ctxBase, Node node,Boolean selected) {
+        super(ctxBase, node);
         this.selected = selected;
     }
 
@@ -50,7 +51,7 @@ public class NavigationItem extends AbstractELNode {
                     }
                     subNode = subNode.getNode(subNode.getName());
                 }
-                wrappedChildNodes.add(new NavigationItem(subNode));
+                wrappedChildNodes.add(new NavigationItem(contextBase, subNode));
             }
 
         } catch (RepositoryException e) {

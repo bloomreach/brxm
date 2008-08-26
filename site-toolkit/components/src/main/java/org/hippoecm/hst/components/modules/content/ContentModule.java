@@ -35,7 +35,7 @@ public class ContentModule extends ModuleBase {
 		ContentModuleNode contentModuleNode = null;
 
 		Node node = ctxBase.getRelativeNode(path);
-		contentModuleNode = new ContentModuleNode(node);
+		contentModuleNode = new ContentModuleNode(ctxBase, node);
 
 		pageContext.setAttribute(getVar(), contentModuleNode);
 	}
