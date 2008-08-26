@@ -60,8 +60,11 @@ public void doTag() throws JspException, IOException {
     if (node != null) {    	
         pageContext.setAttribute(getVar(), node);
         try {
-        	log.info("UUID" +  node.getJcrNode().getUUID());
-			request.getSession().setAttribute("UUID", node.getJcrNode().getUUID());
+            if(node.getJcrNode().isNodeType("mix:referenceable")) {
+                request.getSession().setAttribute("UUID", node.getJcrNode().getUUID());
+            } else {
+                log.warn("Node is not referenceable hence cannot get uuid. ");
+            }
 		} catch (UnsupportedRepositoryOperationException e) {			
 			log.error(e.getMessage());
 		} catch (RepositoryException e) {		
@@ -75,9 +78,7 @@ private TemplateNode getContentNode(HttpServletRequest request) throws Repositor
 	 Session jcrSession = (Session) request.getAttribute(URLMappingTemplateContextFilter.JCRSESSION_REQUEST_ATTRIBUTE);
 	 
 	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
-	 log.info("[[[[[[[[[[[[[[[[[[" + pageNode + " " + contentContextBase);
 	 if (pageNode != null && contentContextBase != null) {
-		 log.info("++++++++" + contentContextBase + " DOCUMENT="+ pageNode.getRelativeContentPath());
 		 Node currentJcrNode = contentContextBase.getRelativeNode(pageNode.getRelativeContentPath());		
 		 return (currentJcrNode == null) ? null : new TemplateNode(contentContextBase, currentJcrNode);
 	 }
