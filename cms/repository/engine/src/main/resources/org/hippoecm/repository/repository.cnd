@@ -131,7 +131,7 @@
 [hippo:application] > nt:unstructured orderable
 
 [hippo:accessmanager] > nt:base
-- hippo:permissioncachesize (long) = '2000' mandatory autocreated 
+- hippo:permissioncachesize (long) = '20000' mandatory autocreated 
 
 [hippo:user] > nt:base
 - hippo:active (boolean) = true mandatory autocreated
