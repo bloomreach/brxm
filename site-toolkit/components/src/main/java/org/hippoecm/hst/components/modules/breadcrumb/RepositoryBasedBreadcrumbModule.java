@@ -82,7 +82,7 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
 	    			subNode = subNode.getNode(selectedItemsList.get(i).toString());
 	    		}
 	    		if(!subNode.isNodeType(HippoNodeType.NT_HANDLE)){
-	    			wrappedNodes.add(new NavigationItem(ctxBase, subNode,true));
+	    			wrappedNodes.add(new NavigationItem(subNode,true));
 	    		}
 	    	}
 

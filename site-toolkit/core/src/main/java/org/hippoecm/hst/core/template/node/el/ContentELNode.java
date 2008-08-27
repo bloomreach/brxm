@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
-import javax.jcr.Node;
+import java.util.Map;
 
-public interface ELNode {
-    public Node getJcrNode();
-    public String getDecodedName();
-    public String getName();
+public interface ContentELNode extends ELNode{
+    public Map getProperty();
+    public Map getResourceUrl();
 }

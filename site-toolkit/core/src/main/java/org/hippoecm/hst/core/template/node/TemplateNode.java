@@ -31,12 +31,14 @@ public class TemplateNode extends AbstractELNode {
 	private Logger log = LoggerFactory.getLogger(TemplateNode.class);	
 	
 	protected String relativePath;	
+	protected ContextBase contextBase;
 	
 	
 	protected String relativeContentPath;
 	
 	public TemplateNode(ContextBase contextBase, Node jcrNode) {
-        super(contextBase, jcrNode);
+        super(jcrNode);
+		this.contextBase = contextBase;
 	}
 	
 	public TemplateNode(ContextBase contextBase, String relativePath) throws RepositoryException {

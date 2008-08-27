@@ -117,7 +117,7 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
                 try {
                     Node node = (Node) jcrSession.getItem(row.getValue("jcr:path").getString());
                     double score = row.getValue("jcr:score").getDouble();
-                    SearchHit searchHit = new SearchHit(ctxBase, node, (counter+offset), score);
+                    SearchHit searchHit = new SearchHit(node, (counter+offset), score);
                     if (isExcerptNeeded()) {
                         searchHit.setExcerpt(row.getValue("rep:excerpt(.)").getString());
                     }

@@ -8,7 +8,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.node.el.AbstractELNode;
+import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,17 @@ import org.slf4j.LoggerFactory;
  * 
  *
  */
-public class NavigationItem extends AbstractELNode {
+public class NavigationItem extends ContentELNodeImpl {
     private static final Logger log = LoggerFactory.getLogger(NavigationItem.class);
 
     Boolean selected = false;
 
-    public NavigationItem(ContextBase ctxBase, Node node) {
-        super(ctxBase, node);
+    public NavigationItem(Node node) {
+        super(node); 
     }
 
-    public NavigationItem(ContextBase ctxBase, Node node,Boolean selected) {
-        super(ctxBase, node);
+    public NavigationItem(Node node,Boolean selected) {
+        super(node);
         this.selected = selected;
     }
 
@@ -51,7 +51,7 @@ public class NavigationItem extends AbstractELNode {
                     }
                     subNode = subNode.getNode(subNode.getName());
                 }
-                wrappedChildNodes.add(new NavigationItem(contextBase, subNode));
+                wrappedChildNodes.add(new NavigationItem(subNode));
             }
 
         } catch (RepositoryException e) {

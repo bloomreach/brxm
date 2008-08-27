@@ -48,8 +48,6 @@ public class ContextBase {
     		
 		String relativePath = stripFirstSlash(repositoryPath);
 		
-		this.urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-		
 		log.info("constructor() with repositoryPath= " + relativePath);
 		if (relativePath.trim().length() == 0) {
 			this.contextRootNode = session.getRootNode();
@@ -69,14 +67,6 @@ public class ContextBase {
 	public Session getSession() {
 		return jcrSession;
 	}
-	
-//	public void setUrlMapping(URLMapping urlMapping) {
-//        this.urlMapping = urlMapping;
-//    }
-    
-    public URLMapping getUrlMapping() {
-       return this.urlMapping;
-    }
 	 
 	public ContextBase getRelativeContextBase(String name, String relativePath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
 	    String contextRootPath = stripFirstSlash(contextRootNode.getPath());

@@ -17,16 +17,17 @@ package org.hippoecm.hst.core.template.module.query;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.node.el.AbstractELNode;
+import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 
-public class SearchHit extends AbstractELNode {
+public class SearchHit extends ContentELNodeImpl {
     private String excerpt;
     private int hitPosition;
     private double score;
     
-    public SearchHit(ContextBase ctxBase, Node node, int hitPosition, double score) {
-        super(ctxBase, node);
+    public SearchHit(Node node, int hitPosition, double score) {
+        super(node);
         this.hitPosition = hitPosition;
         this.score = score;
     }

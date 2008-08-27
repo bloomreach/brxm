@@ -50,7 +50,7 @@ public class RepositoryBasedNavigationModule extends ModuleBase {
             while (subNodes.hasNext()) {
                 Node subNode = subNodes.nextNode();
                 if(subNode == null) {continue;}
-                wrappedNodes.add(new NavigationItem(ctxBase, subNode));
+                wrappedNodes.add(new NavigationItem(subNode));
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);

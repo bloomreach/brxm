@@ -54,6 +54,7 @@ public class URLMappingImpl implements URLMapping {
                 if (subNode == null) {
                     continue;
                 }
+                
                 if (subNode.hasProperty("hst:urlmapping")) {
                     if (subNode.hasProperty("hst:prefixlinkrewrite")) {
                         String prefixLinkRewrite = subNode.getProperty("hst:prefixlinkrewrite").getString();

@@ -41,6 +41,7 @@ public class SourceRewriterImpl implements SourceRewriter {
     private final String HREF_ATTR_NAME = "href=\"";
     private final String SRC_ATTR_NAME = "src=\"";
     private final String ATTR_END = "\"";
+    
     private PathTranslator pathTranslator;
     
     /*
@@ -48,6 +49,7 @@ public class SourceRewriterImpl implements SourceRewriter {
      */
     public SourceRewriterImpl(URLMapping mapping) {
         this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(mapping), new PathToSrcTranslatorImpl());
+        
     }
     
     /*
