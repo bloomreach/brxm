@@ -44,8 +44,8 @@
             <p>It is common use to access the BinariesServlet in the <code>src</code> attribute of
               a <code>img</code> tag, or in the <code>href</code> attribute of the <code>a</code> tag.</p>
             <p>The path to the binary node in the repository should be easily obtained using the
-              context's <code>_path</code> property (<a href="el-index.html#FixedProperties">see here</a>). 
-              In the following example <code>hippo:resource</code> is a subnode of the current context:</p>
+              <code>resourceUrl</code> property of your current item. 
+              In the following example <code>hippo:resource</code> is a subnode of the current pageNode:</p>
           <source><![CDATA[  web.xml setup: BinariesServlet has URL-pattern /binaries/*
   
   using expression language:
