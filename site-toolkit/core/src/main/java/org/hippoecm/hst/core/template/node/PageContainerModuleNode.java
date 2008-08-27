@@ -73,15 +73,18 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 	
 	public String getPropertyValue(String propertyName) throws TemplateException {
 		   try {
-				  return super.getPropertyValue(propertyName);				 
-			} catch (Exception e) {			
+			   if (jcrNode.hasProperty(propertyName)) {
+				  return super.getPropertyValue(propertyName);			
+			   } else {
+				   return getModuleNode().getPropertyValue(propertyName); 			   
+			   }			   
+			} catch (Exception e) {		
 				try {
-					log.error("Cannot get property " + propertyName + " from " + jcrNode.getPath());				
-					//property not available in current node, try the module node				
-					return getModuleNode().getPropertyValue(propertyName);
+					log.error("Cannot get property " + propertyName + " from " + jcrNode.getPath());
 				} catch (RepositoryException e1) {
-					throw new TemplateException(e);
+					log.error("Cannot get property " + propertyName);
 				}
+				throw new TemplateException(e);
 			}
 	   }
 }
