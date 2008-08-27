@@ -45,7 +45,6 @@ public class URLMappingImpl implements URLMapping {
         this.session = session;
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
-        System.out.println("::::::::::::: contextPath= " + contextPath);
         try {
 
             Node hstConf = (Node) session.getItem(path);
