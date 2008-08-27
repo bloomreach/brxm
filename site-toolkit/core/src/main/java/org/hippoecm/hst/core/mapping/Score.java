@@ -16,10 +16,10 @@
 package org.hippoecm.hst.core.mapping;
  
 public class Score {
-    public final static int EXACTPATH = 100;
-    public final static int PARTIALPATH = 25;
-    public final static int ISTYPE = 10;
-    public final static int SUPERTYPE = 5;
+    public final static int EXACTPATH = 47;
+    public final static int PARTIALPATH = 23;
+    public final static int ISTYPE = 7;
+    public final static int SUPERTYPE = 3;
     public final static int MAXIMUNSCORE = ISTYPE * EXACTPATH;
 
 }
