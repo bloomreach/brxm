@@ -23,6 +23,7 @@ public class SearchResult {
     private int offset;
     private int pagesize;
     private String didyoumean;
+    private String query;
 
     public SearchResult(List<SearchHit> hits) {
         this.hits = hits;
@@ -63,6 +64,14 @@ public class SearchResult {
 
     public List<SearchHit> getHits() {
         return hits;
+    }
+
+    public void setQuery(String querytext) {
+        this.query = querytext;
+    }
+    
+    public String getQuery() {
+       return this.query;
     }
 
 }

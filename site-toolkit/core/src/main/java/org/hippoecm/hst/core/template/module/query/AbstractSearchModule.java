@@ -100,7 +100,7 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
             searchResult.setSize(rows.getSize());
             searchResult.setOffset(offset);
             searchResult.setPagesize(limit);
-            
+            searchResult.setQuery(querytext);
             try {
                 rows.skip(offset);
             } catch (NoSuchElementException e ) {
