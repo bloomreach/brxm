@@ -16,7 +16,7 @@
 package org.hippoecm.hst.core.mapping;
  
 public class Score {
-    public final static int EXACTPATH = 47;
+    public final static int EXACTPATH = 113;
     public final static int PARTIALPATH = 23;
     public final static int ISTYPE = 7;
     public final static int SUPERTYPE = 3;
