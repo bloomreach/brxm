@@ -33,7 +33,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <org.hippoecm.version>2.01.00.13144</org.hippoecm.version>
+        <org.hippoecm.version>2.01.00.13171</org.hippoecm.version>
     </properties>
 
     <dependencies>

@@ -16,11 +16,13 @@
       <ul class="subnav">
         <c:set var="firstSubSubItem" value="${subItem.children[0]}"/>
         <c:choose>
-          <c:when test="${firstSubSubItem.path!=null}">
-            <li><a href="${pageContext.request.contextPath}${requestScope.currentUrlbase}/page${firstSubSubItem.path}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
+          <c:when test="${firstSubSubItem!=null}">
+	    <hst-tmpl:link var="link" item="${firstSubSubItem}" />
+            <li><a href="${link.href}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
           </c:when>
           <c:otherwise>
-            <li><a href="${pageContext.request.contextPath}${requestScope.currentUrlbase}/page${subItem.path}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
+	    <hst-tmpl:link var="link" item="${subItem}" />
+            <li><a href="${link.href}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
           </c:otherwise>
         </c:choose>        	    
       </ul>

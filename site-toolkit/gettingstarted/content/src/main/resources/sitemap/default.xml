@@ -22,6 +22,15 @@
     <sv:property sv:name="hst:urlmapping" sv:type="String">
         <sv:value>/page/(.*?)$</sv:value>
     </sv:property>
+    <sv:property sv:name="hst:prefixlinkrewrite" sv:type="String">
+        <sv:value>/page</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:nodepath" sv:type="String">
+        <sv:value>/content/*</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:nodetype" sv:type="String">
+        <sv:value>hippo:document</sv:value>
+    </sv:property>
     <sv:node sv:name="content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemaplayout</sv:value>
