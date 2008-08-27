@@ -1176,7 +1176,7 @@
       <sv:value>workflow.reviewed-action.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>reviewed-action</sv:value>
+      <sv:value>default</sv:value>
     </sv:property>
   </sv:node>
 

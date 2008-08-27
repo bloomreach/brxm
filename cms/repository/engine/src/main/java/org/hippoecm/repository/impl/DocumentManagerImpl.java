@@ -180,8 +180,12 @@ public class DocumentManagerImpl implements DocumentManager {
             if (iter.hasNext()) {
                 Node resultNode = iter.nextNode();
                 String uuid = resultNode.getUUID();
-                return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
-                                            queryNode.getNode(HippoNodeType.NT_TYPES));
+                if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
+                    return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
+                                                queryNode.getNode(HippoNodeType.NT_TYPES));
+                } else {
+                    return new Document(uuid);
+                }
             } else {
                 return null;
             }

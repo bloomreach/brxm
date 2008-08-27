@@ -18,6 +18,11 @@ package org.hippoecm.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
@@ -28,22 +33,40 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
+import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class FolderWorkflowTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    Node root;
-    
+    Node root, node;
+    WorkflowManager manager;
+    String[] content = {
+        "/test/f", "hippostd:folder",
+        "jcr:mixinTypes", "hippo:harddocument",
+        "/test/aap", "hippostd:folder",
+        "jcr:mixinTypes", "hippo:harddocument",
+        "/test/aap/noot", "nt:unstructured",
+        "/test/aap/noot/mies", "hippostd:folder",
+        "jcr:mixinTypes", "hippo:harddocument",
+        "/test/aap/noot/mies/vuur", "nt:unstructured",
+        "/test/aap/noot/mies/vuur/jot", "nt:unstructured",
+        "/test/aap/noot/mies/vuur/jot/gijs", "hippo:coredocument",
+        "jcr:mixinTypes", "hippo:harddocument",
+        "/test/aap/noot/mies/vuur/jot/gijs/duif", "hippo:document",
+        "jcr:mixinTypes", "hippo:harddocument"
+    };
+
     @Before
     public void setUp() throws Exception {
         super.setUp(true);
@@ -52,6 +75,11 @@ public class FolderWorkflowTest extends TestCase {
             root.getNode("test").remove();
         root = root.addNode("test");
         session.save();
+
+        build(session, content);
+        session.save();
+        node = root.getNode("f");
+        manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
     }
 
     @After
@@ -63,11 +91,33 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     @Test
+    public void testQuery() throws Exception {
+        Node document = session.getRootNode().getNode("test/aap/noot/mies/vuur/jot/gijs");
+        QueryManager manager = session.getWorkspace().getQueryManager();
+        HippoQuery query = (HippoQuery) manager.getQuery(session.getRootNode().getNode("hippo:configuration/hippo:documents/embedded"));
+        Map<String,String> arguments = new TreeMap<String,String>();
+        arguments.put("id", document.getUUID());
+        query.bindValue("id", session.getValueFactory().createValue(document.getUUID()));
+        QueryResult resultset = query.execute();
+        NodeIterator iter = resultset.getNodes();
+        assertTrue(iter.getSize() > 0);
+        assertTrue(iter.hasNext());
+        assertEquals("/test/aap/noot/mies", iter.nextNode().getPath());
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        Node document = session.getRootNode().getNode("test/aap/noot/mies/vuur/jot/gijs");
+        Workflow workflow = manager.getWorkflow("default", document);
+        assertNotNull(workflow);
+        assertTrue(workflow instanceof DefaultWorkflow);
+        ((DefaultWorkflow)workflow).delete();
+        assertTrue(root.hasNode("aap/noot/mies/vuur/jot"));
+        assertFalse(root.hasNode("aap/noot/mies/vuur/jot/gijs"));
+    }
+
+    @Test
     public void testFolder() throws RepositoryException, WorkflowException, RemoteException {
-        Node node = root.addNode("f","hippostd:folder");
-        node.addMixin("hippo:harddocument");
-        session.save();
-        WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
         Map<String,Set<String>> types = workflow.list();
@@ -83,10 +133,6 @@ public class FolderWorkflowTest extends TestCase {
     
     @Test
     public void testDirectory() throws RepositoryException, WorkflowException, RemoteException {
-        Node node = root.addNode("f","hippostd:directory");
-        node.addMixin("hippo:harddocument");
-        session.save();
-        WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
         Map<String,Set<String>> types = workflow.list();
@@ -101,12 +147,7 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     @Test
-    @Ignore
     public void testTemplateDocument() throws RepositoryException, WorkflowException, RemoteException {
-        Node node = root.addNode("f","hippostd:folder");
-        node.addMixin("hippo:harddocument");
-        session.save();
-        WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
         Map<String,String[]> renames = new TreeMap<String,String[]>();
@@ -202,7 +243,6 @@ public class FolderWorkflowTest extends TestCase {
         TreeMap<String,String[]> renames = new TreeMap<String,String[]>();
         renames.put("./_name", new String[] { "d" });
         renames.put("./_node/_name", new String[] { "d" });
-        System.err.println("\n\n\n\n\n\n\n\n");
         workflow.copy(session.getRootNode().getNode(
                                        "hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/document"),
                                        session.getRootNode().getNode("test"), renames, ".");

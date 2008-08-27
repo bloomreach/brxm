@@ -664,6 +664,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         WorkflowContextImpl(DocumentManagerImpl documentManager, Node subject) {
             this.documentManager = documentManager;
+            this.subject = subject;
         }
 
         public Document getDocument(String category, String identifier) throws RepositoryException {
