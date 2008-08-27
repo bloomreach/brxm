@@ -80,11 +80,11 @@ public class TabsPlugin extends RenderPlugin {
                 if (tabbie != null) {
                     tabs.remove(tabbie);
                     tabbie.destroy();
-                    service.unbind();
-                    redraw();
                     if (tabs.size() == 0) {
                         tabbedPanel.setSelectedTab(-1);
                     }
+                    service.unbind();
+                    redraw();
                 }
             }
         };
