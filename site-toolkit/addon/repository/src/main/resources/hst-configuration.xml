@@ -18,6 +18,9 @@
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:hardhandle</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>b89b4e46-fb6b-47a6-bb85-f58d20e7e667</sv:value>
+    </sv:property>
     <sv:node sv:name="hst:configuration">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:configuration</sv:value>

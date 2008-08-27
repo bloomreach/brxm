@@ -42,4 +42,21 @@
       <sv:value>prefer-single</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="hst:configuration">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:facetselect</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:docbase" sv:type="String">
+      <sv:value>b89b4e46-fb6b-47a6-bb85-f58d20e7e667</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:facets" sv:type="String">
+      <sv:value>hippostd:state</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:values" sv:type="String">
+      <sv:value>unpublished</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:modes" sv:type="String">
+      <sv:value>prefer-single</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
