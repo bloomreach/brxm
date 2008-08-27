@@ -115,5 +115,21 @@
         </attribute>
     </tag>
 
-    
+    <tag>
+        <name>link</name>
+        <tagclass>org.hippoecm.hst.core.template.tag.LinkTag</tagclass>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>...</description>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>...</description>
+            <name>item</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

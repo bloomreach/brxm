@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.hst.core.template.HstFilterBase;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +39,13 @@ public class URLMappingImpl implements URLMapping {
     private List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
     private Session session;
     private String contextPrefix;
+    private String contextPath;
 
-    public URLMappingImpl(Session session, String contextPrefix, String path) {
+    public URLMappingImpl(Session session, String contextPath,  String contextPrefix, String path) {
         this.session = session;
         this.contextPrefix = contextPrefix;
+        this.contextPath = contextPath;
+        System.out.println("::::::::::::: contextPath= " + contextPath);
         try {
 
             Node hstConf = (Node) session.getItem(path);
@@ -98,6 +102,13 @@ public class URLMappingImpl implements URLMapping {
     public String rewriteLocation(Node node) {
         String path = "";
         try {
+            if(node instanceof HippoNode) {
+                HippoNode hippoNode = (HippoNode)node;
+                if(hippoNode.getCanonicalNode()!= null && !hippoNode.getCanonicalNode().isSame(node)) {
+                    // take canonical node because virtual node found
+                    node = hippoNode.getCanonicalNode();
+                }
+            }
             path = node.getPath();
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 try {
@@ -132,13 +143,13 @@ public class URLMappingImpl implements URLMapping {
                 log.warn("No matching linkrewriter found.");
             } else {
                 String url = bestRewriter.getUrl(node);
-                return contextPrefix+url;
+                return contextPath+contextPrefix+url;
             }
             
         } catch (RepositoryException e) {
             log.error("RepositoryException " + e.getMessage());
         }
-        return contextPrefix+path;
+        return contextPath+contextPrefix+path;
     }
 
     public String rewriteLocation(String documentPath) {
