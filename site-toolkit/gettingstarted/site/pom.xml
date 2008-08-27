@@ -26,8 +26,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>org.hippoecm.hst.gettingstarted website</name>
-  <description>org.hippoecm.hst.gettingstarted website</description>
+  <name>HST2 Getting Started website</name>
+  <description>HST2 Getting Started website</description>
   <artifactId>gettingstarted-site</artifactId>
   <groupId>org.hippoecm.hst</groupId>
   <version>1.01.00-SNAPSHOT</version>

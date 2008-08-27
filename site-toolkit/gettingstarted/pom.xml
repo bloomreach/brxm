@@ -29,7 +29,7 @@
   <modules>
     <module>content</module>
     <module>ecm</module>
-    <!--module>site</module-->
+    <module>site</module>
   </modules>
 
   <build>
