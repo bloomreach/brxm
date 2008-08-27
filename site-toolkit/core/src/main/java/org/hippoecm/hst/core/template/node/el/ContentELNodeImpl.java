@@ -155,8 +155,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
-            private String DEFAULT_RESOURCE = "";
-
+            
             @Override
             public Object get(Object resource) {
                 String resourceName = (String) resource;
@@ -175,14 +174,14 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
                             }
                         } else {
                             log.error(resourceName + "not of type hippo:resource. Returning default value");
-                            return DEFAULT_RESOURCE;
+                            return null;
                         }
                     }
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while looking for resource " + resourceName + "  :"
                                     + e.getMessage());
                 }
-                return DEFAULT_RESOURCE;
+                return null;
             }
         };
     }
