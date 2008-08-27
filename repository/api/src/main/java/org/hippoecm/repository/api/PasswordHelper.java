@@ -206,7 +206,7 @@ public class PasswordHelper {
      */
     synchronized public static boolean checkHash(char[] password, String hash) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
-
+        
         // don't allow empty passwords
         if (password == null || hash == null || password.length == 0 || "".equals(hash)) {
             throw new IllegalArgumentException("Empty username's and password are not allowed");
@@ -222,7 +222,7 @@ public class PasswordHelper {
 
         // plain text hash
         if (tokens == 1) {
-            if (password.equals(hash)) {
+            if (hash.equals(new String(password))) {
                 return true;
             } else {
                 return false;
