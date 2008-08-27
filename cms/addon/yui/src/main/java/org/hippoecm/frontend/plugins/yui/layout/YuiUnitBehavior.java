@@ -50,13 +50,13 @@ public class YuiUnitBehavior extends AbstractBehavior {
         }
     }
 
-    public String addUnit(Component component, YuiWireframeConfig config) {
+    public String addUnit(Component component, YuiWireframeConfig config, String parentMarkupId) {
         String unitElementId = config.getUnitElement(position);
         String bodyId = component.getMarkupId(true);
         if (unitElementId == null) {
             options.put("id", bodyId);
         } else {
-            options.put("id", unitElementId);
+            options.put("id", parentMarkupId + ":" + unitElementId);
             options.put("body", bodyId);
         }
         config.addUnit(position, options);

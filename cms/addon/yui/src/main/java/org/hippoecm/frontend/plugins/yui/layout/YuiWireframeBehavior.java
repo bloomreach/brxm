@@ -48,8 +48,7 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
     }
 
     public YuiWireframeBehavior(String rootElementId, boolean linkedWithParent) {
-        configuration = new YuiWireframeConfig(linkedWithParent);
-        configuration.setRootElementId(rootElementId);
+        configuration = new YuiWireframeConfig(rootElementId, linkedWithParent);
     }
 
     public YuiWireframeBehavior registerUnitElement(String position, String elId) {
@@ -73,10 +72,6 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
             throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
         }
         this.component = component;
-
-        if (configuration.getRootElementId() == null) {
-            configuration.setRootElementId(component.getMarkupId(true));
-        }
     }
 
     @Override
@@ -110,6 +105,7 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
             }
         }
 
+        configuration.setBaseMarkupId(component.getMarkupId(true));
         MarkupContainer cont = (MarkupContainer) component;
         cont.visitChildren(new IVisitor() {
             public Object component(Component component) {
@@ -119,7 +115,8 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof YuiUnitBehavior) {
                         YuiUnitBehavior unitBehavior = (YuiUnitBehavior) behavior;
-                        unitBehavior.addUnit(component, configuration);
+                        unitBehavior.addUnit(component, configuration, YuiWireframeBehavior.this.component
+                                .getMarkupId(true));
                         return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     }
                 }

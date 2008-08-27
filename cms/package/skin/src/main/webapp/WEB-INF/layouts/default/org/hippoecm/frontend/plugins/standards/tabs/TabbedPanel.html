@@ -13,10 +13,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<html xmlns:wicket="http://wicket.apache.org/">
+<html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div id="tabbed-editor-panel-layout">
-      <div id="tabbed-editor-panel-layout-top">
+    <div yui:id="tabbed-panel-layout">
+      <div yui:id="tabbed-panel-layout-top">
         <div wicket:id="tabs-container">
           <ul class="tabs">
             <li wicket:id="tabs">
@@ -30,7 +30,7 @@
           </ul>
         </div>
       </div>
-      <div id="tabbed-editor-panel-layout-center">
+      <div yui:id="tabbed-panel-layout-center">
         <div wicket:id="panel">[panel]</div>
       </div>
     </div>    

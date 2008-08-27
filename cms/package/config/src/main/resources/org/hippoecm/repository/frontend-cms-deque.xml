@@ -1397,10 +1397,13 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.editor.TabsPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.browse.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.css" sv:type="String">
+      <sv:value>document</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.editor.tab</sv:value>
@@ -1424,7 +1427,7 @@
       <sv:value>service.behavior.editor.tabs</sv:value>
     </sv:property>
     <sv:property sv:name="yui.root" sv:type="String">
-      <sv:value>tabbed-editor-panel-layout</sv:value>
+      <sv:value>tabbed-panel-layout</sv:value>
     </sv:property>
     <sv:property sv:name="yui.linked" sv:type="Boolean">
       <sv:value>true</sv:value>
@@ -1434,10 +1437,10 @@
       <sv:value>center</sv:value>
     </sv:property>
     <sv:property sv:name="top" sv:type="String">
-      <sv:value>tabbed-editor-panel-layout-top</sv:value>
+      <sv:value>tabbed-panel-layout-top</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
-      <sv:value>tabbed-editor-panel-layout-center</sv:value>
+      <sv:value>tabbed-panel-layout-center</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1450,9 +1453,6 @@
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.editor.tabs.center</sv:value>
-    </sv:property>
-    <sv:property sv:name="behavior.path" sv:type="String">
-      <sv:value>tabs:tabs-container</sv:value>
     </sv:property>
     <sv:property sv:name="yui.position" sv:type="String">
       <sv:value>center</sv:value>
@@ -1470,7 +1470,7 @@
       <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.path" sv:type="String">
-      <sv:value>editortabs:tabs-container</sv:value>
+      <sv:value>tabs:tabs-container</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.editor.tabs</sv:value>
@@ -1483,21 +1483,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="emptyTab">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standards.tabs.editor.EmptyTab</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.editor.tab</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.editor.tabs.center</sv:value>
-    </sv:property>
-  </sv:node>
-  
   <sv:node sv:name="documentEditorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

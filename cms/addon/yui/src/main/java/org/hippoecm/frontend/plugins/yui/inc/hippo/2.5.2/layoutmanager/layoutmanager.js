@@ -21,7 +21,7 @@
  * page loads and ajax events.
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, layout, resize, functionqueue
+ * @requires yahoo, dom, layout, resize, functionqueue, hippodom
  * @module layoutmanager
  * @beta
  */
@@ -30,7 +30,7 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
     ( function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoDom = YAHOO.hippo.Dom;
 
         YAHOO.hippo.Wireframe = function(id, parentId) {
             this.id = id;
@@ -129,12 +129,10 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         : _parentId;
 
                 if (this.wireframes[id] == null) {
-                    this.wireframes[id] = new YAHOO.hippo.Wireframe(id,
-                            parentId);
+                    this.wireframes[id] = new YAHOO.hippo.Wireframe(id, parentId);
                 }
                 var wireframe = this.wireframes[id];
                 var update = wireframe.layout != null;
-
                 if (update)
                     this.cleanup(id);
 
@@ -143,13 +141,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         var parentLayout = _this.wireframes[parentId].layout;
                         config.parent = parentLayout;
 
-                        var parentCenterEl = parentLayout.getUnitByPosition(
-                                'center').get('wrap');
+                        var bodyEl = HippoDom.resolveElement(id);
+                        bodyEl.id = id;
+
+                        var parentLayoutUnitEl = _this.findLayoutUnit(bodyEl);
+                        var parentCenterEl = YAHOO.widget.LayoutUnit
+                                .getLayoutUnitById(parentLayoutUnitEl.id).get('wrap');
                         var parentWidth = Dom.getStyle(parentCenterEl, 'width')
                         var parentHeight = Dom.getStyle(parentCenterEl,
                                 'height')
 
-                        var bodyEl = Dom.get(id);
                         Dom.setStyle(bodyEl, 'width', parentWidth);
                         Dom.setStyle(bodyEl, 'height', parentHeight);
 
@@ -192,6 +193,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         };
                     } else {
                         initFunc = function() {
+                            var bodyEl = HippoDom.resolveElement(id);
+                            bodyEl.id = id;
                             _this.wireframes[id].layout = new YAHOO.widget.Layout(
                                     id, config);
                         };
@@ -206,6 +209,20 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             addLinkedWireframe : function(id, config, bodyEl) {
+                var _this = this;
+                for ( var i = 0; i < config.units.length; i++) {
+                    var u = config.units[i];
+                    var uid = u["id"];
+                    var unitEl = HippoDom.resolveElement(uid);
+                    unitEl.id = uid;
+                    
+                    uid = u["body"];
+                    if (uid != undefined) {
+                        unitEl = HippoDom.resolveElement(uid);
+                        unitEl.id = uid;
+                    }
+                }
+
                 var layout = null;
                 if (bodyEl == undefined || bodyEl == null) {
                     layout = new YAHOO.widget.Layout(config);
@@ -213,7 +230,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     layout = new YAHOO.widget.Layout(bodyEl, config);
                 }
 
-                var _this = this;
                 layout.on('render', function() {
                     if (_this.wireframes[id].childInitializer != null) {
                         _this.wireframes[id].childInitializer();
@@ -224,32 +240,21 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                 _this.renderWireframe(_this.wireframes[i].id);
                                 break;
                             }
-                    
                         }
                     }
                 });
-                layout
-                        .on(
-                                'beforeResize',
-                                function() {
-                                    var wireframe = _this.wireframes[id];
-                                    var parentWireframe = _this.wireframes[wireframe.parentId];
-                                    if (parentWireframe != null
-                                            && parentWireframe.layout != null) {
-                                        var parentLayout = _this.wireframes[wireframe.parentId].layout;
-                                        var parentCenterEl = parentLayout
-                                                .getUnitByPosition('center')
-                                                .get('wrap');
-                                        var bodyEl = document
-                                                .getElementById(id);
-                                        Dom.setStyle(bodyEl, 'height', Dom
-                                                .getStyle(parentCenterEl,
-                                                        'height'));
-                                        Dom.setStyle(bodyEl, 'width', Dom
-                                                .getStyle(parentCenterEl,
-                                                        'width'));
-                                    }
-                                });
+                layout.on('beforeResize', function() {
+                    var bodyEl = Dom.get(id);
+                    if (bodyEl) {
+                        var parentLayoutUnitEl = _this.findLayoutUnit(bodyEl);
+                        var parentCenterEl = YAHOO.widget.LayoutUnit
+                                .getLayoutUnitById(parentLayoutUnitEl.id).get('wrap');
+                        if (parentCenterEl) {
+                            Dom.setStyle(bodyEl, 'height', Dom.getStyle(parentCenterEl, 'height'));
+                            Dom.setStyle(bodyEl, 'width', Dom.getStyle(parentCenterEl, 'width'));
+                        }
+                    }
+                });
                 this.wireframes[id].layout = layout;
             },
 
@@ -365,33 +370,3 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         return par;
     };
 })();
-
-/*
- * Proposed patch for 'Empty string passed to getElementById()' error in FF3
- * with Firebug 1.2.0b2.
- */
-
-YAHOO.util.Dom.get = function(el) {
-    if (el) {
-        if (el.nodeType || el.item) { // Node, or NodeList
-            return el;
-        }
-
-        if (typeof el === 'string') { // id
-            return document.getElementById(el);
-        }
-
-        if ('length' in el) { // array-like
-            var c = [];
-            for ( var i = 0, len = el.length; i < len; ++i) {
-                c[c.length] = Y.Dom.get(el[i]);
-            }
-
-            return c;
-        }
-
-        return el; // some other object, just pass it back
-    }
-
-    return null;
-};
