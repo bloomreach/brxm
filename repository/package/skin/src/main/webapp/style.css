@@ -110,6 +110,10 @@ body ul.tabs li.tab6 a, body ul.tabs li.tab7 a, body ul.tabs li.tab8 a,
 body ul.tabs li.tab9 a, body ul.tabs li.tab11 a, body ul.tabs li.tab10{
 padding-top: 5px}
 
+/* Document view panel */
+div.document ul.tabs {
+background: none;
+}
 
 /* Preview panel */
 /* ================================================ */
@@ -147,10 +151,11 @@ background: url("images/hippocms7.gif") no-repeat top left;
 .panelcontainer h2{margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/inactiveView.gif") repeat-x;}
 .nopadding{padding: 0px}
 
-#editor-perspective-wrapper,
-#management-perspective-wrapper,
-#dashboard-perspective-wrapper, 
-#browse-perspective-wrapper{
+/* workaround for current browsers; use [yui|id=...] selector when CSS3 is sufficiently supported */
+.editor-perspective-wrapper,
+.management-perspective-wrapper,
+.dashboard-perspective-wrapper,
+.browse-perspective-wrapper{
 }
 .scrolllist{overflow: auto; height: 90px; padding: 2px; background-color: white}
 
@@ -162,7 +167,8 @@ div.slidercontrol a:hover{cursor: s-resize}
 .panelcontainer h2 span{font-family: arial, helvetica, sans-serif; display: block; padding: 4px; background-position: left right; background-repeat: no-repeat; font-size: 18px; color: #666666; font-weight: normal}
 
 .panelHead{background: url("images/inactiveView.gif") repeat-x top left; height: 30px;}
-#browse-perspective-center-body div.panelHead{background: url("images/inactiveView.gif") top left; height: 60px;}
+.browse-perspective-center-body div.panelHead{
+background: url("images/inactiveView.gif") top left; height: 60px;}
 
 body div.actionspanel{
 padding: 6px;
@@ -200,14 +206,12 @@ div.actionspanel ul li{margin-right: 15px; float: left;}
 
 /* Welcome Panel */
 /* ================================================ */
-#welcomepanel{
-margin-bottom: 8px;
-}
-#welcomepanel div.padding{padding: 15px;}
-#welcomepanel table{width: 100%; margin-bottom: 15px}
-#welcomepanel table tr td{display: none; width: 33%; height: 70px; padding-left: 78px; padding-top: 28px; background-position: 15px 15px; background-repeat: no-repeat}
-#welcomepanel table tr td a{font-size: 18px; color: #999999}
-#welcomepanel table tr td a:hover{text-decoration: underline}
+.welcomepanel{margin-bottom: 8px;}
+.welcomepanel div.padding{padding: 15px;}
+.welcomepanel table{width: 100%; margin-bottom: 15px}
+.welcomepanel table tr td{display: none; width: 33%; height: 70px; padding-left: 78px; padding-top: 28px; background-position: 15px 15px; background-repeat: no-repeat}
+.welcomepanel table tr td a{font-size: 18px; color: #999999}
+.welcomepanel table tr td a:hover{text-decoration: underline}
 
 /* Global Icon Management */
 /* ================================================ */
@@ -384,7 +388,7 @@ div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: bl
 /* Template Editor */
 /* ================================================ */
 
-#editor-perspective-wrapper div.panelcontainer{border-top: none; background: white;}
+.editor-perspective-wrapper div.panelcontainer{border-top: none; background: white;}
 
 div.editor{
 padding:0px;

@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,11 +34,13 @@ public class YuiWireframeConfig implements IClusterable {
     private String parentElementId;
     private boolean linkedWithParent = false;
 
+    private String baseMarkupId;
     private Map<String, Unit> units;
     private Map<String, String> unitElements;
 
-    public YuiWireframeConfig(boolean linkedWithParent) {
+    public YuiWireframeConfig(String rootElemId, boolean linkedWithParent) {
         this();
+        this.rootElementId = rootElemId;
         this.linkedWithParent = linkedWithParent;
     }
 
@@ -80,12 +81,18 @@ public class YuiWireframeConfig implements IClusterable {
         return null;
     }
 
-    public void setRootElementId(String id) {
-        rootElementId = id;
+    public String getRootElementId() {
+        if (rootElementId == null) {
+            return baseMarkupId;
+        } else if (!rootElementId.equals("")) {
+            return baseMarkupId + ':' + rootElementId;
+        } else {
+            return rootElementId;
+        }
     }
 
-    public String getRootElementId() {
-        return rootElementId;
+    public void setBaseMarkupId(String id) {
+        baseMarkupId = id;
     }
 
     public static class Unit implements IClusterable {
@@ -114,7 +121,7 @@ public class YuiWireframeConfig implements IClusterable {
 
     public Map<String, Object> getMap() {
         Map<String, Object> newMap = new HashMap<String, Object>();
-        newMap.put("rootElementId", JavascriptUtil.serialize2JS(rootElementId));
+        newMap.put("rootElementId", JavascriptUtil.serialize2JS(getRootElementId()));
         newMap.put("parentElementId", JavascriptUtil.serialize2JS(parentElementId));
         newMap.put("linkedWithParent", linkedWithParent);
 
@@ -129,8 +136,15 @@ public class YuiWireframeConfig implements IClusterable {
                     if (unit.options != null) {
                         Map<String, String> options = unit.options;
                         for (Map.Entry<String, String> entry : options.entrySet()) {
+                            String value;
+                            if (("id".equals(entry.getKey()) || "body".equals(entry.getKey()))
+                                    && !unitElements.containsKey(unitKey)) {
+                                value = baseMarkupId + ":" + entry.getValue();
+                            } else {
+                                value = entry.getValue();
+                            }
                             config.append(", ").append(entry.getKey()).append(": ").append(
-                                    JavascriptUtil.serialize2JS(entry.getValue()));
+                                    JavascriptUtil.serialize2JS(value));
                         }
                     }
                     config.append("}");

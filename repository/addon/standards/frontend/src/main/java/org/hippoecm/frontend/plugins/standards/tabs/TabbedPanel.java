@@ -23,6 +23,7 @@ import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.extensions.ajax.markup.html.tabs.AjaxTabbedPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
@@ -74,6 +75,19 @@ public class TabbedPanel extends AjaxTabbedPanel {
                 plugin.onSelect(tabbie, target);
             }
         }.add(new Label(titleId, titleModel));
+    }
+
+    @Override
+    public void setSelectedTab(int index) {
+        if (getTabs().size() > 0) {
+            super.setSelectedTab(index);
+        } else {
+            if (get(TAB_PANEL_ID) == null) {
+                add(new EmptyPanel(TAB_PANEL_ID));
+            } else {
+                replace(new EmptyPanel(TAB_PANEL_ID));
+            }
+        }
     }
 
 }
