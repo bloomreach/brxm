@@ -41,7 +41,6 @@
 
   <modules>
     <module>core</module>
-    <!--<module>taglib</module>-->
     <module>addon</module>
     <module>components</module>
     <!--<module>skeleton</module>
@@ -49,7 +48,7 @@
   </modules>
   
   <properties>
-    <hippoecm.version>2.01.00.12907</hippoecm.version>
+    <hippoecm.version>2.01.00.13171</hippoecm.version>
   </properties>
   
   <repositories>
