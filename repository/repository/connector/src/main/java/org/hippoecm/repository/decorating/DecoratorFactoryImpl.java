@@ -99,6 +99,10 @@ public abstract class DecoratorFactoryImpl implements DecoratorFactory {
 
     public abstract Query getQueryDecorator(Session session, Query query);
 
+    public Query getQueryDecorator(Session session, Query query, Node node) {
+        return getQueryDecorator(session, query);
+    }
+
     public QueryResult getQueryResultDecorator(Session session,
                                                QueryResult result) {
         return new QueryResultDecorator(this, session, result);

@@ -41,6 +41,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
@@ -51,6 +52,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
     private final Session userSession;
     private final Session rootSession;
     private final Node subject;
@@ -251,6 +253,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
            subject.orderBefore(srcChildRelPath, destChildRelPath);
        }
        subject.save();
+    }
+
+    public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        Node documentNode = userSession.getNodeByUUID(document.getIdentity());
+        if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
+            documentNode.remove();
+            folderNode.save();
+        }
     }
 
     static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {

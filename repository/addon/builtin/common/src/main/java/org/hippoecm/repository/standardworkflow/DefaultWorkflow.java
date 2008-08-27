@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.rmi.RemoteException;
 
@@ -27,21 +26,9 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
-public interface FolderWorkflow extends Workflow {
+public interface DefaultWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
-    public Map<String,Set<String>> list()
+    public void delete()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public String add(String category, String type, String name)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public String add(String category, String type, Map<String,String> arguments)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void archive(String name)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void delete(String name)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void delete(Document offspring)
-      throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void reorder(LinkedHashMap<String, String> mapping)
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

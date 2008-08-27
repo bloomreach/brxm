@@ -15,26 +15,31 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.ItemExistsException;
+import javax.jcr.AccessDeniedException;
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.ValueFactory;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
 
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import org.apache.jackrabbit.core.query.QueryImpl;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -45,7 +50,8 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     private final static String SVN_ID = "$Id$";
 
     protected final Query query;
-    protected Map<String,Value> arguments;
+    protected Map<String, Value> arguments = null;
+    private HardcodedQuery implementation = null;
 
     private final static String MAGIC_NAMED_START = "MAGIC";
     private final static String MAGIC_NAMED_END = "CIGAM";
@@ -53,17 +59,36 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
         super(factory, session, query);
         this.query = query;
-        this.arguments = null;
+    }
+
+    public QueryDecorator(DecoratorFactory factory, Session session, Query query, Node node) {
+        super(factory, session, query);
+        this.query = query;
+        try {
+            if (node.isNodeType(HippoNodeType.NT_IMPLEMENTATION) && node.hasProperty(HippoNodeType.HIPPO_CLASSNAME)) {
+                String classname = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                this.implementation = (HardcodedQuery)Class.forName(classname).newInstance();
+            }
+        } catch (ClassNotFoundException ex) {
+            // FIXME log some error
+        } catch (InstantiationException ex) {
+            // FIXME log some error
+        } catch (IllegalAccessException ex) {
+            // FIXME log some error
+        } catch (RepositoryException ex) {
+            // FIXME log some error
+        }
     }
 
     /**
      * @inheritDoc
      */
     public QueryResult execute() throws RepositoryException {
-        if (arguments != null)
-            return execute((Map<String,String>)null);
-        else
-            return factory.getQueryResultDecorator(session, query.execute());
+        if (arguments != null) {
+            return execute((Map<String, String>)null);
+        } else {
+            return factory.getQueryResultDecorator(session, execute(query));
+        }
     }
 
     /**
@@ -72,8 +97,8 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     public String getStatement() {
         String queryString = query.getStatement();
         String[] argumentNames = getArguments();
-        for (int i=0; i<argumentNames.length; i++) {
-            queryString = queryString.replaceAll(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END, "\\$"+argumentNames[i]);
+        for (int i = 0; i < argumentNames.length; i++) {
+            queryString = queryString.replaceAll(MAGIC_NAMED_START + argumentNames[i] + MAGIC_NAMED_END, "\\$" + argumentNames[i]);
         }
         return queryString;
     }
@@ -84,17 +109,17 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     public String[] getArguments() {
         String queryString = query.getStatement();
         Set<String> arguments = new HashSet<String>();
-        for (int position=queryString.indexOf(MAGIC_NAMED_START); position >=0; position=queryString.indexOf(MAGIC_NAMED_START, position)) {
+        for (int position = queryString.indexOf(MAGIC_NAMED_START); position >= 0; position = queryString.indexOf(MAGIC_NAMED_START, position)) {
             position += MAGIC_NAMED_START.length();
             int endPosition = position;
             if (Character.isJavaIdentifierStart(queryString.charAt(endPosition))) {
                 do {
                     ++endPosition;
-                } while (endPosition<queryString.length() && Character.isJavaIdentifierPart(queryString.charAt(endPosition)) &&
-                         !queryString.substring(endPosition).startsWith(MAGIC_NAMED_END));
+                } while (endPosition < queryString.length() && Character.isJavaIdentifierPart(queryString.charAt(endPosition)) &&
+                        !queryString.substring(endPosition).startsWith(MAGIC_NAMED_END));
             }
             if (queryString.substring(endPosition).startsWith(MAGIC_NAMED_END)) {
-                arguments.add(queryString.substring(position,endPosition));
+                arguments.add(queryString.substring(position, endPosition));
                 position = endPosition + MAGIC_NAMED_END.length();
             }
         }
@@ -112,27 +137,25 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     /**
      * @inheritDoc
      */
-    public QueryResult execute(Map<String,String> arguments) throws RepositoryException {
+    public QueryResult execute(Map<String, String> arguments) throws RepositoryException {
         String queryString = query.getStatement();
-        String[] argumentNames = getArguments();
         if (arguments != null) {
-            for (int i=0; i<argumentNames.length; i++) {
-                if (arguments.containsKey(argumentNames[i]))
-                    queryString = queryString.replace(MAGIC_NAMED_START+argumentNames[i]+MAGIC_NAMED_END,
-                                                      arguments.get(argumentNames[i]));
+            for (Map.Entry<String,String> entry : arguments.entrySet()) {
+                bindValue(entry.getKey(), session.getValueFactory().createValue(entry.getValue()));
             }
         }
         if (this.arguments != null) {
-            for (Map.Entry<String,Value> entry : this.arguments.entrySet()) {
-                queryString = queryString.replace(MAGIC_NAMED_START+entry.getKey()+MAGIC_NAMED_END,
-                                                  entry.getValue().getString());
+            for (Map.Entry<String, Value> entry : this.arguments.entrySet()) {
+                queryString = queryString.replace(MAGIC_NAMED_START + entry.getKey() + MAGIC_NAMED_END, entry.getValue().getString());
             }
         }
         Query q = session.getWorkspace().getQueryManager().createQuery(queryString, getLanguage());
-        return factory.getQueryResultDecorator(session, q.execute());
+        return factory.getQueryResultDecorator(session, execute(q));
     }
 
     public void bindValue(String varName, Value value) throws IllegalArgumentException, RepositoryException {
+        if(arguments == null)
+            arguments = new HashMap<String, Value>();
         arguments.put(varName, value);
     }
 
@@ -150,12 +173,172 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
             if (Character.isJavaIdentifierStart(statement.charAt(endPosition))) {
                 do {
                     ++endPosition;
-                } while (endPosition<statement.length() && Character.isJavaIdentifierPart(statement.charAt(endPosition)));
-                statement = statement.substring(0,position) + MAGIC_NAMED_START + statement.substring(position+1,endPosition) + MAGIC_NAMED_END + statement.substring(endPosition);
+                } while (endPosition < statement.length() && Character.isJavaIdentifierPart(statement.charAt(endPosition)));
+                statement = statement.substring(0, position) + MAGIC_NAMED_START + statement.substring(position + 1, endPosition) + MAGIC_NAMED_END + statement.substring(endPosition);
                 endPosition += MAGIC_NAMED_START.length() + MAGIC_NAMED_END.length() - 1;
             }
             position = endPosition;
         }
         return statement;
+    }
+
+    public static interface HardcodedQuery {
+        public List execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException;
+    }
+
+    private QueryResult execute(Query query) throws RepositoryException {
+        if (implementation != null) {
+            final List result = implementation.execute(session, this, arguments);
+            return new QueryResult() {
+                public String[] getColumnNames() throws RepositoryException {
+                    return null;
+                }
+
+                public RowIterator getRows() throws RepositoryException {
+
+                    return new RowIterator() {
+                        int index = -1;
+
+                        public Row nextRow() {
+                            final Object row = result.get(++index);
+                            return new Row() {
+                                public Value getValue(String column) {
+                                    try {
+                                        if (row instanceof Node) {
+                                            Node node = (Node)row;
+                                            if (node.hasProperty(column))
+                                                return node.getProperty(column).getValue();
+                                            else
+                                                return null;
+                                        } else if (row instanceof Item[]) {
+                                            Item[] items = (Item[])row;
+                                            for (int i = 0; i < items.length; i++) {
+                                                if (items[i].getName().equals(column)) {
+                                                    if (items[i].isNode()) {
+                                                        return ((Property)(((Node)items[i]).getPrimaryItem())).getValue();
+                                                    } else {
+                                                        return ((Property)items[i]).getValue();
+                                                    }
+                                                }
+                                            }
+                                            return null;
+                                        } else {
+                                            return null;
+                                        }
+                                    } catch (RepositoryException ex) {
+                                        // FIXME log some error
+                                        return null;
+                                    }
+                                }
+
+                                public Value[] getValues() {
+                                    try {
+                                        if (row instanceof Node) {
+                                            Node node = (Node)row;
+                                            ValueFactory valueFactory = node.getSession().getValueFactory();
+                                            Value[] values = new Value[3];
+                                            values[0] = valueFactory.createValue(node.getPrimaryNodeType().getName(), PropertyType.NAME);
+                                            values[1] = valueFactory.createValue(node.getPath(), PropertyType.PATH);
+                                            values[2] = valueFactory.createValue(100);
+                                            return values;
+                                        } else if (row instanceof Item[]) {
+                                            Item[] items = (Item[])row;
+                                            Value[] values = new Value[items.length];
+                                            for (int i = 0; i < items.length; i++) {
+                                                if (items[i].isNode())
+                                                    values[i] = ((Property)(((Node)items[i]).getPrimaryItem())).getValue();
+                                                else
+                                                    values[i] = ((Property)items[i]).getValue();
+                                            }
+                                            return values;
+                                        } else
+                                            return null;
+                                    } catch (RepositoryException ex) {
+                                        // FIXME log some error
+                                        return null;
+                                    }
+                                }
+                            };
+                        }
+
+                        public long getPosition() {
+                            return index;
+                        }
+
+                        public long getSize() {
+                            return result.size();
+                        }
+
+                        public void skip(long count) {
+                            index += count;
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        public Object next() {
+                            return nextRow();
+                        }
+
+                        public boolean hasNext() {
+                            return index + 1 < result.size();
+                        }
+                    };
+                }
+
+                public NodeIterator getNodes() throws RepositoryException {
+                    return new NodeIterator() {
+                        int index = -1;
+
+                        public Node nextNode() {
+                            try {
+                                Object row = result.get(++index);
+                                if (row instanceof Node)
+                                    return (Node)row;
+                                else if (row instanceof Item[])
+                                    return ((Item[])row)[0].getParent();
+                                else
+                                    return null;
+                            } catch (AccessDeniedException ex) {
+                                return null; // proper return
+                            } catch (ItemNotFoundException ex) {
+                                return null; // cannot happen
+                            } catch (RepositoryException ex) {
+                                // FIXME log some error
+                                return null;
+                            }
+                        }
+
+                        public long getPosition() {
+                            return index;
+                        }
+
+                        public long getSize() {
+                            return result.size();
+                        }
+
+                        public void skip(long count) {
+                            index += count;
+                        }
+
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        public Object next() {
+                            return nextNode();
+                        }
+
+                        public boolean hasNext() {
+                            return index + 1 < result.size();
+                        }
+                    };
+                }
+            };
+
+        } else {
+            return query.execute();
+        }
     }
 }

@@ -223,8 +223,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     for (int i = 0; i < currentVersion; i++)
                         iter.next();
                     Map.Entry<Calendar, Set<String>> entry = (Map.Entry<Calendar, Set<String>>) iter.next();
-                    BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager
-                            .getWorkflow("reviewed-action", document);
+                    BasicReviewedActionsWorkflow restoreWorkflow = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("default", document);
                     restoreWorkflow.restore(entry.getKey());
                     redraw();
                     /* [BvH] Below is a forcefully refresh of the selected
