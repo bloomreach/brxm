@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
+    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0"
+    xmlns:businesslease="http://www.businesslease.com/1.0"
+    xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.0"
+    xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+    xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions"
+    xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+    xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
+    xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
+    sv:name="sitemap">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:module</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:contentlocation" sv:type="String">
+    <sv:value>/content/pagecontent</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:template" sv:type="String">
+    <sv:value>/jsp/modules/sitemap.jsp</sv:value>
+  </sv:property>
+</sv:node>
