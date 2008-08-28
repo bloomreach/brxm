@@ -17,10 +17,10 @@
 /**
  * @description
  * <p>
- * Resolves id's of the form element_id:yui_id to elements.
- * Resolution consists of finding the element with id element_id and then traversing
- * the Dom tree to find an element with attribute yui:id equal to yui_id.  Traversal
- * is limited to elements with no (HTML) id 
+ * Resolves id's of the form element_id:yui_id to elements. Resolution consists
+ * of finding the element with id element_id and then traversing the Dom tree to
+ * find an element with attribute yui:id equal to yui_id. Traversal is limited
+ * to elements with no (HTML) id
  * </p>
  * @namespace YAHOO.hippo
  * @requires yahoo, dom
@@ -36,29 +36,26 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
 
         YAHOO.hippo.Dom = function() {
         };
-        
+
         YAHOO.hippo.Dom.resolveElement = function(_id) {
             var pathEls = _id.split(':');
             if (pathEls.length > 0) {
                 var baseId = pathEls[0];
-                var element = Dom.get(baseId);
+                var element = YAHOO.util.Dom.get(baseId);
                 if (element != null && pathEls.length > 1) {
                     var yuiId = pathEls[1];
                     var children = [];
                     var traverse = function(node) {
-                        if (node.hasAttribute("yui:id")) {
-                            var value = node.getAttribute("yui:id");
-                            if (value == yuiId) {
-                                children[children.length] = node;
-                                return;
-                            }
+                        var value = node.getAttribute("yui:id");
+                        if (value && value == yuiId) {
+                            children[children.length] = node;
+                            return;
                         }
-
-                        for (var i = 0; i < node.childNodes.length; i++) {
-                            var child = node.childNodes[i];
-                            if (child.nodeType == 1
-                                    && (!child.hasAttribute("id") || child.hasAttribute("yui:id"))) {
-                                traverse(child);
+                        if (node.hasChildNodes()) {
+                            var childNodes = Dom.getChildrenBy(node,
+                                    YAHOO.hippo.Dom.isValidChildNode);
+                            for (var i = 0; i < childNodes.length; i++) {
+                                traverse(childNodes[i]);
                             }
                         }
                     };
@@ -75,17 +72,22 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.enhance = function(el, id) {
-            if (el.hasAttribute("yui:id")) {
-                var yid = el.getAttribute("yui:id");
-                if (yid == id.split(':')[1]) {
-                    if (el.id != id) {
-                        el.id = id;
-                        // workaround: css3 selectors allow a [yui|id=...] syntax
-                        Dom.addClass(el, yid);
-                    }
-                }
+            var yid = el.getAttribute("yui:id");
+            if (yid && yid == id.split(':')[1] && el.id != id) {
+                el.id = id;
+                // workaround: css3 selectors allow a [yui|id=...] syntax
+                Dom.addClass(el, yid);
             }
         };
+
+        YAHOO.hippo.Dom.isValidChildNode = function(node) {
+            if (node.nodeType == 1
+                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
+                return true;
+            }
+            return false;
+        };
+
     })();
 
     YAHOO.register("hippodom", YAHOO.hippo.Dom, {
