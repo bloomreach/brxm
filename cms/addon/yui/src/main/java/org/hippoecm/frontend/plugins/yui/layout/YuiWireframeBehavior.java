@@ -18,10 +18,14 @@ package org.hippoecm.frontend.plugins.yui.layout;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -29,15 +33,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.layout.YuiWireframeConfig.Unit;
+import org.hippoecm.frontend.plugins.yui.util.JavascriptUtil;
 
-public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderContributor {
+public class YuiWireframeBehavior extends AbstractDefaultAjaxBehavior implements IHeaderContributor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
     private YuiWireframeConfig configuration;
-    private Component component;
 
     public YuiWireframeBehavior() {
         this(null, false);
@@ -67,11 +72,29 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
     }
 
     @Override
-    public void bind(Component component) {
-        if (!(component instanceof MarkupContainer)) {
+    protected void respond(AjaxRequestTarget target) {
+        RequestCycle requestCycle = RequestCycle.get();
+        String sizes = requestCycle.getRequest().getParameter("sizes");
+        if (sizes != null) {
+            JSONObject json = JSONObject.fromObject(sizes);
+            Iterator<String> i = json.keys();
+            while (i.hasNext()) {
+                String key = i.next();
+                Unit u = configuration.getUnitByPosition(key);
+                if (u != null) {
+                    u.addOption("width", json.getJSONObject(key).getString("w"));
+                    u.addOption("height", json.getJSONObject(key).getString("h"));
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        if (!(getComponent() instanceof MarkupContainer)) {
             throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
         }
-        this.component = component;
     }
 
     @Override
@@ -86,7 +109,7 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
 
     private void fillConfig() {
         if (configuration.isLinkedWithParent()) {
-            Component parent = component;
+            Component parent = getComponent();
             boolean found = false;
             while (!found) {
                 parent = parent.getParent();
@@ -105,8 +128,8 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
             }
         }
 
-        configuration.setBaseMarkupId(component.getMarkupId(true));
-        MarkupContainer cont = (MarkupContainer) component;
+        configuration.setBaseMarkupId(getComponent().getMarkupId(true));
+        MarkupContainer cont = (MarkupContainer) getComponent();
         cont.visitChildren(new IVisitor() {
             public Object component(Component component) {
                 for (Iterator i = component.getBehaviors().iterator(); i.hasNext();) {
@@ -115,8 +138,7 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof YuiUnitBehavior) {
                         YuiUnitBehavior unitBehavior = (YuiUnitBehavior) behavior;
-                        unitBehavior.addUnit(component, configuration, YuiWireframeBehavior.this.component
-                                .getMarkupId(true));
+                        unitBehavior.addUnit(component, configuration, getComponent().getMarkupId(true));
                         return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     }
                 }
@@ -135,6 +157,8 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
             public Object getObject() {
                 if (variables == null) {
                     variables = config.getMap();
+                    String callback = getCallbackUrl(false).toString();
+                    variables.put("callbackUrl", JavascriptUtil.serialize2JS(callback));
                 }
                 return variables;
             }
@@ -145,5 +169,4 @@ public class YuiWireframeBehavior extends AbstractBehavior implements IHeaderCon
     public YuiWireframeConfig getConfiguration() {
         return configuration;
     }
-
 }

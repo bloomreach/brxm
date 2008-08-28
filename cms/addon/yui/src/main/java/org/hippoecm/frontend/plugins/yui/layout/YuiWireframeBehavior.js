@@ -14,4 +14,4 @@
  * limitations under the License.
  */
  
-YAHOO.hippo.LayoutManager.createWireframe(${rootElementId}, ${parentElementId}, ${linkedWithParent}, ${config}); 
+YAHOO.hippo.LayoutManager.createWireframe(${rootElementId}, ${parentElementId}, ${linkedWithParent}, ${callbackUrl}, ${config}); 

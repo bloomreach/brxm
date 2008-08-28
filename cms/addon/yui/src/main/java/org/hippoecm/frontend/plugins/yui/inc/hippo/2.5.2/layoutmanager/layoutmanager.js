@@ -21,7 +21,7 @@
  * page loads and ajax events.
  * </p>
  * @namespace YAHOO.hippo
- * @requires yahoo, dom, layout, resize, functionqueue, hippodom
+ * @requires yahoo, dom, layout, resize, functionqueue, hippodom, json
  * @module layoutmanager
  * @beta
  */
@@ -38,16 +38,35 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this.layout = null;
             this.childInitializer = null;
             this.resizeEvent = null;
+            this.callbackUrl = null;
         };
 
         YAHOO.hippo.LayoutManagerImpl = function() {
+          this.init();
         };
 
         YAHOO.hippo.LayoutManagerImpl.prototype = {
             ROOT_ELEMENT_ID :'ROOT_ELEMENT_ID',
-            wireframes :new Array(),
-            createQueue :new YAHOO.hippo.FunctionQueue('create'),
-            renderQueue :new YAHOO.hippo.FunctionQueue('render'),
+            wireframes      : new Array(),
+            createQueue     : new YAHOO.hippo.FunctionQueue('create'),
+            renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
+            throttle        : new Wicket.Throttler(true),
+            throttleDelay   : 2000,
+            
+            init :  function() {
+              var _this = this;
+              Wicket.Ajax.registerPreCallHandler(function(){_this.flushThrottle()});
+            },
+            
+            flushThrottle : function() {
+              for(var id in this.throttle.entries) {
+                var entry = this.throttle.entries[id];
+                if (entry != undefined) {
+                  window.clearTimeout(entry.getTimeoutVar());
+                  var exe = this.throttle.execute(id);
+                }
+              }
+            },
 
             onLoad : function() {
                 this.createWireframes();
@@ -122,7 +141,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 return false;
             },
 
-            createWireframe : function(_id, _parentId, linkedWithParent, config) {
+            createWireframe : function(_id, _parentId, linkedWithParent, callbackUrl, config) {
                 var _this = this;
                 var id = (_id == '') ? this.ROOT_ELEMENT_ID : _id;
                 var parentId = (linkedWithParent && _parentId == '') ? this.ROOT_ELEMENT_ID
@@ -132,6 +151,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     this.wireframes[id] = new YAHOO.hippo.Wireframe(id, parentId);
                 }
                 var wireframe = this.wireframes[id];
+                wireframe.callbackUrl = callbackUrl;
                 var update = wireframe.layout != null;
                 if (update)
                     this.cleanup(id);
@@ -255,6 +275,25 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
                     }
                 });
+                layout.on('resize', function(params) {
+                  var wf = _this.wireframes[id];
+                  var url = wf.callbackUrl;
+                  _this.throttle.throttle(id, _this.throttleDelay, function() {
+                    var jsonStr = YAHOO.lang.JSON.stringify(params.sizes);
+                    if(wf.sizes != jsonStr) {
+                      wf.sizes = jsonStr;
+                      
+                      url += '&targetId=' + id;
+                      url += '&sizes=' + jsonStr;
+                      
+                      //Don't use Wicket-ajax directly since you want to avoid the pre-call handlers
+                      var t = wicketAjaxGetTransport();
+                      t.open("GET", url, false);
+                      t.send(null);
+                    }  
+                  });
+                });
+
                 this.wireframes[id].layout = layout;
             },
 
