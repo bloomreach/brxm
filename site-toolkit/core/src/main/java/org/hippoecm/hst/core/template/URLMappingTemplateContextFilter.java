@@ -62,12 +62,12 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	
 	
 	public static final String JCRSESSION_REQUEST_ATTRIBUTE = "jcrSession";
-	public static final String NAVIGATION_REQUEST_ATTRIBUTE = "hstNavigationMapLocation";
+	//public static final String NAVIGATION_REQUEST_ATTRIBUTE = "hstNavigationMapLocation";
 	
-	public static final String NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE = "navigationContextBase";
-	public static final String NAVIGATION_CONTEXTBASE_NAME = "navigationContext";	
+	//public static final String NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE = "navigationContextBase";
+	//public static final String NAVIGATION_CONTEXTBASE_NAME = "navigationContext";	
 	
-	public static final String REPOSITORY_LOCATION_FILTER_PARAM = "hstConfigurationUrl";
+	public static final String REPOSITORY_LOCATION_FILTER_INIT_PARAM = "hstConfigurationUrl";
 	
 	private static final Logger log = LoggerFactory.getLogger(URLMappingTemplateContextFilter.class);
 	
@@ -75,14 +75,18 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	
 	public void init(FilterConfig filterConfig) throws ServletException {
 		super.init(filterConfig);
-		repositoryTemplateContextLocation = getInitParameter(filterConfig, REPOSITORY_LOCATION_FILTER_PARAM, true);
+		repositoryTemplateContextLocation = getInitParameter(filterConfig, REPOSITORY_LOCATION_FILTER_INIT_PARAM, true);
 	}
 	  
 	public void destroy() {
 	}
 
 
-	
+	/**
+	 * The filter determines the templates to use and the content location from the request URI.
+	 * If a template is found the request is forwarded to that template. If not, the filterchain is
+	 * continued with the original request.
+	 */
 	public void doFilter(ServletRequest req, ServletResponse response,
 			FilterChain filterChain) throws IOException, ServletException {
 		
@@ -91,14 +95,12 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 		HttpServletRequest request = (HttpServletRequest) req;
 		
 		if (ignorePath(request)) {
-			log.info("IGNORE " + request.getRequestURI());
+			log.debug("ingore " + request.getRequestURI());
 			filterChain.doFilter(request, response);
 		} else {
-			log.info("NO IGNORE " + request.getRequestURI());
-		
+			log.debug("process " + request.getRequestURI());
 			
-			log.info("URI" + request.getRequestURI());
-			//get mapping		
+			
 			try {
 				ContextBase templateContextBase = getHstConfigurationContextBase(request, repositoryTemplateContextLocation);
 				//find 
@@ -115,7 +117,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            
 	            	//set attributes
 	            	wrappedRequest.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
-	            	wrappedRequest.setAttribute(JCRSESSION_REQUEST_ATTRIBUTE, JCRConnectorWrapper.getTemplateJCRSession(request.getSession()));
+	            	//wrappedRequest.setAttribute(JCRSESSION_REQUEST_ATTRIBUTE, JCRConnectorWrapper.getTemplateJCRSession(request.getSession()));
 	            	//wrappedRequest.setAttribute(NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE, navigationContextBase);
 	            	
 	    			dispatcher.forward(wrappedRequest, response);

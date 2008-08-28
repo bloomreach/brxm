@@ -61,7 +61,7 @@ public class ContextBaseFilter extends HstFilterBase implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse response,
 			FilterChain filterChain) throws IOException, ServletException {
 		
-		log.info("DOFILTER >>>>>>>>");
+		log.info("doFilter()");
 		HttpServletRequest request = (HttpServletRequest) req;		
 		HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request, urlPrefix);	
 		
@@ -77,8 +77,7 @@ public class ContextBaseFilter extends HstFilterBase implements Filter {
 		//
 		prefixStrippedRequest.setAttribute(requestAttributeName, contextBase);	
 	    prefixStrippedRequest.setAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE, urlPrefix);
-		//prefixStrippedRequest.setAttribute(CO, requestAttributeName);
-	    prefixStrippedRequest.setAttribute(CONTENT_CONTEXT_REQUEST_ATTRIBUTE, contextBase);
+	    prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE, contextBase);
 	    prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, request.getRequestURI());
 		
 		filterChain.doFilter(prefixStrippedRequest, response);

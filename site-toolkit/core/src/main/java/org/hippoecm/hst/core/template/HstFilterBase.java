@@ -59,17 +59,32 @@ public abstract class HstFilterBase implements Filter {
 	
 	//filter init-parameter
 	protected static final String IGNOREPATHS_FILTER_INIT_PARAM = "ignorePaths"; //comma separated list with ignore path prefixes
+	protected static final String IGNORETYPES_FILTER_INIT_PARAM = "ignoreTypes"; //comma separated list with ignore path prefixes
 	
 	private List<String> ignorePathsList = null;
+	private List<String> ignoreTypesList = null;
 	
 	private static final Logger log = LoggerFactory.getLogger(HstFilterBase.class);
 	
 	public void init(FilterConfig filterConfig) throws ServletException {		
 		//hstConfigurationUrl = getInitParameter(filterConfig, HSTCONFIGURATION_LOCATION_PARAMETER);
 		initIgnoreTypes(filterConfig);
+		initIgnorePaths(filterConfig);
 	}
 	
 	protected void initIgnoreTypes(FilterConfig filterConfig) {
+		String ignoreTypesString = filterConfig.getInitParameter(IGNORETYPES_FILTER_INIT_PARAM);
+		ignoreTypesList = new ArrayList<String>();
+		if (ignoreTypesString != null) {	
+		    String [] items = ignoreTypesString.split(",");
+		    for (int i=0; i < items.length; i++) {
+		    	log.debug("filter configured with ignoretype ." + items[i]);
+		    	ignoreTypesList.add("." + items[i].trim());
+		    }
+		}
+	}
+	
+	protected void initIgnorePaths(FilterConfig filterConfig) {
 		String ignorePathsString = filterConfig.getInitParameter(IGNOREPATHS_FILTER_INIT_PARAM);
 		ignorePathsList = new ArrayList<String>();
 		if (ignorePathsString != null) {	
@@ -104,9 +119,15 @@ public abstract class HstFilterBase implements Filter {
 		if (request.getAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE) != null) {
 			return true;
 		}
-		String requestURI = request.getRequestURI();
+		String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 		for(String prefix : ignorePathsList) {
 		    if(requestURI.startsWith(prefix)) {
+		        request.setAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE, "true");
+		        return true;
+		    }
+		}
+		for (String suffix: ignoreTypesList) {
+			if(requestURI.endsWith(suffix)) {
 		        request.setAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE, "true");
 		        return true;
 		    }

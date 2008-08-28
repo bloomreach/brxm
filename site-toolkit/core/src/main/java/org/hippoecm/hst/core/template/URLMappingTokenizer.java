@@ -68,7 +68,7 @@ public class URLMappingTokenizer {
     }
     
     private boolean findMatchingTemplate(final HttpServletRequest request) {    	
-    	String requestURI = request.getRequestURI();
+    	String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
     	boolean patternFound = false;
     			
 		Iterator<String> patternIter = mappingToPageNodes.keySet().iterator();

@@ -32,14 +32,12 @@ public class PageNode extends TemplateNode{
    private Logger log = LoggerFactory.getLogger(PageNode.class);	 
    public static final String LAYOUTPAGE_PROPERTY_NAME = "hst:pageLayout";
    public static final String URLMAPPING_PROPERTY_NAME = "hst:urlmapping";
-   
-   String x;
+  
    
    private NodeList<PageContainerNode> containerNodes;
    
    public PageNode(ContextBase contextBase, Node jcrNode) throws RepositoryException {
-	   super(contextBase, jcrNode);
-	   x = jcrNode.getPath();
+	   super(contextBase, jcrNode);	
 	   containerNodes = new NodeList(contextBase, getJcrNode(), PageContainerNode.class);
    }
    
