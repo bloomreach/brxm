@@ -24,7 +24,7 @@
     <body>
         <section name="HST Configuration in web.xml">
         <p>This example web.xml shows the installation of the hst.properties, 
-            of one 'preview' web filter and a servlet for binaries.</p>
+            of the 3 filters and a servlet for binaries.</p>
             <source><![CDATA[  <!-- General configuration -->
   <context-param>
     <description>Comma separated list of configuration files.</description>
@@ -35,45 +35,44 @@
     <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
   </listener>
 
-  <!-- Example of one HST filter pointing to a preview path in the repository. -->
+  <filter>
+    <filter-name>ContextBaseFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.URIFragmentContextBaseFilter</filter-class>    
+    <init-param>      
+      <param-name>levels</param-name>
+      <param-value>1</param-value>    
+    </init-param>
+    <init-param>      
+      <param-name>contentBase</param-name>
+      <param-value>/</param-value>    
+    </init-param>
+    <init-param>      
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+    </init-param>
+  </filter>
+  
   <filter>
     <filter-name>TemplateContext</filter-name>
     <filter-class>org.hippoecm.hst.core.template.URLMappingTemplateContextFilter</filter-class>    
     <init-param>      
-      <param-name>attributeName</param-name>
-      <param-value>context</param-value>    
-    </init-param>
-    <init-param>      
       <param-name>hstConfigurationUrl</param-name>
       <param-value>/hst:configuration/hst:configuration</param-value>    
     </init-param>
     <init-param>      
-      <param-name>repositoryLocation</param-name>
-      <param-value>/</param-value>    
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
     </init-param>
   </filter>
 
   <filter>
-    <filter-name>PreviewContext</filter-name>
-    <filter-class>org.hippoecm.hst.core.template.ContextBaseFilter</filter-class>
+    <filter-name>ModuleFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.ModuleFilter</filter-class>
     <init-param>      
-      <param-name>attributeName</param-name>
-      <param-value>contentContext</param-value>
-    </init-param>
-    <init-param>      
-      <param-name>repositoryLocation</param-name>
-      <param-value>/</param-value>
-    </init-param>
-    <init-param>   
-      <param-name>urlBase</param-name>
-      <param-value>/preview</param-value>
-    </init-param>
-    <init-param>      
-      <param-name>hstConfigurationUrl</param-name>
-      <param-value>/hst:configuration/hst:configuration</param-value>    
-    </init-param>
-    
-  </filter>
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+    </init-param>   
+  </filter> 
 
   <filter>
     <filter-name>ModuleFilter</filter-name>
