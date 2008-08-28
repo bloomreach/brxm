@@ -55,6 +55,10 @@
             <td><pre><a href="tag/moduleParameter-tag.html">&lt;hst-tmpl:moduleParameter&gt;</a></pre></td>
             <td>Uses the module definined in the className attribute of this tag to fetch content or execute some businesslogic.</td>
           </tr>
+          <tr>
+            <td><pre><a href="tag/link-tag.html">&lt;hst-tmpl:link&gt;</a></pre></td>
+            <td>Creates a rewritten link for the current document, based on the urlmapping.</td>
+          </tr>
         </table>
       </subsection>
     </section>
