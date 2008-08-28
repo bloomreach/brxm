@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
@@ -36,63 +37,70 @@ import org.slf4j.LoggerFactory;
 
 public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
 
-	private static final Logger log = LoggerFactory.getLogger(RepositoryBasedBreadcrumbModule.class);
+    private static final Logger log = LoggerFactory.getLogger(RepositoryBasedBreadcrumbModule.class);
 
-	public void render(PageContext pageContext) {
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		PageNode pn = (PageNode)pageContext.getRequest().getAttribute("pageNode");
+    public void render(PageContext pageContext) {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        PageNode pn = (PageNode) pageContext.getRequest().getAttribute("pageNode");
 
         String path = null;
         try {
-        	path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
-		} catch (TemplateException e) {
-			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
-		}
+            path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+        } catch (TemplateException e) {
+            log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
+        }
 
-        if(path == null) {
-            pageContext.setAttribute(getVar(),new ArrayList<NavigationItem>());
+        if (path == null) {
+            pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());
             return;
         }
         ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 
-	    List<NavigationItem> wrappedNodes = new ArrayList<NavigationItem>();
-	    try {
+        List<NavigationItem> wrappedNodes = new ArrayList<NavigationItem>();
+        try {
 
-	    	String currentLocation = path;
-	    	String selectedLocation = null;
-	    	if(pn.getRelativeContentPath()!=null){
-	    		selectedLocation = pn.getRelativeContentPath().substring(currentLocation.length());	
-	    	}
-	    	
-	    	ArrayList<String> selectedItemsList = new ArrayList<String>();
-	    	if(selectedLocation!=null){
-	    	  String [] selectedItems = selectedLocation.split("/");	    	  
-	    	  for(int i=0;i<selectedItems.length;i++){
-                selectedItemsList.add(selectedItems[i]);
-	    	  }
-	    	}
+            String currentLocation = path;
+            String selectedLocation = null;
+            if (pn.getRelativeContentPath() != null) {
+                selectedLocation = pn.getRelativeContentPath().substring(currentLocation.length());
+            }
 
-	    	Node n = ctxBase.getRelativeNode(path);
-	    	Node subNode = null;
-	    	for(int i=0;i<selectedItemsList.size();i++){
-	    		if(subNode==null){
-	    			subNode = n.getNode(selectedItemsList.get(i).toString());
-	    		}
-	    		else {
-	    			subNode = subNode.getNode(selectedItemsList.get(i).toString());
-	    		}
-	    		if(!subNode.isNodeType(HippoNodeType.NT_HANDLE)){
-	    			wrappedNodes.add(new NavigationItem(subNode,true));
-	    		}
-	    	}
+            ArrayList<String> selectedItemsList = new ArrayList<String>();
+            if (selectedLocation != null) {
+                String[] selectedItems = selectedLocation.split("/");
+                for (int i = 0; i < selectedItems.length; i++) {
+                    selectedItemsList.add(selectedItems[i]);
+                }
+            }
+            Node n = ctxBase.getRelativeNode(path);
+            if(n == null ){
+                log.warn("repository path '" + path + "' not found");
+                pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());
+                return;
+            }
+            Node subNode = null;
+            for (int i = 0; i < selectedItemsList.size(); i++) {
+                try {
+                    if (subNode == null) {
+                        subNode = n.getNode(selectedItemsList.get(i).toString());
+                    } else {
+                        subNode = subNode.getNode(selectedItemsList.get(i).toString());
+                    }
+                    if (!subNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        wrappedNodes.add(new NavigationItem(subNode, true));
+                    }
+                } catch (PathNotFoundException e) {
+                    log.warn("PathNotFoundException: " + e.getMessage());
+                }
+            }
 
-		} catch (RepositoryException e) {
-			log.error(e.getMessage(), e);
-			wrappedNodes = new ArrayList<NavigationItem>();
-		}
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: " + e.getMessage());
+            wrappedNodes = new ArrayList<NavigationItem>();
+        }
 
-		pageContext.setAttribute(getVar(), wrappedNodes);
+        pageContext.setAttribute(getVar(), wrappedNodes);
 
-	}
+    }
 
 }
