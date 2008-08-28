@@ -105,7 +105,7 @@ milestone number.  You need to replace dots by an underscore sign.
 mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
-    -Dtag=Release-HREPTWO-v2_01_00_M0 \
+    -Dtag=Release-HREPTWO-v2_01_00-M0 \
     -DdryRun=true
 </source>
 
@@ -120,8 +120,15 @@ for this on pre-initial-release milestone build.
 </p>
 
 <p>
-Make sure there where no errors.  If everything looks sound, cleanup
-and do the actual release preparation:
+Make sure there where no errors.  Some causes for problems can be:
+</p>
+<ul>
+<li>dependencies which specifiy the version as ${parent.version} which
+cannot be translated by the maven-release-plugin</li>
+<li>This plugin also cannot handle optional dependencies</li>
+</ul>
+<p>
+If everything looks sound, cleanup and do the actual release preparation:
 </p>
 
 <source>
@@ -130,7 +137,7 @@ svn --recursive revert .
 mvn release:prepare \
     -DallowTimestampedSnapshots=true \
     -DautoVersionSubmodules=true \
-    -Dtag=Release-HREPTWO-v2_01_00_M0 \
+    -Dtag=Release-HREPTWO-v2_01_00-M0 \
     -DscmCommentPrefix="HREPTWO-0:"
 </source>
 
