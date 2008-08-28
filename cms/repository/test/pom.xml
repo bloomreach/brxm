@@ -232,7 +232,6 @@
           <type>jar</type>
           <classifier>tests</classifier>
           <scope>test</scope>
-          <optional>true</optional>
         </dependency>
       </dependencies>
     </profile>
