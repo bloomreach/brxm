@@ -46,6 +46,13 @@
       <artifactId>yui-2.5.2-sources</artifactId>
       <version>1.01.01</version>
     </dependency>
+    
+    <dependency>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>2.2.2</version>
+      <classifier>jdk15</classifier>
+    </dependency>
   </dependencies>
 
   <build>

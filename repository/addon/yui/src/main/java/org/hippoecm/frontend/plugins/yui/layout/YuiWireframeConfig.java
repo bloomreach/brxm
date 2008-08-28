@@ -94,6 +94,10 @@ public class YuiWireframeConfig implements IClusterable {
     public void setBaseMarkupId(String id) {
         baseMarkupId = id;
     }
+    
+    Unit getUnitByPosition(String position) {
+        return units.get(position);
+    }
 
     public static class Unit implements IClusterable {
         private static final long serialVersionUID = 1L;
