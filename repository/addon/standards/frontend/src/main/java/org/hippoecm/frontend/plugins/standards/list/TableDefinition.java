@@ -21,11 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-public class TableDefinition {
+public class TableDefinition implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+    private static final long serialVersionUID = 1L;
 
     private List<ListColumn> columns;
     private Map<String, Comparator<IModel>> comparators;

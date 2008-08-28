@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,20 +28,20 @@ public class ReorderDataProvider extends SortableDataProvider {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    private List<IModel> listItems;
-    
+    private LinkedList<ListItem> listItems;
+
     public ReorderDataProvider(DocumentsProvider documents) {
-        listItems = new LinkedList<IModel>();
-        Iterator<IModel> it = documents.iterator(0, documents.size()); 
+        listItems = new LinkedList<ListItem>();
+        Iterator<IModel> it = documents.iterator(0, documents.size());
         while (it.hasNext()) {
-            IModel entry = it.next(); 
+            IModel entry = it.next();
             if (entry instanceof JcrNodeModel) {
-                listItems.add(new ListItem((JcrNodeModel)entry));
+                listItems.add(new ListItem((JcrNodeModel) entry));
             }
         }
     }
 
-    public Iterator<IModel> iterator(int first, int count) {
+    public Iterator<ListItem> iterator(int first, int count) {
         return listItems.subList(first, first + count).iterator();
     }
 
@@ -53,10 +52,26 @@ public class ReorderDataProvider extends SortableDataProvider {
     public int size() {
         return listItems.size();
     }
-    
+
     public void detach() {
         for (IModel item : listItems) {
             item.detach();
+        }
+    }
+
+    public void shiftUp(ListItem item) {
+        int index = listItems.indexOf(item);
+        if (index > 0) {
+            listItems.remove(index);
+            listItems.add(--index, item);
+        }
+    }
+
+    public void shiftDown(ListItem item) {
+        int index = listItems.indexOf(item);
+        if (index < listItems.size()) {
+            listItems.remove(index);
+            listItems.add(++index, item);
         }
     }
 

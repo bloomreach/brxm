@@ -26,8 +26,9 @@ import org.apache.wicket.model.IModel;
 public class DialogLink extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
+    
+    private AjaxLink link;
 
     public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
         super(id, linktext);
@@ -39,7 +40,7 @@ public class DialogLink extends Panel {
             }
         };
 
-        final AjaxLink link = new AjaxLink("dialog-link") {
+        link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -50,6 +51,14 @@ public class DialogLink extends Panel {
 
         add(link);
         link.add(new Label("dialog-link-text", linktext));
+    }
+    
+    public void enable() {
+        link.setEnabled(true);
+    }
+
+    public void disable() {
+        link.setEnabled(false);
     }
 
 }
