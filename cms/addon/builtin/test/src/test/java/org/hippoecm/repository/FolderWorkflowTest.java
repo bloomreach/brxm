@@ -146,7 +146,7 @@ public class FolderWorkflowTest extends TestCase {
         assertTrue(node.isNodeType("hippostd:directory"));
     }
 
-    @Test
+    @Ignore
     public void testTemplateDocument() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
