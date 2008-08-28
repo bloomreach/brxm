@@ -142,7 +142,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         config.parent = parentLayout;
 
                         var bodyEl = HippoDom.resolveElement(id);
-                        bodyEl.id = id;
+                        YAHOO.hippo.Dom.enhance(bodyEl, id);
 
                         var parentLayoutUnitEl = _this.findLayoutUnit(bodyEl);
                         var parentCenterEl = YAHOO.widget.LayoutUnit
@@ -194,7 +194,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     } else {
                         initFunc = function() {
                             var bodyEl = HippoDom.resolveElement(id);
-                            bodyEl.id = id;
+                            HippoDom.enhance(bodyEl, id);
                             _this.wireframes[id].layout = new YAHOO.widget.Layout(
                                     id, config);
                         };
@@ -214,12 +214,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var u = config.units[i];
                     var uid = u["id"];
                     var unitEl = HippoDom.resolveElement(uid);
-                    unitEl.id = uid;
+                    HippoDom.enhance(unitEl, uid);
                     
                     uid = u["body"];
                     if (uid != undefined) {
                         unitEl = HippoDom.resolveElement(uid);
-                        unitEl.id = uid;
+                        HippoDom.enhance(unitEl, uid);
                     }
                 }
 
