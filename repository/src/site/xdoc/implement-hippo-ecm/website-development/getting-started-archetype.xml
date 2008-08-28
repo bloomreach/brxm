@@ -175,7 +175,7 @@ mvn archetype:create \
         <source>mvn jetty:run</source>
 
         <p>
-          The sample website is now available at <a href="http://localhost:8085/preview/index">http://localhost:8080/preview/index</a>.
+          The sample website is now available at <a href="http://localhost:8085/preview/index">http://localhost:8085/preview/index</a>.
         </p>
         
         <p>
