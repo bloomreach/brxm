@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>HST2 Project base</name>
+  <description>HST2 Project base</description>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>content</module>
+    <module>ecm</module>
+    <module>site</module>
+  </modules>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>hippoecm</id>
+      <name>Hippo ECM maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots />
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <layout>default</layout>
+    </repository>
+    <repository>
+      <id>hippoecm.legacy</id>
+      <name>Hippo ECM Maven 1 repository.</name>
+      <url>http://repository.hippocms.org/maven/</url>
+      <snapshots />
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <layout>legacy</layout>
+    </repository>
+  </repositories>
+
+</project>

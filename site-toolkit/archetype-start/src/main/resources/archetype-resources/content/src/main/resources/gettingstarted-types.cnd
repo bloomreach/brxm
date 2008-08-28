@@ -1,0 +1,9 @@
+<'${artifactId}'='http://www.hippoecm.org/hst2/${artifactId}/1.0'>
+<'hippostd'='http://www.hippoecm.org/hippostd/nt/1.0'>
+<'hippo'='http://www.hippoecm.org/nt/1.0'>
+
+[${artifactId}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+- ${artifactId}:body (string)
+- ${artifactId}:summary (string)
+- ${artifactId}:title (string)
+- ${artifactId}:date (date)
