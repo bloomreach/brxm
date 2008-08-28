@@ -28,7 +28,15 @@
           comes with a set of tools and components to allow rapid development of websites, the Hippo Site
           Toolkit 2. This section helps you get started with the Hippo Site Toolkit 2, and develop
           your own websites in a Hippo ECM enviroment.
-        </p>    
+        </p>
+        
+        <ul>
+          <li>
+            <a href="getting-started.html">Getting Started</a>
+            - Setting up a new project with Hippo Site Toolkit 2
+          </li>
+        </ul>
+        
       </section>
     </body>
 </document>

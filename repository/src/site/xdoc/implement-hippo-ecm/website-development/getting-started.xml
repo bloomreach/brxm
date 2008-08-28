@@ -62,7 +62,8 @@ to the correct machine name.
                     <li>Copy the ECM Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
 		    <li>Copy the HST2 Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\site.war</li>
                     <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
-                    <li>Open your browser and surf to http://localhost:8080/cms/</li>
+                    <li>Open your browser and surf to http://localhost:8080/cms/ for the CMS</li>
+                    <li>Open your browser and surf to http://localhost:8080/site/preview/index for the site</li>
                 </ol>
             </subsection>
 
