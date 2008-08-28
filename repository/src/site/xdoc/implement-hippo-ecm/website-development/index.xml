@@ -33,7 +33,11 @@
         <ul>
           <li>
             <a href="getting-started.html">Getting Started</a>
-            - Setting up a new project with Hippo Site Toolkit 2
+            - Setting up a new project with Hippo Site Toolkit 2 using pre-configured WAR files
+          </li>
+          <li>
+            <a href="getting-started-archetype.html">Getting Started</a>
+            - Setting up a new project with Hippo Site Toolkit 2 using the Maven archetype
           </li>
         </ul>
         
