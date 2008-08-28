@@ -83,8 +83,10 @@ public class ContextBase {
 		try {
             log.info("get RelativeNode with rootNode" + contextRootNode.getPath() + " path=" + path);
             return contextRootNode.getNode(stripFirstSlash(path));
+        } catch (PathNotFoundException e) {
+            log.warn("Node " + stripFirstSlash(path) + " cannot be found in the repository. Returning null");
         } catch (RepositoryException e) {
-            e.printStackTrace();
+           log.error("RepositoryException " + e.getMessage());
         }
         return null;
 	}
