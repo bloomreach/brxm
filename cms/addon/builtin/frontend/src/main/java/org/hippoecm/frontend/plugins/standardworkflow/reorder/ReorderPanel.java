@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
@@ -169,6 +170,10 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             ((AjaxRequestTarget) target).addComponent(this);
         }
+    }
+    
+    public LinkedHashMap<String, String> getMapping() {
+        return dataProvider.getMapping();
     }
 
 }
