@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
@@ -25,7 +26,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -46,10 +47,16 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
+    private TableDefinition tableDefinition;
+    private ReorderDataProvider dataProvider;
     private ListDataTable dataTable;
+    private int pagesize;
+    private AjaxLink up;
+    private AjaxLink down;
 
     public ReorderPanel(String id, JcrNodeModel model) {
         super(id);
+        setOutputMarkupId(true);
 
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
@@ -59,7 +66,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
             private static final long serialVersionUID = 1L;
 
             public AttributeModifier getCellAttributeModifier(IModel model) {
-                if (model instanceof ListItem) {                    
+                if (model instanceof ListItem) {
                     ListItem item = (ListItem) model.getObject();
                     return item.getCellModifier();
                 }
@@ -67,7 +74,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
             }
 
             public AttributeModifier getColumnAttributeModifier(IModel model) {
-                if (model instanceof ListItem) {                    
+                if (model instanceof ListItem) {
                     ListItem item = (ListItem) model.getObject();
                     return item.getColumnModifier();
                 }
@@ -77,33 +84,90 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         });
         columns.add(column);
 
-        column = new ListColumn(new Model("Name"), "name");
+        column = new ListColumn(new Model(""), "name");
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
 
             public Component getRenderer(String id, IModel model) {
                 if (model instanceof ListItem) {
-                    ListItem nvp = (ListItem) model.getObject();
-                    return new Label(id, ISO9075Helper.decodeLocalName(nvp.getName()));
+                    ListItem item = (ListItem) model;
+                    return new Label(id, ISO9075Helper.decodeLocalName(item.getName()));
                 }
                 return new Label(id);
             }
         });
         columns.add(column);
 
-        TableDefinition tableDefinition = new TableDefinition(columns);
+        tableDefinition = new TableDefinition(columns, false);
         DocumentsProvider documents = new DocumentsProvider(model, new HashMap<String, Comparator<IModel>>());
-        ISortableDataProvider dataProvider = new ReorderDataProvider(documents);
+        dataProvider = new ReorderDataProvider(documents);
+        pagesize = dataProvider.size() > 0 ? dataProvider.size() : 1;
+        add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, pagesize, false));
 
-        add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, dataProvider.size(), false));
+        up = new AjaxLink("up") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                ListItem selection = (ListItem) dataTable.getModel();
+                dataProvider.shiftUp(selection);
+
+                ReorderPanel panel = ReorderPanel.this;
+                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, pagesize, false);
+                panel.replace(dataTable);
+                selectionChanged(selection);
+            }
+        };
+        add(up);
+
+        down = new AjaxLink("down") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                ListItem selection = (ListItem) dataTable.getModel();
+                dataProvider.shiftDown(selection);
+
+                ReorderPanel panel = ReorderPanel.this;
+                dataTable = new ListDataTable("table", tableDefinition, dataProvider, panel, pagesize, false);
+                panel.replace(dataTable);
+                selectionChanged(selection);
+            }
+        };
+        add(down);
+
+        if (dataProvider.size() > 0) {
+            ListItem selection = dataProvider.iterator(0, 1).next();
+            selectionChanged(selection);
+        } else {
+            up.setEnabled(false);
+            down.setEnabled(false);
+        }
     }
 
     public void selectionChanged(IModel model) {
- 
+        ListItem item = (ListItem) model;
+        long position = -1;
+        int size = dataProvider.size();
+        Iterator<ListItem> siblings = dataProvider.iterator(0, size);
+        int i = 0;
+        while (siblings.hasNext()) {
+            i++;
+            ListItem sibling = siblings.next();
+            if (sibling.getName().equals(item.getName())) {
+                position = i;
+                break;
+            }
+        }
+        if (position != -1) {
+            up.setEnabled(position > 1);
+            down.setEnabled(position < size);
+        }
+
         dataTable.setModel(model);
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-            ((AjaxRequestTarget) target).addComponent(dataTable);
+            ((AjaxRequestTarget) target).addComponent(this);
         }
     }
 

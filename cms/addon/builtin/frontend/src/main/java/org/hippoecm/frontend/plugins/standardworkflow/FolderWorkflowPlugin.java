@@ -72,7 +72,6 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     Map<String, Set<String>> templates;
     private Label folderName;
     private DialogLink deleteLink;
-    private DialogLink reorderLink;
 
     public FolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -111,11 +110,12 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
 
         Node node = (Node) getModel().getObject();
         try {
+            //FIXME: reordering should be a workflow only on hippo:folder and not also on hippo:directory
             if (node.isNodeType("hippostd:folder")) {
                 IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
                 final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
-                
-                reorderLink = new DialogLink("reorder-dialog", new Model("Reorder documents"), new IDialogFactory() {
+
+                DialogLink reorderLink = new DialogLink("reorder-dialog", new Model("Reorder"), new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
                     public AbstractDialog createDialog(IDialogService dialogService) {
@@ -123,6 +123,10 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                     }
                 }, getDialogService());
                 add(reorderLink);
+                if (node.getNodes().getSize() < 2) {
+                    reorderLink.disable();
+                }
+                
             } else {
                 add(new EmptyPanel("reorder-dialog"));
             }

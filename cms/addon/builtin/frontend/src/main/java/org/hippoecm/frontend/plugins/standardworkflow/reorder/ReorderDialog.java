@@ -33,7 +33,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
 
     public ReorderDialog(FolderWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
-        super(plugin, dialogWindow, "Reorder documents");
+        super(plugin, dialogWindow, "Reorder");
 
         this.jcrServiceRef = jcrService;
         add(new ReorderPanel("reorder-panel", ((WorkflowsModel) plugin.getModel()).getNodeModel()));
