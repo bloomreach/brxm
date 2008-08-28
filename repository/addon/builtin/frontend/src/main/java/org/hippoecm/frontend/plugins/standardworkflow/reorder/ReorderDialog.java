@@ -23,6 +23,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class ReorderDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
@@ -30,18 +31,22 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private IServiceReference<IJcrService> jcrServiceRef;
+    private ReorderPanel panel;
 
     public ReorderDialog(FolderWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
         super(plugin, dialogWindow, "Reorder");
 
-        this.jcrServiceRef = jcrService;
-        add(new ReorderPanel("reorder-panel", ((WorkflowsModel) plugin.getModel()).getNodeModel()));
+        jcrServiceRef = jcrService;
+        panel = new ReorderPanel("reorder-panel", ((WorkflowsModel) plugin.getModel()).getNodeModel()); 
+        add(panel);
     }
 
     @Override
     protected void execute() throws Exception {
-        //TODO
+        FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
+        workflow.reorder(panel.getMapping());
+        
         IModel pluginModel = getPlugin().getModel();
         if (pluginModel instanceof JcrNodeModel) {
             jcrServiceRef.getService().flush((JcrNodeModel) pluginModel);
