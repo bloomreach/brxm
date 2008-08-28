@@ -85,7 +85,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			log.debug("uriPrefix: " + uriPrefix);
 			
 			long start = System.nanoTime();
-            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
+            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
            
             log.debug("creating mapping took " + (System.nanoTime() - start) / 1000000 + " ms.");
             request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
