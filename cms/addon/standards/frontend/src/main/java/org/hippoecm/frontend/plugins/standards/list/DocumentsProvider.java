@@ -43,7 +43,7 @@ public class DocumentsProvider extends SortableDataProvider {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DocumentsProvider.class);
 
-    protected List<IModel> entries;
+    protected List<IModel> entries = new ArrayList<IModel>();
     private Map<String, Comparator<IModel>> comparators;
 
     public DocumentsProvider(JcrNodeModel model, Map<String, Comparator<IModel>> comparators) {
@@ -58,7 +58,7 @@ public class DocumentsProvider extends SortableDataProvider {
                 boolean isFolder = node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory");
                 boolean isDocument = node.isNodeType(HippoNodeType.NT_DOCUMENT);
                 boolean isRoot = node.isNodeType("rep:root");
-                
+
                 if (!(isDocument && !isFolder) && !isHandle && !isTemplateType && !isRequest && !isRoot) {
                     NodeIterator childNodesIterator = node.getNodes();
                     while (childNodesIterator.hasNext()) {

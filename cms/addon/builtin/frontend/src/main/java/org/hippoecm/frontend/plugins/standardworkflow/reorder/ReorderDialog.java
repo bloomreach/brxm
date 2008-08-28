@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -24,11 +27,14 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReorderDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
 
     private IServiceReference<IJcrService> jcrServiceRef;
     private ReorderPanel panel;
@@ -36,10 +42,19 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     public ReorderDialog(FolderWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
         super(plugin, dialogWindow, "Reorder");
-
         jcrServiceRef = jcrService;
-        panel = new ReorderPanel("reorder-panel", ((WorkflowsModel) plugin.getModel()).getNodeModel()); 
+        
+        JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();        
+        panel = new ReorderPanel("reorder-panel", folderModel); 
         add(panel);
+        String name;
+        try {
+            name = folderModel.getNode().getName();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            name = "";
+        }
+        add(new Label("message", "Reorder " + name));
     }
 
     @Override

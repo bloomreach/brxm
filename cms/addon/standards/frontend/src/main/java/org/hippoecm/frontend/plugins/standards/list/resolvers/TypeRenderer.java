@@ -32,7 +32,7 @@ public class TypeRenderer extends AbstractNodeRenderer {
 
     @Override
     protected Component getViewer(String id, HippoNode node) throws RepositoryException {
-        String label = null;
+        String label;
 
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             label = node.getPrimaryNodeType().getName();
@@ -44,11 +44,15 @@ public class TypeRenderer extends AbstractNodeRenderer {
                     break;
                 }
             }
-            if (label.indexOf(":") > -1) {
-                label = label.substring(label.indexOf(":") + 1);
-            }
+        } else if (node.isNodeType("hippostd:folder")) {
+            label = "orderable folder";
+        } else if (node.isNodeType("hippostd:directory")) {
+            label = "simple folder";
         } else {
-            label = "folder";
+            label = node.getPrimaryNodeType().getName();
+        }
+        if (label.indexOf(":") > -1) {
+            label = label.substring(label.indexOf(":") + 1);
         }
         return new Label(id, label);
     }

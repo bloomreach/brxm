@@ -43,8 +43,8 @@ public class BrowseLink extends Panel {
     public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
         super(id, new Model(docPath));
 
-        final JcrNodeModel variant = new JcrNodeModel(docPath);
-        AjaxLink link = new AjaxLink("link", variant) {
+        final JcrNodeModel nodeModel = new JcrNodeModel(docPath);
+        AjaxLink link = new AjaxLink("link", nodeModel) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -52,7 +52,7 @@ public class BrowseLink extends Panel {
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
-                    browseService.browse(variant);
+                    browseService.browse(nodeModel);
                 } else {
                     log.warn("no browser service found");
                 }
@@ -61,11 +61,13 @@ public class BrowseLink extends Panel {
         add(link);
 
         try {
-            Node handleNode = variant.getNode();
-            while (!handleNode.isNodeType(HippoNodeType.NT_HANDLE) && !handleNode.getPath().equals("/")) {
-                handleNode = handleNode.getParent();
+            Node node = nodeModel.getNode();
+            while (!node.isNodeType(HippoNodeType.NT_HANDLE) &&
+                   !node.isNodeType("hippostd:folder") &&
+                   !node.getPath().equals("/")) {
+                node = node.getParent();
             }
-            String path = handleNode.getPath();
+            String path = node.getPath();
             path = ISO9075Helper.decodeLocalName(path);
             link.add(new Label("label", path));
         } catch (RepositoryException e) {
