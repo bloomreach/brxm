@@ -70,6 +70,7 @@ public interface HippoNodeType {
     final public static String NT_GROUPFOLDER = "hippo:groupfolder";
     final public static String NT_HANDLE = "hippo:handle";
     final public static String NT_HARDDOCUMENT = "hippo:harddocument";
+    final public static String NT_IMPLEMENTATION = "hippo:implementation";
     final public static String NT_INITIALIZEFOLDER = "hippo:initializefolder";
     final public static String NT_INITIALIZEITEM = "hippo:initializeitem";
     final public static String NT_LOGCONFIG = "hippo:logconfig";
