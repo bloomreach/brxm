@@ -59,6 +59,7 @@ public class ListDisplayModule extends ModuleBase {
 	    	ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 	    	log.debug("ListDisplayModule > " + contentLocation + " base=" + contentContextBase);
 			Node n = contentContextBase.getRelativeNode(contentLocation); 
+			if(n!=null) {
 			    log.debug("ListDisplayModule.execute() --> " + n.getPath());
 			    NodeIterator subNodes =  n.getNodes();
 			    while (subNodes.hasNext()) {     
@@ -76,6 +77,10 @@ public class ListDisplayModule extends ModuleBase {
 			    	  wrappedNodes.add(new ListDisplayItem(subSubNode));
 			      }
 			    }
+			} else {
+			    log.warn("contentLocation '" + contentLocation +"' points to a nonexisting repository node. Return empty list");
+			    wrappedNodes = new ArrayList<ELNode>();
+			}
 		} catch (RepositoryException e) {
 			log.error(e.getMessage(), e);
 			wrappedNodes = new ArrayList<ELNode>();
