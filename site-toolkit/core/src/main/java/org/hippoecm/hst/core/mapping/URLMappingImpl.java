@@ -151,22 +151,8 @@ public class URLMappingImpl implements URLMapping {
         return contextPath+contextPrefix+path;
     }
 
-    public String rewriteLocation(String documentPath) {
-        try {
-            Item item = session.getItem(documentPath);
-            if (item.isNode()) {
-                Node node = (Node) item;
-                return rewriteLocation(node);
-            } else {
-                log.warn("Not possible to rewrite a link to a property");
-            }
-        } catch (PathNotFoundException e) {
-            log.warn("item " + documentPath + " does not exist (anymore) in the repository. Return  a score of 0");
-        } catch (RepositoryException e) {
-            log.error("RepositoryException " + e.getMessage());
-        }
-
-        return documentPath;
+    public String rewriteLocation(String path) {
+        return contextPath+contextPrefix+path;
     }
 
 }

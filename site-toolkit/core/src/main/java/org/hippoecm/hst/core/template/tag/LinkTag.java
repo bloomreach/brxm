@@ -37,6 +37,7 @@ public class LinkTag extends SimpleTagSupport {
     private static final Logger log = LoggerFactory.getLogger(LinkTag.class);
 
     private String var;
+    private String location;
     private ELNode item;
 
     @Override
@@ -48,7 +49,9 @@ public class LinkTag extends SimpleTagSupport {
         String href = "";
         if(item!= null) {
             href = urlMapping.rewriteLocation(item.getJcrNode());
-        } 
+        } else if(location != null ) {
+            href = urlMapping.rewriteLocation(location);
+        }
         
         Link link = new Link();
         link.setHref(href);
@@ -70,6 +73,14 @@ public class LinkTag extends SimpleTagSupport {
 
     public void setVar(String var) {
         this.var = var;
+    }
+    
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
     
     public class Link {

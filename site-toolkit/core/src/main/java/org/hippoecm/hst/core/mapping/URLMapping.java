@@ -20,5 +20,5 @@ import javax.jcr.Node;
 public interface URLMapping {
     
     public String rewriteLocation(Node node);
-    public String rewriteLocation(String documentPath);
+    public String rewriteLocation(String path);
 }

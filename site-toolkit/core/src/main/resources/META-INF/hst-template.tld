@@ -120,15 +120,21 @@
         <tagclass>org.hippoecm.hst.core.template.tag.LinkTag</tagclass>
         <body-content>empty</body-content>
         <attribute>
-            <description>...</description>
+            <description>A tag meant for automatic link rewriting</description>
             <name>var</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <description>...</description>
+            <description>If you want a link for a repository source use item</description>
             <name>item</name>
-            <required>true</required>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>If you have a static link, use this one to translate to correct link</description>
+            <name>location</name>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
