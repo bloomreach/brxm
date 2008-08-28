@@ -53,7 +53,7 @@ container to run with a different port.  When deploy the application on a
 machine other than your local machine you need to change &quot;localhost&quot;
 to the correct machine name.
 </p>
-
+</subsection>
             <subsection name="Deploying in Tomcat 6.0">
                 <ol>
                     <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
