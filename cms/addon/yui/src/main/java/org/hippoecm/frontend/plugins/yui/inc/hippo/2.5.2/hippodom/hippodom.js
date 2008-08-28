@@ -74,6 +74,18 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             return null;
         };
 
+        YAHOO.hippo.Dom.enhance = function(el, id) {
+            if (el.hasAttribute("yui:id")) {
+                var yid = el.getAttribute("yui:id");
+                if (yid == id.split(':')[1]) {
+                    if (el.id != id) {
+                        el.id = id;
+                        // workaround: css3 selectors allow a [yui|id=...] syntax
+                        Dom.addClass(el, yid);
+                    }
+                }
+            }
+        };
     })();
 
     YAHOO.register("hippodom", YAHOO.hippo.Dom, {

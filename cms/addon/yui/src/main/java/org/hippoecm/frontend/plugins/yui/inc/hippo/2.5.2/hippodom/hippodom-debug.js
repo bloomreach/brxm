@@ -65,7 +65,6 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
                     traverse(element);
                     if (children.length > 0) {
                         return children[0];
-                        return result;
                     }
                 } else {
                     return element;
