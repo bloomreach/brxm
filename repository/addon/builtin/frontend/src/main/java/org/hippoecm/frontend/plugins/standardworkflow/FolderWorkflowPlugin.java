@@ -238,7 +238,7 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder")) {
+                if (!nodeModel.getNode().isNodeType("hippostd:folder") && !nodeModel.getNode().isNodeType("hippostd:directory")) {
                     if (editor != null) {
                         JcrNodeModel editNodeModel = nodeModel;
                         Node editNodeModelNode = nodeModel.getNode();

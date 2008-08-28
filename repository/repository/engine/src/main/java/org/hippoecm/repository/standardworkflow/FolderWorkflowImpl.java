@@ -245,7 +245,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         }
     }
     
-    public void reorder(LinkedHashMap<String, String> mapping) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public String reorder(LinkedHashMap<String, String> mapping) throws WorkflowException, MappingException, RepositoryException, RemoteException {
        List<String> list = new ArrayList<String>(mapping.keySet());
        Collections.reverse(list);
        for (String srcChildRelPath: list) {
@@ -253,6 +253,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
            subject.orderBefore(srcChildRelPath, destChildRelPath);
        }
        subject.save();
+       return subject.getPath();
     }
 
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {

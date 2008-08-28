@@ -42,6 +42,6 @@ public interface FolderWorkflow extends Workflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void delete(Document offspring)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void reorder(LinkedHashMap<String, String> mapping)
+    public String reorder(LinkedHashMap<String, String> mapping)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
