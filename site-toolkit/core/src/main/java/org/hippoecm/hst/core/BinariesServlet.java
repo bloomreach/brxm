@@ -85,7 +85,7 @@ public class BinariesServlet extends HttpServlet {
         }
 
         try {
-            Session session = JCRConnector.getJCRSession(req.getSession());
+            Session session = JCRConnector.getJCRSession(req);
 
             Item item = JCRConnector.getItem(session, path);
 

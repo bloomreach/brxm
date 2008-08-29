@@ -97,7 +97,7 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
-		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+		Session session = JCRConnectorWrapper.getTemplateJCRSession(request);
 		
 		log.info("URI" + request.getRequestURI());
 			
@@ -151,7 +151,7 @@ public abstract class HstFilterBase implements Filter {
 	} */
 	
 	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
-		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+		Session session = JCRConnectorWrapper.getTemplateJCRSession(request);
 		
 		ContextBase hstConfigurationContextBase = getHstConfigurationContextBase(request, TEMPLATE_CONFIGURATION_LOCATION);
 			
@@ -213,7 +213,7 @@ public abstract class HstFilterBase implements Filter {
 	protected ContextBase getHstConfigurationContextBase(HttpServletRequest request, String hstConfigurationLocation) throws TemplateException {
 		ContextBase hstConfigurationContextBase = null;
 		if (request.getAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE) == null) {
-			Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+			Session session = JCRConnectorWrapper.getTemplateJCRSession(request);
 			try {
 				hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, hstConfigurationLocation, request, session);
 			} catch (PathNotFoundException e) {

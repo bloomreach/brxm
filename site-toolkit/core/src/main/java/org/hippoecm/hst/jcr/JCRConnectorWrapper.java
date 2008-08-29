@@ -4,6 +4,7 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -18,24 +19,27 @@ public class JCRConnectorWrapper extends JCRConnector {
 	private static final Logger log = LoggerFactory.getLogger(JCRConnectorWrapper.class);
 	public static final String AUTHENTICATED_USER_SESSION_ATTRIBUTE ="authenticatedUserJcrSession";
 	
-	public static Session getJCRSession(HttpSession session) {
+	public static Session getJCRSession(HttpServletRequest request) {
+	    HttpSession session = request.getSession();
 		Object userSession = session.getAttribute(AUTHENTICATED_USER_SESSION_ATTRIBUTE);
 		if (userSession == null) {
 			//anonymous session
-			return getDefaultJCRSession(session);
+		    userSession = getDefaultJCRSession(request);
+		    session.setAttribute(AUTHENTICATED_USER_SESSION_ATTRIBUTE, userSession);
+			return (Session)userSession;
 		} else {
 			Session jcrSession = (Session) userSession;
 			if (!jcrSession.isLive()) {
 				log.error("Authenticated JCR Session is not live");
 				//return an 'anonymous' user session
-				return getDefaultJCRSession(session);
+				return getDefaultJCRSession(request);
 			}
 			return jcrSession;
 		}
 	}
 	
-	public static Session getTemplateJCRSession(HttpSession session) {
-		return getDefaultJCRSession(session);
+	public static Session getTemplateJCRSession(HttpServletRequest request) {
+		return getDefaultJCRSession(request);
 	}
 	
 	public static Session getJCRSession(HttpSession httpSession, String userName, String password) {
@@ -55,8 +59,8 @@ public class JCRConnectorWrapper extends JCRConnector {
 	        return result;
 	    }
 	 
-	 private static Session getDefaultJCRSession(HttpSession httpSession) {
-		 return JCRConnector.getJCRSession(httpSession);
+	 private static Session getDefaultJCRSession(HttpServletRequest request) {
+		 return JCRConnector.getJCRSession(request);
 	 }
 
 

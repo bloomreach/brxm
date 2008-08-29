@@ -39,7 +39,7 @@ public class ContextBase {
     
 	
 	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-		this(contextName, repositoryPath, request, JCRConnectorWrapper.getJCRSession(request.getSession()));
+		this(contextName, repositoryPath, request, JCRConnectorWrapper.getJCRSession(request));
 	}
 	
 	public ContextBase (String contextName, String repositoryPath, HttpServletRequest request, Session session) throws PathNotFoundException, RepositoryException {

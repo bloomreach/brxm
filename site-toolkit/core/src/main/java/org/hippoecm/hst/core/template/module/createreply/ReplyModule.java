@@ -88,7 +88,7 @@ public class ReplyModule extends ModuleBase {
 	
 	
 	public void writeNode(HttpServletRequest request, String name, String title, String content, String documentNodeUUID) throws Exception {
-		Session session = JCRConnectorWrapper.getJCRSession(request.getSession());
+		Session session = JCRConnectorWrapper.getJCRSession(request);
 		Node rootNode = session.getRootNode();	
 		
 		Node documentReplyParentNode = null;

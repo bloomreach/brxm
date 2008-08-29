@@ -17,7 +17,7 @@ import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 public class ReplyDisplayModule extends ModuleBase {
 
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
-		Session session = JCRConnectorWrapper.getJCRSession(request.getSession());				
+		Session session = JCRConnectorWrapper.getJCRSession(request);				
         try {
 			Node rootNode = session.getRootNode();	
 			
@@ -47,7 +47,7 @@ public class ReplyDisplayModule extends ModuleBase {
 
 
 	public void render(PageContext pageContext) {
-		Session session = JCRConnectorWrapper.getJCRSession(pageContext.getSession());				
+		Session session = JCRConnectorWrapper.getJCRSession((HttpServletRequest) pageContext.getRequest());				
         try {
 			Node rootNode = session.getRootNode();	
 			

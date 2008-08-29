@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.mapping.URLMappingImpl;
+import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,16 +77,18 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		
 		
 		if (ignorePath(request)) {
-			
 			filterChain.doFilter(request, response);			
 		} else {
+		    
+		    JCRConnector.getJCRSession(request);
+		    
 			String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 			log.debug("requestURI: " + requestURI);
 			String uriPrefix = getLevelPrefix(requestURI, uriLevels);
 			log.debug("uriPrefix: " + uriPrefix);
 			
 			long start = System.nanoTime();
-            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
+            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
            
             log.debug("creating mapping took " + (System.nanoTime() - start) / 1000000 + " ms.");
             request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
