@@ -238,7 +238,6 @@ public class JCRConnector {
                 System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {            
             	// only refresh the session once for a request
                 if(shouldRefresh == null || shouldRefresh) {
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     jcrSession.refresh(false); // NOTICE: never keep changes
                     request.setAttribute(SHOULD_SESSION_REFRESH, new Boolean(false));
                 }
