@@ -27,7 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
@@ -45,10 +44,12 @@ public class JCRConnector {
     private static final Logger logger = LoggerFactory.getLogger(JCRConnector.class);
 
     public static final String JCR_SESSION_KEY = "org.hippoecm.hst.JCRSESSION";
-    public static final String SHOULD_SESSION_REFRESH = "org.hippoecm.hst.JCRSESSION";
 
-    public static Session getJCRSession(HttpServletRequest request) {
-        HttpSession httpSession = request.getSession();
+    public static Session getJCRSession(HttpSession httpSession) {
+        return getJCRSession(httpSession,false);
+    }
+    
+    public static Session getJCRSession(HttpSession httpSession, boolean refreshJcrSession) {
         Session result = null;
         try {
             SessionWrapper wrapper = (SessionWrapper) httpSession.getAttribute(JCR_SESSION_KEY);
@@ -65,17 +66,16 @@ public class JCRConnector {
                 httpSession.setAttribute(JCR_SESSION_KEY, wrapper);
                 result = wrapper.jcrSession;
             }
-            wrapper.refresh(request);
+            wrapper.refresh(httpSession, refreshJcrSession);
         } catch (LoginException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             throw new JCRConnectionException("Failed to login to repository");
         } catch (RepositoryException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             throw new JCRConnectionException("Failed to initialize repository");
         }
         return result;
     }
-
     public static Item getItem(Session session, String path) throws RepositoryException {
 
         if (session == null) {
@@ -231,20 +231,17 @@ public class JCRConnector {
             logger.debug("Unbound JCR session from HTTP session");
         }
 
-        void refresh(HttpServletRequest request) throws RepositoryException {
-            Boolean shouldRefresh =  (Boolean)request.getAttribute(SHOULD_SESSION_REFRESH);
-            HttpSession httpSession = request.getSession();
-            if(httpSession.getMaxInactiveInterval() >= 0 &&
-                System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {            
-            	// only refresh the session once for a request
-                if(shouldRefresh == null || shouldRefresh) {
-                    jcrSession.refresh(false); // NOTICE: never keep changes
-                    request.setAttribute(SHOULD_SESSION_REFRESH, new Boolean(false));
-                }
-                
-                logger.info("refreshing session");
-                lastRefreshed = System.currentTimeMillis();
+        void refresh(HttpSession httpSession, boolean refreshJcrSession) throws RepositoryException {
+            if(refreshJcrSession) {
+                jcrSession.refresh(false);
             }
+            
+            //if(httpSession.getMaxInactiveInterval() >= 0 &&
+            //   System.currentTimeMillis() - lastRefreshed >= httpSession.getMaxInactiveInterval()*1000L) {            
+                //jcrSession.refresh(false); // NOTICE: never keep changes
+            //    logger.info("refreshing session");
+            //    lastRefreshed = System.currentTimeMillis();
+            //}
         }
     }
 }

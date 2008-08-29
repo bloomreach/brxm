@@ -80,7 +80,9 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			filterChain.doFilter(request, response);			
 		} else {
 		    
-		    JCRConnector.getJCRSession(request);
+		    // TODO improve session refreshing: this call is done here to refresh the jcrsession at the beginning of a request.
+		    // parallel requests (for example frames) from one session gives problems. The invalidation needs to be improved
+		    JCRConnector.getJCRSession(request.getSession(), true);
 		    
 			String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 			log.debug("requestURI: " + requestURI);
@@ -88,7 +90,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			log.debug("uriPrefix: " + uriPrefix);
 			
 			long start = System.nanoTime();
-            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
+            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
            
             log.debug("creating mapping took " + (System.nanoTime() - start) / 1000000 + " ms.");
             request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);

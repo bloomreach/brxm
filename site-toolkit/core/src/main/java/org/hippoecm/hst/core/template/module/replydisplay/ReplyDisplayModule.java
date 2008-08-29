@@ -16,62 +16,62 @@ import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 
 public class ReplyDisplayModule extends ModuleBase {
 
-	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
-		Session session = JCRConnectorWrapper.getJCRSession(request);				
+    public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
+        Session session = JCRConnectorWrapper.getJCRSession(request.getSession());              
         try {
-			Node rootNode = session.getRootNode();	
-			
-			String documentNodeUUID = (String) request.getSession().getAttribute("UUID");
-			if (documentNodeUUID != null) {
-				Node documentReplyParentNode = null;
-			    String parentNodeLocation = "content/reply/" + documentNodeUUID;
-			    
-			    if (session.itemExists("/" + parentNodeLocation)) {
-			       Node repliesNode = rootNode.getNode(parentNodeLocation);
-			       NodeIterator nodeIter = repliesNode.getNodes();
-			       List elNodes = new ArrayList();
-			       while (nodeIter.hasNext()) {
-			    	   elNodes.add(new ReplyBean((Node) nodeIter.next()));
-			       }
-			       request.setAttribute("replies", elNodes);
-			    }
-			} 
-			
-		} catch (Exception e) {
-			throw new TemplateException(e);
-		}
-		
-		return null;
-		
-	}
+            Node rootNode = session.getRootNode();  
+            
+            String documentNodeUUID = (String) request.getSession().getAttribute("UUID");
+            if (documentNodeUUID != null) {
+                Node documentReplyParentNode = null;
+                String parentNodeLocation = "content/reply/" + documentNodeUUID;
+                
+                if (session.itemExists("/" + parentNodeLocation)) {
+                   Node repliesNode = rootNode.getNode(parentNodeLocation);
+                   NodeIterator nodeIter = repliesNode.getNodes();
+                   List elNodes = new ArrayList();
+                   while (nodeIter.hasNext()) {
+                       elNodes.add(new ReplyBean((Node) nodeIter.next()));
+                   }
+                   request.setAttribute("replies", elNodes);
+                }
+            } 
+            
+        } catch (Exception e) {
+            throw new TemplateException(e);
+        }
+        
+        return null;
+        
+    }
 
 
-	public void render(PageContext pageContext) {
-		Session session = JCRConnectorWrapper.getJCRSession((HttpServletRequest) pageContext.getRequest());				
+    public void render(PageContext pageContext) {
+        Session session = JCRConnectorWrapper.getJCRSession(pageContext.getSession());              
         try {
-			Node rootNode = session.getRootNode();	
-			
-			String documentNodeUUID = (String) pageContext.getSession().getAttribute("UUID");
-			if (documentNodeUUID != null) {
-				Node documentReplyParentNode = null;
-			    String parentNodeLocation = "content/reply/" + documentNodeUUID;
-			    
-			    if (session.itemExists("/" + parentNodeLocation)) {
-			       Node repliesNode = rootNode.getNode(parentNodeLocation);
-			       NodeIterator nodeIter = repliesNode.getNodes();
-			       List elNodes = new ArrayList();
-			       while (nodeIter.hasNext()) {
-			    	   elNodes.add(new ReplyBean((Node) nodeIter.next()));
-			       }
-			       pageContext.setAttribute("replies", elNodes);
-			    }
-			} 
-			
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
-		
-	}
+            Node rootNode = session.getRootNode();  
+            
+            String documentNodeUUID = (String) pageContext.getSession().getAttribute("UUID");
+            if (documentNodeUUID != null) {
+                Node documentReplyParentNode = null;
+                String parentNodeLocation = "content/reply/" + documentNodeUUID;
+                
+                if (session.itemExists("/" + parentNodeLocation)) {
+                   Node repliesNode = rootNode.getNode(parentNodeLocation);
+                   NodeIterator nodeIter = repliesNode.getNodes();
+                   List elNodes = new ArrayList();
+                   while (nodeIter.hasNext()) {
+                       elNodes.add(new ReplyBean((Node) nodeIter.next()));
+                   }
+                   pageContext.setAttribute("replies", elNodes);
+                }
+            } 
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
 
 }
 
