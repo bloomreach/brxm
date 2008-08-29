@@ -53,19 +53,21 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             throttle        : new Wicket.Throttler(true),
             throttleDelay   : 2000,
             
-            init :  function() {
+            init : function() {
               var _this = this;
               Wicket.Ajax.registerPreCallHandler(function(){_this.flushThrottle()});
             },
             
             flushThrottle : function() {
-              for(var id in this.throttle.entries) {
-                var entry = this.throttle.entries[id];
-                if (entry != undefined) {
-                  window.clearTimeout(entry.getTimeoutVar());
-                  var exe = this.throttle.execute(id);
+                for(var id in this.throttle.entries) {
+                    var entry = this.throttle.entries[id];
+                    //Explicit undefined/null checking for IE
+                    if(!Lang.isUndefined(entry) && !Lang.isNull(entry) 
+                            && Lang.isFunction(entry.getTimeoutVar)) {
+                        window.clearTimeout(entry.getTimeoutVar());
+                        this.throttle.execute(id);
+                    }
                 }
-              }
             },
 
             onLoad : function() {
