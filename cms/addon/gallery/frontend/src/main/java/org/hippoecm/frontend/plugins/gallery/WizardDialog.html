@@ -24,10 +24,12 @@
           <td><label for="upload"> Select Image:</label></td>
           <td><input wicket:id="input" id="upload" type="file" /></td>
         </tr>
-      <tr>
-      <td><label for="typeselect">Item provided is of type:</label></td>
-      <td><select wicket:id="type" id="typeselect"></select></td>
-      </tr>
+        <wicket:enclosure child="type">
+        <tr wicket:id="box">
+            <td><label for="typeselect">Item provided is of type:</label></td>
+            <td><select wicket:id="type" id="typeselect"></select></td>
+        </tr>
+        </wicket:enclosure>
         <tr>
           <td colspan="2"><input type="submit" value="Create"/></td>
         </tr>
