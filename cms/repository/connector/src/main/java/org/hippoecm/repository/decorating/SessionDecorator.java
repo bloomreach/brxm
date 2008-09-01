@@ -66,6 +66,7 @@ import org.apache.jackrabbit.spi.Path;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.hippoecm.repository.SessionClassLoader;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 
@@ -363,4 +364,8 @@ public abstract class SessionDecorator implements XASession, HippoSession {
                                                                           RepositoryException;
 
     public abstract NodeIterator pendingChanges() throws RepositoryException;
+
+    public ClassLoader getSessionClassLoader() throws RepositoryException {
+        return new SessionClassLoader(this);
+    }
 }

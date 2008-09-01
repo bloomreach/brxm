@@ -19,21 +19,23 @@ import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
+
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.session.SessionClassLoader;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
 import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.api.HippoSession;;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JcrSessionModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
@@ -98,7 +100,11 @@ public class JcrSessionModel extends LoadableDetachableModel {
         if (classLoader == null) {
             Session session = getSession();
             if (session != null) {
-                classLoader = new SessionClassLoader(session);
+                try {
+                    classLoader = ((HippoSession)session).getSessionClassLoader();
+                } catch(RepositoryException ex) {
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                }
             }
         }
         return classLoader;

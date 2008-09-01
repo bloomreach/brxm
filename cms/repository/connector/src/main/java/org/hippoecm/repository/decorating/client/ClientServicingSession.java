@@ -37,6 +37,7 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
+import org.hippoecm.repository.SessionClassLoader;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 
@@ -101,5 +102,9 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
+    }
+
+    public ClassLoader getSessionClassLoader() throws RepositoryException {
+        return new SessionClassLoader(this);
     }
 }
