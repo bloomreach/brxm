@@ -117,7 +117,7 @@ public class JcrPropertyValueModel extends Model {
         load();
         try {
             String string = object == null ? "" : object.toString();
-            propertyModel.getProperty().getSession().getValueFactory().createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            value = propertyModel.getProperty().getSession().getValueFactory().createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
             return;
