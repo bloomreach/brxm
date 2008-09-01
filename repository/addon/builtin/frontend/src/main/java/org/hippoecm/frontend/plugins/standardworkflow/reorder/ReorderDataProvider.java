@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -76,19 +76,12 @@ public class ReorderDataProvider extends SortableDataProvider {
         }
     }
 
-    public LinkedHashMap<String, String> getMapping() {
-        LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
-        for (ListItem item: listItems) {
-            ListItem item2;
-            int index = listItems.indexOf(item);
-            if (index < listItems.size() - 1) {
-                item2 = listItems.get(index + 1);
-            } else {
-                item2 = null;
-            }
-            result.put(item.getName(), item2 != null ? item2.getName() : null);
-        }
-        return result;
+    public List<String> getMapping() {
+        LinkedList<String> newOrder = new LinkedList<String>();
+	for (ListItem item : listItems) {
+	    newOrder.add(item.getName());
+	}
+        return newOrder;
     }
 
 }

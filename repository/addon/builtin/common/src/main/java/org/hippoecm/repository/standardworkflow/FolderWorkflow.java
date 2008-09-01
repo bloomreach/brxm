@@ -15,7 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.rmi.RemoteException;
 
@@ -42,6 +42,6 @@ public interface FolderWorkflow extends Workflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void delete(Document offspring)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public String reorder(LinkedHashMap<String, String> mapping)
+    public void reorder(List<String> newOrder)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
