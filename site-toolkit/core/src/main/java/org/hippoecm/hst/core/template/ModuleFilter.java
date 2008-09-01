@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Filter that runs the execute() methods from the modules in the moduleList. 
- * This list is taken from the sessionscope and it is filled by the modules in the
- * @author mmeijnhard
+ * This list is taken from the session and it is filled by the modules in the
+ * previous page.
  *
  */
 public class ModuleFilter extends HstFilterBase implements Filter {
@@ -57,7 +57,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignorePath(request)) {
+		if (ignoreRequest(request)) {
 			chain.doFilter(request, response);
 		} else {
 			String forward = null; 
@@ -73,6 +73,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 							Module module = getModule(moduleRenderAttributes.getClassName());
 							PageNode pageNode = getPageNode(request, moduleRenderAttributes.getPageName());
 
+							
 							PageContainerNode containerNode = pageNode.getPageContainerNode(moduleRenderAttributes.getContainerName()); 
 							if (log.isDebugEnabled() && containerNode != null) {
 						    	log.debug("containerNode=" + containerNode.getJcrNode().getPath());
@@ -93,12 +94,9 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			    }
 			}
 			request.getSession().removeAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
-			if (forward != null) {
-				//RequestDispatcher rd = request.getRequestDispatcher(forward);
-				//rd.forward(new RequestWrapper((HttpServletRequest) request, forward), response);
+			if (forward != null) {			
 				HttpServletResponse resp = (HttpServletResponse) response;
-				resp.sendRedirect(forward);
-				//chain.doFilter(new RequestWrapper((HttpServletRequest) request, forward), response);
+				resp.sendRedirect(forward);			
 			} else {
 			    chain.doFilter(request, response);
 			}
@@ -123,18 +121,5 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			}
 		return (Module) o;
 	}
-	
-	
-    class RequestWrapper extends HttpServletRequestWrapper {
-    	private String forward;
-    	public RequestWrapper(HttpServletRequest request, String forward)  {
-    		super(request);
-    		this.forward = forward;
-    	}
-		@Override
-		public String getRequestURI() {
-			return forward;
-		}
-    }
 
 }

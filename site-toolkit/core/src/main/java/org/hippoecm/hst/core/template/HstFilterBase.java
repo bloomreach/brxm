@@ -115,7 +115,7 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	
-	protected boolean ignorePath(HttpServletRequest request) {
+	protected boolean ignoreRequest(HttpServletRequest request) {
 		if (request.getAttribute(HSTHttpAttributes.REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE) != null) {
 			return true;
 		}

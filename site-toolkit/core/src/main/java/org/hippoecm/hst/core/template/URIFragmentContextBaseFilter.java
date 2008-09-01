@@ -76,7 +76,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		HttpServletRequest request = (HttpServletRequest) req;
 		
 		
-		if (ignorePath(request)) {
+		if (ignoreRequest(request)) {
 			filterChain.doFilter(request, response);			
 		} else {
 		    

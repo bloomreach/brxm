@@ -94,7 +94,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 		
 		HttpServletRequest request = (HttpServletRequest) req;
 		
-		if (ignorePath(request)) {
+		if (ignoreRequest(request)) {
 			log.debug("ingore " + request.getRequestURI());
 			filterChain.doFilter(request, response);
 		} else {
