@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.markup.html.basic.Label;
@@ -95,7 +94,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
                 NodeIterator children = handle.getNodes(HippoNodeType.HIPPO_PROTOTYPE);
                 while (children.hasNext()) {
                     Node child = children.nextNode();
-                    if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                    if (child.isNodeType("nt:unstructured")) {
                         entry.getValue().prototype = child.getUUID();
                     }
                 }

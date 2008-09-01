@@ -21,8 +21,12 @@ import java.util.GregorianCalendar;
 
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 
 public class DateFieldWidget extends AjaxUpdatingWidget {
@@ -30,6 +34,8 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(DateFieldWidget.class);
 
     public DateFieldWidget(String id, IModel model) {
         super(id, model);

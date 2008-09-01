@@ -17,14 +17,16 @@ package org.hippoecm.frontend.widgets;
 
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
+
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
     @SuppressWarnings("unused")
