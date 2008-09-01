@@ -46,20 +46,20 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
                 serviceName = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
             } catch (PathNotFoundException ex) {
-            	WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
+                WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
             
             attributes = new HashMap<String, String>();
             PropertyIterator properties = node.getProperties();
             while (properties.hasNext()) {
-            	Property p = properties.nextProperty();
-            	if (!p.getName().startsWith("hippo:")) {
-            		attributes.put(p.getName(), p.getString());
-            	}
+                Property p = properties.nextProperty();
+                if (!p.getName().startsWith("hippo:")) {
+                    attributes.put(p.getName(), p.getString());
+                }
             }
         } catch (ValueFormatException ex) {
-        	WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
+            WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
     }

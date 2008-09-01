@@ -172,7 +172,9 @@ public class HippoRepositoryFactory {
             } else if (ex.getCause() instanceof IllegalArgumentException) {
                 throw new RepositoryException("Invalid data: " + ex.getCause());
             } else {
-                throw new RepositoryException("unchecked exception: " + ex.getMessage());
+                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                ex.printStackTrace(System.err);
+                throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             }
         }
 

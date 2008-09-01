@@ -27,14 +27,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.NameValue;
-import org.apache.jackrabbit.value.PathValue;
-import org.apache.jackrabbit.value.ReferenceValue;
-import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,37 +117,8 @@ public class JcrPropertyValueModel extends Model {
         load();
         try {
             String string = object == null ? "" : object.toString();
-            switch (type) {
-            case PropertyType.BOOLEAN:
-                value = BooleanValue.valueOf(string);
-                break;
-            case PropertyType.DATE:
-                value = DateValue.valueOf(string);
-                break;
-            case PropertyType.DOUBLE:
-                value = DoubleValue.valueOf(string);
-                break;
-            case PropertyType.LONG:
-                value = LongValue.valueOf(string);
-                break;
-            case PropertyType.NAME:
-                value = NameValue.valueOf(string);
-                break;
-            case PropertyType.PATH:
-                value = PathValue.valueOf(string);
-                break;
-            case PropertyType.REFERENCE:
-                value = ReferenceValue.valueOf(string);
-                break;
-            case PropertyType.STRING:
-            case PropertyType.UNDEFINED:
-                value = new StringValue(string);
-                break;
-            default:
-                log.info("Unable to parse property type " + PropertyType.nameFromValue(type));
-                return;
-            }
-        } catch (ValueFormatException ex) {
+            propertyModel.getProperty().getSession().getValueFactory().createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+        } catch (RepositoryException ex) {
             log.info(ex.getMessage());
             return;
         }

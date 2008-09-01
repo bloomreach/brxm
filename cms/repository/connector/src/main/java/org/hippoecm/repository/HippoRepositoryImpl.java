@@ -33,7 +33,7 @@ import javax.jcr.SimpleCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippoecm.repository.api.UserTransactionImpl;
+import org.hippoecm.repository.UserTransactionImpl;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
     @SuppressWarnings("unused")

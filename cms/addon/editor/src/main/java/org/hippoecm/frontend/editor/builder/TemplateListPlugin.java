@@ -24,7 +24,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.value.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -34,6 +36,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
@@ -49,8 +52,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TemplateListPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -175,7 +176,7 @@ public class TemplateListPlugin extends RenderPlugin {
             itemNode.setProperty("mode", "${mode}");
             itemNode.setProperty("engine", "${engine}");
             itemNode.setProperty("field", name);
-            itemNode.setProperty("caption", new Value[] { new StringValue(typeDescriptor.getName()) });
+            itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
 
             IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
             jcrService.flush((JcrNodeModel) getModel());

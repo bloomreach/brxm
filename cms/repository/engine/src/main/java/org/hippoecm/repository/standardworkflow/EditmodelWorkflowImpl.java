@@ -27,12 +27,12 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +121,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             NodeIterator nodes = target.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
-                if (!child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (!child.isNodeType("nt:unstructured")) {
                     child.remove();
                 }
             }
@@ -166,7 +166,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes();
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
-                if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (child.isNodeType("nt:unstructured")) {
                     return child;
                 }
             }
@@ -224,7 +224,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes();
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
-                if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (child.isNodeType("nt:unstructured")) {
                     draft = child;
                 } else if (prefix != null) {
                     NodeType nt = child.getPrimaryNodeType();
@@ -239,7 +239,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 throw new ItemNotFoundException("Remodel node " + HippoNodeType.HIPPO_PROTOTYPE
                         + ", current version was not found for type " + subject.getPath());
             }
-            draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, JcrConstants.NT_UNSTRUCTURED);
+            draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
             draft.addMixin("mix:referenceable");
 
             PropertyIterator propIter = current.getProperties();

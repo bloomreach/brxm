@@ -44,8 +44,6 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.JcrConstants;
-
 import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
@@ -109,7 +107,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             // if the user session has not yet been saved, no workflow is possible
             // as the root session will not be able to find it.  (ItemNotFoundException)
-            if (!item.isNodeType(JcrConstants.MIX_REFERENCEABLE) && !item.isNodeType("rep:root")) {
+            if (!item.isNodeType("mix:referenceable") && !item.isNodeType("rep:root")) {
                 log.debug("no workflow for node because node is not mix:referenceable");
                 return null;
             }

@@ -82,7 +82,7 @@ public abstract class QueryDecorator extends AbstractDecorator implements HippoQ
     public Node storeAsNode(String absPath) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         Node node = query.storeAsNode(absPath);
-	return node;
+        return node;
     }
 
     public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
