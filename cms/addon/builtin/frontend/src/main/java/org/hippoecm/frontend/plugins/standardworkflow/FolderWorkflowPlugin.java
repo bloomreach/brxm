@@ -27,6 +27,9 @@ import java.util.TreeSet;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -60,8 +63,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -107,33 +108,6 @@ public class FolderWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, getDialogService());
         add(deleteLink);
-
-        Node node = (Node) getModel().getObject();
-        try {
-            //FIXME: reordering should be a workflow only on hippo:folder and not also on hippo:directory
-            if (node.isNodeType("hippostd:folder")) {
-                IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-                final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
-
-                DialogLink reorderLink = new DialogLink("reorder-dialog", new Model("Reorder"), new IDialogFactory() {
-                    private static final long serialVersionUID = 1L;
-
-                    public AbstractDialog createDialog(IDialogService dialogService) {
-                        return new ReorderDialog(FolderWorkflowPlugin.this, dialogService, jcrRef);
-                    }
-                }, getDialogService());
-                add(reorderLink);
-                if (node.getNodes().getSize() < 2) {
-                    reorderLink.disable();
-                }
-                
-            } else {
-                add(new EmptyPanel("reorder-dialog"));
-            }
-        } catch (RepositoryException e) {
-            add(new EmptyPanel("reorder-dialog"));
-            log.error(e.getMessage(), e);
-        }
 
         final IDataProvider provider = new IDataProvider() {
             private static final long serialVersionUID = 1L;

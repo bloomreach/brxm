@@ -155,7 +155,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.OrderableFolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on folders</sv:value>

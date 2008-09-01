@@ -25,7 +25,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.rmi.RemoteException;
-import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -195,15 +196,17 @@ public class FolderWorkflowTest extends TestCase {
          * foo      noot
          * bar      zorro
          */
-        LinkedHashMap<String, String> mapping = new LinkedHashMap<String, String>();
-        mapping.put("aap", "bar");
-        mapping.put("bar", "foo");
-        mapping.put("foo", "mies");
-        mapping.put("mies", "noot");
-        mapping.put("noot", "zorro");
-        mapping.put("zorro", null);
-          
-        workflow.reorder(mapping);
+        List<String> newOrder = new LinkedList<String>();
+        newOrder.add("aap");
+        newOrder.add("bar");
+        newOrder.add("foo");
+        newOrder.add("mies");
+        newOrder.add("noot");
+        newOrder.add("zorro");
+
+        workflow.reorder(newOrder);
+        node.refresh(false);
+
         it = node.getNodes();
         assertEquals("aap", it.nextNode().getName());
         assertEquals("bar", it.nextNode().getName());

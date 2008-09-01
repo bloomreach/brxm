@@ -68,5 +68,4 @@ public class ReorderDialog extends AbstractWorkflowDialog {
         }
 
     }
-
 }

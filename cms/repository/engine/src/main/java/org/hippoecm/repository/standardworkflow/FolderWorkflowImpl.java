@@ -245,15 +245,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         }
     }
     
-    public String reorder(LinkedHashMap<String, String> mapping) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-       List<String> list = new ArrayList<String>(mapping.keySet());
+    public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+       List<String> list = new ArrayList<String>(newOrder);
        Collections.reverse(list);
-       for (String srcChildRelPath: list) {
-           String destChildRelPath = mapping.get(srcChildRelPath);
-           subject.orderBefore(srcChildRelPath, destChildRelPath);
+       Node folder = userSession.getNodeByUUID(subject.getUUID());
+       for (String item : list) {
+           Node head = folder.getNodes().nextNode();
+           if (!head.isSame(folder.getNode(item))) {
+               folder.orderBefore(item, head.getName());
+           }
        }
-       subject.save();
-       return subject.getPath();
+       folder.save();
     }
 
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {

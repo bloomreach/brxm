@@ -172,7 +172,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         }
     }
     
-    public LinkedHashMap<String, String> getMapping() {
+    public List<String> getMapping() {
         return dataProvider.getMapping();
     }
 
