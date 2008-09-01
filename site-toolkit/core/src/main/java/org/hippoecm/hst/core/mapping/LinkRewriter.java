@@ -31,6 +31,7 @@ public class LinkRewriter {
     private String path;
     private int depth;
     private boolean isExactMatch;
+   
 
     public LinkRewriter(String prefixLinkRewrite, String nodeTypeName, String path2) {
         this.prefixLinkRewrite = prefixLinkRewrite;
@@ -50,6 +51,9 @@ public class LinkRewriter {
     }
 
     public String getUrl(Node node) throws RepositoryException{
+        if(isExactMatch) {
+            return prefixLinkRewrite;
+        } 
         return prefixLinkRewrite + node.getPath();
     }
     
