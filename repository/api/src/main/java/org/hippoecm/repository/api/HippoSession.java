@@ -129,4 +129,11 @@ public interface HippoSession extends Session {
 //    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
 //            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
 //            VersionException, LockException, RepositoryException;
+
+    /**
+     * FIXME WARNING this call is not yet part of the API.
+     * Probably it will change into getSessionClassLoader(Node) or similar
+     * Get a classloader which uses the JCR  repository to load the classes from
+     */
+    public ClassLoader getSessionClassLoader() throws RepositoryException;
 }
