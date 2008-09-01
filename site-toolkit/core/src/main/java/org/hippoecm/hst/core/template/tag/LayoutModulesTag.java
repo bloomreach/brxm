@@ -51,6 +51,10 @@ public class LayoutModulesTag extends SimpleTagSupport {
         NodeList<PageContainerNode> containerList = pageNode.getContainers();
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
+        if(pcNode == null ) {
+            log.error("PageContainerNode is null for layout module '" + name + "'. Fix the hst:configuration for this.");
+            return;
+        }
         request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE, pcNode);
         
         //getModules
