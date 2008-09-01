@@ -42,9 +42,9 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
         return descriptor.getDisplayName();
     }
 
-	public String getAttribute(String name) throws RepositoryException,	RemoteException {
-		return descriptor.getAttribute(name);
-	}
+    public String getAttribute(String name) throws RepositoryException, RemoteException {
+        return descriptor.getAttribute(name);
+    }
 
     public Workflow getWorkflow() throws RepositoryException, RemoteException {
         return manager.getWorkflow(descriptor);

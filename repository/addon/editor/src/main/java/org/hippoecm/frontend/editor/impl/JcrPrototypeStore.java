@@ -24,7 +24,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -114,11 +113,11 @@ public class JcrPrototypeStore implements IDetachable {
         while (iter.hasNext()) {
             Node node = iter.nextNode();
             if (draft) {
-                if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (node.isNodeType("nt:unstructured")) {
                     return node;
                 }
             } else {
-                if (!node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (!node.isNodeType("nt:unstructured")) {
                     return node;
                 }
             }

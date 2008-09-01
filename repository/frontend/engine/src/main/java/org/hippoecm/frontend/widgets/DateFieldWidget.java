@@ -21,7 +21,6 @@ import java.util.GregorianCalendar;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.value.DateValue;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -51,8 +50,11 @@ public class DateFieldWidget extends AjaxUpdatingWidget {
             public void setObject(Object object) {
                 Calendar calendar = new GregorianCalendar();
                 calendar.setTime((Date) object);
-                valueModel.setValue(new DateValue(calendar));
-
+                try {
+                  valueModel.setValue(valueModel.getJcrPropertymodel().getProperty().getSession().getValueFactory().createValue(calendar));
+                } catch(RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                }
                 super.setObject(object);
             }
 

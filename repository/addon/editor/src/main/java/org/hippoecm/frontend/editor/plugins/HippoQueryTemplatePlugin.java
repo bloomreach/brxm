@@ -62,7 +62,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
         Node queryNode = jcrNodeModel.getNode();
         try {
 
-            //if(!queryNode.isNodeType(JcrConstants.NT_QUERY))
+            //if(!queryNode.isNodeType("nt:query"))
 
             if (!queryNode.hasProperty("jcr:language")) {
                 queryNode.setProperty("jcr:language", "xpath");

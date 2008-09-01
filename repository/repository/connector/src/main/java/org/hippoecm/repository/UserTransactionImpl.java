@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.api;
+package org.hippoecm.repository;
 
 import javax.jcr.Session;
 import javax.transaction.HeuristicMixedException;

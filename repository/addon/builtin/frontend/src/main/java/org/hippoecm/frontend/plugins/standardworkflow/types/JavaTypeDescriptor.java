@@ -23,17 +23,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.NameValue;
-import org.apache.jackrabbit.value.PathValue;
-import org.apache.jackrabbit.value.ReferenceValue;
-import org.apache.jackrabbit.value.StringValue;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,26 +135,26 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
             int propertyType = PropertyType.valueFromName(type);
             switch (propertyType) {
             case PropertyType.BOOLEAN:
-                return BooleanValue.valueOf("false");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
             case PropertyType.DATE:
-                return new DateValue(Calendar.getInstance());
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(Calendar.getInstance());
             case PropertyType.DOUBLE:
-                return DoubleValue.valueOf("0.0");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0.0);
             case PropertyType.LONG:
-                return LongValue.valueOf("0");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0L);
             case PropertyType.NAME:
-                return NameValue.valueOf("");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.NAME);
             case PropertyType.PATH:
-                return PathValue.valueOf("/");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/", PropertyType.PATH);
             case PropertyType.REFERENCE:
-                return ReferenceValue.valueOf(UUID.randomUUID().toString());
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(UUID.randomUUID().toString(), PropertyType.REFERENCE);
             case PropertyType.STRING:
             case PropertyType.UNDEFINED:
-                return new StringValue("");
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.STRING);
             default:
                 return null;
-            }
-        } catch (ValueFormatException ex) {
+           }
+        } catch (RepositoryException ex) {
             log.error(ex.getMessage());
             return null;
         }
@@ -168,5 +162,4 @@ public class JavaTypeDescriptor implements ITypeDescriptor {
 
     public void detach() {
     }
-
 }

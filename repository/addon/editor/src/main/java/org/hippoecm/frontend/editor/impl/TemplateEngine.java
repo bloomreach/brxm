@@ -18,9 +18,12 @@ package org.hippoecm.frontend.editor.impl;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.JcrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -29,8 +32,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TemplateEngine implements ITemplateEngine, IDetachable {
     @SuppressWarnings("unused")
@@ -69,7 +70,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
                 // by finding the containing templatetype.
                 if (node.getPath().startsWith("/hippo:namespaces")
                         && node.getName().equals(HippoNodeType.HIPPO_PROTOTYPE)) {
-                    if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                    if (node.isNodeType("nt:unstructured")) {
                         Node parent = node.getParent();
                         while (parent != null) {
                             if (parent.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
@@ -80,8 +81,8 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
                         }
                         return null;
                     }
-                } else if (node.isNodeType(JcrConstants.NT_FROZENNODE)) {
-                    String type = node.getProperty(JcrConstants.JCR_FROZENPRIMARYTYPE).getString();
+                } else if (node.isNodeType("nt:frozenNode")) {
+                    String type = node.getProperty("jcr:frozenPrimaryType").getString();
                     return getType(type);
                 }
                 return getType(node.getPrimaryNodeType().getName());

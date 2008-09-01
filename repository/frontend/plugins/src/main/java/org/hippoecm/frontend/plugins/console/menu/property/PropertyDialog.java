@@ -24,25 +24,21 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.apache.jackrabbit.value.BooleanValue;
-import org.apache.jackrabbit.value.DateValue;
-import org.apache.jackrabbit.value.DoubleValue;
-import org.apache.jackrabbit.value.LongValue;
-import org.apache.jackrabbit.value.NameValue;
-import org.apache.jackrabbit.value.PathValue;
-import org.apache.jackrabbit.value.ReferenceValue;
-import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.Session;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +103,7 @@ public class PropertyDialog extends AbstractDialog {
         Value jcrValue = getJcrValue();
         if (isMultiple.booleanValue()) {
             if (jcrValue == null || value.equals("")) {
-                jcrValue = new StringValue("...");
+                jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...", PropertyType.STRING);
             }
             node.setProperty(name, new Value[] { jcrValue });
         } else {
@@ -175,25 +171,25 @@ public class PropertyDialog extends AbstractDialog {
     private Value getJcrValue() {
         try {
             if (type.equals(PropertyType.TYPENAME_BOOLEAN)) {
-                return BooleanValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.BOOLEAN);
             } else if (type.equals(PropertyType.TYPENAME_DATE)) {
-                return DateValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.DATE);
             } else if (type.equals(PropertyType.TYPENAME_DOUBLE)) {
-                return DoubleValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.DOUBLE);
             } else if (type.equals(PropertyType.TYPENAME_LONG)) {
-                return LongValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.LONG);
             } else if (type.equals(PropertyType.TYPENAME_NAME)) {
-                return NameValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.NAME);
             } else if (type.equals(PropertyType.TYPENAME_PATH)) {
-                return PathValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.PATH);
             } else if (type.equals(PropertyType.TYPENAME_REFERENCE)) {
-                return ReferenceValue.valueOf(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.REFERENCE);
             } else if (type.equals(PropertyType.TYPENAME_STRING)) {
-                return new StringValue(value);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.STRING);
             }
             log.info("Unsupported type " + type);
             return null;
-        } catch (ValueFormatException ex) {
+        } catch (RepositoryException ex) {
             log.info(ex.getMessage());
         }
         return null;

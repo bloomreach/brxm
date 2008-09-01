@@ -26,8 +26,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.JcrConstants;
-import org.apache.jackrabbit.value.StringValue;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -36,6 +34,7 @@ import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +144,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                 Value[] values = new Value[overrides.size()];
                 int i = 0;
                 for (String override : overrides) {
-                    values[i++] = new StringValue(override);
+                    values[i++] = templateModel.getNode().getSession().getValueFactory().createValue(override);
                 }
                 node.setProperty("frontend:overrides", values);
 
@@ -166,7 +165,7 @@ public class JcrTypeHelper extends NodeModelWrapper {
                     HippoNodeType.HIPPO_PROTOTYPE);
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                if (node.isNodeType("nt:unstructured")) {
                     return new JcrNodeModel(node);
                 }
             }

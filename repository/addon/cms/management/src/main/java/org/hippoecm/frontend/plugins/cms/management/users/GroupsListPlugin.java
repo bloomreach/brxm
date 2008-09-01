@@ -25,7 +25,9 @@ import javax.jcr.Value;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.value.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,8 +41,6 @@ import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GroupsListPlugin extends AbstractManagementListingPlugin {
     @SuppressWarnings("unused")
@@ -126,8 +126,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
     public static HippoNode addMultiValueProperty(HippoNode node, String propertyName, String propertyValue)
             throws RepositoryException {
         if (!node.hasProperty(propertyName)) {
-            Value[] values = new Value[] { new StringValue(propertyValue) };
-            node.setProperty(propertyName, values);
+            node.setProperty(propertyName, new String[] { propertyValue });
         } else {
             Property property = node.getProperty(propertyName);
             Value[] values = property.getValues();
@@ -143,12 +142,10 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
                 for (int i = 0; i < values.length; i++) {
                     newValues[i] = values[i];
                 }
-                newValues[values.length] = new StringValue(propertyValue);
+                newValues[values.length] = node.getSession().getValueFactory().createValue(propertyValue);
                 property.setValue(newValues);
             }
         }
         return node;
     }
-
-
 }

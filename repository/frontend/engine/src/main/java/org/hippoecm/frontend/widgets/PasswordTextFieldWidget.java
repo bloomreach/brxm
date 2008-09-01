@@ -17,7 +17,6 @@ package org.hippoecm.frontend.widgets;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.value.StringValue;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
@@ -107,7 +106,11 @@ public class PasswordTextFieldWidget extends AjaxUpdatingWidget {
 
             String value = (String) object;
             if (value.length() > 0) {
-                model.setValue(new StringValue(value));
+                try {
+                    model.setValue(model.getJcrPropertymodel().getProperty().getSession().getValueFactory().createValue(value));
+                } catch(RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                }
             }
         }
     }
