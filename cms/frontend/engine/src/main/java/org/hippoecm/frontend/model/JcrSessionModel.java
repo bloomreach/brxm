@@ -33,7 +33,7 @@ import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.WorkflowManagerDecorator;
 import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.api.HippoSession;;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 
