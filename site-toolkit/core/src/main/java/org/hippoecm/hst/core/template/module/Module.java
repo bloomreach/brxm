@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.template.module;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
@@ -29,6 +31,7 @@ public interface Module {
 	
     public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
     public void render(PageContext pageContext) throws TemplateException;
+    void setModuleParameters(Map<String, String> parameters);
     public void init(HttpServletRequest request);
     public void setPageModuleNode(PageContainerModuleNode node);
     public void setVar(String name);

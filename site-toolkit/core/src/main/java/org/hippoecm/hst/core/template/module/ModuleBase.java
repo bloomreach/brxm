@@ -1,5 +1,7 @@
 package org.hippoecm.hst.core.template.module;
 
+import java.util.Map;
+
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -15,14 +17,15 @@ import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 public abstract class ModuleBase implements Module {
 	private PageContainerModuleNode pageContainerModule = null;
 	private String var;
+	protected Map<String, String> moduleParameters;
 	
 	//public abstract String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
 	
-	public void setPageModuleNode(PageContainerModuleNode node) {
+	public final void setPageModuleNode(PageContainerModuleNode node) {
 		this.pageContainerModule = node;
 	}
 	
-	public String getPropertyValueFromModuleNode(String propertyName) throws TemplateException {		
+	public final String getPropertyValueFromModuleNode(String propertyName) throws TemplateException {		
 			return pageContainerModule.getPropertyValue(propertyName);	
 	}
 
@@ -30,7 +33,7 @@ public abstract class ModuleBase implements Module {
 		return var;
 	}
 
-	public void setVar(String var) {
+	public final void setVar(String var) {
 		this.var = var;
 	}
 
@@ -40,11 +43,13 @@ public abstract class ModuleBase implements Module {
 	}
 
 	public void init(HttpServletRequest request) {
-		
 	}
 
-	public void render(PageContext pageContext) throws TemplateException {
-		
+	public final void setModuleParameters(Map<String, String> parameters) {
+		moduleParameters = parameters;
+	}
+
+	public void render(PageContext pageContext) throws TemplateException {		
 	}
 
 }
