@@ -81,6 +81,7 @@ public class ModuleRenderTag extends BodyTagSupport {
 			Module module = getModule();
 			   module.setVar(var);
 			   module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
+               module.setModuleParameters(parameters);
 			   module.render(pageContext);
 			} catch (Exception e) {
 				throw new JspException(e);
