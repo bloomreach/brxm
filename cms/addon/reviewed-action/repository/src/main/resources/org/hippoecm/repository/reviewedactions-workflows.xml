@@ -232,6 +232,31 @@
             </sv:node>
         </sv:node>
     </sv:node>
+    <sv:node sv:name="edit-model">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:workflow</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:nodetype" sv:type="String">
+            <sv:value>hippo:templatetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:roles" sv:type="String">
+            <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:classname" sv:type="String">
+            <sv:value>org.hippoecm.repository.standardworkflow.EditmodelWorkflowImpl</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:renderer" sv:type="String">
+            <sv:value>org.hippoecm.frontend.plugins.standardworkflow.EditmodelWorkflowPlugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:display" sv:type="String">
+            <sv:value>Internal workflow to edit a template</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:types">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:types</sv:value>
+            </sv:property>
+        </sv:node>
+  </sv:node>
     <sv:node sv:name="default">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:workflow</sv:value>
