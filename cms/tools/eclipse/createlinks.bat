@@ -17,6 +17,7 @@ junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
 junction AutoResize ..\..\..\..\..\webResources\xinha\plugins\AutoResize
 junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
 junction ImagePicker ..\..\..\..\..\webResources\xinha\plugins\ImagePicker
+junction FullscreenCompatible ..\..\..\..\..\webResources\xinha\plugins\FullscreenCompatible
 
 cd ..\skins
 junction hippo-gray ..\..\..\..\..\webResources\xinha\skins\hippo-gray
