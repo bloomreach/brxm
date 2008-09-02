@@ -23,6 +23,8 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLoc
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.hippoecm.frontend.plugins.standards.list.ListColumn;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 
 public class ListTableHeader extends Border {
     @SuppressWarnings("unused")
@@ -40,6 +42,18 @@ public class ListTableHeader extends Border {
 
         add(new CssModifier(this));
         add(getBodyContainer());
+
+        if (!triState) {
+            //Initial sorting on the "Name" column (if any)
+            SortState state = (SortState)stateLocator.getSortState();
+            ListColumn[] columns = (ListColumn[])dataTable.getColumns();
+            for (ListColumn column : columns) {
+                if (column.getRenderer() == null || column.getRenderer() instanceof NameRenderer) {
+                    state.setPropertySortOrder(column.getSortProperty(), ISortState.ASCENDING);
+                    break;
+                }
+            }
+        }
 
         add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;

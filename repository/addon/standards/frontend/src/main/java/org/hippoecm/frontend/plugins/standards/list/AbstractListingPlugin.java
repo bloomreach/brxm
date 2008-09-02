@@ -41,7 +41,6 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     private ListDataTable dataTable;
     private int pageSize;
-    private boolean triState;
 
     public AbstractListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -63,18 +62,13 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         }
 
         pageSize = config.getInt("list.page.size", 15);
-        
-        IModel model = getModel();
-        if (model instanceof JcrNodeModel) {
-            try {
-                Node node = (Node) model.getObject();
-                triState = node.getPrimaryNodeType().hasOrderableChildNodes();
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            }
-        }
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, triState);
+
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
         add(dataTable);
+        
+        if(!isOrderable()) {
+            updateSelection(getModel());
+        }
 
         modelChanged();
     }
@@ -87,8 +81,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     public void selectionChanged(IModel model) {
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
-            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
-                    IModelService.class);
+            IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"), IModelService.class);
             if (documentService != null) {
                 documentService.setModel(model);
             } else {
@@ -101,9 +94,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     private void updateSelection(IModel model) {
         dataTable.setModel(model);
-        redraw();
-
         onSelectionChanged(model);
+        redraw();
     }
 
     protected void onSelectionChanged(IModel model) {
@@ -112,7 +104,8 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     @Override
     @SuppressWarnings("unchecked")
     public void onModelChanged() {
-        replace(dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, triState));
+        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
+        replace(dataTable);
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
             IModelService<IModel> documentService = getPluginContext().getService(config.getString("model.document"),
@@ -130,6 +123,19 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
                 || myModel.equals(nodeModel.getParentModel())) {
             modelChanged();
         }
+    }
+
+    private boolean isOrderable() {
+        IModel model = getModel();
+        if (model instanceof JcrNodeModel) {
+            try {
+                Node node = (Node) model.getObject();
+                return node.getPrimaryNodeType().hasOrderableChildNodes();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        }
+        return false;
     }
 
 }
