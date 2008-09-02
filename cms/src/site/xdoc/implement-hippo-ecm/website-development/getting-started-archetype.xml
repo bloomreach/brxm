@@ -35,7 +35,7 @@
       <subsection name="Obtaining the Hippo Site Toolkit 2">
 
         <p>
-          Until the Hippo Site Toolkit 2 is released, you need to be build it from the sources,
+          Until the Hippo Site Toolkit 2 is released, you need to build it from the sources,
           which are available from the public Hippo SVN repository. Use the following command
           to check out the sources:
         </p>
