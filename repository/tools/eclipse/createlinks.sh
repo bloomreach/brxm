@@ -17,6 +17,7 @@ ln -s -v ../../../../../webResources/xinha/plugins/AutoSave AutoSave
 ln -s -v ../../../../../webResources/xinha/plugins/AutoResize AutoResize
 ln -s -v ../../../../../webResources/xinha/plugins/CustomLinker CustomLinker
 ln -s -v ../../../../../webResources/xinha/plugins/ImagePicker ImagePicker
+ln -s -v ../../../../../webResources/xinha/plugins/FullscreenCompatible FullscreenCompatible
 
 cd ../skins
 ln -s -v ../../../../../webResources/xinha/skins/hippo-gray hippo-gray
