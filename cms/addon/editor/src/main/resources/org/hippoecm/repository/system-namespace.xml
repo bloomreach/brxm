@@ -408,7 +408,7 @@
             <sv:value>${height}</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
-            <sv:value>popupeditor</sv:value>
+            <sv:value>fullscreen</sv:value>
             <sv:value>createlink</sv:value>
             <sv:value>formatblock</sv:value>
             <sv:value>bold</sv:value>
@@ -426,6 +426,7 @@
             <sv:value>AutoResize</sv:value>
             <sv:value>CustomLinker</sv:value>
             <sv:value>ImagePicker</sv:value>
+            <sv:value>FullscreenCompatible</sv:value>
           </sv:property>
           <sv:property sv:name="AutoSave" sv:type="String">
             <sv:value>timeoutLength=1500</sv:value>
