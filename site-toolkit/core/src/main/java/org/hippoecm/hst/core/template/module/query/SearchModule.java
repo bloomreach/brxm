@@ -40,7 +40,7 @@ import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSearchModule extends ModuleBase implements Search {
+public abstract class SearchModule extends ModuleBase implements Search {
 
     private static final Logger log = LoggerFactory.getLogger(Search.class);
 
