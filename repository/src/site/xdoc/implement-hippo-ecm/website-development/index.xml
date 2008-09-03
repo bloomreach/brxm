@@ -32,12 +32,21 @@
         
         <ul>
           <li>
-            <a href="getting-started.html">Getting Started</a>
-            - Setting up a new project with Hippo Site Toolkit 2 using pre-configured WAR files
+            <a href="getting-started.html">Quick Start</a>
+            - Get started quickly with Hippo Site Toolkit 2 using pre-built WAR files
           </li>
           <li>
-            <a href="getting-started-archetype.html">Getting Started</a>
-            - Setting up a new project with Hippo Site Toolkit 2 using the Maven archetype
+            <a href="getting-started-archetype.html">Start a project</a>
+            - Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype
+          </li>
+          <li>
+            <a href="hello-world.html">Hello World</a>
+            - Adding a simple page to your website saying hello to the world
+          </li>
+          <li>
+            <a href="facebook.html">Create a Facebook</a>
+            - Learn how to create a new document type, and how to use it in your website,
+              by adding a simple facebook to the sample website.
           </li>
         </ul>
         

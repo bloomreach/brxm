@@ -19,10 +19,10 @@
 -->
 <document>
   <properties>
-    <title>Getting started</title>
+    <title>Start a project</title>
   </properties>
   <body>
-    <section name="Getting started">
+    <section name="Start a project">
       
       <p>
         The Hippo Site Toolkit 2 is a toolkit for developing JSP based websites using
@@ -70,13 +70,13 @@
         </p>
 
         <source>
-mvn archetype:create \ 
-  -DgroupId=org.example \ 
+mvn archetype:create \
+  -DgroupId=org.example \
   -DartifactId=myproject \
   -Dversion=1.01.00 \
-  -DarchetypeGroupId=org.hippoecm.hst \ 
-  -DarchetypeArtifactId=hippo-ecm-hst-archetype-start \ 
-  -DarchetypeVersion=1.01.00-SNAPSHOT 
+  -DarchetypeGroupId=org.hippoecm.hst \
+  -DarchetypeArtifactId=hippo-ecm-hst-archetype-start \
+  -DarchetypeVersion=1.01.00-SNAPSHOT
         </source>
         
         <p>
@@ -175,16 +175,28 @@ mvn archetype:create \
         <source>mvn jetty:run</source>
 
         <p>
-          The sample website is now available at <a href="http://localhost:8085/preview/index">http://localhost:8085/preview/index</a>.
+          The sample website is now available at <a href="http://127.0.0.1:8085/preview/index">http://127.0.0.1:8085/preview/index</a>.
         </p>
-        
+
+        <p>
+          <a href="../../images/hst2/getting-started-cms-signin.png"><img alt="screenshot" src="../../images/hst2/getting-started-cms-signin-thumbnail.jpg" width="400" height="310" /></a>
+          <a href="../../images/hst2/getting-started-site.png"><img alt="screenshot" src="../../images/hst2/getting-started-site-thumbnail.jpg" width="400" height="310" /></a>
+        </p>
+
         <p>
           <i>Note: while running in Jetty is great for development, it is not recommended for production.</i> 
         </p>
 
       </subsection>
       
-      
     </section>
+    
+    <section name="Next Step">
+      <p>
+        Now that your project is up and running, go on and add a
+        <a href="hello-world.html">Hello World</a> page to your website!
+      </p>
+    </section>
+    
   </body>
 </document>
