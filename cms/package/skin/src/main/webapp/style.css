@@ -485,6 +485,7 @@ z-index: 5;
 .editor div.renderItem div select, .editor table.templateItemTable select{}
 .templatedetails div.templateItem textarea, .editor div.renderItem div textarea, .editor table.templateItemTable textarea{width: 100%; height: 200px; border: none;}
  
+.editor div.renderItem div.textArea textarea{border: 1px solid #666666;} 
 .editor div.renderItem div.datePicker input{width: 80px;}
 
 .editor table.htmlarea {border: 1px solid #666666;}
