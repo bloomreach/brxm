@@ -30,19 +30,7 @@ public interface Search {
     public static final boolean DEFAULT_EXCERPTNEEDED = false;
     public static final boolean DEFAULT_SIMILARNEEDED = false;
     
-    /**
-     * set search configuration parameters. This method is called directly in the render() method 
-     * 
-     * @param pageContext
-     */
-    public void prepareSearch(PageContext pageContext);
-    
-    /**
-     * prepare the xpath/sql statement. This method needs to be implemented by every concrete class
-     * 
-     * @param pageContext
-     */
-    public void prepareStatement(PageContext pageContext);
+   
     
     /**
      * Returns the statement set for this query.

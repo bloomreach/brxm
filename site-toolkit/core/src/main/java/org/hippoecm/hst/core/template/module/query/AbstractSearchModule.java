@@ -57,6 +57,35 @@ public abstract class AbstractSearchModule extends ModuleBase implements Search 
 
     
     /**
+     * set search configuration parameters. This method is called directly in the render() method 
+     * 
+     * @param pageContext
+     */
+    private void prepareSearch(PageContext pageContext) {
+        setDidYouMeanNeeded(false);
+        setExcerptNeeded(true);
+        
+        String maxItems = "";
+
+        if(moduleParameters != null){
+            maxItems = moduleParameters.get("maxItems");
+        }
+        
+        if(maxItems != null && !maxItems.equals("")){
+            setLimit(Integer.parseInt(maxItems));
+        } 
+    }
+    
+    /**
+     * prepare the xpath/sql statement. This method needs to be implemented by every concrete class
+     * 
+     * @param pageContext
+     */
+    public void prepareStatement(PageContext pageContext) {
+        String statement = "//*[@jcr:primaryType = 'businesslease:news'] order by @businesslease:date descending";
+        setStatement(statement);
+    }
+    /**
      * this render is a final, since it is delegate code, and is not meant for extending
      */
     @Override
