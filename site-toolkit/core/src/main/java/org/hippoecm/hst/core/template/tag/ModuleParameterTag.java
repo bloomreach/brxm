@@ -39,8 +39,7 @@ public int doEndTag() throws JspException {
     	}
     	
     	ModuleRenderTag moduleTag = (ModuleRenderTag) t;
-    	
-    	log.debug("name=" + getName() + " value=" + getValue()); 
+    	log.debug("Adding parameter to ModuleRenderTag '" + getName() + "=" + getValue() + "'.");
         moduleTag.addParameter(name, value);  	
 		return EVAL_PAGE;
 	}
