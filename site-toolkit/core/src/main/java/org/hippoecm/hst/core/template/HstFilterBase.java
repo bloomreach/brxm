@@ -53,7 +53,7 @@ public abstract class HstFilterBase implements Filter {
 
 	
 	//request attributes
-	public static final String PAGENODE_REQUEST_ATTRIBUTE = "pageNode";
+	public static final String PAGENODE_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE;
 	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE;
 	//public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
 	
