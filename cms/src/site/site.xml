@@ -112,8 +112,10 @@
       
       <item name="Implement Hippo ECM" href="/implement-hippo-ecm/index.html" collapse="true">
         <item name="Website Development" href="/implement-hippo-ecm/website-development/index.html" collapse="true">
-          <item name="Getting Started" href="/implement-hippo-ecm/website-development/getting-started.html"/>
-          <item name="Getting Started (archetype)" href="/implement-hippo-ecm/website-development/getting-started-archetype.html"/>
+          <item name="Quick Start" href="/implement-hippo-ecm/website-development/getting-started.html"/>
+          <item name="Start a project" href="/implement-hippo-ecm/website-development/getting-started-archetype.html"/>
+          <item name="Hello World" href="/implement-hippo-ecm/website-development/hello-world.html"/>
+          <item name="Facebook" href="/implement-hippo-ecm/website-development/facebook.html"/>
         </item>
         <item name="Advanced" href="/implement-hippo-ecm/advanced/index.html" collapse="true">
           <item name="JCR Interface" href="/implement-hippo-ecm/advanced/jcr.html"/>

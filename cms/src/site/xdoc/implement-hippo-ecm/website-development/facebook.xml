@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Create a Facebook</title>
+    </properties>
+    <body>
+        <section name="Create a Facebook">
+
+            <p>
+                Before starting this tutorial, follow the
+                <a href="getting-started-archetype.html">Create a project</a> tutorial to
+                get up and running with your HST2 project. Optionally, you can also follow
+                the <a href="hello-world.html">Hello World</a> tutorial.
+            </p>
+            
+            <p>
+                This tutorial lets you add a simple facebook to your website. You will
+                create a custom document type, create and configure a new HST module,
+                and write some JSP code to use the new document type on your website.
+            </p>
+
+            <subsection name="Create a document type">
+                <p>
+                    For our facebook to be able to list people, we need a document type
+                    to describe a person.
+                </p>
+                <p>
+                    Open Hippo CMS in your browser, and sign in. Click on 'Browse', and navigate
+                    to <code>/document types/myproject</code> (if your project is named 'myproject').
+                    Click on 'Create new type' to create a new document type. A pop-up window
+                    will appear. Give the new document type the name 'person' and click 'OK'.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-create-type.png"><img alt="screenshot" src="../../images/hst2/facebook-create-type-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Now click on the 'person' document type and click 'Edit'. This will
+                    open the document type editor. The template for the new type does not contain any fields
+                    yet. Let's add a 'name' field by clicking on 'String'. A String field is
+                    added to the template instantly. Click on the field's name (default is
+                    'String') to edit the field's properties. Name it 'Name', and fill
+                    in 'myproject:name' in the 'path' field. Finally, check the
+                    'mandatory' checkbox for the name field.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-type-editor.png"><img alt="screenshot" src="../../images/hst2/facebook-type-editor-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Since this is to be a facebook, let's add the ability to include
+                    a picture for each person. Add another field, this time of the type
+                    'hippo-resource'. Name it 'picture', and in the 'path' field, fill
+                    in 'myproject:picture'.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-type-editor-2.png"><img alt="screenshot" src="../../images/hst2/facebook-type-editor-2-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    For now a name and picture will do, so click 'Save and close'. To apply
+                    the changes you made to your namespace, click 'Update all content'.
+                    A pop-up will appear warning you about possible consequences. Click 'OK'.
+                </p>
+            </subsection>
+            
+            <subsection name="Add people">
+                <p>
+                    Now that the new 'person' document type is active, navigate to
+                    <code>/content/pagecontent</code>. Add a new folder to store
+                    people in by clicking 'New Folder', and name it 'people' in
+                    the pop-up that appears.
+                </p>
+                <p>
+                    Inside the new 'people' folder, add a person document. To do this,
+                    click on 'New document'. In the pop-up that appears, give your
+                    person document a name, and select the 'myproject:person' type.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-new-person.png"><img alt="screenshot" src="../../images/hst2/facebook-new-person-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Click 'OK'. The new document will be opened in the document editor.
+                    Enter the person's name, and upload a picture.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-edit-person.png"><img alt="screenshot" src="../../images/hst2/facebook-edit-person-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+            </subsection>
+
+            <subsection name="Create a module">
+                <p>
+                    TODO
+                </p>
+                
+<source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
+
+<hst-tmpl:node var="contentNode"/>
+
+<h1>${contentNode.property['myproject:name'] }</h1>
+<p>
+  <img src="${contentNode.resourceUrl['myproject:picture']}" alt="picture" />
+</p>
+]]>
+</source>                
+                
+            </subsection>
+            
+            <subsection name="Configure HST">
+                <p>
+                    TODO
+                </p>
+            </subsection>
+            
+            <subsection name="Browse your facebook!">
+                <p>
+                    TODO
+                </p>
+            </subsection>
+
+        </section>
+
+        <section name="Next Step">
+            <p>
+                TODO
+            </p>
+        </section>
+    </body>
+</document>

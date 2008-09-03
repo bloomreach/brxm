@@ -19,10 +19,10 @@
 -->
 <document>
     <properties>
-        <title>Getting started</title>
+        <title>Quick Start</title>
     </properties>
     <body>
-      <section name="Getting started">
+      <section name="Quick Start">
  	<p>The quickest way to get started is to obtain one of the pre-built packages. Even when adding additional functionalities to your project, you normally don't need to rebuild Hippo Site Toolkit 2.
 	</p>
 	<p>
