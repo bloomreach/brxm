@@ -139,7 +139,7 @@ public class URLMappingImpl implements URLMapping {
             }
 
             if (bestRewriter == null) {
-                log.warn("No matching linkrewriter found.");
+                log.warn("No matching linkrewriter found for path '" + path + "'");
             } else {
                 String url = bestRewriter.getUrl(node);
                 return contextPath+contextPrefix+url;
