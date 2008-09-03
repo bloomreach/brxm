@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.widgets;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
 
@@ -23,10 +24,40 @@ public class TextAreaWidget extends AjaxUpdatingWidget {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    private String rows;
+    private String cols;
 
     public TextAreaWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new TextArea("widget", this.getModel()));
+        addFormField(new TextArea("widget", this.getModel()) {        
+        	 private static final long serialVersionUID = 1L;
+
+             @Override
+             protected void onComponentTag(final ComponentTag tag) {
+                 if (getRows() != null) {
+                     tag.put("rows", getRows());
+                 }
+                 if (getCols() != null) {
+                     tag.put("cols", getCols());
+                 }
+                 super.onComponentTag(tag);
+             }
+        });
+    }
+    public void setRows(String rows) {
+        this.rows = rows;
+    }
+
+    public String getRows() {
+        return rows;
+    }
+
+    public void setCols(String cols) {
+        this.cols=cols;
+    }
+    
+    public String getCols() {
+        return cols;
     }
 
 }
