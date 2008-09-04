@@ -33,8 +33,8 @@ The getting started packages contain all the core packaged components, but have 
 	Two WAR packages are available for download. You can deploy them in either Tomcat or Jetty or any other servlet container that you prefer. 
 	Notice: Hippo HST2 has not been released. The following downloads are snapshots of the current build. </p>
         <ul>
-         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-SNAPSHOT.war">Hippo ECM getting started package WAR</a></li>
-         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-SNAPSHOT.war">Hippo HST2 getting started package WAR</a></li>
+         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war">Hippo ECM getting started package WAR</a></li>
+         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-20080904.141142-1.war">Hippo HST2 getting started package WAR</a></li>
         </ul>
       </subsection>
 <subsection name="Deploy, run and access">
