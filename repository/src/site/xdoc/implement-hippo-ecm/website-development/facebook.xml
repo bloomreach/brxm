@@ -45,7 +45,7 @@
                 <p>
                     Open Hippo CMS in your browser, and sign in. Click on 'Browse', and navigate
                     to <code>/document types/myproject</code> (if your project is named 'myproject').
-                    Click on 'Create new type' to create a new document type. A pop-up window
+                    Click on 'Create new type' to create a new document type. A dialog
                     will appear. Give the new document type the name 'person' and click 'OK'.
                 </p>
                 <p>
@@ -75,7 +75,7 @@
                 <p>
                     For now a name and picture will do, so click 'Save and close'. To apply
                     the changes you made to your namespace, click 'Update all content'.
-                    A pop-up will appear warning you about possible consequences. Click 'OK'.
+                    A dialog will appear warning you about possible consequences. Click 'OK'.
                 </p>
             </subsection>
             
@@ -84,11 +84,11 @@
                     Now that the new 'person' document type is active, navigate to
                     <code>/content/pagecontent</code>. Add a new folder to store
                     people in by clicking 'New Folder', and name it 'people' in
-                    the pop-up that appears.
+                    the dialog that appears.
                 </p>
                 <p>
                     Inside the new 'people' folder, add a person document. To do this,
-                    click on 'New document'. In the pop-up that appears, give your
+                    click on 'New document'. In the dialog that appears, give your
                     person document a name, and select the 'myproject:person' type.
                 </p>
                 <p>
@@ -105,7 +105,8 @@
 
             <subsection name="Create a module">
                 <p>
-                    TODO
+                    Inside <code>myproject/site/src/main/webapp/jsp/modules</code>, create a JSP file
+                    <code>person.jsp</code>.
                 </p>
                 
 <source>
@@ -125,6 +126,29 @@
 </p>
 ]]>
 </source>                
+                <p>
+                    Open the console in your browser, and sign in. Browse to the
+                    <code>/hst:configuration/hst:configuration/hst:modules</code> node.
+                    Click on 'Add Node'. In the dialog that appears, give the new
+                    node the name 'person', and in the 'Primary Type' field, fill
+                    in 'hst:module'.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-create-module.png"><img alt="screenshot" src="../../images/hst2/facebook-create-module-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Now we need to configure the JSP file for this module. Make sure the
+                    'person' node you just created is selected, and click on 'Add Property'.
+                    Give the new property the name 'hst:template', and the value
+                    '/jsp/modules/person.jsp'.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-module-template.png"><img alt="screenshot" src="../../images/hst2/facebook-module-template-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    To make sure that all our changes are persisted, select the root node
+                    in the tree, and click on 'Save'. Click 'OK' in the confirmation dialog.
+                </p>
                 
             </subsection>
             

@@ -121,10 +121,11 @@
             </subsection>
             <p>
                 As you can see, an HST2 module called <code>RepositoryBasedNavigationModule</code>
-                is loaded using the tag <code>hst-tmpl:module</code>, and given the local name
+                is loaded using the tag <a href="../reference/tag/module-tag.html"><code>hst-tmpl:module</code></a>,
+                and given the local name
                 <code>mainnav</code>. This modules retrieves the relevant items from the repository.
                 Then a <code>forEach</code> loop iterates over those items, and creates links
-                using the tag <code>hst-tmpl:link</code>.
+                using the tag <a href="../reference/tag/link-tag.html"><code>hst-tmpl:link</code></a>.
             </p>
 
         </section>
@@ -132,7 +133,7 @@
         <section name="Next Step">
             <p>
                 Learn how to create your own document type, and how to use it in your website,
-                by <a href="facebook.html">Create a Facebook</a>.
+                by following the <a href="facebook.html">Create a Facebook</a> tutorial.
             </p>
         </section>
 
