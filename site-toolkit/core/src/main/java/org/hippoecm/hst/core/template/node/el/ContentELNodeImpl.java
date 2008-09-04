@@ -149,6 +149,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
         return "";
     }
 
+    
     public Map getResourceUrl() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -182,6 +183,26 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
                                     + e.getMessage());
                 }
                 return null;
+            }
+        };
+    }
+    public Map getHasResourceUrl() {
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            
+            @Override
+            public Object get(Object resource) {
+                String resourceName = (String) resource;
+                    try {
+                        return jcrNode.hasNode(resourceName);
+                    } catch (RepositoryException e) {
+                       log.error("RepositoryException " + e.getMessage());
+                       return false;
+                    }
+                    
             }
         };
     }

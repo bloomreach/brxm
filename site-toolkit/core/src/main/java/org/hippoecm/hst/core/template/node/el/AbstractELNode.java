@@ -30,6 +30,24 @@ public abstract class AbstractELNode implements ELNode {
         return jcrNode;
     }
 
+    public Map getHasProperty(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            public Object get(Object propertyName) {
+                try {
+                    return jcrNode.hasProperty((String) propertyName);
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException " + e.getMessage());
+                    return false;
+                }
+               
+            }
+        };
+    }
+    
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");

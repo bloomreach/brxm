@@ -15,10 +15,14 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
+import java.util.Map;
+
 import javax.jcr.Node;
 
 public interface ELNode {
     public Node getJcrNode();
+    public Map getProperty();
+    public Map getHasProperty();
     public String getDecodedName();
     public String getName();
 }

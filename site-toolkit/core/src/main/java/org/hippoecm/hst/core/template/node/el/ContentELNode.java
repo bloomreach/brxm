@@ -18,6 +18,6 @@ package org.hippoecm.hst.core.template.node.el;
 import java.util.Map;
 
 public interface ContentELNode extends ELNode{
-    public Map getProperty();
     public Map getResourceUrl();
+    public Map getHasResourceUrl();
 }
