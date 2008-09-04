@@ -69,16 +69,7 @@ public class BinariesServlet extends HttpServlet {
             if (path.endsWith("/")) {
                 path = path.substring(0, path.length() - 1);
             }
-        
-
-        // JCR decode
-        String currentPath = "";
-        StringTokenizer pathElts = new StringTokenizer(path, "/");
-//        while (pathElts.hasMoreTokens()) {
-//            String pathElt = pathElts.nextToken();
-//            currentPath += "/" + ISO9075Helper.decodeLocalName(pathElt);
-//        }
-        //path = currentPath;
+            
 
         if (!path.startsWith("/")) {
             path = "/" + path;
