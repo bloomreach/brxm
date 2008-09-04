@@ -306,7 +306,7 @@ public class SearchModule extends ModuleBase implements Search {
             if(!statementWhere.equals("[")) {
                 statementWhere += " and ";
             }
-            statementWhere += " jcr:contains(., "+getQueryText()+")"; 
+            statementWhere += " jcr:contains(., '"+getQueryText()+"')"; 
         }
         
         statementWhere +="]";
