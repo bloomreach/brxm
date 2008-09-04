@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
@@ -155,7 +154,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         while (siblings.hasNext()) {
             i++;
             ListItem sibling = siblings.next();
-            if (sibling.getName().equals(item.getName())) {
+            if (sibling.equals(item)) {
                 position = i;
                 break;
             }
