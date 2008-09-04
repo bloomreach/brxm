@@ -40,7 +40,8 @@ public class URLMappingImpl implements URLMapping {
     private Session session;
     private String contextPrefix;
     private String contextPath;
-
+    private Node siteMapRootNode;
+    
     public URLMappingImpl(Session session, String contextPath,  String contextPrefix, String path) {
         this.session = session;
         this.contextPrefix = contextPrefix;
@@ -48,7 +49,7 @@ public class URLMappingImpl implements URLMapping {
         try {
 
             Node hstConf = (Node) session.getItem(path);
-            Node siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
+            siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
             NodeIterator subNodes;
 
             subNodes = siteMapRootNode.getNodes();
@@ -139,20 +140,48 @@ public class URLMappingImpl implements URLMapping {
             }
 
             if (bestRewriter == null) {
-                log.warn("No matching linkrewriter found for path '" + path + "'");
+                log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
             } else {
                 String url = bestRewriter.getUrl(node);
                 return contextPath+contextPrefix+url;
             }
             
         } catch (RepositoryException e) {
-            log.error("RepositoryException " + e.getMessage());
+            log.error("RepositoryException during link rewriting " + e.getMessage() + " Return node path.");
         }
         return contextPath+contextPrefix+path;
     }
 
     public String rewriteLocation(String path) {
-        return contextPath+contextPrefix+path;
+        if(siteMapRootNode != null && path != null && !"".equals(path)) {
+            if(path.startsWith("/")) {
+                path = path.substring(1);
+                if(path.length()==0) {
+                    log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
+                    return contextPath+contextPrefix;
+                }
+            }
+            try {
+                if(siteMapRootNode.hasNode(path)) {
+                    Node sitemapNode = siteMapRootNode.getNode(path);
+                    if(sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
+                        String newLink = sitemapNode.getProperty("hst:prefixlinkrewrite").getString();
+                        log.debug("rewriting '"+path+"' --> '" + newLink);
+                        return newLink;
+                    } else {
+                        log.warn("cannot rewrite path '" + path + "' because the sitemap node does not have the property 'hst:prefixlinkrewrite'. Node : " + sitemapNode.getPath());
+                    }
+                } else {
+                    log.warn("'" +path+"' does not exist in sitemap node '" + siteMapRootNode.getPath() +"'. Prefixing path with context, but no rewrite ");
+                }
+                
+            } catch (RepositoryException e) {
+                log.warn("Unable to rewrite link for path = '" + path +"'.  Prefixing path with context, but no rewrite. RepositoryException " + e.getMessage());
+            }
+        } 
+        
+        return contextPath+contextPrefix+"/"+path;
+        
     }
 
 }
