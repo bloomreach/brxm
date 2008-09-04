@@ -52,6 +52,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
             // translate the documentPath to a URL in combination with the Node and the mapping object
             if(documentPath.startsWith("/")) {
                 // absolute location, try to translate directly
+                log.warn("absolute path location found in text field. Trying to rewrite the location directly");
                 return mapping.rewriteLocation(documentPath);
             } else {
                 // relative node, most likely a facetselect node:
