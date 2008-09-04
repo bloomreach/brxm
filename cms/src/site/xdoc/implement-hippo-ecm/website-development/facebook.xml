@@ -33,8 +33,9 @@
             
             <p>
                 This tutorial lets you add a simple facebook to your website. You will
-                create a custom document type, create and configure a new HST module,
-                and write some JSP code to use the new document type on your website.
+                create a custom document type, create and configure new HST2
+                <a href="../reference/concepts.html">modules</a>,
+                and configure the HST2 <a href="../reference/concepts.html">sitemap</a>.
             </p>
             
             <p>
@@ -66,7 +67,7 @@
                     added to the template instantly. Click on the field's name (default is
                     'String') to edit the field's properties. Name it 'Name', and fill
                     in 'myproject:name' in the 'path' field. Finally, check the
-                    'mandatory' checkbox for the name field.
+                    'mandatory' checkbox.
                 </p>
                 <p>
                     <a href="../../images/hst2/facebook-type-editor.png"><img alt="screenshot" src="../../images/hst2/facebook-type-editor-thumbnail.jpg" width="400" height="310" /></a>
@@ -74,7 +75,7 @@
                 <p>
                     Since this is to be a facebook, let's add the ability to include
                     a picture for each person. Add another field, this time of the type
-                    'hippo-resource'. Name it 'picture', and in the 'path' field, fill
+                    'hippo-resource'. Name it 'Picture', and in the 'path' field, fill
                     in 'myproject:picture'.
                 </p>
                 <p>
@@ -182,7 +183,8 @@
 
             <subsection name="Configure the sitemap">
                 <p>
-                    Browse to the
+                    The HST2 <a href="../reference/concepts.html">sitemap</a> is where modules are
+                    mapped to URLs. Browse to the
                     <code>/hst:configuration/hst:configuration/hst:sitemap</code> node.
                     Create the following node structure under <code>/hst:configuration/hst:configuration/hst:sitemap</code>
                     (new node names in <b>bold</b>, node types between parentheses):
@@ -239,7 +241,7 @@
                     </li>
                 </ul>
                 <p>
-                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/people/navigation/mainnav</code>:
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/people/navigation/mainnav</code>:
                 </p>
                 <ul>
                     <li>
@@ -255,7 +257,7 @@
                     </li>
                 </ul>
                 <p>
-                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/people/content/people</code>:
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/people/content/people</code>:
                 </p>
                 <ul>
                     <li>
@@ -268,8 +270,9 @@
                 </p>
 
                 <p>
-                    The list of people should now be available on the website on the
-                    URL <code>/preview/facebook</code>.
+                    The list of people should now be available on the website at the
+                    URL <code>/preview/facebook</code>. The links won't work yet, but we
+                    are going to fix that soon.
                 </p>
                 <p>
                     <a href="../../images/hst2/facebook-site-people.png"><img alt="screenshot" src="../../images/hst2/facebook-site-people-thumbnail.jpg" width="400" height="310" /></a>
@@ -312,16 +315,16 @@
                     value '/jsp/modules/person.jsp'.
                 </p>
                 <p>
-                    SCREENSHOT
+                    <a href="../../images/hst2/facebook-person-module.png"><img alt="screenshot" src="../../images/hst2/facebook-person-module-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
-                    To make sure that all our changes are persisted, select the root node
+                    To make sure that all changes are persisted, select the root node
                     in the tree, and click on 'Save'. Click 'OK' in the confirmation dialog.
                 </p>
                 
             </subsection>
             
-            <subsection name="Configure HST">
+            <subsection name="Configure the sitemap">
                 <p>
                     Browse to the
                     <code>/hst:configuration/hst:configuration/hst:sitemap</code> node.
@@ -381,7 +384,7 @@
                 </ul>
                 
                 <p>
-                    SCREENSHOT
+                    <a href="../../images/hst2/facebook-person-sitemapitem.png"><img alt="screenshot" src="../../images/hst2/facebook-person-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 
                 <p>
@@ -426,16 +429,30 @@
             
             <subsection name="Browse your facebook!">
                 <p>
-                    TODO
+                    After all this hard work, go and open the website in your browser
+                    at the URL <code>/preview/facebook</code>. Now if you click on one of
+                    the names, a detail page showing the person's picture should be
+                    loaded.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-site-person.png"><img alt="screenshot" src="../../images/hst2/facebook-site-person-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    There you go, you have made your own facebook! You now know how to
+                    create a document type, how to create HST2 modules, and how to configure
+                    the HST2 sitemap. You can practice a little bit by adding more fields to
+                    the document type and displaying them in your website.
                 </p>
             </subsection>
 
         </section>
 
+        <!--
         <section name="Next Step">
             <p>
                 TODO
             </p>
         </section>
+        -->
     </body>
 </document>
