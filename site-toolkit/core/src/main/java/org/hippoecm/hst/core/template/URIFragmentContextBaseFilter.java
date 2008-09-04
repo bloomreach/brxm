@@ -85,9 +85,12 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		    JCRConnector.getJCRSession(request.getSession(), true);
 		    
 			String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
-			log.debug("requestURI: " + requestURI);
+			
 			String uriPrefix = getLevelPrefix(requestURI, uriLevels);
-			log.debug("uriPrefix: " + uriPrefix);
+			if(uriPrefix == null) {
+			    throw new ServletException("The number of slashes in the url in lower then the configure levels '("+uriLevels+")' in your web.xml \n" +
+			    		"Either, the url is wrong, or you should change the levels in value in your web.xml");
+			}
 			
 			long start = System.nanoTime();
             URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
