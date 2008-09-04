@@ -33,8 +33,10 @@ public class ListItem extends AbstractReadOnlyModel {
     private String name;
     private AttributeModifier cellModifier;
     private AttributeModifier columnModifier;
+    private JcrNodeModel nodeModel;
 
     public ListItem(JcrNodeModel nodeModel) {
+    	this.nodeModel = nodeModel;
         try {
             name = nodeModel.getNode().getName();
             IconAttributeModifier attributeModifier = new IconAttributeModifier();
@@ -56,10 +58,27 @@ public class ListItem extends AbstractReadOnlyModel {
     public AttributeModifier getColumnModifier() {
         return columnModifier;
     }
+    
+    public void detach() {
+    	nodeModel.detach();
+    }
 
     @Override
     public Object getObject() {
         return this;
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+    	if (other instanceof ListItem) {
+    		ListItem otherItem = (ListItem)other;
+    		try {
+				return otherItem.nodeModel.getNode().isSame(nodeModel.getNode());
+			} catch (RepositoryException e) {
+				return false;
+			}
+    	}
+    	return false;
     }
 
 }
