@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -54,17 +55,20 @@ public class Sorter extends Panel {
                         long position = -1;
                         while (siblings.hasNext()) {
                             Node sibling = siblings.nextNode();
-                            if (sibling.getName().equals(nodeModel.getNode().getName())) {
+                            if (sibling != null && sibling.isSame(nodeModel.getNode())) {
                                 position = siblings.getPosition();
                                 break;
                             }
                         }
-                        String placedBefore = null;
+                        Node placedBefore = null;
                         siblings = parentNode.getNodes();
                         for (int i = 0; i < position - 1; i++) {
-                            placedBefore = siblings.nextNode().getName();
+                            placedBefore = siblings.nextNode();
                         }
-                        parentNode.orderBefore(node.getName(), placedBefore);
+                        
+                        String srcChildRelPath = StringUtils.substringAfterLast(node.getPath(), "/");
+                        String destChildRelPath = placedBefore == null ? null : StringUtils.substringAfterLast(placedBefore.getPath(), "/");
+                        parentNode.orderBefore(srcChildRelPath, destChildRelPath);
 
                         up.setEnabled(position > 2);
                         down.setEnabled(true);
@@ -93,20 +97,22 @@ public class Sorter extends Panel {
                     try {
                         Node parentNode = node.getParent();
                         NodeIterator siblings = parentNode.getNodes();
-                        String placedBefore = null;
+                        Node placedBefore = null;
                         while (siblings.hasNext()) {
                             Node sibling = siblings.nextNode();
-                            if (sibling.getName().equals(node.getName())) {
+                            if (sibling.isSame(node)) {
                                 siblings.nextNode();
                                 if (siblings.hasNext()) {
-                                    placedBefore = siblings.nextNode().getName();
+                                    placedBefore = siblings.nextNode();
                                 } else {
                                     placedBefore = null;
                                 }
                                 break;
                             }
                         }
-                        parentNode.orderBefore(node.getName(), placedBefore);
+                        String srcChildRelPath = StringUtils.substringAfterLast(node.getPath(), "/");
+                        String destChildRelPath = placedBefore == null ? null : StringUtils.substringAfterLast(placedBefore.getPath(), "/");
+                        parentNode.orderBefore(srcChildRelPath, destChildRelPath);
 
                         up.setEnabled(true);
                         down.setEnabled(placedBefore != null);
@@ -145,7 +151,7 @@ public class Sorter extends Panel {
                         long position = -1;
                         while (siblings.hasNext()) {
                             Node sibling = siblings.nextNode();
-                            if (sibling.getName().equals(newModel.getNode().getName())) {
+                            if (sibling.isSame(newModel.getNode())) {
                                 position = siblings.getPosition();
                                 break;
                             }
