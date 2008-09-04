@@ -20,18 +20,63 @@ import javax.jcr.query.QueryManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-public interface Search {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public interface Search extends SearchParameters{
+
+
+    public static final Logger log = LoggerFactory.getLogger(Search.class);
+    
     public  static final String DEFAULT_LANGUAGE = Query.XPATH;
     public static final int DEFAULT_THRESHOLD = 10;
     public static final int DEFAULT_LIMIT = 10;
     public static final int DEFAULT_OFFSET = 0;
+    public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final boolean DEFAULT_DIDYOUMEANNEEDED = false;
     public static final boolean DEFAULT_EXCERPTNEEDED = false;
     public static final boolean DEFAULT_SIMILARNEEDED = false;
     
-   
+
+    public void prepareSearch(PageContext pageContext);
     
+    public void prepareStatement(PageContext pageContext);
+     
+    /**
+     * the string value of the where clause. When left empty, no extra where clause is added, though
+     * there will be a default one to account for contextbase you are in 
+     * 
+     * @param String where
+     */
+    public void setWhere(String where);
+    
+    /**
+     * set the nodetype the search results should be of. 
+     * 
+     * @param String nodetype
+     */
+    public void setNodeType(String nodetype);
+    
+    /**
+     * order the search results by this parameter. If not present, no ordering will be done
+     * @param String orderby
+     */
+    public void setOrderBy(String orderby);
+    
+    /**
+     * order descending or ascending. Possible values: 'ascending|descending'. Default ascending
+     * @param String order
+     */
+    public void setOrder(String order);
+    
+    /**
+     *  the initial path to start queries from
+     *  
+     * @param String target repository init target
+     */
+    public void setTarget(String target);
+    
+
     /**
      * Returns the statement set for this query.
      *
@@ -70,6 +115,15 @@ public interface Search {
     public int getLimit();
     
     public void setLimit(int limit);
+    
+    
+    /**
+     *  the depth untill to search for from the target below
+     *  
+     * @param String target repository init target
+     */
+    public void setDepth(int depth);
+    
     
     /**
      * Returns the offset where to start the search hits from. This is nice for paging
