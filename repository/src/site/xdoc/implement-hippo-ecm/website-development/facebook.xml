@@ -36,6 +36,14 @@
                 create a custom document type, create and configure a new HST module,
                 and write some JSP code to use the new document type on your website.
             </p>
+            
+            <p>
+                <i>
+                    Note: in this tutorial we use the console application to manually configure
+                    the HST2. The final version of HST2 will provide a plugin for Hippo CMS 7
+                    which enables easy configuration through a user friendly GUI.
+                </i>
+            </p>
 
             <subsection name="Create a document type">
                 <p>
@@ -82,12 +90,12 @@
             <subsection name="Add people">
                 <p>
                     Now that the new 'person' document type is active, navigate to
-                    <code>/content/pagecontent</code>. Add a new folder to store
-                    people in by clicking 'New Folder', and name it 'people' in
+                    <code>/content</code> in the tree. Add a new folder to store
+                    people in by clicking 'New Folder', and name it 'facebook' in
                     the dialog that appears.
                 </p>
                 <p>
-                    Inside the new 'people' folder, add a person document. To do this,
+                    Inside the new 'facebook' folder, add a person document. To do this,
                     click on 'New document'. In the dialog that appears, give your
                     person document a name, and select the 'myproject:person' type.
                 </p>
@@ -101,14 +109,184 @@
                 <p>
                     <a href="../../images/hst2/facebook-edit-person.png"><img alt="screenshot" src="../../images/hst2/facebook-edit-person-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
+                <p>
+                    Go ahead and add some more people. Add your friends, your partner, your kids, your dog,
+                    go crazy!
+                </p>
+            </subsection>
+            
+            <subsection name="Create a people module">
+                <p>
+                    Each page in a Hippo Site Toolkit 2 based website is composed
+                    of <a href="../reference/concepts.html">modules</a>. A module
+                    consists of a JSP file, and a configuration node in the repository.
+                    Let's create a module that shows a list of all people. 
+                </p>
+                <p>
+                    In your project, inside <code>myproject/site/src/main/webapp/jsp/modules</code>,
+                    create a JSP file <code>people.jsp</code>. The JSP code below iterates over
+                    the person documents in location that we will configure in the console.
+                </p>
+                <p><b>people.jsp:</b></p>
+<source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ page import="org.hippoecm.hst.core.template.*, org.hippoecm.hst.core.template.node.*,javax.jcr.*,java.util.*"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
+
+<hst-tmpl:module name="people" var="items"
+  className="org.hippoecm.hst.core.template.module.listdisplay.ListDisplayModule"
+  execute="false" render="true" />
+
+<c:forEach var="item" items="${items}">
+  <hst-tmpl:link var="link" item="${item}" />
+  <div>
+    <a title="${item.property['myproject:name']}" href="${link.href}">
+      <b>${item.property['myproject:name']}</b>
+    </a>
+  </div>
+</c:forEach>
+]]>
+</source>                
+                <p>
+                    Open the console in your browser, and sign in. Browse to the
+                    <code>/hst:configuration/hst:configuration/hst:modules</code> node.
+                    Click on 'Add Node'. In the dialog that appears, give the new
+                    node the name 'people', and in the 'Primary Type' field, fill
+                    in 'hst:module'.
+                </p>
+                <p>
+                    Now we need to configure the JSP file for this module. Make sure the
+                    'people' node you just created is selected, and click on 'Add Property'.
+                    Give the new property the name 'hst:template', and the value
+                    '/jsp/modules/people.jsp'.
+                </p>
+                <p>
+                    We also need to tell the module the location of our person documents.
+                    Add another property to the 'people' node, with the name 'hst:contentlocation'
+                    and the value '/content/facebook'.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-people-module.png"><img alt="screenshot" src="../../images/hst2/facebook-people-module-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    To make sure that all changes are persisted, select the root node
+                    in the tree, and click on 'Save'. Click 'OK' in the confirmation dialog.
+                </p>
             </subsection>
 
-            <subsection name="Create a module">
+            <subsection name="Configure the sitemap">
                 <p>
-                    Inside <code>myproject/site/src/main/webapp/jsp/modules</code>, create a JSP file
-                    <code>person.jsp</code>.
+                    Browse to the
+                    <code>/hst:configuration/hst:configuration/hst:sitemap</code> node.
+                    Create the following node structure under <code>/hst:configuration/hst:configuration/hst:sitemap</code>
+                    (new node names in <b>bold</b>, node types between parentheses):
                 </p>
-                
+                <ul>
+                    <li>
+                        <p><i>/hst:configuration/hst:configuration/hst:sitemap</i></p>
+                        <ul>
+                            <li>
+                                <p><b>people</b> (hst:sitemapitem)</p>
+                                <ul>
+                                    <li>
+                                        <p><b>navigation</b> (hst:sitemaplayout)</p>
+                                        <ul>
+                                            <li>
+                                                <p><b>mainnav</b> (hst:sitemapmodule)</p>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <p><b>content</b> (hst:sitemaplayout)</p>
+                                        <ul>
+                                            <li>
+                                                <p><b>people</b> (hst:sitemapmodule)</p>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>
+                    Now go ahead and add the following properties with the following values to
+                    the <code>/hst:configuration/hst:configuration/hst:sitemap/people</code> node you just created:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:urlmapping</b>: /facebook</p>
+                    </li>
+                    <li>
+                        <p><b>hst:pageLayout</b>: hst:layouts/default</p>
+                    </li>
+                </ul>
+                <p>
+                    <a href="../../images/hst2/facebook-people-sitemapitem.png"><img alt="screenshot" src="../../images/hst2/facebook-people-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/people/navigation</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:layoutAttribute</b>: nav</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/people/navigation/mainnav</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:module</b>: hst:modules/mainnav</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/people/content</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:layoutAttribute</b>: content</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/people/content/people</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:module</b>: hst:modules/people</p>
+                    </li>
+                </ul>
+                <p>
+                    To make sure that all changes are persisted, select the root node
+                    in the tree, and click on 'Save'. Click 'OK' in the confirmation dialog.
+                </p>
+
+                <p>
+                    The list of people should now be available on the website on the
+                    URL <code>/preview/facebook</code>.
+                </p>
+                <p>
+                    <a href="../../images/hst2/facebook-site-people.png"><img alt="screenshot" src="../../images/hst2/facebook-site-people-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+
+
+            </subsection>
+
+            <subsection name="Create a person module">
+                <p>
+                    Now that we have the list of people in place, let's implement the person detail
+                    pages. We need a module for a person's details.
+                    Inside <code>myproject/site/src/main/webapp/jsp/modules</code>, create a JSP file
+                    <code>person.jsp</code>. The JSP code below displays the name and picture
+                    of a particular person.
+                </p>
+                <p><b>person.jsp:</b></p>
 <source>
 <![CDATA[
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
@@ -127,23 +305,14 @@
 ]]>
 </source>                
                 <p>
-                    Open the console in your browser, and sign in. Browse to the
+                    In the console, browse to the
                     <code>/hst:configuration/hst:configuration/hst:modules</code> node.
-                    Click on 'Add Node'. In the dialog that appears, give the new
-                    node the name 'person', and in the 'Primary Type' field, fill
-                    in 'hst:module'.
+                    Add a child node named 'person', of type 'hst:module'. Add the
+                    property 'hst:template' to the new person node, and give it the
+                    value '/jsp/modules/person.jsp'.
                 </p>
                 <p>
-                    <a href="../../images/hst2/facebook-create-module.png"><img alt="screenshot" src="../../images/hst2/facebook-create-module-thumbnail.jpg" width="400" height="310" /></a>
-                </p>
-                <p>
-                    Now we need to configure the JSP file for this module. Make sure the
-                    'person' node you just created is selected, and click on 'Add Property'.
-                    Give the new property the name 'hst:template', and the value
-                    '/jsp/modules/person.jsp'.
-                </p>
-                <p>
-                    <a href="../../images/hst2/facebook-module-template.png"><img alt="screenshot" src="../../images/hst2/facebook-module-template-thumbnail.jpg" width="400" height="310" /></a>
+                    SCREENSHOT
                 </p>
                 <p>
                     To make sure that all our changes are persisted, select the root node
@@ -154,8 +323,105 @@
             
             <subsection name="Configure HST">
                 <p>
-                    TODO
+                    Browse to the
+                    <code>/hst:configuration/hst:configuration/hst:sitemap</code> node.
+                    Create the following node structure under <code>/hst:configuration/hst:configuration/hst:sitemap</code>
+                    (new node names in <b>bold</b>, node types between parentheses):
                 </p>
+                
+                <ul>
+                    <li>
+                        <p><i>/hst:configuration/hst:configuration/hst:sitemap</i></p>
+                        <ul>
+                            <li>
+                                <p><b>person</b> (hst:sitemapitem)</p>
+                                <ul>
+                                    <li>
+                                        <p><b>navigation</b> (hst:sitemaplayout)</p>
+                                        <ul>
+                                            <li>
+                                                <p><b>mainnav</b> (hst:sitemapmodule)</p>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <p><b>content</b> (hst:sitemaplayout)</p>
+                                        <ul>
+                                            <li>
+                                                <p><b>person</b> (hst:sitemapmodule)</p>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <p>
+                    Now go ahead and add the following properties with the following values to
+                    the <code>/hst:configuration/hst:configuration/hst:sitemap/person</code> node you just created:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:nodetype</b>: hippo:document (check the 'Multi value' checkbox)</p>
+                    </li>
+                    <li>
+                        <p><b>hst:prefixlinkrewrite</b>: /facebook</p>
+                    </li>
+                    <li>
+                        <p><b>hst:urlmapping</b>: /facebook/(.*?)$</p>
+                    </li>
+                    <li>
+                        <p><b>hst:nodepath</b>: /content/facebook/* (check the 'Multi value' checkbox)</p>
+                    </li>
+                    <li>
+                        <p><b>hst:pageLayout</b>: hst:layouts/default</p>
+                    </li>
+                </ul>
+                
+                <p>
+                    SCREENSHOT
+                </p>
+                
+                <p>
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/person/navigation</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:layoutAttribute</b>: nav</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/person/navigation/mainnav</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:module</b>: hst:modules/mainnav</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/person/content</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:layoutAttribute</b>: content</p>
+                    </li>
+                </ul>
+                <p>
+                    Add the following properties to <code>/hst:configuration/hst:configuration/hst:sitemap/person/content/person</code>:
+                </p>
+                <ul>
+                    <li>
+                        <p><b>hst:module</b>: hst:modules/person</p>
+                    </li>
+                </ul>
+                <p>
+                    To make sure that all changes are persisted, select the root node
+                    in the tree, and click on 'Save'. Click 'OK' in the confirmation dialog.
+                </p>
+                
+                
             </subsection>
             
             <subsection name="Browse your facebook!">
