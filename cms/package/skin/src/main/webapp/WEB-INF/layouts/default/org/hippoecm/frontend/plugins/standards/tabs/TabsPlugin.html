@@ -15,24 +15,26 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div yui:id="tabbed-panel-layout">
-      <div yui:id="tabbed-panel-layout-top">
-        <div wicket:id="tabs-container">
-          <ul class="tabs">
-            <li wicket:id="tabs">
-              <span wicket:id="container">
-                <a href="#" wicket:id="close" class="close">X</a>
-                <a href="#" wicket:id="link">
-                  <span wicket:id="title">[[tab title]]</span>
-                </a>
-              </span>
-            </li>
-          </ul>
+    <div wicket:id="tabs" class="tabpanel">
+      <div yui:id="tabbed-panel-layout">
+        <div yui:id="tabbed-panel-layout-top">
+          <div wicket:id="tabs-container">
+            <ul class="tabs">
+              <li wicket:id="tabs">
+                <span wicket:id="container">
+                  <a href="#" wicket:id="close" class="close">X</a>
+                  <a href="#" wicket:id="link">
+                    <span wicket:id="title">[[tab title]]</span>
+                  </a>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div yui:id="tabbed-panel-layout-center">
+          <div wicket:id="panel">[panel]</div>
         </div>
       </div>
-      <div yui:id="tabbed-panel-layout-center">
-        <div wicket:id="panel">[panel]</div>
-      </div>
-    </div>    
+    </div>
   </wicket:panel>
 </html>
