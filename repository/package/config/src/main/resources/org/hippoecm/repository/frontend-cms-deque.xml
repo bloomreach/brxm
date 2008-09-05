@@ -35,7 +35,7 @@
       <sv:value>service.root</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.skin" sv:type="String">
-      <sv:value>skin/style.css</sv:value>
+      <sv:value>skin/deque.css</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.root</sv:value>
@@ -44,7 +44,6 @@
       <sv:value>extension.header</sv:value>
       <sv:value>extension.center</sv:value>
       <sv:value>extension.footer</sv:value>
-      <sv:value>extension.logout</sv:value>
     </sv:property>
     <sv:property sv:name="extension.header" sv:type="String">
       <sv:value>service.header</sv:value>
@@ -54,9 +53,6 @@
     </sv:property>
     <sv:property sv:name="extension.footer" sv:type="String">
       <sv:value>service.footer</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.logout" sv:type="String">
-      <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>
 
@@ -82,7 +78,7 @@
       <sv:value>bottom</sv:value>
     </sv:property>
     <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=root-layout-header,height=1</sv:value>
+      <sv:value>id=root-layout-header,height=50</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
       <sv:value>id=root-layout-center,gutter=0 0px 0 0px</sv:value>
@@ -114,6 +110,12 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.header</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.extensions" sv:type="String">
+      <sv:value>extension.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.logout" sv:type="String">
+      <sv:value>service.logout</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="centerPlugin">
@@ -128,6 +130,9 @@
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.center</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.variant" sv:type="String">
+      <sv:value>vertical</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
@@ -172,11 +177,11 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="yui.wrappers" sv:type="String">
-      <sv:value>top</sv:value>
+      <sv:value>left</sv:value>
       <sv:value>center</sv:value>
     </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>tabbed-panel-layout-top</sv:value>
+    <sv:property sv:name="left" sv:type="String">
+      <sv:value>tabbed-panel-layout-left</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
       <sv:value>tabbed-panel-layout-center</sv:value>
@@ -197,10 +202,10 @@
       <sv:value>service.behavior.center</sv:value>
     </sv:property>
     <sv:property sv:name="yui.position" sv:type="String">
-      <sv:value>top</sv:value>
+      <sv:value>left</sv:value>
     </sv:property>
     <sv:property sv:name="yui.options" sv:type="String">
-      <sv:value>height=70</sv:value>
+      <sv:value>width=35</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1479,7 +1484,7 @@
       <sv:value>top</sv:value>
     </sv:property>
     <sv:property sv:name="yui.options" sv:type="String">
-      <sv:value>height=70</sv:value>
+      <sv:value>height=20</sv:value>
     </sv:property>
   </sv:node>
 

@@ -48,9 +48,10 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     public static final String WICKET_ID = "wicket.id";
     public static final String MODEL_ID = "wicket.model";
+    public static final String VARIANT_ID = "wicket.variant";
     public static final String SKIN_ID = "wicket.skin";
-    public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String CSS_ID = "wicket.css";
+    public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String FEEDBACK = "wicket.feedback";
     public static final String BEHAVIOR = "wicket.behavior";
 
@@ -178,6 +179,17 @@ public abstract class RenderService extends Panel implements IModelListener, IRe
 
     public final void updateModel(IModel model) {
         super.setModel(model);
+    }
+
+    // override methods with configuration data
+
+    @Override
+    public String getVariation() {
+        if (config.getString(VARIANT_ID) != null) {
+            return config.getString(VARIANT_ID);
+        }
+        // don't inherit variation from Wicket ancestor 
+        return null;
     }
 
     // utility routines for subclasses
