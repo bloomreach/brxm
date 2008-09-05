@@ -1,0 +1,28 @@
+This product includes software developed by:
+The Apache Software Foundation (http://www.apache.org/).
+Hippo B.V., Amsterdam, The Netherlands (http://www.hippo.nl/).
+
+NOTICE: Only our own original work is licensed under the terms of the Apache
+License Version 2.0. The licenses of some libraries might impose different
+redistribution or general licensing terms than those stated in the Apache
+License. Users and redistributors are hereby requested to verify these
+conditions and agree upon them.
+
+
+--
+    Copyright 1998-2003 Helma Software. All Rights Reserved.
+    
+This product contains an implementation of javax.imageio.ImageWriter developed by
+Helma Software (http://dev.helma.org/) licensed under the Helma License
+Version 2.0 (the "License"). You may not use this file except in compliance with
+the License. A copy of the License is available at http://dev.helma.org/license/ 
+
+
+--
+    Copyright (C) 2003 ImageMagick Studio, a non-profit organization dedicated
+    to making software imaging solutions freely available.
+
+This product contains a Java port of a ColorQuantizer implemented by
+ImageMagick licensed under the ImageMagick License (the "License"). You may not
+use this file except in compliance with the License. A copy of the License is
+available at http://www.imagemagick.org/script/license.php.
