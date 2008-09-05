@@ -189,7 +189,7 @@ public class SearchModule extends ModuleBase implements Search {
         // didyoumean 
         if (params && moduleParameters.containsKey(DIDYOUMEAN)) {
             String didyoumeanParam = moduleParameters.get(DIDYOUMEAN);
-            setDidYouMeanNeeded(Boolean.getBoolean(didyoumeanParam));
+            setDidYouMeanNeeded(new Boolean(didyoumeanParam));
         }
         // didyoumean treshhold
         if (params && moduleParameters.containsKey(DIDYOUMEAN_MINIMUM)) {
@@ -200,15 +200,20 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // similar
-        if (params && moduleParameters.containsKey(SHOW_SIMILAR)) {
-            String show_similar = moduleParameters.get(SHOW_SIMILAR);
-            setSimilarNeeded(Boolean.getBoolean(show_similar));
+        if (params && moduleParameters.containsKey(SIMILAR)) {
+            String show_similar = moduleParameters.get(SIMILAR);
+            setSimilarNeeded(new Boolean(show_similar));
         }
 
         // excerpt
-        if (params && moduleParameters.containsKey(SHOW_EXCERPT)) {
-            String show_excerpt = moduleParameters.get(SHOW_EXCERPT);
-            setExcerptNeeded(Boolean.getBoolean(show_excerpt));
+        if (params && (moduleParameters.containsKey(EXCERPT))) {
+            String show_excerpt = moduleParameters.get(EXCERPT);
+            setExcerptNeeded(new Boolean(show_excerpt));
+        }
+        // highlight = other term for exceprt
+        if (params && (moduleParameters.containsKey(HIGHLIGHT))) {
+            String show_excerpt = moduleParameters.get(HIGHLIGHT);
+            setExcerptNeeded(new Boolean(show_excerpt));
         }
     }
 
@@ -369,102 +374,6 @@ public class SearchModule extends ModuleBase implements Search {
         return contextClauses;
     }
 
-    public void setQueryText(String queryText) {
-        this.queryText = queryText;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public int getDidYouMeanThreshold() {
-        return didYouMeanThreshold;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public String getQueryText() {
-        return queryText;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public boolean isDidYouMeanNeeded() {
-        return didYouMeanNeeded;
-    }
-
-    public boolean isExcerptNeeded() {
-        return excerptNeeded;
-    }
-
-    public boolean isSimilarNeeded() {
-        return similarNeeded;
-    }
-
-    public void setDidYouMeanNeeded(boolean didYouMeanNeeded) {
-        this.didYouMeanNeeded = didYouMeanNeeded;
-    }
-
-    public void setDidYouMeanThreshold(int didYouMeanThreshold) {
-        this.didYouMeanThreshold = didYouMeanThreshold;
-    }
-
-    public void setExcerptNeeded(boolean excerptNeeded) {
-        this.excerptNeeded = excerptNeeded;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public void setSimilarNeeded(boolean similarNeeded) {
-        this.similarNeeded = similarNeeded;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-
-    }
-
-    public void setNodeType(String nodetype) {
-        this.nodetype = nodetype;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
-    public void setOrderBy(String orderby) {
-        this.orderby = orderby;
-    }
-
-    public void setWhere(String where) {
-        this.where = where;
-    }
 
     /**
      * this render is a final, since it is delegate code, and is not meant for extending
@@ -581,4 +490,100 @@ public class SearchModule extends ModuleBase implements Search {
         return false;
     }
 
+    public void setQueryText(String queryText) {
+        this.queryText = queryText;
+    }
+
+    public void setStatement(String statement) {
+        this.statement = statement;
+    }
+
+    public int getDidYouMeanThreshold() {
+        return didYouMeanThreshold;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public String getQueryText() {
+        return queryText;
+    }
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public boolean isDidYouMeanNeeded() {
+        return didYouMeanNeeded;
+    }
+
+    public boolean isExcerptNeeded() {
+        return excerptNeeded;
+    }
+
+    public boolean isSimilarNeeded() {
+        return similarNeeded;
+    }
+
+    public void setDidYouMeanNeeded(boolean didYouMeanNeeded) {
+        this.didYouMeanNeeded = didYouMeanNeeded;
+    }
+
+    public void setDidYouMeanThreshold(int didYouMeanThreshold) {
+        this.didYouMeanThreshold = didYouMeanThreshold;
+    }
+
+    public void setExcerptNeeded(boolean excerptNeeded) {
+        this.excerptNeeded = excerptNeeded;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public void setSimilarNeeded(boolean similarNeeded) {
+        this.similarNeeded = similarNeeded;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+
+    }
+
+    public void setNodeType(String nodetype) {
+        this.nodetype = nodetype;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    public void setOrderBy(String orderby) {
+        this.orderby = orderby;
+    }
+
+    public void setWhere(String where) {
+        this.where = where;
+    }
 }
