@@ -212,7 +212,7 @@ class FolderPaginatedElements implements PaginatedElements {
 	}
 	
 	public List<Node> getElements(int from, int to) {	
-		List<Node> itemList = new ArrayList();		
+		List<Node> itemList = new ArrayList<Node>();		
 		folderIterator.skip(from);
 		int i = from;
 		while (folderIterator.hasNext() && i++ < to) {
