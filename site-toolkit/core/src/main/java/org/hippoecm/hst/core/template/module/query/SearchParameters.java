@@ -21,10 +21,12 @@ public interface SearchParameters {
     public static final String LIMIT_PARAM = "limit";
 
     public static final String OFFSET_PARAM = "offset";
-    
-    public static final String SHOW_EXCERPT = "show_excerpt";
 
-    public static final String SHOW_SIMILAR = "show_similar";
+    public static final String EXCERPT = "excerpt";
+    
+    public static final String HIGHLIGHT = "highlight";
+
+    public static final String SIMILAR = "similar";
 
     public static final String DIDYOUMEAN_MINIMUM = "didyoumeanminimum";
 
