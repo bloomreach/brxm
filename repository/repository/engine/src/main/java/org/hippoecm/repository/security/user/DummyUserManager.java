@@ -16,12 +16,14 @@
 package org.hippoecm.repository.security.user;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 
 /**
  * Dummy user implementation that is used when the provider doesn't support
- * a own user manager implementation.
+ * it's own user manager implementation.
  */
 public class DummyUserManager extends AbstractUserManager {
 
@@ -36,5 +38,17 @@ public class DummyUserManager extends AbstractUserManager {
 
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
+    }
+
+    public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
+        return false;
+    }
+    
+    public void syncUserInfo(String userId) {
+        return;
+    }
+
+    public String getNodeType() {
+        return HippoNodeType.NT_USER;
     }
 }

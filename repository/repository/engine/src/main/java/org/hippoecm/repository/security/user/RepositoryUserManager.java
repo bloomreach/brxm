@@ -17,23 +17,14 @@ package org.hippoecm.repository.security.user;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.PasswordHelper;
 import org.hippoecm.repository.security.ManagerContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * UserManager backend that stores the users inside the JCR repository
@@ -44,30 +35,23 @@ public class RepositoryUserManager extends AbstractUserManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    /**
-     * Logger
-     */
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    //------------------------< Interface Impl >--------------------------//
-
-    /**
-     * {@inheritDoc}
-     */
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Authenticate the user against the hash stored in the user node
      */
-    @Override
     public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
+        // check if user exists
+        if (!hasUser(creds.getUserID())) {
+            return false;
+        }
         try {
-            return PasswordHelper.checkHash(creds.getPassword(), getPasswordHash(getUserNode(creds.getUserID())));
+            return PasswordHelper.checkHash(creds.getPassword(), getPasswordHash(getUser(creds.getUserID())));
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
         } catch (UnsupportedEncodingException e) {
@@ -75,51 +59,27 @@ public class RepositoryUserManager extends AbstractUserManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> listUsers() throws RepositoryException {
-        if (!isInitialized()) {
-            throw new IllegalStateException("Not initialized.");
-        }
-
-        // find users managed by this provider as sub nodes off the users path
-        StringBuffer statement = new StringBuffer();
-        statement.append("SELECT * FROM ").append(HippoNodeType.NT_USER);
-        statement.append(" WHERE ");
-        statement.append("  jcr:path LIKE '").append(usersPath).append("/%").append("'");
-        statement.append(" AND jcr:PrimaryType = '").append(HippoNodeType.NT_USER).append("')");
-
-        //log.debug("Searching for users: {}", statement);
-
-        Set<String> userIds = new HashSet<String>();
-
-        // find users managed by this provider
-        QueryManager qm;
-        try {
-            qm = session.getWorkspace().getQueryManager();
-            Query q = qm.createQuery(statement.toString(), Query.SQL);
-            QueryResult result = q.execute();
-            NodeIterator iter = result.getNodes();
-            while (iter.hasNext()) {
-                userIds.add(iter.nextNode().getName());
-            }
-        } catch (RepositoryException e) {
-            log.warn("Exception while parsing users from path: {}", usersPath);
-        }
-        return Collections.unmodifiableSet(userIds);
+    public String getNodeType() {
+        return HippoNodeType.NT_USER;
     }
-
-    //------------------------< Private Helper methods >--------------------------//
-
+    
+    /**
+     * The backend is the repository, no need to sync anything.
+     */
+    public void syncUserInfo(String userId) {
+        return;
+    }
+    
     /**
      * Get the (optionally) hashed password of the user
      * @return the password hash
      * @throws RepositoryException
      */
     private String getPasswordHash(Node user) throws RepositoryException {
-        return user.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+        if (user.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
+            return user.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
+        } else {
+            return null;
+        }
     }
-
 }

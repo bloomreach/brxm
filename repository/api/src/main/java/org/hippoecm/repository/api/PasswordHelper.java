@@ -207,9 +207,14 @@ public class PasswordHelper {
     synchronized public static boolean checkHash(char[] password, String hash) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
         
+        // no hash or empty hash doesn't match anything
+        if (hash == null || "".equals(hash)) {
+            return false;
+        }
+        
         // don't allow empty passwords
-        if (password == null || hash == null || password.length == 0 || "".equals(hash)) {
-            throw new IllegalArgumentException("Empty username's and password are not allowed");
+        if (password == null || password.length == 0) {
+            throw new IllegalArgumentException("Empty passwords are not allowed");
         }
 
         StringTokenizer st = new StringTokenizer(hash, "$");

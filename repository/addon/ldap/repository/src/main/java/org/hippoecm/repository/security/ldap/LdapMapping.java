@@ -13,9 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.repository.security.ldap;
 
+/**
+ * Class for mapping ldap attributes to repository attributes, based on a 
+ * mapping definition node.
+ */
 public class LdapMapping {
 
     @SuppressWarnings("unused")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2008 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,17 @@
 <hippo='http://www.hippoecm.org/nt/1.0'>
 <hippoldap='http://www.hippoecm.org/hippoldap/nt/1.0'>
 
-[hippoldap:search] > nt:base
+[hippoldap:usersearch] > nt:base
 - hippoldap:nameattribute (string) = 'uid' mandatory autocreated
 - hippoldap:basedn (string) mandatory
 - hippoldap:filter (string)
+
+[hippoldap:groupsearch] > hippoldap:usersearch
 - hippoldap:memberattribute (string)
-- hippoldap:membernameattribute (string)
+- hippoldap:membernamematcher (string)
+
+// [hippoldap:rolesearch] > hippoldap:groupsearch
+
 
 [hippoldap:mapping] > nt:base
 - hippoldap:source (string) mandatory
@@ -33,16 +38,17 @@
 - hippoldap:multi (boolean) = 'false' mandatory autocreated
 
 [hippoldap:userprovider] > hippo:userprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
-+ hippoldap:search (hippoldap:search) = hippoldap:search multiple
++ * (hippoldap:mapping) = hippoldap:mapping multiple
++ * (hippoldap:usersearch) = hippoldap:usersearch multiple
 
 [hippoldap:groupprovider] > hippo:groupprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
-+ hippoldap:search (hippoldap:search) = hippoldap:search multiple
++ * (hippoldap:mapping) = hippoldap:mapping multiple
++ * (hippoldap:groupsearch) = hippoldap:groupsearch multiple
 
-[hippoldap:roleprovider] > hippo:roleprovider
-+ hippoldap:mapping (hippoldap:mapping) = hippoldap:mapping multiple
-+ hippoldap:search (hippoldap:search) = hippoldap:search multiple
+
+// [hippoldap:roleprovider] > hippo:roleprovider
+// + * (hippoldap:mapping) = hippoldap:mapping multiple
+// + * (hippoldap:rolesearch) = hippoldap:rolesearch multiple
 
 [hippoldap:securityprovider] > hippo:securityprovider
 - hippoldap:providerurl (string) mandatory

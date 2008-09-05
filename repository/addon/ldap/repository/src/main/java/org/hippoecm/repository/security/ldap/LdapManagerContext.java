@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security;
+package org.hippoecm.repository.security.ldap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.security.ldap.LdapContextFactory;
+import org.hippoecm.repository.security.ManagerContext;
+
 
 /**
  * Authentication and Authorization context for the managers

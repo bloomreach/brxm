@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.security.user;
 
-import java.util.Set;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -64,36 +62,41 @@ public interface UserManager {
     public boolean authenticate(SimpleCredentials creds) throws RepositoryException;
 
     /**
-     * Get a list of userIds managed by the backend
-     * @return A Set of userIds
-     * @throws RepositoryException
-     */
-    public Set<String> listUsers() throws RepositoryException;
-
-    /**
      * Check if the user with the given userId exists in the repository
      * @param userId
      * @return the user node
      * @throws RepositoryException
      */
-    public boolean hasUserNode(String userId) throws RepositoryException;
+    public boolean hasUser(String userId) throws RepositoryException;
 
     /**
      * Get the node for the user with the given userId
      * @param userId
-     * @return the user node
+     * @return the user node or null if the user doesn't exist
      * @throws RepositoryException
      */
-    public Node getUserNode(String userId) throws RepositoryException;
+    public Node getUser(String userId) throws RepositoryException;
 
     /**
      * Create a (skeleton) node for the user in the repository
      * @param userId
-     * @param the nodeType for the user. This must be a derivative of hippo:user
      * @return the newly created user node
      * @throws RepositoryException
      */
-    public Node createUserNode(String userId, String nodeType) throws RepositoryException;
+    public Node createUser(String userId) throws RepositoryException;
+
+    /**
+     * Check if the current manager manages the user 
+     * @param group
+     * @return true if the group is managed by the current user
+     */
+    public boolean isManagerForUser(Node user) throws RepositoryException;
+
+    /**
+     * Get the node type for new user nodes
+     * @return the node type
+     */
+    public String getNodeType();
 
     /**
      * Update last login timestamp. This is handled by the {@link AbstractUserManager}.
@@ -106,25 +109,7 @@ public interface UserManager {
      * Called just after authenticate.
      * @param userId
      */
-    public void syncUser(String userId);
-
-    /**
-     * Try to add a user to the backend
-     * @param user the user to add
-     * @return true is the user is successful added
-     * @throws NotSupportedException if the backend doesn't support adding users
-     * @throws RepositoryException
-     */
-    public boolean addUser(String userId, char[] password) throws NotSupportedException, RepositoryException;
-
-    /**
-     * Try to delete a user from the backend
-     * @param user the user to delete
-     * @return true is the user is successful deleted
-     * @throws NotSupportedException if the backend doesn't support deleting users
-     * @throws RepositoryException
-     */
-    public boolean deleteUser(String userId) throws NotSupportedException, RepositoryException;
+    public void syncUserInfo(String userId);
 
     /**
      * Check if the current user is active.
@@ -135,13 +120,46 @@ public interface UserManager {
     public boolean isActive(String userId) throws RepositoryException;
 
     /**
+     * Save current outstanding changes to the repository.
+     */
+    public void saveUsers() throws RepositoryException;
+
+    /**
+     * Set the user's password in the backend
+     * @param password
+     * @param userId
+     * @throws NotSupportedException thrown when backend does not support setting the password
+     * @throws RepositoryException
+     */
+    public void backendSetPassword(String userId, char[] password) throws NotSupportedException, RepositoryException;
+    
+    /**
+     * Try to add a user to the backend
+     * @param user the user to add
+     * @return true is the user is successful added
+     * @throws NotSupportedException if the backend doesn't support adding users
+     * @throws RepositoryException
+     */
+    public boolean backendAddUser(String userId, char[] password) throws NotSupportedException, RepositoryException;
+
+    /**
+     * Try to delete a user from the backend
+     * @param user the user to delete
+     * @return true is the user is successful deleted
+     * @throws NotSupportedException if the backend doesn't support deleting users
+     * @throws RepositoryException
+     */
+    public boolean backendDeleteUser(String userId) throws NotSupportedException, RepositoryException;
+
+
+    /**
      * Set the user to active or inactive
      * @param active true if the user must be set to active
      * @param userId
      * @throws NotSupportedException thrown when backend does not support setting the active flag
      * @throws RepositoryException
      */
-    public void setActive(String userId, boolean active) throws NotSupportedException, RepositoryException;
+    public void backendSetActive(String userId, boolean active) throws NotSupportedException, RepositoryException;
 
     /**
      * Set a key value pair property on the user in the backend
@@ -150,6 +168,6 @@ public interface UserManager {
      * @throws NotSupportedException thrown when the backend does not support setting the key
      * @throws RepositoryException
      */
-    public void setProperty(String userId, String key, String value) throws NotSupportedException, RepositoryException;
+    public void backendSetProperty(String userId, String key, String value) throws NotSupportedException, RepositoryException;
 
 }

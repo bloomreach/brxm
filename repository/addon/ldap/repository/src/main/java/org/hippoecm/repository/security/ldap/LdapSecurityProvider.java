@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security;
+package org.hippoecm.repository.security.ldap;
 
 
 import javax.jcr.InvalidItemStateException;
@@ -28,12 +28,10 @@ import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.security.AbstractSecurityProvider;
+import org.hippoecm.repository.security.SecurityProviderContext;
 import org.hippoecm.repository.security.group.DummyGroupManager;
-import org.hippoecm.repository.security.group.LdapGroupManager;
-import org.hippoecm.repository.security.ldap.LdapContextFactory;
-import org.hippoecm.repository.security.ldap.LdapUtils;
 import org.hippoecm.repository.security.user.DummyUserManager;
-import org.hippoecm.repository.security.user.LdapUserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,8 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     // the nodetypes don't have to be exposed through the api because they are ldap specific
     final public static String NT_LDAPMAPPING = "hippoldap:mapping";
-    final public static String NT_LDAPSEARCH = "hippoldap:search";
+    final public static String NT_LDAPUSERSEARCH = "hippoldap:usersearch";
+    final public static String NT_LDAPGROUPSEARCH = "hippoldap:groupsearch";
     final public static String NT_LDAPGROUPPROVIDER = "hippoldap:groupprovider";
     final public static String NT_LDAPROLEPROVIDER = "hippoldap:roleprovider";
     final public static String NT_LDAPUSERPROVIDER = "hippoldap:userprovider";
@@ -173,6 +172,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                     userManager = new LdapUserManager();
                     userManager.init(userContext);
                 } else {
+                    log.warn("No user manager found, using dummy manager");
                     userManager = new DummyUserManager();
                 }
 
@@ -182,6 +182,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                     groupManager.init(groupContext);
                 } else {
                     groupManager = new DummyGroupManager();
+                    log.warn("No group manager found, using dummy manager");
                 }
             } catch (NamingException e) {
                 // wrap error

@@ -197,9 +197,11 @@
 
 [hippo:userfolder] > nt:base
 + * (hippo:user) = hippo:user
++ * (hippo:userfolder) = hippo:userfolder
 
 [hippo:groupfolder] > nt:base
 + * (hippo:group) = hippo:group
++ * (hippo:groupfolder) = hippo:groupfolder
 
 [hippo:rolefolder] > nt:base
 + * (hippo:role) = hippo:role

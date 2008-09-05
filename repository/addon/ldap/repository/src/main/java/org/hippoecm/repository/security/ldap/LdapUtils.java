@@ -27,7 +27,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.ldap.LdapContext;
 
-import org.hippoecm.repository.security.LdapSecurityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

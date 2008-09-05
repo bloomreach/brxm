@@ -23,9 +23,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
-
 import junit.framework.TestCase;
+
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class RepositoryLoginTest extends TestCase {
     @SuppressWarnings("unused")
@@ -52,6 +52,7 @@ public class RepositoryLoginTest extends TestCase {
 
 
 
+    @Override
     public void setUp() throws RepositoryException, IOException {
         server = HippoRepositoryFactory.getHippoRepository();
         serverSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -78,6 +79,7 @@ public class RepositoryLoginTest extends TestCase {
         serverSession.save();
     }
 
+    @Override
     public void tearDown() throws RepositoryException {
         if (users != null) {
             if (users.hasNode(TESTUSER_ID_PLAIN)) {

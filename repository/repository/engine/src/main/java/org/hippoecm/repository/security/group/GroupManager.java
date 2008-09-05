@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.security.ManagerContext;
+import org.hippoecm.repository.security.user.AbstractUserManager;
 
 /**
  * Interface for managing groups in the backend
@@ -51,13 +52,14 @@ public interface GroupManager {
      * @See ManagerContext
      */
     public void initManager(ManagerContext context) throws RepositoryException;
-    
+
     /**
-     * List the groupIds currently managed by the backend
-     * @return the Set of GroupIds
+     * Check if the group exists
+     * @param groupId
+     * @return true if the group exists
      * @throws RepositoryException
      */
-    public Set<String> listGroups() throws RepositoryException;
+    public boolean hasGroup(String groupId) throws RepositoryException;
 
     /**
      * Get the node for the group with the given groupId
@@ -65,7 +67,7 @@ public interface GroupManager {
      * @return the user node
      * @throws RepositoryException
      */
-    public Node getGroupNode(String groupId) throws RepositoryException;
+    public Node getGroup(String groupId) throws RepositoryException;
 
     /**
      * Create a (skeleton) node for the group in the repository
@@ -74,31 +76,103 @@ public interface GroupManager {
      * @return the newly created user node
      * @throws RepositoryException
      */
-    public Node createGroupNode(String groupId, String nodeType) throws RepositoryException;
+    public Node createGroup(String groupId) throws RepositoryException;
+
+    /**
+     * Helper method the returns the group node and
+     * @param groupId
+     * @param nodeType
+     * @return
+     * @throws RepositoryException
+     */
+    public Node getOrCreateGroup(String groupId) throws RepositoryException;
     
+    /**
+     * Check if the current manager manages the group 
+     * @param group
+     * @return true if the group is managed by the current manager
+     */
+    public boolean isManagerForGroup(Node group) throws RepositoryException;
+    
+    
+    /**
+     * Get the node type for new group nodes
+     * @return the node type
+     */
+    public String getNodeType();
+
+    
+    
+    /**
+     * Get memberships from the repository for a user
+     * @param userId
+     * @throws RepositoryException
+     */
+    public Set<String> getMemeberships(String userId) throws RepositoryException;
+
+    /**
+     * Get the members of a group
+     * @param group
+     * @throws RepositoryException
+     */
+    public Set<String> getMembers(Node group) throws RepositoryException;
+    
+    /**
+     * Set members of a group
+     * @param group
+     * @throws RepositoryException
+     */
+    public void setMembers(Node group, Set<String> members) throws RepositoryException;
+    
+    /**
+     * Make a user member of the group.
+     * @param group
+     * @param userId
+     * @throws RepositoryException
+     */
+    public void addMember(Node group, String userId) throws RepositoryException;
+    
+    /**
+     * Remove a user from the group.
+     * @param group
+     * @param userId
+     * @throws RepositoryException
+     */
+    public void removeMember(Node group, String userId) throws RepositoryException;
 
     /**
      * Hook for the provider to sync from the backend with the repository.
-     * @param userId
+     * @param user
      */
-    public void syncGroup(String groupId);
+    public void syncMemberships(Node user) throws RepositoryException;
     
     /**
-     * Add a group to the backend
+     * Save current outstanding changes to the repository.
+     */
+    public void saveGroups() throws RepositoryException;
+    
+    /**
+     * Get the memberships of the user from the backend.
+     * @param user
+     * @throws RepositoryException
+     */
+    public Set<String> backendGetMemberships(Node user) throws RepositoryException;
+    
+    /**
+     * Add a group to the backend (optional)
      * @param groupId
      * @return true if the group is successful added in the backend
      * @throws NotSupportedException
      * @throws RepositoryException
      */
-    public boolean addGroup(String groupId) throws NotSupportedException, RepositoryException;
+    public boolean backendCreateGroup(String groupId) throws NotSupportedException, RepositoryException;
 
     /**
-     * Delete a group from the backend
+     * Delete a group from the backend (optional)
      * @param groupId
      * @return true if the group is successful removed in the backend
      * @throws NotSupportedException
      * @throws RepositoryException
      */
-    public boolean deleteGroup(String groupId) throws NotSupportedException, RepositoryException;
-
+    public boolean backendDeleteGroup(String groupId) throws NotSupportedException, RepositoryException;
 }
