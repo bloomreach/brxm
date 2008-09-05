@@ -167,7 +167,10 @@ public class URLMappingImpl implements URLMapping {
                     if(sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
                         String newLink = sitemapNode.getProperty("hst:prefixlinkrewrite").getString();
                         log.debug("rewriting '"+path+"' --> '" + newLink);
-                        return newLink;
+                        if(!"".equals(newLink) && !newLink.startsWith("/")) {
+                            newLink = "/"+newLink;
+                        }
+                        return contextPath+contextPrefix+newLink;
                     } else {
                         log.warn("cannot rewrite path '" + path + "' because the sitemap node does not have the property 'hst:prefixlinkrewrite'. Node : " + sitemapNode.getPath());
                     }
