@@ -98,9 +98,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
 		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
-		
-		log.info("URI" + request.getRequestURI());
-			
+
 			PageNode matchPageNode = null;
             if (urlTokenizer.isMatchingTemplateFound()) {
             	log.info("matching template found");

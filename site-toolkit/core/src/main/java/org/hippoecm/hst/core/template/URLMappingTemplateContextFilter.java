@@ -122,7 +122,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            	
 	    			dispatcher.forward(wrappedRequest, response);
 	            } else {
-	            	log.info("no matching template found for" + request.getRequestURI() );
+	            	log.error("no matching template found for url '" + request.getRequestURI() + "'");
 	            	//what to do? no matching pattern found... lets continue the filter chain...
 	            	filterChain.doFilter(req, response);
 	            }
