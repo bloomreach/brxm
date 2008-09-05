@@ -1,5 +1,8 @@
 package org.hippoecm.hst.core.template;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
@@ -19,7 +22,12 @@ public class URLBaseHttpRequestServletWrapper extends HttpServletRequestWrapper 
 	@Override
 	public String getRequestURI() {
 		log.info("getRequestURI()=" + super.getRequestURI());
-		return stripUrlPrefix(super.getRequestURI());
+		try {
+            return URLDecoder.decode(stripUrlPrefix(super.getRequestURI()),"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            log.warn("Url is not utf-8 encoded");
+            return stripUrlPrefix(super.getRequestURI());
+        }
 	}
 
 	@Override
