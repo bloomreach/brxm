@@ -81,9 +81,6 @@ public class HippoLoginModule implements LoginModule {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     //----------------------------------------------------------< LoginModule >
-    /**
-     * {@inheritDoc}
-     */
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,
             Map<String, ?> options) {
 
@@ -111,9 +108,6 @@ public class HippoLoginModule implements LoginModule {
         */
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean login() throws LoginException {
         if (callbackHandler == null) {
             throw new LoginException("no CallbackHandler available");
@@ -130,7 +124,6 @@ public class HippoLoginModule implements LoginModule {
             if (rootSession == null) {
                 throw new LoginException("RootSession not set.");
             }
-
 
             // check for impersonation
             Object attr = creds.getAttribute(SecurityConstants.IMPERSONATOR_ATTRIBUTE);
@@ -158,7 +151,7 @@ public class HippoLoginModule implements LoginModule {
 
                 Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
                 String impersonarorId = iup.getName();
-                // TODO: check somehow if the user is allowed to imporsonate
+                // TODO: check somehow if the user is allowed to impersonate
 
                 log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
 
@@ -215,9 +208,6 @@ public class HippoLoginModule implements LoginModule {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean commit() throws LoginException {
         if (principals.isEmpty()) {
             return false;
@@ -228,9 +218,6 @@ public class HippoLoginModule implements LoginModule {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean abort() throws LoginException {
         if (principals.isEmpty()) {
             return false;
@@ -240,9 +227,6 @@ public class HippoLoginModule implements LoginModule {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean logout() throws LoginException {
         subject.getPrincipals().removeAll(principals);
         principals.clear();
@@ -272,6 +256,10 @@ public class HippoLoginModule implements LoginModule {
         return securityManager.authenticate(creds);
     }
 
+    /**
+     * Set the user principals for the user.
+     * @param userId
+     */
     private void setUserPrincipals(String userId) {
         if (userId == null) {
             return;
@@ -282,6 +270,10 @@ public class HippoLoginModule implements LoginModule {
         principals.add(userPrincipal);
     }
 
+    /**
+     * Find the memberships and set the group principals
+     * @param userId
+     */
     private void setGroupPrincipals(String userId) {
         Set<String> memberships = securityManager.getMemeberships(userId);
         for (String groupId : memberships) {
@@ -291,6 +283,10 @@ public class HippoLoginModule implements LoginModule {
         }
     }
 
+    /**
+     * Create the facet auth principals based on the domains and roles in the repository.
+     * @param userId
+     */
     private void setFacetAuthPrincipals(String userId) {
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();

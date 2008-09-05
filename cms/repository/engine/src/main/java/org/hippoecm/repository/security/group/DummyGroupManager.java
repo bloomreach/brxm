@@ -15,8 +15,18 @@
  */
 package org.hippoecm.repository.security.group;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.jcr.Node;
+
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 
+/**
+ * Dummy group implementation that is used when the provider doesn't support
+ * it's own group manager implementation.
+ */
 public class DummyGroupManager extends AbstractGroupManager {
 
     @SuppressWarnings("unused")
@@ -30,5 +40,13 @@ public class DummyGroupManager extends AbstractGroupManager {
     
     public void initManager(ManagerContext context) {
         initialized = true;
+    }
+
+    public Set<String> backendGetMemberships(Node user) {
+        return new HashSet<String>(0);
+    }
+
+    public String getNodeType() {
+        return HippoNodeType.NT_GROUP;
     }
 }

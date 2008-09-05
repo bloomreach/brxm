@@ -563,8 +563,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                             }
                             
                             Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
-                            String contentName = contentProperty.getString();
-                            contentName = "<<internal>>";
+                            String contentName = "<<internal>>";
                             InputStream contentStream = contentProperty.getStream();
                                 
                             if (contentStream == null) {
