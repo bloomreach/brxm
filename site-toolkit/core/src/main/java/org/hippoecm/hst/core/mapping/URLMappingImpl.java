@@ -93,7 +93,10 @@ public class URLMappingImpl implements URLMapping {
                     		"Disregard item in the url mappings");
                 }
             }
-        } catch (RepositoryException e) {
+        } catch (PathNotFoundException e) {
+            log.error("PathNotFoundException " + e.getMessage());
+        }
+        catch (RepositoryException e) {
             log.error("RepositoryException " + e.getMessage());
         }
 
