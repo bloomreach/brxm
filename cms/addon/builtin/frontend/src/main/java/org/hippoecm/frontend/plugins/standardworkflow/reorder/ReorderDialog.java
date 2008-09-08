@@ -24,7 +24,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
     private IServiceReference<IJcrService> jcrServiceRef;
     private ReorderPanel panel;
 
-    public ReorderDialog(FolderWorkflowPlugin plugin, IDialogService dialogWindow,
+    public ReorderDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
         super(plugin, dialogWindow, "Reorder");
         jcrServiceRef = jcrService;

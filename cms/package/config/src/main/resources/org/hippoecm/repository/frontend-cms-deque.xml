@@ -373,7 +373,7 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="browser.viewers" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms-folder-views</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms-deque-folder-views</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.browser</sv:value>
@@ -419,7 +419,7 @@
       <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=true,minWidth=400,width=600,gutter=0px 5px 0px 3px</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=400,width=800,scroll=true,gutter=0px 3px 0px 0px</sv:value>
+      <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=400,scroll=true,gutter=0px 3px 0px 0px</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1096,10 +1096,10 @@
       <sv:value>workflow.internal.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>internal</sv:value>
+      <sv:value>threepane-internal</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="autoEditPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1114,7 +1114,7 @@
       <sv:value>service.edit</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="managementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
