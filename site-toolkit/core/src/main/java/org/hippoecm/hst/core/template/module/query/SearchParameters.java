@@ -16,9 +16,11 @@
 package org.hippoecm.hst.core.template.module.query;
 
 public interface SearchParameters {
-    public static final String QUERY_PARAM = "query";
+    public static final String QUERY = "query";
 
-    public static final String LIMIT_PARAM = "limit";
+    public static final String LIMIT = "limit";
+    
+    public static final String PAGE = "page";
 
     public static final String OFFSET_PARAM = "offset";
 

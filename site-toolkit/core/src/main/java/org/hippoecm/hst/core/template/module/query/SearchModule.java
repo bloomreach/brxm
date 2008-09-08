@@ -34,6 +34,7 @@ import javax.jcr.query.RowIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -44,11 +45,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SearchModule extends ModuleBase implements Search {
-    
+
     private String language = DEFAULT_LANGUAGE;
     private int didYouMeanThreshold = DEFAULT_THRESHOLD;
     private int limit = DEFAULT_LIMIT;
-    private int offset = DEFAULT_OFFSET;
     private int depth = DEFAULT_DEPTH;
     private boolean didYouMeanNeeded = DEFAULT_DIDYOUMEANNEEDED;
     private boolean excerptNeeded = DEFAULT_EXCERPTNEEDED;
@@ -61,8 +61,13 @@ public class SearchModule extends ModuleBase implements Search {
     private String order;
     private String orderby;
     private String where;
+    private int currentPageNumber = 1;
     private boolean validStatement = true;
 
+    
+    // TODO fixme 
+    
+    
     /**
      * set search configuration parameters. This method is called directly in the render() method 
      * 
@@ -78,14 +83,17 @@ public class SearchModule extends ModuleBase implements Search {
 
         // initPath 
         if (request.getParameter(TARGET) != null && !"".equals(request.getParameter(TARGET))) {
-            setTarget(request.getParameter(TARGET));
+            String target = request.getParameter(TARGET);
+            if (!"".equals(target)) {
+                setTarget(target);
+            }
         } else if (params && moduleParameters.containsKey(TARGET)) {
             String target = moduleParameters.get(TARGET);
             if (!"".equals(target)) {
                 setTarget(target);
             }
         }
-        if(target == null) {
+        if (target == null) {
             log.error("Target is not allowed to be null: skipping search");
             validStatement = false;
             return;
@@ -94,7 +102,7 @@ public class SearchModule extends ModuleBase implements Search {
         // nodetype 
         if (request.getParameter(NODETYPE) != null && !"".equals(request.getParameter(NODETYPE))) {
             setNodeType(request.getParameter(NODETYPE));
-        }else if (params && moduleParameters.containsKey(NODETYPE)) {
+        } else if (params && moduleParameters.containsKey(NODETYPE)) {
             String nodetype = moduleParameters.get(NODETYPE);
             if (!"".equals(nodetype)) {
                 setNodeType(nodetype);
@@ -110,14 +118,14 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // query text
-        if (request.getParameter(QUERY_PARAM) != null && !"".equals(request.getParameter(QUERY_PARAM))) {
-            String queryParam = request.getParameter(QUERY_PARAM);
+        if (request.getParameter(QUERY) != null && !"".equals(request.getParameter(QUERY))) {
+            String queryParam = request.getParameter(QUERY);
             if (!"".equals(queryParam)) {
                 queryParam.replaceAll("'", "''");
                 setQueryText(queryParam);
             }
-        } else if (params && moduleParameters.containsKey(QUERY_PARAM)) {
-            String queryParam = moduleParameters.get(QUERY_PARAM);
+        } else if (params && moduleParameters.containsKey(QUERY)) {
+            String queryParam = moduleParameters.get(QUERY);
             if (!"".equals(queryParam)) {
                 queryParam.replaceAll("'", "''");
                 setQueryText(queryParam);
@@ -152,29 +160,25 @@ public class SearchModule extends ModuleBase implements Search {
             }
         }
 
-        // offset 
-        if (request.getParameter(OFFSET_PARAM) != null && !"".equals(request.getParameter(OFFSET_PARAM))) {
-            String offsetParam = request.getParameter(OFFSET_PARAM);
-            if (!"".equals(offsetParam) && isNumber(OFFSET_PARAM, offsetParam)) {
-                setOffset(Integer.parseInt(offsetParam));
+
+        // limit 
+        if (request.getParameter(LIMIT) != null && !"".equals(request.getParameter(LIMIT))) {
+            String limitParam = request.getParameter(LIMIT);
+            if (!"".equals(limitParam) && isNumber(LIMIT, limitParam)) {
+                setLimit(Integer.parseInt(limitParam));
             }
-        } else if (params && moduleParameters.containsKey(OFFSET_PARAM)) {
-            String offsetParam = moduleParameters.get(OFFSET_PARAM);
-            if (!"".equals(offsetParam) && isNumber(OFFSET_PARAM, offsetParam)) {
-                setOffset(Integer.parseInt(offsetParam));
+        } else if (params && moduleParameters.containsKey(LIMIT)) {
+            String limitParam = moduleParameters.get(LIMIT);
+            if (!"".equals(limitParam) && isNumber(LIMIT, limitParam)) {
+                setLimit(Integer.parseInt(limitParam));
             }
         }
 
-        // limit 
-        if (request.getParameter(LIMIT_PARAM) != null && !"".equals(request.getParameter(LIMIT_PARAM))) {
-            String limitParam = request.getParameter(LIMIT_PARAM);
-            if (!"".equals(limitParam) && isNumber(LIMIT_PARAM, limitParam)) {
-                setLimit(Integer.parseInt(limitParam));
-            }
-        } else if (params && moduleParameters.containsKey(LIMIT_PARAM)) {
-            String limitParam = moduleParameters.get(LIMIT_PARAM);
-            if (!"".equals(limitParam) && isNumber(LIMIT_PARAM, limitParam)) {
-                setLimit(Integer.parseInt(limitParam));
+        // current page 
+        if (request.getParameter(PAGE) != null && !"".equals(request.getParameter(PAGE))) {
+            String currentPageParam = request.getParameter(PAGE);
+            if (!"".equals(currentPageParam) && isNumber(PAGE, currentPageParam)) {
+                setCurrentPageNumber(Integer.parseInt(currentPageParam));
             }
         }
 
@@ -224,7 +228,7 @@ public class SearchModule extends ModuleBase implements Search {
      * @param pageContext
      */
     public void prepareStatement(PageContext pageContext) {
-        if(!validStatement) {
+        if (!validStatement) {
             return;
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
@@ -242,16 +246,16 @@ public class SearchModule extends ModuleBase implements Search {
         String contextBasePath = null;
         String contentBaseUuid = null;
         String contentBasePath = null;
-        String contextClauses = "";  
+        String contextClauses = "";
         try {
             contextBasePath = contextNode.getPath();
             try {
-            contentBaseNode = (HippoNode)contextNode.getNode(target);
-            }  catch (PathNotFoundException e) {
+                contentBaseNode = (HippoNode) contextNode.getNode(target);
+            } catch (PathNotFoundException e) {
                 log.warn("target '" + target + "' is not a subnode of '" + contextBasePath + "'.");
                 validStatement = false;
                 return;
-            } 
+            }
             if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                 contentBaseUuid = contentBaseNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                 try {
@@ -266,114 +270,110 @@ public class SearchModule extends ModuleBase implements Search {
                     && contentBaseNode.getCanonicalNode().isNodeType("mix:referenceable")) {
                 contentBaseUuid = contentBaseNode.getCanonicalNode().getUUID();
             } else {
-                log.warn("Target is not pointing to a referenceable node. Searching will be done by a path prefix, which can become slow");
+                log
+                        .warn("Target is not pointing to a referenceable node. Searching will be done by a path prefix, which can become slow");
                 contentBasePath = contentBaseNode.getPath();
             }
-            
-            contextClauses = getContextWhereClauses(contextNode,contentBaseNode,jcrSession.getRootNode());
-            
-        }catch (RepositoryException e) {
+
+            contextClauses = getContextWhereClauses(contextNode, contentBaseNode, jcrSession.getRootNode());
+
+        } catch (RepositoryException e) {
             log.error("Cannot prepare statement: RepositoryException " + e.getMessage());
             validStatement = false;
             return;
         }
 
-        
-        
-        
-        
         String statementPath = "";
-        String statementWhere = "[" ;
+        String statementWhere = "[";
         String statementOrderBy = "";
 
-        
         if (this.where != null) {
-            statementWhere += "("+this.where+")";
+            statementWhere += "(" + this.where + ")";
         }
-        
+
         if (contentBaseUuid == null) {
-            statementPath = "/jcr:root"+contentBasePath;
-        }
-        else{
-            if(!statementWhere.equals("[")) {
-                statementWhere += " and ";
-            }
-            statementWhere += "@"+HippoNodeType.HIPPO_PATHS + "='"+contentBaseUuid+"'";
-        } 
-        
-        if (this.nodetype != null) {
-            statementPath = statementPath+"//element(*,"+nodetype+")";
+            statementPath = "/jcr:root" + contentBasePath;
         } else {
-            statementPath = statementPath+"//*";
-        }
-        
-        if(getQueryText()!=null && !"".equals(getQueryText())) {
-            if(!statementWhere.equals("[")) {
+            if (!statementWhere.equals("[")) {
                 statementWhere += " and ";
             }
-            statementWhere += " jcr:contains(., '"+getQueryText()+"')"; 
+            statementWhere += "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
         }
-        
-        statementWhere +="]";
-        
-        if(this.orderby != null) {
-            statementOrderBy = " order by @" +orderby; 
-            if(order != null) {
-                statementOrderBy += " "+order;
+
+        if (this.nodetype != null) {
+            statementPath = statementPath + "//element(*," + nodetype + ")";
+        } else {
+            statementPath = statementPath + "//*";
+        }
+
+        if (getQueryText() != null && !"".equals(getQueryText())) {
+            if (!statementWhere.equals("[")) {
+                statementWhere += " and ";
+            }
+            statementWhere += " jcr:contains(., '" + getQueryText() + "')";
+        }
+
+        statementWhere += "]";
+
+        if (this.orderby != null) {
+            statementOrderBy = " order by @" + orderby;
+            if (order != null) {
+                statementOrderBy += " " + order;
             }
         }
-        
-        if(statementWhere.equals("[]")) {
+
+        if (statementWhere.equals("[]")) {
             statementWhere = "";
-        } 
+        }
         statement = statementPath + contextClauses + statementWhere + statementOrderBy;
         log.debug("xpath statement = " + statement);
         setStatement(statement);
     }
 
-    private String getContextWhereClauses(Node contextNode, Node contentBaseNode, Node rootNode) throws RepositoryException {
+    private String getContextWhereClauses(Node contextNode, Node contentBaseNode, Node rootNode)
+            throws RepositoryException {
         //String contextClause = "[(hippostd:state='unpublished' or (hippostd:state='published' and hippostd:stateSummary!='changed'))]" ;
-        
+
         String contextClauses = "";
         /*
          * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
          * add the filter as a query
          */
-        
-        while(!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
-            if(contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+
+        while (!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
+            if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                 // below all mandatory multivalued props
                 Value[] modes = contentBaseNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
                 Value[] facets = contentBaseNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
                 Value[] values = contentBaseNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
-                if(modes.length == facets.length && facets.length == values.length) {
-                    for(int i = 0; i < modes.length; i++) {
+                if (modes.length == facets.length && facets.length == values.length) {
+                    for (int i = 0; i < modes.length; i++) {
                         String mode = modes[i].getString();
                         String facet = facets[i].getString();
                         String value = values[i].getString();
-                        if(mode.equals("clear") || mode.equals("stick")) {
+                        if (mode.equals("clear") || mode.equals("stick")) {
                             // do not know how to handle these in a query
                             log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
                             continue;
                         } else {
-                            if("hippostd:state".equals(facet) && "unpublished".equals(value)) {
+                            if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
                                 // special case
-                                contextClauses += "[(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))]" ;
+                                contextClauses += "[(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))]";
                             } else {
-                                contextClauses += "[@"+facet+"='"+value+"']";
+                                contextClauses += "[@" + facet + "='" + value + "']";
                             }
                         }
                     }
                 } else {
-                    log.warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
+                    log
+                            .warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                 }
             }
             contentBaseNode = contentBaseNode.getParent();
         }
-        
+
         return contextClauses;
     }
-
 
     /**
      * this render is a final, since it is delegate code, and is not meant for extending
@@ -413,16 +413,20 @@ public class SearchModule extends ModuleBase implements Search {
             long start = System.currentTimeMillis();
             QueryResult queryResult = q.execute();
             //  important debug info in case of performance bottlenecks:
-            log.debug("query took " + (System.currentTimeMillis() - start)
-                    + " ms for q = " + q.getStatement());
+            log.debug("query took " + (System.currentTimeMillis() - start) + " ms for q = " + q.getStatement());
 
             start = System.currentTimeMillis();
             RowIterator rows = queryResult.getRows();
 
-            searchResult.setSize(rows.getSize());
+            searchResult.setSize((int)rows.getSize());
+            searchResult.setCurrentPage(currentPageNumber);
+            int offset = (currentPageNumber-1)*limit;
             searchResult.setOffset(offset);
             searchResult.setPagesize(limit);
             searchResult.setQuery(querytext);
+            
+            searchResult.computePagesAndLinks(request.getParameterMap());
+            
             try {
                 rows.skip(offset);
             } catch (NoSuchElementException e) {
@@ -468,9 +472,11 @@ public class SearchModule extends ModuleBase implements Search {
             // important debug info in case of performance bottlenecks:
             log.debug("fetching " + hits.size() + " searchresults took " + (System.currentTimeMillis() - start)
                     + " ms to complete.");
-
+            
             // TODO add similarity search
-
+            
+            
+            
         } catch (InvalidQueryException e) {
             log.error("InvalidQueryException " + e.getMessage() + " for : " + statement);
         } catch (RepositoryException e) {
@@ -508,10 +514,6 @@ public class SearchModule extends ModuleBase implements Search {
 
     public int getLimit() {
         return limit;
-    }
-
-    public int getOffset() {
-        return offset;
     }
 
     public String getQueryText() {
@@ -558,10 +560,6 @@ public class SearchModule extends ModuleBase implements Search {
         this.depth = depth;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
     public void setSimilarNeeded(boolean similarNeeded) {
         this.similarNeeded = similarNeeded;
     }
@@ -585,5 +583,13 @@ public class SearchModule extends ModuleBase implements Search {
 
     public void setWhere(String where) {
         this.where = where;
+    }
+
+    public int getCurrentPageNumber() {
+        return currentPageNumber;
+    }
+
+    public void setCurrentPageNumber(int currentPageNumber) {
+       this.currentPageNumber = currentPageNumber; 
     }
 }

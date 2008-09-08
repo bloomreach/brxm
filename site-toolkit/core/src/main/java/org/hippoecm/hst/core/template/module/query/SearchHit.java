@@ -47,6 +47,10 @@ public class SearchHit extends ContentELNodeImpl {
     public String getExcerpt() {
         return excerpt;
     }
+    
+    public String getHighlight() {
+        return excerpt;
+    }
 
     public double getScore() {
         return score;

@@ -31,7 +31,6 @@ public interface Search extends SearchParameters{
     public  static final String DEFAULT_LANGUAGE = Query.XPATH;
     public static final int DEFAULT_THRESHOLD = 10;
     public static final int DEFAULT_LIMIT = 10;
-    public static final int DEFAULT_OFFSET = 0;
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final boolean DEFAULT_DIDYOUMEANNEEDED = false;
     public static final boolean DEFAULT_EXCERPTNEEDED = false;
@@ -115,7 +114,10 @@ public interface Search extends SearchParameters{
     public int getLimit();
     
     public void setLimit(int limit);
+
+    public void setCurrentPageNumber(int currentPageNumber);
     
+    public int getCurrentPageNumber();
     
     /**
      *  the depth untill to search for from the target below
@@ -123,17 +125,7 @@ public interface Search extends SearchParameters{
      * @param String target repository init target
      */
     public void setDepth(int depth);
-    
-    
-    /**
-     * Returns the offset where to start the search hits from. This is nice for paging
-     * 
-     * @return int offset to get the search hits from
-     */
-    
-    public int getOffset();
-    
-    public void setOffset(int offset);
+   
     
     /**
      * When the number of results is below this threshold, we will look for a 'didyoumean' term
@@ -176,4 +168,5 @@ public interface Search extends SearchParameters{
     
     public boolean isSimilarNeeded();
     public void setSimilarNeeded(boolean similarNeeded);
+    
 }
