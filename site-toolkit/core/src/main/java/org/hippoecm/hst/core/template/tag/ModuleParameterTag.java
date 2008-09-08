@@ -31,7 +31,7 @@ public class ModuleParameterTag  extends BodyTagSupport {
 	private String value;
 
 
-public int doEndTag() throws JspException {		
+	public int doEndTag() throws JspException {		
 		
 		Tag t = findAncestorWithClass(this, ModuleRenderTag.class);
     	if (t == null) {

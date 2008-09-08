@@ -24,6 +24,10 @@ import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 
+/** 
+ * @deprecated
+ *
+ */
 public class ModuleTag extends TagSupport {
 	
 	private String className;
