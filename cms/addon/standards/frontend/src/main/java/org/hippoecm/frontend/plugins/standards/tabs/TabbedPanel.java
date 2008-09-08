@@ -91,9 +91,6 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
         });
-
-        setOutputMarkupId(true);
-        setVersioned(false);
     }
 
     protected LoopItem newTabContainer(final int tabIndex) {
