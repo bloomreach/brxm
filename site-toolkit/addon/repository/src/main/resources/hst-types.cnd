@@ -43,7 +43,9 @@
 + * (hst:sitemaplayout) = hst:sitemaplayout
 
 [hst:sitemap] > hippo:document
+- hst:entrypointid (string)
 + * (hst:sitemapitem) = hst:sitemapitem
+
 
 [hst:navigation] > hippo:document
 + *
