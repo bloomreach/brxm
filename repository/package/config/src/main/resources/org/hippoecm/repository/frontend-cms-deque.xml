@@ -67,7 +67,7 @@
       <sv:value>service.behavior.root</sv:value>
     </sv:property>
     <sv:property sv:name="yui.root" sv:type="String">
-      <sv:value></sv:value>
+      <sv:value/>
     </sv:property>
     <sv:property sv:name="yui.linked" sv:type="Boolean">
       <sv:value>false</sv:value>
@@ -87,7 +87,7 @@
       <sv:value>id=root-layout-footer,height=0</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="ajaxIndicator">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -99,7 +99,7 @@
       <sv:value>service.behavior.root</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="headerPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -445,25 +445,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
           <sv:value>hippo:logfolder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -471,25 +471,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
           <sv:value>hippo:namespace</sv:value>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -497,19 +497,19 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -523,51 +523,51 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/system</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
-            <sv:node sv:name="filter">
+      <sv:node sv:name="filter">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/content/attic</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -575,25 +575,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/hippo</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -601,25 +601,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/hippostd</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -627,25 +627,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/hst</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -653,25 +653,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/reporting</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -679,25 +679,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/frontend</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -705,19 +705,19 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -731,25 +731,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
           <sv:value>hippostd:folder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -757,25 +757,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
           <sv:value>hippo:document</sv:value>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -783,25 +783,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/live</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -809,25 +809,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/preview</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -835,25 +835,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/jcr:system</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -861,25 +861,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:configuration</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filter">
@@ -887,25 +887,25 @@
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
         <sv:property sv:name="state" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
         <sv:property sv:name="display" sv:type="Boolean">
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
-          <sv:value></sv:value>
+          <sv:value/>
         </sv:property>
       </sv:node>
       <!--
@@ -1071,6 +1071,45 @@
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>threepane-internal</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="embedWorkflowList">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category</sv:value>
+    </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>service.browse.workflows.category.embed</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="embedWorkflowPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.browse.workflows.category.embed</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.id" sv:type="String">
+      <sv:value>workflow.embedded.id</sv:value>
+    </sv:property>
+    <sv:property sv:name="workflow.categories" sv:type="String">
+      <sv:value>embedded</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1300,7 +1339,7 @@
       <sv:value>gutter=0px 5px 0px 0px,scroll=true</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="tabbedEditorEditperspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1321,7 +1360,7 @@
       <sv:value>service.behavior.editor.tabs</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="tabbedEditorLayout">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1370,7 +1409,7 @@
       <sv:value>height=1000</sv:value>
     </sv:property>
   </sv:node>
-  
+
   <sv:node sv:name="editorTabTopUnit">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1400,7 +1439,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.MultiEditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-deque-editor</sv:value>
+      <sv:value>cms-deque-document-view</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>

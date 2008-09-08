@@ -28,6 +28,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +43,30 @@ public class PluginContext implements IPluginContext, IClusterable {
     private class PluginControl implements IPluginControl {
         private static final long serialVersionUID = 1L;
 
+        String controlId;
         PluginContext[] contexts;
+        IServiceTracker tracker;
 
         PluginControl(PluginContext[] contexts) {
             this.contexts = contexts;
+            this.tracker = new ServiceTracker(IClusterable.class) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onServiceAdded(IClusterable service, String name) {
+                    manager.registerService(service, PluginContext.this.controlId);
+                }
+
+                @Override
+                protected void onRemoveService(IClusterable service, String name) {
+                    manager.unregisterService(service, PluginContext.this.controlId);
+                }
+            };
+
+            manager.registerService(this, "clusters");
+            controlId = manager.getReference(this).getServiceId();
+
+            manager.registerTracker(tracker, controlId);
         }
 
         public void stopPlugin() {
@@ -53,6 +74,8 @@ public class PluginContext implements IPluginContext, IClusterable {
                 context.stop();
             }
             children.remove(this);
+
+            manager.unregisterTracker(tracker, controlId);
 
             manager.unregisterService(this, "clusters");
         }
@@ -75,20 +98,17 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     public IPluginControl start(IClusterConfig cluster) {
+        log.debug("cluster {} starting cluster", this.controlId);
+
         final PluginContext[] contexts = new PluginContext[cluster.getPlugins().size()];
         PluginControl control = new PluginControl(contexts);
 
-        log.debug("cluster {} starting cluster", this.controlId);
-
-        manager.registerService(control, "clusters");
-        String controlId = manager.getReference(control).getServiceId();
-
         int i = 0;
         for (IPluginConfig config : cluster.getPlugins()) {
-            contexts[i++] = manager.start(config, controlId);
+            contexts[i++] = manager.start(config, control.controlId);
         }
 
-        log.debug("cluster {} started cluster {}", this.controlId, controlId);
+        log.debug("cluster {} started cluster {}", this.controlId, control.controlId);
 
         children.add(control);
         return control;

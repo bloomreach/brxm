@@ -40,14 +40,30 @@
             <sv:value>/hippo:configuration/hippo:frontend</sv:value>
         </sv:property>
     </sv:node>
-
+    
+    <!-- CMS frontend editor perspective -->
+    <sv:node sv:name="cms-editor">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>900.1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>frontend-cms-editor.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+        </sv:property>
+    </sv:node>
+    
     <!-- CMS "deque" frontend static configuration-->
     <sv:node sv:name="cms-frontend-deque">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>900.5</sv:value>
+            <sv:value>900.4</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
             <sv:value>frontend-cms-deque.xml</sv:value>
@@ -56,7 +72,23 @@
             <sv:value>/hippo:configuration/hippo:frontend</sv:value>
         </sv:property>
     </sv:node>
-
+    
+    <!-- CMS "deque" document view -->
+    <sv:node sv:name="cms-deque-document-view">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>900.5</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>frontend-deque-cms-document-view.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+        </sv:property>
+    </sv:node>
+    
     <!-- CMS "deque" frontend editor perspective -->
     <sv:node sv:name="cms-deque-editor">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -73,22 +105,22 @@
         </sv:property>
     </sv:node>
     
-
-    <!-- CMS frontend editor perspective -->
-    <sv:node sv:name="cms-editor">
+    <!-- CMS "deque" frontend preview perspective -->
+    <sv:node sv:name="cms-deque-preview">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippo:initializeitem</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:sequence" sv:type="Double">
-            <sv:value>901</sv:value>
+            <sv:value>900.7</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentresource" sv:type="String">
-            <sv:value>frontend-cms-editor.xml</sv:value>
+            <sv:value>frontend-deque-cms-preview.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
             <sv:value>/hippo:configuration/hippo:frontend</sv:value>
         </sv:property>
     </sv:node>
+    
 
     <!-- CMS frontend shortcut perspective -->
     <sv:node sv:name="cms-shortcuts">
