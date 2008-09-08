@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.mapping;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -27,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -48,7 +48,7 @@ public class URLMappingImpl implements URLMapping {
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
         try {
-
+            long start = System.currentTimeMillis();
             String virtualEntryName = null;
             String physicalEntryPath = null;
             Node hstConf = (Node) session.getItem(path);
@@ -80,9 +80,6 @@ public class URLMappingImpl implements URLMapping {
                 log.warn("RepositoryException: Discarding entry node path replacements in linkrewriting. " + e.getMessage());
             }
             
-            
-            
-
             NodeIterator subNodes;
             subNodes = siteMapRootNode.getNodes();
             while (subNodes.hasNext()) {
@@ -126,6 +123,7 @@ public class URLMappingImpl implements URLMapping {
                             + "Disregard item in the url mappings");
                 }
             }
+            Timer.log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
         } catch (PathNotFoundException e) {
             log.error("PathNotFoundException " + e.getMessage());
         } catch (RepositoryException e) {
@@ -135,6 +133,7 @@ public class URLMappingImpl implements URLMapping {
     }
 
     public String rewriteLocation(Node node) {
+        long start = System.currentTimeMillis();
         String path = "";
         try {
             if (node instanceof HippoNode) {
@@ -157,6 +156,7 @@ public class URLMappingImpl implements URLMapping {
 
             LinkRewriter bestRewriter = null;
             int highestScore = 0;
+            long linkScoreStart = System.currentTimeMillis();
             for (LinkRewriter lrw : linkRewriters) {
                 int score = lrw.score(node);
                 if (score > highestScore) {
@@ -173,26 +173,30 @@ public class URLMappingImpl implements URLMapping {
                     log.debug("found a match but already had a better match");
                 }
             }
-
+            Timer.log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
             if (bestRewriter == null) {
                 log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
             } else {
-                String url = bestRewriter.getUrl(node);
+                String url = bestRewriter.getLocation(node);
+                Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
                 return contextPath + url;
             }
 
         } catch (RepositoryException e) {
             log.error("RepositoryException during link rewriting " + e.getMessage() + " Return node path.");
         }
+        Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
         return contextPath + contextPrefix + path;
     }
 
     public String rewriteLocation(String path) {
+        long start = System.currentTimeMillis();
         if (siteMapRootNode != null && path != null && !"".equals(path)) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
                 if (path.length() == 0) {
                     log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
+                    Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
                     return contextPath + contextPrefix;
                 }
             }
@@ -205,6 +209,7 @@ public class URLMappingImpl implements URLMapping {
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
+                        Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
                         return contextPath + contextPrefix + newLink;
                     } else {
                         log
@@ -223,7 +228,7 @@ public class URLMappingImpl implements URLMapping {
                         + "'.  Prefixing path with context, but no rewrite. RepositoryException " + e.getMessage());
             }
         }
-
+        Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         return contextPath + contextPrefix + "/" + path;
 
     }

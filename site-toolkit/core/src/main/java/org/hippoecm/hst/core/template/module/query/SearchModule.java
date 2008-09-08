@@ -34,15 +34,13 @@ import javax.jcr.query.RowIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchModule extends ModuleBase implements Search {
 
@@ -228,6 +226,7 @@ public class SearchModule extends ModuleBase implements Search {
      * @param pageContext
      */
     public void prepareStatement(PageContext pageContext) {
+        long start = System.currentTimeMillis();
         if (!validStatement) {
             return;
         }
@@ -328,12 +327,14 @@ public class SearchModule extends ModuleBase implements Search {
         statement = statementPath + contextClauses + statementWhere + statementOrderBy;
         log.debug("xpath statement = " + statement);
         setStatement(statement);
+       
+        Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
     }
 
     private String getContextWhereClauses(Node contextNode, Node contentBaseNode, Node rootNode)
             throws RepositoryException {
         //String contextClause = "[(hippostd:state='unpublished' or (hippostd:state='published' and hippostd:stateSummary!='changed'))]" ;
-
+        long start = System.currentTimeMillis();
         String contextClauses = "";
         /*
          * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
@@ -371,7 +372,7 @@ public class SearchModule extends ModuleBase implements Search {
             }
             contentBaseNode = contentBaseNode.getParent();
         }
-
+        Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
         return contextClauses;
     }
 
@@ -413,7 +414,7 @@ public class SearchModule extends ModuleBase implements Search {
             long start = System.currentTimeMillis();
             QueryResult queryResult = q.execute();
             //  important debug info in case of performance bottlenecks:
-            log.debug("query took " + (System.currentTimeMillis() - start) + " ms for q = " + q.getStatement());
+            Timer.log.debug("query took " + (System.currentTimeMillis() - start) + " ms for q = " + q.getStatement());
 
             start = System.currentTimeMillis();
             RowIterator rows = queryResult.getRows();
@@ -456,11 +457,11 @@ public class SearchModule extends ModuleBase implements Search {
             if (isDidYouMeanNeeded() && querytext != null && !querytext.equals("")
                     && (searchResult.getSize() < getDidYouMeanThreshold())) {
                 try {
-                    start = System.currentTimeMillis();
+                    long didyoumeanstart = System.currentTimeMillis();
                     Value v = queryMngr.createQuery(
                             "/jcr:root[rep:spellcheck('" + querytext + "')]/(rep:spellcheck())", Query.XPATH).execute()
                             .getRows().nextRow().getValue("rep:spellcheck()");
-                    log.debug("Getting 'didyoumean' took " + (System.currentTimeMillis() - start) + " ms to complete.");
+                    Timer.log.debug("Getting 'didyoumean' took " + (System.currentTimeMillis() - didyoumeanstart) + " ms to complete.");
                     if (v != null) {
                         searchResult.setDidyoumean(v.getString());
                     }
@@ -470,7 +471,7 @@ public class SearchModule extends ModuleBase implements Search {
 
             }
             // important debug info in case of performance bottlenecks:
-            log.debug("fetching " + hits.size() + " searchresults took " + (System.currentTimeMillis() - start)
+            Timer.log.debug("fetching " + hits.size() + " searchresults took " + (System.currentTimeMillis() - start)
                     + " ms to complete.");
             
             // TODO add similarity search

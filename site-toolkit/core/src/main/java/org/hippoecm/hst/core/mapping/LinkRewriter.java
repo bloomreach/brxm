@@ -56,7 +56,7 @@ public class LinkRewriter {
         }
     }
 
-    public String getUrl(Node node) throws RepositoryException{
+    public String getLocation(Node node) throws RepositoryException{
         if(isExactMatch) {
             return contextPrefix + prefixLinkRewrite;
         } 
@@ -64,9 +64,9 @@ public class LinkRewriter {
         if(virtualEntryName != null && physicalEntryPath != null) {
             if(path.startsWith(physicalEntryPath)) {
                 
-                String newUrl = contextPrefix+ prefixLinkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
-                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newUrl + "'");
-                return newUrl;
+                String newLocation = contextPrefix+ prefixLinkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
+                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newLocation + "'");
+                return newLocation;
             } else {
                 log.warn("node path does not start with the physicalEntryPath which shouldn't be possible");
             }
