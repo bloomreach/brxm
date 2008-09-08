@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.xinha;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,14 +69,20 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     IHeaderContributor[] getHeaderContributorsPartly() {
 
         final Page page = context.getService(Home.class.getName(), Home.class);
-        final List<XinhaPlugin.Configuration> configurations = context.getServices(XinhaPlugin.Configuration.class
-                .getName(), XinhaPlugin.Configuration.class);
+        final List<XinhaPlugin.Configuration> configurations = new LinkedList<XinhaPlugin.Configuration>();
+        List<XinhaPlugin.Configuration> registered = context.getServices(XinhaPlugin.Configuration.class.getName(),
+                XinhaPlugin.Configuration.class);
+        for (XinhaPlugin.Configuration config : registered) {
+            if (config.getName() != null) {
+                configurations.add(config);
+            }
+        }
 
         return new IHeaderContributor[] {
 
         new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
-            
+
             public void renderHead(IHeaderResponse response) {
                 String xinhaEditorUrl = RequestCycle.get().getRequest().getRelativePathPrefixToContextRoot()
                         + "xinha/xinha/";
@@ -133,9 +140,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 //Create global Xinha configuration
                 sb.append("  xinha_config = xinha_config ? xinha_config() : new Xinha.Config();\n");
-                
+
                 //sb.append("  xinha_config.fullScreenSizeDownMethod = 'restore';");
-                
+
                 //collect all stylesheets and add to global Xinha configuration
                 boolean hasCss = false;
                 for (XinhaPlugin.Configuration config : configurations) {

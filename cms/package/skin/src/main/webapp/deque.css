@@ -59,7 +59,7 @@ table tr.selected td a,
 span.banner {
   background: url(images/banner-bg.png);
   position: absolute;
-  top: 1px;
+  top: 2px;
   left: 50px;
   right: 5px;
 }
@@ -100,7 +100,39 @@ ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
 /* Document view panel */
 div.document ul.tabs {
-background: none;
+  background: none;
+  width: auto;
+  position: relative;
+  top: 0px;
+}
+
+.document ul.tabs li {
+  display:block;
+  float:left;
+  margin-right: 10px;
+  position: relative;
+  text-align: center;
+  text-indent: 0px;
+}
+
+.document ul.tabs a {
+  font-weight: normal;
+  white-space:nowrap;
+  display: block;
+  float: left;
+  padding: 6px; 
+  text-decoration: underline;
+  text-align: center;
+}
+
+.document ul.tabs li.tab0, 
+.document ul.tabs li.tab0.selected,
+.document ul.tabs li.tab1,
+.document ul.tabs li.tab1.selected,
+.document ul.tabs li.tab2,
+.document ul.tabs li.tab2.selected{
+  background: none;
+  text-indent: 0px;
 }
 
 /* Preview panel */
@@ -116,7 +148,7 @@ div.previewMessage{background: url("images/icons/message-preview-128.png") no-re
 
 /* Wicket Ajax indicator */
 /* ================================================ */
-span.wicket-ajax-indicator{position: absolute; top: 6px; left: 442px; display: block; visiblity: visible}
+span.wicket-ajax-indicator{position: absolute; top: 15px; left: 15px; display: block; visiblity: visible}
 
 /* Logout */
 /* ================================================ */

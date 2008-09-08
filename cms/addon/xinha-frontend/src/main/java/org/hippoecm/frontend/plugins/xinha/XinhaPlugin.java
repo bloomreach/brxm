@@ -119,6 +119,8 @@ public class XinhaPlugin extends RenderPlugin {
     @Override
     public void onBeforeRender() {
         if (configuration != null) {
+            // FIXME: add logic to clean up on the client (delete Xinha.config)
+            editor.setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
             configuration.setName(editor.getMarkupId());
             configuration.addProperty("callbackUrl", postBehavior.getCallbackUrl().toString());
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
@@ -156,8 +158,7 @@ public class XinhaPlugin extends RenderPlugin {
         if (configuration != null) {
             Page page = (Page) findParent(Page.class);
             if (page == null) {
-                // FIXME: add logic to clean up on the client (delete Xinha.config)
-                editor.setMarkupId("xinha" + Integer.valueOf(Session.get().nextSequenceValue()));
+                configuration.setName(null);
             }
         }
         super.render(target);
@@ -410,7 +411,9 @@ public class XinhaPlugin extends RenderPlugin {
         private Map<String, String> properties = new HashMap<String, String>();
 
         public void setName(String name) {
-            this.name = name;
+            if (name != null) {
+                this.name = name;
+            }
         }
 
         public String getName() {

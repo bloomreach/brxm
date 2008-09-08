@@ -17,32 +17,32 @@
 
   <wicket:panel>
     <div yui:id="browse-perspective-wrapper">
-      <div class="panelcontainer" yui:id="browse-perspective-left">
+      <div yui:id="browse-perspective-left">
         <div yui:id="browse-perspective-left-body">
-          <div class="panelHead">
-            &nbsp;
+          <div class="panelcontainer" style="width: 49%; overflow: hidden;">
+            <div class="panelHead">
+              &nbsp;
+            </div>
+            <div class="panel nopadding">
+              <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
+            </div>
           </div>
-          <div class="panel nopadding">
-            <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
+          <div class="panelcontainer" style="width: 49%; overflow: hidden;">
+            <div class="panelHead">
+              <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
+            </div>
+            <h2 class="hideme">
+              <span class="documents" wicket:id="listing.title">title listing here</span>
+            </h2>
+            <div class="panel nopadding">
+              <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="panelcontainer" yui:id="browse-perspective-center">
-        <div yui:id="browse-perspective-center-body">
-          <div class="panelHead">
-            <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
-          </div>
-          <h2 class="hideme">
-            <span class="documents" wicket:id="listing.title">title listing here</span>
-          </h2>
-          <div class="panel nopadding">
-            <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
-          </div>
-        </div>
-	  </div>
-      <div class="panelcontainer" yui:id="browse-perspective-right">
-        <div yui:id="browse-perspective-right-body">
-  	      <div wicket:id="extension.editor">[ Editor ]</div>
+	    </div>
+    <div class="panelcontainer" yui:id="browse-perspective-center">
+      <div yui:id="browse-perspective-center-body">
+        <div wicket:id="extension.editor">[ Editor ]</div>
   	    </div>  
 	  </div>
     </div>

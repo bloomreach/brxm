@@ -132,16 +132,18 @@ public class EditorForm extends Form {
 
     protected void createTemplate() {
         JcrNodeModel model = (JcrNodeModel) getModel();
-        ITypeDescriptor type = engine.getType(model);
+        if (model != null && model.getNode() != null) {
+            ITypeDescriptor type = engine.getType(model);
 
-        if (type != null) {
-            IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
-            if (clusterConfig != null) {
-                clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
-                String modelId = clusterConfig.getString(RenderService.MODEL_ID);
-                modelService = new ModelService(modelId, model);
-                modelService.init(context);
-                template = context.start(clusterConfig);
+            if (type != null) {
+                IClusterConfig clusterConfig = engine.getTemplate(type, ITemplateEngine.EDIT_MODE);
+                if (clusterConfig != null) {
+                    clusterConfig.put(RenderService.WICKET_ID, engineId + ".wicket.root");
+                    String modelId = clusterConfig.getString(RenderService.MODEL_ID);
+                    modelService = new ModelService(modelId, model);
+                    modelService.init(context);
+                    template = context.start(clusterConfig);
+                }
             }
         }
     }
