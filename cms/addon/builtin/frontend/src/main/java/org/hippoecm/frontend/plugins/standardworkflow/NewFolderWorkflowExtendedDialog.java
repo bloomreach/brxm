@@ -107,8 +107,8 @@ public class NewFolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
             arguments.put("value", value);
             path = workflow.add(category, prototype, arguments);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-            FolderWorkflowPlugin plugin = (FolderWorkflowPlugin)getPlugin();
-            plugin.select(nodeModel);
+
+            folderWorkflowPlugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");
         }
