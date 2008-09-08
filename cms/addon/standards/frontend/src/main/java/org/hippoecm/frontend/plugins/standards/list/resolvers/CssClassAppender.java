@@ -30,6 +30,12 @@ public class CssClassAppender extends AttributeModifier {
     
     @Override
     protected String newValue(final String currentValue, final String replacementValue) {
+        if(currentValue == null) {
+            if(replacementValue == null) 
+               return ""; 
+            return replacementValue;
+        } else if(replacementValue == null)
+            return currentValue;
         return currentValue + " " + replacementValue;
     }
 }
