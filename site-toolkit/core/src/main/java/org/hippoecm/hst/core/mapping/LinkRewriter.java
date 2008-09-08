@@ -58,7 +58,7 @@ public class LinkRewriter {
 
     public String getUrl(Node node) throws RepositoryException{
         if(isExactMatch) {
-            return prefixLinkRewrite;
+            return contextPrefix + prefixLinkRewrite;
         } 
         String path = node.getPath();
         if(virtualEntryName != null && physicalEntryPath != null) {
