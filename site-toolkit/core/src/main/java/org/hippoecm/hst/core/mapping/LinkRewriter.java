@@ -31,11 +31,17 @@ public class LinkRewriter {
     private String path;
     private int depth;
     private boolean isExactMatch;
+    private String virtualEntryName;
+    private String physicalEntryPath;
+    private String contextPrefix;
    
 
-    public LinkRewriter(String prefixLinkRewrite, String nodeTypeName, String path2) {
+    public LinkRewriter(String prefixLinkRewrite, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, String contextPrefix) {
         this.prefixLinkRewrite = prefixLinkRewrite;
         this.nodeTypeName = nodeTypeName;
+        this.virtualEntryName = virtualEntryName;
+        this.physicalEntryPath = physicalEntryPath;
+        this.contextPrefix = contextPrefix;
 
         if (!path2.startsWith("/")) {
             log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");
@@ -54,7 +60,19 @@ public class LinkRewriter {
         if(isExactMatch) {
             return prefixLinkRewrite;
         } 
-        return prefixLinkRewrite + node.getPath();
+        String path = node.getPath();
+        if(virtualEntryName != null && physicalEntryPath != null) {
+            if(path.startsWith(physicalEntryPath)) {
+                
+                String newUrl = contextPrefix+ prefixLinkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
+                System.out.println(newUrl);
+                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newUrl + "'");
+                return newUrl;
+            } else {
+                log.warn("node path does not start with the physicalEntryPath which shouldn't be possible");
+            }
+        }
+        return contextPrefix + prefixLinkRewrite + path;
     }
     
     /**
