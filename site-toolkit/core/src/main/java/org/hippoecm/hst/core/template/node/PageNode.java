@@ -38,13 +38,13 @@ public class PageNode extends TemplateNode{
    
    public PageNode(ContextBase contextBase, Node jcrNode) throws RepositoryException {
 	   super(contextBase, jcrNode);	
-	   containerNodes = new NodeList(contextBase, getJcrNode(), PageContainerNode.class);
+	   containerNodes = new NodeList<PageContainerNode>(contextBase, getJcrNode(), PageContainerNode.class);
    }
    
    public PageNode(ContextBase contextBase, String relativePath) throws RepositoryException {
 	   super(contextBase, relativePath);	  
 	   jcrNode = contextBase.getRelativeNode(relativePath);
-	   containerNodes = new NodeList(contextBase, getJcrNode(), PageContainerNode.class);
+	   containerNodes = new NodeList<PageContainerNode>(contextBase, getJcrNode(), PageContainerNode.class);
    }
    
    public LayoutNode getLayoutNode() throws RepositoryException {	   
