@@ -59,32 +59,12 @@ public class AutoEditPlugin implements IPlugin, IModelListener, IDetachable {
     public void updateModel(IModel imodel) {
         JcrNodeModel model = (JcrNodeModel) imodel;
         if (model != null && model.getNode() != null) {
-            try {
-                Node modelNode = model.getNode();
-                if (model.getNode().isNodeType(HippoNodeType.NT_HANDLE)) {
-                    for (NodeIterator iter = modelNode.getNodes(); iter.hasNext();) {
-                        Node child = iter.nextNode();
-                        if (child.getName().equals(modelNode.getName())) {
-                            // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                            if (child.hasProperty("hippostd:state")
-                                    && child.getProperty("hippostd:state").equals("unpublished")) {
-                                modelNode = child;
-                                break;
-                            } else {
-                                modelNode = child;
-                            }
-                        }
-                    }
+            Node modelNode = model.getNode();
+            if (modelNode != null) {
+                IEditService editor = context.getService(config.getString("editor.id"), IEditService.class);
+                if (editor != null) {
+                    editor.edit(new JcrNodeModel(modelNode));
                 }
-
-                if (modelNode != null) {
-                    IEditService editor = context.getService(config.getString("editor.id"), IEditService.class);
-                    if (editor != null) {
-                        editor.edit(new JcrNodeModel(modelNode));
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
             }
         }
     }
