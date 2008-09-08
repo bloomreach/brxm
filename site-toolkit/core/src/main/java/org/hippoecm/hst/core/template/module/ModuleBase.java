@@ -10,8 +10,8 @@ import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 
 public abstract class ModuleBase implements Module {
-	private PageContainerModuleNode pageContainerModule = null;
-	private String var;
+	protected PageContainerModuleNode pageContainerModule = null;
+	protected String var;
 	protected Map<String, String> moduleParameters;
 	
 	//public abstract String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
