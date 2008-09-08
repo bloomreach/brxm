@@ -18,23 +18,7 @@
     <link href="skin/style.css" type="text/css" rel="stylesheet"/>
   </wicket:head>
   <body class="dialog image-add-48">
-    <form wicket:id="form">
-    <table>
-        <tr>
-          <td><label for="upload"> Select File:</label></td>
-          <td><input wicket:id="input" id="upload" type="file" /></td>
-        </tr>
-        <wicket:enclosure child="type">
-        <tr wicket:id="box">
-            <td><label for="typeselect">Item provided is of type:</label></td>
-            <td><select wicket:id="type" id="typeselect"></select></td>
-        </tr>
-        </wicket:enclosure>
-        <tr>
-          <td colspan="2"><input type="submit" value="Create"/></td>
-        </tr>
-    </table>
-    </form>
+    <span wicket:id="wizard"/>
     <strong><span wicket:id="exception"></span></strong>
   </body>
 </html>

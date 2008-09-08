@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.frontend.plugins.standards;
+package org.hippoecm.frontend.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
