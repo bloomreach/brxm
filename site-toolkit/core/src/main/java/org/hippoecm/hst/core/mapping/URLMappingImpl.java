@@ -112,17 +112,17 @@ public class URLMappingImpl implements URLMapping {
                                 }
                             } else {
                                 log
-                                        .warn("Skipping hst:sitemapitem for linkrewriting because length"
+                                        .warn("For sitemapitem '"+subNode.getName()+"' skipping linkrewriting because length"
                                                 + " of multivalued property 'hst:nodetype' is not equal to the length of 'hst:nodepath'. This is mandatory for a proper working linkrewriting item");
                             }
                         } else {
-                            log.warn("Skipping hst:sitemapitem for linkrewriting because "
+                            log.warn("For sitemapitem '"+subNode.getName()+"' skipping linkrewriting because "
                                     + "'hst:nodetype' property or 'hst:nodepath' property is missing");
                         }
                     }
 
                 } else {
-                    log.warn("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. "
+                    log.warn("hst:sitemapitem '"+subNode.getName()+"' missing 'hst:ulrmapping' property. "
                             + "Disregard item in the url mappings");
                 }
             }
