@@ -166,8 +166,10 @@ public class SearchResult {
             } else {
                 link = queryString.toString()+"&page=";
             }
-            for(int i = 1 ; i <= nrOfPages ; i++) {
-                pages.add(new Page(i,link+i , currentPageNumber));
+            if(nrOfPages > 1) {
+                for(int i = 1 ; i <= nrOfPages ; i++) {
+                    pages.add(new Page(i,link+i , currentPageNumber));
+                }
             }
         }
     }
