@@ -30,12 +30,12 @@ public class GIFImageWriterSpi extends ImageWriterSpi {
 
     public GIFImageWriterSpi() {
         super(
-            "Helma Object Publisher, http://helma.org/",
+            "Hippo ECM image gallery plugin (http://docs.onehippo.org)",
             "1.0",
             new String[] {"gif", "GIF"},
             new String[] {"gif", "GIF"},
             new String[] {"image/gif", "image/x-gif"},
-            "helma.image.imageio.gif.GIFImageWriter",
+            "org.hippoecm.frontend.plugins.gallery.gif.GIFImageWriter",
             STANDARD_OUTPUT_TYPE,
             null,
             false, null, null, null, null,
