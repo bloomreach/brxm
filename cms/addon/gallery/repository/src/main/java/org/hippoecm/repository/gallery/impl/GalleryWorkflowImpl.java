@@ -58,41 +58,12 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
     }
 
     public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException {
-        Node node, document, folder = rootSession.getNodeByUUID(subject.getUUID());
+        Node document, node, folder = rootSession.getNodeByUUID(subject.getUUID());
         Date date = new Date();
         Calendar timestamp = Calendar.getInstance();
         timestamp.setTime(new Date());
-
-        String[] structure = new String[5];
-        structure[0] = Integer.toString(timestamp.get(Calendar.YEAR));
-        structure[1] = Integer.toString(timestamp.get(Calendar.MONTH) + 1);
-        structure[2] = Integer.toString(timestamp.get(Calendar.DAY_OF_MONTH));
-        structure[3] = Integer.toString(timestamp.get(Calendar.HOUR_OF_DAY));
-        structure[4] = Integer.toString((timestamp.get(Calendar.MINUTE)/15)*15);
-        if(structure[1].length() == 1) {
-            structure[1] = "0" + structure[1];
-        }
-        if(structure[2].length() == 1) {
-            structure[2] = "0" + structure[2];
-        }
-        if(structure[3].length() == 1) {
-            structure[3] = "0" + structure[3];
-        }
-        if(structure[4].length() == 1) {
-            structure[4] = "0" + structure[4];
-        }
-        node = folder;
-        for(int i=0; i<structure.length; i++) {
-            if(node.hasNode(structure[i])) {
-                node = node.getNode(structure[i]);
-            } else {
-                node = node.addNode(structure[i], "nt:unstructured");
-            }
-        }
-        folder.save();
-
         name = ISO9075Helper.encodeLocalName(name);
-        node = node.addNode(name, "hippo:handle");
+        node = folder.addNode(name, "hippo:handle");
         node.addMixin("hippo:hardhandle");
         node.setProperty("hippo:discriminator", new Value[0]);
         node = document = node.addNode(name, type);
