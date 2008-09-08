@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -27,32 +25,28 @@ public class DialogLink extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+
     private AjaxLink link;
 
     public DialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
-        super(id, linktext);
+        this(id, linktext, new DialogAction(dialogFactory, dialogService));
+    }
 
-        final PageCreator pageCreator = new PageCreator() {
-            private static final long serialVersionUID = 1L;
-            public Page createPage() {
-                return dialogFactory.createDialog(dialogService);
-            }
-        };
+    public DialogLink(String id, IModel linktext, final DialogAction action) {
+        super(id, linktext);
 
         link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                dialogService.show(pageCreator.createPage());
+                action.execute();
             }
         };
-
         add(link);
         link.add(new Label("dialog-link-text", linktext));
     }
-    
+
     public void enable() {
         link.setEnabled(true);
     }

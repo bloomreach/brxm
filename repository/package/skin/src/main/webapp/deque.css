@@ -197,7 +197,9 @@ padding: 6px;
 /* Actions buttons */
 /* ================================================ */ 
 div.iconactions{padding: 0px;}
+/*
 div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 8px;}
+*/
 
 /* action titles and documentInfo */
 div.iconactions h3{color: white; display: none;}
@@ -717,4 +719,15 @@ div.templateactions div{margin-bottom: 0px; padding: 0px}
   bottom: 55px;
   position:absolute;
   right: 26px;
+}
+
+/* Example state classes */
+.state-new-16 {
+  background-image:url("images/icons/document-new-16.png");
+  background-repeat: no-repeat;
+}
+
+.state-changed-16 {
+  background-image:url("images/icons/dialog-error-16.png");
+  background-repeat: no-repeat;
 }
