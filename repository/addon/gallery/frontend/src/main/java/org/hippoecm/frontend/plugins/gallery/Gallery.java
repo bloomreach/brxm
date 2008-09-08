@@ -23,6 +23,6 @@ public class Gallery {
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     
-    static final Logger log = LoggerFactory.getLogger(Gallery.class);
+    public static final Logger log = LoggerFactory.getLogger(Gallery.class);
 
 }

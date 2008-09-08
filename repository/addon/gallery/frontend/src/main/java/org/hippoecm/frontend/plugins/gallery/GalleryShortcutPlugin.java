@@ -27,6 +27,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.upload.UploadDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 
@@ -39,21 +40,13 @@ public class GalleryShortcutPlugin extends RenderPlugin {
     public GalleryShortcutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        String path = config.getString("gallery.path");
-        String galleryText = config.getString("gallery.text");
-        if(galleryText != null) {
-            galleryText = galleryText.trim();
-            if(galleryText.equals("")) {
-                galleryText = null;
-            }
-        }
         AjaxLink link = new AjaxLink("link") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                     public void onClick(AjaxRequestTarget target) {
                     IDialogService dialogService = getDialogService();
-                    dialogService.show(new WizardDialog(GalleryShortcutPlugin.this,
+                    dialogService.show(new UploadDialog(GalleryShortcutPlugin.this,
                                                         GalleryShortcutPlugin.this.getPluginContext(),
                                                         GalleryShortcutPlugin.this.getPluginConfig(),
                                                         dialogService));
@@ -61,12 +54,20 @@ public class GalleryShortcutPlugin extends RenderPlugin {
             };
         add(link);
 
+        String galleryText = config.getString("gallery.text");
+        if(galleryText != null) {
+            galleryText = galleryText.trim();
+            if(galleryText.equals("")) {
+                galleryText = null;
+            }
+        }
         Label label = new Label("label");
         if(galleryText != null) {
             label.setModel(new Model(galleryText));
         }
         link.add(label);
 
+        String path = config.getString("gallery.path");
         if(path != null) {
             try {
                 while(path.startsWith("/"))
