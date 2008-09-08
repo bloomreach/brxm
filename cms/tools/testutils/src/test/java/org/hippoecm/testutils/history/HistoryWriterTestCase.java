@@ -15,6 +15,7 @@
  */
 package org.hippoecm.testutils.history;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HistoryWriterTestCase {
@@ -22,6 +23,7 @@ public class HistoryWriterTestCase {
     private final static String SVN_ID = "$Id$";
 
     @Test
+    @Ignore
     public void test100MeasurePoints() {
         for (int i = 0; i < 100; i++) {
             long start = System.currentTimeMillis();
@@ -32,6 +34,7 @@ public class HistoryWriterTestCase {
     }
 
     @Test
+    @Ignore
     public void test100MeasurePointsMean() {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
