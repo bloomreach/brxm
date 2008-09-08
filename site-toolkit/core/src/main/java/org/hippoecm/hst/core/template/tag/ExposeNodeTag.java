@@ -82,7 +82,6 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 	 URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	 if (pageNode != null && contentContextBase != null) {
-	     System.out.println("pageNode.getRelativeContentPath() " + pageNode.getRelativeContentPath());
 		 Node currentJcrNode = contentContextBase.getRelativeNode(pageNode.getRelativeContentPath());		
 		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, urlMapping);
 	 }
