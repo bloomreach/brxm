@@ -80,14 +80,17 @@ public class PluginFactory implements IClusterable {
                 } else {
                     message = e.getClass().getName() + ": " + e.getMessage();
                     log.error(e.getMessage());
+                    e.printStackTrace();
                 }
 
             } catch (InvocationTargetException e) {
                 message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
                 log.error(e.getMessage());
+                e.printStackTrace();
             } catch (Exception e) {
                 message = e.getClass().getName() + ": " + e.getMessage();
                 log.error(e.getMessage());
+                e.printStackTrace();
             }
         }
         if (plugin == null && message != null) {

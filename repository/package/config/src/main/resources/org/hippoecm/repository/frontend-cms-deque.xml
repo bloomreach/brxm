@@ -414,16 +414,12 @@
     <sv:property sv:name="yui.units" sv:type="String">
       <sv:value>left</sv:value>
       <sv:value>center</sv:value>
-      <sv:value>right</sv:value>
     </sv:property>
     <sv:property sv:name="left" sv:type="String">
-      <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=true,minWidth=150,width=200,gutter=0px 5px 0px 3px</sv:value>
+      <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=true,minWidth=400,width=600,gutter=0px 5px 0px 3px</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=200,scroll=true,gutter=0px 3px 0px 0px</sv:value>
-    </sv:property>
-    <sv:property sv:name="right" sv:type="String">
-      <sv:value>id=browse-perspective-right,body=browse-perspective-right-body,minWidth=200,width=200,scroll=true,resize=true</sv:value>
+      <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=400,width=800,scroll=true,gutter=0px 3px 0px 0px</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1062,45 +1058,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="embedWorkflowList">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.category</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.browse.workflows.category.embed</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="embedWorkflowPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.workflow.EmbedWorkflowPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.category.embed</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflow.embedded.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>embedded</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="internalWorkflowList">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1142,31 +1099,13 @@
       <sv:value>internal</sv:value>
     </sv:property>
   </sv:node>
-
-  <sv:node sv:name="reviewedActionWorkflowList">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.category</sv:value>
-    </sv:property>
-    <sv:property sv:name="item" sv:type="String">
-      <sv:value>service.browse.workflows.category.reviewed-action</sv:value>
-    </sv:property>
-  </sv:node>
   
-  <sv:node sv:name="reviewedActionWorkflowPlugin">
+  <sv:node sv:name="autoEditPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugin.workflow.WorkflowPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.browse.workflows.category.reviewed-action</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.document</sv:value>
@@ -1174,17 +1113,8 @@
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
-    <sv:property sv:name="browser.id" sv:type="String">
-      <sv:value>BrowserPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.id" sv:type="String">
-      <sv:value>workflow.reviewed-action.id</sv:value>
-    </sv:property>
-    <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>default</sv:value>
-    </sv:property>
   </sv:node>
-
+  
   <sv:node sv:name="managementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

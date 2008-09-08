@@ -55,11 +55,11 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
     private static final Logger log = LoggerFactory.getLogger(WorkflowPlugin.class);
 
     public static final String CATEGORIES = "workflow.categories";
-    public static final String WORKFLOW_ID = "workflow.id";
 
     private IPluginContext context;
     private IPluginConfig config;
     private String[] categories;
+    private String serviceId;
     private JcrNodeModel model;
     private Map<String, IPluginControl> workflows;
     private Map<String, ModelService> models;
@@ -94,6 +94,8 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         }
 
         context.registerService(this, IJcrService.class.getName());
+
+        serviceId = context.getReference(this).getServiceId();
     }
 
     // implement IModelListener
@@ -141,7 +143,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
             }
         }
 
-        String workflowId = config.getString(WORKFLOW_ID) + (wflCount++);
+        String workflowId = serviceId + "." + (wflCount++);
         String modelId = workflowId + ".model";
 
         IPluginConfig wflConfig = new JavaPluginConfig();

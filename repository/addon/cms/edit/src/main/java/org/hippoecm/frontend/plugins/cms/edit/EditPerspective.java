@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
@@ -37,15 +38,23 @@ public class EditPerspective extends Perspective implements IEditService {
     private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private ModelService modelService;
+    private ModelService documentService;
 
     public EditPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         if (config.getString(RenderService.MODEL_ID) != null) {
-            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel("/"));
+            modelService = new ModelService(config.getString(RenderService.MODEL_ID), new JcrNodeModel((Node) null));
             modelService.init(context);
         } else {
-            log.error("no model service specified");
+            log.error("no model service ({}) specified", RenderService.MODEL_ID);
+        }
+
+        if (config.getString("model.document") != null) {
+            documentService = new ModelService(config.getString("model.document"), new JcrNodeModel((Node) null));
+            documentService.init(context);
+        } else {
+            log.error("no model service (model.document) specified");
         }
 
         if (config.getString(IEditService.EDITOR_ID) != null) {
@@ -72,6 +81,16 @@ public class EditPerspective extends Perspective implements IEditService {
     public void edit(IModel model) {
         if (modelService != null) {
             modelService.setModel(model);
+
+            if (documentService != null) {
+                JcrNodeModel nodeModel = (JcrNodeModel) model;
+                try {
+                    Node node = nodeModel.getNode();
+                    documentService.setModel(new JcrNodeModel(node.getParent()));
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+            }
         }
     }
 
