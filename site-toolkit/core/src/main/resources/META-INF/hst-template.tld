@@ -100,6 +100,38 @@
     </tag>
     
     <tag>
+        <name>paging-module</name>
+        <tagclass>org.hippoecm.hst.core.template.tag.PagingModuleTag</tagclass>
+        <body-content>JSP</body-content>
+        <attribute>            
+            <name>className</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>            
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>            
+            <name>render</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+          <attribute>            
+            <name>execute</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>            
+            <name>var</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    <tag>
         <name>moduleParameter</name>
         <tagclass>org.hippoecm.hst.core.template.tag.ModuleParameterTag</tagclass>
         <body-content>JSP</body-content>

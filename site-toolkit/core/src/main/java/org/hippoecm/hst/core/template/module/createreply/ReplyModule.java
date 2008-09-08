@@ -39,6 +39,7 @@ public class ReplyModule extends ModuleBase {
     private static final Logger log = LoggerFactory.getLogger(ReplyModule.class);
     
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX EXECUTE");
 		if (request.getParameter("MODULE_NAME") != null) {
 		String name = request.getParameter("name");
 		String title = request.getParameter("title");
@@ -117,7 +118,8 @@ public class ReplyModule extends ModuleBase {
 		String urlPrefix = (String) pageContext.getRequest().getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;
 		String action = getPropertyValueFromModuleNode("action");
-		formBean.setAction(urlPrefix + action); // + "/"); node.getRelativeContentPath());
+		String applicationContext = ((HttpServletRequest) pageContext.getRequest()).getContextPath();
+		formBean.setAction(applicationContext + urlPrefix + action); // + "/"); node.getRelativeContentPath());
 		pageContext.getRequest().setAttribute("webform", formBean);
 		
 	}

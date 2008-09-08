@@ -5,7 +5,7 @@ import javax.servlet.jsp.JspException;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.module.Module;
-import org.hippoecm.hst.core.template.module.PageModule;
+import org.hippoecm.hst.core.template.module.PagingModule;
 import org.hippoecm.hst.core.template.module.PaginatedDataBean;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.slf4j.Logger;
@@ -48,19 +48,22 @@ public class PagingModuleTag extends ModuleTagBase {
      */
     protected final void doRender(HttpServletRequest request, PageContainerModuleNode pcm) throws JspException {       
             try {
-                PageModule pageModule = getPageModule();              
-                pageModule.setVar(var);
-                pageModule.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
-                pageModule.setModuleParameters(parameters);
+                PagingModule pagingModule = getPageModule();              
+                pagingModule.setVar(var);
+                pagingModule.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
+                pagingModule.setModuleParameters(parameters);
                 
-                int pageSize = pageModule.getPageSize(pageContext);
-                int pageNo = pageModule.getPageNumber(pageContext);
+                pagingModule.prePagingRender(pageContext);
+                
+                int pageSize = pagingModule.getPageSize(pageContext);
+                int pageNo = pagingModule.getPageNumber(pageContext);
+                int totalItems = pagingModule.totalItems();
                 int from = (pageNo == 0 ? 0 : (pageNo * pageSize) - 1);
-                int to = pageNo * pageSize;
+                int to = (pageNo * pageSize < totalItems) ? pageNo * pageSize : totalItems;
                 
                 PaginatedDataBean paginatedData = new PaginatedDataBean();
-                paginatedData.setItems(pageModule.getElements(from, to));
-                paginatedData.setTotalItems(pageModule.totalItems());
+                paginatedData.setItems(pagingModule.getElements(from, to));
+                paginatedData.setTotalItems(totalItems);
                 paginatedData.setPageSize(pageSize);
                 paginatedData.setPageNo(pageNo);
                 
@@ -70,14 +73,14 @@ public class PagingModuleTag extends ModuleTagBase {
                 }
     }
     
-    protected final PageModule getPageModule() throws Exception {
+    protected final PagingModule getPageModule() throws Exception {
         Object o = null;
         log.info("Create instance of class " + getClassName());
         o = Class.forName(getClassName()).newInstance();
-        if (!PageModule.class.isInstance(o)) {
-            throw new Exception(getClassName() + " does not implement the interface " + PageModule.class.getName());
+        if (!PagingModule.class.isInstance(o)) {
+            throw new Exception(getClassName() + " does not implement the interface " + PagingModule.class.getName());
         }
-        return (PageModule) o;
+        return (PagingModule) o;
     }
     
     

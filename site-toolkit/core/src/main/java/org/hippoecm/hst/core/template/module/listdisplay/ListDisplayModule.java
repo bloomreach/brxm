@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -56,7 +57,7 @@ public class ListDisplayModule extends ModuleBase {
 				log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
 			}
 
-	    	ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+	    	ContextBase contentContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 	    	log.debug("ListDisplayModule > " + contentLocation + " base=" + contentContextBase);
 			Node n = contentContextBase.getRelativeNode(contentLocation); 
 			if(n!=null) {
