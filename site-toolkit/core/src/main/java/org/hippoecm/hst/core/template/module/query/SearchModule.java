@@ -419,7 +419,7 @@ public class SearchModule extends ModuleBase implements Search {
             RowIterator rows = queryResult.getRows();
 
             searchResult.setSize((int)rows.getSize());
-            searchResult.setCurrentPage(currentPageNumber);
+            searchResult.setCurrentPageNumber(currentPageNumber);
             int offset = (currentPageNumber-1)*limit;
             searchResult.setOffset(offset);
             searchResult.setPagesize(limit);

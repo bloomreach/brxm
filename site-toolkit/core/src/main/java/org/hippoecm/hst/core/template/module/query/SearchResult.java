@@ -87,14 +87,53 @@ public class SearchResult {
        return this.query;
     }
 
-    public void setCurrentPage(int currentPageNumber) {
+    public void setCurrentPageNumber(int currentPageNumber) {
        this.currentPageNumber = currentPageNumber;
     }
 
-    public int getCurrentPage(){
+    public int getCurrentPageNumber(){
         return currentPageNumber;
     }
 
+   
+    public List<Page> getPages() {
+        return pages;
+    }
+    
+    public Page getNextpage() {
+        if(pages.size() > currentPageNumber) {
+            return pages.get(currentPageNumber);
+        } 
+        return new Page(false);
+    }
+    
+    public Page getPrevpage() {
+        if(currentPageNumber > 1) {
+            return pages.get(currentPageNumber-2);
+        }
+        return new Page(false);
+    }
+
+    public Page getFirstpage(){
+        if(pages.size() > 0 && currentPageNumber > 1) {
+            return pages.get(0);
+        }
+        return new Page(false);
+    }
+
+    public Page getLastpage(){
+        if(pages.size() > 0 && currentPageNumber < pages.size()) {
+            return pages.get(pages.size() - 1);
+        }
+        return new Page(false);
+    }
+    
+    public void setPages(List<Page> pages) {
+        this.pages = pages;
+    }
+    
+    
+    
     public void computePagesAndLinks(Map parameterMap) {
         pages = new ArrayList<Page>();
         StringBuffer queryString = null;
@@ -128,32 +167,35 @@ public class SearchResult {
                 link = queryString.toString()+"&page=";
             }
             for(int i = 1 ; i <= nrOfPages ; i++) {
-                pages.add(new Page(i,link+i , currentPageNumber==i ));
+                pages.add(new Page(i,link+i , currentPageNumber));
             }
         }
     }
 
-    public List<Page> getPages() {
-        return pages;
-    }
-
-    public void setPages(List<Page> pages) {
-        this.pages = pages;
-    }
     
     public class Page {
         private int number;
         private String link;
         private boolean current;
+        private boolean exists;
 
-        public Page(int number, String link, boolean current) {
+        public Page(int number, String link, int crPageNumber) {
             this.number =number;
-            this.current = current;
+            this.current = crPageNumber==number;
             this.link = link;
-        }
+            this.exists = true;
+        } 
+        
+        public Page(boolean exists) {
+            this.exists = exists;
+        } 
         
         public boolean isCurrent() {
             return current;
+        }
+        
+        public boolean isExists() {
+            return exists;
         }
 
         public void setCurrent(boolean current) {
