@@ -65,7 +65,6 @@ public class LinkRewriter {
             if(path.startsWith(physicalEntryPath)) {
                 
                 String newUrl = contextPrefix+ prefixLinkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
-                System.out.println(newUrl);
                 log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newUrl + "'");
                 return newUrl;
             } else {
