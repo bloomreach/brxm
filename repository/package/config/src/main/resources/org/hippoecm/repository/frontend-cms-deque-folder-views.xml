@@ -191,7 +191,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.threepane.DocumentListingPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.NewDocumentListingPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${wicket.id}</sv:value>
