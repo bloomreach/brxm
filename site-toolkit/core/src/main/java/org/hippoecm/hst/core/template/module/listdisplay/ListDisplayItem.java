@@ -8,11 +8,11 @@ import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListDisplayItem extends AbstractELNode{
+public class ListDisplayItem extends ContentELNodeImpl{
 	private static final Logger log = LoggerFactory.getLogger(ListDisplayItem.class);
 	
-    public ListDisplayItem(Node node) {
-    	super(node); 
+    public ListDisplayItem(Node node, URLMapping urlMapping) {
+    	super(node, urlMapping); 
     }
     
 }

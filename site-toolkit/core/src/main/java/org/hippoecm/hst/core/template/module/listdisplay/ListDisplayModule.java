@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -46,7 +47,7 @@ public class ListDisplayModule extends ModuleBase {
 
 	public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		
+		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	    List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 
 	    try {	    	
@@ -75,7 +76,7 @@ public class ListDisplayModule extends ModuleBase {
 			    		  continue;
 			    	  }
 			    	  log.debug("ADD NODE: " + subSubNode.getName());
-			    	  wrappedNodes.add(new ListDisplayItem(subSubNode));
+			    	  wrappedNodes.add(new ListDisplayItem(subSubNode, urlMapping));
 			      }
 			    }
 			} else {

@@ -34,7 +34,9 @@ import javax.jcr.query.RowIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -394,6 +396,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
         ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 
         String statement = getStatement();
@@ -444,7 +447,7 @@ public class SearchModule extends ModuleBase implements Search {
                 try {
                     Node node = (Node) jcrSession.getItem(row.getValue("jcr:path").getString());
                     double score = row.getValue("jcr:score").getDouble();
-                    SearchHit searchHit = new SearchHit(node, (counter + offset), score);
+                    SearchHit searchHit = new SearchHit(node, urlMapping, (counter + offset), score);
                     if (isExcerptNeeded()) {
                         searchHit.setExcerpt(row.getValue("rep:excerpt(.)").getString());
                     }
