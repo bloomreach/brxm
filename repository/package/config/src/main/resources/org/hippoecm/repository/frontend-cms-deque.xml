@@ -1113,21 +1113,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="autoEditPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.document</sv:value>
-    </sv:property>
-    <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="managementPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1430,7 +1415,25 @@
       <sv:value>height=20</sv:value>
     </sv:property>
   </sv:node>
-
+  
+  <sv:node sv:name="previewPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.PreviewPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.document</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.name" sv:type="String">
+      <sv:value>cms-deque-preview</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="documentEditorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -1439,7 +1442,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.edit.MultiEditorPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-deque-document-view</sv:value>
+      <sv:value>cms-deque-editor</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
