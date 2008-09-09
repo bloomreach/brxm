@@ -27,14 +27,12 @@ class ButtonBar extends Panel {
 
     public ButtonBar(String id, UploadWizard wizard) {
         super(id);
-        add(new AgainLink("again", wizard));
+        add(new BackLink("back", wizard));
         add(new CancelLink("cancel", wizard));
         add(new FinishLink("finish", wizard));
     }
 
     private class CancelLink extends AbstractWizardLink {
-        @SuppressWarnings("unused")
-        private final static String SVN_ID = "$Id: CancelLink.java 12815 2008-08-01 10:03:35Z wgrevink $";
         private static final long serialVersionUID = 1L;
 
         public CancelLink(String id, UploadWizard wizard) {
@@ -52,10 +50,10 @@ class ButtonBar extends Panel {
         }
     }
 
-    private class AgainLink extends AbstractWizardLink {
+    private class BackLink extends AbstractWizardLink {
         private static final long serialVersionUID = 1L;
 
-        public AgainLink(String id, UploadWizard wizard) {
+        public BackLink(String id, UploadWizard wizard) {
             super(id, wizard);
         }
 
@@ -69,7 +67,6 @@ class ButtonBar extends Panel {
         public final boolean isVisible() {
             return !wizard.getWizardModel().isNextAvailable();
         }
-
     }
 
     private class FinishLink extends AbstractWizardLink {
@@ -88,7 +85,6 @@ class ButtonBar extends Panel {
         public boolean isVisible() {
             return !wizard.getWizardModel().isNextAvailable();
         }
-
     }
 
     private abstract class AbstractWizardLink extends AjaxLink {

@@ -41,8 +41,19 @@ public class NamespaceFriendlyChoiceRenderer implements IChoiceRenderer {
     public Object getDisplayValue(Object object) {
         String input = object.toString();
         String displayValue = input;
-        int semicolon = input.indexOf(':');
-        displayValue = input.substring(semicolon + 1);
+
+        //FIXME:  Really ugly hack to avoid seeing "exampleImageSet" and "exampleAssetSet"
+        //in the upload dialog type chooser. This should be implemented using i18n, remove
+        //this as soon as i18n has been implemented.
+        if("hippogallery:exampleImageSet".equals(displayValue)) {
+            displayValue = "hippogallery:simpleImage";
+        }
+        if("hippogallery:exampleAssetSet".equals(displayValue)) {
+            displayValue = "hippogallery:simpleAsset";
+        }
+        
+        int semicolon = displayValue.indexOf(':');
+        displayValue = displayValue.substring(semicolon + 1);
         if(doubles.contains(displayValue)) {
             String namespace = input.substring(0, semicolon);
             return displayValue + " (" + namespace + ")";
