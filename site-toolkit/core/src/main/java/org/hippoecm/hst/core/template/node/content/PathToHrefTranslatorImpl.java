@@ -47,6 +47,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
             }
         }
         if(mapping == null ) {
+            log.warn("UrlMapping is null, returning original path");
             return documentPath;
         } else {
             // translate the documentPath to a URL in combination with the Node and the mapping object
@@ -58,8 +59,6 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                 // relative node, most likely a facetselect node:
                 String uuid =null;
                 try {
-                    //node = ((HippoNode)node).getCanonicalNode();
-                    
                     Node facetSelectNode = node.getNode(documentPath);
                     if(facetSelectNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
