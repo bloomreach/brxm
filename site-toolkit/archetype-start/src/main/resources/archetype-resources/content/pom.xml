@@ -26,7 +26,7 @@
   <name>HST2 Project Sample Content</name>
   <description>HST2 Project Sample Content</description>
   <groupId>${groupId}</groupId>
-  <artifactId>${artifactId}-sample-content</artifactId>
+  <artifactId>${rootArtifactId}-sample-content</artifactId>
   <packaging>jar</packaging>
 
   <build>

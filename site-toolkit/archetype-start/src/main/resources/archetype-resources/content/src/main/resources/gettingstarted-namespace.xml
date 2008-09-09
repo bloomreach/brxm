@@ -1,7 +1,9 @@
 #set($dollar = '$')
+#set($hyphen = '-')
+#set($underscore = '_')
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="${artifactId}"
-  xmlns:${artifactId}="http://www.hippoecm.org/hst2/${artifactId}/1.0"
+<sv:node sv:name="${rootArtifactId.replace($hyphen,$underscore)}"
+  xmlns:${rootArtifactId.replace($hyphen,$underscore)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0"
@@ -57,10 +59,10 @@
           <sv:value>hippostd:publishableSummary</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:type" sv:type="String">
-          <sv:value>${artifactId}:textpage</sv:value>
+          <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst2/${artifactId}/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -70,7 +72,7 @@
             <sv:value>3ceb139b-06ef-46eb-bf5d-196329ed8fc9</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>${artifactId}:title</sv:value>
+            <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:title</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
             <sv:value>String</sv:value>
@@ -84,7 +86,7 @@
             <sv:value>40f58b2c-4fae-48de-94c1-e17645b9ac5c</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>${artifactId}:date</sv:value>
+            <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:date</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
             <sv:value>Date</sv:value>
@@ -98,7 +100,7 @@
             <sv:value>5f5a0d86-d2b7-4612-b499-de89957ef13b</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>${artifactId}:summary</sv:value>
+            <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:summary</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
             <sv:value>Html</sv:value>
@@ -112,7 +114,7 @@
             <sv:value>9dcca11f-2c83-4e88-afad-399d44ce0ccc</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>${artifactId}:body</sv:value>
+            <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:body</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
             <sv:value>Html</sv:value>
@@ -126,7 +128,7 @@
       </sv:property>
       <sv:node sv:name="hippo:prototype">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>${artifactId}:textpage</sv:value>
+          <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
@@ -135,16 +137,16 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>fa531385-aba3-4780-9e9a-9b02089e994a</sv:value>
         </sv:property>
-        <sv:property sv:name="${artifactId}:body" sv:type="String">
+        <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:body" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="${artifactId}:date" sv:type="Date">
+        <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:date" sv:type="Date">
           <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
         </sv:property>
-        <sv:property sv:name="${artifactId}:summary" sv:type="String">
+        <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:summary" sv:type="String">
           <sv:value/>
         </sv:property>
-        <sv:property sv:name="${artifactId}:title" sv:type="String">
+        <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:title" sv:type="String">
           <sv:value/>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>

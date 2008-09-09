@@ -27,7 +27,7 @@
     <name>HST2 Project ECM WAR package</name>
     <description>HST2 Project ECM WAR package</description>
     <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}-ecm</artifactId>
+    <artifactId>${rootArtifactId}-ecm</artifactId>
     <packaging>war</packaging>
 
     <properties>
@@ -52,7 +52,7 @@
         
         <dependency>
             <groupId>${groupId}</groupId>
-            <artifactId>${artifactId}-sample-content</artifactId>
+            <artifactId>${rootArtifactId}-sample-content</artifactId>
             <version>${version}</version>
             <type>jar</type>
         </dependency>

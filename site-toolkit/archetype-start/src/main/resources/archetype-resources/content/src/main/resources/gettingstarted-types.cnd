@@ -1,9 +1,11 @@
-<'${artifactId}'='http://www.hippoecm.org/hst2/${artifactId}/1.0'>
+#set($hyphen = '-')
+#set($underscore = '_')
+<'${rootArtifactId.replace($hyphen,$underscore)}'='http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0'>
 <'hippostd'='http://www.hippoecm.org/hippostd/nt/1.0'>
 <'hippo'='http://www.hippoecm.org/nt/1.0'>
 
-[${artifactId}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
-- ${artifactId}:body (string)
-- ${artifactId}:summary (string)
-- ${artifactId}:title (string)
-- ${artifactId}:date (date)
+[${rootArtifactId.replace($hyphen,$underscore)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+- ${rootArtifactId.replace($hyphen,$underscore)}:body (string)
+- ${rootArtifactId.replace($hyphen,$underscore)}:summary (string)
+- ${rootArtifactId.replace($hyphen,$underscore)}:title (string)
+- ${rootArtifactId.replace($hyphen,$underscore)}:date (date)
