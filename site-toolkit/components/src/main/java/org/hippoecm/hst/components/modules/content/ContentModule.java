@@ -4,6 +4,8 @@ import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -33,9 +35,10 @@ public class ContentModule extends ModuleBase {
 		ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 
 		ContentModuleNode contentModuleNode = null;
-
 		Node node = ctxBase.getRelativeNode(path);
-		contentModuleNode = new ContentModuleNode(ctxBase, node);
+		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+		
+		contentModuleNode = new ContentModuleNode(ctxBase, node, urlMapping);
 
 		pageContext.setAttribute(getVar(), contentModuleNode);
 	}
