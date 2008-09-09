@@ -169,10 +169,21 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         var parentLayoutUnitEl = _this.findLayoutUnit(bodyEl);
                         var parentCenterEl = YAHOO.widget.LayoutUnit
                                 .getLayoutUnitById(parentLayoutUnitEl.id).get('wrap');
-                        var parentWidth = Dom.getStyle(parentCenterEl, 'width')
-                        var parentHeight = Dom.getStyle(parentCenterEl,
-                                'height')
-
+                        var parentWidth = Dom.getStyle(parentCenterEl, 'width');
+                        var parentHeight = Dom.getStyle(parentCenterEl, 'height')
+                        
+                        var border = _this.getBorder(bodyEl);      
+                        if(parentWidth.indexOf('px') > 0) {
+                        	parentWidth = parseInt(parentWidth.substr(0, parentWidth.indexOf('px')));
+                            parentWidth -= border.x;
+                            parentWidth += 'px';
+                        }    					
+                        if(parentHeight.indexOf('px') > 0) {
+                        	parentHeight = parseInt(parentHeight.substr(0, parentHeight.indexOf('px')));
+                            parentHeight -= border.y;
+                            parentHeight += 'px';
+                        }    					
+                        
                         Dom.setStyle(bodyEl, 'width', parentWidth);
                         Dom.setStyle(bodyEl, 'height', parentHeight);
 
@@ -272,8 +283,21 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         var parentCenterEl = YAHOO.widget.LayoutUnit
                                 .getLayoutUnitById(parentLayoutUnitEl.id).get('wrap');
                         if (parentCenterEl) {
-                            Dom.setStyle(bodyEl, 'height', Dom.getStyle(parentCenterEl, 'height'));
-                            Dom.setStyle(bodyEl, 'width', Dom.getStyle(parentCenterEl, 'width'));
+                            var parentWidth = Dom.getStyle(parentCenterEl, 'width');
+                            var parentHeight = Dom.getStyle(parentCenterEl, 'height')
+                            var border = _this.getBorder(bodyEl);      
+                            if(parentWidth.indexOf('px') > 0) {
+                            	parentWidth = parseInt(parentWidth.substr(0, parentWidth.indexOf('px')));
+                                parentWidth -= border.x;
+                                parentWidth += 'px';
+                            }    					
+                            if(parentHeight.indexOf('px') > 0) {
+                            	parentHeight = parseInt(parentHeight.substr(0, parentHeight.indexOf('px')));
+                                parentHeight -= border.y;
+                                parentHeight += 'px';
+                            }    					
+                            Dom.setStyle(bodyEl, 'height', parentHeight);
+                            Dom.setStyle(bodyEl, 'width', parentWidth);
                         }
                     }
                 });
@@ -304,14 +328,36 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var idx = percentage.indexOf('%');
                     if (idx > -1) {
                         var abs = parseInt(percentage.substr(0, idx));
-                        var parentSize = parseInt(parentSize.substr(0,
-                                parentSize.indexOf('px')));
+                        var parentSize = parseInt(parentSize.substr(0, parentSize.indexOf('px')));
                         var x = parseInt((abs * parentSize) / 100);
                         return x;
                     }
                 }
                 return size;
+            },
+            
+            getBorderWidth: function(el, type) {
+            	var x = Dom.getStyle(el, type);
+            	if(Lang.isUndefined(x) || Lang.isNull(x) || x.length<3) 
+            		return 0;
+    			x = x.substr(0, x.indexOf('px'));
+    			//FF3 on Ubuntu thinks the border is something like 0.81236666 so we round it
+    			return Math.round(x);
+            },
+            
+            getBorder: function(el) {
+            	var obj = { x: 0, y: 0 };
+            	
+            	var x = this.getBorderWidth(el, 'border-left-width');
+            	x += this.getBorderWidth(el, 'border-right-width');
+            	obj.x = x;
+
+            	var y = this.getBorderWidth(el, 'border-top-width');
+            	y += this.getBorderWidth(el, 'border-bottom-width');
+            	obj.y = y;
+            	return obj;
             }
+            
         };
 
     })();
