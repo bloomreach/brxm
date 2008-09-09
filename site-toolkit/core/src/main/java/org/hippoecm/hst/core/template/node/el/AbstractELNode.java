@@ -5,7 +5,9 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
@@ -30,7 +32,7 @@ public abstract class AbstractELNode implements ELNode {
         return jcrNode;
     }
 
-    public Map getHasProperty(){
+    public Map getHasProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
@@ -43,11 +45,11 @@ public abstract class AbstractELNode implements ELNode {
                     log.error("RepositoryException " + e.getMessage());
                     return false;
                 }
-               
+
             }
         };
     }
-    
+
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -56,17 +58,41 @@ public abstract class AbstractELNode implements ELNode {
         return new ELPseudoMap() {
             public Object get(Object propertyName) {
                 try {
-                    return jcrNode.getProperty((String) propertyName).getValue().getString();
+                    Value val = jcrNode.getProperty((String) propertyName).getValue();
+                    switch (val.getType()) {
+                    case PropertyType.BINARY:
+                        break;
+                    case PropertyType.BOOLEAN:
+                        return val.getBoolean();
+                    case PropertyType.DATE:
+                        return val.getDate();
+                    case PropertyType.DOUBLE:
+                        return val.getDouble();
+                    case PropertyType.LONG:
+                        return val.getLong();
+                    case PropertyType.REFERENCE:
+                        // TODO return path of referenced node?
+                        break;
+                    case PropertyType.PATH:
+                        // TODO return what?
+                        break;
+                    case PropertyType.STRING:
+                        return val.getString();
+                    case PropertyType.NAME:
+                        // TODO what to return
+                        break;
+                    default:
+                        log.error("Illegal type for Value");
+                        return "";
+                    }
                 } catch (ValueFormatException e) {
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
+                    log.warn("Property is multivalued: not applicable for AbstractELNode. Return null");
                 } catch (PathNotFoundException e) {
-                    e.printStackTrace();
+                    log.warn("Property " + propertyName + " not found. Return null");
                 } catch (RepositoryException e) {
-                    e.printStackTrace();
+                    log.warn("RepositoryException " + e.getMessage());
                 }
-                return "";
+                return null;
             }
         };
     }
@@ -97,5 +123,5 @@ public abstract class AbstractELNode implements ELNode {
             return "";
         }
     }
-  
+
 }
