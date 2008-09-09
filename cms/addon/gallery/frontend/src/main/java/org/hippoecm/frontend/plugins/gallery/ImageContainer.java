@@ -19,6 +19,9 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.dragdrop.ImageNodeDragBehavior;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 
@@ -27,11 +30,11 @@ public class ImageContainer extends Panel {
 
     private JcrResourceStream stream;
 
-    public ImageContainer(String wicketId, JcrNodeModel model) {
+    public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext, IPluginConfig pluginConfig) {
         super(wicketId, model);
 
         stream = new JcrResourceStream(model.getNode());
-        add(new NonCachingImage("image", new JcrResource(stream)) {
+        NonCachingImage img = new NonCachingImage("image", new JcrResource(stream)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -39,7 +42,10 @@ public class ImageContainer extends Panel {
                 super.onComponentTag(tag);
                 tag.put("width", ThumbnailConstants.THUMBNAIL_WIDTH);
             }
-        });
+        };
+        
+        img.add(new ImageNodeDragBehavior(pluginContext, pluginConfig, model.getItemModel().getPath()));
+        add(img);
     }
 
     @Override

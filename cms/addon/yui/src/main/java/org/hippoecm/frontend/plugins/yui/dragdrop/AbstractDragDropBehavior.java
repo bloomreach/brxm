@@ -105,44 +105,52 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
             }
             return variables;
         }
+    }
+    
+    /*
+    id, label, groups, callbackUrl, callbackParameters
+   */
+   Map<String, Object> getHeaderContributorVariables() {
+       Component component = getComponent();
 
-        /*
-         id, label, groups, callbackUrl, callbackParameters
-        */
-        private Map<String, Object> getHeaderContributorVariables() {
-            Component component = getComponent();
+       Map<String, Object> variables = new MiniMap(7);
+       variables.put("id", component.getMarkupId(true));
+       variables.put("label", getLabel());
 
-            Map<String, Object> variables = new MiniMap(6);
-            variables.put("id", component.getMarkupId(true));
-            variables.put("label", getLabel());
+       String[] groups = config.getStringArray("yui.dd.groups");
+       if (groups == null || groups.length == 0) {
+           groups = new String[] { "default" };
+       }
 
-            String[] groups = config.getStringArray("yui.dd.groups");
-            if (groups == null || groups.length == 0) {
-                groups = new String[] { "default" };
-            }
+       StringBuilder buf = new StringBuilder(16 * groups.length);
+       buf.append('[');
+       for (int i = 0; i < groups.length; i++) {
+           if (i > 0) {
+               buf.append(',');
+           }
+           buf.append('\'').append(groups[i]).append('\'');
+       }
+       buf.append("]");
+       variables.put("groups", buf.toString());
 
-            StringBuilder buf = new StringBuilder(16 * groups.length);
-            buf.append('[');
-            for (int i = 0; i < groups.length; i++) {
-                if (i > 0) {
-                    buf.append(',');
-                }
-                buf.append('\'').append(groups[i]).append('\'');
-            }
-            buf.append("]");
-            variables.put("groups", buf.toString());
+       variables.put("callbackUrl", getCallbackUrl());
+       variables.put("callbackParameters", getCallbackParameters());
+       variables.put("callbackFunction", getCallbackScript());
+       variables.put("modelType", getModelType());
 
-            variables.put("callbackUrl", getCallbackUrl());
-            variables.put("callbackParameters", getCallbackParameters());
-            variables.put("callbackFunction", getCallbackScript());
+       return variables;
+   }
 
-            return variables;
-        }
+   protected String getCallbackParameters() {
+       return "[]";
+   }
 
-        protected String getCallbackParameters() {
-            return "[]";
-        }
-
+    
+    /**
+     * Specify the clientside class that is used as the DragModel, default is YAHOO.hippo.DDModel 
+     */
+    String getModelType() {
+        return "YAHOO.hippo.DDModel";
     };
 
 }

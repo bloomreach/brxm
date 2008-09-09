@@ -42,6 +42,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -50,6 +51,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.modal.linkpicker.LinkPickerBehavior;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -114,6 +116,16 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
+        
+        add(new DropBehavior(context, config) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onDrop(IModel model, AjaxRequestTarget target) {
+               //nothing
+            }
+            
+        });
     }
 
     @Override

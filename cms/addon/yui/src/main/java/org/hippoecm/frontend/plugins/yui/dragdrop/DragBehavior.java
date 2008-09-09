@@ -38,7 +38,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
     }
 
     @Override
-    protected void respond(AjaxRequestTarget target) {
+    protected void respond(final AjaxRequestTarget target) {
         final IModel draggedModel = getDragModel();
         if(draggedModel == null)
             return;
@@ -48,7 +48,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
             @Override
             void visit(DropBehavior dropPoint) {
                 if (dropPoint.getComponentMarkupId().equals(targetId)) {
-                    dropPoint.onDrop(draggedModel);
+                    dropPoint.onDrop(draggedModel, target);
                 }
             }
         });
@@ -66,7 +66,6 @@ public class DragBehavior extends AbstractDragDropBehavior {
         }
         return null;
     }
-        
 
     @Override
     protected String getHeaderContributorFilename() {
@@ -77,7 +76,6 @@ public class DragBehavior extends AbstractDragDropBehavior {
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return DragBehavior.class;
     }
-    
 
     private abstract class DropPointVisitor implements IVisitor {
         @SuppressWarnings("unchecked")

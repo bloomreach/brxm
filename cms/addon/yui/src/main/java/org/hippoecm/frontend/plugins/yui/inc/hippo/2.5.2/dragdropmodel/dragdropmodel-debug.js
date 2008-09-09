@@ -34,6 +34,7 @@ YAHOO.extend(YAHOO.hippo.DDModel, YAHOO.util.DDProxy, {
     TYPE: "DDModel",
     
      initPlayer: function(id, sGroup, config) {
+	    console.log('Init for DDModel');
         if (!id) { 
             return; 
         }
@@ -113,7 +114,7 @@ YAHOO.extend(YAHOO.hippo.DDModel, YAHOO.util.DDProxy, {
     },
 
     onDragDrop: function(e, id) {
-        this.resetTargets();        
+    	this.resetTargets();        
     },
   
     onInvalidDrop: function(e) { 
@@ -125,7 +126,6 @@ YAHOO.extend(YAHOO.hippo.DDModel, YAHOO.util.DDProxy, {
     onDrag: function(e, id) {
     }
 });
-
 
  
 YAHOO.hippo.DDRemove = function(id, sGroup, config) { 
@@ -183,6 +183,105 @@ YAHOO.extend(YAHOO.hippo.DDRemove, YAHOO.util.DDProxy, {
     },
 
     onDragDrop: function(e, id) {
+    },
+
+    onInvalidDrop: function(e) { 
+    }, 
+
+    onDragOver: function(e, id) {
+    },
+
+    onDrag: function(e, id) {
+        
+    }
+});
+
+YAHOO.hippo.DDImage = function(id, sGroup, config) { 
+    YAHOO.hippo.DDImage.superclass.constructor.apply(this, arguments); 
+       this.initPlayer(id, sGroup, config); 
+};
+
+YAHOO.extend(YAHOO.hippo.DDImage, YAHOO.util.DDProxy, {
+    
+    TYPE: "DDImage",
+    
+     initPlayer: function(id, sGroup, config) {
+        if (!id) { 
+            return; 
+        }
+        this.nodePath = config.nodePath;
+        
+        YAHOO.util.DDM.mode = YAHOO.util.DDM.POINT;
+        
+        var el = this.getDragEl()
+        YAHOO.util.Dom.setStyle(el, "borderColor", "transparent");
+        YAHOO.util.Dom.setStyle(el, "opacity", 0.76);
+
+        // specify that this is not currently a drop target
+        this.isTarget = false;
+        this.type = YAHOO.hippo.DDImage.TYPE;
+
+        this.startPos = YAHOO.util.Dom.getXY( this.getEl() );
+        YAHOO.log(id + " startpos: " + this.startPos, "info", "hippo");
+        
+        this.label = config.label;
+        this.currentGroup = config.currentGroup;
+    },
+
+    startDrag: function(x, y) {
+        if(!this.startPos) {
+           this.startPos = YAHOO.util.Dom.getXY(this.getEl()); 
+        }
+        var Dom = YAHOO.util.Dom;
+        var dragEl = this.getDragEl();
+        var clickEl = this.getEl();
+        
+        dragEl.innerHTML = this.label;
+        dragEl.innerHTML = '<div style="padding-left:15px;padding-top:5px;width:120px;"><div><img src="' + clickEl.src + '" /></div></div>';
+        
+        Dom.setStyle(dragEl, "color",  Dom.getStyle(clickEl, "color"));
+        Dom.setStyle(clickEl, "opacity", 0.4);
+        
+    },
+    
+    addCustomCallbackParameters: function(dropId, parameters) {
+    	var textAreas = YAHOO.util.Dom.getElementsByClassName('xinha_textarea', 'textarea', YAHOO.util.Dom.get(dropId));
+    	if(textAreas == null || textAreas[0] == null)
+    	    return;
+    	
+    	var id = textAreas[0].id;
+    	var x= eval('xinha_editors.' + id);
+
+    	var img = new Image();
+    	img.src = 'drop-on-xinha' + this.nodePath;
+        if ( Xinha.is_ie ) {
+	        var sel = x.getSelection();
+	        var range = x.createRange(sel);
+	        //TODO: check if this still works.
+	        x._doc.execCommand("insertimage", false, img.src);
+	        img = range.parentElement();
+	        // wonder if this works...
+	        if ( img.tagName.toLowerCase() != "img" ) {
+	            img = img.previousSibling;
+	        }
+	    } else {
+	    	//gecko/webkit
+	    	x.insertNodeAtSelection(img);
+        	if ( !img.tagName ) {
+        	    // if the cursor is at the beginning of the document
+        	    img = x.range.startContainer.firstChild;
+            }
+	    }
+        x._insertImage(img);
+    	return false;
+    },
+
+    endDrag: function(e) {
+        YAHOO.util.Dom.setStyle(this.getEl(), "opacity", 1);
+    },
+
+    onDragDrop: function(e, id) {
+    	
     },
 
     onInvalidDrop: function(e) { 

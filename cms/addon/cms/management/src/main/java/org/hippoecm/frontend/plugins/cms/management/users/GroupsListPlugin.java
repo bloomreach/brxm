@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -62,7 +63,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onDrop(IModel model) {
+            public void onDrop(IModel model, AjaxRequestTarget target) {
                 if (model instanceof JcrNodeModel) {
                     JcrNodeModel droppedGroup = (JcrNodeModel) model;
                     String myUsername = getUsername();
