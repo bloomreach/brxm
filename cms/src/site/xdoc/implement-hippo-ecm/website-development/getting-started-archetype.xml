@@ -70,9 +70,10 @@
         </p>
 
         <source>
-mvn archetype:create \
+mvn archetype:generate \
   -DgroupId=org.example \
   -DartifactId=myproject \
+  -Dpackage=org.example \
   -Dversion=1.01.00 \
   -DarchetypeGroupId=org.hippoecm.hst \
   -DarchetypeArtifactId=hippo-ecm-hst-archetype-start \
