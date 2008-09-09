@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
-import java.text.Normalizer.Form;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
