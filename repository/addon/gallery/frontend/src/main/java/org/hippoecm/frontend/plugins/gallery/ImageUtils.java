@@ -39,8 +39,8 @@ public class ImageUtils {
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
-    public static InputStream createThumbnail(InputStream imageData, int maxWidth, String mimeType) {
-        if (maxWidth <= 0) {
+    public static InputStream createThumbnail(InputStream imageData, int maxSize, String mimeType) {
+        if (maxSize <= 0) {
             return new ByteArrayInputStream(new byte[] {});
         }
         try {
@@ -61,11 +61,17 @@ public class ImageUtils {
             reader.setInput(new MemoryCacheImageInputStream(imageData));
             double originalWidth = reader.getWidth(0);
             double originalHeight = reader.getHeight(0);
+            
+            double ratio;
+            if (originalHeight > originalWidth) {
+                ratio = maxSize / originalHeight;
+            } else {
+                ratio = maxSize / originalWidth;
+            }
+            
             BufferedImage originalImage = reader.read(0);
-
             AffineTransform transformation;
             BufferedImage scaledImage;
-            double ratio = maxWidth / originalWidth;
             if (ratio < 1.0d) {
                 transformation = AffineTransform.getScaleInstance(ratio, ratio);
                 double scaledWidth = originalWidth * ratio;
