@@ -17,11 +17,13 @@ package org.hippoecm.hst.core.template.node.content;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.core.mapping.URLMapping;
+
 public interface SourceRewriter {
 
     /**
      * Search content for hrefs/src's and replace them with a translated value
      */
     public String replace(Node node, String content);
-
+    public URLMapping getUrlMapping();
 }

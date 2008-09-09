@@ -87,8 +87,6 @@ public class URLMappingImpl implements URLMapping {
                 if (subNode == null) {
                     continue;
                 }
-
-                if (subNode.hasProperty("hst:urlmapping")) {
                     if (subNode.hasProperty("hst:prefixlinkrewrite")) {
                         String prefixLinkRewrite = subNode.getProperty("hst:prefixlinkrewrite").getString();
                         if ("".equals(prefixLinkRewrite)) {
@@ -117,11 +115,6 @@ public class URLMappingImpl implements URLMapping {
                                     + "'hst:nodetype' property or 'hst:nodepath' property is missing");
                         }
                     }
-
-                } else {
-                    log.warn("hst:sitemapitem '"+subNode.getName()+"' missing 'hst:ulrmapping' property. "
-                            + "Disregard item in the url mappings");
-                }
             }
             Timer.log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
         } catch (PathNotFoundException e) {
@@ -196,7 +189,6 @@ public class URLMappingImpl implements URLMapping {
                 path = path.substring(1);
                 if (path.length() == 0) {
                     log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
-                    Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
                     return contextPath + contextPrefix;
                 }
             }

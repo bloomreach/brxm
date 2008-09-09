@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,13 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
      * log all rewriting to the SourceRewriter interface
      */
     private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
+    private URLMapping mapping;
+    
+    public PathToSrcTranslatorImpl(URLMapping mapping) {
+       this.mapping = mapping; 
+    }
 
+    
     public String documentPathToSrc(Node node, String documentPath) {
         Session session = null;
         try {
@@ -58,18 +65,24 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                 // pathEls[0] refers to facetselect
                 postfix = documentPath.substring(pathEls[0].length());
             }
-
+            if(mapping == null) {
+                log.warn("UrlMapping is null, returning original path");
+                return documentPath;
+            }
             if (node.hasNode(pathEls[0])) {
                 Node facetSelect = node.getNode(pathEls[0]);
                 if (facetSelect.isNodeType(HippoNodeType.NT_FACETSELECT)
                         && facetSelect.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
                     String uuid = facetSelect.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    Node handle = session.getNodeByUUID(uuid);
-                    documentPath = "/binaries" + handle.getPath();
-                    if (postfix != null) {
-                        documentPath += postfix;
+                    Node deref = session.getNodeByUUID(uuid);
+                    documentPath = "/binaries" + deref.getPath();
+                    if (postfix != null && !postfix.equals("/")) {
+                        if(postfix.startsWith("/")) {
+                            postfix = postfix.substring(1);
+                        }
+                        return mapping.rewriteLocation(deref.getNode(postfix));
                     } else {
-                        documentPath += "/" + handle.getName();
+                        return mapping.rewriteLocation(deref.getNode(deref.getName()));
                     }
 
                 } else {

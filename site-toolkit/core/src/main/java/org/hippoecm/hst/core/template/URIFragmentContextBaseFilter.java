@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -78,11 +79,9 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		
 		if (ignoreRequest(request)) {
 			filterChain.doFilter(request, response);			
-		} else {
+		} 
+		else {  
 		    
-		    // TODO improve session refreshing: this call is done here to refresh the jcrsession at the beginning of a request.
-		    // parallel requests (for example frames) from one session gives problems. The invalidation needs to be improved
-		    JCRConnector.getJCRSession(request.getSession(), true);
 		    
 			String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 			
@@ -91,6 +90,14 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			    throw new ServletException("The number of slashes in the url in lower then the configure levels '("+uriLevels+")' in your web.xml \n" +
 			    		"Either, the url is wrong, or you should change the levels in value in your web.xml");
 			}
+			
+			if(isBinaryRequest(requestURI, uriPrefix)) {
+			    forwardToBinaryServlet(request, response,requestURI, uriPrefix);
+			    return;
+			}
+			// TODO improve session refreshing: this call is done here to refresh the jcrsession at the beginning of a request.
+            // parallel requests (for example frames) from one session gives problems. The invalidation needs to be improved  
+			JCRConnector.getJCRSession(request.getSession(), true);
 			
 			long start = System.nanoTime();
             URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION );
@@ -131,7 +138,21 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		
 	}
 	
-	/**
+	private void forwardToBinaryServlet(HttpServletRequest request, ServletResponse response, String requestURI, String uriPrefix) throws ServletException, IOException {
+	    String forward = requestURI.substring(uriPrefix.length());
+	    log.debug("Forwarding request to binaries servlet: '" + request.getRequestURI() + "' --> '" + forward +"'");
+	    RequestDispatcher dispatcher = request.getRequestDispatcher(forward);
+        dispatcher.forward(request, response);
+    }
+
+    private boolean isBinaryRequest(String requestURI, String uriPrefix) {
+        if(requestURI.substring(uriPrefix.length()).startsWith("/binaries")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
 	 * Returns the prefix of a String where the prefix has a specified number of
 	 * slashes.
 	 * @param requestURI

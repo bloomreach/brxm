@@ -52,9 +52,8 @@ public class BinariesServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-        String relativeURL = req.getRequestURI();
+       String relativeURL = req.getRequestURI();
 
-       
             // simply remove the contextpath, servletpath and end /
            String path = relativeURL;
 

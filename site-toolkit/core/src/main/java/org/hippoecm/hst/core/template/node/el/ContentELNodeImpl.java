@@ -35,31 +35,32 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
+public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
     private Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
-   
+
     private SourceRewriter sourceRewriter;
-    
+
     /*
      * If you want a custom source rewriter, use this constructor
      */
 
-    public ContentELNodeImpl(Node node, SourceRewriter sourceRewriter){
+    public ContentELNodeImpl(Node node, SourceRewriter sourceRewriter) {
         super(node);
         this.sourceRewriter = sourceRewriter;
     }
-    
+
     public ContentELNodeImpl(Node node, URLMapping urlMapping) {
         super(node);
-        this.sourceRewriter =  new SourceRewriterImpl(urlMapping);
+        this.sourceRewriter = new SourceRewriterImpl(urlMapping);
     }
-    
-    public ContentELNodeImpl(ContextBase contextBase, String relativePath, URLMapping urlMapping) throws RepositoryException {   
+
+    public ContentELNodeImpl(ContextBase contextBase, String relativePath, URLMapping urlMapping)
+            throws RepositoryException {
         super(contextBase, relativePath);
-        this.sourceRewriter =  new SourceRewriterImpl(urlMapping);
-    } 
-    
+        this.sourceRewriter = new SourceRewriterImpl(urlMapping);
+    }
+
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -74,16 +75,16 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
                         return "";
                     }
                     if (jcrNode.getProperty(prop).getDefinition().isMultiple()) {
-                        log.warn("The property is a multivalued property. Use .... if you want the collection." +
-                        		" All properties will now be returned appended into a single String");
+                        log.warn("The property is a multivalued property. Use .... if you want the collection."
+                                + " All properties will now be returned appended into a single String");
                         StringBuffer sb = new StringBuffer("");
                         for (Value val : jcrNode.getProperty(prop).getValues()) {
-                            sb.append(value2Object(jcrNode,prop,val));
+                            sb.append(value2Object(jcrNode, prop, val));
                             sb.append(" ");
                         }
                         return sb;
                     } else {
-                        return value2Object(jcrNode,prop,jcrNode.getProperty(prop).getValue());
+                        return value2Object(jcrNode, prop, jcrNode.getProperty(prop).getValue());
                     }
 
                 } catch (PathNotFoundException e) {
@@ -96,7 +97,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
         };
     }
 
-    private Object value2Object(Node node, String prop,Value val) {
+    private Object value2Object(Node node, String prop, Value val) {
         try {
             switch (val.getType()) {
             case PropertyType.BINARY:
@@ -120,15 +121,15 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
                 /*
                  * Default String values are parsed for src and href attributes because these need
                  * translation
-                 */ 
-                if(sourceRewriter == null ){
+                 */
+                if (sourceRewriter == null) {
                     log.warn("sourceRewriter is null. No linkrewriting or srcrewriting will be done");
-                    return val.getString();   
+                    return val.getString();
                 } else {
                     log.debug("parsing string property for source rewriting for property: " + prop);
                     return sourceRewriter.replace(node, val.getString());
                 }
-                
+
             case PropertyType.NAME:
                 // TODO what to return
                 break;
@@ -146,14 +147,13 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
         return "";
     }
 
-    
     public Map getResourceUrl() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
-            
+
             @Override
             public Object get(Object resource) {
                 String resourceName = (String) resource;
@@ -161,45 +161,63 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
                     if (jcrNode.hasNode(resourceName)) {
                         Node resourceNode = jcrNode.getNode(resourceName);
                         if (resourceNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
-                            if (resourceNode instanceof HippoNode
-                                    && ((HippoNode) resourceNode).getCanonicalNode() != null) {
-                                Node canonical = ((HippoNode) resourceNode).getCanonicalNode();
-                                log.info("resource location = " + "/binaries" + canonical.getPath());
-                                return "/binaries" + canonical.getPath();
-                            } else {
-                                log.info("resource location = " + "/binaries" + resourceNode.getPath());
-                                return "/binaries" + resourceNode.getPath();
+                            // first find the canonical resource
+                            if (!(resourceNode instanceof HippoNode)) {
+                                throw new RepositoryException("Resource node is not of type HippoNode");
                             }
-                        } else {
-                            log.error(resourceName + "not of type hippo:resource. Returning default value");
-                            return null;
+                            HippoNode hippoNode = (HippoNode) resourceNode;
+                            int levelsUp = 0;
+                            String[] origPaths = hippoNode.getPath().split("/");
+                            String postfix = "";
+                            while (hippoNode.getCanonicalNode() == null) {
+                                // TODO this might go wrong for same name sibblings
+                                hippoNode = (HippoNode) hippoNode.getParent();
+                                levelsUp++;
+                                if (postfix.length() > 0) {
+                                    postfix = "/" + postfix;
+                                }
+                                postfix = origPaths[origPaths.length - levelsUp] + postfix;
+                            }
+                            hippoNode = (HippoNode)hippoNode.getCanonicalNode();
+                            Node canonical;
+                            if (levelsUp > 0) {
+                                canonical = hippoNode.getNode(postfix);
+                            } else {
+                                canonical = hippoNode.getCanonicalNode();
+                            }
+                            return sourceRewriter.getUrlMapping().rewriteLocation(canonical);
                         }
+                    } else {
+                        log.error(resourceName + "not of type hippo:resource. Returning null");
+                        return null;
                     }
                 } catch (RepositoryException e) {
-                    log.error("RepositoryException while looking for resource " + resourceName + "  :"
+                    log
+                            .error("RepositoryException while looking for resource " + resourceName + "  :"
                                     + e.getMessage());
                 }
                 return null;
             }
         };
     }
+
     public Map getHasResourceUrl() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
-            
+
             @Override
             public Object get(Object resource) {
                 String resourceName = (String) resource;
-                    try {
-                        return jcrNode.hasNode(resourceName);
-                    } catch (RepositoryException e) {
-                       log.error("RepositoryException " + e.getMessage());
-                       return false;
-                    }
-                    
+                try {
+                    return jcrNode.hasNode(resourceName);
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException " + e.getMessage());
+                    return false;
+                }
+
             }
         };
     }

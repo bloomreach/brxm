@@ -44,22 +44,20 @@ public class SourceRewriterImpl implements SourceRewriter {
     private final String ATTR_END = "\"";
     
     private PathTranslator pathTranslator;
+    private URLMapping urlMapping;
     
     /*
      * constructor with default URLPathTranslatorImpl();
      */
     public SourceRewriterImpl(URLMapping mapping) {
-        this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(mapping), new PathToSrcTranslatorImpl());
-        
-    }
-    
-    /*
-     * constructor with custom URLPathTranslatorImpl();
-     */
-    public SourceRewriterImpl(PathTranslator pathTranslator) {
-        this.pathTranslator = pathTranslator ;
+        this.pathTranslator = new PathTranslatorImpl(new PathToHrefTranslatorImpl(mapping), new PathToSrcTranslatorImpl(mapping));
+        this.urlMapping = mapping;
     }
 
+    public URLMapping getUrlMapping(){
+        return this.urlMapping;
+    }
+    
     /* (non-Javadoc)
      * @see org.hippoecm.hst.core.template.node.content.SourceRewriter#replace(javax.jcr.Session, java.lang.String)
      */
