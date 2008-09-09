@@ -78,9 +78,9 @@ public class ReorderDataProvider extends SortableDataProvider {
 
     public List<String> getMapping() {
         LinkedList<String> newOrder = new LinkedList<String>();
-	for (ListItem item : listItems) {
-	    newOrder.add(item.getName());
-	}
+        for (ListItem item : listItems) {
+            newOrder.add(item.getName());
+        }
         return newOrder;
     }
 

@@ -36,7 +36,7 @@ public class ListItem extends AbstractReadOnlyModel {
     private JcrNodeModel nodeModel;
 
     public ListItem(JcrNodeModel nodeModel) {
-    	this.nodeModel = nodeModel;
+        this.nodeModel = nodeModel;
         try {
             name = nodeModel.getNode().getName();
             IconAttributeModifier attributeModifier = new IconAttributeModifier();
@@ -60,7 +60,7 @@ public class ListItem extends AbstractReadOnlyModel {
     }
     
     public void detach() {
-    	nodeModel.detach();
+        nodeModel.detach();
     }
 
     @Override
@@ -70,15 +70,15 @@ public class ListItem extends AbstractReadOnlyModel {
     
     @Override
     public boolean equals(Object other) {
-    	if (other instanceof ListItem) {
-    		ListItem otherItem = (ListItem)other;
-    		try {
-				return otherItem.nodeModel.getNode().isSame(nodeModel.getNode());
-			} catch (RepositoryException e) {
-				return false;
-			}
-    	}
-    	return false;
+        if (other instanceof ListItem) {
+            ListItem otherItem = (ListItem)other;
+            try {
+                return otherItem.nodeModel.getNode().isSame(nodeModel.getNode());
+            } catch (RepositoryException e) {
+                return false;
+            }
+        }
+        return false;
     }
 
 }
