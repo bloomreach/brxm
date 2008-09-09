@@ -32,7 +32,7 @@ if (!YAHOO.hippo.DragDropManager) {
         },
 
         addDraggable : function(id, label, groups, callbackFunc, callbackUrl,
-                callbackParameters) {
+                callbackParameters, modelType, customConfig) {
             var js = YAHOO.lang;
             var func = function() {
 
@@ -40,27 +40,46 @@ if (!YAHOO.hippo.DragDropManager) {
                     centerFrame :true,
                     resizeFrame :false
                 }
+                if(!js.isUndefined(customConfig) && !js.isNull(customConfig)) {
+                	for( p in customConfig) {
+                		if(!js.isFunction(customConfig[p])) {
+                			config[p] = customConfig[p];
+                		}
+                	}
+                }
+                
                 if (!js.isUndefined(label) && !js.isNull(label)) {
                     config.label = label;
                 }
-
+                
+                var _class = YAHOO.hippo.DDModel;
+                if(!js.isUndefined(modelType) && !js.isNull(modelType)) {
+                	_class= modelType;
+                }
                 var drag = null;
                 // maybe isArray checks for null/undef but code is obfuscated
-                if (!js.isUndefined(groups) && !js.isNull(groups)
-                        && js.isArray(groups)) {
-                    drag = new YAHOO.hippo.DDModel(id, groups.shift(), config);
+                if (!js.isUndefined(groups) && !js.isNull(groups) && js.isArray(groups)) {
+                	drag = new _class(id, groups.shift(), config);
+                    //drag = new YAHOO.hippo.DDModel(id, groups.shift(), config);
                     while (groups.length > 0) {
                         drag.addToGroup(groups.shift());
                     }
                 } else {
-                    drag = new YAHOO.util.DDModel(id, null, config);
+                    drag = new _class(id, null, config);
                 }
+                
                 if (js.isUndefined(callbackParameters)
                         || js.isNull(callbackParameters)) {
                     callbackParameters = new Array();
                 }
 
                 drag.onDragDrop = function(ev, dropId) {
+                	var sendAjax = true;
+                	if (js.isFunction(drag.addCustomCallbackParameters)) {
+                		sendAjax = drag.addCustomCallbackParameters(dropId, callbackParameters);
+                	}
+                	if(!sendAjax) return;
+                	
                     var targetId = {
                         key :'targetId',
                         value :dropId

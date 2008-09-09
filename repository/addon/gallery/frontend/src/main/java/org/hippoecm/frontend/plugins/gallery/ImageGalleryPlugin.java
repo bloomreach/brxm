@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
+import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -57,7 +58,10 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         List<ListColumn> columns = new ArrayList<ListColumn>();
         
         ListColumn column = new ListColumn(new Model("PrimaryItem"), null);
-        column.setRenderer(new PrimaryItemViewer());
+        PrimaryItemViewer imageViewer = new PrimaryItemViewer();
+        //imageViewer.add(new NodeDragBehavior(ImageGalleryPlugin.this.getPluginContext(), ImageGalleryPlugin.this.getPluginConfig(), ""));
+
+        column.setRenderer(imageViewer);
         columns.add(column);
 
         column = new ListColumn(new Model("Name"), "name");
@@ -72,7 +76,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
         return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
-    private static class PrimaryItemViewer extends AbstractNodeRenderer {
+    private class PrimaryItemViewer extends AbstractNodeRenderer {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -84,7 +88,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
                         Item primItem = imageSet.getPrimaryItem();
                         if (primItem.isNode()) {
                             if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                                return new ImageContainer(id, new JcrNodeModel((Node) primItem));
+                                return new ImageContainer(id, new JcrNodeModel((Node) primItem), getPluginContext(), getPluginConfig());
                             } else {
                                 ImageGalleryPlugin.log.warn("primary item of image set must be of type "
                                         + HippoNodeType.NT_RESOURCE);

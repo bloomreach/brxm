@@ -42,34 +42,54 @@ public class ImageItemFactory implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private final static Logger log = LoggerFactory.getLogger(ImageItemFactory.class);
-
+    
+    final static String BINARIES_PREFIX = "binaries";
+    final static String DROP_PREFIX = "drop-on-xinha";
+    
     private JcrNodeModel nodeModel;
     private EnumMap<XinhaImage, String> values;
-    private String prefix;
 
-    public ImageItemFactory(JcrNodeModel nodeModel, EnumMap<XinhaImage, String> values, String prefix) {
+    public ImageItemFactory(JcrNodeModel nodeModel, EnumMap<XinhaImage, String> values) {
         this.nodeModel = nodeModel;
         this.values = values;
-        this.prefix = prefix;
     }
 
     public ImageItem createImageItem() {
         String urlValue = values.get(XinhaImage.URL);
-        if (urlValue != null && urlValue.startsWith(prefix)) {
-            // find the nodename of the facetselect
-            String resourcePath = urlValue.substring(prefix.length());
-            Item resourceItem;
-            try {
-                resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
-                if (resourceItem.isNode() && ((Node) resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                    return createImageItem(resourceItem.getParent());
+        if (urlValue != null) {
+            if(urlValue.startsWith(BINARIES_PREFIX)) {
+                // find the nodename of the facetselect
+                String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
+                Item resourceItem;
+                try {
+                    resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
+                    if (resourceItem.isNode() && ((Node) resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        return createImageItem(resourceItem.getParent());
+                    }
+                } catch (PathNotFoundException e) {
+                    log.warn("resourcePath not found: " + resourcePath);
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
                 }
-            } catch (PathNotFoundException e) {
-                log.warn("resourcePath not found: " + resourcePath);
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
+            } else if(urlValue.startsWith(DROP_PREFIX)) {
+                //reset width and height
+                values.put(XinhaImage.WIDTH, null);
+                values.put(XinhaImage.HEIGHT, null);
+                
+                String resourcePath = urlValue.substring(DROP_PREFIX.length());
+                Item resourceItem;
+                try {
+                    resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
+                    JcrNodeModel mod = new JcrNodeModel(resourcePath);
+                    //if (resourceItem.isNode() && ((Node) resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        return createImageItem(mod.getNode());
+                    //}
+                } catch (PathNotFoundException e) {
+                    log.warn("resourcePath not found: " + resourcePath);
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                }
             }
-
         }
         return ImageItem.DEFAULT;
     }

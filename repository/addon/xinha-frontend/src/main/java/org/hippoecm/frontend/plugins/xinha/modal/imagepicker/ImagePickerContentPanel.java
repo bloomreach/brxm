@@ -60,10 +60,10 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
             final EnumMap<XinhaImage, String> values) {
         super(modal, nodeModel, values);
 
-        imageItemFactory = new ImageItemFactory(nodeModel, values, "binaries");
+        imageItemFactory = new ImageItemFactory(nodeModel, values);
         selectedItem = imageItemFactory.createImageItem();
-
-        ok.setEnabled(false);
+        
+        ok.setEnabled(selectedItem.isValid());
 
         // ******************************************************************
         // Image resource nodes various formats

@@ -45,7 +45,7 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     protected void respond(AjaxRequestTarget target) {
     }
     
-    public abstract void onDrop(IModel model);
+    public abstract void onDrop(IModel model, AjaxRequestTarget target);
     
     
     public String getComponentMarkupId() {

@@ -22,6 +22,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -88,7 +89,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         }
 
         @Override
-        public void onDrop(IModel model) {
+        public void onDrop(IModel model, AjaxRequestTarget target) {
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel droppedModel = (JcrNodeModel) model;
                 JcrNodeModel groupModel = (JcrNodeModel) getModel();
