@@ -104,8 +104,12 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 			try {
 				ContextBase templateContextBase = getHstConfigurationContextBase(request, repositoryTemplateContextLocation);
 				//find 
+				long start = System.currentTimeMillis();
 				URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
+				System.out.println("Creating URLMappingTokenizer took " + (System.currentTimeMillis() - start) + " ms.");
+				start = System.currentTimeMillis();
 	           	PageNode matchPageNode = getPageNode(request, urlTokenizer, templateContextBase);
+	           	System.out.println("Finding matching page node took " + (System.currentTimeMillis() - start) + " ms.");
 	           	if (matchPageNode != null) {
 	            	
 	            	log.info("matchPageNode.getURLMappingValue()=" + matchPageNode.getURLMappingValue());

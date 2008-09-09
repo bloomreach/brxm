@@ -44,10 +44,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode{
     /*
      * If you want a custom source rewriter, use this constructor
      */
-    public ContentELNodeImpl(Node node) {
-        super(node);
-        this.sourceRewriter =  new SourceRewriterImpl((URLMapping)null);
-    }
+
     public ContentELNodeImpl(Node node, SourceRewriter sourceRewriter){
         super(node);
         this.sourceRewriter = sourceRewriter;

@@ -19,9 +19,10 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 
-public class SearchHit extends ContentELNodeImpl {
+public class SearchHit extends AbstractELNode {
     private String excerpt;
     private int hitPosition;
     private double score;

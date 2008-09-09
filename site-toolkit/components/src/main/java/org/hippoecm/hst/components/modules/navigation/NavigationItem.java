@@ -7,8 +7,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
+import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * 
  *
  */
-public class NavigationItem extends ContentELNodeImpl {
+public class NavigationItem extends AbstractELNode {
     private static final Logger log = LoggerFactory.getLogger(NavigationItem.class);
 
     Boolean selected = false;
