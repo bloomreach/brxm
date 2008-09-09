@@ -119,6 +119,7 @@
         </item>
         <item name="Advanced" href="/implement-hippo-ecm/advanced/index.html" collapse="true">
           <item name="JCR Interface" href="/implement-hippo-ecm/advanced/jcr.html"/>
+          <item name="Dropbox Example" href="/implement-hippo-ecm/advanced/jcr-dropbox-example.html"/>
         </item>
         <item name="Reference" href="/implement-hippo-ecm/reference/index.html" collapse="true">
           <item name="Concepts" href="/implement-hippo-ecm/reference/concepts.html"/>
@@ -158,9 +159,6 @@
           </item>
         </item>
         <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
-        <item name="Integrating Hippo ECM" href="/extend-hippo-ecm/integrate-hippo-ecm/index.html" collapse="true">
-          <item name="Example" href="/extend-hippo-ecm/integrate-hippo-ecm/example.html"/>
-        </item>
       </item>
     </menu>
 
