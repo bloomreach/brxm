@@ -37,6 +37,10 @@
             <a href="jcr.html">JCR Interface</a>
             - Learn how to get low level access to your content through the JCR interface
           </li>
+          <li>
+            <a href="jcr-dropbox-example.html">Dropbox Demo</a>
+            - Learn how to import content and work with metadata and facets, all through the JCR interface
+          </li>
         </ul>
         
       </section>

@@ -23,32 +23,33 @@
     </properties>
     <body>
       <section name="JCR Interface">
-        <p>
-          After having set up your ECM, you may very well want to publish the contents
-          of the repository by means of a website. This means that your website has to connect to
-          the repository. As the repository is Java Content Repository (JCR) compliant,
-          Java clients using this standard can communicate with the repository.
-          Besides that, Hippo has developed a library on top of the JCR layer
-          that is called the <code>Hippo Site Toolkit 2</code>, which is targeted at JSP clients,
-          for easy website development, see the <a href="index.html">Hippo Site Toolkit 2</a>.
-        </p>
-
-        <subsection name="The JCR Interface">
           <p>
-            The Hippo Repository provides a standard Java Content Repository (JCR) interface that is also known
+            Hippo Repository provides a standard Java Content Repository (JCR) interface that is also known
             as <a href="http://www.jcp.org/en/jsr/detail?id=170" target="_blank">Java Specification Request 170</a>.
             It uses an <a href="http://jackrabbit.apache.org/jcr-api.html" target="_blank">Apache JackRabbit</a> implementation.
-            The JCR interface is also mentioned in the example under <a href="/integrate-hippo-ecm/example.html">Integrating Hippo ECM</a>,
-            which was applicable for extending the CMS interface.</p>
-          <p>A Java client that wants to use the interface must retrieve a <code>javax.jcr.Session</code> object.
-             A static factory class is available to help with that. A simple example on how to connect and login
-             to a Hippo Repository based on location, user name and password is:
           </p>
-          <source><![CDATA[  HippoRepository repository
+
+        <subsection name="JCR Basics">
+          <p>
+            A Java client that wants to use the interface must retrieve a <code>javax.jcr.Session</code> object.
+            A static factory class is available to help with that. A simple example on how to connect and login
+            to a Hippo Repository based on location, user name and password is:
+          </p>
+<source>
+<![CDATA[
+HippoRepository repository
       = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
   javax.jcr.Session session = repository.login(<userName>, <password>);
-  session.getRootNode()  etc..]]></source>
+  session.getRootNode()  etc..
+]]>
+</source>
+          <p>
+            For a less trivial example see the <a href="jcr-dropbox-example.html">Dropbox Demo</a>.
+            It shows how to import content into the repository, and how to work with metadata
+            and facets, all through the JCR interface.
+          </p>
         </subsection>
+        
        </section>
 
     </body>
