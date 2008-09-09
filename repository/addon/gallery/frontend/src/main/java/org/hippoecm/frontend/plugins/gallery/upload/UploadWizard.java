@@ -20,6 +20,8 @@ import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 
 public class UploadWizard extends Wizard {
@@ -27,6 +29,7 @@ public class UploadWizard extends Wizard {
     private final static String SVN_ID = "$Id: $";
     private static final long serialVersionUID = 1L;
 
+    private UploadForm form;
     private IDialogService dialogService;
     private UploadDialog uploadDialog;
 
@@ -61,7 +64,8 @@ public class UploadWizard extends Wizard {
 
         public Step1() {
             super();
-            add(new UploadForm("form", uploadDialog));
+            form = new UploadForm("form", uploadDialog);
+            add(form);
         }
     }
 
@@ -70,6 +74,8 @@ public class UploadWizard extends Wizard {
 
         public Step2() {
             super();
+            add(new Label("status", "Upload successful!"));
+            add(new MultiLineLabel("description", new PropertyModel(form, "description")));
             add(new Label("message", "Do you want to upload another file?"));
         }
     }

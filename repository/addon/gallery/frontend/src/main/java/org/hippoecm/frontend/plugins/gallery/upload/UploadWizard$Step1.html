@@ -17,19 +17,18 @@
     <form wicket:id="form">
         <table>
             <tr>
-                <td><label for="upload"> Select File:</label></td>
+                <td><label for="upload">Select file:</label></td>
                 <td><input wicket:id="input" id="upload" type="file" /></td>
             </tr>
             <wicket:enclosure child="type">
             <tr>
-                <td><label for="typeselect">Item provided is of type:</label></td>
+                <td><label for="typeselect">File type:</label></td>
                 <td><select wicket:id="type" id="typeselect"></select></td>
             </tr>
             </wicket:enclosure>
             <tr>
-            <td colspan="2"><input type="submit" value="Create"/></td>
+            <td colspan="2"><input type="submit" value="Upload"/></td>
             </tr>
         </table>
     </form>
-    <!--span wicket:id="progress"/-->
 </wicket:panel>

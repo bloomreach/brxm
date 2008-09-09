@@ -36,6 +36,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
+import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.plugins.gallery.ThumbnailConstants;
 import org.hippoecm.frontend.service.IJcrService;
@@ -54,14 +55,7 @@ class UploadForm extends Form {
     private final UploadDialog uploadDialog;
     private final FileUploadField uploadField;
     private String type;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    private String description;
 
     public UploadForm(String id, UploadDialog uploadDialog) {
         super(id, uploadDialog.getModel());
@@ -109,6 +103,14 @@ class UploadForm extends Form {
         }
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    
     @Override
     protected void onSubmit() {
         final FileUpload upload = uploadField.getFileUpload();
@@ -125,8 +127,7 @@ class UploadForm extends Form {
                         GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
                                 .getWorkflowCategory(), galleryNode);
                         Document document = workflow.createGalleryItem(filename, type);
-                        Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
-                                document.getIdentity());
+                        Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                         Item item = node.getPrimaryItem();
                         if (item.isNode()) {
                             Node primaryChild = (Node) item;
@@ -148,6 +149,8 @@ class UploadForm extends Form {
                                     }
                                 }
                             }
+                            description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
+
                             makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
                                     .getProperty("jcr:mimeType").getString());
                             node.save();
