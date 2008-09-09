@@ -16,24 +16,11 @@
 package org.hippoecm.hst.core.template;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -44,14 +31,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.node.LayoutNode;
-import org.hippoecm.hst.core.template.node.NavigationNode;
+import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.core.template.node.TemplateNode;
-import org.hippoecm.hst.jcr.JCRConnector;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,10 +87,10 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 				//find 
 				long start = System.currentTimeMillis();
 				URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
-				System.out.println("Creating URLMappingTokenizer took " + (System.currentTimeMillis() - start) + " ms.");
+				Timer.log.debug("Creating URLMappingTokenizer took " + (System.currentTimeMillis() - start) + " ms.");
 				start = System.currentTimeMillis();
 	           	PageNode matchPageNode = getPageNode(request, urlTokenizer, templateContextBase);
-	           	System.out.println("Finding matching page node took " + (System.currentTimeMillis() - start) + " ms.");
+	           	Timer.log.debug("Finding matching page node took " + (System.currentTimeMillis() - start) + " ms.");
 	           	if (matchPageNode != null) {
 	            	
 	            	log.info("matchPageNode.getURLMappingValue()=" + matchPageNode.getURLMappingValue());
