@@ -314,6 +314,9 @@
     <sv:property sv:name="shortcuts.id" sv:type="String">
       <sv:value>shortcuts.id</sv:value>
     </sv:property>
+    <sv:property sv:name="shortcuts.query" sv:type="String">
+      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/deque-shortcuts/node()</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="currentActivityPlugin">

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node sv:name="deque-shortcuts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+  xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+  xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+  xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
+
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugincluster</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="imageGalleryShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.path" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.workflow" sv:type="String">
+      <sv:value>internal</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.text" sv:type="String">
+      <sv:value>Add an image to the gallery</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="documentShortcut">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderShortcutPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>shortcut</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.path" sv:type="String">
+      <sv:value>/content</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.workflow" sv:type="String">
+      <sv:value>internal</sv:value>
+    </sv:property>
+  </sv:node>
+
+</sv:node>
