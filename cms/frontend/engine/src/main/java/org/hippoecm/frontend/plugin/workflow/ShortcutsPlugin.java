@@ -95,11 +95,9 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelList
                 Node pluginNode = iter.nextNode();
 
                 String pluginId = config.getString(SHORTCUTS_ID) + (pluginCount++);
-                String modelId = pluginId + ".model";
 
                 IPluginConfig pluginConfig = new JavaPluginConfig(new JcrPluginConfig(new JcrNodeModel(pluginNode)));
                 pluginConfig.put(RenderService.WICKET_ID, config.get(RenderService.WICKET_ID));
-                pluginConfig.put(RenderService.MODEL_ID, modelId);
 
                 JavaClusterConfig clusterConfig = new JavaClusterConfig();
                 clusterConfig.addPlugin(pluginConfig);
