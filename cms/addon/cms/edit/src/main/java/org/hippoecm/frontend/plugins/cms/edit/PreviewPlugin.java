@@ -20,9 +20,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -32,15 +32,15 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentViewPlugin implements IPlugin, IEditService, IDetachable {
+public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(DocumentViewPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
 
     private IPluginContext context;
     private IPluginConfig config;
@@ -48,72 +48,56 @@ public class DocumentViewPlugin implements IPlugin, IEditService, IDetachable {
     private IFactoryService factory;
     private String clusterEditorId;
 
-    public DocumentViewPlugin(IPluginContext context, IPluginConfig config) {
+    public PreviewPlugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
 
-        context.registerService(this, config.getString(EDITOR_ID));
+        if (config.getString(RenderService.MODEL_ID) != null) {
+            context.registerService(this, config.getString(RenderService.MODEL_ID));
+        } else {
+            log.warn("No model defined ({})", RenderService.MODEL_ID);
+        }
     }
 
     public void detach() {
         config.detach();
     }
 
-    public void edit(IModel handle) {
-        JcrNodeModel draft = getDraftModel((JcrNodeModel) handle);
-        if (draft != null) {
-            openEditor(draft);
-        } else {
-            JcrNodeModel preview = getPreviewModel((JcrNodeModel) handle);
+    public void updateModel(IModel handle) {
+        JcrNodeModel handleModel = (JcrNodeModel) handle;
+        if (handleModel != null && handleModel.getNode() != null) {
+            JcrNodeModel preview = getPreviewModel(handleModel);
             if (preview != null) {
+                stopCluster();
                 openPreview(preview);
             } else {
-                log.error("No draft or unpublished version found of document");
-                return;
+                log.error("No preview version found of document");
             }
         }
     }
 
     void stopCluster() {
-        viewer.stopPlugin();
-        context.unregisterService(factory, clusterEditorId);
+        if (viewer != null) {
+            viewer.stopPlugin();
+            context.unregisterService(factory, clusterEditorId);
 
-        viewer = null;
-        factory = null;
+            viewer = null;
+            factory = null;
+        }
     }
 
     void openEditor(JcrNodeModel model) {
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
-                IPluginConfigService.class);
-        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.editor.name"));
-        viewer = context.start(clusterConfig);
-
-        String editorId = clusterConfig.getString("editor.id");
+        String editorId = config.getString("editor.id");
         IEditService editService = context.getService(editorId, IEditService.class);
-        clusterEditorId = context.getReference(editService).getServiceId();
-
-        // register as the factory for the view service
-        factory = new IFactoryService() {
-            private static final long serialVersionUID = 1L;
-
-            public void delete(IClusterable service) {
-                stopCluster();
-
-                // also delete the cluster that started this plugin
-                String myId = context.getReference(DocumentViewPlugin.this).getServiceId();
-                IFactoryService container = context.getService(myId, IFactoryService.class);
-                container.delete(DocumentViewPlugin.this);
-            }
-        };
-        context.registerService(factory, clusterEditorId);
-
-        editService.edit(model);
+        if (editService != null) {
+            editService.edit(model);
+        }
     }
 
     void openPreview(JcrNodeModel preview) {
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.preview.name"));
+        IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));
 
         // register self as edit service
         final String editorId = clusterConfig.getString("editor.id");
@@ -146,9 +130,9 @@ public class DocumentViewPlugin implements IPlugin, IEditService, IDetachable {
                 context.unregisterService(editService, editorId);
 
                 // also delete the cluster that contains this plugin
-                String myId = context.getReference(DocumentViewPlugin.this).getServiceId();
+                String myId = context.getReference(PreviewPlugin.this).getServiceId();
                 IFactoryService container = context.getService(myId, IFactoryService.class);
-                container.delete(DocumentViewPlugin.this);
+                container.delete(PreviewPlugin.this);
             }
         };
         context.registerService(factory, clusterEditorId);
@@ -166,28 +150,6 @@ public class DocumentViewPlugin implements IPlugin, IEditService, IDetachable {
                         // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                         if (child.hasProperty("hippostd:state")
                                 && child.getProperty("hippostd:state").getString().equals("unpublished")) {
-                            return new JcrNodeModel(child);
-                        }
-                    }
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return null;
-    }
-
-    JcrNodeModel getDraftModel(JcrNodeModel handle) {
-        String user = ((UserSession) Session.get()).getCredentials().getString("username");
-        try {
-            Node handleNode = handle.getNode();
-            if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
-                    Node child = iter.nextNode();
-                    if (child.getName().equals(handleNode.getName())) {
-                        // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                        if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")
-                                && child.getProperty("hippostd:holder").getString().equals(user)) {
                             return new JcrNodeModel(child);
                         }
                     }
