@@ -64,6 +64,9 @@
     <sv:property sv:name="gallery.workflow" sv:type="String">
       <sv:value>internal</sv:value>
     </sv:property>
+    <sv:property sv:name="option.only" sv:type="String">
+      <sv:value>New Document</sv:value>
+    </sv:property>
   </sv:node>
 
 </sv:node>
