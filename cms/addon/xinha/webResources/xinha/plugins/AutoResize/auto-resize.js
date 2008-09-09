@@ -24,11 +24,9 @@ function AutoResize(editor) {
 
     YAHOO.hippo.LayoutManager.registerResizeListener(this.editor._textArea,
             this, function(type, args, me) {
-        
-        var unit = args[0];
-        var sizes = unit.getSizes();
-        if(sizes.body.w) me.dim.width  = parseInt(sizes.body.w);
-        if(sizes.body.h) me.dim.height = parseInt(sizes.body.h);
+    	var unit = args[0];
+        if(unit.body.w) me.dim.width  = parseInt(unit.body.w);
+        if(unit.body.h) me.dim.height = parseInt(unit.body.h);
         
         var scrollBottom = unit.body.scrollHeight - (unit.body.scrollTop + unit.body.clientHeight); // height of element scroll
         var scroll = unit.body.scrollTop + scrollBottom > 0;
