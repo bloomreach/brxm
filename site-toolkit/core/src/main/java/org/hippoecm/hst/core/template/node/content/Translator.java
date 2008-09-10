@@ -16,5 +16,5 @@
 package org.hippoecm.hst.core.template.node.content;
 
 public interface Translator {
-    public static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:"};
+    public static final String[] EXTERNALS = {"http:", "https:", "webdav:", "ftp:", "mailto:"};
 }
