@@ -185,7 +185,7 @@ public abstract class HstFilterBase implements Filter {
 	    	    Property urlMappingProperty = subNode.getProperty("hst:urlmapping");
 	            siteMapNodes.put(urlMappingProperty.getValue().getString(), new PageNode(templateContextBase, subNode));
 	    	} else {
-	    	    log.warn("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. Item not meant for mapping, but only for binaries");
+	    	    log.debug("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. Item not meant for mapping, but only for binaries");
 	    	}
 	    }
 		return siteMapNodes;
