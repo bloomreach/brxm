@@ -70,24 +70,26 @@ public class LayoutModulesTag  extends BodyTagSupport {
 		}
         List<PageContainerModuleNode> pcmList = pcNodeModules.getItems();;
     
+        int amountRenderedModules = 0;
         for (int index=0; index < pcmList.size(); index++) {
         	try {
         		PageContainerModuleNode pcm = pcmList.get(index);			
         		log.debug("pageContainerModule" + pcm);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);			
 				pageContext.include(pcm.getTemplatePage());
+				amountRenderedModules++;
 			} catch (RepositoryException e) {
 				log.error("RepositoryException:", e);
-				throw new JspException(e);
+				//throw new JspException(e);
 			} catch (IOException e) {
                 log.error("IOException:", e);
-                throw new JspException(e);
+                //throw new JspException(e);
 			} catch (ServletException e) {
-				throw new JspException(e);
+				//throw new JspException(e);
 			}
         }
         
-        if (pcmList.size() == 0) {
+        if (amountRenderedModules == 0) {
             log.debug("empty pcmList: eval body");
             return EVAL_BODY_INCLUDE;
         }
