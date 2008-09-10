@@ -26,12 +26,14 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public class TabsPlugin extends RenderPlugin {
     public static final int MAX_TAB_TITLE_LENGTH = 9;
 
     private TabbedPanel tabbedPanel;
+    private RenderService emptyPanel;
     private List<Tab> tabs;
     private ServiceTracker<IRenderService> tabsTracker;
     private int selectCount;
@@ -58,6 +61,13 @@ public class TabsPlugin extends RenderPlugin {
         tabs = new ArrayList<Tab>();
         add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
 
+        IPluginConfig panelConfig = new JavaPluginConfig();
+        panelConfig.put("wicket.id", properties.getString(TAB_ID));
+        panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
+
+        emptyPanel = new RenderService(context, panelConfig);
+        context.registerService(emptyPanel, properties.getString(TAB_ID));
+
         selectCount = 0;
         tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
             private static final long serialVersionUID = 1L;
@@ -65,11 +75,13 @@ public class TabsPlugin extends RenderPlugin {
             @Override
             public void onServiceAdded(IRenderService service, String name) {
                 // add the plugin
-                service.bind(TabsPlugin.this, org.apache.wicket.extensions.markup.html.tabs.TabbedPanel.TAB_PANEL_ID);
-                Tab tabbie = new Tab(service);
-                tabs.add(tabbie);
-                if (tabs.size() == 1) {
-                    tabbedPanel.setSelectedTab(0);
+                service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
+                if (service != emptyPanel) {
+                    Tab tabbie = new Tab(service);
+                    tabs.add(tabbie);
+                    if (tabs.size() == 1) {
+                        tabbedPanel.setSelectedTab(0);
+                    }
                 }
                 redraw();
             }
@@ -116,6 +128,10 @@ public class TabsPlugin extends RenderPlugin {
             tabbie.detach();
         }
         super.onDetach();
+    }
+
+    Panel getEmptyPanel() {
+        return emptyPanel;
     }
 
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
@@ -185,7 +201,7 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         public Panel getPanel(String panelId) {
-            assert (panelId.equals(org.apache.wicket.extensions.markup.html.tabs.TabbedPanel.TAB_PANEL_ID));
+            assert (panelId.equals(TabbedPanel.TAB_PANEL_ID));
 
             return (Panel) renderer;
         }

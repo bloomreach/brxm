@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.Loop.LoopItem;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
@@ -180,9 +179,9 @@ public class TabbedPanel extends WebMarkupContainer {
     public void setSelectedTab(int index) {
         if (index < 0 || index >= tabs.size()) {
             if (get(TAB_PANEL_ID) == null) {
-                add(new EmptyPanel(TAB_PANEL_ID));
+                add(plugin.getEmptyPanel());
             } else {
-                replace(new EmptyPanel(TAB_PANEL_ID));
+                replace(plugin.getEmptyPanel());
             }
             return;
         }

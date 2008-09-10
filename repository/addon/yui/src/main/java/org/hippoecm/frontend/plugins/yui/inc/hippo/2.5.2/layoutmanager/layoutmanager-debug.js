@@ -36,7 +36,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             this.id = id;
             this.parentId = parentId;
             this.layout = null;
-            this.childInitializer = null;
+            this.init = null;
             this.resizeEvent = null;
             this.callbackUrl = null;
         };
@@ -73,10 +73,27 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             onLoad : function() {
                 YAHOO.log('onLoad', 'info', 'LayoutManager');
+                this.cleanupWireframes();
                 this.createWireframes();
                 this.renderWireframes();
             },
 
+            cleanupWireframes : function() {
+                var newlist = [];
+                newlist[this.ROOT_ELEMENT_ID] = this.wireframes[this.ROOT_ELEMENT_ID];
+                for(var i in this.wireframes) {
+                    if(this.wireframes[i].parentId != undefined  && i != this.ROOT_ELEMENT_ID) {
+                        var bodyEl = HippoDom.resolveElement(this.wireframes[i].id);
+                        if (bodyEl == null) {
+                            this.cleanup(this.wireframes[i].id);
+                        } else {
+                            newlist[i] = this.wireframes[i];
+                        }
+                    }
+                }
+                this.wireframes = newlist;
+            },
+            
             createWireframes : function() {
                 YAHOO.log('Create ' + this.createQueue.queue.length + 'wireframes', 'info', 'LayoutManager');
                 this.createQueue.handleQueue();
@@ -241,12 +258,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
 
                         _this.addLinkedWireframe(id, config, bodyEl);
-                        _this.renderWireframe(id);
                     }
-                    _this.wireframes[parentId].childInitializer = childInit;
+                    _this.wireframes[id].init = childInit;
                     if (update) {
                         var func = function() {
-                            _this.renderWireframe(parentId)
+                            _this.renderWireframe(_this.ROOT_ELEMENT_ID);
                         };
                         this.renderQueue.registerFunction(func,
                                 _this.ROOT_ELEMENT_ID);
@@ -299,17 +315,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
                 layout.on('render', function() {
                     YAHOO.log('Wireframe[' + id + '] onrender', 'info', 'LayoutManager');
-                    if (_this.wireframes[id].childInitializer != null) {
-                        YAHOO.log('Wireframe[' + id + '] childInit', 'info', 'LayoutManager');
-                        _this.wireframes[id].childInitializer();
-                        _this.wireframes[id].childInitializer = null;
-                    } else {
-                        YAHOO.log('Wireframe[' + id + '] find child and render it', 'info', 'LayoutManager');
-                        for(var i in _this.wireframes) {
-                            if(_this.wireframes[i].parentId == id) {
-                                _this.renderWireframe(_this.wireframes[i].id);
-                                break;
+                    for(var i in _this.wireframes) {
+                        if(_this.wireframes[i].parentId != undefined && _this.wireframes[i].parentId == id) {
+                            if (_this.wireframes[i].init != null) {
+                                YAHOO.log('Wireframe[' + id + '] childInit', 'info', 'LayoutManager');
+                                _this.wireframes[i].init();
+                                _this.wireframes[i].init = null;
                             }
+                            YAHOO.log('Wireframe[' + id + '] find child and render it', 'info', 'LayoutManager');
+                            _this.renderWireframe(_this.wireframes[i].id);
                         }
                     }
                 });

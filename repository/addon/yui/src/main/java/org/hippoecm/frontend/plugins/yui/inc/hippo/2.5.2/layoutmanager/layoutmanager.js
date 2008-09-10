@@ -71,10 +71,27 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             onLoad : function() {
+                this.cleanupWireframes();
                 this.createWireframes();
                 this.renderWireframes();
             },
 
+            cleanupWireframes : function() {
+                var newlist = [];
+                newlist[this.ROOT_ELEMENT_ID] = this.wireframes[this.ROOT_ELEMENT_ID];
+                for(var i in this.wireframes) {
+                    if(this.wireframes[i].parentId != undefined  && i != this.ROOT_ELEMENT_ID) {
+                        var bodyEl = HippoDom.resolveElement(this.wireframes[i].id);
+                        if (bodyEl == null) {
+                            this.cleanup(this.wireframes[i].id);
+                        } else {
+                            newlist[i] = this.wireframes[i];
+                        }
+                    }
+                }
+                this.wireframes = newlist;
+            },
+            
             createWireframes : function() {
                 this.createQueue.handleQueue();
             },
@@ -208,12 +225,11 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                         }
 
                         _this.addLinkedWireframe(id, config, bodyEl);
-                        _this.renderWireframe(id);
                     }
-                    _this.wireframes[parentId].childInitializer = childInit;
+                    _this.wireframes[id].init = childInit;
                     if (update) {
                         var func = function() {
-                            _this.renderWireframe(parentId)
+                            _this.renderWireframe(_this.ROOT_ELEMENT_ID);
                         };
                         this.renderQueue.registerFunction(func,
                                 _this.ROOT_ELEMENT_ID);
@@ -264,15 +280,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
 
                 layout.on('render', function() {
-                    if (_this.wireframes[id].childInitializer != null) {
-                        _this.wireframes[id].childInitializer();
-                        _this.wireframes[id].childInitializer = null;
-                    } else {
-                        for(var i in _this.wireframes) {
-                            if(_this.wireframes[i].parentId == id) {
-                                _this.renderWireframe(_this.wireframes[i].id);
-                                break;
+                    for(var i in _this.wireframes) {
+                        if(_this.wireframes[i].parentId != undefined && _this.wireframes[i].parentId == id) {
+                            if (_this.wireframes[i].init != null) {
+                                _this.wireframes[i].init();
+                                _this.wireframes[i].init = null;
                             }
+                            _this.renderWireframe(_this.wireframes[i].id);
                         }
                     }
                 });
@@ -308,7 +322,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     var jsonStr = YAHOO.lang.JSON.stringify(params.sizes);
                     if(wf.sizes != jsonStr) {
                       wf.sizes = jsonStr;
-                      
                       url += '&targetId=' + id;
                       url += '&sizes=' + jsonStr;
                       

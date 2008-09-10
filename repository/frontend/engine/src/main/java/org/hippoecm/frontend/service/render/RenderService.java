@@ -38,7 +38,7 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class RenderService extends Panel implements IModelListener, IRenderService {
+public class RenderService extends Panel implements IModelListener, IRenderService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
