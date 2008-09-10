@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.repository.api.ISO9075Helper;
 
@@ -70,10 +71,8 @@ public class BinariesServlet extends HttpServlet {
             }
             
 
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-
+        path = UrlUtilities.decodeUrl(path);
+       
         try {
             Session session = JCRConnector.getJCRSession(req.getSession());
 
