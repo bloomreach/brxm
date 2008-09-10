@@ -26,6 +26,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.NavigationItem;
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -41,7 +42,7 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
 
     public void render(PageContext pageContext) {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        PageNode pn = (PageNode) pageContext.getRequest().getAttribute("pageNode");
+        PageNode pn = (PageNode) pageContext.getRequest().getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
 
         String path = null;
         try {
