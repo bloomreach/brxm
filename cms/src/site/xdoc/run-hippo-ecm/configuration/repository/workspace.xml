@@ -34,11 +34,12 @@
             </p>
             <p>
                 An example JackRabbit workspace configuration can be found in the
-                <a href="http://jackrabbit.apache.org/doc/config.html#Workspace configuration">Jackrabbit documentation</a>.
+                <a href="http://jackrabbit.apache.org/jackrabbit-configuration.html">Jackrabbit documentation</a>.
                 Hippo Repository has a custom workspace configuration for enabling fast faceted navigation through
                 custom indexing. The main differences with a default JackRabbit workspace configuration are
                 the SearchIndex class and indexingConfigurationClass. See <a href="searchindex.html">Search Index configuration</a> for
                 explanation of all &lt;SearchIndex&gt; parameters.
+                
             </p>
             <subsection name="Workspace Configuration">
                 <p>
