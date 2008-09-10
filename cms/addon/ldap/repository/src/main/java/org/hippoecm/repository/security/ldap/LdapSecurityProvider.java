@@ -15,11 +15,11 @@
  */
 package org.hippoecm.repository.security.ldap;
 
-
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -40,18 +40,6 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    private static long lastUpdate = 0;
-    private static boolean syncRunning = false;
-    private final static Object mutex = new Object();
-
-    private static long cacheTime;
-    private final static long DEFAULT_CACHE_TIME = 600 * 1000;
-
-    //private Session session;
-    private SecurityProviderContext context;
-    private Node providerNode;
-    private EventListener listener;
-
     // the nodetypes don't have to be exposed through the api because they are ldap specific
     final public static String NT_LDAPMAPPING = "hippoldap:mapping";
     final public static String NT_LDAPUSERSEARCH = "hippoldap:usersearch";
@@ -60,7 +48,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     final public static String NT_LDAPROLEPROVIDER = "hippoldap:roleprovider";
     final public static String NT_LDAPUSERPROVIDER = "hippoldap:userprovider";
     final public static String NT_LDAPSECURITYPROVIDER = "hippoldap:securityprovider";
-    
+
     // the properties don't have to be exposed through the api because they are ldap specific
     public final static String PROPERTY_PROVIDER_URL = "hippoldap:providerurl";
     public final static String PROPERTY_AUTHENTICATION = "hippoldap:authentication";
@@ -72,28 +60,33 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     public final static String PROPERTY_CACHE_MAX_AGE = "hippoldap:cachemaxage";
     public final static String PROPERTY_LDAP_DN = "hippoldap:dn";
 
+    // updates and sync caches
+    private long lastUpdate = 0;
+    private final Object mutex = new Object();
+    private final long DEFAULT_CACHE_TIME = 600 * 1000;
+    private long cacheTime = DEFAULT_CACHE_TIME;
+
+    //private Session session;
+    private SecurityProviderContext context;
+    private EventListener listener;
+    private BackgroundSync backgroundSync = null;
+
     /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    //------------------------< Interface Impl >--------------------------//
     /**
      * {@inheritDoc}
      */
     public void init(SecurityProviderContext context) throws RepositoryException {
-        this.context = context;
-
-        Session session = context.getSession();
-
-        providerNode = session.getRootNode().getNode(context.getSecurityPath() + "/" + context.getProviderId());
-
         log.info("Initializing security provider: '{}'.", context.getProviderId());
-
+        this.context = context;
+        
         /* Register a listener for the provider node.  Whenever a node
          * or property is added, refresh the security provider.
          */
-        ObservationManager obMgr = session.getWorkspace().getObservationManager();
+        ObservationManager obMgr = context.getSession().getWorkspace().getObservationManager();
         listener = new EventListener() {
             public void onEvent(EventIterator events) {
                 try {
@@ -105,8 +98,8 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 }
             }
         };
-        obMgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
-                providerNode.getPath(), true, null, null, true);
+        obMgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
+                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/" + context.getProviderPath(), true, null, null, true);
 
         // initial config load
         reloadConfig();
@@ -114,32 +107,31 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     @Override
     public void sync() {
-        synchronized (mutex) {
-            if (syncRunning) {
-                return;
-            }
-            syncRunning = true;
-        }
-        cacheTime = DEFAULT_CACHE_TIME;
-        try {
-            if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
-                cacheTime = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
-            }
-        } catch (RepositoryException e) {
-            log.info("No refresh time found using default of: {} ms.", cacheTime);
-        }
         if ((System.currentTimeMillis() - lastUpdate) < cacheTime) {
             // keep using cache
+            log.debug("Time until cache refresh: {} ms for provider {}.",
+                    (System.currentTimeMillis() - lastUpdate - cacheTime), context.getProviderId());
             return;
         }
-        log.debug("Start ldap sync");
-        ((LdapUserManager) userManager).updateUsers();
-        ((LdapGroupManager) groupManager).updateGroups();
-        lastUpdate = System.currentTimeMillis();
-        log.info("Ldap users and groups synced.");
-        syncRunning = false;
+
+        synchronized (mutex) {
+            if (backgroundSync == null) {
+                backgroundSync = new BackgroundSync();
+                backgroundSync.start();
+                lastUpdate = System.currentTimeMillis();
+            } else {
+                if (!backgroundSync.isRunning()) {
+                    // previous sync is done, start new one.
+                    backgroundSync = new BackgroundSync();
+                    backgroundSync.start();
+                    lastUpdate = System.currentTimeMillis();
+                } else {
+                    log.debug("Ldap sync still running for provider: {}", context.getProviderId());
+                }
+            }
+        }
     }
-    
+
     @Override
     public void remove() {
         ObservationManager obMgr;
@@ -154,40 +146,101 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
         }
     }
 
-    //------------------------< Private methods >--------------------------//
-    public void reloadConfig() throws RepositoryException {
-        synchronized (mutex) {
+    public synchronized void reloadConfig() throws RepositoryException {
+        try {
+            log.info("Reading config for security provider: '{}'.", context.getProviderId());
+
+            context.getSession().refresh(false);
+            Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
+
+            // try login to test factory
+            LdapContextFactory lcf = LdapUtils.createContextFactory(providerNode);
+            LdapContext sysContext = lcf.getSystemLdapContext();
+            LdapUtils.closeContext(sysContext);
+
+            // login succeeded, create manager contexts
+
+            if (providerNode.hasNode(HippoNodeType.NT_USERPROVIDER)) {
+                LdapManagerContext userContext = new LdapManagerContext(lcf, context.getSession(), context
+                        .getProviderPath(), context.getUsersPath());
+
+                userManager = new LdapUserManager();
+                userManager.init(userContext);
+            } else {
+                log.warn("No user manager found, using dummy manager");
+                userManager = new DummyUserManager();
+            }
+
+            if (providerNode.hasNode(HippoNodeType.NT_GROUPPROVIDER)) {
+                LdapManagerContext groupContext = new LdapManagerContext(lcf, context.getSession(), context
+                        .getProviderPath(), context.getGroupsPath());
+
+                groupManager = new LdapGroupManager();
+                groupManager.init(groupContext);
+            } else {
+                groupManager = new DummyGroupManager();
+                log.warn("No group manager found, using dummy manager");
+            }
+
+            cacheTime = DEFAULT_CACHE_TIME;
             try {
-                log.info("Reading config for security provider: '{}'.", context.getProviderId());
+                context.getSession().refresh(false);
+                if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
+                    cacheTime = providerNode.getProperty(PROPERTY_CACHE_MAX_AGE).getLong() * 1000;
+                }
+            } catch (RepositoryException e) {
+                log.info("No refresh time found using default of: {} ms.", cacheTime);
+            }
+        } catch (NamingException e) {
+            // wrap error
+            throw new RepositoryException("Error while setting up ldap system context.", e);
+        }
+    }
 
-                // try login to test factory
+    private class BackgroundSync extends Thread {
+
+        private boolean running = true;
+
+        @Override
+        public void run() {
+            try {
+                log.info("Start ldap sync for: {}", context.getProviderId());
+
+                // create new separate session so saves don't interferer with other sessions
+                Session syncSession = context.getSession().impersonate(new SimpleCredentials("system", new char[] {}));
+                Node providerNode = syncSession.getRootNode().getNode(context.getProviderPath());
+
                 LdapContextFactory lcf = LdapUtils.createContextFactory(providerNode);
-                LdapContext sysContext = lcf.getSystemLdapContext();
-                LdapUtils.closeContext(sysContext);
-
-                // login succeeded, create manager contexts
-                LdapManagerContext userContext = new LdapManagerContext(lcf, context.getProviderNode(), context.getUsersPath());
 
                 if (providerNode.hasNode(HippoNodeType.NT_USERPROVIDER)) {
-                    userManager = new LdapUserManager();
-                    userManager.init(userContext);
-                } else {
-                    log.warn("No user manager found, using dummy manager");
-                    userManager = new DummyUserManager();
+                    LdapManagerContext userContext = new LdapManagerContext(lcf, syncSession,
+                            context.getProviderPath(), context.getUsersPath());
+                    LdapUserManager userMgr = new LdapUserManager();
+                    userMgr.init(userContext);
+                    userMgr.updateUsers();
                 }
 
-                LdapManagerContext groupContext = new LdapManagerContext(lcf, context.getProviderNode(), context.getGroupsPath());
                 if (providerNode.hasNode(HippoNodeType.NT_GROUPPROVIDER)) {
-                    groupManager = new LdapGroupManager();
-                    groupManager.init(groupContext);
-                } else {
-                    groupManager = new DummyGroupManager();
-                    log.warn("No group manager found, using dummy manager");
+                    LdapManagerContext groupContext = new LdapManagerContext(lcf, syncSession, context
+                            .getProviderPath(), context.getGroupsPath());
+                    LdapGroupManager groupMgr = new LdapGroupManager();
+                    groupMgr.init(groupContext);
+                    groupMgr.updateGroups();
                 }
-            } catch (NamingException e) {
-                // wrap error
-                throw new RepositoryException("Error while setting up ldap system context.", e);
+
+                syncSession.save();
+                syncSession.logout();
+
+                log.info("Ldap users and groups synced for: {}", context.getProviderId());
+            } catch (RepositoryException e) {
+                log.error("Unable to sync users and groups for provider: " + context.getProviderId(), e);
+            } finally {
+                running = false;
             }
+        }
+
+        public boolean isRunning() {
+            return running;
         }
     }
 

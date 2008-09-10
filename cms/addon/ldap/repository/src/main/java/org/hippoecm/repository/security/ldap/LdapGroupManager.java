@@ -63,7 +63,7 @@ public class LdapGroupManager extends AbstractGroupManager {
     /**
      * The initialized ldap context factory
      */
-    LdapContext ctx = null;
+    LdapContext systemCtx = null;
 
     /**
      * The attribute to property mappings
@@ -86,8 +86,14 @@ public class LdapGroupManager extends AbstractGroupManager {
     public void initManager(ManagerContext context) throws RepositoryException {
         LdapManagerContext ldapContext = (LdapManagerContext) context;
         lcf = ldapContext.getLdapContextFactory();
-        loadSearches(context.getProviderNode());
-        loadMappings(context.getProviderNode());
+        try {
+            systemCtx = lcf.getSystemLdapContext();
+        } catch (NamingException e) {
+            throw new RepositoryException("Unable to connect to the ldap server for: " + providerId, e);
+        }
+        Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
+        loadSearches(providerNode);
+        loadMappings(providerNode);
         initialized = true;
     }
 
@@ -104,7 +110,9 @@ public class LdapGroupManager extends AbstractGroupManager {
             throw new IllegalStateException("Not initialized: " + providerId);
         }
         try {
-            log.debug("Found " + members.size() + " members for group: " + dn);
+            if (log.isTraceEnabled()) {
+                log.trace("Found " + members.size() + " members for group: " + dn);
+            }
             List<String> uids = new ArrayList<String>();
             // parse member dn string
             for (String member : members) {
@@ -165,7 +173,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             group.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
             group.setProperty(HippoNodeType.HIPPO_MEMBERS, uids.toArray(new String[uids.size()]));
             group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
-            log.debug("Updated members of for group: {}", dn);
+            log.debug("Updated {} members of for group: {}", uids.size(), dn);
         } catch (RepositoryException e) {
             log.warn("Unable to update members of group {} : {}", dn, e.getMessage());
         }
@@ -177,7 +185,7 @@ public class LdapGroupManager extends AbstractGroupManager {
         try {
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-            Attributes attrs = ctx.getAttributes(dn);
+            Attributes attrs = systemCtx.getAttributes(dn);
             for (LdapMapping mapping : mappings) {
                 try {
                     Attribute attr = attrs.get(mapping.getSource());
@@ -210,7 +218,6 @@ public class LdapGroupManager extends AbstractGroupManager {
         String dn = user.getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
         String userId = user.getName();        
         try {
-            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
             for (LdapGroupSearch search : searches) { 
@@ -227,7 +234,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.debug("Searching for memberships of user '" + userId + "' with filter '" + filter
                             + "' providerId: " + providerId);
                 }
-                results = ctx.search(search.getBaseDn(), filter, ctls);
+                results = systemCtx.search(search.getBaseDn(), filter, ctls);
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
                     Attributes attrs = sr.getAttributes();
@@ -239,8 +246,6 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
-        } finally {
-            LdapUtils.closeContext(ctx);
         }
         return groups;
     }
@@ -256,7 +261,6 @@ public class LdapGroupManager extends AbstractGroupManager {
         NamingEnumeration<SearchResult> results = null;
         String dn = null;
         try {
-            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
@@ -268,7 +272,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                     continue;
                 }
                 
-                results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
+                results = systemCtx.search(search.getBaseDn(), search.getFilter(), ctls);
                 if (log.isDebugEnabled()) {
                     log.debug("Searching for groups in '"+search.getBaseDn()+"' with filter '"+search.getFilter()+"'");
                 }
@@ -306,8 +310,6 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
-        } finally {
-            LdapUtils.closeContext(ctx);
         }
 
         // save remaining unsaved group nodes

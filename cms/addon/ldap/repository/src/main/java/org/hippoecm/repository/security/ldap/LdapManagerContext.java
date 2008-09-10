@@ -15,8 +15,8 @@
  */
 package org.hippoecm.repository.security.ldap;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.security.ManagerContext;
 
@@ -41,9 +41,10 @@ public class LdapManagerContext extends ManagerContext {
      * @param session Session The system/root session
      * @param path the path for exposing information e.g. hippo:users, hippo:groups, etc.
      * @param providerPath the path to the configuration of this provider
+     * @param session the provider's session
      */
-    public LdapManagerContext(LdapContextFactory lcf, Node providerNode, String path) throws RepositoryException {
-        super(providerNode, path);
+    public LdapManagerContext(LdapContextFactory lcf, Session session, String providerPath, String path) throws RepositoryException {
+        super(session, providerPath, path);
         this.lcf = lcf;
     }
 

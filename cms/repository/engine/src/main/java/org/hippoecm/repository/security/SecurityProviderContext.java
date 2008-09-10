@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.security;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -29,20 +28,20 @@ public class SecurityProviderContext {
     private final static String SVN_ID = "$Id$";
 
     private final Session session;
-    private final Node providerNode;
     private final String providerId;
+    private final String providerPath;
     private final String securityPath;
     private final String usersPath;
     private final String groupsPath;
     private final String rolesPath;
     private final String domainsPath;
 
-    public SecurityProviderContext(Node providerNode, String securityPath, String usersPath, String groupsPath, String rolesPath, String domainsPath)
-            throws RepositoryException {
-        this.providerNode = providerNode;
-        this.session = providerNode.getSession();
-        this.providerId = providerNode.getName();
+    public SecurityProviderContext(Session session, String providerId, String securityPath, String usersPath,
+            String groupsPath, String rolesPath, String domainsPath) throws RepositoryException {
+        this.session = session;
+        this.providerId = providerId;
         this.securityPath = securityPath;
+        this.providerPath = securityPath + "/" + providerId;
         this.usersPath = usersPath;
         this.groupsPath = groupsPath;
         this.rolesPath = rolesPath;
@@ -53,12 +52,12 @@ public class SecurityProviderContext {
         return session;
     }
 
-    public Node getProviderNode() {
-        return providerNode;
-    }
-
     public String getProviderId() {
         return providerId;
+    }
+
+    public String getProviderPath() {
+        return providerPath;
     }
 
     public String getSecurityPath() {
@@ -80,5 +79,4 @@ public class SecurityProviderContext {
     public String getDomainsPath() {
         return domainsPath;
     }
-
 }

@@ -18,6 +18,8 @@ package org.hippoecm.repository.security;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -53,11 +55,15 @@ public class SecurityProviderFactory {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public SecurityProvider create(Node providerNode) throws ValueFormatException, PathNotFoundException, RepositoryException, ClassNotFoundException,
+    public SecurityProvider create(Session session, String providerId) throws ValueFormatException, PathNotFoundException, RepositoryException, ClassNotFoundException,
             InstantiationException, IllegalAccessException {
+        Node providerNode = session.getRootNode().getNode(securityPath + "/" + providerId);
         Class clazz = Class.forName(providerNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
         SecurityProvider sp = (SecurityProvider) clazz.newInstance();
-        SecurityProviderContext context = new SecurityProviderContext(providerNode, securityPath, usersPath, groupsPath, rolesPath, domainsPath);
+        
+        // create new session for each provider
+        Session providerSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
+        SecurityProviderContext context = new SecurityProviderContext(providerSession, providerId, securityPath, usersPath, groupsPath, rolesPath, domainsPath);
         sp.init(context);
         return sp;
     }

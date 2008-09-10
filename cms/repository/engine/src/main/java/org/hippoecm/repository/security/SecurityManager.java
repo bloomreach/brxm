@@ -160,6 +160,11 @@ public class SecurityManager {
             }
            
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
+            
+            // internal provider doesn't need to sync
+            if (INTERNAL_PROVIDER.equals(providerId)) {
+                return true;
+            }
 
             UserManager userMgr = providers.get(providerId).getUserManger();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
@@ -227,7 +232,7 @@ public class SecurityManager {
             try {
                 name = provider.getName();
                 log.debug("Found secutiry provider: '{}'", name);
-                providers.put(name, spf.create(provider));
+                providers.put(name, spf.create(session, name));
                 log.info("Security provider '{}' initialized.", name);
             } catch (ClassNotFoundException e) {
                 log.error("Class not found for security provider: " + e.getMessage());

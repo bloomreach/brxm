@@ -59,6 +59,11 @@ public class LdapUserManager extends AbstractUserManager {
     private LdapContextFactory lcf;
 
     /**
+     * The system context
+     */
+    LdapContext systemCtx;
+
+    /**
      * The attribute to property mappings
      */
     Set<LdapMapping> mappings = new HashSet<LdapMapping>();
@@ -71,7 +76,7 @@ public class LdapUserManager extends AbstractUserManager {
     /**
      * Logger
      */
-    private final static Logger log = LoggerFactory.getLogger(LdapUserManager.class);
+    private final Logger log = LoggerFactory.getLogger(LdapUserManager.class);
 
     /**
      * initialize
@@ -79,9 +84,14 @@ public class LdapUserManager extends AbstractUserManager {
     public void initManager(ManagerContext context) throws RepositoryException {
         LdapManagerContext ldapContext = (LdapManagerContext) context;
         lcf = ldapContext.getLdapContextFactory();
-        providerId = ldapContext.getProviderId();
-        loadSearches(context.getProviderNode());
-        loadMappings(context.getProviderNode());
+        try {
+            systemCtx = lcf.getSystemLdapContext();
+        } catch (NamingException e) {
+            throw new RepositoryException("Unable to connect to the ldap server for: " + providerId, e);
+        }
+        Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
+        loadSearches(providerNode);
+        loadMappings(providerNode);
         initialized = true;
     }
 
@@ -101,14 +111,14 @@ public class LdapUserManager extends AbstractUserManager {
             return false;
         }
         log.debug("Found dn {} with provider: {}", dn, providerId);
-        LdapContext ctx = null;
+        LdapContext userCtx = null;
         try {
-            ctx = lcf.getLdapContext(dn, creds.getPassword());
+            userCtx = lcf.getLdapContext(dn, creds.getPassword());
             return true;
         } catch (NamingException e) {
             log.debug("Exception while trying to authenticate user {} : {}", creds.getUserID(), e.getMessage());
         } finally {
-            LdapUtils.closeContext(ctx);
+            LdapUtils.closeContext(userCtx);
         }
         return false;
     }
@@ -133,10 +143,12 @@ public class LdapUserManager extends AbstractUserManager {
         String dn = null;
         Node user = null;
         try {
-            if (hasUser(userId)) {
-                user = getUser(userId);
+            user = getUser(userId);
+            
+            if (user != null) {
                 if (!isManagerForUser(user)) {
-                    log.warn("Unable to sync user info. User '{}' not not managed by provider: {} ", userId, providerId);
+                    log.warn("Unable to sync user info. User '{}' not not managed by provider: {} ", userId,
+                                    providerId);
                     return;
                 }
                 dn = user.getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
@@ -148,50 +160,25 @@ public class LdapUserManager extends AbstractUserManager {
                 }
                 user = createUser(userId);
                 user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-                // This method is called after successful login. Set lastlogin here to prevent indexer race. 
-                user.setProperty(HippoNodeType.HIPPO_LASTLOGIN, Calendar.getInstance());
             }
         } catch (RepositoryException e) {
             log.error("Failed to lookup user " + userId + " by ldap provider " + providerId, e);
             return;
         }
-        
+
         if (user == null || dn == null) {
             // this really shouldn't happen
             log.error("Unable to sync user info for user " + userId + " by ldap provider " + providerId);
             return;
         }
-        
-        LdapContext ctx = null;
+
         try {
-            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-            Attributes attrs = ctx.getAttributes(dn);
-            for (LdapMapping mapping : mappings) {
-                try {
-                    Attribute attr = attrs.get(mapping.getSource());
-                    if (attr != null) {
-                        Object o = attr.get();
-                        if (o instanceof String) {
-                            user.setProperty(mapping.getTarget(), (String) o);
-                        }
-                    }
-                } catch (NamingException e) {
-                    log.debug("Skipping atturibute for user " + userId + " unable to get attributes: "
-                            + mapping.getSource() + " : " + e.getMessage());
-                } catch (RepositoryException e) {
-                    log.debug("Skipping attribute for user " + userId + " unable to get/create property: "
-                            + mapping.getTarget() + " : " + e.getMessage());
-                }
-            }
-            user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
-        } catch (RepositoryException e) {
-            log.error("Unable to get or create user node: " + userId, e);
+            Attributes attrs = systemCtx.getAttributes(dn);
+            syncMappingInfo(user, attrs);
         } catch (NamingException e) {
             log.error("Unable to sync user: {} : {}", userId, e);
-        } finally {
-            LdapUtils.closeContext(ctx);
         }
     }
 
@@ -203,27 +190,47 @@ public class LdapUserManager extends AbstractUserManager {
      */
     public synchronized void updateUsers() {
         log.info("Starting synchronizing ldap users for: " + providerId);
+
         NamingEnumeration<SearchResult> results = null;
         String dn = null;
-        try {
-            LdapContext ldapContext = lcf.getSystemLdapContext();
-            SearchControls ctls = new SearchControls();
-            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            int count = 0;
-            for (LdapUserSearch search : searches) {
-                results = ldapContext.search(search.getBaseDn(), search.getFilter(), ctls);
+        Node user = null;
+        String userId = null;
+        SearchControls ctls = new SearchControls();
+        ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        int count = 0;
+        for (LdapUserSearch search : searches) {
+            try {
+                results = systemCtx.search(search.getBaseDn(), search.getFilter(), ctls);
                 while (results.hasMore()) {
-                    SearchResult sr = results.next();
-                    Attributes attrs = sr.getAttributes();
-                    Attribute uidAttr = attrs.get(search.getNameAttr());
-                    dn = sr.getName() + "," + search.getBaseDn();
-                    log.trace("Found dn: {}", dn);
-                    if (uidAttr == null) {
-                        log.warn("Skipping dn='" + sr.getName() + "' because the uid attribute is not found.");
-                    } else {
-                        if (createUserIfNotExists((String) uidAttr.get(), dn)) {
-                            count++;
-                            if (count == SAVE_INTERVAL) {
+                    try {
+                        SearchResult sr = results.next();
+                        Attributes attrs = sr.getAttributes();
+                        Attribute uidAttr = attrs.get(search.getNameAttr());
+                        dn = sr.getName() + "," + search.getBaseDn();
+                        log.trace("Found dn: {}", dn);
+                        if (uidAttr == null) {
+                            log.warn("Skipping dn='" + sr.getName() + "' because the uid attribute is not found.");
+                        } else {
+                            try {
+                                userId = (String) uidAttr.get();
+                                user = getUser(userId);
+                                
+                                // create the user if it doesn't exists
+                                if (user == null) {
+                                    user = createUser(userId);
+                                    user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
+                                }
+
+                                // update the mappings
+                                if (isManagerForUser(user)) {
+                                    count++;
+                                    syncMappingInfo(user, attrs);
+                                }
+                                
+                            } catch (RepositoryException e) {
+                                log.warn("Unable to update user: " + userId + " by provider: " + providerId, e);
+                            }
+                            if (count >= SAVE_INTERVAL) {
                                 count = 0;
                                 try {
                                     saveUsers();
@@ -232,11 +239,13 @@ public class LdapUserManager extends AbstractUserManager {
                                 }
                             }
                         }
+                    } catch (NamingException e) {
+                        log.error("Error while trying fetching users from ldap: " + providerId, e);
                     }
                 }
+            } catch (NamingException e) {
+                log.error("Error while trying fetching users from ldap: " + providerId, e);
             }
-        } catch (NamingException e) {
-            log.error("Error while trying fetching users from ldap: " + providerId, e);
         }
 
         // save remaining unsaved user nodes
@@ -256,15 +265,16 @@ public class LdapUserManager extends AbstractUserManager {
     private String getDnForUser(String userId) throws RepositoryException {
         // Try to find the user in the ldap server.
         try {
-            LdapContext ldapContext = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             NamingEnumeration<SearchResult> results = null;
 
             for (LdapUserSearch search : searches) {
-                String filter = "(&(" + search.getFilter() + ")(" + search.getNameAttr() + "=" + userId+ "))";
-                log.debug("Searching for user: '" + userId + "' with filter '" + filter + "' in: " + search.getBaseDn());
-                results = ldapContext.search(search.getBaseDn(), filter, ctls);
+                String filter = "(&(" + search.getFilter() + ")(" + search.getNameAttr() + "=" + userId + "))";
+                log
+                        .debug("Searching for user: '" + userId + "' with filter '" + filter + "' in: "
+                                + search.getBaseDn());
+                results = systemCtx.search(search.getBaseDn(), filter, ctls);
                 // just use the first match found
                 if (results.hasMore()) {
                     SearchResult sr = results.next();
@@ -278,34 +288,31 @@ public class LdapUserManager extends AbstractUserManager {
         return null;
     }
 
-    /**
-     * Create a user if it doesn't exist in the Repository.
-     * @param userId
-     * @param dn
-     * @return true when a new user is created, false when the user already exists
-     */
-    private boolean createUserIfNotExists(String userId, String dn) {
-        log.trace("Checking user: {} for dn: {}", userId, dn);
+    private void syncMappingInfo(Node user, Attributes attrs) {
         try {
-            if (hasUser(userId)) {
-                // user exists, don't mess with it.
-                return false;
+            String userId = user.getName();
+            SearchControls ctls = new SearchControls();
+            ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+            for (LdapMapping mapping : mappings) {
+                try {
+                    Attribute attr = attrs.get(mapping.getSource());
+                    if (attr != null) {
+                        Object o = attr.get();
+                        if (o instanceof String) {
+                            user.setProperty(mapping.getTarget(), (String) o);
+                        }
+                    }
+                } catch (NamingException e) {
+                    log.debug("Skipping atturibute for user " + userId + " unable to get attributes: "
+                            + mapping.getSource() + " : " + e.getMessage());
+                } catch (RepositoryException e) {
+                    log.debug("Skipping attribute for user " + userId + " unable to get/create property: "
+                            + mapping.getTarget() + " : " + e.getMessage());
+                }
             }
+            user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
         } catch (RepositoryException e) {
-            // something is wrong with the user node, log and leave it
-            log.error("Failed to lookup user " + userId, e);
-            return false;
-        }
-        try {
-            Node user = createUser(userId);
-            user.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
-            user.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-            log.debug("User: {} created by by {} ", userId, providerId);
-            return true;
-        } catch (RepositoryException e) {
-            log.warn("Failed to create user " + userId + " :" + e.getMessage());
-            log.debug("Failed to create user " + userId, e);
-            return false;
+            log.error("RepositoryException while updating ldap mappings for provider: " + providerId, e);
         }
     }
 
@@ -319,7 +326,8 @@ public class LdapUserManager extends AbstractUserManager {
         statement.append("SELECT * FROM ").append(LdapSecurityProvider.NT_LDAPUSERSEARCH);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE ");
-        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_USERPROVIDER).append("/%'");
+        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_USERPROVIDER).append(
+                "/%'");
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
         QueryResult result = q.execute();
@@ -350,7 +358,8 @@ public class LdapUserManager extends AbstractUserManager {
         statement.append("SELECT * FROM ").append(LdapSecurityProvider.NT_LDAPMAPPING);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE ");
-        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_USERPROVIDER).append("/%'");
+        statement.append("'").append(providerNode.getPath()).append("/").append(HippoNodeType.NT_USERPROVIDER).append(
+                "/%'");
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
         QueryResult result = q.execute();
