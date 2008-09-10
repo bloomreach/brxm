@@ -46,9 +46,6 @@
       <includes>
         <include>org.hippoecm:hippo-ecm-quickstart-bin:jar:*</include>
       </includes>
-      <excludes>
-        <exclude>*:sources</exclude>
-      </excludes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
@@ -58,7 +55,6 @@
         <include>*:jar:*</include>
       </includes>
       <excludes>
-        <exclude>*:sources</exclude>
         <exclude>org.hippoecm:hippo-ecm-quickstart-bin:jar:*</exclude>
       </excludes>
     </dependencySet>
