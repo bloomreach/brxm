@@ -199,11 +199,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    public final Set<String> getMemeberships(String userId) {
-        return getMemeberships(userId, null);
+    public final Set<String> getMemberships(String userId) {
+        return getMemberships(userId, null);
     }
 
-    public final Set<String> getMemeberships(String userId, String providerId) {
+    public final Set<String> getMemberships(String userId, String providerId) {
         Set<String> memberships = new HashSet<String>();
 
         StringBuffer statement = new StringBuffer();
@@ -244,7 +244,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             return;
         }
         String userId = user.getName();
-        Set<String> repositoryMemberships = getMemeberships(userId, providerId);
+        Set<String> repositoryMemberships = getMemberships(userId, providerId);
         Set<String> backendMemberships = backendGetMemberships(user);
         Set<String> inSync = new HashSet<String>();
         for (String groupId : repositoryMemberships) {

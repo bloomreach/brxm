@@ -108,7 +108,7 @@ public interface GroupManager {
      * @param userId
      * @throws RepositoryException
      */
-    public Set<String> getMemeberships(String userId) throws RepositoryException;
+    public Set<String> getMemberships(String userId) throws RepositoryException;
 
     /**
      * Get the members of a group

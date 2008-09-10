@@ -261,9 +261,9 @@ public class SecurityManager {
      * @param userId
      * @return a set of Strings with the memberships or an empty set if no memberships are found. 
      */
-    public Set<String> getMemeberships(String userId) {
+    public Set<String> getMemberships(String userId) {
         try {
-            return providers.get(INTERNAL_PROVIDER).getGroupManager().getMemeberships(userId);
+            return providers.get(INTERNAL_PROVIDER).getGroupManager().getMemberships(userId);
         } catch (RepositoryException e) {
             log.warn("Unable to get memberships for userId: " + userId, e);
             return new HashSet<String>(0);
