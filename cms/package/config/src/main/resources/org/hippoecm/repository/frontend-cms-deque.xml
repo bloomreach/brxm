@@ -1365,7 +1365,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="tabbedEditorEditperspective">
+  <sv:node sv:name="tabbedEditorTabs">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -1383,6 +1383,9 @@
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.editor.tabs</sv:value>
+    </sv:property>
+    <sv:property sv:name="tabbedpanel.behavior" sv:type="String">
+      <sv:value>service.behavior.editor.tabs.center</sv:value>
     </sv:property>
   </sv:node>
 
