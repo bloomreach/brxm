@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -48,6 +49,11 @@ public abstract class AbstractGroupManager implements GroupManager {
     protected String groupsPath;
 
     /**
+     * The path from the root containing the users
+     */
+    protected String providerPath;
+    
+    /**
      * Is the class initialized
      */
     protected boolean initialized = false;
@@ -58,6 +64,12 @@ public abstract class AbstractGroupManager implements GroupManager {
     protected String providerId;
 
     /**
+     * Number of dir levels: /u/s/user etc.
+     */
+    private int dirLevels = 0;
+    
+
+    /**
      * Logger
      */
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -66,6 +78,8 @@ public abstract class AbstractGroupManager implements GroupManager {
         this.session = context.getSession();
         this.groupsPath = context.getPath();
         this.providerId = context.getProviderId();
+        this.providerPath = context.getProviderPath();
+        setDirLevels();
         initManager(context);
     }
 
@@ -77,14 +91,35 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        return session.getRootNode().hasNode(groupsPath + "/" + groupId);
+
+        // dirLevels 0, common case and default users
+        if (session.getRootNode().hasNode(groupsPath + "/" + groupId)) {
+            return true;
+        }
+        if (dirLevels > 0) {
+            return session.getRootNode().hasNode(buildGroupPath(groupId, dirLevels));
+        }
+        return false;
     }
+    
 
     public final Node getGroup(String groupId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        return session.getRootNode().getNode(groupsPath + "/" + groupId);
+        // dirLevels 0, common case
+        try {
+            return session.getRootNode().getNode(groupsPath + "/" + groupId);
+        } catch (PathNotFoundException e) {
+            if (dirLevels > 0) {
+                try {
+                    return session.getRootNode().getNode(buildGroupPath(groupId, dirLevels));
+                } catch (PathNotFoundException e1) {
+                    // noop
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -96,7 +131,17 @@ public abstract class AbstractGroupManager implements GroupManager {
             throw new IllegalStateException("Not initialized.");
         }
         log.trace("Creating node for group: {} in path: {}", groupId, groupsPath);
-        Node group = session.getRootNode().getNode(groupsPath).addNode(groupId, getNodeType());
+        int length = groupId.length();
+        Node groupsNode = session.getRootNode().getNode(groupsPath);
+        for (int i = 0; i < dirLevels && i < length; i++) {
+            String c = Character.toString(Character.toLowerCase(groupId.charAt(i)));
+            if (!groupsNode.hasNode(c)) {
+                groupsNode = groupsNode.addNode(c, HippoNodeType.NT_GROUPFOLDER);
+            } else {
+                groupsNode = groupsNode.getNode(c);
+            }
+        }
+        Node group = groupsNode.addNode(groupId, getNodeType());
         group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
         if (!org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
             group.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
@@ -105,6 +150,40 @@ public abstract class AbstractGroupManager implements GroupManager {
         return group;
     }
 
+
+    private String buildGroupPath(String groupId, int dirLevels) {
+        int length = groupId.length();
+        StringBuilder path = new StringBuilder(groupsPath);
+        for (int i = 0; i < dirLevels && i < length; i++) {
+            path.append('/').append(Character.toLowerCase(groupId.charAt(i)));
+        }
+        path.append('/').append(groupId);
+        return path.toString();
+    }
+    
+
+    private final void setDirLevels() {
+        dirLevels = 0;
+        String relPath = providerPath + "/" + HippoNodeType.NT_GROUPPROVIDER;
+        try {
+            if (session.getRootNode().hasNode(relPath)) {
+                Node n = session.getRootNode().getNode(relPath);
+                if (n.hasProperty(HippoNodeType.HIPPO_DIRLEVELS)) {
+                    dirLevels = (int) n.getProperty(HippoNodeType.HIPPO_DIRLEVELS).getLong();
+                    // long -> int overflow
+                    if (dirLevels < 0) {
+                        dirLevels = 0;
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.info("Dirlevels setting not found, using 0 for user manager for provider: " + providerId);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Using dirlevels '"+dirLevels+"' for provider: " + providerId);
+        }
+    }
+    
     public final Node getOrCreateGroup(String groupId) throws RepositoryException {
         if (hasGroup(groupId)) {
             return getGroup(groupId);
@@ -244,6 +323,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final void saveGroups() throws RepositoryException {
+        session.refresh(true);
         session.getRootNode().getNode(groupsPath).save();
     }
 

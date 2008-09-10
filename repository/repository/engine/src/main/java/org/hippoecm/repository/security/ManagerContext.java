@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.security;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -37,13 +36,15 @@ public class ManagerContext {
     /**
      * The id of the provider that created the context.
      */
-    private final Node providerNode;
-
-    /**
-     * The id of the provider that created the context.
-     */
     private final String providerId;
 
+
+    /**
+     * The path of the provider that created the context.
+     */
+    private final String providerPath;
+
+    
     /**
      * The target path to expose information for this context eg. hippo:users, hippo:groups, etc.
      */
@@ -54,11 +55,12 @@ public class ManagerContext {
      * @param session Session The system/root session
      * @param path the path for exposing information e.g. hippo:users, hippo:groups, etc.
      * @param providerPath the path to the configuration of this provider
+     * @param session the providers own session
      */
-    public ManagerContext(Node providerNode, String path) throws RepositoryException {
-        this.providerNode = providerNode;
-        this.session = providerNode.getSession();
-        this.providerId = providerNode.getName();
+    public ManagerContext(Session session, String providerPath, String path) throws RepositoryException {
+        this.session = session;
+        this.providerPath = providerPath;
+        this.providerId = providerPath.substring(providerPath.lastIndexOf('/') + 1);
         this.path = path;
     }
 
@@ -71,19 +73,19 @@ public class ManagerContext {
     }
 
     /**
-     * Get the provider node.
-     */
-    public Node getProviderNode() {
-        return providerNode;
-    }
-
-    /**
      * Get the id of the provider that created the context.
      */
     public String getProviderId() {
         return providerId;
     }
-
+    
+    /**
+     * Get the path of the provider that created the context.
+     */
+    public String getProviderPath() {
+        return providerPath;
+    }
+    
     /**
      * Get the path to expose information for this context eg. hippo:users, hippo:groups, etc.
      * @return
@@ -91,5 +93,4 @@ public class ManagerContext {
     public String getPath() {
         return path;
     }
-
 }

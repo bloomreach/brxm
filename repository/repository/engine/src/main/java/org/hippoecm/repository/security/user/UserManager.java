@@ -16,6 +16,7 @@
 package org.hippoecm.repository.security.user;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.transaction.NotSupportedException;
@@ -77,6 +78,9 @@ public interface UserManager {
      */
     public Node getUser(String userId) throws RepositoryException;
 
+    public NodeIterator listUsers(String providerId) throws RepositoryException;
+    public NodeIterator listUsers() throws RepositoryException;
+    
     /**
      * Create a (skeleton) node for the user in the repository
      * @param userId

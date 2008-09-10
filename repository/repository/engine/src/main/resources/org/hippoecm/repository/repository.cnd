@@ -184,8 +184,10 @@
 + hippo:authrole (hippo:authrole) = hippo:authrole multiple
 
 [hippo:userprovider] >  nt:base
+- hippo:dirlevels (long) = '0' autocreated
 
 [hippo:groupprovider] >  nt:base
+- hippo:dirlevels (long) = '0' autocreated
 
 [hippo:roleprovider] >  nt:base
 

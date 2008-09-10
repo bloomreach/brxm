@@ -25,22 +25,16 @@ public class RepositorySecurityProvider extends AbstractSecurityProvider {
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
 
-    //------------------------< Interface Impl >--------------------------//
-    /**
-     * {@inheritDoc}
-     */
+    
     public void init(SecurityProviderContext context) throws RepositoryException {
         ManagerContext mgrContext;
-
-        mgrContext = new ManagerContext(context.getProviderNode(), context.getUsersPath());
+        
+        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getUsersPath());
         userManager = new RepositoryUserManager();
         userManager.init(mgrContext);
 
-        mgrContext = new ManagerContext(context.getProviderNode(), context.getGroupsPath());
+        mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getGroupsPath());
         groupManager = new RepositoryGroupManager();
         groupManager.init(mgrContext);
     }
-
-    //------------------------< Private Helper methods >--------------------------//
-
 }
