@@ -116,6 +116,8 @@ public class EventLogger {
             } catch (RepositoryException e) {
                 log.error("Event logging failed: " + e.getMessage(), e);
             }
+        } else {
+            log.info("Event log: [" + who + " -> " + className + "." + methodName + "]");
         }
     }
 
@@ -142,6 +144,8 @@ public class EventLogger {
             } catch (RepositoryException e) {
                 log.warn("Event logging failed: [" + who + " -> " + className + "." + methodName + "] : " + e.getMessage());
             }
+        } else {
+            log.info("Event log: [" + who + " -> " + className + "." + methodName + "]");
         }
     }
 

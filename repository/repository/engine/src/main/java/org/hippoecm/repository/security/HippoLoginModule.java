@@ -275,7 +275,7 @@ public class HippoLoginModule implements LoginModule {
      * @param userId
      */
     private void setGroupPrincipals(String userId) {
-        Set<String> memberships = securityManager.getMemeberships(userId);
+        Set<String> memberships = securityManager.getMemberships(userId);
         for (String groupId : memberships) {
             GroupPrincipal groupPrincipal = new GroupPrincipal(groupId);
             principals.add(groupPrincipal);
