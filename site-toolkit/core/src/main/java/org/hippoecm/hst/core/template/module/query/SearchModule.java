@@ -234,9 +234,8 @@ public class SearchModule extends ModuleBase implements Search {
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
-        Session jcrSession = ctxBase.getSession();
         Node contextNode = (HippoNode) ctxBase.getContextRootNode();
-        HippoNode contentBaseNode = null;
+        
         /*
          * if the contextNode is a facetselect node --> take the uuid
          * if the contextNode is a virtual node --> take the canonical node. If no canonical node, log error, and refuse query. 
@@ -244,77 +243,32 @@ public class SearchModule extends ModuleBase implements Search {
          * 
          * Searching based on uuid can be only done for nodes extending from hippo:document type.
          */
-        String contextBasePath = null;
-        String contentBaseUuid = null;
-        String contentBasePath = null;
-        String contextClauses = "";
-        try {
-            contextBasePath = contextNode.getPath();
-            try {
-                contentBaseNode = (HippoNode) contextNode.getNode(target);
-            } catch (PathNotFoundException e) {
-                log.warn("target '" + target + "' is not a subnode of '" + contextBasePath + "'.");
-                validStatement = false;
-                return;
-            }
-            if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                contentBaseUuid = contentBaseNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                try {
-                    contentBasePath = jcrSession.getNodeByUUID(contentBaseUuid).getPath();
-                } catch (ItemNotFoundException e) {
-                    log.error("There is no node with a uuid that is present in the '" + HippoNodeType.HIPPO_DOCBASE
-                            + "' property for " + contextBasePath);
-                    validStatement = false;
-                    return;
-                }
-            } else if (contentBaseNode.getCanonicalNode() != null
-                    && contentBaseNode.getCanonicalNode().isNodeType("mix:referenceable")) {
-                contentBaseUuid = contentBaseNode.getCanonicalNode().getUUID();
-            } else {
-                log
-                        .warn("Target is not pointing to a referenceable node. Searching will be done by a path prefix, which can become slow");
-                contentBasePath = contentBaseNode.getPath();
-            }
-
-            contextClauses = getContextWhereClauses(contextNode, contentBaseNode, jcrSession.getRootNode());
-
-        } catch (RepositoryException e) {
-            log.error("Cannot prepare statement: RepositoryException " + e.getMessage());
-            validStatement = false;
-            return;
-        }
-
-        String statementPath = "";
-        String statementWhere = "[";
+        
+        String statementPath = null;
+        String statementWhere = null;
+        String contextWhereClauses = "";
         String statementOrderBy = "";
-
+        
+        contextWhereClauses = getContextWhereClause(contextNode);
+        
         if (this.where != null) {
-            statementWhere += "(" + this.where + ")";
+            statementWhere = "(" + this.where + ")";
         }
 
-        if (contentBaseUuid == null) {
-            statementPath = "/jcr:root" + contentBasePath;
-        } else {
-            if (!statementWhere.equals("[")) {
-                statementWhere += " and ";
-            }
-            statementWhere += "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
-        }
-
+       
         if (this.nodetype != null) {
-            statementPath = statementPath + "//element(*," + nodetype + ")";
+            statementPath =  "//element(*," + nodetype + ")";
         } else {
-            statementPath = statementPath + "//*";
+            statementPath =  "//*";
         }
 
         if (getQueryText() != null && !"".equals(getQueryText())) {
-            if (!statementWhere.equals("[")) {
-                statementWhere += " and ";
+            if (statementWhere == null ) {
+                statementWhere = " jcr:contains(., '" + getQueryText() + "')";
+            } else {
+                statementWhere += " and jcr:contains(., '" + getQueryText() + "')";
             }
-            statementWhere += " jcr:contains(., '" + getQueryText() + "')";
         }
-
-        statementWhere += "]";
 
         if (this.orderby != null) {
             statementOrderBy = " order by @" + orderby;
@@ -323,56 +277,106 @@ public class SearchModule extends ModuleBase implements Search {
             }
         }
 
-        if (statementWhere.equals("[]")) {
-            statementWhere = "";
+        String where = "";
+        if(contextWhereClauses!=null) {
+            where +=contextWhereClauses;
         }
-        statement = statementPath + contextClauses + statementWhere + statementOrderBy;
+        if(statementWhere!=null) {
+            if(where.length() > 0) {
+                where += " and ";
+            }
+            where += statementWhere;
+        }
+        if(where.length() > 0) {
+            where = "[" + where + "]";
+        }
+        
+        statement = statementPath + where + statementOrderBy;
         log.debug("xpath statement = " + statement);
+        System.out.println(statement);
         setStatement(statement);
-       
         Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
     }
 
-    private String getContextWhereClauses(Node contextNode, Node contentBaseNode, Node rootNode)
-            throws RepositoryException {
-        //String contextClause = "[(hippostd:state='unpublished' or (hippostd:state='published' and hippostd:stateSummary!='changed'))]" ;
-        long start = System.currentTimeMillis();
+    private String getContextWhereClause(Node contextNode) {
+        HippoNode contentBaseNode = null;
+        String contextBasePath = null;
+        String contentBaseUuid = null;
         String contextClauses = "";
-        /*
-         * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
-         * add the filter as a query
-         */
-
-        while (!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
-            if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                // below all mandatory multivalued props
-                Value[] modes = contentBaseNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
-                Value[] facets = contentBaseNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
-                Value[] values = contentBaseNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
-                if (modes.length == facets.length && facets.length == values.length) {
-                    for (int i = 0; i < modes.length; i++) {
-                        String mode = modes[i].getString();
-                        String facet = facets[i].getString();
-                        String value = values[i].getString();
-                        if (mode.equals("clear") || mode.equals("stick")) {
-                            // do not know how to handle these in a query
-                            log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
-                            continue;
-                        } else {
-                            if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
-                                // special case
-                                contextClauses += "[(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))]";
+        long start = System.currentTimeMillis();
+        try {
+            contextBasePath = contextNode.getPath();
+            try {
+                contentBaseNode = (HippoNode) contextNode.getNode(target);
+            } catch (PathNotFoundException e) {
+                log.warn("target '" + target + "' is not a subnode of '" + contextBasePath + "'.");
+                validStatement = false;
+                return null;
+            }
+            /*
+             * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
+             * add the filter as a query
+             */
+            Node rootNode = contentBaseNode.getSession().getRootNode();
+            
+            while (!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
+                
+                // the contentBaseUuid will be the uuid of the first 'referenceable node' or docbase of a facetselect
+                if(contentBaseUuid == null) {
+                    if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        contentBaseUuid = contentBaseNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                        
+                    } else if (contentBaseNode.getCanonicalNode() != null
+                            && contentBaseNode.getCanonicalNode().isNodeType("mix:referenceable")) {
+                        contentBaseUuid = contentBaseNode.getCanonicalNode().getUUID();
+                    } else {
+                        log.warn("Target '"+target+"' is not pointing to a referenceable node or facetselect. Trying to search from the parent");
+                    }
+                }
+                if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    // below all mandatory multivalued props
+                    Value[] modes = contentBaseNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
+                    Value[] facets = contentBaseNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
+                    Value[] values = contentBaseNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
+                    if (modes.length == facets.length && facets.length == values.length) {
+                        for (int i = 0; i < modes.length; i++) {
+                            String mode = modes[i].getString();
+                            String facet = facets[i].getString();
+                            String value = values[i].getString();
+                            if (mode.equals("clear") || mode.equals("stick")) {
+                                // do not know how to handle these in a query
+                                log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
+                                continue;
                             } else {
-                                contextClauses += "[@" + facet + "='" + value + "']";
+                                if(contextClauses.length() > 0) {
+                                    contextClauses += " and ";
+                                }
+                                if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
+                                    // special case
+                                    contextClauses += "(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))";
+                                } else {
+                                    contextClauses += "@" + facet + "='" + value + "'";
+                                }
                             }
                         }
+                    } else {
+                        log
+                                .warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                     }
-                } else {
-                    log
-                            .warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                 }
+                contentBaseNode = (HippoNode) contentBaseNode.getParent();
             }
-            contentBaseNode = contentBaseNode.getParent();
+
+        } catch (RepositoryException e) {
+            log.error("Cannot prepare statement: RepositoryException " + e.getMessage());
+            validStatement = false;
+            return null;
+        }
+        
+        if(contextClauses.length() > 0) {
+            contextClauses += " and " + "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
+        } else {
+            contextClauses =  "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
         }
         Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
         return contextClauses;
