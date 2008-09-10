@@ -293,7 +293,6 @@ public class SearchModule extends ModuleBase implements Search {
         
         statement = statementPath + where + statementOrderBy;
         log.debug("xpath statement = " + statement);
-        System.out.println(statement);
         setStatement(statement);
         Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
     }
