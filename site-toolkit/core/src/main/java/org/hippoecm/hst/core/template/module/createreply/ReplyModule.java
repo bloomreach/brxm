@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ContextBaseFilter;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.ModuleBase;
@@ -39,7 +38,6 @@ public class ReplyModule extends ModuleBase {
     private static final Logger log = LoggerFactory.getLogger(ReplyModule.class);
     
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX EXECUTE");
 		if (request.getParameter("MODULE_NAME") != null) {
 		String name = request.getParameter("name");
 		String title = request.getParameter("title");

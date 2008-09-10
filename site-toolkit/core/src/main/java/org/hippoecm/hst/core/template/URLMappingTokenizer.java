@@ -20,14 +20,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JCRConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

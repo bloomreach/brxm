@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
 import org.slf4j.Logger;
