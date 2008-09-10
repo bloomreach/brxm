@@ -78,7 +78,7 @@
       <sv:value>bottom</sv:value>
     </sv:property>
     <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=root-layout-header,height=50</sv:value>
+      <sv:value>id=root-layout-header,height=80</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
       <sv:value>id=root-layout-center,gutter=0 0px 0 0px</sv:value>
@@ -112,9 +112,13 @@
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.logout</sv:value>
+      <sv:value>extension.shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="extension.logout" sv:type="String">
       <sv:value>service.logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="extension.shortcuts" sv:type="String">
+      <sv:value>service.browse.shortcuts</sv:value>
     </sv:property>
   </sv:node>
 
@@ -412,7 +416,6 @@
       <sv:value>/hippo:configuration/hippo:frontend/cms-deque-folder-views</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.shortcuts</sv:value>
       <sv:value>extension.browser</sv:value>
       <sv:value>extension.list</sv:value>
       <sv:value>extension.workflows</sv:value>
@@ -429,9 +432,6 @@
     </sv:property>
     <sv:property sv:name="extension.editor" sv:type="String">
       <sv:value>service.browse.editor</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.browse.shortcuts</sv:value>
     </sv:property>
   </sv:node>
 

@@ -110,7 +110,8 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
             try {
                 Node node = nodeModel.getNode();
                 // walk up until a folder or a handle has been found
-                while (!node.isNodeType("hippostd:folder") && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                // FIXME dependency on hippostd: types ought not be necessary
+                while (!node.isNodeType("hippostd:folder") && !node.isNodeType("hippostd:directory") && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     node = node.getParent();
                     nodeModel = new JcrNodeModel(node);
                 }
