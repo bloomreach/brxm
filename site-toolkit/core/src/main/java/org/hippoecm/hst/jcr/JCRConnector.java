@@ -76,112 +76,7 @@ public class JCRConnector {
         }
         return result;
     }
-    public static Item getItem(Session session, String path) throws RepositoryException {
-
-        if (session == null) {
-            throw new JCRConnectionException("No JCR session available to get an item");
-        }
-        
-        Node node = session.getRootNode();
-
-        // strip first slash
-        while (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-
-        // loop all path elements and interpret them
-        String[] pathElts = path.split("/");
-        for (int pathIdx = 0; pathIdx < pathElts.length && node != null; pathIdx++) {
-            String relPath = pathElts[pathIdx];
-            if(relPath.equals(""))
-                continue;
-
-            // determine if this (last) part of the path is a property or argument
-            // with [] notation
-            Map<String, String> conditions = null;
-            if (relPath.contains("[") && relPath.endsWith("]")
-                    && !Character.isDigit(relPath.charAt(relPath.indexOf("[")+1))) {
-                conditions = new TreeMap<String, String>();
-                int beginIndex = relPath.indexOf("[") + 1;
-                int endIndex = relPath.lastIndexOf("]");
-                String[] conditionElts = relPath.substring(beginIndex, endIndex).split(",");
-                for (int conditionIdx = 0; conditionIdx < conditionElts.length; conditionIdx++) {
-                    int pos = conditionElts[conditionIdx].indexOf("=");
-                    if (pos >= 0) {
-                        String key = conditionElts[conditionIdx].substring(0, pos);
-                        String value = conditionElts[conditionIdx].substring(pos + 1);
-                        if (value.startsWith("'") && value.endsWith("'")) {
-                            value = value.substring(1, value.length() - 1);
-                        }
-                        conditions.put(key, value);
-                    } else {
-                        conditions.put(conditionElts[conditionIdx], null);
-                    }
-                }
-                relPath = relPath.substring(0, relPath.indexOf("["));
-            }
-
-            // current path element is doesn't have [] notation
-            if (conditions == null || conditions.size() == 0) {
-
-                // a property with . notation
-                if (pathIdx + 1 == pathElts.length &&
-                        !relPath.contains("[") && node.hasProperty(relPath)) {
-                    try {
-                        return node.getProperty(relPath);
-                    } catch (PathNotFoundException ex) {
-                        return null;
-                    }
-                }
-
-                // a subnode
-                else if (node.hasNode(relPath)) {
-                    try {
-                        node = node.getNode(relPath);
-                    } catch (PathNotFoundException ex) {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            }
-
-            // current path element is a property or argument: loop nodes and stop if the condition are ok
-            else {
-                for (NodeIterator iter = node.getNodes(relPath); iter.hasNext();) {
-                    node = iter.nextNode();
-                    for (Map.Entry<String, String> condition : conditions.entrySet()) {
-                        if (node.hasProperty(condition.getKey())) {
-                            if (condition.getValue() != null) {
-                                try {
-                                    if (!node.getProperty(condition.getKey()).getString().equals(condition.getValue())) {
-                                        node = null;
-                                        break;
-                                    }
-                                } catch (PathNotFoundException ex) {
-                                    node = null;
-                                    break;
-                                } catch (ValueFormatException ex) {
-                                    node = null;
-                                    break;
-                                }
-                            }
-                        } else {
-                            node = null;
-                            break;
-                        }
-                    }
-
-                    // node found
-                    if (node != null) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return node;
-    }
+   
 
     private static class SessionWrapper implements HttpSessionBindingListener {
         Session jcrSession;
@@ -221,7 +116,6 @@ public class JCRConnector {
         }
 
         public void valueUnbound(HttpSessionBindingEvent event) {
-            
             // logout itself may fail (connection lost) 
             try {
                 jcrSession.logout();

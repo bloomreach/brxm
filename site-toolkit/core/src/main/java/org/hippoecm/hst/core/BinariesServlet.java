@@ -18,8 +18,6 @@ package org.hippoecm.hst.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.util.StringTokenizer;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -36,8 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +72,7 @@ public class BinariesServlet extends HttpServlet {
         try {
             Session session = JCRConnector.getJCRSession(req.getSession());
 
-            Item item = JCRConnector.getItem(session, path);
+            Item item = session.getItem(path);
 
             if (item == null) {
                 log.warn("item at path " + path + " not found, response status = 404)");
