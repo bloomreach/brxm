@@ -64,6 +64,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                         uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                         Session session = node.getSession();
                         Node deref = session.getNodeByUUID(uuid);
+                        log.debug("rewrite '" + deref.getPath() +"' --> '" + mapping.rewriteLocation(deref) + "'");
                         return mapping.rewriteLocation(deref);
                     } else {
                         log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL");
