@@ -34,7 +34,7 @@
             <p>
                 The standard repository configuration for Jackrabbit
                 can be found at
-                <a href="http://jackrabbit.apache.org/doc/config.html">http://jackrabbit.apache.org/doc/config.html</a>.
+                <a href="http://jackrabbit.apache.org/jackrabbit-configuration.html">http://jackrabbit.apache.org/jackrabbit-configuration.html</a>.
                 This page refers to that page for parts that are the same, and elaborates on those parts
                 that are specific for Hippo Repository.
             </p>
@@ -84,7 +84,7 @@
                 except for a few special variables, namely ${rep.home}, ${wsp.name} and ${wsp.home}.
             </p>
             <p>
-                See the <a href="http://jackrabbit.apache.org/doc/config.html">Jackrabbit documentation</a>
+                See the <a href="http://jackrabbit.apache.org/jackrabbit-configuration.html">Jackrabbit documentation</a>
                 for more information.
             </p>
 
@@ -94,7 +94,7 @@
                     registered namespaces, custom node types, etc.
                 </p>
                 <p>
-                    See the <a href="http://jackrabbit.apache.org/doc/config.html#Virtual file systems">Jackrabbit documentation</a>
+                    See the <a href="http://jackrabbit.apache.org/jackrabbit-configuration.html">Jackrabbit documentation</a>
                     for more information.
                 </p>
             </subsection>
