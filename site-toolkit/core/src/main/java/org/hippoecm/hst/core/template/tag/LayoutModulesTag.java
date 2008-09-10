@@ -23,7 +23,9 @@ import javax.jcr.Session;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
@@ -37,15 +39,16 @@ import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LayoutModulesTag extends SimpleTagSupport {
+public class LayoutModulesTag  extends BodyTagSupport {
 	private static final Logger log = LoggerFactory.getLogger(LayoutModulesTag.class);
 	
     private String name;
+    private boolean defaultOutput = false;
+    
 	@Override
-	public void doTag() throws JspException, IOException {
-	
+	public int doStartTag() throws JspException {  
 		
-		PageContext pageContext = (PageContext) getJspContext(); 
+		//PageContext pageContext = (PageContext) getJspContext(); 
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	    	
         PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
         NodeList<PageContainerNode> containerList = pageNode.getContainers();
@@ -53,7 +56,7 @@ public class LayoutModulesTag extends SimpleTagSupport {
         
         if(pcNode == null ) {
             log.error("PageContainerNode is null for layout module '" + name + "'. Fix the hst:configuration for this.");
-            return;
+            return SKIP_BODY;
         }
         request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE, pcNode);
         
@@ -69,23 +72,34 @@ public class LayoutModulesTag extends SimpleTagSupport {
     
         for (int index=0; index < pcmList.size(); index++) {
         	try {
-        		PageContainerModuleNode pcm = pcmList.get(index);				
+        		PageContainerModuleNode pcm = pcmList.get(index);			
+        		log.debug("pageContainerModule" + pcm);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);			
 				pageContext.include(pcm.getTemplatePage());
 			} catch (RepositoryException e) {
 				log.error("RepositoryException:", e);
 				throw new JspException(e);
+			} catch (IOException e) {
+                log.error("IOException:", e);
+                throw new JspException(e);
 			} catch (ServletException e) {
 				throw new JspException(e);
 			}
         }
-       
+        
+        if (pcmList.size() == 0) {
+            log.debug("empty pcmList: eval body");
+            return EVAL_BODY_INCLUDE;
+        }
+        return SKIP_BODY;
 	}
+	
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+   
 
 }

@@ -47,7 +47,7 @@
      <tag>
         <name>container</name>
         <tagclass>org.hippoecm.hst.core.template.tag.LayoutModulesTag</tagclass>
-        <body-content>empty</body-content>
+        <body-content>JSP</body-content>
         <attribute>
             <description>Use in template def</description>
             <name>name</name>
