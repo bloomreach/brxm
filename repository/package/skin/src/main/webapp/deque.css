@@ -194,6 +194,12 @@ body div.actionspanel{
 padding: 6px;
 }
 
+/* Shortcut buttons */
+/* ================================================ */ 
+div.iconshortcuts{padding: 0px;}
+div.iconshortcuts h3{color: white; display: none;}
+div.iconshortcuts div.renderItem{float: top; background: url("images/devider.png") no-repeat center right; height: 29px; white-space:nowrap; }
+
 /* Actions buttons */
 /* ================================================ */ 
 div.iconactions{padding: 0px;}
