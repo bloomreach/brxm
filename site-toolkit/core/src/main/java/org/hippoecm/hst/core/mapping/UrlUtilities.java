@@ -13,7 +13,7 @@ public class UrlUtilities {
     public static final String HTML_POSTFIX = ".html";
     
     public static String encodeUrl(String contextPath, int uriLevels, String rewrite){
-        // for encoding a url, you have to decode the jcr node paths :-)
+        
         if(rewrite.startsWith("/")) {
             rewrite = rewrite.substring(1);
         }
@@ -30,6 +30,7 @@ public class UrlUtilities {
             if(replaceDup && i == nrParts-1) {
                 encodedUrl.append(HTML_POSTFIX);
             } else {
+                // for encoding a url, you have to decode the jcr node paths :-)
                 encodedUrl.append("/"+ISO9075Helper.decodeLocalName(uriParts[i]));
             }
         }
@@ -51,13 +52,13 @@ public class UrlUtilities {
         for(int i = 0 ; i < nrParts ; i++) {
             if(i == nrParts -1) {
                  if(uriParts[i].endsWith(HTML_POSTFIX)) {
-                     String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length());
-                     decodedUrl.append("/"+ISO9075Helper.encodeLocalName(lastPart)+ "/"+ISO9075Helper.encodeLocalName(lastPart));
+                     String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length()).replaceAll(" ", "_x0020_");
+                     decodedUrl.append("/"+lastPart+ "/"+lastPart);
                  } else {
-                     decodedUrl.append("/"+ISO9075Helper.encodeLocalName(uriParts[i]));
+                     decodedUrl.append("/"+uriParts[i].replaceAll(" ", "_x0020_"));
                  }
             } else {
-                decodedUrl.append("/"+ISO9075Helper.encodeLocalName(uriParts[i]));
+                decodedUrl.append("/"+uriParts[i].replaceAll(" ", "_x0020_"));
             }
         }
         
