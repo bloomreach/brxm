@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
@@ -32,7 +35,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +71,12 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
     public void updateModel(IModel handle) {
         JcrNodeModel handleModel = (JcrNodeModel) handle;
         if (handleModel != null && handleModel.getNode() != null) {
+            JcrNodeModel draft = getDraftModel(handleModel);
+            if (draft != null) {
+                stopCluster();
+                openEditor(draft);
+                return;
+            }
             JcrNodeModel preview = getPreviewModel(handleModel);
             if (preview != null) {
                 stopCluster();
@@ -138,6 +149,19 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
         context.registerService(factory, clusterEditorId);
 
         viewService.edit(preview);
+
+        // look up the render service that is created by the cluster
+        final String wicketId = clusterConfig.getString("wicket.id");
+        List<IRenderService> targetServices = context.getServices(wicketId, IRenderService.class);
+        List<IRenderService> clusterServices = context.getServices(context.getReference(viewer).getServiceId(),
+                IRenderService.class);
+        for (IRenderService target : targetServices) {
+            if (clusterServices.contains(target)) {
+                // found it!
+                target.focus(null);
+                break;
+            }
+        }
     }
 
     JcrNodeModel getPreviewModel(JcrNodeModel handle) {
@@ -150,6 +174,29 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
                         // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
                         if (child.hasProperty("hippostd:state")
                                 && child.getProperty("hippostd:state").getString().equals("unpublished")) {
+                            return new JcrNodeModel(child);
+                        }
+                    }
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    JcrNodeModel getDraftModel(JcrNodeModel handle) {
+        String user = ((UserSession) Session.get()).getCredentials().getString("username");
+        try {
+            Node handleNode = handle.getNode();
+            if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
+                    Node child = iter.nextNode();
+                    if (child.getName().equals(handleNode.getName())) {
+                        // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                        if (child.hasProperty("hippostd:state")
+                                && child.getProperty("hippostd:state").getString().equals("draft")
+                                && child.getProperty("hippostd:holder").getString().equals(user)) {
                             return new JcrNodeModel(child);
                         }
                     }
