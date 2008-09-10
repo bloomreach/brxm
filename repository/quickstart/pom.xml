@@ -37,7 +37,7 @@
   <modules>
     <module>war</module>
     <module>ear</module>
-    <module>bin</module>
+    <!--module>bin</module-->
   </modules>
 
   <build>
