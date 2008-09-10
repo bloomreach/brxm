@@ -25,6 +25,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
@@ -35,6 +36,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
+import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
@@ -42,7 +44,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
+public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
@@ -52,10 +54,13 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
     private IPluginControl viewer;
     private IFactoryService factory;
     private String clusterEditorId;
+    private JcrNodeModel previewHandle;
 
     public PreviewPlugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
+
+        context.registerService(this, IJcrService.class.getName());
 
         if (config.getString(RenderService.MODEL_ID) != null) {
             context.registerService(this, config.getString(RenderService.MODEL_ID));
@@ -87,6 +92,14 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
         }
     }
 
+    public void onFlush(JcrNodeModel nodeModel) {
+        if (previewHandle != null) {
+            if (previewHandle.equals(nodeModel)) {
+                updateModel(previewHandle);
+            }
+        }
+    }
+
     void stopCluster() {
         if (viewer != null) {
             viewer.stopPlugin();
@@ -94,6 +107,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
 
             viewer = null;
             factory = null;
+            previewHandle = null;
         }
     }
 
@@ -106,6 +120,8 @@ public class PreviewPlugin implements IPlugin, IModelListener, IDetachable {
     }
 
     void openPreview(JcrNodeModel preview) {
+        previewHandle = preview.getParentModel();
+
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
         IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));
