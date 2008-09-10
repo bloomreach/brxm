@@ -45,14 +45,14 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected AjaxLink discard;
     protected AjaxLink save;
     private JcrNodeModel model;
-    private IServiceReference<MultiEditorPlugin> factory;
+    private IServiceReference<IEditorManager> factory;
     private IServiceReference<IEditService> editor;
 
-    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, MultiEditorPlugin plugin, IEditService editor) {
+    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, IEditorManager mgr, IEditService editor) {
         super(context, dialogWindow);
 
         this.model = model;
-        this.factory = context.getReference(plugin);
+        this.factory = context.getReference(mgr);
         this.editor = context.getReference(editor);
 
         this.ok.setVisible(false);
@@ -74,7 +74,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 save();
-                MultiEditorPlugin plugin = factory.getService();
+                IEditorManager plugin = factory.getService();
                 plugin.deleteEditor(OnCloseDialog.this.editor.getService());
                 closeDialog();
             }
@@ -87,7 +87,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 discard();
-                MultiEditorPlugin plugin = factory.getService();
+                IEditorManager plugin = factory.getService();
                 plugin.deleteEditor(OnCloseDialog.this.editor.getService());
                 closeDialog();
             }

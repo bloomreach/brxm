@@ -47,7 +47,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
+public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -202,6 +202,13 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IDetachable {
 
             entry.getValue().plugin.stopPlugin();
             editors.remove(entry.getKey());
+
+            // notify listeners
+            List<ICloseEditorListener> listeners = context.getServices(config.getString("editor.id"),
+                    ICloseEditorListener.class);
+            for (ICloseEditorListener listener : listeners) {
+                listener.onClose(entry.getKey());
+            }
         } else {
             log.error("unknown editor " + service + ".  Delete is ignored");
         }

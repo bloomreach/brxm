@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IJcrService;
@@ -44,7 +45,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
+public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, ICloseEditorListener, IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
@@ -54,7 +55,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     private IPluginControl viewer;
     private IFactoryService factory;
     private String clusterEditorId;
-    private JcrNodeModel previewHandle;
+    private JcrNodeModel model;
 
     public PreviewPlugin(IPluginContext context, IPluginConfig config) {
         this.context = context;
@@ -67,6 +68,9 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
         } else {
             log.warn("No model defined ({})", RenderService.MODEL_ID);
         }
+
+        // register for editor close notifications
+        context.registerService(this, config.getString("editor.id"));
     }
 
     public void detach() {
@@ -76,6 +80,8 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     public void updateModel(IModel handle) {
         JcrNodeModel handleModel = (JcrNodeModel) handle;
         if (handleModel != null && handleModel.getNode() != null) {
+            model = handleModel;
+
             JcrNodeModel draft = getDraftModel(handleModel);
             if (draft != null) {
                 stopCluster();
@@ -93,9 +99,23 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        if (previewHandle != null) {
-            if (previewHandle.equals(nodeModel)) {
-                updateModel(previewHandle);
+        if (model != null) {
+            if (model.equals(nodeModel)) {
+                updateModel(model);
+            }
+        }
+    }
+
+    public void onClose(IModel model) {
+        if (model instanceof JcrNodeModel) {
+            JcrNodeModel nodeModel = (JcrNodeModel) model;
+            JcrNodeModel handleModel = nodeModel.getParentModel();
+            if (handleModel != null && handleModel.getNode() != null) {
+                String browserId = config.getString("browser.id");
+                IBrowseService viewService = context.getService(browserId, IBrowseService.class);
+                if (viewService != null) {
+                    viewService.browse(handleModel);
+                }
             }
         }
     }
@@ -107,7 +127,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
 
             viewer = null;
             factory = null;
-            previewHandle = null;
+            model = null;
         }
     }
 
@@ -120,8 +140,6 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     }
 
     void openPreview(JcrNodeModel preview) {
-        previewHandle = preview.getParentModel();
-
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
         IClusterConfig clusterConfig = pluginConfigService.getCluster(config.getString("cluster.name"));

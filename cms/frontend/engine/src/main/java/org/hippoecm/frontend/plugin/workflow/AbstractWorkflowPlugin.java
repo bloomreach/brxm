@@ -222,6 +222,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         } catch (Exception ex) {
             log.error(ex.getMessage());
             showException(ex);
+            ex.printStackTrace();
         }
     }
 

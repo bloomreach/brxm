@@ -1475,6 +1475,9 @@
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
+    <sv:property sv:name="browser.id" sv:type="String">
+      <sv:value>BrowserPerspective</sv:value>
+    </sv:property>
   </sv:node>
   
   <sv:node sv:name="documentEditorPlugin">
@@ -1494,7 +1497,7 @@
       <sv:value>service.editor.tab</sv:value>
     </sv:property>
   </sv:node>
-
+  
   <sv:node sv:name="logoutPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
