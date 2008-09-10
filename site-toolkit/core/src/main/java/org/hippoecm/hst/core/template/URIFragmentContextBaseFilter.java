@@ -125,7 +125,6 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			} catch (RepositoryException e) {
 				throw new ServletException(e);
 			}
-			System.out.println(request.getRequestURI());
 			HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request, uriPrefix);
            
 			prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE, contentContextBase);
