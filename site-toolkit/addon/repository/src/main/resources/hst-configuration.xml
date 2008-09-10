@@ -52,6 +52,24 @@
                 <sv:value>hippo:harddocument</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String"/>
+            <sv:node sv:name="binaries">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hst:sitemapitem</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:prefixlinkrewrite" sv:type="String">
+                    <sv:value>/binaries</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:nodepath" sv:type="String">
+                    <sv:value>/content/*</sv:value>
+                    <sv:value>/content/assets/*</sv:value>
+                    <sv:value>/content/gallery/*</sv:value>
+                </sv:property>
+                <sv:property sv:name="hst:nodetype" sv:type="String">
+                    <sv:value>hippo:resource</sv:value>
+                    <sv:value>hippo:document</sv:value>
+                    <sv:value>hippo:document</sv:value>
+                </sv:property>
+            </sv:node>
         </sv:node>
         <sv:node sv:name="hst:navigation">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
