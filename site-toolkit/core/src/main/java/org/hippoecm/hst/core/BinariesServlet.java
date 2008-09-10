@@ -22,6 +22,7 @@ import java.net.URLDecoder;
 import java.util.StringTokenizer;
 
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.hippoecm.hst.jcr.JCRConnector;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 
 import org.slf4j.Logger;
@@ -45,7 +47,7 @@ public class BinariesServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Logger logger = LoggerFactory.getLogger(BinariesServlet.class);
+    public static final Logger log = LoggerFactory.getLogger(BinariesServlet.class);
 
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -53,46 +55,58 @@ public class BinariesServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-       String relativeURL = req.getRequestURI();
+        String relativeURL = req.getRequestURI();
 
-            // simply remove the contextpath, servletpath and end /
-           String path = relativeURL;
+        // simply remove the contextpath, servletpath and end /
+        String path = relativeURL;
 
-            if (path.startsWith(req.getContextPath())) {
-                path = path.substring(req.getContextPath().length());
-            }
+        if (path.startsWith(req.getContextPath())) {
+            path = path.substring(req.getContextPath().length());
+        }
 
-            if (path.startsWith(req.getServletPath())) {
-                path = path.substring(req.getServletPath().length());
-            }
+        if (path.startsWith(req.getServletPath())) {
+            path = path.substring(req.getServletPath().length());
+        }
 
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-            
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
 
         path = UrlUtilities.decodeUrl(path);
-       
         try {
             Session session = JCRConnector.getJCRSession(req.getSession());
 
             Item item = JCRConnector.getItem(session, path);
 
             if (item == null) {
-                logger.warn("item at path " + path + " not found, response status = 404)");
+                log.warn("item at path " + path + " not found, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             if (!item.isNode()) {
-                logger.warn("item at path " + path + " is not a node, response status = 404)");
+                log.warn("item at path " + path + " is not a node, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
 
             Node node = (Node) item;
 
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                try {
+                    Item resource = node.getPrimaryItem();
+                    if (resource.isNode() && ((Node) resource).isNodeType(HippoNodeType.NT_RESOURCE)) {
+                        node = (Node) resource;
+                    } else {
+                        log.warn("expected a hippo:resoource node as primary item.");
+                    }
+                } catch (ItemNotFoundException e) {
+                    log.warn("No primary item found for binary");
+                }
+
+            }
+
             if (!node.hasProperty("jcr:mimeType")) {
-                logger.warn("item at path " + path + " has no property jcr:mimeType, response status = 404)");
+                log.warn("item at path " + path + " has no property jcr:mimeType, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -100,7 +114,7 @@ public class BinariesServlet extends HttpServlet {
             String mimeType = node.getProperty("jcr:mimeType").getString();
 
             if (!node.hasProperty("jcr:data")) {
-                logger.warn("item at path " + path + " has no property jcr:data, response status = 404)");
+                log.warn("item at path " + path + " has no property jcr:data, response status = 404)");
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -118,9 +132,8 @@ public class BinariesServlet extends HttpServlet {
                 ostream.write(buffer, 0, len);
             }
         } catch (RepositoryException ex) {
-            logger.error("RepositoryException with message " + ex.getMessage() +
-            		" while getting binary data stream item " +
-            		"at path " + path + ", response status = 404)");
+            log.error("RepositoryException with message " + ex.getMessage() + " while getting binary data stream item "
+                    + "at path " + path + ", response status = 404)");
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }

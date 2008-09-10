@@ -22,7 +22,11 @@ public class UrlUtilities {
         StringBuffer encodedUrl = new StringBuffer(contextPath);
         boolean replaceDup = false;
         if(nrParts > uriLevels) {
-            if(uriParts[nrParts-1].equals(uriParts[nrParts-2])) {
+            /*
+             * When the link is to a hippo document, the name coincides with the handle. 
+             * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
+             */
+            if(uriParts[nrParts-1].equals(uriParts[nrParts-2]) && !uriParts[nrParts-1].contains(".")) {
                 replaceDup = true; 
             }
         }
@@ -51,7 +55,12 @@ public class UrlUtilities {
         int nrParts = uriParts.length;
         for(int i = 0 ; i < nrParts ; i++) {
             if(i == nrParts -1) {
-                 if(uriParts[i].endsWith(HTML_POSTFIX)) {
+                 /*
+                  * if it ends with the html postfix and uriPart[i] != uriParts[i-1], it means we have to expand the request to
+                  *  /handle/document concept
+                  */  
+                 if(uriParts[i].endsWith(HTML_POSTFIX) && !uriParts[i].equals(uriParts[i-1])) {
+                     // For now, just replace " " with "_x0020_" to get jcr path
                      String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length()).replaceAll(" ", "_x0020_");
                      decodedUrl.append("/"+lastPart+ "/"+lastPart);
                  } else {
