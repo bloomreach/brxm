@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.mapping.URLMappingImpl;
 import org.hippoecm.hst.jcr.JCRConnector;
 import org.hippoecm.hst.jcr.JCRConnectorWrapper;
@@ -99,10 +100,10 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
             // parallel requests (for example frames) from one session gives problems. The invalidation needs to be improved  
 			JCRConnector.getJCRSession(request.getSession(), true);
 			
-			long start = System.nanoTime();
+			long start = System.currentTimeMillis();
             URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels );
            
-            log.debug("creating mapping took " + (System.nanoTime() - start) / 1000000 + " ms.");
+            Timer.log.debug("creating mapping took " + (System.currentTimeMillis() - start) + " ms.");
             request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
             
 			//content configuration contextbase
@@ -124,7 +125,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 			} catch (RepositoryException e) {
 				throw new ServletException(e);
 			}
-			
+			System.out.println(request.getRequestURI());
 			HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request, uriPrefix);
            
 			prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE, contentContextBase);
@@ -133,7 +134,7 @@ public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filt
 		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE, uriPrefix);
 		    
 			filterChain.doFilter(prefixStrippedRequest, response);			
-		
+			Timer.log.debug("Handling request took " + (System.currentTimeMillis() - start) + " ms.");
 	   }
 		
 	}
