@@ -53,11 +53,6 @@ public class HippoNodeTypeSanityTest extends TestCase {
     public void tearDown() throws Exception {
         session.refresh(false);
         if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").getNode("doc").getProperty("hippo:compute").remove();
-            session.getRootNode().getNode("test").getNode("doc").getProperty("hippo:related").remove();
-            session.getRootNode().getNode("test").getNode("doc").getProperty("hippo:fuck").remove();
-            session.getRootNode().getNode("test").getNode("doc").remove();
-            session.save();
             session.getRootNode().getNode("test").remove();
             session.save();
         }
