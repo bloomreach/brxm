@@ -42,11 +42,13 @@ public class URLMappingImpl implements URLMapping {
     private String contextPrefix;
     private String contextPath;
     private Node siteMapRootNode;
+    private int uriLevels;
 
-    public URLMappingImpl(Session session, String contextPath, String contextPrefix, String path) {
+    public URLMappingImpl(Session session, String contextPath, String contextPrefix, String path, int uriLevels) {
         this.session = session;
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
+        this.uriLevels = uriLevels;
         try {
             long start = System.currentTimeMillis();
             String virtualEntryName = null;
@@ -128,6 +130,7 @@ public class URLMappingImpl implements URLMapping {
     public String rewriteLocation(Node node) {
         long start = System.currentTimeMillis();
         String path = "";
+        String rewrite = null;
         try {
             if (node instanceof HippoNode) {
                 HippoNode hippoNode = (HippoNode) node;
@@ -171,25 +174,29 @@ public class URLMappingImpl implements URLMapping {
                 log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
             } else {
                 String url = bestRewriter.getLocation(node);
-                Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
-                return contextPath + url;
+                rewrite = url;
             }
 
         } catch (RepositoryException e) {
             log.error("RepositoryException during link rewriting " + e.getMessage() + " Return node path.");
         }
         Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
-        return contextPath + contextPrefix + path;
+       
+        if(rewrite == null) {
+            rewrite = contextPrefix + path;
+        }
+        return UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
     }
 
     public String rewriteLocation(String path) {
         long start = System.currentTimeMillis();
+        String rewrite = null;
         if (siteMapRootNode != null && path != null && !"".equals(path)) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
                 if (path.length() == 0) {
                     log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
-                    return contextPath + contextPrefix;
+                    rewrite =  contextPrefix;
                 }
             }
             try {
@@ -201,8 +208,7 @@ public class URLMappingImpl implements URLMapping {
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
-                        Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
-                        return contextPath + contextPrefix + newLink;
+                        rewrite =  contextPrefix + newLink;
                     } else {
                         log
                                 .warn("cannot rewrite path '"
@@ -221,8 +227,10 @@ public class URLMappingImpl implements URLMapping {
             }
         }
         Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
-        return contextPath + contextPrefix + "/" + path;
-
+        if(rewrite == null) {
+            rewrite = contextPrefix + "/" + path;
+        }
+        return UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
     }
 
 }
