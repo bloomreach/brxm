@@ -24,16 +24,6 @@ public class URLBaseHttpRequestServletWrapper extends HttpServletRequestWrapper 
 		strippedRequestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 		//strip urlprefix from uri
 		strippedRequestURI = strippedRequestURI.replaceFirst(urlPrefix, "");
-		
-		//urldecode resulting requestURI
-		String urlDecodedURI = null;
-		try {
-		    urlDecodedURI = URLDecoder.decode(stripUrlPrefix(strippedRequestURI),"utf-8");
-		    strippedRequestURI = urlDecodedURI;
-        } catch (UnsupportedEncodingException e) {
-            log.warn("Url is not utf-8 encoded");            
-        }
-		
 	}
 
 	@Override
