@@ -27,7 +27,7 @@ div.clearer {clear: both;}
 /* Global elements styles */
 /* ================================================ */
 
-body {background-color: #003159 }
+body {background-color: white;}
 
 /* default font settings */
 body, table tr td, table tr th{
@@ -37,7 +37,7 @@ vertical-align: top;
 /*overflow: hidden;*/
 }
 
-a {color: #00A2E3;}
+/* a {color: #00A2E3;} */
 
 /* default buttons */
 button, input[type="button"], input[type="submit"] {
@@ -53,87 +53,70 @@ ul.hightlight li,
 table tr.selected td, 
 table tr.selected td,
 table tr.selected td a,
-.hightlight a { background-color: #00A2E3; color: white;}
+.hightlight a { background: #c3d1de; border-bottom: 1px solid #286088}
 
-/* banner */
-span.banner {
-  background: url(images/banner-bg.png);
-  position: absolute;
-  top: 2px;
-  left: 50px;
-  right: 5px;
-}
 
 /* Tabsplugin */
 /* ================================================ */
 ul.tabs li.selected a{font-weight: bold; text-decoration: none; color: black }
 
 
-.vertical ul.tabs {position: absolute; top: 50px; width: 35px;}
+.vertical ul.tabs {position: absolute; top: 50px; width: 35px; left: 2px}
 .vertical ul.tabs li {height: 40px;}
 
 ul.tabs li a.close {position: absolute; right: 40px; top: 1px; background: url('images/close.png') no-repeat center center; padding: 6px; padding-right: 11px; height: 14px; text-indent: -9999px}
 
-.vertical ul.tabs li.tab0{
-  background: url(images/dashboard.png);
-  text-indent: -9999px;
-}
-.vertical ul.tabs li.tab0.selected{
-  background: url(images/dashboard-light.png);
-}
-.vertical ul.tabs li.tab1{
-  background: url(images/browse.png);
-  text-indent: -9999px;
-}
-.vertical ul.tabs li.tab1.selected{
-  background: url(images/browse-light.png);
-}
-.vertical ul.tabs li.tab2{
-  background: url(images/users.png);
-  text-indent: -9999px;
-}
-.vertical ul.tabs li.tab2.selected{
-  background: url(images/users-light.png);
-}
+.vertical ul.tabs li.selected {background-image:url("images/maintabselected.png")}
+.vertical ul.tabs li span{display: block; width: 100%; height: 100%; background-repeat: no-repeat; background-position: center center; text-indent: -9999px;}
+
+.vertical ul.tabs li.tab0 span{background-image: url(images/icons/home-24.png);}
+.vertical ul.tabs li.tab1 span{background-image: url(images/icons/emblem-documents-24.png);}
+.vertical ul.tabs li.tab2 span{background-image: url(images/icons/groups-24.png);}
 
 ul.tabs li.tab0 a.close, ul.tabs li.tab1 a.close{background-image: none}
 
 /* Document view panel */
-div.document ul.tabs {
+.documenttabtop{background: url("images/documenttabsback.png") repeat-x bottom}
+ul.documenttabs {
   background: none;
   width: auto;
   position: relative;
-  top: 0px;
 }
 
-.document ul.tabs li {
+ul.documenttabs li.tab0,
+ul.documenttabs li.tab1,
+ul.documenttabs li.tab2,
+ul.documenttabs li.tab3,
+ul.documenttabs li.tab4,
+ul.documenttabs li.tab5
+ {
   display:block;
   float:left;
   margin-right: 10px;
   position: relative;
-  text-align: center;
-  text-indent: 0px;
+  background: url("images/tabinactive.gif") no-repeat;
+  width: 150px;
 }
 
-.document ul.tabs a {
+ul.documenttabs a {
   font-weight: normal;
   white-space:nowrap;
   display: block;
   float: left;
-  padding: 6px; 
-  text-decoration: underline;
+  padding: 4px;
+  padding-bottom: 5px;
+  padding-left: 25px; 
+  text-decoration: none;
   text-align: center;
+  color: #333333;
+
+}
+ul.documenttabs a.edit_ico{
+background-repeat: no-repeat;
+background-position: 5px 4px;
 }
 
-.document ul.tabs li.tab0, 
-.document ul.tabs li.tab0.selected,
-.document ul.tabs li.tab1,
-.document ul.tabs li.tab1.selected,
-.document ul.tabs li.tab2,
-.document ul.tabs li.tab2.selected{
-  background: none;
-  text-indent: 0px;
-}
+ul.documenttabs li.selected{background: url("images/tabactive.gif") no-repeat}
 
 /* Preview panel */
 /* ================================================ */
@@ -148,62 +131,62 @@ div.previewMessage{background: url("images/icons/message-preview-128.png") no-re
 
 /* Wicket Ajax indicator */
 /* ================================================ */
-span.wicket-ajax-indicator{position: absolute; top: 15px; left: 15px; display: block; visiblity: visible}
+span.wicket-ajax-indicator{position: absolute; top: 18px; left: 212px; display: block; visiblity: visible}
 
 /* Logout */
 /* ================================================ */
-ul.logout {position: absolute; right: 0px; top: 0px; z-index: 10; padding: 6px; width: 400px;}
-ul.logout li{float: right; margin-left: 15px;}
-ul.logout li span.name{color: black; font-weight: bold;}
+ul.logout {position: absolute; right: 0px; top: 4px; z-index: 10; padding: 6px; width: 400px; color: white;
+background: url("images/headingback-right.png") no-repeat top right;
+text-align: right;
+padding-right: 17px;
+padding-top: 24px;
+}
+ul.logout li{display: inline}
+ul.logout li span.name{color: white; font-weight: bold; text-transform: capitalize}
 ul.logout a:hover{text-decoration: underline}
-ul.logout li div a { }
+ul.logout li a { color: white;}
 
 
 /* Main Positioning and Panels */
 /* ================================================ */
-.banner {
-  background: url(images/banner-bg.png);
-  height: 44px;
-}
+.perspective-name{color: white; padding: 6px; width: 150px;}
 
-.panelcontainer{border: 1px solid #cccccc; background: white url("images/panelBack.png") repeat-x 0px 29px;}
-.panel{padding-top: 5px; position: relative;}
-.panelcontainer h2{margin-top: 0px; background-position: center right; background-repeat: repeat-x;  height: 29px; margin-bottom: 0px; background: white url("images/inactiveView.gif") repeat-x;}
-.nopadding{padding: 0px}
+.header{background: url("images/headingback.png") repeat-x; height: 45px; margin-top: 4px;}
+.header a.home{background: url("images/headingback-left.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;}
 
-/* workaround for current browsers; use [yui|id=...] selector when CSS3 is sufficiently supported */
-.editor-perspective-wrapper,
-.management-perspective-wrapper,
-.dashboard-perspective-wrapper,
-.browse-perspective-wrapper{
-}
 .scrolllist{overflow: auto; height: 90px; padding: 2px; background-color: white}
 
 div.slidercontrol a {background: url("images/sliderback.gif") repeat-x; height: 6px; width: 100%; text-align: center; display: block}
 div.slidercontrol a:hover{cursor: s-resize}
 
-/* Main Positioning and Panels */
+/* Shortcuts */
 /* ================================================ */
-.panelcontainer h2 span{font-family: arial, helvetica, sans-serif; display: block; padding: 4px; background-position: left right; background-repeat: no-repeat; font-size: 18px; color: #666666; font-weight: normal}
+.shortcuts {margin-left: 35px; padding: 6px}
+.shortcuts div div{float: left; margin-right: 8px;}
+.shortcuts div div a{color: #333333}
+.shortcuts div div a.image-add{background: none}
+.shortcuts div div a.icon-16{padding-left: 0px;}
 
-.panelHead{background: url("images/inactiveView.gif") repeat-x top left; height: 30px;}
-.browse-perspective-center-body div.panelHead{
-background: url("images/inactiveView.gif") top left; height: 60px;}
+div.iconshortcuts{padding: 0px;}
+div.iconshortcuts h3{color: white; display: none;}
 
-body div.actionspanel{
-padding: 6px;
+
+
+
+/* Boxes */
+/* ================================================ */
+
+
 }
 
 /* Shortcut buttons */
 /* ================================================ */ 
-div.iconshortcuts{padding: 0px;}
-div.iconshortcuts h3{color: white; display: none;}
-div.iconshortcuts div.renderItem{float: top; background: url("images/devider.png") no-repeat center right; height: 29px; white-space:nowrap; }
-
 /* Actions buttons */
 /* ================================================ */ 
 div.iconactions{padding: 0px;}
+/*
 div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 8px;}
+*/
 
 /* action titles and documentInfo */
 div.iconactions h3{color: white; display: none;}
@@ -229,6 +212,10 @@ div.actionspanel ul li{margin-right: 15px; float: left;}
 .actionspanel ul li a span, .actionspanel ul li span a, .actionspanel ul li span span{display: inline; padding: 0px;}
 
 .actionspanel ul li a:hover{text-decoration: underline; color: black;}
+
+.actionspanel select{float: right;  background: #286088; color: white; margin: 2px; border: 1px solid white;}
+.actionspanel select option{color: #666666; background: white; color: #666666; }
+
 
 /* Welcome Panel */
 /* ================================================ */
@@ -321,13 +308,24 @@ table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/
 .close-control{background-image:url("images/controls/close-control.gif")}
 .back-control{background-image:url("images/controls/back-control.gif"); background-repeat: no-repeat; display: block; width:45px; height: 45px; text-indent: -9999px; position: absolute; top: 0px; left: 12px; z-index:100;}
 
+/* Boxes */
+/* ================================================ */
+.box-top,
+.box-left,
+.box-right,
+.box-topleft,
+.box-topright,
+.box-bottomleft,
+.box-bottomright{background-image: url(images/boxes/box-blue.png);}
+
+
 /* Wicket standard Dialog overwrite */
 /* ================================================ */
 body div.wicket-modal div.w_blue div.w_top, body div.wicket-modal div.w_blue div.w_bottom, body div.wicket-modal div.w_blue div.w_topLeft, body div.wicket-modal div.w_blue div.w_topRight, body div.wicket-modal div.w_blue div.w_bottomRight, body div.wicket-modal div.w_blue div.w_bottomLeft, body div.wicket-modal div.w_blue a.w_close{
-background-image: url(images/wicketframe-hippo.png); 
+background-image: url(images/boxes/box-blue.png); 
 }
 body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue div.w_right {
-background-image:url(images/wicketframe2-hippo.png); 
+background-image:url(images/boxes/box-blue2.png); 
 }
 
 body div.wicket-modal div.w_caption{background: #fafbfb}
@@ -396,30 +394,47 @@ div.versioning .panelHead td{padding: 5px;}
 div.Tree {
 margin:0px;
 border: none;
-margin-top: 2px;
+background: #D7E1EA;
 }
 div.Tree *{white-space: nowrap;}
 
 div.Tree div.wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 
-div.Tree .wicket-tree .row a {color: black}
+div.Tree .wicket-tree .row a {color: #333333}
 div.wicket-tree div.a_{width: auto; display:block;}
 div.Tree .wicket-tree .row {width:auto;}
 div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
 div.Tree .wicket-tree .row-selected a {}
-div.Tree .wicket-tree .row-selected { background: #f2f2f2; overflow:hidden; }
+div.Tree .wicket-tree .row-selected { background: #c3d1de; overflow:hidden; border-bottom: 1px solid #286088}
 div.Tree div.wicket-tree{border: none;}
 div.Tree div.wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+
+div.Tree .wicket-tree span.plus{background: url("images/tree-icons.png") no-repeat scroll 0px center} 
+div.Tree .wicket-tree span.minus{background: url("images/tree-icons.png") no-repeat scroll -18px center} 
+div.Tree .wicket-tree span.corner{background: url("images/tree-icons.png") no-repeat scroll -54px center}
+div.Tree .wicket-tree span.junction{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
+div.Tree .wicket-tree span.junction-last{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
+div.Tree .wicket-tree span.indent-line {background: url("images/tree-icons.png") no-repeat scroll -36px center}
+
+
+.navigator{background: #286088}
+
+.navigator .folderlist h3{background: transparent url(images/filelistHeaderback.gif) repeat-x; padding: 4px; padding-top: 2px;  padding-bottom: 5px; font-weight: normal; }
+.navigator .documentlist, .navigator .folderlist{background: #D7E1EA}
+
+
 
 /* Template Editor */
 /* ================================================ */
 
-.editor-perspective-wrapper div.panelcontainer{border-top: none; background: white;}
-
 div.editor{
 padding:0px;
-background: url("images/panelBack.png") repeat-x;
+background: white;
+border: 1px solid #286088;
+border-top: none;
 }
+
+.editor-top{background: url("images/editortoolbarback.png") repeat-x}}
 
 div.templatetitle{
 background: url("images/inactiveView.gif") repeat-x;
@@ -470,7 +485,7 @@ div#templateitemedit input{width: 100%;}
 
 .templatedetails div.templateItem h3,
 .editor div.renderItem div h3, 
-.editor table.templateItemTable h3{font-size: 11px; font-weight: normal; color: #b2b2b2; margin-bottom: 8px; text-decoration: underline}
+.editor table.templateItemTable h3{font-size: 11px; font-weight: normal; color: #b2b2b2; margin-bottom: 8px;}
 .templatedetails div.templateItem h3{color: #666666; text-decoration: none;}
 
 .editor table.templateItemTable td.controls{width: 15px; background: white; padding: 0px;}
@@ -504,23 +519,30 @@ z-index: 5;
 .editor table.templateItemTable input,
 .editor table.templateItemTable select,
 .editor table.templateItemTable textarea
-{font-family: arial, helvetica, sans-serif; font-size: 18px; background: white; border: 1px solid #666666; padding: 2px;}
+{font-size: 11px; background: #f6fbfe; border: none; padding: 4px; color: #333333}
 
 .templatedetails div.templateItem input,
 .editor div.renderItem div input, .editor table.templateItemTable input{width: 100%;}
 .editor div.renderItem div select, .editor table.templateItemTable select{}
 .templatedetails div.templateItem textarea, .editor div.renderItem div textarea, .editor table.templateItemTable textarea{width: 100%; height: 200px; border: none;}
  
-.editor div.renderItem div.textArea textarea{border: 1px solid #666666;} 
+.editor div.renderItem div.textArea textarea{border: none} 
 .editor div.renderItem div.datePicker input{width: 80px;}
 
-.editor table.htmlarea {border: 1px solid #666666;}
+.editor table.htmlarea {border: none}
+
 /* Xinha */
 /* ================================================ */
 table.htmlarea tr td{border: none}
 table.htmlarea tr td table tr td{border: none}
 body div.renderItem div table.htmlarea tr td select{margin-top: 0px; font-size: 11px;}
 table.htmlarea tr td{padding: 0px; vertical-align: top;}
+
+body .htmlarea .toolbar {background: none; border: none;}
+body .htmlarea .toolbar .button{background: none; border: none}
+body table.htmlarea{background: #f6fbfe; border: 5px solid #f6fbfe}
+table.htmlarea .statusBar{display: none}
+
 
 div.fields div.toolbar div, div.toolbar div {
 margin-bottom:0px;
@@ -532,9 +554,6 @@ body .htmlarea .toolbar select, body .htmlarea .toolbar select:hover, body .html
 top: 1px;
 }
 
-body .htmlarea .toolbar {
-  background-color: #fefefe;
-}
 .htmlarea table.toolbarRow {
   margin-top:2px;
   margin-bottom:2px;
@@ -607,14 +626,15 @@ padding:0px;
 /* Table datalists */
 /* ================================================ */
 
-.dataview{width: 100%; background: white}
+.dataview{width: 100%; background: #D7E1EA;}
 table.dataview th a {color: #666666;}
-.dataview tr td{padding: 5px;}
+.dataview tr td{padding: 2px;}
+.dataview tr td{padding-bottom: 3px;}
+.dataview tr td{height: 11px;}
 .dataview th {
   text-align:left;
   background: url('images/filelistHeaderback.gif') repeat-x; 
-  padding: 4px;
-  padding-top: 2px;
+  padding: 4px; padding-top: 2px;  padding-bottom: 5px;
 }
 
 tr.headers th.orderAscending {
@@ -629,18 +649,10 @@ tr.headers th.orderDescending {
   background-position:center; 
   background-repeat: no-repeat;
 }
-tr.headers th.orderNone {
-}
+tr.headers th.orderNone {}
 
-tr.even td{background-color: #f7f7f7}
-tr.odd td { padding: 5px; }
-
-.Doclist table tr td a{color: black}
-/*.Doclist{ height: 100%;}*/
-/*overflow: auto}*/
-
-table tr td.icon-16{width: 15px}
-table tr td.icon-16 span {display: block; height: 16px;}
+table tr td.icon-16 span {display: block; height: 16px; width:16px; margin-left: 2px}
+table tr td.icon-16{padding: 0px;}
 
 .dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
 .dataListPaging td div{margin-bottom: 5px}
@@ -648,8 +660,11 @@ table tr td.icon-16 span {display: block; height: 16px;}
 .dataListPaging td a:hover{background: #f2f2f2}
 .dataListPaging td span em, .dataListPaging td a em{font-style: normal}
 
-.navigator, .navigator a { color: green; font-size: 18px; margin-left: 10px; }
-.navigator { color: grey }
+
+/* Management Perspective */
+/* ================================================ */
+.management{background:#286088 }
+
 
 
 /* User Management */

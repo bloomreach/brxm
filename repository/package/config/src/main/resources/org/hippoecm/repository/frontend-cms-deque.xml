@@ -451,7 +451,7 @@
       <sv:value>center</sv:value>
     </sv:property>
     <sv:property sv:name="left" sv:type="String">
-      <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=false,minWidth=400,width=600,gutter=0px 4px 0px 0px</sv:value>
+      <sv:value>id=browse-perspective-left,body=browse-perspective-left-body,resize=true,scroll=false,minWidth=300,width=300,gutter=0px 4px 0px 0px</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
       <sv:value>id=browse-perspective-center,body=browse-perspective-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px</sv:value>
@@ -512,10 +512,10 @@
       <sv:value>id=navigator-top,body=navigator-top-body,height=25px,resize=false</sv:value>
     </sv:property>
     <sv:property sv:name="left" sv:type="String">
-      <sv:value>id=navigator-left,body=navigator-left-body,resize=true,scroll=true,minWidth=200,width=300,gutter=0px 4px 0px 0px</sv:value>
+      <sv:value>id=navigator-left,body=navigator-left-body,resize=true,scroll=true,minWidth=100,width=150,gutter=0px 1px 1px 1px</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=navigator-center,body=navigator-center-body,minWidth=400,scroll=true,gutter=0px 0px 0px 0px</sv:value>
+      <sv:value>id=navigator-center,body=navigator-center-body,minWidth=100,width=150,scroll=true,gutter=0px 1px 1px 0px</sv:value>
     </sv:property>
   </sv:node>
   
@@ -1490,7 +1490,7 @@
       <sv:value>center</sv:value>
     </sv:property>
     <sv:property sv:name="yui.options" sv:type="String">
-      <sv:value>gutter=0px 5px 0px 0px</sv:value>
+      <sv:value>gutter=0px 0px 0px 0px</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1511,7 +1511,7 @@
       <sv:value>top</sv:value>
     </sv:property>
     <sv:property sv:name="yui.options" sv:type="String">
-      <sv:value>height=20,gutter=0px 5px 0px 0px</sv:value>
+      <sv:value>height=20,gutter=0px 0px 0px 0px</sv:value>
     </sv:property>
   </sv:node>
   
