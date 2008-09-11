@@ -18,7 +18,7 @@
     <div yui:id="dashboard-perspective-wrapper">
       <div class="panelcontainer" yui:id="welcomepanel">
         <h2>
-          <span class="welcome">Welcome to Hippo CMS 7</span>
+          <span class="welcome"><wicket:message key="welcome">welcome message</wicket:message></span>
         </h2>
         <div class="padding">
           <div wicket:id="extension.shortcuts">[ Shortcuts ]</div>
@@ -27,20 +27,20 @@
       <div class="panelcontainer" yui:id="lefthalf">
         <div yui:id="lefthalf-body">
           <h2>
-            <span class="history">History</span>
+            <span class="history"><wicket:message key="history">history message</wicket:message></span>
           </h2>
           <div class="panel nopadding">
-            <div class="plugin" wicket:id="extension.currentActivity">Whats going on</div>
+            <div class="plugin" wicket:id="extension.currentActivity">[ Whats going on plugin ]</div>
           </div>
         </div>
       </div>
       <div class="panelcontainer" yui:id="righthalf">
         <div yui:id="righthalf-body">
           <h2>
-            <span class="task">Todo</span>
+            <span class="task"><wicket:message key="todo">todo message</wicket:message></span>
           </h2>
           <div class="panel">
-            <div class="plugin" wicket:id="extension.todo">Todo</div>
+            <div class="plugin" wicket:id="extension.todo">[ Todo plugin ]</div>
           </div>
         </div>
       </div>  

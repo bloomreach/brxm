@@ -15,7 +15,7 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
-      <title>Hippo CMS 7 - Sign in</title>
+      <title>Hippo CMS 7</title>
       <link href="skin/style.css" rel="stylesheet" type="text/css"/>
       <link href="skin/login.css" rel="stylesheet" type="text/css"/>
   </wicket:head>
@@ -25,33 +25,29 @@
          <div>
             <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
             <form wicket:id="signInForm" name="signInForm">
-            <h2>Sign in <span>Hippo CMS 7</span></h2>
-              
-              <!--  <wicket:message key="key.key">Login</wicket:message>-->
-              
+            <h2><wicket:message key="header"/><span><wicket:message key="subheader"/></span></h2>
               <div id="login-input">
                 <table>
                     <tr>
-                        <td><label wicket:id="username-label">Username</label></td>
+                        <td width="50%"><wicket:message key="username-label"/>&nbsp;</td>
                             <td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
                          </tr>
                 <tr>
-                    <td><label wicket:id="password-label">Password</label></td>
+                    <td><wicket:message key="password-label"/>&nbsp;</td>
                     <td><input wicket:id="password" type="password" value="password"/></td>
-                  
+                </tr>
+                <tr>
+                	<td><wicket:message key="locale-label"/>&nbsp;</td>
+                	<td>
+  						<select name="locale" wicket:id="locale"></select>
+                  	</td>                	
                 </tr>
                   <tr>
                     <td>&nbsp;</td>
-                    <td style="text-align: right; padding-top: 4px;"><input type="submit" name="submit" wicket:id="submit" value="Sign in" /></td>
+                    <td style="text-align: right; padding-top: 4px;"><input type="submit" name="submit" wicket:id="submit" value="label" /></td>
                   </tr>
                 </table>
-                
-<!--                <label>Locale</label>
-                <select>
-                  <option>Choose your language</option>
-                </select>
--->             
-                
+               
                 <div class="feedback" wicket:id="feedback">
                   Feedback panel
                 </div>            
