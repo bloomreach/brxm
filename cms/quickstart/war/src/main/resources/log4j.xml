@@ -59,12 +59,7 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  
-  <category additivity="false" name="org.hippoecm.frontend">
-    <level value="debug"/>
-    <appender-ref ref="console"/>
-  </category>
-  
+
   <category additivity="false" name="org.hippoecm.repository.impl.WorkflowManagerImpl">
     <level value="warn"/>
     <appender-ref ref="console"/>
@@ -82,7 +77,7 @@
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.LocalHippoRepository">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.hippoecm.repository.DerivedDataEngine">
@@ -91,7 +86,7 @@
   </category>
 
   <root>
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>
