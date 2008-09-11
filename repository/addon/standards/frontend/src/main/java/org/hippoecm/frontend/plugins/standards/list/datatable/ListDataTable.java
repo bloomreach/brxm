@@ -35,7 +35,7 @@ public class ListDataTable extends DataTable {
     private static final long serialVersionUID = 1L;
 
     private TableSelectionListener selectionListener;
-    
+
     public interface TableSelectionListener {
         public void selectionChanged(IModel model);
     }
@@ -47,7 +47,7 @@ public class ListDataTable extends DataTable {
         setVersioned(false);
 
         this.selectionListener = selectionListener;
-        
+
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
                 private static final long serialVersionUID = 1L;
@@ -80,11 +80,20 @@ public class ListDataTable extends DataTable {
             }
         });
 
+//        item.add(new AjaxEventBehavior("ondblclick") {
+//            private static final long serialVersionUID = 1L;
+//            @Override
+//            protected void onEvent(AjaxRequestTarget target) {
+//                String script = "var x = YAHOO.util.Dom.getElementsByClassName('edit_ico'); var y = x[0];y.onclick();this.blur()";
+//                target.appendJavascript(script);
+//            }
+//        });
+
         return item;
     }
 
     public TableSelectionListener getSelectionListener() {
         return selectionListener;
-    } 
+    }
 
 }
