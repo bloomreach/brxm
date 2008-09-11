@@ -203,9 +203,7 @@ div.iconshortcuts div.renderItem{float: top; background: url("images/devider.png
 /* Actions buttons */
 /* ================================================ */ 
 div.iconactions{padding: 0px;}
-/*
 div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 8px;}
-*/
 
 /* action titles and documentInfo */
 div.iconactions h3{color: white; display: none;}
