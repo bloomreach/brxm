@@ -34,6 +34,7 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
+import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
@@ -95,33 +96,49 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
         updatePrototype();
 
         typeStore = null;
-        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
+        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel(), getPluginConfig().getString("mode"));
         String typeName = typeHelper.getName();
         if (typeName != null) {
             String prefix = typeName.substring(0, typeName.indexOf(':'));
+            String mode = getPluginConfig().getString("mode");
 
             IPluginContext context = getPluginContext();
 
-            typeStore = new JcrTypeStore(prefix);
+            if ("edit".equals(mode)) {
+                typeStore = new JcrTypeStore(prefix);
+            } else {
+                typeStore = new JcrTypeStore();
+            }
+
             TemplateEngine engine = new TemplateEngine(context, typeStore);
             context.registerService(engine, ITemplateEngine.class.getName());
             String engineId = context.getReference(engine).getServiceId();
             engine.setId(engineId);
 
+            IClusterConfig clusterConfig;
             ITypeDescriptor type = typeHelper.getTypeDescriptor();
             JcrNodeModel templateModel = typeHelper.getTemplate();
             if (templateModel == null) {
                 BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
-                IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
-                templateModel = typeHelper.storeTemplate(cluster);
+                if ("edit".equals(mode)) {
+                    IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
+                    templateModel = typeHelper.storeTemplate(cluster);
+                    clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
+                } else {
+                    clusterConfig = builtinStore.getTemplate(type, mode);
+                }
+            } else {
+                if ("edit".equals(mode)) {
+                    clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
+                } else {
+                    clusterConfig = new JcrClusterConfig(templateModel);
+                }
             }
-
-            PreviewClusterConfig clusterConfig = new PreviewClusterConfig(context, templateModel, helperModel, engineId);
 
             String uniqId = context.getReference(this).getServiceId();
             IClusterConfig cluster = new ClusterConfigDecorator(clusterConfig, uniqId + ".cluster");
             cluster.put(ITemplateEngine.ENGINE, engineId);
-            cluster.put(ITemplateEngine.MODE, ITemplateEngine.EDIT_MODE);
+            cluster.put(ITemplateEngine.MODE, mode);
             cluster.put(RenderService.WICKET_ID, getPluginConfig().getString("template"));
 
             String modelId = cluster.getString(RenderService.MODEL_ID);
@@ -142,7 +159,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
     }
 
     private void updatePrototype() {
-        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel());
+        JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel(), getPluginConfig().getString("mode"));
         JcrTypeDescriptor typeModel = typeHelper.getTypeDescriptor();
         ITemplateEngine engine = getPluginContext().getService(getPluginConfig().getString("engine"),
                 ITemplateEngine.class);

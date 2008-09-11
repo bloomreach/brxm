@@ -298,17 +298,19 @@ public class PluginConfigPlugin extends RenderPlugin {
     }
 
     private JcrTypeDescriptor getTypeModel() {
-        JcrNodeModel typeNodeModel = (JcrNodeModel) getModel();
-        try {
-            while (typeNodeModel != null) {
-                Node typeNode = typeNodeModel.getNode();
-                if (typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-                    return new JcrTypeHelper(new JcrNodeModel(typeNode)).getTypeDescriptor();
+        if ("edit".equals(getPluginConfig().getString("mode"))) {
+            JcrNodeModel typeNodeModel = (JcrNodeModel) getModel();
+            try {
+                while (typeNodeModel != null) {
+                    Node typeNode = typeNodeModel.getNode();
+                    if (typeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                        return new JcrTypeHelper(new JcrNodeModel(typeNode), "edit").getTypeDescriptor();
+                    }
+                    typeNodeModel = typeNodeModel.getParentModel();
                 }
-                typeNodeModel = typeNodeModel.getParentModel();
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
         return null;
     }

@@ -88,7 +88,7 @@ public class XinhaPlugin extends RenderPlugin {
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        mode = config.getString("mode");
+        mode = config.getString("mode", "view");
         Fragment fragment = new Fragment("fragment", mode, this);
         add(fragment);
 
