@@ -14,37 +14,21 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
-
   <wicket:panel>
     <div yui:id="browse-perspective-wrapper">
       <div class="panelcontainer" yui:id="browse-perspective-left">
         <div yui:id="browse-perspective-left-body">
-          <div style="position:relative;float:left;width:50%;border-right: 0px solid blue;height:100%;">
-            <div class="panelHead">
-              &nbsp;
-            </div>
-            <div class="panel nopadding">
-              <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
-            </div>
-          </div>
-          <div style="position:relative;float:right;width:50%;height:100%">
-            <div class="panelHead">
-              <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
-            </div>
-            <h2 class="hideme">
-              <span class="documents" wicket:id="listing.title">title listing here</span>
-            </h2>
-            <div class="panel nopadding">
-              <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
-            </div>
-          </div>
+          <h2 class="hideme">
+            <span class="documents" wicket:id="listing.title">title listing here</span>
+          </h2>
+          <div wicket:id="extension.navigator">navigator here</div>
         </div>
       </div>
       <div class="panelcontainer" yui:id="browse-perspective-center">
         <div yui:id="browse-perspective-center-body">
           <div wicket:id="extension.editor">[ Editor ]</div>
         </div>
-      </div>    
+      </div>
     </div>
   </wicket:panel>
 </html>

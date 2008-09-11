@@ -21,13 +21,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
+import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
+import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -70,13 +73,11 @@ public class PluginFactory implements IClusterable {
                 plugin = (IPlugin) constructor.newInstance(actualArgs);
 
             } catch (ClassNotFoundException e) {
-                //TODO: use the standard wicket resource locating mechanism for this.
-                String markup = StringUtils.replace(className, ".", "/") + ".html";
-                if (loader.getResourceAsStream(markup) != null) {
-                    markup = loader.getResource(markup).toExternalForm();
-
-                    config.put("pluginfactory.markup", markup);
-                    plugin = new LayoutPlugin(context, config);
+                IResourceSettings resourceSettings = Application.get().getResourceSettings();
+                IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
+                IResourceStream stream = locator.locate(null, className.replace('.', '/') + ".html");
+                if (stream != null) {
+                	plugin = new LayoutPlugin(context, config, stream);
                 } else {
                     message = e.getClass().getName() + ": " + e.getMessage();
                     log.error(e.getMessage());
@@ -108,28 +109,21 @@ public class PluginFactory implements IClusterable {
     private class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
-        private String markup;
+        private IResourceStream stream;
 
-        public LayoutPlugin(IPluginContext context, IPluginConfig config) {
+        public LayoutPlugin(IPluginContext context, IPluginConfig config, IResourceStream stream) {
             super(context, config);
 
-            markup = config.getString("pluginfactory.markup");
+            this.stream = stream;
         }
 
         public String getCacheKey(MarkupContainer container, Class containerClass) {
-            return markup;
+            return getPluginConfig().getString(IPlugin.CLASSNAME);
         }
 
         // implement IMarkupResourceStreamProvider.
         public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
-            try {
-                if (markup != null) {
-                    return new UrlResourceStream(new URL(markup));
-                }
-            } catch (MalformedURLException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage());
-            }
-            return null;
+        	return stream;
         }
     }
 
