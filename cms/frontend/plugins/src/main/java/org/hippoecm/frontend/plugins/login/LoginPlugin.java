@@ -15,9 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.wicket.Application;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.SimpleFormComponentLabel;
@@ -61,18 +71,31 @@ public class LoginPlugin extends RenderPlugin {
 
         //private CheckBox rememberMe;
         private TextField username, password;
+        private DropDownChoice locale;
+
+        private List locales = Arrays.asList(new String[] { "nl", "en" });
+        public String selectedLocale;
 
         public SignInForm(final String id) {
             super(id);
 
-            add(username = new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
-            username.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.username", "Username"));
-            add(new SimpleFormComponentLabel("username-label", username));
+            // by default, use the user's browser settings for the locale
+            selectedLocale = getSession().getLocale().getLanguage();
 
+            add(username = new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
             add(password = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
             //add(password = new RSAPasswordTextField("password", new Model(), this));
-            password.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.password", "Password"));
-            add(new SimpleFormComponentLabel("password-label", password));
+            add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
+            
+            locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+				private static final long serialVersionUID = 1L;
+
+				protected void onUpdate(AjaxRequestTarget target) {
+                    //immediately set the locale when the user changes it
+					getSession().setLocale(new Locale(selectedLocale));
+					setResponsePage(Home.class);
+                }
+            });
 
             add(new FeedbackPanel("feedback"));
 
@@ -80,10 +103,9 @@ public class LoginPlugin extends RenderPlugin {
             //rememberMe.setLabel(new ResourceModel("org.hippoecm.frontend.plugins.login.rememberMe", "rememberMe"));
             //add(new SimpleFormComponentLabel("rememberMe-label", rememberMe));
 
-            Button submit = new Button("submit", new ResourceModel("org.hippoecm.frontend.plugins.login.submit",
-                    "Sign In"));
+            Button submit = new Button("submit", new ResourceModel("submit-label"));
             add(submit);
-
+            
             Main main = (Main) Application.get();
             if (main.getRepository() == null) {
                 submit.setEnabled(false);
@@ -92,10 +114,14 @@ public class LoginPlugin extends RenderPlugin {
             }
         }
 
+
         @Override
         public final void onSubmit() {
             UserSession userSession = (UserSession) getSession();
             userSession.setJcrCredentials(credentials);
+            
+           	userSession.setLocale(new Locale(selectedLocale));
+            
             userSession.getJcrSession();
 
             setResponsePage(Home.class);
