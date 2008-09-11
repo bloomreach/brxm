@@ -18,16 +18,17 @@
         <div yui:id="navigator-wrapper">
             <div yui:id="navigator-top">
                 <div yui:id="navigator-top-body">
-                    <h2 style="float:left; margin-right: 50px;">Browse</h2>
                     <div class="iconactions" wicket:id="extension.workflows">workflow here</div>
+                    <h2 class="perspective-name">Browse</h2>
                 </div>
             </div>
-            <div yui:id="navigator-left">
+            <div class="folderlist" yui:id="navigator-left">
                 <div yui:id="navigator-left-body">
+                    <h3>Folders</h3>
                     <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
                 </div>
             </div>
-            <div yui:id="navigator-center">
+            <div class="documentlist" yui:id="navigator-center">
                 <div yui:id="navigator-center-body">
                     <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
                 </div>

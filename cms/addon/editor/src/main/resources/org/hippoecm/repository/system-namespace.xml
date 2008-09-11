@@ -503,7 +503,7 @@
             <sv:value>imagepicker</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
-            <sv:value>hippo-gray</sv:value>
+            <sv:value>hippo-lite</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
