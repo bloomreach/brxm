@@ -18,15 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,10 +34,8 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.service.ITitleDecorator;
-import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class NewDocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
@@ -69,23 +59,7 @@ public class NewDocumentListingPlugin extends AbstractListingPlugin implements I
 
         ListColumn column = new ListColumn(new Model(""), "icon");
         column.setComparator(new TypeComparator());
-        column.setRenderer(new EmptyRenderer() {
-            private static final long serialVersionUID = 1L;
-            
-            @Override
-            protected Component getViewer(String id, HippoNode node) throws RepositoryException {
-                Component c = super.getViewer(id, node); 
-                c.add(new AjaxEventBehavior("ondblclick") {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onEvent(AjaxRequestTarget target) {
-                        target.appendJavascript("var x = YAHOO.util.Dom.getElementsByClassName('edit_ico'); var y = x[0];y.onclick();this.blur()");
-                    }
-                });
-                return c;
-            }
-        });
+        column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
 
@@ -106,5 +80,5 @@ public class NewDocumentListingPlugin extends AbstractListingPlugin implements I
     protected ISortableDataProvider getDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
-    
+
 }

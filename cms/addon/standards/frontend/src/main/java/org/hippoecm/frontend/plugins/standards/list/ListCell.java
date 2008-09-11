@@ -46,6 +46,15 @@ class ListCell extends Panel {
             }
         });
 
+//        add(new AjaxEventBehavior("ondblclick") {
+//            private static final long serialVersionUID = 1L;
+//            @Override
+//            protected void onEvent(AjaxRequestTarget target) {
+//                String script = "var x = YAHOO.util.Dom.getElementsByClassName('edit_ico'); var y = x[0];y.onclick();this.blur()";
+//                target.appendJavascript(script);
+//            }
+//        });
+
         if (renderer == null) {
             add(new NameRenderer().getRenderer("renderer", model));
         } else {
