@@ -198,7 +198,7 @@ padding: 6px;
 /* ================================================ */ 
 div.iconshortcuts{padding: 0px;}
 div.iconshortcuts h3{color: white; display: none;}
-div.iconshortcuts div.renderItem{float: top; background: none no-repeat center right; height: 29px; white-space:nowrap; float: left; margin: 5px 15px; }
+div.iconshortcuts div.renderItem{float: top; background: url("images/devider.png") no-repeat center right; height: 29px; white-space:nowrap; }
 
 /* Actions buttons */
 /* ================================================ */ 

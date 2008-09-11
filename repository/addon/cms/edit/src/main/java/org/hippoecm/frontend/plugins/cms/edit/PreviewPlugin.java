@@ -201,27 +201,17 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     JcrNodeModel getPreviewModel(JcrNodeModel handle) {
         try {
             Node handleNode = handle.getNode();
-            Node published = null;
             if (handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
                         // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
-                        if (child.hasProperty("hippostd:state")) {
-                            String state = child.getProperty("hippostd:state").getString();
-                            if (state.equals("unpublished")) {
-                                return new JcrNodeModel(child);
-                            } else if (state.equals("published")) {
-                                published = child;
-                            }
+                        if (child.hasProperty("hippostd:state")
+                                && child.getProperty("hippostd:state").getString().equals("unpublished")) {
+                            return new JcrNodeModel(child);
                         }
                     }
                 }
-            } else {
-                return handle;
-            }
-            if (published != null) {
-                return new JcrNodeModel(published);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
