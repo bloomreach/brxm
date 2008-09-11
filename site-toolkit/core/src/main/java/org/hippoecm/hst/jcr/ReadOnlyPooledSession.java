@@ -62,7 +62,7 @@ public class ReadOnlyPooledSession implements Session{
     }
     
     public boolean isValid(long currentTime){
-        return (currentTime - creationTime < 60*1000);
+        return ( (currentTime - creationTime) < 60*1000);
     }
     
     public Session getDelegatee(){
@@ -72,8 +72,7 @@ public class ReadOnlyPooledSession implements Session{
     //    return this.jcrSessionPool;
     //}
      public void logout() {
-        //jcrSessionPool.release(this);
-         log.warn("logout unsupported in read only session");
+         log.warn("logout unsupported in read only session. Use the delegatee");
      }
     
      public void addLockToken(String lt) {
