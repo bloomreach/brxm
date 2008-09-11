@@ -60,9 +60,7 @@ public class JcrSessionPool {
                         return session;
                     } else {
                         // try next in the idleSessions untill none left
-                        if (session.isLive()) {
-                            session.getDelegatee().logout();
-                        }
+                        session.getDelegatee().logout();
                         session = null;
                     }
                 } catch (NoSuchElementException e) {
@@ -98,7 +96,12 @@ public class JcrSessionPool {
     public void release(HttpServletRequest request) {
         synchronized (jcrSessionPool.activeSessions) {
             ReadOnlyPooledSession finishedSession = jcrSessionPool.activeSessions.remove(request);
-            if (finishedSession != null && finishedSession.isLive()) {
+            if (finishedSession != null) {
+                if(!finishedSession.isLive()) {
+                    finishedSession.getDelegatee().logout();
+                    return;
+                }
+                
                 if (finishedSession.isValid(System.currentTimeMillis())) {
                     idleSessions.add(finishedSession);
                 } else {
