@@ -246,14 +246,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                     && !Lang.isNull(u.width)
                                     && !Lang.isNumber(u.width)
                                     && (pos == 'left' || pos == 'right')) {
-                                u.width = _this.calculateSizeFromPercentage(
-                                        u.width, parentWidth);
+                                u.width = _this.calculateSize(u.width, parentWidth);
                             } else if (!Lang.isUndefined(u.height)
                                     && !Lang.isNull(u.height)
                                     && !Lang.isNumber(u.height)
                                     && (pos == 'top' || pos == 'bottom')) {
-                                u.height = _this.calculateSizeFromPercentage(
-                                        u.height, parentHeight);
+                                u.height = _this.calculateSize(u.height, parentHeight);
                             }
                         }
 
@@ -376,13 +374,12 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.wireframes[id].layout = layout;
             },
 
-            calculateSizeFromPercentage : function(percentage, parentSize) {
-                if (!Lang.isNumber(percentage)) {
-                    var idx = percentage.indexOf('%');
+            calculateSize : function(size, parentSize) {
+                if (!Lang.isNumber(size)) {
+                    var idx = size.indexOf('%');
                     if (idx > -1) {
-                        var abs = parseInt(percentage.substr(0, idx));
-                        var parentSize = parseInt(parentSize.substr(0,
-                                parentSize.indexOf('px')));
+                        var abs = parseInt(size.substr(0, idx));
+                        var parentSize = parseInt(parentSize.substr(0, parentSize.indexOf('px')));
                         var x = parseInt((abs * parentSize) / 100);
                         return x;
                     }
