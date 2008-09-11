@@ -57,27 +57,9 @@ public class JcrTemplateStore implements IPluginConfigService {
         }
         Node templateNode = getTemplateNode(type);
         if (templateNode != null) {
-            cluster = new JcrClusterConfig(new JcrNodeModel(templateNode)) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Object get(Object key) {
-                    if ("mode".equals(key)) {
-                        return mode;
-                    }
-                    return super.get(key);
-                }
-
-                @Override
-                public Object put(Object key, Object value) {
-                    if ("mode".equals(key)) {
-                        log.warn("Illegal attempt to persist template mode");
-                        return null;
-                    }
-                    return super.put(key, value);
-                }
-            };
+            cluster = new JcrClusterConfig(new JcrNodeModel(templateNode));
             cluster = new ClusterConfigDecorator(cluster, serviceId + ".clusters." + (count++));
+            cluster.put("mode", mode);
         } else {
             cluster = null;
         }

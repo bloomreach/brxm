@@ -22,10 +22,6 @@ import java.util.UUID;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,7 +32,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
@@ -52,6 +47,8 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateListPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -117,6 +114,11 @@ public class TemplateListPlugin extends RenderPlugin {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         addField(type);
+                    }
+
+                    @Override
+                    public boolean isEnabled() {
+                        return "edit".equals(getPluginConfig().getString("mode"));
                     }
                 };
                 final String name = type.getName();

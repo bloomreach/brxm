@@ -21,9 +21,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -34,7 +37,6 @@ import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,47 +48,67 @@ public class JcrTypeHelper extends NodeModelWrapper {
 
     private static final Logger log = LoggerFactory.getLogger(JcrTypeHelper.class);
 
-    public JcrTypeHelper(JcrNodeModel nodeModel) {
+    private String mode;
+
+    public JcrTypeHelper(JcrNodeModel nodeModel, String mode) {
         super(nodeModel);
+        this.mode = mode;
     }
 
     public String getName() {
         try {
             Node baseNode = getNodeModel().getNode();
             return baseNode.getParent().getName() + ":" + baseNode.getName();
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return null;
     }
-    
+
     public JcrTypeDescriptor getTypeDescriptor() {
         try {
             Node baseNode = getNodeModel().getNode();
 
             String prefix = baseNode.getParent().getName();
             String name;
+            String uri;
             if ("system".equals(prefix)) {
                 name = baseNode.getName();
+                uri = "internal";
             } else {
                 name = prefix + ":" + baseNode.getName();
+                uri = getUri(prefix, baseNode.getSession());
             }
 
             Node ntHandle = baseNode.getNode(HippoNodeType.HIPPO_NODETYPE);
             NodeIterator ntIter = ntHandle.getNodes(HippoNodeType.HIPPO_NODETYPE);
+            Node typeNode = null;
             while (ntIter.hasNext()) {
-                Node typeNode = ntIter.nextNode();
-                if (!typeNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-
-                    String typeName;
-                    if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
-                        typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
-                    } else {
-                        typeName = name;
+                Node node = ntIter.nextNode();
+                if ("edit".equals(mode)) {
+                    if (!node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        typeNode = node;
+                        break;
                     }
-
-                    return new JcrTypeDescriptor(new JcrNodeModel(typeNode), name, typeName);
+                } else {
+                    if (node.isNodeType(HippoNodeType.NT_REMODEL)) {
+                        if (node.getProperty(HippoNodeType.HIPPO_URI).getString().equals(uri)) {
+                            typeNode = node;
+                            break;
+                        }
+                    }
                 }
+            }
+
+            if (typeNode != null) {
+                String typeName;
+                if (typeNode.hasProperty(HippoNodeType.HIPPO_TYPE)) {
+                    typeName = typeNode.getProperty(HippoNodeType.HIPPO_TYPE).getString();
+                } else {
+                    typeName = name;
+                }
+
+                return new JcrTypeDescriptor(new JcrNodeModel(typeNode), name, typeName);
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -161,17 +183,38 @@ public class JcrTypeHelper extends NodeModelWrapper {
 
     public JcrNodeModel getPrototype() {
         try {
+            Node baseNode = getNodeModel().getNode();
+            String prefix = baseNode.getParent().getName();
+
             NodeIterator iter = getNodeModel().getNode().getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes(
                     HippoNodeType.HIPPO_PROTOTYPE);
             while (iter.hasNext()) {
                 Node node = iter.nextNode();
-                if (node.isNodeType("nt:unstructured")) {
-                    return new JcrNodeModel(node);
+                if ("edit".equals(mode)) {
+                    if (node.isNodeType("nt:unstructured")) {
+                        return new JcrNodeModel(node);
+                    }
+                } else {
+                    String nt = node.getPrimaryNodeType().getName();
+                    if (prefix.equals(nt.substring(0, nt.indexOf(':')))) {
+                        return new JcrNodeModel(node);
+                    }
                 }
             }
-            throw new ItemNotFoundException("draft version of prototype was not found");
+            throw new ItemNotFoundException("no prototype was not found");
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
+        }
+        return null;
+    }
+
+    private String getUri(String prefix, Session session) throws NamespaceException, RepositoryException {
+        NamespaceRegistry nsReg = session.getWorkspace().getNamespaceRegistry();
+        String[] prefixes = nsReg.getPrefixes();
+        for (String pref : prefixes) {
+            if (pref.equals(prefix)) {
+                return nsReg.getURI(prefix);
+            }
         }
         return null;
     }

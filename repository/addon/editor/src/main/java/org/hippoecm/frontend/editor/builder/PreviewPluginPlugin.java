@@ -115,7 +115,7 @@ public class PreviewPluginPlugin extends RenderPlugin {
                     Node node = pluginNodeModel.getNode();
                     if (node != null) {
                         JcrTypeHelper helper = new JcrTypeHelper(new JcrNodeModel(node.getParent().getParent()
-                                .getParent()));
+                                .getParent()), "edit");
 
                         // clean up prototype
                         String fieldName = node.getProperty(FieldPlugin.FIELD).getString();
