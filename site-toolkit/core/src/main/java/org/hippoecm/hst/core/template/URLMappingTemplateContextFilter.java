@@ -102,8 +102,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            
 	            	//set attributes
 	            	wrappedRequest.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
-	            	//wrappedRequest.setAttribute(JCRSESSION_REQUEST_ATTRIBUTE, JCRConnectorWrapper.getTemplateJCRSession(request.getSession()));
-	            	//wrappedRequest.setAttribute(NAVIGATION_CONTEXTBASE_REQUEST_ATTRIBUTE, navigationContextBase);
 	            	
 	    			dispatcher.forward(wrappedRequest, response);
 	            } else {
