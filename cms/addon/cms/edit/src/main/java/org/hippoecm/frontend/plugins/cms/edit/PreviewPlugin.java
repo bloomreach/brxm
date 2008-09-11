@@ -75,22 +75,23 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
 
     public void detach() {
         config.detach();
+        model.detach();
     }
 
     public void updateModel(IModel handle) {
         JcrNodeModel handleModel = (JcrNodeModel) handle;
         if (handleModel != null && handleModel.getNode() != null) {
-            model = handleModel;
-
             JcrNodeModel draft = getDraftModel(handleModel);
             if (draft != null) {
                 stopCluster();
+                model = handleModel;
                 openEditor(draft);
                 return;
             }
             JcrNodeModel preview = getPreviewModel(handleModel);
             if (preview != null) {
                 stopCluster();
+                model = handleModel;
                 openPreview(preview);
             } else {
                 log.error("No preview version found of document");
@@ -101,7 +102,8 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     public void onFlush(JcrNodeModel nodeModel) {
         if (model != null) {
             if (model.equals(nodeModel)) {
-                updateModel(model);
+                stopCluster();
+                updateModel(nodeModel);
             }
         }
     }
