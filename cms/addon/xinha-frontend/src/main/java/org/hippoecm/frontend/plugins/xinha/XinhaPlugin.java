@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -76,6 +78,9 @@ public class XinhaPlugin extends RenderPlugin {
     private final static Set<String> ignorePaths = new HashSet<String>(Arrays.asList(new String[] { "/jcr:system",
             "/hippo:configuration", "/hippo:namespaces" }));
 
+    private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
+    private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+
     private String mode;
     private TextArea editor;
     private Configuration configuration;
@@ -111,7 +116,24 @@ public class XinhaPlugin extends RenderPlugin {
                 @Override
                 protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
                     String text = (String) getModelObject();
-                    getResponse().write(text);
+                    if (text != null) {
+                        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
+                        String prefix = BINARIES_PREFIX + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath() + "/";
+
+                        StringBuffer processed = new StringBuffer();
+                        Matcher m = IMG_PATTERN.matcher(text);
+                        while (m.find()) {
+                            StringBuffer src = new StringBuffer();
+                            Matcher s = SRC_PATTERN.matcher(m.group());
+                            while (s.find()) {
+                                String path = s.group().substring(5, s.group().length() - 1);
+                                s.appendReplacement(src, "src=\"" + prefix + path + "\"");
+                            }
+                            m.appendReplacement(processed, src.toString());
+                        }
+                        m.appendTail(processed);
+                        getResponse().write(processed);
+                    }
                     renderComponentTagBody(markupStream, openTag);
                 }
             });
@@ -443,7 +465,7 @@ public class XinhaPlugin extends RenderPlugin {
 
         //merge properties
         public void addProperties(Map<String, String> properties) {
-            for(Map.Entry<String,String> entry : properties.entrySet()) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
                 addProperty(entry.getKey(), entry.getValue());
             }
         }
