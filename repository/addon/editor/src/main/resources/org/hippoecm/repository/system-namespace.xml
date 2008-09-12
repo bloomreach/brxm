@@ -505,6 +505,9 @@
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>hippo-lite</sv:value>
           </sv:property>
+          <sv:property sv:name="Xinha.config.css" sv:type="String">
+            <sv:value>../../skin/xinhaInternal.css</sv:value>
+          </sv:property>
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
             <sv:value>AutoResize</sv:value>

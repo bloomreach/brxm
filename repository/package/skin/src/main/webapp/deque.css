@@ -170,14 +170,9 @@ div.slidercontrol a:hover{cursor: s-resize}
 div.iconshortcuts{padding: 0px;}
 div.iconshortcuts h3{color: white; display: none;}
 
-
-
-
 /* Boxes */
 /* ================================================ */
 
-
-}
 
 /* Shortcut buttons */
 /* ================================================ */ 
@@ -239,9 +234,9 @@ table.users_ico_table tr td{background-image: url("images/icons/users_ico_small.
 .iconsSmall a{display: block; padding: 2px; background-repeat: no-repeat; text-indent: -9999px; width: 16px; height: 16px; margin-top: 2px;}
 .iconsBig a{display: block; padding: 2px; background-repeat: no-repeat;}
 
-.icons-48 a{background-repeat: no-repeat;}
-.icons-24 a{background-repeat: no-repeat;}
-.icon-16 {background-repeat: no-repeat; 5px; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px; }
+.icon-48 a{background-repeat: no-repeat;}
+.icon-24 a{background-repeat: no-repeat;}
+.icon-16 {background-repeat: no-repeat; background-position: center left; padding-left: 22px; padding-top:4px; padding-bottom: 4px; }
 
 /* mimetypes icons */
 table tr.selected span.document-16, .document-16{background-image:url("images/icons/document-16.png")}
@@ -250,6 +245,18 @@ table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/
 .document_big_ico{background-image:url("images/icons/document-48.png")}
 .users_big_ico{background-image:url("images/icons/groups-48.png")}
 .groups_big_ico{background-image:url("images/icons/groups-48.png")}
+
+.state-review-16{background-image:url("images/icons/state-review-16.png")}
+.state-changed-16{background-image:url("images/icons/state-changed-16.png")}
+.state-new-16{background-image:url("images/icons/state-new-16.png")}
+.state-live-16{background-image:url("images/icons/state-live-16.png")}
+
+.arrow-sort-down-16{background-image:url("images/icons/arrow-sort-down-16.png")}
+.arrow-sort-up-16{background-image:url("images/icons/arrow-sort-up-16.png")}
+
+.arrow-paging-previous-16{background-image:url("images/icons/arrow-paging-previous-16.png")}
+.arrow-paging-next-16{background-image:url("images/icons/arrow-paging-next-16.png")}
+
 
 .document-new-48{background-image:url("images/icons/document-48.png")}
 .user-48{background-image:url("images/icons/groups-48.png")}
@@ -341,8 +348,6 @@ body div.wicket-modal div.w_right_1 {margin-left:5px;}
 body.dialog div.dialogException{border: 1px solid red; padding: 5px; color: red; background: green}
 */
 
-
-
 div.dialog div.dialogButtons, body.dialog div.dialogButtons{text-align: right; position: absolute; right: 50px; bottom:50px;}
 
 body div.dialog table tr td, body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
@@ -389,8 +394,27 @@ div.versioning .panelHead td{padding: 5px;}
     display:none;
 }
 
-/* Tree */
+
+
+
+/* Navigator */
 /* ================================================ */
+.navigator{background: #286088}
+.navigator .folderlist h3{background: transparent url(images/filelistHeaderback.gif) repeat-x; font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 4px;}
+.navigator .documentlist, 
+.navigator .folderlist{background: #D7E1EA}
+
+.documentlist table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
+.documentlist table tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
+.documentlist table tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
+
+/* Document list */
+.documentlist table {border-collapse: separate}
+.documentlist table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
+.documentlist table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
+
+
+/* Tree */
 div.Tree {
 margin:0px;
 border: none;
@@ -401,7 +425,7 @@ div.Tree *{white-space: nowrap;}
 div.Tree div.wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 
 div.Tree .wicket-tree .row a {color: #333333}
-div.wicket-tree div.a_{width: auto; display:block;}
+div.Tree div.wicket-tree div.a_{width: auto; display:block; margin-left: 0px; padding-left: 0px;}
 div.Tree .wicket-tree .row {width:auto;}
 div.Tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
 div.Tree .wicket-tree .row-selected a {}
@@ -415,14 +439,6 @@ div.Tree .wicket-tree span.corner{background: url("images/tree-icons.png") no-re
 div.Tree .wicket-tree span.junction{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
 div.Tree .wicket-tree span.junction-last{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
 div.Tree .wicket-tree span.indent-line {background: url("images/tree-icons.png") no-repeat scroll -36px center}
-
-
-.navigator{background: #286088}
-
-.navigator .folderlist h3{background: transparent url(images/filelistHeaderback.gif) repeat-x; padding: 4px; padding-top: 2px;  padding-bottom: 5px; font-weight: normal; }
-.navigator .documentlist, .navigator .folderlist{background: #D7E1EA}
-
-
 
 /* Template Editor */
 /* ================================================ */
@@ -622,50 +638,35 @@ div.fields table.htmlarea tr td, .htmlarea div.toolbar {
 padding:0px;
 }
 
-
 /* Table datalists */
 /* ================================================ */
-
-.dataview{width: 100%; background: #D7E1EA;}
+.dataview{background: #D7E1EA;}
+.dataview th {background: url('images/filelistHeaderback.gif') repeat-x;}
 table.dataview th a {color: #666666;}
-.dataview tr td{padding: 2px;}
-.dataview tr td{padding-bottom: 3px;}
-.dataview tr td{height: 11px;}
-.dataview th {
-  text-align:left;
-  background: url('images/filelistHeaderback.gif') repeat-x; 
-  padding: 4px; padding-top: 2px;  padding-bottom: 5px;
-}
-
 tr.headers th.orderAscending {
-  background-color: #DFDFFF;
-  background-image: url('images/controls/down-control.gif');
+  background-image: url('images/icons/arrow-sort-down-16.png');
   background-position:center; 
   background-repeat: no-repeat;
+  padding-right: 20px;
 }
 tr.headers th.orderDescending {
-  background-color: #DFDFFF;
-  background-image: url('images/controls/up-control.gif');
+  background-image: url('images/icons/arrow-sort-up-16.png');
   background-position:center; 
   background-repeat: no-repeat;
+  padding-right: 20px;
 }
 tr.headers th.orderNone {}
 
-table tr td.icon-16 span {display: block; height: 16px; width:16px; margin-left: 2px}
-table tr td.icon-16{padding: 0px;}
-
-.dataListPaging td{padding: 10px; text-align: center; font-weight: bold;}
-.dataListPaging td div{margin-bottom: 5px}
-.dataListPaging td a{padding: 5px;}
+.dataListPaging{position: absolute; bottom: 0px; left: 18px;}
+.dataListPaging td{padding: 10px; text-align: center; }
+.dataListPaging td div{margin-bottom: 5px; color: #286088 }
+.dataListPaging td a{padding: 5px; color: #286088 }
 .dataListPaging td a:hover{background: #f2f2f2}
 .dataListPaging td span em, .dataListPaging td a em{font-style: normal}
-
 
 /* Management Perspective */
 /* ================================================ */
 .management{background:#286088 }
-
-
 
 /* User Management */
 /* ================================================ */
@@ -740,13 +741,3 @@ div.templateactions div{margin-bottom: 0px; padding: 0px}
   right: 26px;
 }
 
-/* Example state classes */
-.state-new-16 {
-  background-image:url("images/icons/document-new-16.png");
-  background-repeat: no-repeat;
-}
-
-.state-changed-16 {
-  background-image:url("images/icons/dialog-error-16.png");
-  background-repeat: no-repeat;
-}
