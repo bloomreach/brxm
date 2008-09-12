@@ -30,7 +30,8 @@ public class ImageContainer extends Panel {
 
     private JcrResourceStream stream;
 
-    public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext, IPluginConfig pluginConfig) {
+    public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext,
+            final IPluginConfig pluginConfig) {
         super(wicketId, model);
 
         stream = new JcrResourceStream(model.getNode());
@@ -40,10 +41,13 @@ public class ImageContainer extends Panel {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                tag.put("width", ThumbnailConstants.THUMBNAIL_WIDTH);
+                int width = pluginConfig.getInt("gallery.thumbnail.size");
+                if (width > 0) {
+                    tag.put("width", width);
+                }
             }
         };
-        
+
         img.add(new ImageNodeDragBehavior(pluginContext, pluginConfig, model.getItemModel().getPath()));
         add(img);
     }

@@ -38,7 +38,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.ThumbnailConstants;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
@@ -156,7 +155,7 @@ class UploadForm extends Form {
                             node.save();
                         }
 
-                        uploadDialog.getWizard().getWizardModel().next();
+                        uploadDialog.getWizardModel().next();
                         IJcrService jcrService = this.uploadDialog.getJcrService();
                         jcrService.flush(model);
                     } catch (MappingException ex) {
@@ -178,8 +177,7 @@ class UploadForm extends Form {
 
     private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
         if (mimeType.startsWith("image")) {
-            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, ThumbnailConstants.THUMBNAIL_WIDTH,
-                    mimeType);
+            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, uploadDialog.getThumbnailSize(),  mimeType);
             node.setProperty("jcr:data", thumbNail);
         } else {
             node.setProperty("jcr:data", resourceData);

@@ -36,7 +36,6 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -57,11 +56,8 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
     public TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
         
-        ListColumn column = new ListColumn(new Model("PrimaryItem"), null);
-        PrimaryItemViewer imageViewer = new PrimaryItemViewer();
-        //imageViewer.add(new NodeDragBehavior(ImageGalleryPlugin.this.getPluginContext(), ImageGalleryPlugin.this.getPluginConfig(), ""));
-
-        column.setRenderer(imageViewer);
+        ListColumn column = new ListColumn(new Model("Image"), null);
+        column.setRenderer(new PrimaryItemViewer());
         columns.add(column);
 
         column = new ListColumn(new Model("Name"), "name");
