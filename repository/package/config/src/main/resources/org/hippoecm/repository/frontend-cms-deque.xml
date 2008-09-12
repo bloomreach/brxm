@@ -277,16 +277,16 @@
     <sv:property sv:name="yui.units" sv:type="String">
       <sv:value>left</sv:value>
       <sv:value>center</sv:value>
-      <sv:value>top</sv:value>
-    </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=welcomepanel,height=200,resize=true,gutter=0px 0px 0px 0px</sv:value>
-    </sv:property>
-    <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=righthalf,scroll=true,body=righthalf-body,gutter=0px 0px 0px 0px</sv:value>
+      <sv:value>right</sv:value>
     </sv:property>
     <sv:property sv:name="left" sv:type="String">
-      <sv:value>id=lefthalf,width=50%,body=lefthalf-body,resize=true,scroll=true,gutter=0px 0px 0px 0px</sv:value>
+      <sv:value>id=left,width=33%,body=left-body,resize=true,gutter=1px 1px 1px 1px</sv:value>
+    </sv:property>
+    <sv:property sv:name="center" sv:type="String">
+      <sv:value>id=center,scroll=true,width=33%,body=center-body,gutter=1px 1px 1px 0px</sv:value>
+    </sv:property>
+    <sv:property sv:name="right" sv:type="String">
+      <sv:value>id=right,width=33%,body=right-body,resize=true,scroll=true,gutter=1px 1px 1px 0px</sv:value>
     </sv:property>
   </sv:node>
 
@@ -1276,7 +1276,7 @@
       <sv:value>center</sv:value>
     </sv:property>
     <sv:property sv:name="left" sv:type="String">
-      <sv:value>id=management-perspective-left,width=200,resize=true,gutter=0px 5px 0px 3spx</sv:value>
+      <sv:value>id=management-perspective-left,width=200,resize=true,gutter=0px 1px 1px 1px</sv:value>
     </sv:property>
     <sv:property sv:name="center" sv:type="String">
       <sv:value>management-perspective-center</sv:value>

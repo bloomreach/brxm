@@ -15,21 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table class="templateItemTable">
-      <tr>
-        <td class="controls">
-          <a class="up-control" wicket:id="up">&nbsp;</a>
-          <a class="down-control" wicket:id="down">&nbsp;</a>
-        </td>
-        <td>
-          <div class="templateItem">
+    
+   <div class="templateItem">
+     <ul class="fieldcontrols">
+     <li><a class="arrow-sort-up-16" wicket:id="up">&nbsp;</a></li>
+       <li><a class="arrow-sort-down-16" wicket:id="down">&nbsp;</a></li>
+       <li><a class="remove-field-16" wicket:id="remove">&nbsp;</a></li>
+     </ul>
             <div wicket:id="preview">[ item goes here ]</div>
-          </div>
-        </td>
-        <td class="removeItem">
-          <a class="close-control" wicket:id="remove">&nbsp;</a>
-        </td>
-      </tr>
-    </table>
-  </wicket:panel>
+    </div>
+  
+   </wicket:panel>
 </html>
