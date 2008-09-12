@@ -54,6 +54,9 @@
     <sv:property sv:name="list.page.size" sv:type="String">
       <sv:value>5</sv:value>
     </sv:property>
+    <sv:property sv:name="gallery.thumbnail.size" sv:type="String">
+      <sv:value>60</sv:value>
+    </sv:property>
     <sv:property sv:name="yui.dd.groups" sv:type="String">
       <sv:value>drop-on-xinha</sv:value>
     </sv:property>

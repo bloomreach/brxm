@@ -18,11 +18,9 @@ package org.hippoecm.frontend.plugins.gallery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Gallery {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    private static final long serialVersionUID = 1L;
-    
-    public static final Logger log = LoggerFactory.getLogger(Gallery.class);
+public interface Gallery {
+    final static String SVN_ID = "$Id$";
 
+    public static final Logger log = LoggerFactory.getLogger(Gallery.class);    
+    public static final int DEFAULT_THUMBNAIL_SIZE = 60;
 }

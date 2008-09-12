@@ -76,6 +76,9 @@
     <sv:property sv:name="gallery.text" sv:type="String">
       <sv:value>Add image</sv:value>
     </sv:property>
+    <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
+      <sv:value>60</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="assetGalleryShortcut">

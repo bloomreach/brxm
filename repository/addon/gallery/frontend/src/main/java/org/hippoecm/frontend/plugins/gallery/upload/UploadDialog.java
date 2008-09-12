@@ -19,6 +19,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
@@ -37,14 +38,15 @@ public class UploadDialog extends WebPage implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String title;
     private UploadWizard wizard;
     private IServiceReference<IJcrService> jcrServiceRef;
     private String workflowCategory;
     private String exception = "";
+    private IPluginConfig pluginConfig;
 
     public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
             IDialogService dialogWindow) {
+        pluginConfig = config;
         try {
             String path = config.getString("gallery.path");
             if (path != null) {
@@ -59,41 +61,43 @@ public class UploadDialog extends WebPage implements ITitleDecorator {
             Gallery.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
 
-        title = config.getString("gallery.text");
-        if(title == null) {
-            title = "";
-        }
-        title = title.trim();
-        
         Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
 
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
-        workflowCategory = config.getString("gallery.workflow");
-        wizard = new UploadWizard("wizard", dialogWindow, this); 
+        
+        wizard = new UploadWizard("wizard", dialogWindow, this);
         add(wizard);
     }
 
     public String getException() {
         return exception;
     }
-    
+
     public void setException(String exception) {
         this.exception = exception;
     }
 
     public String getWorkflowCategory() {
-        return workflowCategory;
+        return pluginConfig.getString("gallery.workflow", "");
     }
-    
-    public UploadWizard getWizard() {
-        return wizard;
+
+    public IWizardModel getWizardModel() {
+        return wizard.getWizardModel();
     }
 
     public IJcrService getJcrService() {
         return jcrServiceRef.getService();
+    }
+
+    public String getTitle() {
+        return pluginConfig.getString("gallery.text", "");
+    }
+
+    public int getThumbnailSize() {
+        return pluginConfig.getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
     }
 
     @Override
@@ -102,10 +106,6 @@ public class UploadDialog extends WebPage implements ITitleDecorator {
             jcrServiceRef.detach();
         }
         super.onDetach();
-    }
-
-    public String getTitle() {
-        return title;
     }
 
 }
