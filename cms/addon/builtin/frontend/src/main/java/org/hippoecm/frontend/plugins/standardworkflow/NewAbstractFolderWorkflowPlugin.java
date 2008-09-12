@@ -32,8 +32,10 @@ import java.util.Map.Entry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,6 +43,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
@@ -64,8 +67,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -77,14 +78,14 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
     protected static final String WORKFLOW_ACTION_LINK_ID = "workflow-action-dialog-link";
     protected static final String DIALOG_LINKS_COMPONENT_ID = "items";
     
-    List<WorkflowActionComponent> staticTemplates;
-    protected Map<String, WorkflowActionComponent> templates;
+    List<FolderWorkflowActionComponent> staticTemplates;
+    Map<String, FolderWorkflowActionComponent> templates;
 
     private Label folderName;
 
     public NewAbstractFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        templates = new LinkedHashMap<String, WorkflowActionComponent>();
+        templates = new LinkedHashMap<String, FolderWorkflowActionComponent>();
         add(folderName = new Label("foldername"));
         
         DialogAction action = new DialogAction(new IDialogFactory() {
@@ -130,7 +131,7 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
 
             @Override
             protected void populateItem(Item item) {
-                final WorkflowActionComponent wac = (WorkflowActionComponent) item.getModel().getObject();
+                final FolderWorkflowActionComponent wac = (FolderWorkflowActionComponent) item.getModel().getObject();
                 item.add(createDialogActionComponent(wac));
             }
         };
@@ -141,17 +142,17 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
      * @param component
      * @return
      */
-    protected Component createDialogActionComponent(WorkflowActionComponent component) {
-        DialogLink link = new DialogLink(component.getId(), new Model(component.label), component.action);
-        if (component.icon != null) {
-            link.add(new AttributeAppender("class", new Model(component.icon), " "));
+    protected Component createDialogActionComponent(FolderWorkflowActionComponent component) {
+        DialogLink link = new DialogLink(component.getId(), new Model(component.getLabel()), component.getAction());
+        if (component.getIcon() != null) {
+            link.add(new AttributeAppender("class", new Model(component.getIcon()), " "));
         }
-        link.setEnabled(component.action.isEnabled());
+        link.setEnabled(component.getAction().isEnabled());
         return link;
     }
 
     protected void addWorkflowAction(String label, String icon, Set<String> prototypes, DialogAction action) {
-        getStaticTemplates().add(new WorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, label, icon, prototypes, action));
+        getStaticTemplates().add(new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, label, icon, prototypes, action));
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -251,15 +252,15 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
             }
         }
         if (staticTemplates != null && staticTemplates.size() > 0) {
-            for (WorkflowActionComponent c : staticTemplates) {
-                templates.put(c.label, c);
+            for (FolderWorkflowActionComponent c : staticTemplates) {
+                templates.put(c.getLabel(), c);
             }
         }
     }
     
-    private List<WorkflowActionComponent> getStaticTemplates() {
+    private List<FolderWorkflowActionComponent> getStaticTemplates() {
         if (staticTemplates == null) {
-            staticTemplates = new LinkedList<WorkflowActionComponent>();
+            staticTemplates = new LinkedList<FolderWorkflowActionComponent>();
         }
         return staticTemplates;
     }
@@ -269,15 +270,15 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
             private static final long serialVersionUID = 1L;
 
             public IModel model(Object object) {
-                return new Model((WorkflowActionComponent) object);
+                return new Model((FolderWorkflowActionComponent) object);
             }
 
             public int size() {
                 return templates != null ? templates.size() : 0;
             }
 
-            public Iterator<WorkflowActionComponent> iterator(int skip, int count) {
-                return templates != null ? templates.values().iterator() : new TreeSet<WorkflowActionComponent>()
+            public Iterator<FolderWorkflowActionComponent> iterator(int skip, int count) {
+                return templates != null ? templates.values().iterator() : new TreeSet<FolderWorkflowActionComponent>()
                         .iterator();
             }
 
@@ -286,7 +287,7 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
         };
     }
     
-    protected WorkflowActionComponent createWorkflowActionComponent(final String category, final Set<String> prototypes) {
+    protected FolderWorkflowActionComponent createWorkflowActionComponent(final String category, final Set<String> prototypes) {
         DialogAction action = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -307,46 +308,20 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
         } else {
             icon = "addextended_ico";
         }
-        return new WorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, category, icon, prototypes, action);
+        return new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, category, icon, prototypes, action);
     }
 
 
-    public class WorkflowActionComponent implements IClusterable {
-        private static final long serialVersionUID = 1L;
-        
-        private String id;
-        private String label;
-        private String icon;
-        private DialogAction action;
+    public class FolderWorkflowActionComponent extends WorkflowActionComponent {
         private Set<String> prototypes;
 
-        public WorkflowActionComponent(String id, String label, String icon, Set<String> prototypes, DialogAction action) {
-            this.id = id;
-            this.label = label;
-            this.icon = icon;
+        public FolderWorkflowActionComponent(String id, String label, String icon, Set<String> prototypes, DialogAction action) {
+            super(id, label, icon, action);
             this.prototypes = prototypes != null ? prototypes : Collections.EMPTY_SET;
-            this.action = action;
-        }
-
-        public String getId() {
-            return id;
-        }
-        
-        public String getLabel() {
-            return label;
-        }
-
-        public String getIcon() {
-            return icon;
         }
 
         public Set<String> getPrototypes() {
             return prototypes;
         }
-        
-        public DialogAction getAction() {
-            return action;
-        }
-        
     }
 }

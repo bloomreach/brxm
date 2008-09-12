@@ -67,7 +67,7 @@ public class NewOrderableFolderWorkflowPlugin extends NewFolderWorkflowPlugin {
 
     @Override
     protected Component createDialogLinksComponent() {
-               return new WorkflowActionComponentDropDownChoice(DIALOG_LINKS_COMPONENT_ID, templates);
+        return new WorkflowActionComponentDropDownChoice(DIALOG_LINKS_COMPONENT_ID, templates);
     }
 
 }

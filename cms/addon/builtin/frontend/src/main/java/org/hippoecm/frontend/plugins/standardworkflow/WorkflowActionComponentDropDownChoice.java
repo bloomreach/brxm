@@ -11,14 +11,13 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugins.standardworkflow.NewAbstractFolderWorkflowPlugin.WorkflowActionComponent;
 
 public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
     private static final long serialVersionUID = 1L;
     
     private WorkflowActionComponent selected;
     
-    public WorkflowActionComponentDropDownChoice(String id, Map<String, WorkflowActionComponent> items) {
+    public WorkflowActionComponentDropDownChoice(String id, Map<String, ? extends WorkflowActionComponent> items) {
         super(id);
         setModel(new PropertyModel(this, "selected"));
         setChoices(createModel(items));
@@ -41,13 +40,13 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
         return true;
     }
     
-    private IModel createModel(final Map<String, WorkflowActionComponent> items) {
+    private IModel createModel(final Map<String, ? extends WorkflowActionComponent> items) {
         IModel model = new IModel() {
             private static final long serialVersionUID = 1L;
 
             public Object getObject() {
                 List<WorkflowActionComponent> list = new ArrayList<WorkflowActionComponent>(items.size());
-                for(Entry<String, WorkflowActionComponent> entry : items.entrySet()) {
+                for(Entry<String, ? extends WorkflowActionComponent> entry : items.entrySet()) {
                     if(entry.getValue().getAction().isEnabled()) {
                         list.add(entry.getValue());
                     }
