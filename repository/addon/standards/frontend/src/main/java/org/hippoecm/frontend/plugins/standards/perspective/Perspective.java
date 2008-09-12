@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.perspective;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -37,7 +38,8 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
             title = config.getString(TITLE);
         }
         
-        title = "HERE COMES JOHNNY".toString();
+        title = (new StringResourceModel(title, this, null)).toString();
+        
     }
 
     // ITitleDecorator

@@ -17,17 +17,17 @@
     <form wicket:id="form">
         <table>
             <tr>
-                <td><label for="upload">Select file:</label></td>
+                <td><label for="upload"><wicket:message key="select-file-label"/></label></td>
                 <td><input wicket:id="input" id="upload" type="file" /></td>
             </tr>
             <wicket:enclosure child="type">
             <tr>
-                <td><label for="typeselect">File type:</label></td>
+                <td><label for="typeselect"><wicket:message key="file-type-label"/></label></td>
                 <td><select wicket:id="type" id="typeselect"></select></td>
             </tr>
             </wicket:enclosure>
             <tr>
-            <td colspan="2"><input type="submit" value="Upload"/></td>
+            <td colspan="2"><input type="submit" value="label comes here" wicket:message="value:upload-label"/></td>
             </tr>
         </table>
     </form>

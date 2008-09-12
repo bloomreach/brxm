@@ -345,7 +345,7 @@
       <sv:value>model.browse.document</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>Browse</sv:value>
+      <sv:value>browse-perspective-title</sv:value>
     </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
