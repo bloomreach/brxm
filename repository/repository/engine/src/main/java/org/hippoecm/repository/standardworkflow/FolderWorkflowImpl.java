@@ -120,7 +120,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                             if (typeNode.getName().equals("hippo:prototype")) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
                                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("reporting:")
-                                        && !documentType.equals("nt:unstructured")) {
+                                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
                                     prototypes.add(documentType);
                                 }
                             } else {

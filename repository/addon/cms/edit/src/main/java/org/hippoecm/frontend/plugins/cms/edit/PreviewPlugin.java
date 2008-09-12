@@ -21,10 +21,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -42,8 +46,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, ICloseEditorListener, IDetachable {
     private static final long serialVersionUID = 1L;
@@ -75,7 +77,9 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
 
     public void detach() {
         config.detach();
-        model.detach();
+        if(model != null) {
+            model.detach();
+        }
     }
 
     public void updateModel(IModel handle) {
@@ -208,7 +212,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                 for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
                     Node child = iter.nextNode();
                     if (child.getName().equals(handleNode.getName())) {
-                        // FIXME: This has knowledge of hippostd reviewed actions, which here is not fundamentally wrong, but could raise hairs
+                        // FIXME: This has knowledge of hippostd reviewed actions, which within this new context wrong
                         if (child.hasProperty("hippostd:state")) {
                             String state = child.getProperty("hippostd:state").getString();
                             if (state.equals("unpublished")) {
@@ -216,6 +220,8 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                             } else if (state.equals("published")) {
                                 published = child;
                             }
+                        } else {
+                          published = child;
                         }
                     }
                 }
