@@ -68,16 +68,18 @@ public class TemplateListPlugin extends RenderPlugin {
         JcrNodeModel templateTypeModel = (JcrNodeModel) getModel();
         try {
             Node typeNode = templateTypeModel.getNode();
-            Node templateHandle = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
-            NodeIterator templates = templateHandle.getNodes(HippoNodeType.HIPPO_TEMPLATE);
-            while (templates.hasNext()) {
-                Node template = templates.nextNode();
-                if (template.isNodeType("frontend:plugincluster")) {
-                    templateNodeModel = new JcrNodeModel(template);
-                    JcrTypeStore typeStore = new JcrTypeStore(typeNode.getParent().getName());
-                    editedType = typeStore.getTypeDescriptor(typeNode.getParent().getName() + ":"
-                            + ISO9075Helper.decodeLocalName(typeNode.getName()));
-                    break;
+            if (typeNode.hasNode(HippoNodeType.HIPPO_TEMPLATE)) {
+                Node templateHandle = typeNode.getNode(HippoNodeType.HIPPO_TEMPLATE);
+                NodeIterator templates = templateHandle.getNodes(HippoNodeType.HIPPO_TEMPLATE);
+                while (templates.hasNext()) {
+                    Node template = templates.nextNode();
+                    if (template.isNodeType("frontend:plugincluster")) {
+                        templateNodeModel = new JcrNodeModel(template);
+                        JcrTypeStore typeStore = new JcrTypeStore(typeNode.getParent().getName());
+                        editedType = typeStore.getTypeDescriptor(typeNode.getParent().getName() + ":"
+                                + ISO9075Helper.decodeLocalName(typeNode.getName()));
+                        break;
+                    }
                 }
             }
         } catch (RepositoryException ex) {
@@ -154,40 +156,46 @@ public class TemplateListPlugin extends RenderPlugin {
         for (ITypeDescriptor type : templateList) {
             type.detach();
         }
-        editedType.detach();
-        templateNodeModel.detach();
+        if (editedType != null) {
+            editedType.detach();
+            templateNodeModel.detach();
+        }
         super.onDetach();
     }
 
     protected void addField(ITypeDescriptor typeDescriptor) {
-        try {
-            String name = editedType.addField(typeDescriptor.getName());
-
-            // add item to template
-            Node templateNode = templateNodeModel.getNode();
-
-            String pluginName = UUID.randomUUID().toString();
-            Node itemNode = templateNode.addNode(pluginName, "frontend:plugin");
-            if (typeDescriptor.isNode()) {
-                itemNode.setProperty(IPlugin.CLASSNAME, NodeFieldPlugin.class.getName());
-            } else {
-                itemNode.setProperty(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
+        if(editedType != null) {
+            try {
+                String name = editedType.addField(typeDescriptor.getName());
+    
+                // add item to template
+                Node templateNode = templateNodeModel.getNode();
+    
+                String pluginName = UUID.randomUUID().toString();
+                Node itemNode = templateNode.addNode(pluginName, "frontend:plugin");
+                if (typeDescriptor.isNode()) {
+                    itemNode.setProperty(IPlugin.CLASSNAME, NodeFieldPlugin.class.getName());
+                } else {
+                    itemNode.setProperty(IPlugin.CLASSNAME, PropertyFieldPlugin.class.getName());
+                }
+                itemNode.setProperty("wicket.id", "${cluster.id}.field");
+                itemNode.setProperty("wicket.model", "${wicket.model}");
+                itemNode.setProperty("mode", "${mode}");
+                itemNode.setProperty("engine", "${engine}");
+                itemNode.setProperty("field", name);
+                itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
+    
+                IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
+                jcrService.flush((JcrNodeModel) getModel());
+    
+                // update helper model
+                select(new JcrNodeModel(itemNode));
+    
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
             }
-            itemNode.setProperty("wicket.id", "${cluster.id}.field");
-            itemNode.setProperty("wicket.model", "${wicket.model}");
-            itemNode.setProperty("mode", "${mode}");
-            itemNode.setProperty("engine", "${engine}");
-            itemNode.setProperty("field", name);
-            itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
-
-            IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
-            jcrService.flush((JcrNodeModel) getModel());
-
-            // update helper model
-            select(new JcrNodeModel(itemNode));
-
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } else {
+            log.error("No type is being edited");
         }
     }
 
