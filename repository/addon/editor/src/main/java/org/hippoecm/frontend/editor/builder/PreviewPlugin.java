@@ -97,8 +97,9 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
 
         typeStore = null;
         JcrTypeHelper typeHelper = new JcrTypeHelper((JcrNodeModel) getModel(), getPluginConfig().getString("mode"));
-        String typeName = typeHelper.getName();
-        if (typeName != null) {
+        ITypeDescriptor type = typeHelper.getTypeDescriptor();
+        if (type != null) {
+            String typeName = typeHelper.getName();
             String prefix = typeName.substring(0, typeName.indexOf(':'));
             String mode = getPluginConfig().getString("mode");
 
@@ -116,7 +117,6 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
             engine.setId(engineId);
 
             IClusterConfig clusterConfig;
-            ITypeDescriptor type = typeHelper.getTypeDescriptor();
             JcrNodeModel templateModel = typeHelper.getTemplate();
             if (templateModel == null) {
                 BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
