@@ -23,6 +23,7 @@ import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -93,7 +94,7 @@ public class UploadDialog extends WebPage implements ITitleDecorator {
     }
 
     public String getTitle() {
-        return pluginConfig.getString("gallery.text", "");
+        return (new StringResourceModel(pluginConfig.getString("gallery.text", ""), this, null)).getString();
     }
 
     public int getThumbnailSize() {

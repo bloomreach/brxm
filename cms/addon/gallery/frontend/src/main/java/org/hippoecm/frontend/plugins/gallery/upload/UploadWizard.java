@@ -22,6 +22,7 @@ import org.apache.wicket.extensions.wizard.WizardStep;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 
 public class UploadWizard extends Wizard {
@@ -74,9 +75,9 @@ public class UploadWizard extends Wizard {
 
         public Step2() {
             super();
-            add(new Label("status", "Upload successful!"));
+            add(new Label("status", new StringResourceModel("upload-successful-label", this, null)));
             add(new MultiLineLabel("description", new PropertyModel(form, "description")));
-            add(new Label("message", "Do you want to upload another file?"));
+            add(new Label("message", new StringResourceModel("upload-another-label", this, null)));
         }
     }
 

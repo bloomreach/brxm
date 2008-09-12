@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.lang.Bytes;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
@@ -160,18 +161,18 @@ class UploadForm extends Form {
                         jcrService.flush(model);
                     } catch (MappingException ex) {
                         Gallery.log.error(ex.getMessage());
-                        this.uploadDialog.setException("Workflow error: " + ex.getMessage());
+                        this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null).getString() + ex.getMessage());
                     } catch (RepositoryException ex) {
                         Gallery.log.error(ex.getMessage());
-                        this.uploadDialog.setException("Workflow error: " + ex.getMessage());
+                        this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null).getString() + ex.getMessage());
                     }
                 }
             } catch (IOException ex) {
                 Gallery.log.info("upload of image truncated");
-                this.uploadDialog.setException("Upload failed: " + ex.getMessage());
+                this.uploadDialog.setException((new StringResourceModel("upload-failed-label", this, null).getString()) + " " + ex.getMessage());
             }
         } else {
-            this.uploadDialog.setException("No file uploaded");
+            this.uploadDialog.setException(new StringResourceModel("no-file-uploaded-label", this, null).getString());
         }
     }
 
