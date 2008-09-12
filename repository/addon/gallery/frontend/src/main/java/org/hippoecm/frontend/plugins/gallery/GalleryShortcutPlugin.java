@@ -23,6 +23,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.resource.StringResourceStream;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -54,17 +56,8 @@ public class GalleryShortcutPlugin extends RenderPlugin {
             };
         add(link);
 
-        String galleryText = config.getString("gallery.text");
-        if(galleryText != null) {
-            galleryText = galleryText.trim();
-            if(galleryText.equals("")) {
-                galleryText = null;
-            }
-        }
         Label label = new Label("label");
-        if(galleryText != null) {
-            label.setModel(new Model(galleryText));
-        }
+        label.setModel(new StringResourceModel(config.getString("gallery.text"), this, null));
         link.add(label);
 
         String path = config.getString("gallery.path");

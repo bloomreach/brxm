@@ -348,7 +348,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
 
         public String getTitle() {
-            return "New document";
+            return "new-document-label";
         }
 
         protected void ok() throws Exception {

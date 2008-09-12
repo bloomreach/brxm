@@ -36,6 +36,8 @@ public abstract class Perspective extends RenderPlugin implements ITitleDecorato
         if (config.getString(TITLE) != null) {
             title = config.getString(TITLE);
         }
+        
+        title = "HERE COMES JOHNNY".toString();
     }
 
     // ITitleDecorator

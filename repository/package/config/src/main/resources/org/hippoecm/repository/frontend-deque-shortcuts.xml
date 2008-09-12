@@ -44,7 +44,7 @@
       <sv:value>internal</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
-      <sv:value>New document</sv:value>
+      <sv:value>new-document-label</sv:value>
     </sv:property>
     <sv:property sv:name="option.only" sv:type="String">
       <sv:value>New Document</sv:value>
@@ -74,7 +74,7 @@
       <sv:value>internal</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
-      <sv:value>Add image</sv:value>
+      <sv:value>add-image-label</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.thumbnail.size" sv:type="Long">
       <sv:value>60</sv:value>
@@ -98,7 +98,7 @@
       <sv:value>internal</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
-      <sv:value>Add file</sv:value>
+      <sv:value>add-file-label</sv:value>
     </sv:property>
   </sv:node>
 
