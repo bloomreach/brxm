@@ -1,32 +1,10 @@
 /* Defaults */
 * { margin : 0; padding : 0;}
-/* Normalizes font-size for headers */
-h1,h2,h3,h4,h5,h6 { font-size : 100%; }
-/* Removes list-style from lists */
-ol,ul { list-style : none; }
-/* no underlined links by default */
-a {text-decoration: none}
-/* Normalizes font-style and font-weight to normal */
-address, caption, cite, code, dfn, th, var
-{ font-style : normal; font-weight : normal; }
-table { border-collapse : collapse; border-spacing : 0; }
-/* Removes border from fieldset and img */
-fieldset,img { border : 0; }
-/* Left-aligns text in caption and th */
-caption,th { text-align : left; }
-/* used as a fast fix if you want something to float left */
-/* to clear */
 div.clearer {clear: both;}
-.hideme {display:none;}
-.floatleft{float: left}
- /* firefox fix for left right movement when scrollbar is enabled */
- html { min-height: 100%; margin-bottom: 0.01em; } 
 /* ======================================== */
-  
 
 /* Global elements styles */
 /* ================================================ */
-
 body {background-color: white;}
 
 /* default font settings */
@@ -37,14 +15,7 @@ vertical-align: top;
 background: transparent;
 padding: 15px;
 }
+ol, ul{list-style-position: inside}
 
-/* a {color: #00A2E3;} */
-
-/* default buttons */
-button, input[type="button"], input[type="submit"] {
- font-size: 12px;
- padding: 4px;
-margin: 2px;
-}
 
 
