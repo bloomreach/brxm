@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -41,7 +42,12 @@ public class ImageContainer extends Panel {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                int width = pluginConfig.getInt("gallery.thumbnail.size");
+                int width;
+                try {
+                    width = pluginConfig.getInt("gallery.thumbnail.size");
+                } catch (StringValueConversionException e) {
+                    width = 0;
+                }
                 if (width > 0) {
                     tag.put("width", width);
                 }
