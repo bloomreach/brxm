@@ -59,6 +59,7 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
       <resource>
@@ -67,6 +68,7 @@
         <includes>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
     </resources>
