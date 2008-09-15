@@ -256,6 +256,9 @@ Xinha.prototype._insertImage = function(image)
             break;
         }
       }
+      
+      editor.plugins.AutoSave.instance.saveSynchronous();
+      
     },
     outparam);
 };
