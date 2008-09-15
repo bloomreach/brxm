@@ -15,10 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
+
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -27,8 +32,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
@@ -40,14 +43,16 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
 
     protected Tree tree;
     protected AbstractTreeNode rootNode;
+    private String startingPath = "/";
 
     public FolderTreePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         context.registerService(this, IJcrService.class.getName());
 
+        startingPath = config.getString("path", startingPath);
         FolderTreeConfig folderTreeConfig = new FolderTreeConfig(config);
-        this.rootNode = new FolderTreeNode(new JcrNodeModel("/"), folderTreeConfig);
+        this.rootNode = new FolderTreeNode(new JcrNodeModel(startingPath), folderTreeConfig);
 
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
         tree = new CmsJcrTree("tree", treeModel) {
