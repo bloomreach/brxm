@@ -820,6 +820,7 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
+          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:property sv:name="wicket.model" sv:type="String">
@@ -868,6 +869,9 @@
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${cluster.id}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="types" sv:type="String">
             <sv:value>png=image/png,jpeg=image/jpeg,jpg=image/jpeg,gif=image/gif</sv:value>

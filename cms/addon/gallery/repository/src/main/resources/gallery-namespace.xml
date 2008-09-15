@@ -120,7 +120,7 @@
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>3fff010a-6cd1-49f0-86ca-970fda17d16c</sv:value>
+            <sv:value>2fff010a-6cd1-49f0-86ca-970fda17d16c</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>hippogallery:thumbnail</sv:value>
@@ -137,7 +137,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>927b5f3a-2fa2-4690-82de-5f78605c3429</sv:value>
+            <sv:value>827b5f3a-2fa2-4690-82de-5f78605c3429</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>hippogallery:picture</sv:value>
@@ -405,7 +405,7 @@
             <sv:value>true</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>d94cbec0-431c-45c0-b241-38582ce26ae5</sv:value>
+            <sv:value>d94cbec0-431c-45c0-b241-38582ce25ae5</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>hippogallery:asset</sv:value>
