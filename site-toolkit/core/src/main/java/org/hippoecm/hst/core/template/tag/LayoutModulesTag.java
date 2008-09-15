@@ -19,19 +19,14 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.HstFilterBase;
+import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
-import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
@@ -75,8 +70,10 @@ public class LayoutModulesTag  extends BodyTagSupport {
         	try {
         		PageContainerModuleNode pcm = pcmList.get(index);			
         		log.debug("pageContainerModule" + pcm);
-				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);			
+				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);	
+				long start = System.currentTimeMillis();
 				pageContext.include(pcm.getTemplatePage());
+				Timer.log.debug((System.currentTimeMillis() - start) + " ms for including container '"+getName()+"' --> '" + pcm.getTemplatePage()+"'");
 				amountRenderedModules++;
 			} catch (RepositoryException e) {
 				log.error("RepositoryException:", e);
