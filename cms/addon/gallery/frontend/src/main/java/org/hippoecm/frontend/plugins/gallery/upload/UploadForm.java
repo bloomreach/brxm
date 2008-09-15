@@ -39,7 +39,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
-import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
 import org.hippoecm.repository.api.Document;
@@ -155,10 +154,7 @@ class UploadForm extends Form {
                                     .getProperty("jcr:mimeType").getString());
                             node.save();
                         }
-
                         uploadDialog.getWizardModel().next();
-                        IJcrService jcrService = this.uploadDialog.getJcrService();
-                        jcrService.flush(model);
                     } catch (MappingException ex) {
                         Gallery.log.error(ex.getMessage());
                         this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null).getString() + ex.getMessage());
