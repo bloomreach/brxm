@@ -41,7 +41,7 @@
       <sv:value>internal</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
-      <sv:value>Add an image to the gallery</sv:value>
+      <sv:value>add-image-label</sv:value>
     </sv:property>
   </sv:node>
 
@@ -62,7 +62,7 @@
       <sv:value>internal</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
-      <sv:value>Add an asset to the store</sv:value>
+      <sv:value>add-file-label</sv:value>
     </sv:property>
   </sv:node>
 
