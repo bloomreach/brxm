@@ -55,6 +55,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
         // Add upload form with ajax progress bar
         form = new FileUploadForm("form");
         add(form);
+
+        String mode = config.getString("mode", "edit");
+        if (!"edit".equals(mode)) {
+            form.setVisible(false);
+        }
     }
 
     private class FileUploadForm extends Form {

@@ -56,12 +56,13 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
             @Override
             public void execute(Workflow wf) throws Exception {
-                Node docNode = ((WorkflowsModel)DefaultWorkflowPlugin.this.getModel()).getNodeModel().getNode();
+                Node handleNode = ((WorkflowsModel)DefaultWorkflowPlugin.this.getModel()).getNodeModel().getNode();
+                Node docNode = handleNode.getNodes(handleNode.getName()).nextNode();
                 IEditService viewer = getPluginContext().getService(getPluginConfig().getString(IEditService.EDITOR_ID), IEditService.class);
                 if (viewer != null) {
                     viewer.edit(new JcrNodeModel(docNode));
                 } else {
-                    log.warn("No editor found to edit {}", docNode.getPath());
+                    log.warn("No editor found to edit {}", handleNode.getPath());
                 }
             }
         });
