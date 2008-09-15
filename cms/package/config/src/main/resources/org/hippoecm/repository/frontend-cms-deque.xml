@@ -1531,6 +1531,9 @@
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
     </sv:property>
+    <sv:property sv:name="editor.wrapped.id" sv:type="String">
+      <sv:value>service.edit.multi</sv:value>
+    </sv:property>
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
@@ -1547,7 +1550,7 @@
       <sv:value>cms-deque-editor</sv:value>
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
-      <sv:value>service.edit</sv:value>
+      <sv:value>service.edit.multi</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.editor.tab</sv:value>

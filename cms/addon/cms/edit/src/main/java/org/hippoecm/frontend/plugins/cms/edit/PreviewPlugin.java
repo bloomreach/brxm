@@ -21,14 +21,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -46,8 +42,10 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, ICloseEditorListener, IDetachable {
+public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelListener, IDetachable {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(PreviewPlugin.class);
@@ -59,7 +57,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     private String clusterEditorId;
     private JcrNodeModel model;
 
-    public PreviewPlugin(IPluginContext context, IPluginConfig config) {
+    public PreviewPlugin(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
         this.config = config;
 
@@ -71,13 +69,52 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             log.warn("No model defined ({})", RenderService.MODEL_ID);
         }
 
-        // register for editor close notifications
-        context.registerService(this, config.getString("editor.id"));
+        // register editor
+        context.registerService(new IEditService() {
+            private static final long serialVersionUID = 1L;
+
+            public void edit(IModel model) {
+                if (model instanceof JcrNodeModel) {
+                    JcrNodeModel nodeModel = (JcrNodeModel) model;
+                    if (nodeModel.equals(model)) {
+                        stopCluster();
+                        openEditor(nodeModel);
+                        return;
+                    }
+                }
+            }
+        }, config.getString("editor.id"));
+
+        // register for decorated editor close notifications
+        context.registerService(new ICloseEditorListener() {
+            private static final long serialVersionUID = 1L;
+
+            public void onClose(IModel model) {
+                if (model instanceof JcrNodeModel) {
+                    JcrNodeModel nodeModel = (JcrNodeModel) model;
+                    JcrNodeModel handleModel = nodeModel.getParentModel();
+                    if (handleModel != null && handleModel.getNode() != null) {
+                        String browserId = config.getString("browser.id");
+                        IBrowseService viewService = context.getService(browserId, IBrowseService.class);
+                        if (viewService != null) {
+                            viewService.browse(handleModel);
+                        }
+                    }
+                }
+
+                // notify listeners
+                List<ICloseEditorListener> listeners = context.getServices(config.getString("editor.id"),
+                        ICloseEditorListener.class);
+                for (ICloseEditorListener listener : listeners) {
+                    listener.onClose(model);
+                }
+            }
+        }, config.getString("editor.wrapped.id"));
     }
 
     public void detach() {
         config.detach();
-        if(model != null) {
+        if (model != null) {
             model.detach();
         }
     }
@@ -112,20 +149,6 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
         }
     }
 
-    public void onClose(IModel model) {
-        if (model instanceof JcrNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) model;
-            JcrNodeModel handleModel = nodeModel.getParentModel();
-            if (handleModel != null && handleModel.getNode() != null) {
-                String browserId = config.getString("browser.id");
-                IBrowseService viewService = context.getService(browserId, IBrowseService.class);
-                if (viewService != null) {
-                    viewService.browse(handleModel);
-                }
-            }
-        }
-    }
-
     void stopCluster() {
         if (viewer != null) {
             viewer.stopPlugin();
@@ -138,7 +161,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     }
 
     void openEditor(JcrNodeModel model) {
-        String editorId = config.getString("editor.id");
+        String editorId = config.getString("editor.wrapped.id");
         IEditService editService = context.getService(editorId, IEditService.class);
         if (editService != null) {
             editService.edit(model);
@@ -221,7 +244,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                                 published = child;
                             }
                         } else {
-                          published = child;
+                            published = child;
                         }
                     }
                 }
