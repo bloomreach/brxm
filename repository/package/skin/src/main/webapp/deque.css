@@ -145,7 +145,7 @@ ul.logout li a { color: white;}
 
 /* Main Positioning and Panels */
 /* ================================================ */
-.perspective-name{color: white; padding: 6px; width: 150px;}
+
 
 .header{background: url("images/headingback.png") repeat-x; height: 45px; margin-top: 4px;}
 .header a.home{background: url("images/headingback-left.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;}
@@ -178,43 +178,26 @@ div.iconshortcuts h3{color: white; display: none;}
 /* ================================================ */
 
 
-/* Shortcut buttons */
+/* Toolbar */
 /* ================================================ */ 
-/* Actions buttons */
-/* ================================================ */ 
-div.iconactions{padding: 0px;}
-/*
-div.iconactions div.renderItem{float: left; background: url("images/devider.png") no-repeat center right; height: 29px; margin-right: 8px;}
-*/
+div.editor .toolbar .toolbarSection {display: block; float: left; color: #666666; padding-top: 0px; margin-right: 15px; background: url("images/devider.png") no-repeat center right;}
+div.editor .toolbar .toolbarSection li{margin-right: 15px; float: left;}
+div.editor .toolbar .toolbarSection li a:hover{text-decoration: underline; color: black;}
+div.editor .toolbar .toolbarSection li span, .toolbarSection li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #666666}
+div.editor .toolbar .toolbarSection li a span, 
+div.editor .toolbar .toolbarSection li span a, 
+div.editor .toolbar .toolbarSection li span span{display: inline; padding: 0px;}
+div.editor .toolbar div.renderItem,
+div.editor .toolbar div.renderItem div.renderItem{margin: 0px; padding: 0px;}
 
-/* action titles and documentInfo */
-div.iconactions h3{color: white; display: none;}
-div.iconactions h3.documentInfo{display: block; float: left; color: #666666; padding-top: 0px; margin-right: 15px; background: url("images/devider.png") no-repeat center right; padding-right: 15px;}
-div.iconactions h3.documentInfo span.documentLocked{color: black; display: block; float: left; background-repeat: no-repeat; background-position: center center; margin-right: 10px; height: 16px; width: 16px;}
-div.iconactions h3.documentInfo span.documentStatus{padding-left: 5px; display; block;}
-div.iconactions h3.documentInfo span.documentCaption{display; block}
 
-.actionspanel2 {
-  margin-left: -120px;
-  padding-top: 24px;    
-}
+div.editor .toolbar .toolbarSection select{float: right;  background: #286088; color: white; margin: 2px; border: 1px solid white;}
+div.editor .toolbar .toolbarSection select option{color: #666666; background: white; color: #666666; }
 
-.versionToggle {
-  position:relative;
-  float:left;
-  clear: both;
-}
-
-div.actionspanel ul{float: left}
-div.actionspanel ul li{margin-right: 15px; float: left;}
-.actionspanel ul li span, .actionspanel ul li a{display: block; padding: 2px; padding-left: 24px; background-repeat: no-repeat; color: #666666}
-.actionspanel ul li a span, .actionspanel ul li span a, .actionspanel ul li span span{display: inline; padding: 0px;}
-
-.actionspanel ul li a:hover{text-decoration: underline; color: black;}
-
-.actionspanel select{float: right;  background: #286088; color: white; margin: 2px; border: 1px solid white;}
-.actionspanel select option{color: #666666; background: white; color: #666666; }
-
+div.editor .toolbar .toolbarSection li.documentLocked{height: 16px; width: 16px; margin-right: 0px;}
+div.editor .toolbar .toolbarSection li.documentCaption{margin-right: 2px;}
+div.editor .toolbar .toolbarSection li.documentCaption span,
+div.editor .toolbar .toolbarSection li.documentStatus span{padding-left: 5px; color: black}
 
 /* Welcome Panel */
 /* ================================================ */
@@ -322,7 +305,6 @@ table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/
 .box-bottomleft,
 .box-bottomright{background-image: url(images/boxes/box-blue.png);}
 
-
 /* Wicket standard Dialog overwrite */
 /* ================================================ */
 body div.wicket-modal div.w_blue div.w_top, body div.wicket-modal div.w_blue div.w_bottom, body div.wicket-modal div.w_blue div.w_topLeft, body div.wicket-modal div.w_blue div.w_topRight, body div.wicket-modal div.w_blue div.w_bottomRight, body div.wicket-modal div.w_blue div.w_bottomLeft, body div.wicket-modal div.w_blue a.w_close{
@@ -332,23 +314,48 @@ body div.wicket-modal div.w_blue div.w_left, body div.wicket-modal div.w_blue di
 background-image:url(images/boxes/box-blue2.png); 
 }
 
-body div.wicket-modal div.w_caption{background: url("images/boxes/box-blue-back.png") repeat-x}
-body div.wicket-modal div.w_caption span{color: white}
+body div.wicket-modal div.w_caption{background: url("images/boxes/box-blue-caption.png") repeat-x; height: 20px;}
+
+body div.wicket-modal div.w_caption span{color: white; font-size: 12px; padding-left: 5px;}
+body div.w_blue a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
+body div.w_blue a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
 body div.wicket-modal div.w_content {background: white url("images/boxes/box-blue-back.png") repeat-x bottom left} 
 body div.wicket-modal div.w_content_3{border: none}
 body div.wicket-modal div.w_content_2 {padding-top: 0px}
-body.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background-color: none;}
-div.dialog{background-position: 40px 38px; padding: 50px; padding-left: 122px; padding-top: 43px; background-repeat: no-repeat; background: transparent url("images/icons/dialog-question-48.png") no-repeat 40px 38px;}
 body div.wicket-modal div.w_content_1{margin-right: 5px;}
 body div.wicket-modal div.w_right_1 {margin-left:5px;}
+
+
+body.dialog{padding: 40px;}
+
+/* Reorder Dialog */
+/* ================================================ */
+div.reorder table {width: 377px; margin-right: 40px;}
+div.reorderborder{border: 1px solid #286088; padding: 5px;}
+div.reorderbuttons{float: right; width: 40px;}
+
+div.reorder .folderlist h3{font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
+div.reorder table tr td {padding: 0px;}
+div.reorder table tr td {border-bottom: 1px solid #D7E1EA }
+div.reorder table tr.selected td {border-bottom: 1px solid #286088 }
+div.reorder table * {cursor: pointer}
+
+div.reorder table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
+div.reorder table tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
+div.reorder table tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
+
+div.reorder table {border-collapse: separate}
+div.reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
+div.reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
+
+
 
 /* element get's shown even when there is no message, uncomment this line when the issue is fixed 
 body.dialog div.dialogException{border: 1px solid red; padding: 5px; color: red; background: green}
 */
 
-div.dialog div.dialogButtons, body.dialog div.dialogButtons{text-align: right; position: absolute; right: 50px; bottom:50px;}
+div.dialog div.dialogButtons, body.dialog div.dialogButtons{text-align: right; position: absolute; right: 15px; bottom:15px;}
 
-body div.dialog table tr td, body.dialog table tr td{padding-top: 5px; padding-bottom: 5px;}
 body div.dialog h1, body.dialog h1{margin-bottom: 10px; font-size: 16px;}
 
 div.dialog table.imagePicker tr td{padding: 5px;}
@@ -394,15 +401,21 @@ div.versioning .panelHead td{padding: 5px;}
 
 /* Navigator */
 /* ================================================ */
+.navigator .perspectiveTitle{color: white; padding: 2px; padding-left: 4px;}
 .navigator{background: #286088}
 .navigator .folderlist h3{background: transparent url(images/filelistHeaderback.png) repeat-x; font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
 .navigator .documentlist, 
 .navigator .folderlist{background: #D7E1EA}
 .navigator table.dataview {background: url('images/filelistHeaderback.png') repeat-x;}
 
+.navigator .toolbar .toolbarSection li.alignright{float: right}
+.navigator .toolbar{padding:2px}
+
 .documentlist table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
 .documentlist table tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
 .documentlist table tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
+
+
 
 /* Document list */
 .documentlist table {border-collapse: separate}
@@ -447,7 +460,6 @@ border-top: none;
 }
 body .documentPreview ol {list-style-type: decimal; list-style-position: inside}
 body .documentPreview ul {list-style-type: disc; list-style-position: inside}
-
 
 .editor-top{background: url("images/editortoolbarback.png") repeat-x}}
 
@@ -551,8 +563,6 @@ margin-bottom:0px;
 padding:0px;
 margin: 0px;
 }
-
-
 
 .htmlarea table.toolbarRow {
   margin-top:2px;

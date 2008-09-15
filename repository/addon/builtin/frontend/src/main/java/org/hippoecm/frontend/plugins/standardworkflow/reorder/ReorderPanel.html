@@ -15,29 +15,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <table width="99%">
-        <tr>
-            <td width="40%">
-                <table class="dataview" cellspacing="0" wicket:id="table" width="100%">[table]</table>
-            </td>
-            <td width="10%">
-            </td>            
-            <td>
-                <table width="50%">
-                    <tr>
-                        <td>
-                            <p style="font-size:500%;"><a wicket:id="up">&#8593;</a></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p style="font-size:500%;"><a wicket:id="down">&#8595;</a></p>
-                        </td>
-                    </tr>                    
-                </table>
-            </td>
-        </tr>
-    </table>
+    <div class="reorderborder">
+        <div class="reorderbuttons">
+            <button wicket:id="up">&#8593;</button>
+            <button wicket:id="down">&#8595;</button>
+        </div>
+    <table class="dataview" cellspacing="0" wicket:id="table" width="100%">[table]</table>
+    </div>
   </wicket:panel>
 </html>
 
