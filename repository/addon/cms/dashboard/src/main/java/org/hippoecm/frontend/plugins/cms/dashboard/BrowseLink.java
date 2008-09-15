@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -67,9 +68,13 @@ public class BrowseLink extends Panel {
                    !node.getPath().equals("/")) {
                 node = node.getParent();
             }
+            String nodeName = node.getName();
             String path = node.getPath();
             path = ISO9075Helper.decodeLocalName(path);
-            link.add(new Label("label", path));
+            nodeName = ISO9075Helper.decodeLocalName(nodeName);
+            link.add(new Label("label", nodeName));
+            link.add(new SimpleAttributeModifier("title", path));
+            
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
             link.add(new Label("label", e.getMessage()));
