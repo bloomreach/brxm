@@ -29,7 +29,7 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
 
     private static final long serialVersionUID = 1L;
 
-    private Page page;
+    protected Page page;
 
     public DialogWindow(String id) {
         super(id);

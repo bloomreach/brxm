@@ -20,13 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
@@ -42,7 +38,6 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IFactoryService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,22 +80,6 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager,
             context.registerService(this, config.getString(EDITOR_ID));
         } else {
             log.error("No editor id ({}) defined under which to register", EDITOR_ID);
-        }
-
-        try {
-            String user = ((UserSession) Session.get()).getCredentials().getString("username");
-            QueryManager qMgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
-            Query query = qMgr.createQuery("select * from hippostd:publishable where hippostd:state='draft' "
-                    + "and hippostd:holder='" + user + "'", Query.SQL);
-            NodeIterator iter = query.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (!node.getName().equals("hippo:prototype")) {
-                    openEditor(new JcrNodeModel(node));
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
     }
 
