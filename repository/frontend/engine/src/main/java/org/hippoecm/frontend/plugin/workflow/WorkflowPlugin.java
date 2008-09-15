@@ -80,7 +80,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
                 StringBuffer sb = new StringBuffer();
                 sb.append("workflow showing categories");
                 for (String category : categories)
-                    sb.append(category);
+                    sb.append(" "+category);
                 log.debug(new String(sb));
             }
         } else {
