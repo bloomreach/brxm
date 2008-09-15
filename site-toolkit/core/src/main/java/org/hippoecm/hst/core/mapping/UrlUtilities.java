@@ -61,13 +61,18 @@ public class UrlUtilities {
                   */  
                  if(uriParts[i].endsWith(HTML_POSTFIX) && !uriParts[i].equals(uriParts[i-1])) {
                      // For now, just replace " " with "_x0020_" to get jcr path
-                     String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length()).replaceAll(" ", "_x0020_");
+                     String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length());
+                     lastPart = ISO9075Helper.encodeLocalName(lastPart);
                      decodedUrl.append("/"+lastPart+ "/"+lastPart);
                  } else {
-                     decodedUrl.append("/"+uriParts[i].replaceAll(" ", "_x0020_"));
+                     String uriPart = uriParts[i];
+                     uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                     decodedUrl.append("/"+uriPart);
                  }
             } else {
-                decodedUrl.append("/"+uriParts[i].replaceAll(" ", "_x0020_"));
+                String uriPart = uriParts[i];
+                uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                decodedUrl.append("/"+uriPart);
             }
         }
         
