@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -25,6 +26,8 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -56,10 +59,17 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     private IFactoryService factory;
     private String clusterEditorId;
     private JcrNodeModel model;
+    private List<JcrNodeModel> editors;
+    private List<JcrNodeModel> pending;
+    private boolean preview;
 
     public PreviewPlugin(final IPluginContext context, final IPluginConfig config) {
         this.context = context;
         this.config = config;
+
+        preview = false;
+        editors = new LinkedList<JcrNodeModel>();
+        pending = new LinkedList<JcrNodeModel>();
 
         context.registerService(this, IJcrService.class.getName());
 
@@ -73,14 +83,10 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
         context.registerService(new IEditService() {
             private static final long serialVersionUID = 1L;
 
-            public void edit(IModel model) {
-                if (model instanceof JcrNodeModel) {
-                    JcrNodeModel nodeModel = (JcrNodeModel) model;
-                    if (nodeModel.equals(model)) {
-                        stopCluster();
-                        openEditor(nodeModel);
-                        return;
-                    }
+            public void edit(IModel editModel) {
+                if (editModel instanceof JcrNodeModel) {
+                    JcrNodeModel nodeModel = (JcrNodeModel) editModel;
+                    openEditor(nodeModel);
                 }
             }
         }, config.getString("editor.id"));
@@ -90,6 +96,10 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             private static final long serialVersionUID = 1L;
 
             public void onClose(IModel model) {
+                if (editors.contains(model)) {
+                    editors.remove(model);
+                }
+
                 if (model instanceof JcrNodeModel) {
                     JcrNodeModel nodeModel = (JcrNodeModel) model;
                     JcrNodeModel handleModel = nodeModel.getParentModel();
@@ -100,6 +110,11 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                             viewService.browse(handleModel);
                         }
                     }
+                }
+
+                // add pending editor
+                if (editors.size() < 5 && pending.size() > 0) {
+                    openEditor(pending.remove(0));
                 }
 
                 // notify listeners
@@ -157,14 +172,47 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             viewer = null;
             factory = null;
             model = null;
+            preview = false;
         }
     }
 
-    void openEditor(JcrNodeModel model) {
-        String editorId = config.getString("editor.wrapped.id");
-        IEditService editService = context.getService(editorId, IEditService.class);
-        if (editService != null) {
-            editService.edit(model);
+    void openEditor(JcrNodeModel nodeModel) {
+        if (!editors.contains(nodeModel) && !pending.contains(nodeModel)) {
+            if (editors.size() < 4) {
+                boolean restart = (!nodeModel.getParentModel().equals(model)) && preview;
+                // store a copy of the model; it's reset in stopCluster
+                JcrNodeModel previewModel = model;
+
+                stopCluster();
+
+                String editorId = config.getString("editor.wrapped.id");
+                IEditService editService = context.getService(editorId, IEditService.class);
+                if (editService != null) {
+                    editService.edit(nodeModel);
+                }
+                editors.add(nodeModel);
+
+                if (restart) {
+                    updateModel(previewModel);
+                }
+            } else {
+                // close preview
+                if (nodeModel.getParentModel().equals(model) && preview) {
+                    stopCluster();
+                }
+                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                dialogService.show(new TooManyEditorsWarningDialog(context, dialogService));
+                pending.add(nodeModel);
+            }
+        } else if (editors.contains(nodeModel)) {
+            String editorId = config.getString("editor.wrapped.id");
+            IEditService editService = context.getService(editorId, IEditService.class);
+            if (editService != null) {
+                editService.edit(nodeModel);
+            }
+        } else {
+            IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+            dialogService.show(new TooManyEditorsWarningDialog(context, dialogService));
         }
     }
 
@@ -212,6 +260,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
         context.registerService(factory, clusterEditorId);
 
         viewService.edit(preview);
+        this.preview = true;
 
         // look up the render service that is created by the cluster
         final String wicketId = clusterConfig.getString("wicket.id");
@@ -283,4 +332,24 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
         return null;
     }
 
+    private class TooManyEditorsWarningDialog extends AbstractDialog {
+
+        TooManyEditorsWarningDialog(IPluginContext context, IDialogService dialogService) {
+            super(context, dialogService, "Warning: Only 4 editors can be open at the same time.  The document will be shown when you close one of the existing editors.");
+
+            cancel.setVisible(false);
+        }
+
+        @Override
+        protected void cancel() {
+        }
+
+        @Override
+        protected void ok() throws Exception {
+        }
+
+        public String getTitle() {
+            return "Warning";
+        }
+    }
 }

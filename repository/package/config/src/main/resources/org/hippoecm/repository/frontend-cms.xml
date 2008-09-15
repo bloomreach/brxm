@@ -1433,6 +1433,17 @@
       <sv:value>service.tab</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="autoEditPlugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.cms.edit.AutoEditPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="editor.id" sv:type="String">
+      <sv:value>service.edit</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="logoutPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
