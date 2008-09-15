@@ -53,24 +53,25 @@ public class ReadOnlyPooledSession implements Session{
     
     private Session delegatee;
     private long creationTime;
-    //private JcrSessionPool jcrSessionPool;
+    private JcrSessionPool jcrSessionPool;
+    private static final int TIME_TO_LIVE_SECONDS = 1000;
     
     public ReadOnlyPooledSession(Session session, JcrSessionPool  jcrSessionPool) {
         this.delegatee = session;
         creationTime = System.currentTimeMillis();
-        //this.jcrSessionPool = jcrSessionPool;
+        this.jcrSessionPool = jcrSessionPool;
     }
     
-    public boolean isValid(long currentTime){
-        return ( (currentTime - creationTime) < 60*1000);
+    public boolean isValid(){
+        return ( (System.currentTimeMillis() - creationTime) < TIME_TO_LIVE_SECONDS*1000);
     }
     
     public Session getDelegatee(){
         return delegatee;
     }
-    //public JcrSessionPool getJcrSessionPool(){
-    //    return this.jcrSessionPool;
-    //}
+    public JcrSessionPool getJcrSessionPool(){
+        return this.jcrSessionPool;
+    }
      public void logout() {
          log.warn("logout unsupported in read only session. Use the delegatee");
      }

@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.repository.api.HippoNode;
@@ -37,18 +38,19 @@ public class URLMappingImpl implements URLMapping {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
 
+    private RewriteLRUCache rewriteLRUCache;
     private List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
-    private Session session;
     private String contextPrefix;
     private String contextPath;
     private Node siteMapRootNode;
     private int uriLevels;
 
     public URLMappingImpl(Session session, String contextPath, String contextPrefix, String path, int uriLevels) {
-        this.session = session;
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
         this.uriLevels = uriLevels;
+        this.rewriteLRUCache = new RewriteLRUCache(500);
+        
         try {
             long start = System.currentTimeMillis();
             String virtualEntryName = null;
@@ -129,9 +131,15 @@ public class URLMappingImpl implements URLMapping {
 
     public String rewriteLocation(Node node) {
         long start = System.currentTimeMillis();
+        String origPath = null;
         String path = "";
         String rewrite = null;
         try {
+            origPath= node.getPath();
+            String rewritten = this.rewriteLRUCache.get(origPath);
+            if(rewritten != null) {
+                return rewritten;
+            }
             if (node instanceof HippoNode) {
                 HippoNode hippoNode = (HippoNode) node;
                 if (hippoNode.getCanonicalNode() != null && !hippoNode.getCanonicalNode().isSame(node)) {
@@ -185,11 +193,20 @@ public class URLMappingImpl implements URLMapping {
         if(rewrite == null) {
             rewrite = contextPrefix + path;
         }
-        return UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        rewrite = UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        if(origPath != null ) {
+            this.rewriteLRUCache.put(origPath, rewrite);
+        }
+        return rewrite;
     }
 
     public String rewriteLocation(String path) {
         long start = System.currentTimeMillis();
+        String origPath = path;
+        String rewritten = this.rewriteLRUCache.get(origPath);
+        if(rewritten != null) {
+            return rewritten;
+        }
         String rewrite = null;
         if (siteMapRootNode != null && path != null && !"".equals(path)) {
             if (path.startsWith("/")) {
@@ -230,7 +247,33 @@ public class URLMappingImpl implements URLMapping {
         if(rewrite == null) {
             rewrite = contextPrefix + "/" + path;
         }
-        return UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        rewrite = UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        this.rewriteLRUCache.put(origPath, rewrite);
+        return rewrite;
+    }
+    
+    private class RewriteLRUCache {
+        
+        private LRUMap cache;
+        private int miss;
+        private int hit;
+        
+        private RewriteLRUCache(int size){
+            this.cache = new LRUMap(size);
+        }
+        
+        private String get(String key) {
+            String rewrite = (String)cache.get(key);
+            if(rewrite==null) {
+                miss++; 
+            } else {
+                hit++;
+            }
+            return rewrite;
+        }
+        private void put(String key, String rewrite) {
+           cache.put(key, rewrite);
+        }
     }
 
 }

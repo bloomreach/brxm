@@ -22,7 +22,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class ContextBase {
     
 	
 	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-		this(contextName, repositoryPath, request, JCRConnectorWrapper.getJCRSession(request.getSession()));
+		this(contextName, repositoryPath, request,JcrSessionFactory.getSession(request));
 	}
 	
 	public ContextBase (String contextName, String repositoryPath, HttpServletRequest request, Session session) throws PathNotFoundException, RepositoryException {

@@ -32,7 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.mapping.UrlUtilities;
-import org.hippoecm.hst.jcr.JCRConnector;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +70,10 @@ public class BinariesServlet extends HttpServlet {
         }
 
         path = UrlUtilities.decodeUrl(path);
+        Session session = null;
         try {
-            Session session = JCRConnector.getJCRSession(req.getSession());
-
+            session = JcrSessionFactory.getSession(req);
+            
             Item item = session.getItem(path);
 
             if (item == null) {
@@ -131,6 +133,10 @@ public class BinariesServlet extends HttpServlet {
             log.error("RepositoryException with message " + ex.getMessage() + " while getting binary data stream item "
                     + "at path " + path + ", response status = 404)");
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } finally {
+            if(session!=null && session instanceof ReadOnlyPooledSession) {
+                ((ReadOnlyPooledSession)session).getJcrSessionPool().release(req.getSession());
+            }
         }
     }
 }

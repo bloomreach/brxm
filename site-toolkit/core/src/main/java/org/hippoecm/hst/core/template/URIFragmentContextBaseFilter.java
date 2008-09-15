@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,9 +32,10 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
-import org.hippoecm.hst.core.mapping.URLMappingImpl;
-import org.hippoecm.hst.jcr.JCRConnector;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
+import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.mapping.URLMappingFactory;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,131 +51,138 @@ import org.slf4j.LoggerFactory;
  * </p>
  *
  */
-public class URIFragmentContextBaseFilter  extends HstFilterBase implements Filter {
-	private static final Logger log = LoggerFactory.getLogger(URIFragmentContextBaseFilter.class);
-	
-	private static final String CONTENT_BASE_INIT_PARAMETER = "contentBase";
-	private static final String URI_LEVEL_INIT_PARAMETER = "levels";
-	private static final String RELATIVE_HST_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";	
-	
-	private String contentBase;
-	private int uriLevels;
+public class URIFragmentContextBaseFilter extends HstFilterBase implements Filter {
+    private static final Logger log = LoggerFactory.getLogger(URIFragmentContextBaseFilter.class);
 
-	public void init(FilterConfig filterConfig) throws ServletException {
-		super.init(filterConfig);
-		contentBase = ContextBase.stripFirstSlash(getInitParameter(filterConfig, CONTENT_BASE_INIT_PARAMETER, true));
-		try {
-			uriLevels =  Integer.parseInt(getInitParameter(filterConfig, URI_LEVEL_INIT_PARAMETER, true));
-		} catch (NumberFormatException e) {
-			throw new ServletException("The init-parameter " + URI_LEVEL_INIT_PARAMETER + " is not an int.");
-		}
-	}
-	
-	public void destroy() {
-	}
+    private static final String CONTENT_BASE_INIT_PARAMETER = "contentBase";
+    private static final String URI_LEVEL_INIT_PARAMETER = "levels";
+    private static final String RELATIVE_HST_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";
 
-	public void doFilter(ServletRequest req, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
-		
-		HttpServletRequest request = (HttpServletRequest) req;
-		
-		
-		if (ignoreRequest(request)) {
-			filterChain.doFilter(request, response);			
-		} 
-		else {  
-		    
-		    
-			String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
-			
-			String uriPrefix = getLevelPrefix(requestURI, uriLevels);
-			if(uriPrefix == null) {
-			    throw new ServletException("The number of slashes in the url in lower then the configure levels '("+uriLevels+")' in your web.xml \n" +
-			    		"Either, the url is wrong, or you should change the levels in value in your web.xml");
-			}
-			
-			if(isBinaryRequest(requestURI, uriPrefix)) {
-			    forwardToBinaryServlet(request, response,requestURI, uriPrefix);
-			    return;
-			}
-			// TODO improve session refreshing: this call is done here to refresh the jcrsession at the beginning of a request.
-            // parallel requests (for example frames) from one session gives problems. The invalidation needs to be improved  
-			JCRConnector.getJCRSession(request.getSession(), true);
-			
-			long start = System.currentTimeMillis();
-            URLMappingImpl urlMapping = new URLMappingImpl(JCRConnectorWrapper.getJCRSession(request.getSession()), request.getContextPath() ,uriPrefix ,contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels );
-           
-            Timer.log.debug("creating mapping took " + (System.currentTimeMillis() - start) + " ms.");
-            request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
-            
-			//content configuration contextbase
-			ContextBase contentContextBase = null;
-			try {
-				contentContextBase = new ContextBase(uriPrefix, contentBase + uriPrefix, request);
-			} catch (PathNotFoundException e) {
-				throw new ServletException(e);
-			} catch (RepositoryException e) {
-				throw new ServletException(e);
-			}
-			
-			//hst configuration contextbase
-			ContextBase hstConfigurationContextBase = null;
-			try {
-				hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, request);
-			} catch (PathNotFoundException e) {
-				throw new ServletException(e);
-			} catch (RepositoryException e) {
-				throw new ServletException(e);
-			}
-			HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request, uriPrefix);
-           
-			prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE, contentContextBase);
-		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE, hstConfigurationContextBase);
-		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, requestURI);
-		    prefixStrippedRequest.setAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE, uriPrefix);
-		    
-			filterChain.doFilter(prefixStrippedRequest, response);			
-			Timer.log.debug("Handling request took " + (System.currentTimeMillis() - start) + " ms.");
-	   }
-		
-	}
-	
-	private void forwardToBinaryServlet(HttpServletRequest request, ServletResponse response, String requestURI, String uriPrefix) throws ServletException, IOException {
-	    String forward = requestURI.substring(uriPrefix.length());
-	    log.debug("Forwarding request to binaries servlet: '" + request.getRequestURI() + "' --> '" + forward +"'");
-	    RequestDispatcher dispatcher = request.getRequestDispatcher(forward);
+    private String contentBase;
+    private int uriLevels;
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+        super.init(filterConfig);
+        contentBase = ContextBase.stripFirstSlash(getInitParameter(filterConfig, CONTENT_BASE_INIT_PARAMETER, true));
+        try {
+            uriLevels = Integer.parseInt(getInitParameter(filterConfig, URI_LEVEL_INIT_PARAMETER, true));
+        } catch (NumberFormatException e) {
+            throw new ServletException("The init-parameter " + URI_LEVEL_INIT_PARAMETER + " is not an int.");
+        }
+    }
+
+    public void destroy() {
+    }
+
+    public void doFilter(ServletRequest req, ServletResponse response, FilterChain filterChain) throws IOException,
+            ServletException {
+
+        HttpServletRequest request = (HttpServletRequest) req;
+
+        if (ignoreRequest(request)) {
+            filterChain.doFilter(request, response);
+        } else {
+
+            String requestURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
+
+            String uriPrefix = getLevelPrefix(requestURI, uriLevels);
+            if (uriPrefix == null) {
+                throw new ServletException("The number of slashes in the url in lower then the configure levels '("
+                        + uriLevels + ")' in your web.xml \n"
+                        + "Either, the url is wrong, or you should change the levels in value in your web.xml");
+            }
+
+            if (isBinaryRequest(requestURI, uriPrefix)) {
+                forwardToBinaryServlet(request, response, requestURI, uriPrefix);
+                return;
+            }
+
+            Session session = null;
+            long requesttime = System.currentTimeMillis();
+            try {
+                long start = System.nanoTime();
+                session = JcrSessionFactory.getSession(request);
+                Timer.log.debug("getting session took from the pool took " + (System.nanoTime() - start)/1000000 + " ms.");
+                
+                start = System.nanoTime();
+                URLMapping urlMapping = URLMappingFactory.getUrlMapping(session, request.getContextPath(),
+                        uriPrefix, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels);
+                Timer.log.debug("creating mapping took " + (System.nanoTime() - start)/1000000 + " ms.");
+                request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
+
+                //content configuration contextbase
+                ContextBase contentContextBase = null;
+                try {
+                    contentContextBase = new ContextBase(uriPrefix, contentBase + uriPrefix, request);
+                } catch (PathNotFoundException e) {
+                    throw new ServletException(e);
+                } catch (RepositoryException e) {
+                    throw new ServletException(e);
+                }
+
+                //hst configuration contextbase
+                ContextBase hstConfigurationContextBase = null;
+                try {
+                    hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, contentBase + uriPrefix
+                            + RELATIVE_HST_CONFIGURATION_LOCATION, request);
+                } catch (PathNotFoundException e) {
+                    throw new ServletException(e);
+                } catch (RepositoryException e) {
+                    throw new ServletException(e);
+                }
+                HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request,
+                        uriPrefix);
+
+                prefixStrippedRequest.setAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE,
+                        contentContextBase);
+                prefixStrippedRequest.setAttribute(
+                        HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE,
+                        hstConfigurationContextBase);
+                prefixStrippedRequest.setAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE, requestURI);
+                prefixStrippedRequest.setAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE, uriPrefix);
+
+                filterChain.doFilter(prefixStrippedRequest, response);
+            } finally {
+                if (session != null && session instanceof ReadOnlyPooledSession) {
+                    ((ReadOnlyPooledSession) session).getJcrSessionPool().release(request.getSession());
+                }
+                Timer.log.debug("Handling request took " + (System.currentTimeMillis() - requesttime));
+            }
+        }
+
+    }
+
+    private void forwardToBinaryServlet(HttpServletRequest request, ServletResponse response, String requestURI,
+            String uriPrefix) throws ServletException, IOException {
+        String forward = requestURI.substring(uriPrefix.length());
+        log.debug("Forwarding request to binaries servlet: '" + request.getRequestURI() + "' --> '" + forward + "'");
+        RequestDispatcher dispatcher = request.getRequestDispatcher(forward);
         dispatcher.forward(request, response);
     }
 
     private boolean isBinaryRequest(String requestURI, String uriPrefix) {
-        if(requestURI.substring(uriPrefix.length()).startsWith("/binaries")) {
+        if (requestURI.substring(uriPrefix.length()).startsWith("/binaries")) {
             return true;
         }
         return false;
     }
 
     /**
-	 * Returns the prefix of a String where the prefix has a specified number of
-	 * slashes.
-	 * @param requestURI
-	 * @param levels
-	 * @return
-	 */
-	private String getLevelPrefix(String requestURI, int levels) {
-		String [] splittedURI = requestURI.split("/");
-		if (splittedURI.length <= levels) {
-			return null;
-		}
-		StringBuffer levelPrefix = new StringBuffer();
-		for (int i=1; i <= levels; i++) {
-			levelPrefix.append("/").append(splittedURI[i]);
-		}
-		return levelPrefix.toString();
-	}
+     * Returns the prefix of a String where the prefix has a specified number of
+     * slashes.
+     * @param requestURI
+     * @param levels
+     * @return
+     */
+    private String getLevelPrefix(String requestURI, int levels) {
+        String[] splittedURI = requestURI.split("/");
+        if (splittedURI.length <= levels) {
+            return null;
+        }
+        StringBuffer levelPrefix = new StringBuffer();
+        for (int i = 1; i <= levels; i++) {
+            levelPrefix.append("/").append(splittedURI[i]);
+        }
+        return levelPrefix.toString();
+    }
 }
-
-
-
-
-
-

@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,8 +94,7 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
-		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
-
+		Session session =  JcrSessionFactory.getTemplateSession(request);
 			PageNode matchPageNode = null;
             if (urlTokenizer.isMatchingTemplateFound()) {
             	log.info("matching template found");
@@ -138,16 +137,8 @@ public abstract class HstFilterBase implements Filter {
 	}
 	
 	
-	/*public PageNode getPageNode(HttpServletRequest request) throws TemplateException, RepositoryException {
-		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
-		ContextBase templateContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, TEMPLATE_CONFIGURATION_LOCATION, request, session);
-		URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
-       	return getPageNode(request, urlTokenizer, templateContextBase);
-	} */
-	
 	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
-		Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
-		
+		Session session =  JcrSessionFactory.getTemplateSession(request);
 		ContextBase hstConfigurationContextBase = getHstConfigurationContextBase(request, TEMPLATE_CONFIGURATION_LOCATION);
 			
 		Node siteMapNodes = hstConfigurationContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
@@ -208,7 +199,7 @@ public abstract class HstFilterBase implements Filter {
 	protected ContextBase getHstConfigurationContextBase(HttpServletRequest request, String hstConfigurationLocation) throws TemplateException {
 		ContextBase hstConfigurationContextBase = null;
 		if (request.getAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE) == null) {
-			Session session = JCRConnectorWrapper.getTemplateJCRSession(request.getSession());
+			Session session =  JcrSessionFactory.getTemplateSession(request);
 			try {
 				hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, hstConfigurationLocation, request, session);
 			} catch (PathNotFoundException e) {

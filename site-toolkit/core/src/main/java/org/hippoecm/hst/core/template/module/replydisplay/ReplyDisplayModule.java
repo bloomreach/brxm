@@ -12,12 +12,12 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-import org.hippoecm.hst.jcr.JCRConnectorWrapper;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
 
 public class ReplyDisplayModule extends ModuleBase {
 
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {
-        Session session = JCRConnectorWrapper.getJCRSession(request.getSession());              
+    public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {   
+        Session session =  JcrSessionFactory.getSession(request);
         try {
             Node rootNode = session.getRootNode();  
             
@@ -47,7 +47,7 @@ public class ReplyDisplayModule extends ModuleBase {
 
 
     public void render(PageContext pageContext) {
-        Session session = JCRConnectorWrapper.getJCRSession(pageContext.getSession());              
+        Session session =  JcrSessionFactory.getSession((HttpServletRequest)pageContext.getRequest());
         try {
             Node rootNode = session.getRootNode();  
             

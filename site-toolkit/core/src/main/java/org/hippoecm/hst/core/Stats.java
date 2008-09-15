@@ -13,20 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.jcr;
+package org.hippoecm.hst.core;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Runtime exception thrown when the JJcrSessionFactory cannot get a session from the 
- * repository.   
+ * Interface only for logging Stats
+ *
  */
-public class JCRConnectionException extends RuntimeException {
-
-    private static final long serialVersionUID = 2013464181234807485L;
-
-    /**
-     * Constructor.
-     */
-    public JCRConnectionException(String message) {
-        super(message);
-    }
+public interface Stats {
+    public static final Logger log = LoggerFactory.getLogger(Stats.class);
 }
