@@ -44,3 +44,5 @@ div#loginWrapper form select {
 }
 
 div#loginWrapper table tr td{padding: 2px; vertical-align: middle; padding-left: 0px; padding-right: 0px}
+
+select{width: 150px}

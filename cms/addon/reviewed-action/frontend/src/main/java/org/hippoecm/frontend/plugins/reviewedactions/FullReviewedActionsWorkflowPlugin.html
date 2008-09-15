@@ -15,8 +15,7 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="actionspanel">
-      <ul>
+      <ul class="toolbarSection">
         <li>
           <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
         </li>
@@ -30,13 +29,16 @@
           <span class="delete_ico" wicket:id="delete-dialog">Delete</span>
         </li>
       </ul>
-    </div>
-    <div class="actionspanel2">
-      <h3 class="documentInfo">
-        <span class="documentLocked document-lock-16" wicket:id="locked" title="Document is currently being editted by someone else" />
-        <span class="documentCaption" wicket:id="caption"/>
-        <span class="documentStatus" wicket:id="status"/>
-      </h3>
-    </div>      
+      <ul class="toolbarSection">
+        <li class="documentLocked document-lock-16">
+          <span title="Document is currently being editted by someone else" wicket:id="locked"></span>
+        </li>
+        <li class="documentCaption">
+          <span wicket:id="caption"></span>
+        </li>
+        <li class="documentStatus">
+          <span wicket:id="status"></span>  
+        </li>
+      </ul>
   </wicket:panel>
 </html>
