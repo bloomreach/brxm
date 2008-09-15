@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.gallery.upload;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.extensions.wizard.WizardModel;
@@ -24,11 +26,15 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UploadWizard extends Wizard {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(UploadWizard.class);
 
     private UploadForm form;
     private IDialogService dialogService;
@@ -53,6 +59,13 @@ public class UploadWizard extends Wizard {
     @Override
     public void onFinish() {
         dialogService.close();
+        try {
+            JcrNodeModel gallery = (JcrNodeModel)uploadDialog.getModel();
+            gallery.getNode().getSession().refresh(true);
+            uploadDialog.getJcrService().flush(gallery);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     @Override
