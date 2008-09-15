@@ -29,6 +29,7 @@
 
 [hst:sitemapmodule] > hippo:document
 - hst:module (string)
+- * (string)
 
 [hst:sitemaplayout]> hippo:document
 - hst:layoutAttribute (string)
