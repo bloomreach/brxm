@@ -136,7 +136,8 @@ public class RepositoryServlet extends HttpServlet {
         // try to parse the path
         storageLocation = config.getServletContext().getRealPath(storageLocation);
         if (storageLocation == null) {
-            throw new ServletException("Cannot determin repository location " + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
+            throw new ServletException("Cannot determin repository location "
+                    + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
         }
     }
 
@@ -265,7 +266,8 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("<body>");
             writer.println("  <h2>Hippo Repository Console</h2>");
             writer.println("  <h3>Request parameters</h3>");
-            writer.println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
+            writer
+                    .println("    <table style=\"params\" summary=\"request parameters\"><tr><th>name</th><th>value</th></tr>");
             writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
             writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
             writer.println("    <tr><td>relative path</td><td>: <code>" + path + "</code></td></tr>");
@@ -296,7 +298,8 @@ public class RepositoryServlet extends HttpServlet {
                 pathEltName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(pathElt));
 
                 currentPath += "/" + StringEscapeUtils.escapeHtml(pathElt);
-                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/" + pathEltName + "</a>");
+                writer.print("<a href=\"" + req.getContextPath() + req.getServletPath() + "/" + currentPath + "/\">/"
+                        + pathEltName + "</a>");
             }
             writer.println("</code>");
 
@@ -306,8 +309,10 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    <ul>");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/" + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
-                String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode) child).getDisplayName()));
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/"
+                        + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
+                String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode) child)
+                        .getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
                 } else {
@@ -333,7 +338,7 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    </ul>");
 
             String queryString = null;
-            if((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
+            if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
                 queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Query executed</h3>");
                 writer.println("  <blockquote>");
@@ -341,7 +346,8 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("  </blockquote>");
                 writer.println("  <ol>");
                 QueryManager qmgr = session.getWorkspace().getQueryManager();
-                Query query = qmgr.createQuery(queryString, (req.getParameter("xpath") != null ? Query.XPATH : Query.SQL));
+                Query query = qmgr.createQuery(queryString, (req.getParameter("xpath") != null ? Query.XPATH
+                        : Query.SQL));
                 QueryResult result = query.execute();
                 for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
                     Node resultNode = iter.nextNode();
@@ -354,7 +360,7 @@ public class RepositoryServlet extends HttpServlet {
                 result = query.execute();
                 String[] columns = result.getColumnNames();
                 writer.println("  <tr>");
-                for(int i=0; i<columns.length; i++) {
+                for (int i = 0; i < columns.length; i++) {
                     writer.print("    <th>");
                     writer.print(columns[i]);
                     writer.println("</th>");
@@ -368,7 +374,7 @@ public class RepositoryServlet extends HttpServlet {
                         if (values != null) {
                             for (int i = 0; i < values.length; i++) {
                                 writer.print("    <td>");
-                                writer.print(values[i]!=null ? values[i].getString() : "");
+                                writer.print(values[i] != null ? values[i].getString() : "");
                                 writer.println("</td>");
                             }
                         }
@@ -377,7 +383,7 @@ public class RepositoryServlet extends HttpServlet {
                 }
                 writer.println("  </ol>");
             }
-            if((queryString = req.getParameter("uuid")) != null) {
+            if ((queryString = req.getParameter("uuid")) != null) {
                 queryString = URLDecoder.decode(queryString, "UTF-8");
                 writer.println("  <h3>Get node by UUID</h3>");
                 writer.println("  <blockquote>");
@@ -386,16 +392,54 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("  <ol>");
                 writer.println("    <li>");
                 try {
-                Node n = session.getNodeByUUID(queryString);
-                writer.println("Found node: " + n.getPath());
+                    Node n = session.getNodeByUUID(queryString);
+                    writer.println("Found node: " + n.getPath());
                 } catch (ItemNotFoundException e) {
                     writer.println("No node found for uuid " + queryString);
                 } catch (RepositoryException e) {
                     writer.println(e.getMessage());
                 }
-                writer.println("  </ol><hr><table>");
+                writer.println("  </li> ");
+                writer.println("  </ol><hr>");
 
-                writer.println("  </ol>");
+            }
+            if ((queryString = req.getParameter("deref")) != null) {
+                queryString = URLDecoder.decode(queryString, "UTF-8");
+                writer.println("  <h3>Getting nodes having a reference to </h3>");
+                writer.println("  <blockquote>");
+                writer.println("UUID = " + queryString);
+                Node n = null;
+                try {
+                    n = session.getNodeByUUID(queryString);
+                    writer.println(" ( " + n.getPath() + " )");
+                } catch (RepositoryException e) {
+                    writer.println(e.getMessage());
+                }
+                writer.println("  </blockquote><hr>");
+                if (n != null) {
+                    PropertyIterator propIt = n.getReferences();
+                    if (propIt.hasNext()) {
+                        writer.println("  <table>");
+                        writer.println("  <tr><th align=left>");
+                        writer.println("  Node path");
+                        writer.println("  </th><th align=left>" );
+                        writer.println("  Property reference name" );
+                        writer.println("  </th></tr>");
+                        while (propIt.hasNext()) {
+                            Property prop = propIt.nextProperty();
+                            writer.println("  <tr><td>");
+                            writer.println(prop.getParent().getPath());
+                            writer.println("    </td><td>");
+                            writer.println("<b>"+prop.getName()+"</b>");
+                            writer.println("    </td></tr>");
+                        }
+                        writer.println("  </table>");
+
+                    }else {
+                        writer.println("No nodes have a reference to '" +n.getPath() + "'");
+                    }
+                }
+
             }
         } catch (LoginException ex) {
             res.setHeader("WWW-Authenticate", "Basic realm=\"Repository\"");
