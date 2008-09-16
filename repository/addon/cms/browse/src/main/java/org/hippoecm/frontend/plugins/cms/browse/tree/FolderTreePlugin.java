@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
+
+import javax.jcr.RepositoryException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListener {
@@ -65,7 +67,15 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         };
         add(tree);
 
+        tree.setRootLess(config.getBoolean("rootless"));
+
         onModelChanged();
+    }
+
+    @Override
+    public void focus(IRenderService child) {
+        super.focus(child);
+        setModel(new JcrNodeModel(startingPath));
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
@@ -83,9 +93,21 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
 
         JcrNodeModel model = (JcrNodeModel) getModel();
         AbstractTreeNode node = null;
+        boolean nodesSelected = false;
+
         while (model != null) {
             node = rootNode.getTreeModel().lookup(model);
-
+            if(node == null)
+                break;
+            try {
+                if(node.getNodeModel().getNode() != null) {
+                    if (node.getNodeModel().getNode().getPath().startsWith(startingPath)) {
+                        nodesSelected = true;
+                    }
+                }
+            } catch(RepositoryException ex) {
+                // FIXME log some warning
+            }
             if (node != null) {
                 TreeNode parentNode = node.getParent();
                 while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
@@ -98,6 +120,9 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             }
             model = model.getParentModel();
         }
-    }
 
+        if(!nodesSelected) {
+            tree.getTreeState().collapseAll();
+        }
+    }
 }
