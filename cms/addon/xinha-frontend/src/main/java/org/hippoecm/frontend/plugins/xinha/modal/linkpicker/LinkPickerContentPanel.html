@@ -15,10 +15,11 @@
 -->
 <wicket:panel>
   <wicket:extend>
+    
     <div>
       <select wicket:id="linkTypeDropDown">[ LinkTypeDropDown ]</select>
     </div>
-    <div style="margin:5px;">
+    <div>
       <wicket:panel wicket:id="linkPickerWidget">[ LinkPickerWidget ]</wicket:panel>
     </div>  
 
@@ -29,16 +30,16 @@
     </wicket:fragment>
     
     <wicket:fragment wicket:id="internalLink">
-      <table class="linkPicker" style="background: #F2F2F2; width: 100%;">
+      <table class="dataview">
         <tr>
           <td>
-            <span wicket:id="pathLabel" style="padding-left: 5px;">[ pathLabel ]</span>
+            <span wicket:id="pathLabel"> [ pathLabel ]</span>
           </td> 
         </tr>
         <tr>
           <td>
             <div wicket:id="wrapper">
-              <div wicket:id="item" style="padding-left: 5px;">
+              <div wicket:id="item">
                 <a wicket:id="callback">
                   <img src="" wicket:id="icon"/>
                   <span wicket:id="linkname">[link to handle]</span>
@@ -48,6 +49,7 @@
           </td>
         </tr>
       </table>
+  
     </wicket:fragment>  
   </wicket:extend>
 </wicket:panel>
