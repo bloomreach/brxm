@@ -301,6 +301,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
             } else {
                 setModel(null);
             }
+            if (templates.keySet().size() >= 1) {
+                // pre-select the first item in the template category
+                templateCategory = templates.keySet().iterator().next();
+            }
             evaluateChoices();
         }
 
@@ -308,10 +312,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (templates.keySet().size() == 1) {
                 categoryChoice.setChoices(new LinkedList<String>(templates.keySet()));
                 categoryChoice.setVisible(false);
-                templateCategory = templates.keySet().iterator().next();
             } else if (templates.keySet().size() > 1) {
                 categoryChoice.setChoices(new LinkedList<String>(templates.keySet()));
-                templateCategory = templates.keySet().iterator().next();
                 categoryChoice.setVisible(true);
             } else {
                 categoryChoice.setVisible(false);
