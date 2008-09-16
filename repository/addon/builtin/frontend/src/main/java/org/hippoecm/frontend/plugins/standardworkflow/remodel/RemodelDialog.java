@@ -30,7 +30,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.export.CndSerializer;
 import org.hippoecm.frontend.plugins.standardworkflow.export.NamespaceUpdater;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
@@ -51,7 +51,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
     private IServiceReference<IJcrService> jcrServiceRef;
 
-    public RemodelDialog(RemodelWorkflowPlugin plugin, IDialogService dialogWindow,
+    public RemodelDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
         super(plugin, dialogWindow, "Update content");
 

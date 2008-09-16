@@ -15,12 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
@@ -31,7 +27,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NewCreateTypeDialog;
-import org.hippoecm.frontend.plugins.standardworkflow.remodel.NewRemodelDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog;
 import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +50,7 @@ public class NewRemodelWorkflowPlugin extends AbstractWorkflowPlugin {
 
         action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new NewRemodelDialog(NewRemodelWorkflowPlugin.this, getDialogService(), jcrRef);
+                return new RemodelDialog(NewRemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
         choice = new WorkflowActionComponent("remodelRequest-dialog", "Update all content", (String)null, action);
