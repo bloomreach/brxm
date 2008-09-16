@@ -14,55 +14,44 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:head>
-      <title>Hippo CMS 7</title>
-      <link href="skin/style.css" rel="stylesheet" type="text/css"/>
-      <link href="skin/login.css" rel="stylesheet" type="text/css"/>
-  </wicket:head>
-  <body>
-    <wicket:panel>
-      <div id="loginWrapper">
-         <div>
-            <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
-            <form wicket:id="signInForm" name="signInForm">
-            <h2><wicket:message key="header"/><span><wicket:message key="subheader"/></span></h2>
-              <div id="login-input">
-                <table>
-                    <tr>
-                        <td width="50%"><wicket:message key="username-label"/>&nbsp;</td>
-                            <td><input wicket:id="username" type="text" value="foo@goo.moo"/></td>
-                         </tr>
-                <tr>
-                    <td><wicket:message key="password-label"/>&nbsp;</td>
-                    <td><input wicket:id="password" type="password" value="password"/></td>
-                </tr>
-                <tr>
-                	<td><wicket:message key="locale-label"/>&nbsp;</td>
-                	<td>
-  						<select name="locale" wicket:id="locale"></select>
-                  	</td>                	
-                </tr>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td style="text-align: right; padding-top: 4px;"><input type="submit" name="submit" wicket:id="submit" value="label" /></td>
-                  </tr>
-                </table>
-               
-                <div class="feedback" wicket:id="feedback">
-                  Feedback panel
-                </div>            
-                
-              </div>
-<!--                <div class="row">
-                  <input wicket:id="rememberMe" id="rememberMe" type="checkbox" />
-                  <label wicket:id="rememberMe-label" class="label-right">Always sign in automatically</label>
-                </div>
- -->                
-
-              
-            </form>
-          </div>
-        </div>  
-    </wicket:panel>
-  </body>
+<wicket:head>
+  <title>Hippo CMS 7</title>
+  <link href="skin/style.css" rel="stylesheet" type="text/css" />
+  <link href="skin/login.css" rel="stylesheet" type="text/css" />
+</wicket:head>
+<body>
+<wicket:panel>
+  <div id="loginWrapper">
+    <div>
+      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
+      <form wicket:id="signInForm" name="signInForm">
+        <h2><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
+        <div id="login-input">
+          <table>
+            <tr>
+              <td width="50%"><wicket:message key="username-label" />&nbsp;</td>
+              <td><input wicket:id="username" type="text" value="foo@goo.moo" /></td>
+            </tr>
+            <tr>
+              <td><wicket:message key="password-label" />&nbsp;</td>
+              <td><input wicket:id="password" type="password" value="password" /></td>
+            </tr>
+            <tr>
+              <td><wicket:message key="locale-label" />&nbsp;</td>
+              <td><select name="locale" wicket:id="locale"></select></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td style="text-align: right; padding-top: 4px;">
+                <input type="submit" name="submit" wicket:id="submit" value="label" />
+              </td>
+            </tr>
+          </table>
+          <div class="feedback" wicket:id="feedback">Feedback panel</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</wicket:panel>
+</body>
 </html>
