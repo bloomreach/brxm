@@ -135,6 +135,7 @@
           <sv:value>New Document</sv:value>
         </sv:property>
       </sv:node>
+      <!--
       <sv:node sv:name="simple folder">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:directory</sv:value>
@@ -149,6 +150,7 @@
           <sv:value>New Document</sv:value>
         </sv:property>
       </sv:node>
+      -->
     </sv:node>
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>addfolder_ico</sv:value>
