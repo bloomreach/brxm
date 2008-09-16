@@ -225,17 +225,20 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
                         if (templates.containsKey(optionSelectOnly))
                             newTemplates.put(optionSelectOnly, templates.get(optionSelectOnly));
+                        templates = newTemplates;
                     } else {
                         Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
                         if (templates.size() > 0) {
                             Map.Entry<String, Set<String>> firstEntry = templates.entrySet().iterator().next();
                             newTemplates.put(firstEntry.getKey(), firstEntry.getValue());
                         }
+                        templates = newTemplates;
                     }
                 } else if (optionSelectOnly != null && isDefaultFolder) {
                     Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
                     if (templates.containsKey(optionSelectOnly))
                         newTemplates.put(optionSelectOnly, templates.get(optionSelectOnly));
+                    templates = newTemplates;
                 }
             } catch (MappingException ex) {
                 log.warn("failure to initialize shortcut", ex);
