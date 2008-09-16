@@ -30,14 +30,15 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.service.render.AbstractRenderService;
 
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @SuppressWarnings("unused")
@@ -48,6 +49,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
     static final Logger log = LoggerFactory.getLogger(SectionTreePlugin.class);
 
     boolean selected = false;
+    boolean toggleBehaviour = false;
 
     public SectionTreePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -55,6 +57,14 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
         final List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
+        String[] behaviours = config.getStringArray("behaviours");
+        if(behaviours != null) {
+            for(int i=0; i<behaviours.length; i++) {
+                if("toggle".equals(behaviours[i]))
+                    toggleBehaviour = true;
+            }
+        }
+
         add(new ListView("list", extensions) {
 
             private static final long serialVersionUID = 1L;
@@ -62,25 +72,54 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             @Override
             protected void populateItem(ListItem item) {
                 final String plugin = (String) item.getModel().getObject();
-                AjaxLink link = new AjaxLink("link", new Model(plugin)) {
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        for(Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
-                            if(entry.getKey().equals(plugin)) {
-                                add(new AttributeModifier("class", true, new Model("focus")));
-                                for(IRenderService service : entry.getValue().getChildren()) {
-                                    service.focus(service);
-                                    service.getComponent().setVisible(true);
+                AjaxLink link;
+                if(toggleBehaviour) {
+                    link = new AjaxLink("link", new Model(plugin)) {
+                            @Override
+                            public void onClick(AjaxRequestTarget target) {
+                                boolean hasFocus = false;
+                                for(Map.Entry<String, AbstractRenderService.ExtensionPoint> entry : children.entrySet()) {
+                                    if(entry.getKey().equals(plugin)) {
+                                        for(IRenderService service : entry.getValue().getChildren()) {
+                                            Component component = service.getComponent();
+                                            if(component.isVisible()) {
+                                                service.focus(service);
+                                                service.getComponent().setVisible(hasFocus = false);
+                                            } else {
+                                                service.focus(service);
+                                                service.getComponent().setVisible(hasFocus = true);
+                                            }
+                                        }
+                                    }
                                 }
-                            } else {
-                                add(new AttributeModifier("class", true, new Model("unfocus")));
-                                for(IRenderService service : entry.getValue().getChildren())
-                                    service.getComponent().setVisible(false);
+                                if(hasFocus) {
+                                    add(new AttributeModifier("class", true, new Model("focus")));
+                                } else {
+                                    add(new AttributeModifier("class", true, new Model("unfocus")));
+                                }
                             }
-                        }
-                        SectionTreePlugin.this.redraw();
-                    }
-                };
+                        };
+                } else {
+                    link = new AjaxLink("link", new Model(plugin)) {
+                            @Override
+                            public void onClick(AjaxRequestTarget target) {
+                                for(Map.Entry<String, AbstractRenderService.ExtensionPoint> entry : children.entrySet()) {
+                                    if(entry.getKey().equals(plugin)) {
+                                        add(new AttributeModifier("class", true, new Model("focus")));
+                                        for(IRenderService service : entry.getValue().getChildren()) {
+                                            service.focus(service);
+                                            service.getComponent().setVisible(true);
+                                        }
+                                    } else {
+                                        add(new AttributeModifier("class", true, new Model("unfocus")));
+                                        for(IRenderService service : entry.getValue().getChildren())
+                                            service.getComponent().setVisible(false);
+                                    }
+                                }
+                                SectionTreePlugin.this.redraw();
+                            }
+                        };
+                }
                 item.add(link);
 
                 String label = plugin;
@@ -110,6 +149,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 }
                 if(!added) {
                     item.add(new EmptyPanel("id"));
+                    link.setVisible(false);
+                    item.setVisible(false);
                 }
             }
         });

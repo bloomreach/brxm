@@ -541,6 +541,9 @@
       <sv:value>Files</sv:value>
       <sv:value>Configuration</sv:value>
     </sv:property>
+    <sv:property sv:name="behaviours" sv:type="String">
+      <sv:value>toggle</sv:value>
+    </sv:property>
     <sv:property sv:name="extension.content" sv:type="String">
       <sv:value>service.browse.tree.content</sv:value>
     </sv:property>
@@ -690,6 +693,58 @@
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/content/attic</sv:value>
+        </sv:property>
+        <sv:property sv:name="parent" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="child" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="target" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="display" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="name" sv:type="String">
+          <sv:value/>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="filter">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="path" sv:type="String">
+          <sv:value>/content/gallery</sv:value>
+        </sv:property>
+        <sv:property sv:name="parent" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="child" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="target" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="display" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="name" sv:type="String">
+          <sv:value/>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="filter">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="path" sv:type="String">
+          <sv:value>/content/assets</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
           <sv:value/>

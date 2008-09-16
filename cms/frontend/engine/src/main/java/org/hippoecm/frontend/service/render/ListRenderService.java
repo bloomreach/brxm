@@ -40,37 +40,27 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.service.render.RenderService;
 
-
-public class RenderService extends AbstractRenderService {
+public class ListRenderService extends AbstractRenderService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(RenderService.class);
+    private static final Logger log = LoggerFactory.getLogger(ListRenderService.class);
 
-
-    public RenderService(IPluginContext context, IPluginConfig properties) {
+    public ListRenderService(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
-    }
-
-    protected void addExtensionPoint(final String extension) {
-        super.addExtensionPoint(extension);
-        add(new EmptyPanel(extension));
     }
 
     protected ExtensionPoint createExtensionPoint(String extension) {
         return new ExtensionPoint(extension);
     }
 
-    protected void removeExtensionPoint(String name) {
-        super.removeExtensionPoint(name);
-        replace(new EmptyPanel(name));
-    }
-
     protected class ExtensionPoint extends AbstractRenderService.ExtensionPoint {
         private static final long serialVersionUID = 1L;
+
 
         ExtensionPoint(String extension) {
             super(extension);
@@ -78,17 +68,15 @@ public class RenderService extends AbstractRenderService {
 
         @Override
         public void onServiceAdded(IRenderService service, String name) {
-            service.bind(RenderService.this, extension);
-            replace(service.getComponent());
+            service.bind(ListRenderService.this, "id");
+            service.getComponent().setVisible(false);
             super.onServiceAdded(service, name);
         }
 
         @Override
         public void onRemoveService(IRenderService service, String name) {
-            replace(new EmptyPanel(extension));
             service.unbind();
             super.onRemoveService(service, name);
         }
-
     }
 }
