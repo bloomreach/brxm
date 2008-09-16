@@ -326,7 +326,7 @@ div.reorderbuttons{float: right; width: 40px;}
 div.reorder .folderlist h3{font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
 div.reorder table tr td {padding: 0px;}
 div.reorder table tr td {border-bottom: 1px solid #ffffff }
-div.reorder table tr.selected td {border-bottom: 1px solid #32629b }
+div.reorder table tr.selected td {}
 div.reorder table * {cursor: pointer}
 
 div.reorder table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
@@ -409,8 +409,9 @@ div.Tree .wicket-tree span.indent-line {background: url("images/tree-icons.png")
 /* tree sections */
 div.treeSection{}
 div.treeSection .focus{}
-div.treeSection h2{padding: 4px;}
-div.treeSection h2 a{color: #666666}
+div.treeSection h2{}
+div.treeSection h2 a{color: #666666; display: block; padding: 4px;}
+div.treeSection h2 a:hover{background: #f2f2f2}
 
 /* Template Editor */
 /* ================================================ */
@@ -587,13 +588,13 @@ padding:0px;
 table.dataview th a {color: #666666;}
 tr.headers th.orderAscending {
   background-image: url('images/icons/arrow-sort-down-16.png');
-  background-position:center; 
+  background-position:center right; 
   background-repeat: no-repeat;
   padding-right: 20px;
 }
 tr.headers th.orderDescending {
   background-image: url('images/icons/arrow-sort-up-16.png');
-  background-position:center; 
+  background-position:center right; 
   background-repeat: no-repeat;
   padding-right: 20px;
 }
