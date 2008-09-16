@@ -56,10 +56,12 @@ public class JcrTreeModel extends DefaultTreeModel implements IDetachable {
     public AbstractTreeNode lookup(JcrNodeModel nodeModel) {
         String key = nodeModel.getItemModel().getPath();
         if((AbstractTreeNode) registry.get(key) == null) {
-            AbstractTreeNode parentNode = lookup(nodeModel.getParentModel());
-            if(parentNode!=null) {
-                // load children which get registered
-                parentNode.children();
+            if(nodeModel.getParentModel() != null) {
+                AbstractTreeNode parentNode = lookup(nodeModel.getParentModel());
+                if(parentNode!=null) {
+                    // load children which get registered
+                    parentNode.children();
+                }
             }
         }
 
@@ -71,5 +73,4 @@ public class JcrTreeModel extends DefaultTreeModel implements IDetachable {
             entry.getValue().detach();
         }
     }
-
 }
