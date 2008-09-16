@@ -30,9 +30,11 @@
         </li>
       </ul>
       <ul class="toolbarSection">
+	<wicket:enclosure child="locked">
         <li class="documentLocked document-lock-16">
           <span title="Document is currently being editted by someone else" wicket:id="locked"></span>
         </li>
+	</wicket:enclosure>
         <li class="documentCaption">
           <span wicket:id="caption"></span>
         </li>
