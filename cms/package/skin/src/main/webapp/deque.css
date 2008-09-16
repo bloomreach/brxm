@@ -724,3 +724,13 @@ margin-top: 10px;
   right: 26px;
 }
 
+.focus {
+  background-color:#c3d1d3;
+  width: 100%;
+  vertical-align: middle;
+}
+.unfocus {
+  background-color:#d7e1ea
+  width: 100%;
+  vertical-align: middle;
+}
