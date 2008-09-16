@@ -17,6 +17,7 @@ package org.hippoecm.frontend.widgets;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -27,18 +28,14 @@ import org.slf4j.LoggerFactory;
 public abstract class JcrTree extends Tree {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
     private JcrTreeModel treeModel;
 
     public JcrTree(String id, JcrTreeModel treeModel) {
         super(id, treeModel);
-
         this.treeModel = treeModel;
-
         setLinkType(LinkType.AJAX);
 
         ITreeState treeState = getTreeState();
@@ -47,6 +44,8 @@ public abstract class JcrTree extends Tree {
         treeState.expandNode((TreeNode) treeModel.getRoot());
     }
 
+    protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
+    
     @Override
     public void onDetach() {
         treeModel.detach();
