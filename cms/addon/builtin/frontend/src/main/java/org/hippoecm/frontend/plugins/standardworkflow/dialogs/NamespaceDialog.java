@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin;
+import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
 
     private String url;
 
-    public NamespaceDialog(NamespaceWorkflowPlugin plugin, IDialogService dialogWindow) {
+    public NamespaceDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow) {
         super(plugin, dialogWindow, "Create new namespace");
 
         add(new TextFieldWidget("prefix", new PropertyModel(this, "prefix")));

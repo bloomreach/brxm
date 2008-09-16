@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NewCreateTypeDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.CreateTypeDialog;
 import org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog;
 import org.hippoecm.frontend.service.IJcrService;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class NewRemodelWorkflowPlugin extends AbstractWorkflowPlugin {
 
         action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new NewCreateTypeDialog(NewRemodelWorkflowPlugin.this, getDialogService(), jcrRef);
+                return new CreateTypeDialog(NewRemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
         choice = new WorkflowActionComponent("createTypeRequest-dialog", "Create new type", (String)null, action);
