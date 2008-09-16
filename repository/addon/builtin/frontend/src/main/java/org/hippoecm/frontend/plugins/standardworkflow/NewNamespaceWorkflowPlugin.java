@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
-import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NewNamespaceDialog;
+import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
 import org.hippoecm.frontend.service.IJcrService;
 
 public class NewNamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
@@ -47,7 +47,7 @@ public class NewNamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
 
         action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new NewNamespaceDialog(NewNamespaceWorkflowPlugin.this, dialogService);
+                return new NamespaceDialog(NewNamespaceWorkflowPlugin.this, dialogService);
             }
         }, getDialogService());
         choice = new WorkflowActionComponent("createNamespaceRequest-dialog", "Create namespace", (String)null, action);
