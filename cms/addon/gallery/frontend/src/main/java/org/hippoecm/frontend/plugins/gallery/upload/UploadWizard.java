@@ -53,7 +53,7 @@ public class UploadWizard extends Wizard {
 
     @Override
     public void onCancel() {
-        dialogService.close();
+        onFinish();
     }
 
     @Override
