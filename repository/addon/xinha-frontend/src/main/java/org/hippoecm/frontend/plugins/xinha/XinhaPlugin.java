@@ -52,6 +52,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
 import org.hippoecm.frontend.plugins.xinha.modal.linkpicker.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
@@ -144,9 +145,15 @@ public class XinhaPlugin extends RenderPlugin {
 
             @Override
             public void onDrop(IModel model, AjaxRequestTarget target) {
-               //nothing
+                if(model instanceof JcrNodeModel) {
+                    JcrNodeModel nodeModel = (JcrNodeModel) model;
+                    //test for nodetype to select picker
+                    ImageItem item = imagePickerBehavior.getImageItemDAO().insertImageModel(nodeModel); 
+                    if(item != null) {
+                        target.getHeaderResponse().renderOnDomReadyJavascript("xinha_editors." + configuration.getName() + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "');");
+                    }
+                }
             }
-            
         });
     }
 

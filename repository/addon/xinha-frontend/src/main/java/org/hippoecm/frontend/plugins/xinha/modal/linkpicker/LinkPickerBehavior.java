@@ -42,7 +42,7 @@ public class LinkPickerBehavior extends XinhaModalBehavior {
         for (XinhaLink xl : XinhaLink.values()) {
             enums.put(xl, params.get(xl.getValue()));
         }
-        return new LinkPickerContentPanel(modalWindow, nodeModel, enums);
+        return new LinkPickerContentPanel(modalWindow, enums, nodeModel);
     }
 
 }

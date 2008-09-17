@@ -41,27 +41,24 @@ if (!YAHOO.hippo.DragDropManager) {
                     resizeFrame :false
                 }
                 if(!js.isUndefined(customConfig) && !js.isNull(customConfig)) {
-                	for( p in customConfig) {
-                		if(!js.isFunction(customConfig[p])) {
-                			config[p] = customConfig[p];
-                		}
-                	}
+                    for( p in customConfig) {
+                        if(!js.isFunction(customConfig[p])) {
+                            config[p] = customConfig[p];
+                        }
+                    }
                 }
                 
                 if (!js.isUndefined(label) && !js.isNull(label)) {
                     config.label = label;
                 }
-                
                 var _class = YAHOO.hippo.DDModel;
-                console.log(_class);
                 if(!js.isUndefined(modelType) && !js.isNull(modelType)) {
-                	_class= modelType;
+                    _class= modelType;
                 }
-                console.log(';class: '  +_class);
                 var drag = null;
                 // maybe isArray checks for null/undef but code is obfuscated
                 if (!js.isUndefined(groups) && !js.isNull(groups) && js.isArray(groups)) {
-                	drag = new _class(id, groups.shift(), config);
+                    drag = new _class(id, groups.shift(), config);
                     //drag = new YAHOO.hippo.DDModel(id, groups.shift(), config);
                     while (groups.length > 0) {
                         drag.addToGroup(groups.shift());
@@ -70,31 +67,27 @@ if (!YAHOO.hippo.DragDropManager) {
                     drag = new _class(id, null, config);
                 }
                 
-                if (js.isUndefined(callbackParameters)
-                        || js.isNull(callbackParameters)) {
+                if (!js.isArray(callbackParameters)) {
                     callbackParameters = new Array();
                 }
 
                 drag.onDragDrop = function(ev, dropId) {
-                	var sendAjax = true;
-                	if (js.isFunction(drag.addCustomCallbackParameters)) {
-                		sendAjax = drag.addCustomCallbackParameters(dropId, callbackParameters);
-                	}
-                	if(!sendAjax) return;
-                	
-                    var targetId = {
-                        key :'targetId',
-                        value :dropId
-                    };
-                    callbackParameters.push(targetId);
-                    for (i = 0; i < callbackParameters.length; i++) {
-                        var paramKey = callbackParameters[i].key, paramValue = Wicket.Form
-                                .encode(callbackParameters[i].value);
-                        callbackUrl += (callbackUrl.indexOf('?') > -1) ? '&'
-                                : '?';
-                        callbackUrl += (paramKey + '=' + paramValue);
+                    
+                    var myCallbackParameters = drag.getCallbackParameters(dropId);
+                    while(callbackParameters.length > 0) {
+                        myCallbackParameters.push(callbackParameters.shift());
                     }
-                    callbackFunc(callbackUrl);
+                    drag.onDragDropAction(dropId);
+                    
+                    if(drag.cancelCallback()) return;
+                    
+                    var url = callbackUrl;
+                    for (i = 0; i < myCallbackParameters.length; i++) {
+                        var paramKey = myCallbackParameters[i].key, paramValue = Wicket.Form.encode(myCallbackParameters[i].value);
+                        url += (callbackUrl.indexOf('?') > -1) ? '&' : '?';
+                        url += (paramKey + '=' + paramValue);
+                    }
+                    callbackFunc(url);
                 }
             };
             this.loader.registerFunction(func);

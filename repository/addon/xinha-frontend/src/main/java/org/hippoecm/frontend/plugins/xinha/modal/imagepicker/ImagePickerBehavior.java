@@ -29,11 +29,11 @@ public class ImagePickerBehavior extends XinhaModalBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private JcrNodeModel nodeModel;
+    private ImageItemDAO imageItemDAO;
 
-    public ImagePickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
+    public ImagePickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel nodeModel) {
         super(modalWindow);
-        nodeModel = model;
+        imageItemDAO = new ImageItemDAO(nodeModel);
     }
 
     @Override
@@ -42,7 +42,10 @@ public class ImagePickerBehavior extends XinhaModalBehavior {
         for (XinhaImage p : XinhaImage.values()) {
             enums.put(p, params.get(p.getValue()));
         }
-        return new ImagePickerContentPanel(modalWindow, nodeModel, enums);
+        return new ImagePickerContentPanel(modalWindow, enums, imageItemDAO);
     }
-
+    
+    public ImageItemDAO getImageItemDAO() {
+        return imageItemDAO;
+    }
 }

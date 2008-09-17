@@ -99,6 +99,35 @@ ImagePicker.prototype.shouldPrefix = function(url) {
     return true;
 }
 
+ImagePicker.prototype.insertImage = function(url) {
+    if ( Xinha.is_ie )
+    {
+      var sel = this.editor.getSelection();
+      var range = this.editor.createRange(sel);
+      //TODO: check if this still works.
+      this.editor._doc.execCommand("insertimage", false, url);
+      img = range.parentElement();
+      // wonder if this works...
+      if ( img.tagName.toLowerCase() != "img" )
+      {
+        img = img.previousSibling;
+      }
+    }
+    else
+    {
+        var img  = new Image();
+        img.src = url;
+        //img = document.createElement('img');
+        //img.src = param.f_url;
+        this.editor.insertNodeAtSelection(img);
+        if ( !img.tagName )
+        {
+            // if the cursor is at the beginning of the document
+            img = this.editor.range.startContainer.firstChild;
+        }
+    }
+}
+
 /**
  * Override Xinha._insertImage
  */

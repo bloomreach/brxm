@@ -26,14 +26,14 @@ public class NodeDragBehavior extends DragBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
-    final private String nodePath;
-    
+
+    final String nodePath;
+
     public NodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
         super(context, config);
-        this.nodePath= nodePath;
+        this.nodePath = nodePath;
     }
-    
+
     @Override
     protected IModel getDragModel() {
         return new JcrNodeModel(nodePath);
