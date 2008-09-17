@@ -25,12 +25,12 @@
         <section name="Quickstart guide">
 <p>
 The quickest way to get started is to obtain one of the pre-built packages.
-Even when adding additional functionalities to Hippo ECM, you normally don't
-need to rebuild Hippo ECM.  This because more functionality can be added by
-simply adding the JARs containing the add-ons to the already packaged product,
-or uploading them into the running packaged product. Therefore, there is no
-need to do a rebuild from all the sources, one of the pre-built packages can
-always be customized.
+Don't worry about special functionalities you require:
+more functionality can be added easily to a pre-built package, at any time.
+This is done by simply adding the JARs containing the add-ons to the already 
+packaged product, or uploading them into the running packaged product. 
+<!-- There is no need to rebuild from all the sources, contrary to other 
+content management systems. :::CONFIRM this claim or remove completely.--> 
 </p>
 <p>
 The quickstart packages contain all the core packaged products, but have been
