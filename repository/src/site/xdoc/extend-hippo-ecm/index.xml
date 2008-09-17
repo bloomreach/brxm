@@ -45,6 +45,10 @@
             <a href="hello-world.html">Hello World add-on</a>
             - Create a trivial front end plugin in this step-by-step tutorial
           </li>
+          <li>
+            <a href="packaging.html">Custom Packaging</a>
+            - Create a custom war file on top of the quickstart war
+          </li>
         </ul>
 
       </section>

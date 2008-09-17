@@ -262,6 +262,48 @@ mvn jetty:run-war
 
     </section>
 
+    <section name="Giving our plugin a place on the dashboard">
+      <p>
+        Now instead of replacing an existing plugin it would be nice if our plugin 
+        had it's own pace on the dashboard. For this we have to edit the file 
+        <b>/package/skin/src/main/webapp/WEB-INF/layouts/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective.html</b>.
+        Here we add the following code at the location we want to render our plugin.
+      </p>
+      <source>
+<![CDATA[<h2>
+  <span class="task">HelloWorld</span>
+</h2>
+<div class="panel">
+  <div class="plugin" wicket:id="extension.helloworld">HelloWorld</div>
+</div>]]>
+      </source>
+      
+      <subsection name="Adding you plugin to the repository">
+        <p>
+          First we need to create a node for our plugin. To do this navigate (in the console) to 
+          <b>/hippo:configuration/hippo:frontend/cms</b>. Make sure you have the "cms" node selected. 
+          Now add a node called "helloWorldPlugin" and give the primary type "frontend:plugin". 
+          Then two properties to your new node. One called "plugin.class" with the value of your 
+          plugin (org.example.helloworld.HelloWorldPlugin)
+          and a second one called "wicket.id" with the value "service.helloworld".
+          Now the plugin is added to the repository and it is time for the dashboard to find it. 
+          (Oh and make sure you save your changes.)
+        </p>
+        
+        <p>
+          Our plugin is in the repository but the dashboard doesn't know that, so time to
+          update the dashboard. Using the console, navigate to "hippo:configuration -> 
+          hippo:frontend -> cms -> dashboardPerspective". Under wicket.extensions 
+          you will see the current plugins shown on the dashboard. Add an entry "extension.helloworld".
+          Next add a property called "extension.helloworld" and give it the value "service.helloworld".
+          Now the dashboard knows where to find the plugin that is referenced by extension.helloworld 
+          and our plugin will show up on the dashboard (after you saved your changes of course).
+        </p>
+        
+      </subsection>
+      
+    </section>
+
     <section name="Making the Hello World plugin context sensitive">
       <p>
         Now let's make our plugin a little bit less static. We can make the label show
