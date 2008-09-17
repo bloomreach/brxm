@@ -14,7 +14,16 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
+    <wicket:panel>
+      <wicket:container wicket:id="fragment"/>
+    </wicket:panel>
+    <wicket:fragment wicket:id="image">
       <img wicket:id="image" />
-  </wicket:panel>
+    </wicket:fragment>
+    <wicket:fragment wicket:id="embed">
+      <a wicket:id="link"><span wicket:id="name" /></a>
+      <!-- embed style="width: 400px; height: 300px;" src="http://localhost:8080/cms/deque/binaries/content/assets/Hippo.pdf/Hippo.pdf" name="plugin" type="application/pdf" -->
+    </wicket:fragment>
+    <wicket:fragment wicket:id="unknown">
+    </wicket:fragment>
 </html>
