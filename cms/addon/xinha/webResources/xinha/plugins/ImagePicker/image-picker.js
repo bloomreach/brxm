@@ -107,6 +107,7 @@ ImagePicker.prototype.shouldPrefix = function(url) {
 }
 
 ImagePicker.prototype.insertImage = function(url) {
+	url = ImagePicker.encode(url);
     if ( Xinha.is_ie )
     {
       var sel = this.editor.getSelection();
@@ -210,6 +211,7 @@ Xinha.prototype._insertImage = function(image)
       {
         return false;
       }
+      var encodedUrl = ImagePicker.encode(param.f_url);
       var img = image;
       if ( !img )
       {
@@ -218,7 +220,7 @@ Xinha.prototype._insertImage = function(image)
           var sel = editor.getSelection();
           var range = editor.createRange(sel);
           //TODO: check if this still works.
-          editor._doc.execCommand("insertimage", false, param.f_url);
+          editor._doc.execCommand("insertimage", false, encodedUrl);
           img = range.parentElement();
           // wonder if this works...
           if ( img.tagName.toLowerCase() != "img" )
@@ -229,7 +231,7 @@ Xinha.prototype._insertImage = function(image)
         else
         {
           img = document.createElement('img');
-          img.src = param.f_url;
+          img.src = encodedUrl;
           editor.insertNodeAtSelection(img);
           if ( !img.tagName )
           {
@@ -240,7 +242,7 @@ Xinha.prototype._insertImage = function(image)
       }
       else
       {
-        img.src = param.f_url;
+        img.src = encodedUrl;
       }
 
       for ( var field in param )
