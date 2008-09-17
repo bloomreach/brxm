@@ -17,22 +17,22 @@
   <wicket:panel>
       <ul class="toolbarSection">
         <li>
-          <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
+          <a class="edit_ico" wicket:id="edit-dialog"><wicket:message key="edit-label"/></a>
         </li>
         <li>
-          <a class="publish_ico" wicket:id="publish-dialog">Publish</a>
+          <a class="publish_ico" wicket:id="publish-dialog"><wicket:message key="publish-label"/></a>
         </li>
         <li>
-          <a class="depublish_ico" wicket:id="dePublish-dialog">Take offline</a>
+          <a class="depublish_ico" wicket:id="dePublish-dialog"><wicket:message key="unpublish-label"/></a>
         </li>
         <li>
-          <span class="delete_ico" wicket:id="delete-dialog">Delete</span>
+          <span class="delete_ico" wicket:id="delete-dialog">delete label here</span>
         </li>
       </ul>
       <ul class="toolbarSection">
 	<wicket:enclosure child="locked">
         <li class="documentLocked document-lock-16">
-          <span title="Document is currently being editted by someone else" wicket:id="locked"></span>
+          <span title="locked message here" wicket:message="title:locked-message" wicket:id="locked"></span>
         </li>
 	</wicket:enclosure>
         <li class="documentCaption">

@@ -77,6 +77,8 @@ public class TodoPlugin extends RenderPlugin {
                 Node node = (Node) item.getModelObject();
                 String path = node.getPath();
                 item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", path));
+                item.add(new Label("request-description", node.getProperty("type").getString()));
+                item.add(new Label("request-owner", node.getProperty("username").getString()));
             } catch (RepositoryException e) {
                 item.add(new Label("request", e.getMessage()));
             }
