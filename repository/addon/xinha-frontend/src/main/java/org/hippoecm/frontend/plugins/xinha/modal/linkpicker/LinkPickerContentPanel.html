@@ -16,32 +16,27 @@
 <wicket:panel>
   <wicket:extend>
     
-    <div>
+    <div class="link-picker">
       <select wicket:id="linkTypeDropDown">[ LinkTypeDropDown ]</select>
     </div>
-    <div>
+    <div class="link-picker">
       <wicket:panel wicket:id="linkPickerWidget">[ LinkPickerWidget ]</wicket:panel>
     </div>  
 
     <wicket:fragment wicket:id="externalLink">
-      
       <h3>Type a url</h3>
       <input type="text" wicket:id="externalLinkUrl" />
     </wicket:fragment>
     
     <wicket:fragment wicket:id="internalLink">
+      <div wicket:id="pathLabel" class="internal-link-label"> [ pathLabel ]</div>
       <table class="dataview">
         <tr>
           <td>
-            <span wicket:id="pathLabel"> [ pathLabel ]</span>
-          </td> 
-        </tr>
-        <tr>
-          <td>
-            <div wicket:id="wrapper">
-              <div wicket:id="item">
+            <div wicket:id="wrapper" class="internal-link-wrapper">
+              <div wicket:id="item" class="internal-link-node">
                 <a wicket:id="callback">
-                  <img src="" wicket:id="icon"/>
+                  <span wicket:id="icon">[ icon ]</span>
                   <span wicket:id="linkname">[link to handle]</span>
                 </a>
               </div>

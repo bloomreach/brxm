@@ -684,3 +684,26 @@ margin-top: 10px;
   right: 26px;
 }
 
+.link-picker {
+  padding: 5px;
+}
+
+div.internal-link-label {
+    padding-left: 10px;
+    font-size: 1.1em;
+    margin-bottom: 5px; 
+}
+
+div.internal-link-wrapper {
+    padding-top: 5px; 
+}
+
+div.internal-link-node {
+    padding-left:5px;
+    padding-right:5px;
+    height: 18px;
+}
+
+div.link-picker table.dataview {
+    width:100%;     
+}
