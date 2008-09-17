@@ -18,14 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
-import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,15 +28,12 @@ import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
- 
+
 public class ImageGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+
     public ImageGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
@@ -51,51 +41,21 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
     @Override
     public TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
-        
+
         ListColumn column = new ListColumn(new Model("Image"), null);
-        column.setRenderer(new PrimaryItemViewer());
+        column.setRenderer(new ThumbnailRenderer(getPluginContext(), getPluginConfig()));
         columns.add(column);
 
         column = new ListColumn(new Model("Name"), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
-        
+
         return new TableDefinition(columns);
     }
-    
+
     @Override
     protected ISortableDataProvider getDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
-    }
-
-    private class PrimaryItemViewer extends AbstractNodeRenderer {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected Component getViewer(String id, HippoNode node) throws RepositoryException {
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                if (node.hasNode(node.getName())) {
-                    Node imageSet = node.getNode(node.getName());
-                    try {
-                        Item primItem = imageSet.getPrimaryItem();
-                        if (primItem.isNode()) {
-                            if (((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                                return new ImageContainer(id, new JcrNodeModel((Node) primItem), getPluginContext(), getPluginConfig());
-                            } else {
-                                Gallery.log.warn("primary item of image set must be of type "
-                                        + HippoNodeType.NT_RESOURCE);
-                            }
-                        }
-                    } catch (ItemNotFoundException e) {
-                        Gallery.log.debug("ImageSet must have a primary item. " + node.getPath()
-                                + " probably not of correct image set type");
-                    }
-                }
-            } else {
-                Gallery.log.debug("Node " + node.getPath() + " is not a hippo:handle");
-            }
-            return new Label(id);
-        }
     }
 
 }
