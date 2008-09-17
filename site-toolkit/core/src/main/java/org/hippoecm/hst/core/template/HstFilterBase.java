@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.template;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -160,7 +161,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	protected Map <String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
-		Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
+		Map<String, PageNode> siteMapNodes = new LinkedHashMap<String, PageNode>();
 	
 		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);	 
 	    NodeIterator subNodes =  siteMapRootNode.getNodes();
