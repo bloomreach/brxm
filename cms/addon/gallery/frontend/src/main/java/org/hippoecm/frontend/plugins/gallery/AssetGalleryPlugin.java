@@ -18,13 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,11 +29,7 @@ import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class AssetGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
@@ -54,62 +44,26 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
     public TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn column = new ListColumn(new Model("Type"), null);
+        ListColumn column = new ListColumn(new Model("Type"), "type");
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new MimeTypeAttributeModifier());
+        column.setComparator(new MimeTypeComparator());
         columns.add(column);
+
+        column = new ListColumn(new Model("Size"), "size");
+        column.setRenderer(new SizeRenderer());
+        column.setComparator(new SizeComparator());
+        columns.add(column);        
 
         column = new ListColumn(new Model("Name"), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
-
+        
         return new TableDefinition(columns);
     }
 
     @Override
     protected ISortableDataProvider getDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
-    }
-
-    private class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
-            String cssClass;
-            if (node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName())) {
-                Node imageSet = node.getNode(node.getName());
-                try {
-                    Item primItem = imageSet.getPrimaryItem();
-                    if (primItem.isNode() && ((Node) primItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        String mimeType = ((Node) primItem).getProperty("jcr:mimeType").getString();
-                        if (mimeType.startsWith("application")) {
-                            cssClass = mimeType;
-                            cssClass = StringUtils.replace(cssClass, "/", "-");
-                            cssClass = StringUtils.replace(cssClass, ".", "-");
-                        } else {
-                            cssClass = StringUtils.substringBefore(mimeType, "/");    
-                        }
-                        cssClass = "mimetype-" + cssClass + "-16";
-                    } else {
-                        Gallery.log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
-                        return null;
-                    }
-                } catch (ItemNotFoundException e) {
-                    Gallery.log.warn("ImageSet must have a primary item. " + node.getPath()
-                            + " probably not of correct image set type");
-                    return null;
-                }
-            } else {
-                Gallery.log.warn("Node " + node.getPath() + " is not a hippo:handle");
-                return null;
-            }
-            return new CssClassAppender(new Model(cssClass));
-        }
-
-        @Override
-        public AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException {
-            return new CssClassAppender(new Model("icon-16"));
-        }
     }
 }
