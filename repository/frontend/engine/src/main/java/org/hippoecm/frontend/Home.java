@@ -21,6 +21,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -132,6 +133,13 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     // Use the IPluginContext to access the plugin manager
     public final PluginManager getPluginManager() {
         return mgr;
+    }
+
+    @Override
+    protected void setHeaders(WebResponse response) {
+        response.setHeader("Pragma", "no-cache");
+        // FF3 bug: no-store shouldn't be necessary
+        response.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate"); // no-store
     }
 
     public void addService(IRenderService service, String name) {

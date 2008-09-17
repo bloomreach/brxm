@@ -81,7 +81,7 @@ public class LoginPlugin extends RenderPlugin {
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
                     getSession().setLocale(new Locale(selectedLocale));
-                    setResponsePage(Home.class);
+                    setResponsePage(new Home());
                 }
             });
 
@@ -96,7 +96,7 @@ public class LoginPlugin extends RenderPlugin {
             userSession.setJcrCredentials(credentials);
             userSession.setLocale(new Locale(selectedLocale));
             userSession.getJcrSession();
-            setResponsePage(Home.class);
+            setResponsePage(new Home());
         }
     }
 

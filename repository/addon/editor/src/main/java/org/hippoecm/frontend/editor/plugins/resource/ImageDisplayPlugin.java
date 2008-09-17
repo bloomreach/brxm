@@ -17,7 +17,13 @@ package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.IOException;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
+import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -45,8 +51,26 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
         context.registerService(this, IJcrService.class.getName());
 
         resource = new JcrResourceStream(((JcrNodeModel) getModel()).getNode());
-
-        add(new NonCachingImage("image", new JcrResource(resource)));
+        Fragment fragment = new Fragment("fragment", "unknown", this);
+        try {
+            Node node = ((JcrNodeModel) getModel()).getNode();
+            String mimeType = node.getProperty("jcr:mimeType").getString();
+            if (mimeType.indexOf('/') > 0) {
+                String category = mimeType.substring(0, mimeType.indexOf('/'));
+                if ("image".equals(category)) {
+                    fragment = new Fragment("fragment", "image", this);
+                    fragment.add(new NonCachingImage("image", new JcrResource(resource)));
+                } else if ("application".equals(category)) {
+                    ResourceLink link = new ResourceLink("link", new JcrResource(resource));
+                    link.add(new Label("name", "download"));
+                    fragment = new Fragment("fragment", "embed", this);
+                    fragment.add(link);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        add(fragment);
     }
 
     @Override
