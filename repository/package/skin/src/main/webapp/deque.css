@@ -235,6 +235,8 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .mimetype-application-vnd-ms-powerpoint-16{background-image:url("images/icons/mimetype-powerpoint-16.png")}
 .mimetype-application-msword-16{background-image:url("images/icons/mimetype-word-16.png")}
 .mimetype-application-zip-16{background-image:url("images/icons/mimetype-zip-16.png")}
+.mimetype-application-rtf-16{background-image:url("images/icons/mimetype-rtf-16.png")}
+.mimetype-application-octet-stream-16{background-image:url("images/icons/mimetype-binary-16.png")}
 .mimetype-image-16{background-image:url("images/icons/mimetype-image-16.png")}
 .mimetype-audio-16{background-image:url("images/icons/mimetype-audio-16.png")}
 .mimetype-video-16{background-image:url("images/icons/mimetype-video-16.png")}
