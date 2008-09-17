@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+      <title>Custom packaging</title>
+  </properties>
+  <body>
+  	<section name="Creating your own war package">
+  		<p>
+	  		In the hello world example we created a plugin and included it directly in the quickstart war project.
+	  		While this works just fine, it requires you to make chances to an external project when there are a lot
+	  		of changes to be made it can get messy.
+	  		A would be better if we can just leave quickstart war untouched en build our own war using quickstart war
+	  		as a blue print.
+	  	</p>
+  	</section>
+  	<section name="Your own pom file">
+  		<p>
+  			All there is to creating your own war file is some modifications to the pom file (of your own project).
+  		</p>
+  		<p>
+  			<b>Note:</b> I assume that you have a project with a pom file similar to the one created in the helloworld tutorial.
+  			If you don't have that you are better of following that tutorial first. 
+  		</p>
+  		<subsection name="Adding the war dependency">
+  			<p>
+  				First we need to add a dependency to the quickstart war to our pom file.
+  			</p>
+  			<source>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
+    &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
+    &lt;version&gt;2.01.00-SNAPSHOT&lt;/version&gt;
+    &lt;type&gt;war&lt;/type&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;
+</source>
+  		</subsection>
+  		<subsection name="Modifying the build section">
+  			<p>
+  				Add the following to the plugins section. It tells maven to use the quickstart war as an overlay.
+  			</p>
+  			<source>
+&lt;plugin&gt;
+	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+	&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+	&lt;version&gt;2.1-alpha-1&lt;/version&gt;
+	&lt;configuration&gt;
+		&lt;overlays&gt;
+		&lt;overlay&gt;
+	        &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
+	        &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
+        &lt;/overlay&gt;
+    &lt;/overlays&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+</source>
+			<p>
+				Well thats actually it. Running <b>mvn install</b> will create a custom war of your own plugin project and store it in the maven repository.
+			</p>
+  		</subsection>
+  		<subsection name="Troubleshooting">
+  			<p>
+  				It can happen that maven is unable to find the quickstart war. In that case it will print instructions on how to add the the file to your repository.
+  				You will probably have to do this if you only downloaded the war instead of building it yourself with maven.
+  			</p>
+  		</subsection>
+  	</section>
+  	<section name="Adding the jetty plugin for fast testing">
+  		<p>
+  			While developing your plugin you will probably what to test your work a lot. So lets take a moment to make that easy.
+  			You can add the jetty plugin to your pom file which will make it very easy to get your plugin running fast.
+  		</p>
+  		<p>
+  			Add the following plugin section to your plugins section in your pom file.
+  			You will now be able to test drive your war with <b>mvn jetty:run-war</b>.
+  		</p>
+  		<source>
+&lt;plugin&gt;
+  &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;
+  &lt;version&gt;6.1.10&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;scanIntervalSeconds&gt;5&lt;/scanIntervalSeconds&gt;
+    &lt;connectors&gt;
+      &lt;connector implementation="org.mortbay.jetty.nio.SelectChannelConnector"&gt;
+        &lt;port&gt;8080&lt;/port&gt;
+      &lt;/connector&gt;
+    &lt;/connectors&gt;
+    &lt;contextPath&gt;/cms&lt;/contextPath&gt;
+  &lt;/configuration&gt;
+  &lt;dependencies&gt;
+    &lt;!-- atomikos dependecies for running jetty:run[-war|-exploded] --&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
+      &lt;artifactId&gt;transactions-api&lt;/artifactId&gt;
+      &lt;version&gt;3.1.4&lt;/version&gt;
+      &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
+      &lt;artifactId&gt;transactions-jta&lt;/artifactId&gt;
+      &lt;version&gt;3.1.4&lt;/version&gt;
+      &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
+      &lt;artifactId&gt;transactions&lt;/artifactId&gt;
+      &lt;version&gt;3.1.4&lt;/version&gt;
+      &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.atomikos&lt;/groupId&gt;
+      &lt;artifactId&gt;atomikos-util&lt;/artifactId&gt;
+      &lt;version&gt;3.1.4&lt;/version&gt;
+      &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/plugin&gt;
+  		</source>
+  	</section>
+  </body>
+</document>
