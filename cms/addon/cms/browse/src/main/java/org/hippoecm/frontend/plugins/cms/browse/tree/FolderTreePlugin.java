@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.util.Iterator;
+
 import javax.swing.tree.TreeNode;
 
 import javax.jcr.RepositoryException;
@@ -84,6 +86,10 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             node.markReload();
             node.getTreeModel().nodeStructureChanged(node);
             redraw();
+        } else {
+            rootNode.markReload();
+            rootNode.getTreeModel().nodeStructureChanged(rootNode);
+            redraw();
         }
     }
 
@@ -97,8 +103,10 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
 
         while (model != null) {
             node = rootNode.getTreeModel().lookup(model);
-            if(node == null)
+            if(node == null) {
+                redraw();
                 break;
+            }
             try {
                 if(node.getNodeModel().getNode() != null) {
                     if (node.getNodeModel().getNode().getPath().startsWith(startingPath)) {
@@ -121,8 +129,8 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             model = model.getParentModel();
         }
 
-        if(!nodesSelected) {
-            tree.getTreeState().collapseAll();
-        }
+        //if(!nodesSelected) {
+        //    tree.getTreeState().collapseAll();
+        //}
     }
 }
