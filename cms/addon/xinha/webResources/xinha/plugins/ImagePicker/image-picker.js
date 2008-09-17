@@ -34,6 +34,13 @@ Xinha.Config.prototype.ImagePicker =
   'callbackUrl' : null
 }
 
+ImagePicker.encode = function(string) {
+	return encodeURI(string);
+}
+
+ImagePicker.decode = function(string) {
+	return decodeURI(string);
+}
 
 ImagePicker.prototype._lc = function(string) {
     return Xinha._lc(string, 'ImagePicker');
@@ -49,7 +56,7 @@ ImagePicker.prototype.inwardHtml = function(html) {
         m = m.replace(_this.srcRE, function(n) {
             var url = n.substring(5, n.length - 1);
             if(_this.shouldPrefix(url)) {
-                return 'src="' + prefix + url + '"';
+                return 'src="' + prefix + ImagePicker.encode(url) + '"';
             }
             return n;
         });
@@ -68,7 +75,7 @@ ImagePicker.prototype.outwardHtml = function(html) {
         m = m.replace(_this.srcRE, function(n) {
             var idx = n.indexOf(prefix);
             if (idx > -1) {
-                return 'src="' + n.substr(prefix.length + idx);
+                return 'src="' + ImagePicker.decode(n.substr(prefix.length + idx));
             }
             return n;
         });
@@ -84,7 +91,7 @@ ImagePicker.prototype.getPrefix = function() {
             this.prefix += '/';
         }
     }
-    return this.prefix;
+    return ImagePicker.encode(this.prefix);
 }
 
 ImagePicker.prototype.shouldPrefix = function(url) {

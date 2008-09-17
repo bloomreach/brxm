@@ -124,13 +124,15 @@ public class XinhaPlugin extends RenderPlugin {
                         StringBuffer processed = new StringBuffer();
                         Matcher m = IMG_PATTERN.matcher(text);
                         while (m.find()) {
-                            StringBuffer src = new StringBuffer();
-                            Matcher s = SRC_PATTERN.matcher(m.group());
+                            String img = m.group();
+                            StringBuffer newImg = new StringBuffer();
+                            Matcher s = SRC_PATTERN.matcher(img);
                             while (s.find()) {
-                                String path = s.group().substring(5, s.group().length() - 1);
-                                s.appendReplacement(src, "src=\"" + prefix + path + "\"");
+                                String src = s.group();
+                                s.appendReplacement(newImg, "src=\"" + prefix + src.substring(5, src.length() - 1) + "\"");
                             }
-                            m.appendReplacement(processed, src.toString());
+                            s.appendTail(newImg);
+                            m.appendReplacement(processed, newImg.toString());
                         }
                         m.appendTail(processed);
                         getResponse().write(processed);
