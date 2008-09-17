@@ -17,11 +17,11 @@
 package org.hippoecm.frontend.plugins.xinha.modal.imagepicker;
 
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.image.ContextImage;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-public class PreviewImage extends ContextImage {
+public class PreviewImage extends WebComponent {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     
@@ -42,7 +42,11 @@ public class PreviewImage extends ContextImage {
 
     @Override
     protected void onComponentTag(ComponentTag tag) {
+        checkComponentTag(tag, "img");
         super.onComponentTag(tag);
+        
+        tag.put("src", getRequest().getRelativePathPrefixToWicketHandler() + getModelObjectAsString());
+
         if (width != null)
             tag.put("width", width);
         if (height != null)
