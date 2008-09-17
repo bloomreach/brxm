@@ -230,6 +230,16 @@ table tr.selected span.document-16, .document-16{background-image:url("images/ic
 table tr.selected span.folder-16, .folder-16{background-image:url("images/icons/folder-16.png")}
 table tr.selected span.folder-open-16, .folder-open-16{background-image:url("images/icons/folder-open-16.png")}
 
+.mimetype-application-vnd-ms-excel-16{background-image:url("images/icons/mimetype-excel-16.png")}
+.mimetype-application-pdf-16{background-image:url("images/icons/mimetype-pdf-16.png")}
+.mimetype-application-vnd-ms-powerpoint-16{background-image:url("images/icons/mimetype-powerpoint-16.png")}
+.mimetype-application-msword-16{background-image:url("images/icons/mimetype-word-16.png")}
+.mimetype-application-zip-16{background-image:url("images/icons/mimetype-zip-16.png")}
+.mimetype-image-16{background-image:url("images/icons/mimetype-image-16.png")}
+.mimetype-audio-16{background-image:url("images/icons/mimetype-audio-16.png")}
+.mimetype-video-16{background-image:url("images/icons/mimetype-video-16.png")}
+.mimetype-text-16{background-image:url("images/icons/mimetype-text-16.png")}
+
 .document-48{background-image:url("images/icons/document-48.png")}
 .users-48{background-image:url("images/icons/groups-48.png")}
 .groups-48{background-image:url("images/icons/groups-48.png")}
