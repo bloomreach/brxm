@@ -51,6 +51,7 @@ import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -359,9 +360,9 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                         @Override
                         protected void onComponentTag(ComponentTag tag) {
                             if (nodeItem.isHandle()) {
-                                tag.put("src", "skin/images/icons/document-16.png");
+                                tag.put("class", "icon-16 document-16");
                             } else {
-                                tag.put("src", "skin/images/icons/folder-16.png");
+                                tag.put("class", "icon-16 folder-16");
                             }
                             super.onComponentTag(tag);
                         }
@@ -483,7 +484,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
         }
 
         public String getDisplayName() {
-            return displayName;
+            return ISO9075Helper.decodeLocalName(displayName);
         }
     }
 
