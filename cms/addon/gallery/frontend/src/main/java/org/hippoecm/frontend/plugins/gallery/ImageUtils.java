@@ -23,7 +23,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -39,36 +41,69 @@ public class ImageUtils {
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
+    private static Map<String, ImageReader> readersMap = new HashMap<String, ImageReader>();
+    private static Map<String, ImageWriter> writersMap = new HashMap<String, ImageWriter>();
+    
+    public static ImageReader getImageReader(String mimeType) {
+        if (readersMap.containsKey(mimeType)) {
+            return readersMap.get(mimeType);
+        } else {
+            Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(mimeType);
+            if (readers == null || !readers.hasNext()) {
+                return null;
+            }
+            ImageReader reader = readers.next();
+            readersMap.put(mimeType, reader);
+            return reader;
+        }
+    }
+
+    public static ImageWriter getImageWriter(String mimeType) {
+        if (writersMap.containsKey(mimeType)) {
+            return writersMap.get(mimeType);
+        } else {
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mimeType);
+            if (writers == null || !writers.hasNext()) {
+                return null;
+            }
+            ImageWriter writer = writers.next();
+            writersMap.put(mimeType, writer);
+            return writer;
+        }
+    }
+
+    public static boolean mimeTypeSupported(String mimeType) {
+        return getImageReader(mimeType) != null && getImageWriter(mimeType) != null;
+    }
+
     public static InputStream createThumbnail(InputStream imageData, int maxSize, String mimeType) {
         if (maxSize <= 0) {
             return new ByteArrayInputStream(new byte[] {});
         }
         try {
-            Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(mimeType);
-            if (readers == null || !readers.hasNext()) {
+            ImageReader reader = getImageReader(mimeType);
+            if (reader == null) {
                 log.warn("Unsupported mimetype, cannot read: " + mimeType);
                 return imageData;
             }
-            ImageReader reader = readers.next();
 
-            Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mimeType);
-            if (writers == null || !writers.hasNext()) {
+            ImageWriter writer = getImageWriter(mimeType);
+            if (writer == null) {
                 log.warn("Unsupported mimetype, cannot write: " + mimeType);
                 return imageData;
             }
-            ImageWriter writer = writers.next();
 
             reader.setInput(new MemoryCacheImageInputStream(imageData));
             double originalWidth = reader.getWidth(0);
             double originalHeight = reader.getHeight(0);
-            
+
             double ratio;
             if (originalHeight > originalWidth) {
                 ratio = maxSize / originalHeight;
             } else {
                 ratio = maxSize / originalWidth;
             }
-            
+
             BufferedImage originalImage = reader.read(0);
             AffineTransform transformation;
             BufferedImage scaledImage;
@@ -100,4 +135,5 @@ public class ImageUtils {
             return imageData;
         }
     }
+
 }

@@ -60,7 +60,7 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
                 if ("image".equals(category)) {
                     fragment = new Fragment("fragment", "image", this);
                     fragment.add(new NonCachingImage("image", new JcrResource(resource)));
-                } else if ("application".equals(category)) {
+                } else {
                     ResourceLink link = new ResourceLink("link", new JcrResource(resource));
                     link.add(new Label("name", "download"));
                     fragment = new Fragment("fragment", "embed", this);
