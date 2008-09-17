@@ -77,10 +77,12 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
     private String linkTypeDropDownSelected;
     private AbstractLinkPicker linkPicker;
     private Map<String, AbstractLinkPicker> pickerCache = new HashMap<String, AbstractLinkPicker>();
+    private JcrNodeModel nodeModel;
 
-    public LinkPickerContentPanel(final XinhaModalWindow modal, final JcrNodeModel nodeModel,
-            final EnumMap<XinhaLink, String> values) {
-        super(modal, nodeModel, values);
+    public LinkPickerContentPanel(final XinhaModalWindow modal, final EnumMap<XinhaLink, String> values,
+            final JcrNodeModel nodeModel) {
+        super(modal, values);
+        this.nodeModel = nodeModel;
 
         final LinkType initialType = getLinkType();
         final String initialHref = values.get(XinhaLink.HREF);
@@ -484,7 +486,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
             return displayName;
         }
     }
-    
+
     private static class HtmlLinkValidator {
 
         private String validLink;

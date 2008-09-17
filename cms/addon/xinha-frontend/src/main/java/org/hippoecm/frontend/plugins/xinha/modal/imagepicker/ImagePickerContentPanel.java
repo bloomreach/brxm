@@ -15,16 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.xinha.modal.imagepicker;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -35,12 +27,9 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,16 +42,16 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
 
-    private ImageItemFactory imageItemFactory;
     private ImageItem selectedItem;
+    private ImageItemDAO imageItemDAO;
 
-    public ImagePickerContentPanel(XinhaModalWindow modal, JcrNodeModel nodeModel,
-            final EnumMap<XinhaImage, String> values) {
-        super(modal, nodeModel, values);
+    public ImagePickerContentPanel(XinhaModalWindow modal, final EnumMap<XinhaImage, String> values,
+            final ImageItemDAO imageItemDAO) {
+        super(modal, values);
 
-        imageItemFactory = new ImageItemFactory(nodeModel, values);
-        selectedItem = imageItemFactory.createImageItem();
-        
+        this.imageItemDAO = imageItemDAO;
+        this.selectedItem = imageItemDAO.createImageItem(values);
+
         ok.setEnabled(selectedItem.isValid());
 
         // ******************************************************************
@@ -105,7 +94,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
         // ******************************************************************
         // image listing
-        final List<ImageItem> items = getImageItems(nodeModel);
+        final List<ImageItem> items = imageItemDAO.getImageItems();
         form.add(new ListView("item", items) {
             private static final long serialVersionUID = 1L;
 
@@ -143,7 +132,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
             }
         });
     }
-    
+
     @Override
     protected String getXinhaParameterName(XinhaImage k) {
         return k.getValue();
@@ -151,67 +140,14 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     @Override
     protected void onDetach() {
-        this.nodeModel.detach();
+        this.imageItemDAO.detach();
         super.onDetach();
     }
 
     @Override
     protected void onOk() {
-        if (selectedItem.getUuid() == null) {
-            return;
+        if (imageItemDAO.insertImageItem(selectedItem)) {
+            values.put(XinhaImage.URL, selectedItem.getUrl());
         }
-        values.put(XinhaImage.URL, selectedItem.getUrl());
-
-        Node node = nodeModel.getNode();
-        String nodeName = selectedItem.getNodeName();
-        try {
-            if (node.hasNode(nodeName)) {
-                return;
-            }
-            Node facetselect = node.addNode(nodeName, HippoNodeType.NT_FACETSELECT);
-            //todo fetch corresponding uuid of the chosen imageset
-            facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, selectedItem.getUuid());
-            facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
-            facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
-            facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
-            // need a node save (the draft so no problem) to visualize images
-            node.save();
-        } catch (RepositoryException e) {
-            log
-                    .error("An error occured while trying to save new image facetSelect[" + selectedItem.getUuid()
-                            + "]", e);
-        }
-    }
-
-    private List<ImageItem> getImageItems(JcrNodeModel nodeModel2) {
-        List<ImageItem> items = new ArrayList<ImageItem>();
-        String gallerySearchPath = "/content/gallery-search";
-        try {
-            Session session = nodeModel.getNode().getSession();
-            Node gallerySearchNode = (Node) session.getItem(gallerySearchPath);
-            Node resultset = gallerySearchNode.getNode(HippoNodeType.HIPPO_RESULTSET);
-            NodeIterator imageNodesIt = resultset.getNodes();
-            while (imageNodesIt.hasNext()) {
-                HippoNode imageNode = (HippoNode) imageNodesIt.nextNode();
-                // nextNode can return null
-                if (imageNode == null) {
-                    continue;
-                }
-                Node canonical = imageNode.getCanonicalNode();
-                if (canonical != null && canonical.getParent().isNodeType("mix:referenceable")) {
-                    try { //test if canonical node has a primaryItem
-                        canonical.getPrimaryItem().getName();
-                        items.add(imageItemFactory.createImageItem(canonical));
-                    } catch (ItemNotFoundException e) {
-                        log.error("gallery node does not have a primary item: skipping node: " + canonical.getPath());
-                    }
-                }
-            }
-        } catch (PathNotFoundException e) {
-            log.error("Gallery Search node missing: " + gallerySearchPath);
-        } catch (RepositoryException e) {
-            log.error("RepositoryException " + e.getMessage(), e);
-        }
-        return items;
     }
 }

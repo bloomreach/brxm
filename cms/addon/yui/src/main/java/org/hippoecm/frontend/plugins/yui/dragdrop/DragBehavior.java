@@ -39,10 +39,13 @@ public class DragBehavior extends AbstractDragDropBehavior {
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        final IModel draggedModel = getDragModel();
-        if(draggedModel == null)
+        if (!lookupDropBehavior()) {
             return;
-        
+        }
+        final IModel draggedModel = getDragModel();
+        if (draggedModel == null)
+            return;
+
         final String targetId = getComponent().getRequest().getParameter("targetId");
         getComponent().getPage().visitChildren(new DropPointVisitor() {
             @Override
@@ -52,7 +55,10 @@ public class DragBehavior extends AbstractDragDropBehavior {
                 }
             }
         });
+    }
 
+    protected boolean lookupDropBehavior() {
+        return true;
     }
 
     protected IModel getDragModel() {
@@ -61,7 +67,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
             //TODO: generic gedrag uitzoeken
             IModelService pluginModelService = context.getService(pluginModelId, IModelService.class);
             if (pluginModelService != null) {
-                return pluginModelService.getModel();    
+                return pluginModelService.getModel();
             }
         }
         return null;
@@ -71,7 +77,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
     protected String getHeaderContributorFilename() {
         return "Drag.js";
     }
-    
+
     @Override
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return DragBehavior.class;

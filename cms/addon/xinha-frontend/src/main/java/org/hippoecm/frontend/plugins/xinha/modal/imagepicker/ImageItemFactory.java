@@ -21,7 +21,6 @@ import java.util.EnumMap;
 import java.util.List;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -31,7 +30,6 @@ import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,48 +40,41 @@ public class ImageItemFactory implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private final static Logger log = LoggerFactory.getLogger(ImageItemFactory.class);
-    
+
     final static String BINARIES_PREFIX = "binaries";
     final static String DROP_PREFIX = "drop-on-xinha";
-    
-    private JcrNodeModel nodeModel;
-    private EnumMap<XinhaImage, String> values;
 
-    public ImageItemFactory(JcrNodeModel nodeModel, EnumMap<XinhaImage, String> values) {
+    private JcrNodeModel nodeModel;
+
+    public ImageItemFactory(JcrNodeModel nodeModel) {
         this.nodeModel = nodeModel;
-        this.values = values;
     }
 
-    public ImageItem createImageItem() {
+    public ImageItem createImageItem(EnumMap<XinhaImage, String> values) {
         String urlValue = values.get(XinhaImage.URL);
         if (urlValue != null) {
-            if(urlValue.startsWith(BINARIES_PREFIX)) {
+            if (urlValue.startsWith(BINARIES_PREFIX)) {
                 // find the nodename of the facetselect
                 String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
-                Item resourceItem;
+                JcrNodeModel linkedImageModel = new JcrNodeModel(resourcePath).getParentModel();
                 try {
-                    resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
-                    if (resourceItem.isNode() && ((Node) resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        return createImageItem(resourceItem.getParent());
+                    Node imageNode = linkedImageModel.getNode().getCanonicalNode();
+                    if (imageNode != null) {
+                        return createImageItem(imageNode);
                     }
-                } catch (PathNotFoundException e) {
-                    log.warn("resourcePath not found: " + resourcePath);
                 } catch (RepositoryException e) {
-                    log.error(e.getMessage());
+                    log.error("Error retrieving canonical node for imageNode[" + resourcePath + "]", e);
                 }
-            } else if(urlValue.startsWith(DROP_PREFIX)) {
+            } else if (urlValue.startsWith(DROP_PREFIX)) {
                 //reset width and height
                 values.put(XinhaImage.WIDTH, null);
                 values.put(XinhaImage.HEIGHT, null);
-                
+
                 String resourcePath = urlValue.substring(DROP_PREFIX.length());
-                Item resourceItem;
                 try {
-                    resourceItem = nodeModel.getNode().getSession().getItem(resourcePath);
+                    //test if node exists
                     JcrNodeModel mod = new JcrNodeModel(resourcePath);
-                    //if (resourceItem.isNode() && ((Node) resourceItem).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                        return createImageItem(mod.getNode());
-                    //}
+                    return createImageItem(mod.getNode());
                 } catch (PathNotFoundException e) {
                     log.warn("resourcePath not found: " + resourcePath);
                 } catch (RepositoryException e) {

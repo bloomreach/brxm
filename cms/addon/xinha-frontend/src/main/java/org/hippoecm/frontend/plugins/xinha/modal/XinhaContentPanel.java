@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 
 public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
     @SuppressWarnings("unused")
@@ -38,15 +37,13 @@ public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
     final protected AjaxButton ok;
     final protected AjaxButton cancel;
     final protected FeedbackPanel feedback;
-    final protected JcrNodeModel nodeModel;
     final protected XinhaModalWindow modal;
 
-    public XinhaContentPanel(final XinhaModalWindow modal, final JcrNodeModel nodeModel, final EnumMap<K, String> values) {
+    public XinhaContentPanel(final XinhaModalWindow modal, final EnumMap<K, String> values) {
         super(modal.getContentId());
-        this.values = values;
-        this.nodeModel = nodeModel;
         this.modal = modal;
-        
+        this.values = values;
+
         add(form = new Form("form"));
 
         ok = new AjaxButton("ok", form) {
@@ -73,10 +70,10 @@ public abstract class XinhaContentPanel<K extends Enum<K>> extends Panel {
         //TODO: feedback is written in the page feedbackpanel, not this one in the modalwindow
         form.add(feedback = new FeedbackPanel("feedback2"));
         feedback.setOutputMarkupId(true);
-        
+
         form.add(new EmptyPanel("extraButtons"));
     }
-    
+
     protected EnumModel<K> newEnumModel(Enum<K> e) {
         return new EnumModel<K>(values, e);
     }

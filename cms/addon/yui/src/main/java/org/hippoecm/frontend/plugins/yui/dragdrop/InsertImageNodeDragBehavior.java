@@ -16,43 +16,27 @@
 
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import java.util.Map;
-
-import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
-public class ImageNodeDragBehavior extends NodeDragBehavior {
+public class InsertImageNodeDragBehavior extends ImageNodeDragBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
-    public ImageNodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
+
+    public InsertImageNodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
         super(context, config, nodePath);
-    }
-    
-    @Override
-    String getModelType() {
-        return "YAHOO.hippo.DDImage";
-    }
-    
-    @Override
-    protected boolean lookupDropBehavior() {
-        return false;
     }
 
     @Override
-    Map<String, Object> getHeaderContributorVariables() {
-        Map<String, Object> original = super.getHeaderContributorVariables();
-        Map<String, Object> nieuw = new MiniMap(original.size() + 1);
-        nieuw.putAll(original);
-        nieuw.put("customConfig", "{nodePath: '" + nodePath + "'}");
-        return nieuw;
+    String getModelType() {
+        return "YAHOO.hippo.DDInsertImage";
     }
-  
+
     @Override
-    protected String getHeaderContributorFilename() {
-        return "DragImageNode.js"; 
+    protected boolean lookupDropBehavior() {
+        return true;
     }
+
 }
