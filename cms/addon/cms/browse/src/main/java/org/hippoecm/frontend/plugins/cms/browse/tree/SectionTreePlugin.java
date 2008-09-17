@@ -48,7 +48,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
 
     static final Logger log = LoggerFactory.getLogger(SectionTreePlugin.class);
 
-    boolean selected = false;
+    boolean selected = true; // true means collapsed all by default, false means that it will expand the first entry
     boolean toggleBehaviour = false;
 
     public SectionTreePlugin(IPluginContext context, IPluginConfig config) {
@@ -83,7 +83,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                                         for(IRenderService service : entry.getValue().getChildren()) {
                                             Component component = service.getComponent();
                                             if(component.isVisible()) {
-                                                service.focus(service);
                                                 service.getComponent().setVisible(hasFocus = false);
                                             } else {
                                                 service.focus(service);
@@ -93,10 +92,11 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                                     }
                                 }
                                 if(hasFocus) {
-                                    add(new AttributeModifier("class", true, new Model("focus")));
+                                    add(new AttributeModifier("class", true, new Model("select")));
                                 } else {
                                     add(new AttributeModifier("class", true, new Model("unfocus")));
                                 }
+                                SectionTreePlugin.this.redraw();
                             }
                         };
                 } else {
@@ -154,11 +154,5 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 }
             }
         });
-    }
-
-    // FIXME: the focus method goes through the parent hierarchy which we need
-    // to shortcut here, however is the focus really a method for the API?
-    @Override
-    public void focus(IRenderService child) {
     }
 }
