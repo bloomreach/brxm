@@ -334,6 +334,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
+            // FIXME: workaround for HREPTWO-1585
+            if(prop.getName().equals("hippo:paths"))
+                continue;
             if (prop.getDefinition().isMultiple()) {
                 boolean isProtected = true;
                 for(int i=0; i<nodeTypes.length; i++) {
