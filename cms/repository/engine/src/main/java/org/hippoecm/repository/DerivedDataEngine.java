@@ -305,7 +305,7 @@ public class DerivedDataEngine {
                                             if(values.length == property.getValues().length) {
                                                 Value[] oldValues = property.getValues();
                                                 for(int i=0; i<values.length; i++)
-                                                    if(values[i].equals(oldValues[i])) {
+                                                    if(!values[i].equals(oldValues[i])) {
                                                         changed = true;
                                                         break;
                                                     }

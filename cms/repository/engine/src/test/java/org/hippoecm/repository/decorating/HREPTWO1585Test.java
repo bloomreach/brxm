@@ -25,7 +25,7 @@ import org.hippoecm.repository.TestCase;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class HREPTWO1585IssueTest extends TestCase {
+public class HREPTWO1585Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -55,7 +55,9 @@ public class HREPTWO1585IssueTest extends TestCase {
     @Test public void testIssue() throws RepositoryException {
         Node source = session.getRootNode().getNode("test/d/x");
         Node target = session.getRootNode().getNode("test/f");
+
         target = target.addNode(source.getName(), source.getPrimaryNodeType().getName());
+
         NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
         for(int i=0; i<mixinNodeTypes.length; i++)
             target.addMixin(mixinNodeTypes[i].getName());
@@ -64,12 +66,9 @@ public class HREPTWO1585IssueTest extends TestCase {
         if(mixinNodeTypes.length > 0) {
             System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
         }
+
         for(PropertyIterator iter = source.getProperties(); iter.hasNext(); ) {
             Property prop = iter.nextProperty();
-            /*
-            if(prop.getName().equals("hippo:paths"))
-                continue;
-            */
             if (prop.getDefinition().isMultiple()) {
                 boolean isProtected = true;
                 for(int i=0; i<nodeTypes.length; i++) {
@@ -97,11 +96,7 @@ public class HREPTWO1585IssueTest extends TestCase {
 
         session.save();
         session.refresh(false);
-        if(session.getRootNode().getNode("test/f").getUUID().equals(session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[0].getString()))
-            fail("Issue resolved");
-        /*
-          assertEquals(session.getRootNode().getNode("test/f").getUUID(),
+        assertEquals(session.getRootNode().getNode("test/f").getUUID(),
                      session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[0].getString());
-        */
     }
 }
