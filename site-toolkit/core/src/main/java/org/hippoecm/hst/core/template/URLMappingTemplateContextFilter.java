@@ -93,7 +93,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
                     throw new JspException("URLMapping is null");
                 } 
                 PageNode matchPageNode = urlMapping.getMatchingPageNode(request, getHstConfigurationContextBase(request, repositoryTemplateContextLocation));
-				Timer.log.debug("Creating URLMappingTokenizer + finding matching page node took: " + (System.currentTimeMillis() - start) + " ms.");
+				Timer.log.debug((System.currentTimeMillis() - start) + " ms for finding matching page node.");
 	           	if (matchPageNode != null) {
 	            	log.info("matchPageNode.getURLMappingValue()=" + matchPageNode.getURLMappingValue());
 	            	String urlPrefix = getUrlPrefix(request);

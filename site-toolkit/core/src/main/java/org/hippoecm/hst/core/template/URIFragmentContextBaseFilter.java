@@ -105,7 +105,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 Timer.log.debug("getting session took from the pool took " + (System.nanoTime() - start)/1000000 + " ms.");
                 
                 start = System.nanoTime();
-                URLMapping urlMapping = URLMappingFactory.getUrlMapping(session, request.getContextPath(),
+                URLMapping urlMapping = URLMappingFactory.getUrlMapping(session, request,
                         uriPrefix, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels);
                 Timer.log.debug("creating mapping took " + (System.nanoTime() - start)/1000000 + " ms.");
                 request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);

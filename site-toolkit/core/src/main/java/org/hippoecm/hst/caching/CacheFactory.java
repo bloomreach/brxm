@@ -38,12 +38,15 @@ public class CacheFactory {
         }
         
         HttpServletRequest request = (HttpServletRequest)ctx.getRequest();
+        return getCache(request);
+    }
+    
+    public static Cache getCache(HttpServletRequest request) {
         Session session = JcrSessionFactory.getSession(request);
         String cacheName = session.getUserID();
         if(cacheName == null) {
             cacheName = "anonymous";
         }
-        
         synchronized(caches){
             Cache cache = caches.get(cacheName);
             if( cache != null) {

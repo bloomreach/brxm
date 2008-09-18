@@ -19,7 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.caching.Cache;
+import org.hippoecm.hst.caching.CacheFactory;
+import org.hippoecm.hst.caching.CachedResponse;
+import org.hippoecm.hst.caching.CachedResponseImpl;
+import org.hippoecm.hst.caching.validity.ExpiresValidity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +33,9 @@ public class URLMappingFactory {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
     private final static Map<String, URLMapping> urlMappings = new HashMap<String, URLMapping>();
-    private final static Object mutex = new Object();
+    private final static int TTL = 60;
     
-    public static URLMapping getUrlMapping(Session session, String contextPath, String uriPrefix, String hst_configuration_path,
+    public static URLMapping getUrlMapping(Session session, HttpServletRequest request, String uriPrefix, String hst_configuration_path,
             int uriLevels) {
         
         String userId = session.getUserID();
@@ -37,15 +43,17 @@ public class URLMappingFactory {
             userId = "anonymous";
         }
         String key = userId+"_"+hst_configuration_path;
-        synchronized(mutex) {
-            URLMapping urlMapping = urlMappings.get(key);
-            if( urlMapping != null) {
+        Cache cache = CacheFactory.getCache(request);
+        synchronized (cache) {
+            CachedResponse urlMapping = cache.get(key);
+            if(urlMapping != null && urlMapping.getResponse() instanceof URLMapping) {
                 log.debug("return found urlmapping for user and context");
-                return urlMapping;
+                return (URLMapping)urlMapping.getResponse();
             } else {
                 log.debug("no urlmapping found for user and context. Create a new one");
-                URLMapping newUrlMapping = new URLMappingImpl(session, contextPath, uriPrefix, hst_configuration_path,uriLevels);
-                urlMappings.put(key, newUrlMapping);
+                URLMapping newUrlMapping = new URLMappingImpl(session, request.getContextPath(), uriPrefix, hst_configuration_path,uriLevels);
+                CachedResponse cr = new CachedResponseImpl(new ExpiresValidity(TTL*1000), newUrlMapping);
+                cache.store(key, cr);
                 return newUrlMapping;
             }
         }
