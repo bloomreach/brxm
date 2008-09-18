@@ -170,4 +170,17 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>cache</name>
+        <tagclass>org.hippoecm.hst.caching.CacheTag</tagclass>
+        <body-content>JSP</body-content>
+        <attribute>
+            <description>name</description>
+            <name>name</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+    
 </taglib>
