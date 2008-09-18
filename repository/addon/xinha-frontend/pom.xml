@@ -66,6 +66,7 @@
           <include>**/*.js</include>
           <include>**/*.html</include>
           <include>**/*.css</include>
+          <include>**/*.properties</include>
         </includes>
       </resource>
     </resources>

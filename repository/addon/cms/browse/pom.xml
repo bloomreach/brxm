@@ -52,6 +52,7 @@
     <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <resources>
       <resource>
+      <resource>
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
@@ -59,15 +60,6 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
