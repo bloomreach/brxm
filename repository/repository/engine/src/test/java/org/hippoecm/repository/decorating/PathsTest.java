@@ -21,116 +21,137 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 
-import junit.framework.TestCase;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import org.hippoecm.repository.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class PathsTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+    private String[] content = {
+        "/test", "nt:unstructured",
+        "/test/d", "nt:unstructured",
+        "jcr:mixinTypes", "mix:referenceable",
+        "/test/f", "nt:unstructured",
+        "jcr:mixinTypes", "mix:referenceable",
+        "/test/d/x", "hippo:document",
+        "jcr:mixinTypes", "hippo:harddocument"
+    };
 
-    protected HippoRepository repository;
-    protected Session session;
-    protected Exception firstException = null;
-    protected boolean needCleanUp = true;
-
-    public void testPaths() throws Exception {
-        Exception firstException = null;
-        repository = null;
-        try {
-            repository = HippoRepositoryFactory.getHippoRepository();
-            assertNotNull(repository);
-            session = repository.login();
-            // the login without credentials cannot save, so no cleanup needed
-            needCleanUp = false;
-            Node root = session.getRootNode();
-
-            Node sub1 = root.addNode("sub");
-            Node sub2 = sub1.addNode("subsub");
-
-            assertTrue(root instanceof NodeDecorator);
-            assertTrue(sub1 instanceof NodeDecorator);
-            assertTrue(sub2 instanceof NodeDecorator);
-
-        } catch (RepositoryException ex) {
-            fail("unexpected repository exception " + ex.getMessage());
-            firstException = ex;
-        }
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        if(session.getRootNode().hasNode("test"))
+            session.getRootNode().getNode("test").remove();
     }
 
-    public void testPathProperty() throws Exception {
-        repository = null;
-        try {
-            repository = HippoRepositoryFactory.getHippoRepository();
-            assertNotNull(repository);
-            session = repository.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-            Node root = session.getRootNode();
-            Node sub1 = root.addNode("test");
-            Node sub2 = sub1.addNode("sub");
-            Node sub3 = sub2.addNode("node", "hippo:testdocument");
-            sub1.addMixin("mix:referenceable");
-            sub2.addMixin("mix:referenceable");
-            sub3.addMixin("hippo:harddocument");
-            session.save();
-            Node node = session.getRootNode().getNode("test/sub/node");
-
-            Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
-            Value[] values = prop.getValues();
-            Set valuesSet = new HashSet();
-            for (int i = 0; i < values.length; i++) {
-                valuesSet.add(values[i].getString());
-            }
-            assertTrue(values.length == 2);
-            assertTrue(valuesSet.contains(sub1.getUUID()));
-            assertTrue(valuesSet.contains(sub2.getUUID()));
-        } catch (RepositoryException ex) {
-            fail("unexpected repository exception " + ex.getMessage());
-            firstException = ex;
-        }
-    }
-
+    @After
     public void tearDown() throws Exception {
+        if(session.getRootNode().hasNode("test"))
+            session.getRootNode().getNode("test").remove();
+        super.tearDown();
+    }
 
-        if(needCleanUp){
-            Node node = session.getRootNode();
-            for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-                Node child = iter.nextNode();
-                if (!child.getPath().equals("/jcr:system")) {
-                    child.remove();
+    @Test
+    public void testPaths() throws RepositoryException {
+        Node root = session.getRootNode();
+        Node sub1 = root.addNode("test");
+        Node sub2 = sub1.addNode("sub");
+        assertTrue(root instanceof NodeDecorator);
+        assertTrue(sub1 instanceof NodeDecorator);
+        assertTrue(sub2 instanceof NodeDecorator);
+    }
+
+    @Test
+    public void testPathProperty() throws Exception {
+        build(session, new String[] {
+                "/test", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+                "/test/sub", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+                "/test/sub/node", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+
+            });
+        session.save();
+        Node node = session.getRootNode().getNode("test/sub/node");
+
+        Property prop = node.getProperty(HippoNodeType.HIPPO_PATHS);
+        Value[] values = prop.getValues();
+        Set valuesSet = new HashSet();
+        for (int i = 0; i < values.length; i++) {
+            valuesSet.add(values[i].getString());
+        }
+        assertTrue(values.length == 2);
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test").getUUID()));
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub").getUUID()));
+    }
+
+    @Test
+    public void testIssue() throws RepositoryException {
+        build(session, new String[] {
+                "/test", "nt:unstructured",
+                "/test/d", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+                "/test/f", "nt:unstructured",
+                "jcr:mixinTypes", "mix:referenceable",
+                "/test/d/x", "hippo:document",
+                "jcr:mixinTypes", "hippo:harddocument"
+            });
+
+        Node source = session.getRootNode().getNode("test/d/x");
+        Node target = session.getRootNode().getNode("test/f");
+
+        target = target.addNode(source.getName(), source.getPrimaryNodeType().getName());
+
+        NodeType[] mixinNodeTypes = source.getMixinNodeTypes();
+        for(int i=0; i<mixinNodeTypes.length; i++)
+            target.addMixin(mixinNodeTypes[i].getName());
+        NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
+        nodeTypes[0] = target.getPrimaryNodeType();
+        if(mixinNodeTypes.length > 0) {
+            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
+        }
+
+        for(PropertyIterator iter = source.getProperties(); iter.hasNext(); ) {
+            Property prop = iter.nextProperty();
+            if (prop.getDefinition().isMultiple()) {
+                boolean isProtected = true;
+                for(int i=0; i<nodeTypes.length; i++) {
+                    if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValues())) {
+                        isProtected = false;
+                        break; 
+                    }
+                }
+                if (!isProtected) {
+                    target.setProperty(prop.getName(), prop.getValues());
+                }
+            } else {
+                boolean isProtected = true;
+                for(int i=0; i<nodeTypes.length; i++) {
+                    if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
+                        isProtected = false;
+                        break; 
+                    }
+                }
+                if (!isProtected) {
+                    target.setProperty(prop.getName(), prop.getValue());
                 }
             }
-            session.save();
-            if(session != null) {
-                session.logout();
-            }
         }
 
-        boolean exceptionOccurred = false;
-        try {
-            if (repository != null) {
-                repository.close();
-                repository = null;
-            }
-        } catch (Exception ex) {
-            if (firstException == null) {
-                firstException = ex;
-                exceptionOccurred = true;
-            }
-        }
-
-        if (exceptionOccurred || firstException != null){
-            throw firstException;
-        }
-
+        session.save();
+        session.refresh(false);
+        assertEquals(session.getRootNode().getNode("test/f").getUUID(),
+                     session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[0].getString());
     }
-
 }
