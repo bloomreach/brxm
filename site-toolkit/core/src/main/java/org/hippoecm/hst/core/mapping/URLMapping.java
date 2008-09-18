@@ -16,9 +16,14 @@
 package org.hippoecm.hst.core.mapping;
 
 import javax.jcr.Node;
+import javax.servlet.http.HttpServletRequest;
+
+import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.template.node.PageNode;
 
 public interface URLMapping {
     
     public String rewriteLocation(Node node);
     public String rewriteLocation(String path);
+    public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase);
 }

@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.template;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,20 +93,7 @@ public abstract class HstFilterBase implements Filter {
 		}
 	}
 	
-	public PageNode getPageNode(HttpServletRequest request, URLMappingTokenizer urlTokenizer, ContextBase templateContextBase) throws TemplateException, RepositoryException {		
-		Session session =  JcrSessionFactory.getTemplateSession(request);
-			PageNode matchPageNode = null;
-            if (urlTokenizer.isMatchingTemplateFound()) {
-            	log.info("matching template found");
-            	matchPageNode = urlTokenizer.getMatchingPageNode();
-            	String documentPath = urlTokenizer.getTemplateMatchRefValue();
-            	if (documentPath != null && documentPath.trim().length() > 0) {
-            		log.info("setContentNodePath > " + documentPath);
-            		matchPageNode.setRelativeContentPath(documentPath);
-            	}
-            }
-            return matchPageNode;
-	}
+
 	
 	
 	protected boolean ignoreRequest(HttpServletRequest request) {
@@ -161,7 +147,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	protected Map <String, PageNode> getURLMappingNodes(ContextBase templateContextBase) throws RepositoryException {
-		Map<String, PageNode> siteMapNodes = new LinkedHashMap<String, PageNode>();
+		Map<String, PageNode> siteMapNodes = new HashMap<String, PageNode>();
 	
 		Node siteMapRootNode = templateContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);	 
 	    NodeIterator subNodes =  siteMapRootNode.getNodes();

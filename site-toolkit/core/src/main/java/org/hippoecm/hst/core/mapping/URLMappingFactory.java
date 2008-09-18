@@ -32,7 +32,11 @@ public class URLMappingFactory {
     public static URLMapping getUrlMapping(Session session, String contextPath, String uriPrefix, String hst_configuration_path,
             int uriLevels) {
         
-        String key = session.getUserID()+"_"+hst_configuration_path;
+        String userId = session.getUserID();
+        if(userId == null) {
+            userId = "anonymous";
+        }
+        String key = userId+"_"+hst_configuration_path;
         synchronized(mutex) {
             URLMapping urlMapping = urlMappings.get(key);
             if( urlMapping != null) {

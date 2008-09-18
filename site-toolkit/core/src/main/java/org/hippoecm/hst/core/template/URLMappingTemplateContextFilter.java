@@ -30,8 +30,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.jsp.JspException;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,27 +86,20 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 			
 			
 			try {
-				ContextBase templateContextBase = getHstConfigurationContextBase(request, repositoryTemplateContextLocation);
-				//find 
 				long start = System.currentTimeMillis();
-				URLMappingTokenizer urlTokenizer = new URLMappingTokenizer(request, getURLMappingNodes(templateContextBase) );
+                
+				URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+                if(urlMapping == null) {
+                    throw new JspException("URLMapping is null");
+                } 
+                PageNode matchPageNode = urlMapping.getMatchingPageNode(request, getHstConfigurationContextBase(request, repositoryTemplateContextLocation));
 				Timer.log.debug("Creating URLMappingTokenizer + finding matching page node took: " + (System.currentTimeMillis() - start) + " ms.");
-				start = System.currentTimeMillis();
-	           	PageNode matchPageNode = getPageNode(request, urlTokenizer, templateContextBase);
-	           	Timer.log.debug("Finding matching page node took " + (System.currentTimeMillis() - start) + " ms.");
 	           	if (matchPageNode != null) {
-	            	
 	            	log.info("matchPageNode.getURLMappingValue()=" + matchPageNode.getURLMappingValue());
-	            	
 	            	String urlPrefix = getUrlPrefix(request);
 	            	RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
-	            	
-	            	HttpServletRequestWrapper wrappedRequest = urlTokenizer.getWrappedRequest(request);
-	            
 	            	//set attributes
-	            	wrappedRequest.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
-	            	
-	    			dispatcher.forward(wrappedRequest, response);
+	    			dispatcher.forward(request, response);
 	            } else {
 	            	log.error("no matching template found for url '" + request.getRequestURI() + "'");
 	            	//what to do? no matching pattern found... lets continue the filter chain...

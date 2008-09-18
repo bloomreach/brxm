@@ -49,12 +49,16 @@ public class JcrSessionFactory {
         SimpleCredentials smplCred = new SimpleCredentials(username, (password != null ? password.toCharArray() : null));
         
         // TODO a less blocking synronization
+        String userId = smplCred.getUserID();
+        if(userId == null) {
+            userId = "anonymous";
+        }
         synchronized(jcrSessionPools) {
-            JcrSessionPool jcrSessionPool = jcrSessionPools.get(smplCred.getUserID());
+            JcrSessionPool jcrSessionPool = jcrSessionPools.get(userId);
             if(jcrSessionPool == null) {
                 log.debug("No session pool present for user '" +username+ "'. Create one" );
                 jcrSessionPool = new JcrSessionPool(smplCred, repositoryLocation);
-                jcrSessionPools.put(smplCred.getUserID(),jcrSessionPool);
+                jcrSessionPools.put(userId,jcrSessionPool);
                 return jcrSessionPool.getSession(request.getSession());
             }
             log.debug("Return session from pool if an idle valid one is present, otherwise add a new one to the session");
