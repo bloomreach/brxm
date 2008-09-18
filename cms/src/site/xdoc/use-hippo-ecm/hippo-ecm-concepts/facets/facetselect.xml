@@ -120,7 +120,7 @@ IsLarge
         </p>
         <p>
           You can even have a facet select, which filters a hierarchical tree which contains in turn another facet select. So, you can have facet selects in facet selects.
-          Instead of a facetselect in a facetselect, you can have a <a href="/site/use-hippo-ecm/facets/facetsearch.html">facetsearch</a> node <b>inside</b> the result of a facetselect node!
+          Instead of a facetselect in a facetselect, you can have a <a href="facetsearch.html">facetsearch</a> node <b>inside</b> the result of a facetselect node!
           From this facetsearch node on, faceted navigation will be displayed.
         </p>
         <p>

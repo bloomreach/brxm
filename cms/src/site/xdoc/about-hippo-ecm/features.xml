@@ -62,7 +62,7 @@
       <subsection name="Versioning">
         <p>
         Hippo ECM has the ability to keep track of changes to documents.
-    Versioning is <a href="versioning.html">further explained</a>
+    Versioning is <a href="../use-hippo-ecm/versioning.html">further explained</a>
     in more detail, but is is both available to end-applications
     which understand JCR versioning, as integrated in the Workflow
     that is applicable on documents.

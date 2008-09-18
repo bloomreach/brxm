@@ -28,7 +28,7 @@
               <p>
                 Hippo ECM is still under development, and therefore there are no released packages available at
                 this time.  You can either build the packages yourself using a
-                <a href="../extend-hippo-ecm/building/maven.html">Maven build</a>.  Or you can download a
+                <a href="../building/maven.html">Maven build</a>.  Or you can download a
                 current snapshot version from:
               </p>
 <source>

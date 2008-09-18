@@ -160,7 +160,7 @@ session.getRootNode().addNode("test", "demo:mynodetype");
         <p>
           <!-- FIXME outdated? -->
           To automate the procedure of initializing modules, you can add the content to
-          <a href="configuration/configuration.html">configuration.xml</a>.
+          configuration.xml.
           At this time, there can be only a single configuration.xml which is packaged
           with the repository.
         </p>
@@ -169,7 +169,7 @@ session.getRootNode().addNode("test", "demo:mynodetype");
           <!-- FIXME outdated? -->
           Therefor if you want a repository to have the plugins automatically available,
           it is required to rebuild the repository in a custom project, such that the
-          <a href="configuration/configuration.html">configuration.xml</a> can be overridden.
+          configuration.xml can be overridden.
         </p>
 
       </subsection>

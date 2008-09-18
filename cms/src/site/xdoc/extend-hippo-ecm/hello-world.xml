@@ -178,7 +178,7 @@ mvn install
         <p>
           To test our HelloWorldPlugin we need to add our hello world jar to the classpath
           of our WAR application. Make sure you
-          have a <a href="building/maven.html">complete SVN checkout of Hippo ECM</a>.
+          have a <a href="../building/maven.html">complete SVN checkout of Hippo ECM</a>.
           You will find the WAR application under <b>quickstart/war</b> in the Hippo ECM project tree:
         </p>
 
