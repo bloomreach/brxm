@@ -99,6 +99,7 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	            	String urlPrefix = getUrlPrefix(request);
 	            	RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
 	            	//set attributes
+	            	request.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
 	    			dispatcher.forward(request, response);
 	            } else {
 	            	log.error("no matching template found for url '" + request.getRequestURI() + "'");
