@@ -42,8 +42,7 @@ public class PageNode extends TemplateNode{
    }
    
    public PageNode(ContextBase contextBase, String relativePath) throws RepositoryException {
-	   super(contextBase, relativePath);	  
-	   jcrNode = contextBase.getRelativeNode(relativePath);
+	   super(contextBase, relativePath);	
 	   containerNodes = new NodeList<PageContainerNode>(contextBase, getJcrNode(), PageContainerNode.class);
    }
    
