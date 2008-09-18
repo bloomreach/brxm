@@ -188,7 +188,7 @@
         The end application is a packaging of the core system as well as multiple
         add-ons.  These add-ons are either WAR or JARs which are merged or put
         together in an EAR.
-        Please refer to the <a href="../../building/index.html">building
+        Please refer to the <a href="../../../building/index.html">building
         section</a> on how to compose your end application by adding add-ons to your
         application.
       </p>

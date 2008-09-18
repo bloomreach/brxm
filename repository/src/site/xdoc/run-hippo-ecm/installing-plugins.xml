@@ -43,7 +43,7 @@
       <subsection name="Extending the EAR">
         <p>
           To install the plugin, unzip the EAR package (see <a
-          href="deploying-the-wars.html">Deploying the WARs</a> on how to
+          href="deploying-the-ear.html">Deploying the EAR</a> on how to
           obtain it)
           <source>
 ~/> mkdir hippo-ear
@@ -72,7 +72,7 @@ xml-apis-1.3.03.jar
       <subsection name="Extending the WAR">
         <p>
           As in the case of the EAR, unzip the WAR package (see <a
-          href="deploying-the-wars.html">Deploying the WARs</a> again on how to
+          href="deploying-the-war.html">Deploying the WAR</a> again on how to
           obtain the package)
           <source>
 ~/> mkdir hippo-war

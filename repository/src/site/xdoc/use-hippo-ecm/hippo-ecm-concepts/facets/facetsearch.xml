@@ -35,8 +35,7 @@
         can be used to represent all kinds of data in all kinds of different structures purely
         defined by their meta information. This results in virtual node trees
         providing a faceted navigation. See the
-        <a href="../../integrate-hippo-ecm/example.html">example</a> under
-        <a href="../../integrate-hippo-ecm/index.html">Integrating Hippo ECM</a>
+        <a href="../../implement-hippo-ecm/advanced/jcr-dropbox-example.html">example</a>
         for a ready to use demo project creating faceted navigation.
       </p>
        <subsection name="Faceted navigation explained: visual">
