@@ -51,13 +51,13 @@
           </tr>
           <tr>
             <td>
+              <a href="implement-hippo-ecm/index.html"><img alt="implement" src="images/frontpage/implement.png" /></a>
+            </td>
+            <td>
               <a href="building/index.html"><img alt="build" src="images/frontpage/build.png" /></a>
             </td>
             <td>
               <a href="extend-hippo-ecm/index.html"><img alt="extend" src="images/frontpage/extend.png" /></a>
-            </td>
-            <td>
-              <a href="extend-hippo-ecm/integrate-hippo-ecm/index.html"><img alt="integrate" src="images/frontpage/integrate.png" /></a>
             </td>
             <!--<li>
               <p>
