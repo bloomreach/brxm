@@ -6,7 +6,7 @@ import javax.jcr.Node;
 import javax.servlet.jsp.PageContext;
 
 public interface PagingModule extends Module {
-    public static final String PAGESIZE_CMS_PROPERTY = "pagesize";
+    public static final String PAGESIZE_CMS_PROPERTY = "pageSize";
     public static final String PAGE_PARAMETER_CMS_PROPERTY = "pageParameter";
     
     /**
