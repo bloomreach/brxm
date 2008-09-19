@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.mapping.UrlUtilities;
-import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -72,7 +72,7 @@ public class BinariesServlet extends HttpServlet {
         path = UrlUtilities.decodeUrl(path);
         Session session = null;
         try {
-            session = JcrSessionFactory.getSession(req);
+            session = JcrSessionPoolManager.getSession(req);
             
             Item item = session.getItem(path);
 

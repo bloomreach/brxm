@@ -22,13 +22,13 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 
-public class CacheFactory {
-
-    private static final Map<String,Cache> caches = new HashMap<String, Cache>();
-    
+public class CacheManager {
+ 
     private static final String APPLICATION_CACHES = "org.hippoecm.hst.caching.applicationcache";
+    
+    public static final Map<String,Cache> caches = new HashMap<String, Cache>();
     private static boolean isApplicationScopeSet = false;
     
     public static Cache getCache(PageContext ctx) {
@@ -42,7 +42,7 @@ public class CacheFactory {
     }
     
     public static Cache getCache(HttpServletRequest request) {
-        Session session = JcrSessionFactory.getSession(request);
+        Session session = JcrSessionPoolManager.getSession(request);
         String cacheName = session.getUserID();
         if(cacheName == null) {
             cacheName = "anonymous";

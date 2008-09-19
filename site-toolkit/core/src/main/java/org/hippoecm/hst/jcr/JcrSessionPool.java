@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrSessionPool {
-    private static final Logger log = LoggerFactory.getLogger(JcrSessionFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrSessionPoolManager.class);
 
     private static final boolean MUST_REFRESH = true;
     private SimpleCredentials simpleCredentials;
@@ -137,7 +137,7 @@ public class JcrSessionPool {
 
     private void refresh(ReadOnlyPooledSession finishedSession) {
         // while no invalidation, refresh sessions after a release
-        if(MUST_REFRESH) {
+        if(!MUST_REFRESH) {
             try {
                 finishedSession.getDelegatee().refresh(false);
             } catch (RepositoryException e) {

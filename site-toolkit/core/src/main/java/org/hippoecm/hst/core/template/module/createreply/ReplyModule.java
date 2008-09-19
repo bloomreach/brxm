@@ -29,7 +29,7 @@ import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.form.el.WebFormBean;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JcrSessionFactory;
+import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +85,7 @@ public class ReplyModule extends ModuleBase {
 	
 	
 	public void writeNode(HttpServletRequest request, String name, String title, String content, String documentNodeUUID) throws Exception {
-		Session session =  JcrSessionFactory.getSession(request);
+		Session session =  JcrSessionPoolManager.getSession(request);
 		Node rootNode = session.getRootNode();	
 		
 		Node documentReplyParentNode = null;

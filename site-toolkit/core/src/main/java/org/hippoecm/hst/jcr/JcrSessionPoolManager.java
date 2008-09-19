@@ -27,9 +27,9 @@ import org.hippoecm.hst.core.HSTConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrSessionFactory {
+public class JcrSessionPoolManager {
     
-    private static final Logger log = LoggerFactory.getLogger(JcrSessionFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrSessionPoolManager.class);
     private static final Map<String,JcrSessionPool> jcrSessionPools = new HashMap<String,JcrSessionPool>();
     
     public final static Session getTemplateSession(HttpServletRequest request){

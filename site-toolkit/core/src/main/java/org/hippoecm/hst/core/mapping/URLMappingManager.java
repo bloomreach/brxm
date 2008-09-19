@@ -22,14 +22,14 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.caching.Cache;
-import org.hippoecm.hst.caching.CacheFactory;
+import org.hippoecm.hst.caching.CacheManager;
 import org.hippoecm.hst.caching.CachedResponse;
 import org.hippoecm.hst.caching.CachedResponseImpl;
 import org.hippoecm.hst.caching.validity.ExpiresValidity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class URLMappingFactory {
+public class URLMappingManager {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
     private final static Map<String, URLMapping> urlMappings = new HashMap<String, URLMapping>();
@@ -43,7 +43,7 @@ public class URLMappingFactory {
             userId = "anonymous";
         }
         String key = userId+"_"+hst_configuration_path;
-        Cache cache = CacheFactory.getCache(request);
+        Cache cache = CacheManager.getCache(request);
         synchronized (cache) {
             CachedResponse urlMapping = cache.get(key);
             if(urlMapping != null && urlMapping.getResponse() instanceof URLMapping) {

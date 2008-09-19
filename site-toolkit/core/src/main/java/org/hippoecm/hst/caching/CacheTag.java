@@ -36,7 +36,7 @@ public class CacheTag extends BodyTagSupport {
     
     public int doStartTag() throws JspException {
         key = nameExpr;
-        this.cache = CacheFactory.getCache(pageContext);
+        this.cache = CacheManager.getCache(pageContext);
         synchronized (cache) {
         this.cachedResponse = this.cache.get(this.key);
         }
