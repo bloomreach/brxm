@@ -108,12 +108,6 @@ public class FacetRule implements Serializable {
         type = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
         value = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
 
-        // catch some illegal options
-        if (value.equals(FacetAuthConstants.WILDCARD) && !equals) {
-            throw new RepositoryException("Not-equals and wildcard value not allowed together.");
-        }
-
-
         //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
         Name name = null;

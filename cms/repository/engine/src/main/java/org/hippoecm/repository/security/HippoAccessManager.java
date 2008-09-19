@@ -736,7 +736,11 @@ public class HippoAccessManager implements AccessManager {
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName()) && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
-            return false;
+            if(FacetAuthConstants.WILDCARD.equals(rule.getValue()) && !rule.isEqual()) {
+                return true;
+            } else {
+                return false;
+            }
         }
         HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), rule.getFacetName());
         PropertyState state = (PropertyState) getItemState(propertyId);
