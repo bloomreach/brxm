@@ -30,7 +30,16 @@ more functionality can be added easily to a pre-built package, at any time.
 This is done by simply adding the JARs containing the add-ons to the already 
 packaged product, or uploading them into the running packaged product. 
 <!-- There is no need to rebuild from all the sources, contrary to other 
-content management systems. :::CONFIRM this claim or remove completely.--> 
+content management systems. :::CONFIRM this claim or remove completely.
+[BvH] the original statement was not that this was contrary to other CMSes;
+that statement is too dangerous to made.  The original statement that there
+is no need to rebuild to add functionality.  This is a very important
+statement because it is a huge improvement over CMS6, and is an important
+feature that people want.  So, yes this statement can be confirmed, however
+not how it was rewritten.  The reason is was uncommented until now is that
+there is no easy way yet (we don't have an upload functionality button, you
+have to copy manually).  When this is there, we should make bigger claims.
+--> 
 </p>
 <p>
 The quickstart packages contain all the core packaged products, but have been
