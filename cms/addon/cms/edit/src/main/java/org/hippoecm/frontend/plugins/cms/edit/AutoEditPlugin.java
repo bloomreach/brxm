@@ -44,9 +44,9 @@ public class AutoEditPlugin implements IPlugin {
             IEditService editService = context.getService(config.getString("editor.id"), IEditService.class);
             if (editService != null) {
                 try {
-                    String user = ((UserSession) Session.get()).getCredentials().getString("username");
+                    String user = ((UserSession) Session.get()).getCredentials().getString("username"); // FIXME: no guarantee to have username here
                     QueryManager qMgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
-                    Query query = qMgr.createQuery("select * from hippostd:publishable where hippostd:state='draft' "
+                    Query query = qMgr.createQuery("select * from hippostd:publishable where hippostd:state='draft' " // FIXME wrong knowledge in use here
                             + "and hippostd:holder='" + user + "'", Query.SQL);
                     NodeIterator iter = query.execute().getNodes();
                     while (iter.hasNext()) {
