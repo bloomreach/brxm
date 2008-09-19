@@ -171,6 +171,7 @@
     
     <menu name="Documentation versions">
       <item name="Latest release" href="http://docs.onehippo.org/hippo-ecm/"/>
+      <item name="M6.4" href="http://docs.onehippo.org/hippo-ecm/2.01.00.13536/"/>
       <item name="M6.3" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12907/"/>
       <item name="M6.2" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12677/"/>
       <item name="M6.1" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12357/"/>

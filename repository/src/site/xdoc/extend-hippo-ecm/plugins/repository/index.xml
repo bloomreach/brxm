@@ -51,7 +51,7 @@ the JAR containing your plugin to the EAR:
 </p>
 
 <source>
-jar -uf hippo-ecm-package-ear-2.01.00.ear your-plugin.jar
+jar -uf hippo-ecm-package-ear-2.01.00.13536.ear your-plugin.jar
 </source>
 
 <p>

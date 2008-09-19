@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.01.00-SNAPSHOT</version>
+      <version>2.01.00.13536</version>
     </dependency>
   </dependencies>
 
