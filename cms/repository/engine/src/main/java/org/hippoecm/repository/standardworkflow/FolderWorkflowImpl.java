@@ -36,6 +36,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -345,6 +346,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                         break; 
                     }
                 }
+                for(int i=0; i<nodeTypes.length; i++) {
+                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
+                    for(int j=0; j<propDefs.length; j++) {
+                        if(propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                            isProtected = true;
+                    }
+                }
                 if (!isProtected) {
                     if(renames.containsKey(path+"/"+prop.getName())) {
                         target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source));
@@ -358,6 +366,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
                         isProtected = false;
                         break; 
+                    }
+                }
+                for(int i=0; i<nodeTypes.length; i++) {
+                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
+                    for(int j=0; j<propDefs.length; j++) {
+                        if(propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                            isProtected = true;
                     }
                 }
                 if (!isProtected) {
