@@ -137,9 +137,9 @@ public class JcrSessionPool {
 
     private void refresh(ReadOnlyPooledSession finishedSession) {
         // while no invalidation, refresh sessions after a release
-        if(!MUST_REFRESH) {
+        if(MUST_REFRESH) {
             try {
-                finishedSession.getDelegatee().refresh(false);
+                finishedSession.refresh(false);
             } catch (RepositoryException e) {
                 log.error("RepositoryException " + e.getMessage());
             }
