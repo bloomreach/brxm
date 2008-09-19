@@ -47,7 +47,7 @@
 &lt;dependency&gt;
     &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
     &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
-    &lt;version&gt;2.01.00-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;2.01.00.13536&lt;/version&gt;
     &lt;type&gt;war&lt;/type&gt;
     &lt;scope&gt;runtime&lt;/scope&gt;
 &lt;/dependency&gt;

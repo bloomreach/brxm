@@ -86,7 +86,7 @@
           This will build the packages and leave them in the target
           directories of your maven build.  For instance the produced EAR
           containing all the applications is available in
-          <code>hippo-ecm/package/ear/target/hippo-ecm-package-ear-2.01.00-dev.ear</code>.
+          <code>hippo-ecm/package/ear/target/hippo-ecm-package-ear-2.01.00.13536.ear</code>.
         </p>
       </subsection>
 

@@ -59,8 +59,9 @@ are snapshots of the current build.
 </p>
   <blockquote>
       <ul>
-          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.12907/hippo-ecm-quickstart-war-2.01.00.12907.war">quickstart war package</a></li>
-          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.12907/hippo-ecm-quickstart-ear-2.01.00.12907.ear">quickstart ear package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war">quickstart war package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear">quickstart ear package</a></li>
+          <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.ear">quickstart binary package which includes the Jetty application container</a></li>
       </ul>
   </blockquote>
 
@@ -145,6 +146,14 @@ http://localhost:8080/
             </subsection>
             
  </subsection>
+ <subsection name="Deploy the binary distribution">
+ 	      <p>
+ 	      Start either the <code>startup.sh</code> (when running on
+ 	      a Unix-like environment) or the <code>startup.bat</code>
+ 	      (when running on Microsoft Windows XP or better) script
+ 	      from your command line.
+ 	      </p>
+ 	    </subsection>
  </section>
 
     </body>
