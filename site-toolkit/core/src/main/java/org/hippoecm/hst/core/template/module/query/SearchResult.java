@@ -32,8 +32,9 @@ public class SearchResult {
     private int currentPageNumber;
     private String didyoumean;
     private String query;
+    private String nodeType;
 
-    public SearchResult(List<SearchHit> hits) {
+	public SearchResult(List<SearchHit> hits) {
         this.hits = hits;
     }
 
@@ -130,9 +131,15 @@ public class SearchResult {
     
     public void setPages(List<Page> pages) {
         this.pages = pages;
-    }
-    
-    
+    }    
+
+    public String getNodeType() {
+		return nodeType;
+	}
+
+	public void setNodeType(String nodeType) {
+		this.nodeType = nodeType;
+	}
     
     public void computePagesAndLinks(Map parameterMap) {
         pages = new ArrayList<Page>();

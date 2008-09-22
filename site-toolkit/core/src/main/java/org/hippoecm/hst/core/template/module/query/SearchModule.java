@@ -431,6 +431,7 @@ public class SearchModule extends ModuleBase implements Search {
             searchResult.setOffset(offset);
             searchResult.setPagesize(limit);
             searchResult.setQuery(querytext);
+            searchResult.setNodeType(nodetype);
             
             searchResult.computePagesAndLinks(request.getParameterMap());
             
@@ -599,4 +600,5 @@ public class SearchModule extends ModuleBase implements Search {
     public void setCurrentPageNumber(int currentPageNumber) {
        this.currentPageNumber = currentPageNumber; 
     }
+    
 }
