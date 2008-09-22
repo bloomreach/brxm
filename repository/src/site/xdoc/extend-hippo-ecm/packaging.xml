@@ -27,7 +27,7 @@
 	  		In the hello world example we created a plugin and included it directly in the quickstart war project.
 	  		While this works just fine, it requires you to make changes to an external project and when there are a lot
 	  		of changes to be made it can get messy.
-	  		It would be better if we can just leave quickstart war untouched en build our own war using quickstart war
+	  		It would be better if we can just leave quickstart war untouched and build our own war using quickstart war
 	  		as a blue print.
 	  	</p>
   	</section>
