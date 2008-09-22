@@ -3026,7 +3026,7 @@
   	<sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
     </sv:property>
-    <sv:property sv:name="plugin.cluster" sv:type="String">
+    <sv:property sv:name="cluster.name" sv:type="String">
       <sv:value>cms-dashboard-plugins</sv:value>
     </sv:property>
   </sv:node>
