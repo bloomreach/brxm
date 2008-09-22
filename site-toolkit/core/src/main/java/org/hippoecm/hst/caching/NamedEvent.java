@@ -15,10 +15,30 @@
  */
 package org.hippoecm.hst.caching;
 
-public interface Cache {
-    public boolean containsKey(CacheKey key);
-    public CachedResponse get(CacheKey key);
-    public void store(CacheKey key, CachedResponse value);
-    public void remove(CacheKey key);
-    public void clear();
+public class NamedEvent extends Event {
+
+    private static final long serialVersionUID = 1L;
+    private String m_name;
+    private int m_hashcode;
+
+    public NamedEvent(String name) {
+        m_name = name;
+        m_hashcode = name.hashCode();
+    }
+
+    public boolean equals(Event e) {
+        if (e instanceof NamedEvent) {
+            return m_name.equals(((NamedEvent) e).m_name);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return m_hashcode;
+    }
+
+    public String toString() {
+        return "NamedEvent[" + m_name + "]";
+    }
 }
+

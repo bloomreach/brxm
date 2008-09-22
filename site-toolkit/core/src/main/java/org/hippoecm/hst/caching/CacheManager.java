@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.caching;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,41 +25,91 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.jcr.JcrSessionPoolManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheManager {
- 
-    private static final String APPLICATION_CACHES = "org.hippoecm.hst.caching.applicationcache";
+    
+    private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
+    private static final String APPLICATION_CACHES = "org.hippoecm.hst.caching.applicationcaches";
     
     public static final Map<String,Cache> caches = new HashMap<String, Cache>();
     private static boolean isApplicationScopeSet = false;
     
     public static Cache getCache(PageContext ctx) {
+       return getCache(ctx, null);
+    }
+    public static Cache getCache(PageContext ctx, String clazz) {
         if(!isApplicationScopeSet) {
             ctx.setAttribute(APPLICATION_CACHES, caches);
             isApplicationScopeSet = true;
         }
-        
         HttpServletRequest request = (HttpServletRequest)ctx.getRequest();
-        return getCache(request);
+        return getCache(request, clazz);
     }
     
+    
     public static Cache getCache(HttpServletRequest request) {
+        return getCache(request, null);
+    }
+
+    public static Map<String,Cache> getCaches(){
+        return caches;
+    }
+    
+    public static Cache getCache(HttpServletRequest request, String clazz) {
         Session session = JcrSessionPoolManager.getSession(request);
         String cacheName = session.getUserID();
         if(cacheName == null) {
             cacheName = "anonymous";
         }
+        
+        if(clazz == null) {
+            clazz = LRUMemoryCacheImpl.class.getName();
+        }
+        
+        cacheName = clazz+"_"+cacheName;
+        
         synchronized(caches){
             Cache cache = caches.get(cacheName);
             if( cache != null) {
                 return cache;
             } else {
-                cache = new LRUMemoryCacheImpl(1000);
+                cache = createCache(1000, clazz);
+                if(cache==null) {
+                    log.warn("Cache instantiation failed for '" + clazz + "'");
+                    return null;
+                }
                 caches.put(cacheName, cache);
                 return cache;
             }
         }
         
+    }
+    
+    private static Cache createCache(int size, String clazz) {
+        Object o = null;
+        try {
+            Class c = Class.forName(clazz);
+            Constructor con = c.getConstructor(new Class[] {int.class});
+            o = con.newInstance(new Object[] {size} );
+            if (!Cache.class.isInstance(o)) {
+                log.error(clazz + " does not implement the interface " + Cache.class.getName()+ ". Return null" );
+                return null;
+            }
+            return (Cache)o;
+        } catch (InstantiationException e) {
+            log.error("InstantiationException : Cannot instantiate cache for '" + clazz + "' :" + e.getMessage());
+        } catch (IllegalAccessException e) {
+            log.error("IllegalAccessException : Cannot instantiate cache for '" + clazz + "' :" + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            log.error("ClassNotFoundException : Cannot instantiate cache for '" + clazz + "' :" + e.getMessage());
+        } catch (SecurityException e) {
+        } catch (NoSuchMethodException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (InvocationTargetException e) {
+        }
+        return null;
     }
 
    

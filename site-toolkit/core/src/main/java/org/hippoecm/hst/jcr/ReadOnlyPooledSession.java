@@ -53,12 +53,14 @@ public class ReadOnlyPooledSession implements Session{
     
     private Session delegatee;
     private long creationTime;
+    private long lastRefreshTime;
     private JcrSessionPool jcrSessionPool;
     private static final int TIME_TO_LIVE_SECONDS = 1000;
     
     public ReadOnlyPooledSession(Session session, JcrSessionPool  jcrSessionPool) {
         this.delegatee = session;
-        creationTime = System.currentTimeMillis();
+        this.creationTime = System.currentTimeMillis();
+        this.lastRefreshTime = creationTime;
         this.jcrSessionPool = jcrSessionPool;
     }
     
@@ -72,6 +74,11 @@ public class ReadOnlyPooledSession implements Session{
     public JcrSessionPool getJcrSessionPool(){
         return this.jcrSessionPool;
     }
+    
+    public long getLastRefreshTime(){
+        return this.lastRefreshTime;
+    }
+    
      public void logout() {
          log.warn("logout unsupported in read only session. Use the delegatee");
      }
@@ -79,9 +86,10 @@ public class ReadOnlyPooledSession implements Session{
      public void addLockToken(String lt) {
          log.warn("addLockToken unsupported in read only session");
      }
+     
      public void refresh(boolean keepChanges) throws RepositoryException {
-         log.warn("refresh is not allowed to in ReadOnlyPooledSession");
-         throw new UnsupportedRepositoryOperationException("refresh is not allowed to in ReadOnlyPooledSession");
+         this.lastRefreshTime = System.currentTimeMillis();
+         delegatee.refresh(keepChanges);
      }
 
      public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,

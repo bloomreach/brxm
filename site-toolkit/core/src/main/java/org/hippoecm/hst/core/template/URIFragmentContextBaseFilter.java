@@ -17,9 +17,15 @@ package org.hippoecm.hst.core.template;
 
 import java.io.IOException;
 
+import javax.jcr.LoginException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.observation.Event;
+import javax.jcr.observation.EventListener;
+import javax.jcr.observation.ObservationManager;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -30,12 +36,17 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.hippoecm.hst.caching.observation.EventListenerImpl;
+import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
+import org.hippoecm.hst.jcr.JCRConnectionException;
 import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +82,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
         } catch (NumberFormatException e) {
             throw new ServletException("The init-parameter " + URI_LEVEL_INIT_PARAMETER + " is not an int.");
         }
-        
+         registerEventListener(filterConfig);
     }
 
     
@@ -105,14 +116,9 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
             Session session = null;
             long requesttime = System.currentTimeMillis();
             try {
-                long start = System.nanoTime();
                 session = JcrSessionPoolManager.getSession(request);
-                Timer.log.debug("getting session took from the pool took " + (System.nanoTime() - start)/1000000 + " ms.");
-                
-                start = System.nanoTime();
                 URLMapping urlMapping = URLMappingManager.getUrlMapping(session, request,
                         uriPrefix, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels);
-                Timer.log.debug("creating mapping took " + (System.nanoTime() - start)/1000000 + " ms.");
                 request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
 
                 //content configuration contextbase
@@ -191,6 +197,42 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
         return levelPrefix.toString();
     }
     
+    private void registerEventListener(FilterConfig filterConfig) {
+        String repositoryLocation = HSTConfiguration.get(filterConfig.getServletContext(), HSTConfiguration.KEY_REPOSITORY_ADRESS);
+        String username = HSTConfiguration.get(filterConfig.getServletContext(), HSTConfiguration.KEY_REPOSITORY_USERNAME);
+        String password = HSTConfiguration.get(filterConfig.getServletContext(), HSTConfiguration.KEY_REPOSITORY_PASSWORD);
+        SimpleCredentials smplCred = new SimpleCredentials(username, (password != null ? password.toCharArray() : null));
+        
+        Session observer; 
+        EventListener listener;       
+        HippoRepositoryFactory.setDefaultRepository(repositoryLocation);
+        try {
+            HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+            observer = repository.login(smplCred);
+        } catch (LoginException e) {
+            throw new JCRConnectionException("Cannot login with credentials");
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            throw new JCRConnectionException("Failed to initialize repository");
+        }
+        
+        ObservationManager obMgr;
+        try {
+            obMgr = observer.getWorkspace().getObservationManager();
+            listener = new EventListenerImpl();
+            
+            obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, 
+                    "/",
+                    true, null, null, true);
+            
+        } catch (UnsupportedRepositoryOperationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+    }
     
 
 }

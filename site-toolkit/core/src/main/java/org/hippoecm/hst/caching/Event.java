@@ -15,10 +15,19 @@
  */
 package org.hippoecm.hst.caching;
 
-public interface Cache {
-    public boolean containsKey(CacheKey key);
-    public CachedResponse get(CacheKey key);
-    public void store(CacheKey key, CachedResponse value);
-    public void remove(CacheKey key);
-    public void clear();
+import java.io.Serializable;
+
+public abstract class Event implements Serializable {
+   
+    public abstract boolean equals(Event e);
+  
+    public abstract int hashCode();
+
+    public boolean equals(Object o) {
+        if (o instanceof Event) {
+            return equals((Event) o);
+        }
+        return false;
+    }
 }
+

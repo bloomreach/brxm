@@ -13,12 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.caching;
+package org.hippoecm.hst.caching.validity;
 
-public interface Cache {
-    public boolean containsKey(CacheKey key);
-    public CachedResponse get(CacheKey key);
-    public void store(CacheKey key, CachedResponse value);
-    public void remove(CacheKey key);
-    public void clear();
+public class NOPValidity implements SourceValidity{
+
+    private static final long serialVersionUID = 1L;
+
+    public int isValid() {
+       return 1;
+    }
+
+    public int isValid(SourceValidity newValidity) {
+        return 1;
+    }
+
 }

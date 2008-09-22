@@ -30,7 +30,7 @@ public class LRUMemoryCacheImpl implements Cache{
         cache.clear();
     }
 
-    public boolean containsKey(Object key) {
+    public boolean containsKey(CacheKey key) {
         CachedResponse cachedResponse =null ;
         synchronized (cache) {
             cachedResponse = (CachedResponse)this.cache.get(key);
@@ -46,7 +46,7 @@ public class LRUMemoryCacheImpl implements Cache{
        
     }
 
-    public CachedResponse get(Object key) {
+    public CachedResponse get(CacheKey key) {
         CachedResponse cachedResponse =null ;
         synchronized (cache) {
             cachedResponse = (CachedResponse)this.cache.get(key);
@@ -60,15 +60,15 @@ public class LRUMemoryCacheImpl implements Cache{
         return null;
     }
 
-    public void remove(Object key) {
+    public void remove(CacheKey key) {
         cache.remove(key);
     }
 
-    public void store(Object key, CachedResponse value) {
-        cache.put(key, value);
+    public void store(CacheKey key, CachedResponse cr) {
+        cache.put(key, cr);
     }
     
-    private boolean checkValdidity(CachedResponse cachedResponse, Object key) {
+    protected boolean checkValdidity(CachedResponse cachedResponse, CacheKey key) {
         if( cachedResponse == null){
             return false;
         }
@@ -98,5 +98,6 @@ public class LRUMemoryCacheImpl implements Cache{
             return isValid;
         }
     }
+
 
 }

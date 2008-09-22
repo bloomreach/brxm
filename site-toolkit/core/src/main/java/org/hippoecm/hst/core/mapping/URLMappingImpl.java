@@ -53,20 +53,33 @@ public class URLMappingImpl implements URLMapping {
     private Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
     private String contextPrefix;
     private String contextPath;
+    
+    // a list containing all canonical paths which are used in the url mapping. These paths are used to create named events
+    // on which the cache is invalidated
+    private List<String> canonicalPathConfiguration;
+    
     private Node siteMapRootNode;
     private int uriLevels;
 
-    public URLMappingImpl(Session session, String contextPath, String contextPrefix, String path, int uriLevels) {
+    public URLMappingImpl(Session session, String contextPath, String contextPrefix, String confPath, int uriLevels) {
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
         this.uriLevels = uriLevels;
         this.rewriteLRUCache = new RewriteLRUCache(500);
-
+        this.canonicalPathConfiguration = new ArrayList<String>();
         try {
             long start = System.currentTimeMillis();
             String virtualEntryName = null;
             String physicalEntryPath = null;
-            Node hstConf = (Node) session.getItem(path);
+            HippoNode hstConf = (HippoNode) session.getItem(confPath);
+            Node canonical = hstConf.getCanonicalNode();
+            if(canonical != null ) {
+                this.canonicalPathConfiguration.add(canonical.getPath());
+            }
+            
+            // TODO when the configuration is a combination of multiple facetselects, we need to add all canonical path
+            // configurations. currently, only the base path is added
+            
             siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
             try {
                 if (siteMapRootNode.hasProperty("hst:entrypointid")
@@ -356,6 +369,10 @@ public class URLMappingImpl implements URLMapping {
         private void put(String key, String rewrite) {
             cache.put(key, rewrite);
         }
+    }
+
+    public List<String> getCanonicalPathsConfiguration() {
+        return this.canonicalPathConfiguration;
     }
 
 }

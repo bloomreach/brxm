@@ -15,10 +15,7 @@
  */
 package org.hippoecm.hst.caching;
 
-public interface Cache {
-    public boolean containsKey(CacheKey key);
-    public CachedResponse get(CacheKey key);
-    public void store(CacheKey key, CachedResponse value);
-    public void remove(CacheKey key);
-    public void clear();
+public interface EventCache {
+    public void processEvent(Event e);
+    public long getLastEvictionTime();
 }
