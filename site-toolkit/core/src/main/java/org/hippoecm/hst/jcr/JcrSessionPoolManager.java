@@ -16,6 +16,7 @@
 package org.hippoecm.hst.jcr;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.jcr.Session;
@@ -63,6 +64,16 @@ public class JcrSessionPoolManager {
             }
             log.debug("Return session from pool if an idle valid one is present, otherwise add a new one to the session");
             return jcrSessionPool.getSession(request.getSession());
+        }
+    }
+    
+    public static void dispose() {
+       // logout *all* jcr sessions. 
+        synchronized(jcrSessionPools) {
+            for(Iterator<JcrSessionPool> si = jcrSessionPools.values().iterator(); si.hasNext(); ) {
+                JcrSessionPool jcrSessionPool = si.next();
+                jcrSessionPool.dispose();
+            }
         }
     }
     

@@ -71,7 +71,8 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
 
     private String contentBase;
     private int uriLevels;
-
+    private Session observer; 
+    private EventListener listener;  
    
     
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -87,7 +88,17 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
 
     
     public void destroy() {
-        // TODO logout all jcr sessions
+        JcrSessionPoolManager.dispose();
+        try {
+            ObservationManager obMgr = observer.getWorkspace().getObservationManager();
+            obMgr.removeEventListener(listener);
+            observer.logout();
+            log.debug("Destroy succesfully disposed all jcr sessions");
+        } catch (UnsupportedRepositoryOperationException e) {
+            log.error("UnsupportedRepositoryOperationException during 'destroy()' of filter in disposing jcr sessions and unregistering listener. " + e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("RepositoryException during 'destroy()' of filter in disposing jcr sessions and unregistering listener. " + e.getMessage());
+        }
     }
 
     public void doFilter(ServletRequest req, ServletResponse response, FilterChain filterChain) throws IOException,
@@ -202,9 +213,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
         String username = HSTConfiguration.get(filterConfig.getServletContext(), HSTConfiguration.KEY_REPOSITORY_USERNAME);
         String password = HSTConfiguration.get(filterConfig.getServletContext(), HSTConfiguration.KEY_REPOSITORY_PASSWORD);
         SimpleCredentials smplCred = new SimpleCredentials(username, (password != null ? password.toCharArray() : null));
-        
-        Session observer; 
-        EventListener listener;       
+             
         HippoRepositoryFactory.setDefaultRepository(repositoryLocation);
         try {
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
@@ -220,7 +229,6 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
         try {
             obMgr = observer.getWorkspace().getObservationManager();
             listener = new EventListenerImpl();
-            
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, 
                     "/",
                     true, null, null, true);

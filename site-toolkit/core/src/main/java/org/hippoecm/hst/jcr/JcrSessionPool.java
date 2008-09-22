@@ -16,13 +16,13 @@
 package org.hippoecm.hst.jcr;
 
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.core.Stats;
@@ -154,6 +154,18 @@ public class JcrSessionPool {
         Stats.log.debug("Idle sessions : " + this.idleSessions.size());
         Stats.log.debug("ActiveSessions sessions : " + this.activeSessions.size());
         Stats.log.debug("------------------------");
+        }
+    }
+
+
+    public void dispose() {
+        synchronized(this) {
+            for( Iterator<ReadOnlyPooledSession> si = this.activeSessions.values().iterator(); si.hasNext() ; ){
+                si.next().getDelegatee().logout();
+            } 
+            for( Iterator<ReadOnlyPooledSession> si = this.idleSessions.iterator(); si.hasNext() ; ){
+                si.next().getDelegatee().logout();
+            }
         }
     }
 }
