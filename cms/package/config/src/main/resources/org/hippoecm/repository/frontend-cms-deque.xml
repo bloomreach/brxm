@@ -356,36 +356,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="currentActivityPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reporting.ReportPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="report.input.node" sv:type="String">
-      <sv:value>426c67c6-4591-4cdf-92c8-19b7dd0b1c39</sv:value>
-    </sv:property>
-    <sv:property sv:name="report.resultset.model" sv:type="String">
-      <sv:value>model.report.current</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="todoPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.reporting.ReportPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="report.input.node" sv:type="String">
-      <sv:value>f2e7cb32-081a-4679-8bed-0fec3ef9a132</sv:value>
-    </sv:property>
-    <sv:property sv:name="report.resultset.model" sv:type="String">
-      <sv:value>model.report.todo</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="browserPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -3049,5 +3019,15 @@
       <sv:value>service.logout</sv:value>
     </sv:property>
   </sv:node>
-
+  <sv:node sv:name="clusterLoaderPlugin">
+  	<sv:property sv:name="jcr:primaryType" sv:type="Name">
+  		<sv:value>frontend:plugin</sv:value>
+  	</sv:property>
+  	<sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.cluster" sv:type="String">
+      <sv:value>cms-dashboard-plugins</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
