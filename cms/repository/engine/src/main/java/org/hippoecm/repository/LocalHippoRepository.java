@@ -214,8 +214,19 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
+    private class LocalRepositoryImpl extends RepositoryImpl {
+        LocalRepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
+            super(repConfig);
+        }
+        @Override
+        protected Session getRootSession(String workspaceName) throws RepositoryException {
+            return super.getRootSession(workspaceName);
+        }
+    }
+
     private void initialize() throws RepositoryException {
-        jackrabbitRepository = RepositoryImpl.create(RepositoryConfig.create(getRepositoryConfigAsStream(),
+
+        jackrabbitRepository = new LocalRepositoryImpl(RepositoryConfig.create(getRepositoryConfigAsStream(),
                 getRepositoryPath()));
         repository = jackrabbitRepository;
 
@@ -227,7 +238,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init
-            Session jcrRootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
+            Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
 
             try {
                 log.info("Initializing hippo namespace");
@@ -756,7 +767,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
         if (listener != null) {
             try {
-                Session rootSession =  ((RepositoryImpl)jackrabbitRepository).getRootSession(null);
+                Session rootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
                 Workspace workspace = rootSession.getWorkspace();
                 ObservationManager obMgr = workspace.getObservationManager();
                 obMgr.removeEventListener(listener);

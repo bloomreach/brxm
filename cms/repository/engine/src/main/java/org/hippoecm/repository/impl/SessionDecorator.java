@@ -225,22 +225,6 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     /**
-     * Forwards the method call to the underlying session.
-     */
-    public void logout() {
-        try {
-            Repository rep = session.getRepository();
-            Session rootSession = ((RepositoryImpl)rep).getRootSession(null);
-            EventLogger logger = new EventLogger(rootSession);
-            logger.logEvent(session.getUserID(), "Session", "logout");
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            super.logout();
-        }
-    }
-
-    /**
      * Convenience function to copy a node to a destination path in the same workspace
      *
      * @param srcNode the source path node to copy

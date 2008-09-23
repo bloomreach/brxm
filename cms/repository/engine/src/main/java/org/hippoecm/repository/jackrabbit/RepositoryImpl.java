@@ -78,10 +78,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
                 facetedContext);
     }
 
-    public static RepositoryImpl create(RepositoryConfig config) throws RepositoryException {
-        return new RepositoryImpl(config);
-    }
-
     @Override
     protected SharedItemStateManager createItemStateManager(PersistenceManager persistMgr, NodeId rootNodeId,
             NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory, ISMLocking locking)
@@ -131,7 +127,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * @return Session the rootSession
      * @throws RepositoryException
      */
-    public Session getRootSession(String workspaceName) throws RepositoryException {
+    protected Session getRootSession(String workspaceName) throws RepositoryException {
         if (workspaceName == null) {
             workspaceName = super.repConfig.getDefaultWorkspaceName();
         }
