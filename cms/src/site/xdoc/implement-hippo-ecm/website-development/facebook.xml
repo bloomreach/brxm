@@ -52,9 +52,11 @@
                     to describe a person.
                 </p>
                 <p>
-                    Open Hippo CMS in your browser, and sign in. Click on 'Browse', and navigate
-                    to <code>/document types/myproject</code> (if your project is named 'myproject').
-                    Click on 'Create new type' to create a new document type. A dialog
+                    Open Hippo CMS in your browser, and sign in. Click on the folder icon
+                    to open the browse tab. Click on 'Configuration', and under 'document
+                    types' select 'myproject' (or the name of your project, if you used
+                    a different name). Select 'Create new type' in the dropdown
+                    to create a new document type. A dialog
                     will appear. Give the new document type the name 'person' and click 'OK'.
                 </p>
                 <p>
@@ -83,22 +85,22 @@
                 </p>
                 <p>
                     For now a name and picture will do, so click 'Save and close'. To apply
-                    the changes you made to your namespace, click 'Update all content'.
+                    the changes you made to your namespace, select 'Update all content' from the dropdown.
                     A dialog will appear warning you about possible consequences. Click 'OK'.
                 </p>
             </subsection>
             
             <subsection name="Add people">
                 <p>
-                    Now that the new 'person' document type is active, navigate to
-                    <code>/content</code> in the tree. Add a new folder to store
-                    people in by clicking 'New Folder', and name it 'facebook' in
+                    Now that the new 'person' document type is active, click on
+                    'Documents' in the 'Folders' column. Add a new folder to store
+                    people in by selecting 'New Folder' in the dropdown, and name it 'facebook' in
                     the dialog that appears.
                 </p>
                 <p>
                     Inside the new 'facebook' folder, add a person document. To do this,
-                    click on 'New document'. In the dialog that appears, give your
-                    person document a name, and select the 'myproject:person' type.
+                    select 'New document' in the dropdown. In the dialog that appears, give your
+                    person document a name, and select the 'person' type.
                 </p>
                 <p>
                     <a href="../../images/hst2/facebook-new-person.png"><img alt="screenshot" src="../../images/hst2/facebook-new-person-thumbnail.jpg" width="400" height="310" /></a>

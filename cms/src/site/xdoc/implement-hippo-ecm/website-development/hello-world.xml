@@ -32,17 +32,18 @@
             
             <subsection name="Add the document">
                 <p>
-                    Open Hippo CMS in your browser, and login. Click on 'Browse'
-                    and navigate to <code>/content/pagecontent</code> in the
-                    tree. Create a new document by cliking on 'New Document'.
+                    Open Hippo CMS in your browser, and login. Click on the
+                    folder icon on the left to open the browse tab. In the
+                    'Folders' column, click on 'Documents'. In the right
+                    column, click on 'pagecontent'. Create a new document
+                    by selecting 'New Document' in the dropdown.
                     A pop-up window will appear.
                 </p>
                 <p>
                     <a href="../../images/hst2/hello-world-new-document.png"><img alt="screenshot" src="../../images/hst2/hello-world-new-document-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
-                    Give your new document a name, e.g. "Hello World", and select
-                    the 'myproject:textpage' document type. Click on 'OK'. Your
+                    Give your new document a name, e.g. "Hello World". Click on 'OK'. Your
                     new document will be opened in the document editor.
                 </p>
                 <p>
