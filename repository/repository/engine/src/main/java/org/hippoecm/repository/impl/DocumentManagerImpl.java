@@ -85,6 +85,12 @@ public class DocumentManagerImpl implements DocumentManager {
         }
     }
 
+    void reset() {
+        if(pm != null) {
+            pm.evictAll();
+        }
+    }
+
     public Session getSession() {
         return session;
     }
