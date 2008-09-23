@@ -34,6 +34,9 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
     private Map<Event, List<WeakReference<CacheKey>>> eventMap; // This is the event registry
     private int registerCounter;
     private int registerCleanUpLimit;
+    
+    private int eventsProcessed = 0;
+    private int eventsRegistered = 0;
 
     public EventCacheImpl(int size) {
         super(size);
@@ -45,6 +48,7 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
 
     @Override
     public void store(CacheKey key, CachedResponse cr) {
+        if(!isActive()) {return;}
         // examine the validities for any event validities which should be registered before storing the value.
         examineMineValidities(key, cr.getValidityObjects());
         super.store(key, cr);
@@ -65,6 +69,8 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
     }
 
     public void processEvent(Event event) {
+        if(!isActive()) {return;}
+        eventsProcessed++;
         this.lastEvictionTime = System.currentTimeMillis();
         synchronized (this) {
             List<WeakReference<CacheKey>> objects = eventMap.get(event);
@@ -81,12 +87,14 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
     }
 
     private void register(CacheKey object, Event eventKey) {
+        if(!isActive()) {return;}
         /*
          * The event registry maps an event --> {key1, key2, key3}.
          * 
          * When an event arrives, all entries with key1, key2, key3 are evicted from this cache.
          * For memory reason, the CacheKey's are hold in WeakReferences. 
          */
+        eventsRegistered++;
         registerCounter++;
         synchronized (eventMap) {
             List<WeakReference<CacheKey>> objects = eventMap.get(eventKey);
@@ -141,4 +149,14 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
         return lastEvictionTime;
     }
 
+    public Map<String, String> getStatistics() {
+        Map<String, String> stats = super.getStatistics();
+        synchronized(this) {
+            stats.put("Registry size ", String.valueOf(this.eventMap.size()));
+            stats.put("Last evition time ", String.valueOf(getLastEvictionTime()));
+            stats.put("Processed events ", String.valueOf(this.eventsProcessed));
+            stats.put("Registered events ", String.valueOf(this.eventsRegistered));
+        }
+        return stats;
+    }
 }

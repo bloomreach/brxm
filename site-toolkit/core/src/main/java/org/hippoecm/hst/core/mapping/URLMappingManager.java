@@ -25,7 +25,6 @@ import org.hippoecm.hst.caching.CacheKey;
 import org.hippoecm.hst.caching.CacheManager;
 import org.hippoecm.hst.caching.CachedResponse;
 import org.hippoecm.hst.caching.CachedResponseImpl;
-import org.hippoecm.hst.caching.Event;
 import org.hippoecm.hst.caching.EventCacheImpl;
 import org.hippoecm.hst.caching.NamedEvent;
 import org.hippoecm.hst.caching.validity.AggregatedValidity;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class URLMappingManager {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
-    private final static int TTL = 60;
    
     
     public static URLMapping getUrlMapping(Session session, HttpServletRequest request, String uriPrefix, String hst_configuration_path,

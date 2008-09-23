@@ -15,10 +15,17 @@
  */
 package org.hippoecm.hst.caching;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 public interface Cache {
     public boolean containsKey(CacheKey key);
     public CachedResponse get(CacheKey key);
+    public Map<String, String> getStatistics();
     public void store(CacheKey key, CachedResponse value);
     public void remove(CacheKey key);
+    public void disable(boolean disable);
+    public boolean isActive();
     public void clear();
 }
