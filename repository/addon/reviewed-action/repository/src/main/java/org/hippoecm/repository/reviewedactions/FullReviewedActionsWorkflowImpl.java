@@ -40,6 +40,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("cannot delete document with pending depublication request");
         if(published != null)
             throw new WorkflowException("cannot delete published document");
+        if(draft != null)
+            throw new WorkflowException("cannot delete document being edited");
         doDelete();
     }
 

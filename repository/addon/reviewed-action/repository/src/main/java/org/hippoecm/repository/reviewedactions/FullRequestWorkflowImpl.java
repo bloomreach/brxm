@@ -30,6 +30,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     protected FullReviewedActionsWorkflowImpl publishedWorkflow;;
     protected FullReviewedActionsWorkflowImpl unpublishedWorkflow;;
+    protected FullReviewedActionsWorkflowImpl draftWorkflow;;
 
     public FullRequestWorkflowImpl() throws RemoteException {
     }
@@ -40,6 +41,9 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         if(PublicationRequest.DELETE.equals(requestType)) {
             if (publishedWorkflow != null) {
                 throw new WorkflowException("cannot delete document when still published");
+            }
+            if (draftWorkflow != null) {
+                throw new WorkflowException("cannot delete document which is being edited");
             }
             unpublishedWorkflow.setWorkflowContext(getWorkflowContext()); // FIXME; should use workflow chaining
             unpublishedWorkflow.doDelete();
