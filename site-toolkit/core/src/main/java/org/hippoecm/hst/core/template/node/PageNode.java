@@ -90,7 +90,7 @@ public class PageNode extends TemplateNode{
    
    public PageContainerNode getContainerNode(String containerName) {
 	   try {
-		for (PageContainerNode containerNode : containerNodes.getItems()) {
+		for (PageContainerNode containerNode : containerNodes.getItems()) {		  
 			log.debug("name=" + containerName + " value=" + containerNode.getLayoutAttributeValue());
 			   if (containerNode.getLayoutAttributeValue().equals(containerName)) {
 				   return containerNode;

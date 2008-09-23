@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class HstFilterBase implements Filter {
 	
-	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/hst:configuration/hst:configuration";
+	public static final String TEMPLATE_CONFIGURATION_LOCATION = "/";
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
 	public static final String SITEMAP_RELATIVE_LOCATION = "hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";

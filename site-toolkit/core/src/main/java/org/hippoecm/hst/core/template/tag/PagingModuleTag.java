@@ -28,7 +28,7 @@ public class PagingModuleTag extends ModuleTagBase {
     }
     
     public int doEndTag() throws JspException {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();     
         PageContainerModuleNode pcm = null;
         if (doExecute || doRender) {
             pcm = (PageContainerModuleNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE);
@@ -51,15 +51,20 @@ public class PagingModuleTag extends ModuleTagBase {
                 PagingModule pagingModule = getPageModule();              
                 pagingModule.setVar(var);
                 pagingModule.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
-                pagingModule.setModuleParameters(parameters);
+                pagingModule.setModuleParameters(parameters);             
                 
                 pagingModule.prePagingRender(pageContext);
                 
                 int pageSize = pagingModule.getPageSize(pageContext);
                 int pageNo = pagingModule.getPageNumber(pageContext);
                 int totalItems = pagingModule.totalItems();
-                int from = (pageNo == 0 ? 0 : (pageNo * pageSize) - 1);
-                int to = (pageNo * pageSize < totalItems) ? pageNo * pageSize : totalItems;
+                int from = (pageNo == 0 ? 0 : (pageNo * pageSize));
+                int to = ((pageNo + 1) * pageSize);
+                to = (to > totalItems) ? totalItems : to;
+                System.out.println("PAGESIZE" + pageSize);
+                System.out.println("PNO" + pageNo);
+                System.out.println("TOTAL" + totalItems);
+                System.out.println("VANNNN" + from + "TOTTTT" + to);
                 
                 PaginatedDataBean paginatedData = new PaginatedDataBean();
                 paginatedData.setItems(pagingModule.getElements(from, to));
@@ -67,6 +72,14 @@ public class PagingModuleTag extends ModuleTagBase {
                 paginatedData.setPageSize(pageSize);
                 paginatedData.setPageNo(pageNo);
                 
+                try {
+                    String pageParameter = pagingModule.getPageParameter();
+                    paginatedData.setPageParameter(pageParameter);
+                } catch (Exception e) {
+                    log.warn("PageParameter not available");
+                }
+                
+                log.debug("paginatedData: " + paginatedData);
                 pageContext.setAttribute(var, paginatedData);
                 } catch (Exception e) {
                     throw new JspException(e);

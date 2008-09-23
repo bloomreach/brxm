@@ -5,6 +5,8 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.template.TemplateException;
+
 public interface PagingModule extends Module {
     public static final String PAGESIZE_CMS_PROPERTY = "pageSize";
     public static final String PAGE_PARAMETER_CMS_PROPERTY = "pageParameter";
@@ -30,5 +32,6 @@ public interface PagingModule extends Module {
     
     int getPageSize(PageContext context);    
     public int getPageNumber(PageContext context);
+    public String getPageParameter() throws TemplateException;
     
 }

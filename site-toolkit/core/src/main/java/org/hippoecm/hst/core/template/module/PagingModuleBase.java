@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PagingModuleBase extends ModuleBase implements PagingModule {
     private static final Logger log = LoggerFactory.getLogger(PagingModuleBase.class);
-    private static int DEFAULT_PAGESIZE = 10;
+    private static int DEFAULT_PAGESIZE = 3;
   
     public int getPageSize(PageContext context) {            
         String propertyValue = null;
@@ -30,7 +30,7 @@ public abstract class PagingModuleBase extends ModuleBase implements PagingModul
     public int getPageNumber(PageContext context) {
         String pageParameter = null;
         try {
-            pageParameter = pageContainerModule.getPropertyValue(PagingModule.PAGE_PARAMETER_CMS_PROPERTY);
+            pageParameter = getPageParameter();
             HttpServletRequest request = (HttpServletRequest) context.getRequest();
             String pageParameterValue = request.getParameter(pageParameter);
             try {
@@ -47,6 +47,10 @@ public abstract class PagingModuleBase extends ModuleBase implements PagingModul
 
     public void prePagingRender(PageContext context) {
          //empty 
+    }
+    
+    public String getPageParameter() throws TemplateException {
+        return pageContainerModule.getPropertyValue(PagingModule.PAGE_PARAMETER_CMS_PROPERTY);
     }
     
     

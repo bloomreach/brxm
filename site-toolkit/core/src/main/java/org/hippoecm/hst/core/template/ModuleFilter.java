@@ -93,6 +93,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 						} 
 			    }
 			}
+			
 			request.getSession().removeAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
 			if (forward != null) {			
 				HttpServletResponse resp = (HttpServletResponse) response;
