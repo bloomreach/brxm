@@ -23,15 +23,27 @@ public class ContentModule extends ModuleBase {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
 		String path = null;
-		try {
-			path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
-		} catch (TemplateException e) {
-			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
-		}
-		if(path == null) {
-			pageContext.setAttribute(getVar(),null);
-			return;
-		}
+		
+        boolean params = false;
+        if (moduleParameters != null) {
+            params = true;
+        }
+        if (params && moduleParameters.containsKey(ModuleNode.CONTENTLOCATION_PROPERTY_NAME)) {
+            path = moduleParameters.get(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+        }
+        else {
+    		try {
+    			path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+    		} catch (TemplateException e) {
+    			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
+    		}
+    		if(path == null) {
+    			pageContext.setAttribute(getVar(),null);
+    			return;
+    		}
+        }
+		
+		
 		ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
 
 		ContentModuleNode contentModuleNode = null;
