@@ -145,12 +145,8 @@ public class LRUMemoryCacheImpl implements Cache{
         return stats;
     }
 
-    public void disable(boolean disable) {
-       if(disable) {
-           active = false;
-       } else {
-           active = true;
-       }
+    public void setActive(boolean active) {
+       this.active = active;
     }
 
     public boolean isActive() {

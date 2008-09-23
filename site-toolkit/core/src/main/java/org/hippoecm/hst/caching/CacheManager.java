@@ -31,19 +31,13 @@ import org.slf4j.LoggerFactory;
 public class CacheManager {
     
     private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
-    private static final String APPLICATION_CACHES = "org.hippoecm.hst.caching.applicationcaches";
-    
     public static final Map<String,Cache> caches = new HashMap<String, Cache>();
-    private static boolean isApplicationScopeSet = false;
+    public static boolean newCacheIsEnabled = true;
     
     public static Cache getCache(PageContext ctx) {
        return getCache(ctx, null);
     }
     public static Cache getCache(PageContext ctx, String clazz) {
-        if(!isApplicationScopeSet) {
-            ctx.setAttribute(APPLICATION_CACHES, caches);
-            isApplicationScopeSet = true;
-        }
         HttpServletRequest request = (HttpServletRequest)ctx.getRequest();
         return getCache(request, clazz);
     }
@@ -80,6 +74,7 @@ public class CacheManager {
                     log.warn("Cache instantiation failed for '" + clazz + "'");
                     return null;
                 }
+                cache.setActive(newCacheIsEnabled);
                 caches.put(cacheName, cache);
                 return cache;
             }

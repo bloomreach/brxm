@@ -65,7 +65,7 @@ public class URLMappingImpl implements URLMapping {
         this.contextPrefix = contextPrefix;
         this.contextPath = contextPath;
         this.uriLevels = uriLevels;
-        this.rewriteLRUCache = new RewriteLRUCache(1000);
+        this.rewriteLRUCache = new RewriteLRUCache(500);
         this.canonicalPathConfiguration = new ArrayList<String>();
         try {
             long start = System.currentTimeMillis();

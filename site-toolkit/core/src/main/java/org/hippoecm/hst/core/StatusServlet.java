@@ -89,6 +89,13 @@ public class StatusServlet extends HttpServlet {
         boolean disableAll = Boolean.parseBoolean(req.getParameter("disableall"));
         boolean enableAll = Boolean.parseBoolean(req.getParameter("enableall"));
         
+        if(disableAll) {
+            CacheManager.newCacheIsEnabled = false;
+        }
+        if(enableAll) {
+            CacheManager.newCacheIsEnabled = true;
+        }
+        
         for(Iterator<Entry<String, Cache>> it = CacheManager.getCaches().entrySet().iterator(); it.hasNext(); ){
             i = (++i % 2);
             Entry<String, Cache> entry = it.next();
@@ -102,13 +109,13 @@ public class StatusServlet extends HttpServlet {
                 entry.getValue().clear();
             }
             if(changeActive!=null && changeActive.equals(entry.getKey())) {
-                entry.getValue().disable(entry.getValue().isActive());
+                entry.getValue().setActive(entry.getValue().isActive());
             }
             if(disableAll) {
-                entry.getValue().disable(true);
+                entry.getValue().setActive(false);
             }
             if(enableAll) {
-                entry.getValue().disable(false);
+                entry.getValue().setActive(true);
             }
             
             tdStart(writer, "Options", getColor(i,entry.getValue().isActive())); 

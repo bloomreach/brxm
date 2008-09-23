@@ -32,11 +32,11 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
 
     private long lastEvictionTime = 0;
     private Map<Event, List<WeakReference<CacheKey>>> eventMap; // This is the event registry
-    private int registerCounter;
-    private int registerCleanUpLimit;
+    private long registerCounter;
+    private long registerCleanUpLimit;
     
-    private int eventsProcessed = 0;
-    private int eventsRegistered = 0;
+    private long eventsProcessed = 0;
+    private long cachekeyEvictions = 0;
 
     public EventCacheImpl(int size) {
         super(size);
@@ -79,6 +79,7 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
                     CacheKey key = weakKey.get();
                     if (key != null) {
                         this.remove(key);
+                        cachekeyEvictions++;
                     }
                 }
                 eventMap.remove(event);
@@ -94,7 +95,6 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
          * When an event arrives, all entries with key1, key2, key3 are evicted from this cache.
          * For memory reason, the CacheKey's are hold in WeakReferences. 
          */
-        eventsRegistered++;
         registerCounter++;
         synchronized (eventMap) {
             List<WeakReference<CacheKey>> objects = eventMap.get(eventKey);
@@ -155,7 +155,8 @@ public class EventCacheImpl extends LRUMemoryCacheImpl implements EventCache {
             stats.put("Registry size ", String.valueOf(this.eventMap.size()));
             stats.put("Last evition time ", String.valueOf(getLastEvictionTime()));
             stats.put("Processed events ", String.valueOf(this.eventsProcessed));
-            stats.put("Registered events ", String.valueOf(this.eventsRegistered));
+            stats.put("Registered events ", String.valueOf(this.eventMap.size()));
+            stats.put("Number of keys evicted by events ", String.valueOf(this.cachekeyEvictions));
         }
         return stats;
     }
