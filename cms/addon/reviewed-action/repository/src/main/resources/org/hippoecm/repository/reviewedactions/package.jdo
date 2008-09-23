@@ -33,6 +33,7 @@
       <datastore-identity strategy="native"/>
       <field name="publishedWorkflow" column="../{..}[hippostd:state='published']"/>
       <field name="unpublishedWorkflow" column="../{..}[hippostd:state='unpublished']"/>
+      <field name="draftWorkflow" column="../{..}[hippostd:state='draft']"/>
     </class>
     <class name="BasicRequestWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
