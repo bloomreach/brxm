@@ -439,17 +439,16 @@ public class DerivedDataEngine {
                 } else
                     changed = true;
                 if(changed) {
-                    modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
+                    try {
+                        modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues);
+                    } catch(ItemNotFoundException ex) {
+                        logger.info("write error on modified node "+modified.getPath(), ex);
+                    }
                 }
             }
         } catch(ConstraintViolationException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
-        } catch(RepositoryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            logger.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } finally {
-
             if(logger.isDebugEnabled())
                 logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
         }

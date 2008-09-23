@@ -77,10 +77,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
     String configuration;
     List<WorkflowInvocation> invocationChain;
     ListIterator<WorkflowInvocation> invocationIndex;
+    DocumentManagerImpl documentManager;
 
     public WorkflowManagerImpl(Session session, Session rootSession) {
         this.session = session;
         this.rootSession = rootSession;
+        documentManager = new DocumentManagerImpl(rootSession);
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH+"/"+
                     HippoNodeType.WORKFLOWS_PATH).getUUID();
@@ -89,11 +91,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } catch (RepositoryException ex) {
             log.error("workflow manager configuration failed: "+ex.getMessage(), ex);
         }
-    }
-
-    public WorkflowManagerImpl(Session session, String uuid) {
-        this.session = session;
-        configuration = uuid;
     }
 
     public Session getSession() throws RepositoryException {
@@ -171,7 +168,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                     try {
                         Class documentClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
-                        if (document.getIdentity()!=null&&session.getNodeByUUID(document.getIdentity()).isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
+                        if (document.getIdentity() != null &&
+                            session.getNodeByUUID(document.getIdentity()).isNodeType(
+                                                           workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
                             log.debug("found workflow in category "+category+" for document");
                             return workflowNode;
                         }
@@ -240,7 +239,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                  * only one such session, while there may be many decorated ones.
                  */
                 synchronized (SessionDecorator.unwrap(rootSession)) {
-                    DocumentManagerImpl documentManager = new DocumentManagerImpl(rootSession);
+                    documentManager.reset();
                     Workflow workflow;
                     Class clazz = Class.forName(classname);
                     if (InternalWorkflow.class.isAssignableFrom(clazz)) {
