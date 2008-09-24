@@ -38,10 +38,12 @@ public class UrlUtilities {
                 encodedUrl.append("/"+ISO9075Helper.decodeLocalName(uriParts[i]));
             }
         }
+        System.out.println(" rewrite  == "  + rewrite + "  -->  " + encodedUrl.toString());
         return encodedUrl.toString();
     }
     
     public static String decodeUrl(String url){
+        long start = System.nanoTime();
         try {
             url =  URLDecoder.decode(url,"utf-8");
         } catch (UnsupportedEncodingException e) {
@@ -51,6 +53,14 @@ public class UrlUtilities {
         if(url.startsWith("/")) {
             url = url.substring(1);
         }
+        
+        // TODO for the cms tag '2.01.00.13171' we have an issue regarding not encoded date nodes (for example 2008/09/23)
+        // therefor for now, a hardcoded fix for nodes below /content/gallery and /content/assets
+        boolean isBinary = false;
+        if(url.startsWith("content/gallery") || url.startsWith("content/assets")) {
+            isBinary = true;
+        }
+        
         String[] uriParts = url.split("/");
         int nrParts = uriParts.length;
         for(int i = 0 ; i < nrParts ; i++) {
@@ -60,23 +70,43 @@ public class UrlUtilities {
                   *  /handle/document concept
                   */  
                  if(uriParts[i].endsWith(HTML_POSTFIX) && !uriParts[i].equals(uriParts[i-1])) {
-                     // For now, just replace " " with "_x0020_" to get jcr path
                      String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length());
                      lastPart = ISO9075Helper.encodeLocalName(lastPart);
                      decodedUrl.append("/"+lastPart+ "/"+lastPart);
                  } else {
+                     // TODO currently the last path part can contain a colon (for hippo:resources), which should not be encoded. This might need some
+                     // changing when cms changes this behavior.
+                     
                      String uriPart = uriParts[i];
-                     uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                     if(uriPart.contains(":")) {
+                         // do not encode
+                     }
+                     else if(isBinary && isInteger(uriPart)) {
+                         // do not encode
+                     } else {
+                         uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                     }
                      decodedUrl.append("/"+uriPart);
                  }
             } else {
                 String uriPart = uriParts[i];
-                uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                if(isBinary && isInteger(uriPart)) {
+                    // do not encode
+                } else {
+                    uriPart = ISO9075Helper.encodeLocalName(uriPart);
+                }
                 decodedUrl.append("/"+uriPart);
             }
         }
-        
-        // for decoding a url, you have to encode the url to get jcr node paths
         return decodedUrl.toString();
+    }
+
+    private static boolean isInteger(String uriPart) {
+        try {
+            Integer.parseInt(uriPart);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
