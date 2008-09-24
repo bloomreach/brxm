@@ -25,7 +25,7 @@
   
   <name>HST2 Project website</name>
   <description>HST2 Project website</description>
-  <artifactId>${artifactId}-site</artifactId>
+  <artifactId>${rootArtifactId}-site</artifactId>
   <groupId>${groupId}</groupId>
   <version>${version}</version>
   <packaging>war</packaging>
