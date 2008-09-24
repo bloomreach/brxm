@@ -2,6 +2,7 @@ package org.hippoecm.hst.core.mapping;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -13,7 +14,6 @@ public class UrlUtilities {
     public static final String HTML_POSTFIX = ".html";
     
     public static String encodeUrl(String contextPath, int uriLevels, String rewrite){
-        
         if(rewrite.startsWith("/")) {
             rewrite = rewrite.substring(1);
         }
@@ -35,15 +35,19 @@ public class UrlUtilities {
                 encodedUrl.append(HTML_POSTFIX);
             } else {
                 // for encoding a url, you have to decode the jcr node paths :-)
-                encodedUrl.append("/"+ISO9075Helper.decodeLocalName(uriParts[i]));
+                String decodedLocalName = ISO9075Helper.decodeLocalName(uriParts[i]);
+                try {
+                    decodedLocalName = URLEncoder.encode(decodedLocalName, "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                   // utf-8 is supported
+                }
+                encodedUrl.append("/"+decodedLocalName);
             }
         }
-        System.out.println(" rewrite  == "  + rewrite + "  -->  " + encodedUrl.toString());
         return encodedUrl.toString();
     }
     
     public static String decodeUrl(String url){
-        long start = System.nanoTime();
         try {
             url =  URLDecoder.decode(url,"utf-8");
         } catch (UnsupportedEncodingException e) {
