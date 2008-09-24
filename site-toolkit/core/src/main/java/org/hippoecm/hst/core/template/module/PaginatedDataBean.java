@@ -103,8 +103,6 @@ public class PaginatedDataBean {
         };
     }
     
-    
-    
     public Map getCurrentPageBlock() {
         return new ELPseudoMap() {
             public Object get(Object bSize) {
@@ -143,7 +141,7 @@ public class PaginatedDataBean {
                  
                  int blockNo = pageNo / blockSize; 
                  int lastOfBlock = ((blockNo + 1) * blockSize) - 1;
-                 int totalPages = getTotalPages();
+                 int totalPages = getTotalPages() == 0 ? 0 : getTotalPages() - 1;
                  return new Long(totalPages < lastOfBlock ? totalPages : lastOfBlock);
             }
         };
@@ -171,7 +169,6 @@ public class PaginatedDataBean {
         sb.append(", pageNo=").append(pageNo);
         sb.append("]");
         return sb.toString();
-        
     }
     
     

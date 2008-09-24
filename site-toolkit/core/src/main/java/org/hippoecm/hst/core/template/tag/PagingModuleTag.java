@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  *  Tag for paginated display of module data. This tag is almost identical to the module tag.
  *  The difference that a render call does not result in a call to the execute() method. Instead it
- *  gets the items of the paginated view and puts them in a bean that is made available to the
+ *  gets the items of the paginated view and puts them in a bean that is made available in the
  *  pageScope.
  *   
  *

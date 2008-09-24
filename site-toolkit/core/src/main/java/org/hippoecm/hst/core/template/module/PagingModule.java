@@ -7,6 +7,10 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.TemplateException;
 
+/**
+ * The module interface used by the PagingModuleTag. 
+ *
+ */
 public interface PagingModule extends Module {
     public static final String PAGESIZE_CMS_PROPERTY = "pageSize";
     public static final String PAGE_PARAMETER_CMS_PROPERTY = "pageParameter";

@@ -7,6 +7,12 @@ import org.hippoecm.hst.core.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Non specific PagingModule functionality like getting the pagesize, pagenumber etc.
+ * Things that should be the same for standard modules that want to enable paginated
+ * browsing.
+ *
+ */
 public abstract class PagingModuleBase extends ModuleBase implements PagingModule {
     private static final Logger log = LoggerFactory.getLogger(PagingModuleBase.class);
     private static int DEFAULT_PAGESIZE = 3;
