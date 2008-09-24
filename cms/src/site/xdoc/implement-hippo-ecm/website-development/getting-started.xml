@@ -58,7 +58,7 @@ to the correct machine name.
                 <ol>
                     <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
                     <li>Unpack the zip</li>
-                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
+                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to apache-tomcat-6.0.16\lib</li>
                     <li>Copy the ECM Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
 		    <li>Copy the HST2 Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\site.war</li>
                     <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
