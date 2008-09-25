@@ -6,10 +6,12 @@ cd ../..
 
 cd package/war/src/main/webapp
 ln -s -v ../../../../skin/src/main/webapp skin
+ln -s -v ../../../../layout/src/main/webapp layout
 ln -s -v ../../../../../addon/xinha/src/main/webapp xinha
 
 cd ../../../../../quickstart/war/src/main/webapp
 ln -s -v ../../../../../package/skin/src/main/webapp skin
+ln -s -v ../../../../../package/layout/src/main/webapp layout
 ln -s -v ../../../../../addon/xinha/src/main/webapp xinha
 
 cd ../../../../../addon/xinha/src/main/webapp/xinha/plugins
