@@ -49,10 +49,18 @@
       <type>jar</type>
     </dependency>
 
-    <!-- Default application skin (must be included before actual front-end application) -->
+    <!-- Application skin (must be included before actual front-end application) -->
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-package-skin</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>war</type>
+    </dependency>
+    
+    <!-- Application layout (must be included before actual front-end application) -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-layout</artifactId>
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
     </dependency>
@@ -69,6 +77,14 @@
       <artifactId>hippo-ecm-frontend-application</artifactId>
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
+    </dependency>
+    
+    <!-- Hippo ECM authorization configuration -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-auth</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
     </dependency>
 
     <!-- Hippo ECM application configuration -->
@@ -233,6 +249,11 @@
               <groupId>org.hippoecm</groupId>
               <artifactId>hippo-ecm-package-skin</artifactId>
               <contextRoot>/skin</contextRoot>
+            </webModule>
+            <webModule>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-package-layout</artifactId>
+              <contextRoot>/layout</contextRoot>
             </webModule>
             <webModule>
               <groupId>org.hippoecm</groupId>
