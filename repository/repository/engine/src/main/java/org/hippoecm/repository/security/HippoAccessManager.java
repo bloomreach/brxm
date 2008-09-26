@@ -480,6 +480,11 @@ public class HippoAccessManager implements AccessManager {
         }
     }
 
+    public boolean hasPrivilege(String absPath, String[] privileges) {
+        // FIXME TODO HREPTWO-1628
+        return true;
+    }
+
     /**
      * {@inheritDoc}
      */
