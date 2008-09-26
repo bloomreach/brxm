@@ -141,18 +141,37 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
-        
+
         add(new DropBehavior(context, config) {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void onDrop(IModel model, AjaxRequestTarget target) {
-                if(model instanceof JcrNodeModel) {
+                if (model instanceof JcrNodeModel) {
                     JcrNodeModel nodeModel = (JcrNodeModel) model;
-                    //test for nodetype to select picker
-                    ImageItem item = imagePickerBehavior.getImageItemDAO().insertImageModel(nodeModel); 
-                    if(item != null) {
-                        target.getHeaderResponse().renderOnDomReadyJavascript("xinha_editors." + configuration.getName() + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "');");
+
+                    HippoNode node = nodeModel.getNode();
+                    try {
+                        if (node.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                            //String mimeType = node.getProperty("jcr:mimeType").getValue().getString();
+
+                            //The ImagePicker expects a node of type ImageSet but as this is not a 'generic' nodeType we assume
+                            //that the node dropped on Xinha is the thumbnail of an Imageset and calling parent
+                            //will give us the ImageSet node
+                            ImageItem item = imagePickerBehavior.getImageItemDAO().insertImageModel(
+                                    nodeModel.getParentModel());
+
+                            if (item != null) {
+                                boolean openModal = item.getResourceDefinitions().size() > 1;
+                                target.getHeaderResponse().renderOnDomReadyJavascript(
+                                        "xinha_editors." + configuration.getName()
+                                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', "
+                                                + openModal + ");");
+                            }
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("An error occurred while handling the onDrop event with node["
+                                + nodeModel.getItemModel().getPath() + "]", e);
                     }
                 }
             }

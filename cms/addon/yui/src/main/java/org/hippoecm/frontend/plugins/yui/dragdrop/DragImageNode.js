@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-YAHOO.hippo.DragDropManager.addDraggable('${id}', '${label}', ${groups}, ${callbackFunction}, '${callbackUrl}', ${callbackParameters}, ${modelType}, ${customConfig});
+YAHOO.hippo.DragDropManager.addDraggable('${id}', '${label}', ${groups}, ${callbackFunction}, '${callbackUrl}', ${callbackParameters}, ${modelType});
