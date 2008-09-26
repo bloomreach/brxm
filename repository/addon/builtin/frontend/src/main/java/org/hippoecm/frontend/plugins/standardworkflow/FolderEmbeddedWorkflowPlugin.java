@@ -90,10 +90,6 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
             FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
             workflow.delete(item);
         }
-
-        @Override
-        public void cancel() {
-        }
     }
 }
 

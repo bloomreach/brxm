@@ -57,10 +57,6 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
         plugin.flushNodeModel(nodeModel);
     }
 
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         return "Add a new Node";
     }

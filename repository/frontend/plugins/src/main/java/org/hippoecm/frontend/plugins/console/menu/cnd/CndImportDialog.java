@@ -111,12 +111,4 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
         }
     }
 
-
-    @Override
-    protected void cancel() {
-    }
-
-    @Override
-    protected void ok() throws Exception {
-    }
 }

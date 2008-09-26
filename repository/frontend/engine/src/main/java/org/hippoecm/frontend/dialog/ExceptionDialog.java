@@ -15,39 +15,25 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 
-public class ExceptionDialog extends WebPage {
+public class ExceptionDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-    private IServiceReference<IDialogService> windowRef;
+    
+    private  Exception exception;
 
-    public ExceptionDialog(IPluginContext context, IDialogService dialogService, String exception) {
-        windowRef = context.getReference(dialogService);
-
-        add(new Label("exception", exception));
-        add(new AjaxLink("ok") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                try {
-                    getDialogWindow().close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    public ExceptionDialog(IPluginContext context, IDialogService dialogService, Exception exception) {
+        super(context, dialogService);
+        this.exception = exception;
+        cancel.setVisible(false);
+        add(new Label("message", exception.getMessage()));
     }
 
-    protected IDialogService getDialogWindow() {
-        return windowRef.getService();
+    public String getTitle() {
+        return exception.getMessage();
     }
+    
 }

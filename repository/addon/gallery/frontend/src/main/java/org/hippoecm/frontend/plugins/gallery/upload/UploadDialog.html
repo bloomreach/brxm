@@ -14,11 +14,9 @@
   limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:head>
-    <link href="skin/style.css" type="text/css" rel="stylesheet"/>
-  </wicket:head>
-  <body class="dialog image-add-48">
-    <span wicket:id="wizard"/>
-    <strong><span wicket:id="exception"></span></strong>
-  </body>
+  <wicket:extend>
+    <div class="dialog image-add-48">
+      <span wicket:id="wizard"/>
+    </div>
+  </wicket:extend>
 </html>

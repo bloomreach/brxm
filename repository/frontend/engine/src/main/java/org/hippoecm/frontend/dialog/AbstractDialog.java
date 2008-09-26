@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDialog extends WebPage implements ITitleDecorator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
     protected AjaxLink ok;
@@ -143,9 +142,11 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
         onCloseDialog();
     }
 
-    protected abstract void ok() throws Exception;
+    protected void ok() throws Exception {
+    }
 
-    protected abstract void cancel();
+    protected void cancel() {
+    }
 
     protected void onCloseDialog() {
     }

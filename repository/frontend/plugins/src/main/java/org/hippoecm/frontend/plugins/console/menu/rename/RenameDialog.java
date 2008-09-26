@@ -83,10 +83,6 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
-    @Override
-    protected void cancel() {
-    }
-
     public String getTitle() {
         return "Rename Node";
     }

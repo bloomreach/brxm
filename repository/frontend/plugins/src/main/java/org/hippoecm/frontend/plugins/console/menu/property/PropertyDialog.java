@@ -114,10 +114,6 @@ public class PropertyDialog extends AbstractDialog {
         plugin.setModel(newNodeModel);
     }
 
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         return "Add a new Property";
     }

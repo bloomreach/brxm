@@ -112,7 +112,4 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
 }

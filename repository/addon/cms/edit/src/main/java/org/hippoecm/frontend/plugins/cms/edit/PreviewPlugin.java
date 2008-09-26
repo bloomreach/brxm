@@ -336,16 +336,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
 
         TooManyEditorsWarningDialog(IPluginContext context, IDialogService dialogService) {
             super(context, dialogService, "Warning: Only 4 editors can be open at the same time.  The document will be shown when you close one of the existing editors.");
-
             cancel.setVisible(false);
-        }
-
-        @Override
-        protected void cancel() {
-        }
-
-        @Override
-        protected void ok() throws Exception {
         }
 
         public String getTitle() {

@@ -181,7 +181,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                 IDialogService.class);
         if (dialogService != null) {
-            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, ex.getMessage()));
+            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, ex));
         }
     }
 

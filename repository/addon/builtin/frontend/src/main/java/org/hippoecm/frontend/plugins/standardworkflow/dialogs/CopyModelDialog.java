@@ -83,8 +83,4 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
 }

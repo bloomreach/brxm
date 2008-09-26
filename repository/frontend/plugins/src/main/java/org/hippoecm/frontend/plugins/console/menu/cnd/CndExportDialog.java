@@ -128,14 +128,6 @@ public class CndExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    @Override
-    public void ok() {
-    }
-
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         return "Export CND of namespace";
     }

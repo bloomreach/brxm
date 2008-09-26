@@ -109,14 +109,6 @@ public class ContentExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    @Override
-    public void ok() {
-    }
-
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
         String path;

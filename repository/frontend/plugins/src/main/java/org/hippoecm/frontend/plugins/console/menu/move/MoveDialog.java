@@ -115,8 +115,4 @@ public class MoveDialog extends LookupDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
 }

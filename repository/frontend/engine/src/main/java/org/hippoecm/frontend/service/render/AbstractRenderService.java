@@ -25,12 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
+import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
@@ -118,6 +120,18 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
             }
             if (sb != null) {
                 cssClasses = new String(sb);
+            }
+        }
+        
+        String[] skins = config.getStringArray(SKIN_ID);
+        if (skins != null) {
+            IDialogService dialogService = getDialogService();
+            for (String skin : skins) {
+                HeaderContributor cssContributor = HeaderContributor.forCss(skin); 
+                add(cssContributor);
+                if (dialogService != null && dialogService instanceof DialogWindow) {
+                    ((DialogWindow) dialogService).addDialogBehavior(cssContributor);
+                }
             }
         }
 

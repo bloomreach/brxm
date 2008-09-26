@@ -203,10 +203,6 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     }
 
     @Override
-    protected void cancel() {
-    }
-
-    @Override
     protected void ok() throws Exception {
         MenuPlugin plugin = pluginRef.getService();
         plugin.setModel(nodeModel);

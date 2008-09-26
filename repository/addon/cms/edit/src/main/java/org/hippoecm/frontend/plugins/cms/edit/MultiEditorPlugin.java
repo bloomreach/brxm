@@ -125,7 +125,7 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager,
                                 }
                             } catch (RepositoryException e) {
                                 if (dialogService != null) {
-                                    dialogService.show(new ExceptionDialog(context, dialogService, e.getMessage()));
+                                    dialogService.show(new ExceptionDialog(context, dialogService, e));
                                     log.error(e.getClass().getName() + ": " + e.getMessage());
                                 } else {
                                     log.error(e.getMessage());
