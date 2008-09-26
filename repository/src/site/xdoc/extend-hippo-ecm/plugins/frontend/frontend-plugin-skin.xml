@@ -38,7 +38,7 @@
 
       <p>
         The most obvious part of a skin is the cascading style sheet (CSS) file.  The
-        CSS file determines the default font sizes, spacing, etcetera to be used for
+        CSS file determines the default font sizes, spacing, etc to be used for
         all elements.  Also part of the skin are icons in use by either CSS file (such
         as declaring a button or background image) or elsewhere.
       </p>
@@ -46,19 +46,17 @@
       <p>
         There always needs to be a skin with the CSS file and icons to be used,  a
         packaging project like the CMS needs to supply it. The default
-        CMS skin is supplied in the project <code>hippo-ecm-cms-skin</code>. A skin
+        CMS skin is supplied in the project <code>hippo-ecm-package-skin</code>. A skin
         itself is an add-on like others and can be combined with other skin plugins.
       </p>
 
     <subsection name="Create your own skin">
-
       <p>
         You can create your own skin by creating a project with the same structure and
-        content as the hippo-ecm-cms-skin project as supplied in
-        <code>cms/skin</code>.  You can also take the hippo-ecm-cms-skin WAR,
-        rename it and modify it to your needs.  This works because this add-on is just
-        a collection of files, and building the WAR is just a packaging of the files.
-        No actual compilation of sources is required.
+        content as the hippo-ecm-package-skin project. You can also take the 
+        hippo-ecm-package-skin WAR, rename it and modify it to your needs.  This works
+        because this add-on is just a collection of files, and building the WAR is just
+        a packaging of the files. No compilation of sources is required.
       </p>
 
       <p>
@@ -72,23 +70,27 @@
 
       <p>
         You can <em>not</em> change the context-root of the skin.  All skin files in
-        the final produced end-application are retrievale under the <code>skin/</code>
+        the final produced end-application are retrieved under the <code>skin/</code>
         path.
       </p>
 
     </subsection>
 
     <subsection name="What to customize">
-
       <p>
         <dl>
           <dt>Cascading style sheets</dt>
           <dd>
-            When creating your own skin you can modify the cascading style sheet in use,
-            such as the <code>src/main/webapp/style.css</code>.  In the packaged WAR this
-            file is placed in the root of the WAR.  The <code>style.css</code> is the
-            primary style file in use, but there are others for specific screens, such as
-            the login screen.
+            When creating your own skin you can modify the default style sheet in use
+            (<code>screen.css</code>), or create your own style sheet file and
+            configure the application to use that style sheet instead.
+            Configuring an application to use a specific style sheet is done by adding a
+            property 'wicket.skin' to the applications root plugin.
+          </dd>
+          
+          <dd>
+          For example, add a file 'mystyle.css' next to 'screen.css' and set the property
+          /hippo:configuration/hippo:frontend/cms-static/root/wicket.skin to 'skin/mystyle.css'
           </dd>
 
           <dt>Icons</dt>
