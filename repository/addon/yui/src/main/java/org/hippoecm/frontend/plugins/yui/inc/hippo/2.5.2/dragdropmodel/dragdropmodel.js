@@ -248,7 +248,6 @@ YAHOO.extend(YAHOO.hippo.DDImage, YAHOO.hippo.DDBaseModel, {
         }
         YAHOO.hippo.DDImage.superclass.initPlayer.call(this, id, sGroup, config);
         
-        this.nodePath = config.nodePath;
         this.currentGroup = config.currentGroup;
     },
     
@@ -269,57 +268,5 @@ YAHOO.extend(YAHOO.hippo.DDImage, YAHOO.hippo.DDBaseModel, {
     setEndStyle: function() {
         YAHOO.util.Dom.setStyle(this.getEl(), "opacity", 1);
     },
-    
-    onDragDropAction: function(dropId) {
-        var textAreas = YAHOO.util.Dom.getElementsByClassName('xinha_textarea', 'textarea', YAHOO.util.Dom.get(dropId));
-        if(textAreas == null || textAreas[0] == null)
-            return null;
-        
-        var id = textAreas[0].id;
-        var x= eval('xinha_editors.' + id);
-
-        var img = new Image();
-        img.src = 'drop-on-xinha' + this.nodePath;
-        if ( Xinha.is_ie ) {
-            var sel = x.getSelection();
-            var range = x.createRange(sel);
-            //TODO: check if this still works.
-            x._doc.execCommand("insertimage", false, img.src);
-            img = range.parentElement();
-            // wonder if this works...
-            if ( img.tagName.toLowerCase() != "img" ) {
-                img = img.previousSibling;
-            }
-        } else {
-            //gecko/webkit
-            x.insertNodeAtSelection(img);
-            if ( !img.tagName ) {
-                // if the cursor is at the beginning of the document
-                img = x.range.startContainer.firstChild;
-            }
-        }
-        x._insertImage(img);
-    },
-    
-    cancelCallback: function() {
-        return true;
-    }
-
-});
-
-YAHOO.hippo.DDInsertImage = function(id, sGroup, config) { 
-    YAHOO.hippo.DDInsertImage.superclass.constructor.apply(this, arguments); 
-       this.initPlayer(id, sGroup, config); 
-};
-
-YAHOO.extend(YAHOO.hippo.DDInsertImage, YAHOO.hippo.DDImage, {
-    TYPE: "DDInsertImage",
-    
-    cancelCallback: function() {
-        return false;
-    },
-    
-    onDragDropAction: function(dropId) {
-    }
     
 });

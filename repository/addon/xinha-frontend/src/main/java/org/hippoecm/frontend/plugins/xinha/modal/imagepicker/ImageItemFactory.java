@@ -23,13 +23,13 @@ import java.util.List;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,6 @@ public class ImageItemFactory implements IClusterable {
     private final static Logger log = LoggerFactory.getLogger(ImageItemFactory.class);
 
     final static String BINARIES_PREFIX = "binaries";
-    final static String DROP_PREFIX = "drop-on-xinha";
 
     private JcrNodeModel nodeModel;
 
@@ -57,28 +56,18 @@ public class ImageItemFactory implements IClusterable {
                 // find the nodename of the facetselect
                 String resourcePath = urlValue.substring(BINARIES_PREFIX.length());
                 JcrNodeModel linkedImageModel = new JcrNodeModel(resourcePath).getParentModel();
-                try {
-                    Node imageNode = linkedImageModel.getNode().getCanonicalNode();
-                    if (imageNode != null) {
-                        return createImageItem(imageNode);
+                HippoNode virtualImageNode = linkedImageModel.getNode();
+                if (virtualImageNode != null) {
+                    try {
+                        Node imageNode = linkedImageModel.getNode().getCanonicalNode();
+                        if (imageNode != null) {
+                            return createImageItem(imageNode);
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Error retrieving canonical node for imageNode[" + resourcePath + "]", e);
                     }
-                } catch (RepositoryException e) {
-                    log.error("Error retrieving canonical node for imageNode[" + resourcePath + "]", e);
-                }
-            } else if (urlValue.startsWith(DROP_PREFIX)) {
-                //reset width and height
-                values.put(XinhaImage.WIDTH, null);
-                values.put(XinhaImage.HEIGHT, null);
-
-                String resourcePath = urlValue.substring(DROP_PREFIX.length());
-                try {
-                    //test if node exists
-                    JcrNodeModel mod = new JcrNodeModel(resourcePath);
-                    return createImageItem(mod.getNode());
-                } catch (PathNotFoundException e) {
-                    log.warn("resourcePath not found: " + resourcePath);
-                } catch (RepositoryException e) {
-                    log.error(e.getMessage());
+                } else {
+                    log.error("Error retrieving virtual node for imageNode[" + resourcePath + "]");
                 }
             }
         }

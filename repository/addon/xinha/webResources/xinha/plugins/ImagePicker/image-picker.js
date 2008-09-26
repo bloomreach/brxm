@@ -95,18 +95,14 @@ ImagePicker.prototype.getPrefix = function() {
 }
 
 ImagePicker.prototype.shouldPrefix = function(url) {
-    if(this.checkPrefixes == null) {
-        this.checkPrefixes = this.noReplacePrefixes;
-        this.checkPrefixes.push(this.getPrefix());
-    }    
-    for(var i=0; i<this.checkPrefixes.length; i++) {
-        if(url.indexOf(this.checkPrefixes[i]) == 0) 
+    for (var i=0; i<this.noReplacePrefixes.length; i++) {
+        if(url.indexOf(this.noReplacePrefixes[i]) == 0) 
             return false;
     }
     return true;
 }
 
-ImagePicker.prototype.insertImage = function(url) {
+ImagePicker.prototype.insertImage = function(url, openModal) {
 	url = ImagePicker.encode(url);
     if ( Xinha.is_ie )
     {
@@ -133,6 +129,11 @@ ImagePicker.prototype.insertImage = function(url) {
             // if the cursor is at the beginning of the document
             img = this.editor.range.startContainer.firstChild;
         }
+    }
+    if(openModal) {
+    	img.width = null;
+    	img.height = null;
+    	this.editor._insertImage(img);
     }
 }
 
@@ -180,10 +181,11 @@ Xinha.prototype._insertImage = function(image)
   alert(image.vspace +' '+ image.getAttribute('vspace') + ' ' + image.getAttribute('vspace',2) + ' ' + getSpecifiedAttribute(image,'vspace') );
     alert(image.hspace +' '+ image.getAttribute('hspace') + ' ' + image.getAttribute('hspace',2) + ' ' + getSpecifiedAttribute(image,'hspace') );
   */
+
   outparam =
     {
       f_base   : base,
-      f_url    : this.stripBaseURL(image.getAttribute('src',2)), // the second parameter makes IE return the value as it is set, as opposed to an "interpolated" (as MSDN calls it) value
+      f_url    : decodeURI(this.stripBaseURL(image.getAttribute('src',2))), // the second parameter makes IE return the value as it is set, as opposed to an "interpolated" (as MSDN calls it) value
       f_alt    : image.alt,
       f_border : image.border,
       f_align  : image.align,

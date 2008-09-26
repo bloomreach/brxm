@@ -23,7 +23,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.dragdrop.ImageNodeDragBehavior;
-import org.hippoecm.frontend.plugins.yui.dragdrop.InsertImageNodeDragBehavior;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 
@@ -55,11 +54,8 @@ public class ImageContainer extends Panel {
             }
         };
 
-        //TODO: if ImageNode has 1 ResourceDefinition other than thumbnail, we can 
-        //directly insert the Image using InsertImageNodeDragbehavior, otherwise
-        //use ImageNodeDragBehavior which first shows the ImagePickerModal 
-        String parentPath = model.getParentModel().getItemModel().getPath();
-        img.add(new InsertImageNodeDragBehavior(pluginContext, pluginConfig, parentPath));
+        String path = model.getItemModel().getPath();
+        img.add(new ImageNodeDragBehavior(pluginContext, pluginConfig, path));
         add(img);
     }
 
