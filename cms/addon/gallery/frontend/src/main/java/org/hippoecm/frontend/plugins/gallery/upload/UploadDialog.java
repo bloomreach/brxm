@@ -20,10 +20,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.wizard.IWizardModel;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -32,21 +30,20 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 
-public class UploadDialog extends WebPage implements ITitleDecorator {
+public class UploadDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private UploadWizard wizard;
     private IServiceReference<IJcrService> jcrServiceRef;
-    private String workflowCategory;
-    private String exception = "";
     private IPluginConfig pluginConfig;
 
-    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
-            IDialogService dialogWindow) {
+    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config, IDialogService dialogWindow) {
+        super(context, dialogWindow);
+        ok.setVisible(false);
+        cancel.setVisible(false);
         pluginConfig = config;
         try {
             String path = config.getString("gallery.path");
@@ -62,23 +59,11 @@ public class UploadDialog extends WebPage implements ITitleDecorator {
             Gallery.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
 
-        Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
-        exceptionLabel.setOutputMarkupId(true);
-        add(exceptionLabel);
-
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
         
         wizard = new UploadWizard("wizard", dialogWindow, this);
         add(wizard);
-    }
-
-    public String getException() {
-        return exception;
-    }
-
-    public void setException(String exception) {
-        this.exception = exception;
     }
 
     public String getWorkflowCategory() {

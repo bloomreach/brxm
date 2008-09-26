@@ -79,10 +79,6 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
         
     }
 
-    @Override
-    protected void cancel() {
-    }
-
     public String getTitle() {
         return "Add namespace";
     }

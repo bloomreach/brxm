@@ -113,8 +113,4 @@ public class CopyDialog extends LookupDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
 }

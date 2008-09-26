@@ -90,10 +90,6 @@ public class SaveDialog extends AbstractDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         return "Save Session";
     }

@@ -35,7 +35,7 @@
       <sv:value>service.root</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.skin" sv:type="String">
-      <sv:value>skin/deque.css</sv:value>
+      <sv:value>skin/screen.css</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.root</sv:value>

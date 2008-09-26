@@ -144,12 +144,4 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
         }
     }
 
-    @Override
-    protected void ok() throws Exception {
-    }
-
-    @Override
-    protected void cancel() {
-    }
-
 }

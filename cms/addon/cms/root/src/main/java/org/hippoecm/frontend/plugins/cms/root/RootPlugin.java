@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.behavior.HeaderContributor;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.widgets.Pinger;
 
 public class RootPlugin extends RenderPlugin {
@@ -30,11 +28,6 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        if (config.getString(RenderService.SKIN_ID) != null) {
-            add(HeaderContributor.forCss(config.getString(RenderService.SKIN_ID)));
-        }
-
         add(new Pinger("pinger"));
     }
 

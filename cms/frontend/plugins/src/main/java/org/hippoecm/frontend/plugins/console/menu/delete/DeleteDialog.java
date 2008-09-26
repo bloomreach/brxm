@@ -55,10 +55,6 @@ public class DeleteDialog extends AbstractDialog {
         plugin.flushNodeModel(parentModel.findRootModel());
     }
 
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();

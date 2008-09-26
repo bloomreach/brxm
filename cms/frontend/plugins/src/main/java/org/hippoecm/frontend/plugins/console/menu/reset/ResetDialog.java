@@ -87,10 +87,6 @@ public class ResetDialog extends AbstractDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
     public String getTitle() {
         return "Refresh Session (undo changes)";
     }

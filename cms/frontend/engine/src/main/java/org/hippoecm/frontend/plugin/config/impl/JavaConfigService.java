@@ -21,6 +21,7 @@ import java.util.Map;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.service.render.RenderService;
 
 class JavaConfigService implements IPluginConfigService {
     @SuppressWarnings("unused")
@@ -54,9 +55,11 @@ class JavaConfigService implements IPluginConfigService {
 
     private IClusterConfig initLogin() {
         JavaClusterConfig plugins = new JavaClusterConfig();
-
+       
         IPluginConfig config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
+        //FIXME: Hardcoded LoginPlugin skin, should be made configurable
+        config.put(RenderService.SKIN_ID, new String[] {"skin/screen.css", "skin/login.css"});
         config.put("wicket.id", "service.root");
         plugins.addPlugin(config);
 

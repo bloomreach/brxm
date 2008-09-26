@@ -149,8 +149,4 @@ public class LinkPickerDialog extends LookupDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
 }

@@ -15,10 +15,14 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -26,15 +30,16 @@ import org.hippoecm.frontend.service.ITitleDecorator;
 public class DialogWindow extends ModalWindow implements PageCreator, IDialogService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
     protected Page page;
+    private List<IBehavior> dialogBehaviors;
 
     public DialogWindow(String id) {
         super(id);
         setCookieName(id);
         setPageCreator(this);
+        dialogBehaviors = new ArrayList<IBehavior>();
     }
 
     public Page createPage() {
@@ -48,6 +53,12 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
             setTitle(((ITitleDecorator) page).getTitle());
         }
 
+        if (dialogBehaviors != null) {
+            for (IBehavior behavior : dialogBehaviors) {
+                page.add(behavior);
+            }
+        }
+
         IRequestTarget target = RequestCycle.get().getRequestTarget();
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             show((AjaxRequestTarget) target);
@@ -59,5 +70,12 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             close((AjaxRequestTarget) target);
         }
+    }
+
+    public void addDialogBehavior(IBehavior behavior) {
+        if (dialogBehaviors == null) {
+            dialogBehaviors = new ArrayList<IBehavior>();
+        }
+        dialogBehaviors.add(behavior);
     }
 }

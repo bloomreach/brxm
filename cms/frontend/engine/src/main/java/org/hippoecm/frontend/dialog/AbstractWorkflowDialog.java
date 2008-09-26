@@ -119,10 +119,6 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         }
     }
 
-    @Override
-    public void cancel() {
-    }
-
     /**
      * This abstract method is called from ok() and should implement
      * the action to be performed when the dialog's ok button is clicked.

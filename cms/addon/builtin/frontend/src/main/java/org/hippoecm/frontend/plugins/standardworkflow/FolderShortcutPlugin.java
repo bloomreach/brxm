@@ -381,9 +381,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 }
             }
         }
-
-        protected void cancel() {
-        }
     }
 }
 
