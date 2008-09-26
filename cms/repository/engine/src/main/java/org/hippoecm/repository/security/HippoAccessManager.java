@@ -60,7 +60,6 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
-import org.hippoecm.repository.jackrabbit.HippoPropertyId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
@@ -742,7 +741,7 @@ public class HippoAccessManager implements AccessManager {
                 return false;
             }
         }
-        HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), rule.getFacetName());
+        PropertyId propertyId = new PropertyId(nodeState.getNodeId(), rule.getFacetName());
         PropertyState state = (PropertyState) getItemState(propertyId);
         InternalValue[] iVals = state.getValues();
 
@@ -813,7 +812,7 @@ public class HippoAccessManager implements AccessManager {
             return false;
         }
 
-        HippoPropertyId propertyId = new HippoPropertyId(nodeState.getNodeId(), NameConstants.JCR_MIXINTYPES);
+        PropertyId propertyId = new PropertyId(nodeState.getNodeId(), NameConstants.JCR_MIXINTYPES);
         PropertyState state = (PropertyState) getItemState(propertyId);
         InternalValue[] iVals = state.getValues();
 
