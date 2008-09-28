@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,12 +35,17 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -53,13 +59,12 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
+
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
 
 abstract class SessionImplHelper {
     @SuppressWarnings("unused")
@@ -121,6 +126,29 @@ abstract class SessionImplHelper {
      */
     public Set<Principal> getUserPrincipals() {
         return Collections.unmodifiableSet(subject.getPrincipals());
+    }
+
+    public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
+        AccessManager accessMgr = sessionImpl.getAccessManager();
+        if(accessMgr instanceof HippoAccessManager) {
+            String[] strings = actions.split(",");
+            int len = strings.length;
+            for(int i=strings.length-1; i>=0; i--) {
+                if(SessionImpl.READ_ACTION.equals(strings[i]) ||
+                   SessionImpl.REMOVE_ACTION.equals(strings[i]) ||
+                   SessionImpl.ADD_NODE_ACTION.equals(strings[i]) ||
+                   SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
+                    len -= 1;
+                    System.arraycopy(strings, i, strings, i+1, len-i);
+                }
+            }
+            if(len > 0) {
+                String[] privileges = new String[len];
+                System.arraycopy(privileges, 0, strings, 0, len);
+                if(!((HippoAccessManager)accessMgr).hasPrivilege(absPath, privileges))
+                    throw new AccessControlException("No access to "+absPath);
+            }
+        }
     }
 
     abstract SessionItemStateManager getItemStateManager();
