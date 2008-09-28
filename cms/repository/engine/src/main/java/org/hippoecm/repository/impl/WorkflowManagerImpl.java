@@ -23,15 +23,16 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Vector;
-import java.util.List;
+
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,9 +40,11 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.EventLogger;
@@ -122,10 +125,30 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (workflowNode==null) {
                         continue;
                     }
-                    log.debug("matching item type against "+workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+                    if (log.isDebugEnabled()) {
+                        log.debug("matching item type against " +
+                                  workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
+                    }
                     if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
-                        log.debug("found workflow in category "+category+" for node "+(item==null ? "<none>" : item.getPath()));
+                        boolean hasPermission = true;
+                        if(workflowNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
+                            Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
+                            for(int i=0; i<privileges.length; i++) {
+                                try {
+                                    item.getSession().checkPermission(item.getPath(), privileges[i].getString());
+                                } catch(AccessDeniedException ex) {
+                                    hasPermission = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if(hasPermission) {
+                            if(log.isDebugEnabled()) {
+                                log.debug("found workflow in category " + category + " for node " +
+                                          (item==null ? "<none>" : item.getPath()));
+                            }
                         return workflowNode;
+                        }
                     }
                 }
             } else {
@@ -168,15 +191,26 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                     try {
                         Class documentClass = Class.forName(workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
-                        if (document.getIdentity() != null &&
-                            session.getNodeByUUID(document.getIdentity()).isNodeType(
-                                                           workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
-                            log.debug("found workflow in category "+category+" for document");
-                            return workflowNode;
-                        }
-                        if (documentClass.isAssignableFrom(document.getClass())) {
-                            log.debug("found workflow in category "+category+" for document");
-                            return workflowNode;
+                        Node documentNode = (document.getIdentity()!=null ? session.getNodeByUUID(document.getIdentity()) : null);
+                        if ((documentNode != null && documentNode.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) || documentClass.isAssignableFrom(document.getClass())) {
+                            boolean hasPermission = true;
+                            if(workflowNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
+                                Value[] privileges = workflowNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
+                                for(int i=0; i<privileges.length; i++) {
+                                    try {
+                                        session.checkPermission(documentNode.getPath(), privileges[i].getString());
+                                    } catch(AccessDeniedException ex) {
+                                        hasPermission = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(hasPermission) {
+                                if(log.isDebugEnabled()) {
+                                    log.debug("found workflow in category "+category+" for document");
+                                }
+                                return workflowNode;
+                            }
                         }
                     } catch (ClassNotFoundException ex) {
                     }
