@@ -124,7 +124,6 @@ public interface HippoNodeType {
     final public static String HIPPO_JCRREMOVE = "hippo:jcrremove";
     final public static String HIPPO_LASTLOGIN = "hippo:lastlogin";
     final public static String HIPPO_LASTSYNC = "hippo:lastsync";
-    final public static String HIPPO_LOGAPPENDER = "hippo:logappender";
     final public static String HIPPO_LOGENABLED = "hippo:logenabled";
     final public static String HIPPO_LOGMAXSIZE = "hippo:logmaxsize";
     final public static String HIPPO_LOGPATH = "hippo:logpath";
