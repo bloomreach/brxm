@@ -15,8 +15,26 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    Name: <span wicket:id="name"></span><br/>
-    <select wicket:id="template"></select>&nbsp;&nbsp;<select wicket:id="prototype"></select><br/>
-    <span wicket:id="message"></span><br/>
+    <p class="hippo-window-status" wicket:id="message"></p>
+    <table class="hippo-window-form">
+    <tr>
+     <td>
+      <label for="sjibbie">Name</label>
+      </td>
+      <td>
+       <span wicket:id="name"></span>
+    </td>
+    </tr>
+    <tr>
+      <td><label>Document Type</label></td>
+    <td><select class="hippo-form-select" wicket:id="prototype"></select></td>
+    </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <select class="hippo-form-select" wicket:id="template"></select>
+        </td>
+      </tr>
+    </table>
   </wicket:extend>
 </html>
