@@ -18,55 +18,74 @@
   limitations under the License.
 -->
 <document>
-    <properties>
-        <title>Quick Start</title>
-    </properties>
-    <body>
-      <section name="Quick Start">
- 	<p>The quickest way to get started is to obtain one of the pre-built packages. Even when adding additional functionalities to your project, you normally don't need to rebuild Hippo Site Toolkit 2.
-	</p>
-	<p>
-The getting started packages contain all the core packaged components, but have been pre-configured with a number of modules and settings, to give you a quick overview of the HST2 without having the laborious tasks to first enter content, create users, etcetera.
-	</p>
+  <properties>
+    <title>Quick Start</title>
+  </properties>
+  <body>
+    <section name="Quick Start">
+      <p> 
+        The HST2 Getting Started packages contain all the core components, and have been
+        pre-configured with a number of modules and settings, to give you a quick overview of the
+        HST2. 
+      </p>
+      
       <subsection name="Download">
-	<p>
-	Two WAR packages are available for download. You can deploy them in either Tomcat or Jetty or any other servlet container that you prefer. 
-	Notice: Hippo HST2 has not been released. The following downloads are snapshots of the current build. </p>
+        <p> 
+          Two WAR packages are available for download. You can deploy them in either Tomcat or
+          Jetty or any other servlet container that you prefer. Note: Hippo HST2 has not been
+          released. The following downloads are snapshots of the current build. 
+        </p>
         <ul>
-         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war">Hippo ECM getting started package WAR</a></li>
-         <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-20080904.141142-1.war">Hippo HST2 getting started package WAR</a></li>
+          <li>
+            <a
+              href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war"
+              >Hippo ECM getting started package WAR</a>
+          </li>
+          <li>
+            <a
+              href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-20080904.141142-1.war"
+              >Hippo HST2 getting started package WAR</a>
+          </li>
         </ul>
       </subsection>
-<subsection name="Deploy, run and access">
+      
+      <subsection name="Deploying in Tomcat 6.0">
+        <ol>
+          <li>
+            Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache
+            Tomcat</a> website.
+          </li>
+          <li>
+            Unpack the zip.
+          </li>
+          <li>
+            Download <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
+            to <code>apache-tomcat-6.0.16/lib</code>.
+          </li>
+          <li>
+            Copy the ECM Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
+          </li>
+          <li>
+            Copy the HST2 Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/site.war</code>.
+          </li>
+          <li>
+            Start Tomcat with one of the startup scripts in <code>apache-tomcat-6.0.16/bin</code>.
+          </li>
+          <li>
+            Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> for the CMS.
+          </li>
+          <li>
+            Open your browser and surf to <a href="http://localhost:8080/site/preview/index">http://localhost:8080/site/preview/index</a>
+            for the site.
+          </li>
+        </ol>
+        <p> 
+          <i>Note: The port number might be different if you configured you application or servlet container to run
+          on a different port. If you deploy the application on a machine other than your local
+          machine you need to change &quot;localhost&quot; to the correct machine name.</i> 
+        </p>
+      </subsection>
 
-<p>
-Below you find how to deploy the application in Tomcat. Once the application has been deployed and started, you
-can access the Hippo CMS under the URL:
-</p>
-
-  <source>
-http://localhost:8080/cms/
-  </source>
-<p>
-The port number may change if you configured you application or servlet
-container to run with a different port.  When deploy the application on a
-machine other than your local machine you need to change &quot;localhost&quot;
-to the correct machine name.
-</p>
-</subsection>
-            <subsection name="Deploying in Tomcat 6.0">
-                <ol>
-                    <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
-                    <li>Unpack the zip</li>
-                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to apache-tomcat-6.0.16\lib</li>
-                    <li>Copy the ECM Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
-		    <li>Copy the HST2 Getting started WAR from the link above to apache-tomcat-6.0.16\webapps\site.war</li>
-                    <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
-                    <li>Open your browser and surf to http://localhost:8080/cms/ for the CMS</li>
-                    <li>Open your browser and surf to http://localhost:8080/site/preview/index for the site</li>
-                </ol>
-            </subsection>
-
-      </section>
-    </body>
+    </section>
+  </body>
 </document>
