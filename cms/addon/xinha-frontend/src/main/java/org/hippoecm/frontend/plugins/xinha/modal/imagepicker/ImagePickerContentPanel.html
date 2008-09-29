@@ -15,29 +15,30 @@
 -->
 <wicket:panel>
   <wicket:extend>
-    <table class="imagePicker">
+    <table class="hippo-window-picker">
       <tr>
-        <td>
-          <label>Selected image</label>
+        <td class="hippo-halfwidth">
+          <div class="hippo-list-thumbnails">
+            <div class="hippo-thumbnail" wicket:id="item">
+              <a wicket:id="callback">
+                <div wicket:id="entry">
+                  <img src="" wicket:id="thumbnail" />
+                </div>
+              </a>
+            </div>
+          </div>
         </td>
-        <td> 
+        <td class="hippo-halfwidth hippo-alignmiddle"> 
+          <p>
           <img wicket:id="selectedImagePreview"/>
             <!-- <label>Choose Version</label> --> 
             <select wicket:id="resourcenodes" style="display: none;">
               <option>thumbnail</option>
               <option>picture</option>
             </select>
+          </p>
         </td>
       </tr>
     </table>
-    <div class="thumbnailScroll">
-      <div class="thumbnail" wicket:id="item">
-        <a wicket:id="callback">
-          <div wicket:id="entry" style="float:left; margin:5px;">
-            <img src="" wicket:id="thumbnail" />
-          </div>
-        </a>
-      </div>
-    </div>
   </wicket:extend>  
 </wicket:panel>

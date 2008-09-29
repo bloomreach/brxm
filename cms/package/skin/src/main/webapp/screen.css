@@ -35,6 +35,10 @@ html { min-height: 100%; margin-bottom: 0.01em; }
 body {background: url("images/bodyback.png") repeat-y}
 .scrolllist{overflow: auto; height: 94px; padding: 2px; border: 1px solid #32629b; border-top: none; border-right: none}
 
+/* Global tools */
+.hippo-halfwidth{width: 50%;}
+.hippo-alignmiddle{text-align: center; vertical-align: middle}
+
 /* default font settings */
 body, table tr td, table tr th{
 font-family: tahoma, arial,sans-serif,helvetica;
@@ -269,7 +273,7 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .document-lock-16{background-image:url("images/icons/document-lock-16.png")}
 
 .dialog-information-48{background-image:url("images/icons/dialog-information-48.png")}
-.dialog-question-48{background-image:url("images/icons/dialog-question-48.png")}
+.hippo-icon-question-48{background-image:url("images/icons/dialog-question-48.png")}
 
 .panel-toggle-version-16{background-image:url("images/icons/panel-toggle-version-16.png");}
 .panel-toggle-version-16 a:hover{cursor: pointer}
@@ -308,8 +312,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .modelreq_ico{background-image:url("images/icons/refresh-16.png")}
 .createtyperequest_ico{background-image:url("images/icons/document-new-16.png")}
 
-/* Wicket standard Dialog overwrite */
+/* Windows */
 /* ================================================ */
+.hippo-window{padding: 25px; background: none}
+.hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom:15px;}
+.hippo-wizard-buttons{text-align: right; position: absolute; right: 15px; bottom:15px;}
 body div.wicket-modal div.w_blue div.w_top, body div.wicket-modal div.w_blue div.w_bottom, body div.wicket-modal div.w_blue div.w_topLeft, body div.wicket-modal div.w_blue div.w_topRight, body div.wicket-modal div.w_blue div.w_bottomRight, body div.wicket-modal div.w_blue div.w_bottomLeft, body div.wicket-modal div.w_blue a.w_close{
 background-image: url(images/box-blue.png); 
 }
@@ -328,37 +335,55 @@ body div.wicket-modal div.w_content_2 {padding-top: 0px}
 body div.wicket-modal div.w_content_1{margin-right: 5px;}
 body div.wicket-modal div.w_right_1 {margin-left:5px;}
 
-body.dialog{padding: 40px; background: none;}
+.hippo-window .dialogButtons, .hippo-window .dialogButtons{}
+.hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
 
-/* Reorder Dialog */
+/* Dialogs */
 /* ================================================ */
-div.reorder table {width: 377px; margin-right: 40px;}
-div.reorderborder{border: 1px solid #32629b; padding: 5px;}
-div.reorderbuttons{float: right; width: 40px;}
+.hippo-window-dialog{background-position: 10px 10px; background-repeat: no-repeat; padding: 5px; padding-left: 75px; padding-top: 20px; min-height: 200px;}
+.hippo-window-dialog-title{font-size: 11px;}
+.hippo-window-dialog-question{font-weight: bold}
 
-div.reorder .folderlist h3{font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
-div.reorder table tr td {padding: 0px;}
-div.reorder table tr td {border-bottom: 1px solid #ffffff }
-div.reorder table tr.selected td {}
-div.reorder table * {cursor: pointer}
+/* Wizard */
+/* ================================================ */
+.hippo-wizard{}
 
-div.reorder table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
-div.reorder table tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
-div.reorder table tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
+/* Form elements */
+/* ================================================ */
+.hippo-window-form td{padding: 5px;}
+.hippo-window-form .hippo-form-select{width: 300px;}
+.hippo-select-file{}
 
-div.reorder table {border-collapse: separate}
-div.reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
-div.reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
 
-div.dialog div.dialogButtons, body.dialog div.dialogButtons{text-align: right; position: absolute; right: 15px; bottom:15px;}
 
-body div.dialog h1, body.dialog h1{margin-bottom: 10px; font-size: 16px;}
+/* Reorder items */
+/* ================================================ */
+.hippo-reorder table {width: 377px; margin-right: 40px;}
+.hippo-reorder .reorderborder{border: 1px solid #32629b; padding: 5px;}
+.hippo-reorder .reorderbuttons{float: right; width: 40px;}
+
+.hippo-reorder .folderlist h3{font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
+.hippo-reorder table tr td {padding: 0px;}
+.hippo-reorder table tr td {border-bottom: 1px solid #ffffff }
+.hippo-reorder table tr.selected td {}
+.hippo-reorder table * {cursor: pointer}
+
+.hippo-reorder table tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
+.hippo-reorder table tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
+.hippo-reorder table tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
+
+.hippo-reorder table {border-collapse: separate}
+.hippo-reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
+.hippo-reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
 
 /* Image gallery Popup */
 /* ================================================ */
-div.thumbnailScroll{width: 250px; overflow: auto; white-space: nowrap; border:1px solid #CCCCCC; background: url("images/panelBack.png") repeat-x; border-top: none;}
-div.dialog table.imagePicker tr td{padding: 5px;}
-div.dialog table.imagePicker{margin-bottom: 15px}
+.hippo-list-thumbnails{width: 100%; overflow: auto; white-space: nowrap; height: 300px;}
+.hippo-window-picker{width: 100%;}
+.hippo-window-picker tr td{padding: 5px; border: 1px solid #666666}
+.hippo-window-picker{margin-bottom: 15px}
+.hippo-thumbnail{width: 80px; height: 80px; text-align: center; float: left; border: 1px solid #cccccc; padding: 2px; margin: 2px;}
+
 
 /* Paging */
 /* ================================================ */

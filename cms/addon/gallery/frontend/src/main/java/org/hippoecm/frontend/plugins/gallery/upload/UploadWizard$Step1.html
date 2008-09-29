@@ -15,20 +15,14 @@
 -->
 <wicket:panel xmlns:wicket="http://wicket.apache.org/">
     <form wicket:id="form">
-        <table>
-            <tr>
-                <td><label for="upload"><wicket:message key="select-file-label"/></label></td>
-                <td><input wicket:id="input" id="upload" type="file" /></td>
-            </tr>
+    <label for="upload"><wicket:message key="select-file-label"/></label>
+                <input class="hippo-select-file" size="62" wicket:id="input" id="upload" type="file" />
             <wicket:enclosure child="type">
-            <tr>
-                <td><label for="typeselect"><wicket:message key="file-type-label"/></label></td>
-                <td><select wicket:id="type" id="typeselect"></select></td>
-            </tr>
-            </wicket:enclosure>
-            <tr>
-            <td colspan="2"><input type="submit" value="label comes here" wicket:message="value:upload-label"/></td>
-            </tr>
-        </table>
+            <label for="typeselect"><wicket:message key="file-type-label"/></label>
+            <select wicket:id="type" id="typeselect"></select>
+             </wicket:enclosure>
+        <div class="hippo-window-buttons">
+        <input style="margin-right: 115px" type="submit" value="label comes here" wicket:message="value:upload-label"/>
+        </div>
     </form>
 </wicket:panel>

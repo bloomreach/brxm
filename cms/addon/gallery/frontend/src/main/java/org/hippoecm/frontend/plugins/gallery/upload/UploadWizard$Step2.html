@@ -14,9 +14,9 @@
   * limitations under the License.
 -->
 <wicket:panel xmlns:wicket="http://wicket.apache.org/">
-    <table>
-        <tr><td><label wicket:id="status">status</label></td></tr>
-        <tr><td><span wicket:id="description">description</span></td></tr>
-        <tr><td><span wicket:id="message">message</span></td></tr>
-    </table>
+    <div class="hippo-window-dialog hippo-icon-question-48">
+    <p class="hippo-window-dialog-question" wicket:id="message">message</p>
+    <p class="hippo-window-dialog-body" wicket:id="status">status</p>
+        <p class="hippo-window-dialog-body" wicket:id="description">description</p>
+    </div>
 </wicket:panel>
