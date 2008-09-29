@@ -116,9 +116,10 @@ public class PaginatedDataBean {
         return new ELPseudoMap() {            
             public Object get(Object bSize) {
                 int blockSize = getCurrentPageBlockSize(bSize);
+                int totalPages = getTotalPages();
                  
-                 int fragment = pageNo % blockSize > 0 ? 1 : 0; 
-                 return new Long((pageNo / blockSize) + fragment);
+                 int fragment = (totalPages % blockSize > 0) && (totalPages >= blockSize) ? 1 : 0; 
+                 return new Long((totalPages / blockSize) + fragment);
             }
         };
     }
