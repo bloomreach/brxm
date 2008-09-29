@@ -35,7 +35,6 @@ public interface HippoNodeType {
     final public static String FRONTEND_PATH = "hippo:frontend";
     final public static String GROUPS_PATH = "hippo:groups";
     final public static String INITIALIZE_PATH = "hippo:initialize";
-    final public static String LOGGING_PATH = "hippo:logging";
     final public static String NAMESPACES_PATH = "hippo:namespaces";
     final public static String PLUGIN_PATH = "hippo:plugins";
     final public static String ROLES_PATH = "hippo:roles";
@@ -124,9 +123,6 @@ public interface HippoNodeType {
     final public static String HIPPO_JCRREMOVE = "hippo:jcrremove";
     final public static String HIPPO_LASTLOGIN = "hippo:lastlogin";
     final public static String HIPPO_LASTSYNC = "hippo:lastsync";
-    final public static String HIPPO_LOGENABLED = "hippo:logenabled";
-    final public static String HIPPO_LOGMAXSIZE = "hippo:logmaxsize";
-    final public static String HIPPO_LOGPATH = "hippo:logpath";
     final public static String HIPPO_MEMBERS = "hippo:members";
     final public static String HIPPO_MANDATORY = "hippo:mandatory";
     final public static String HIPPO_MODES = "hippo:modes";
