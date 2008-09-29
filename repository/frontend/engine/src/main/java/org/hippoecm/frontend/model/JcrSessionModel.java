@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.model;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -35,7 +37,9 @@ import org.hippoecm.frontend.session.WorkflowManagerDecorator;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 
 public class JcrSessionModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
@@ -135,6 +139,15 @@ public class JcrSessionModel extends LoadableDetachableModel {
 
             if (repository != null && username != null && password != null) {
                 result = repository.login(username, password.toCharArray());
+                try {
+                    if(result.getRootNode().hasNode("hippo:log")) {
+                        Workflow workflow = ((HippoWorkspace)result.getWorkspace()).getWorkflowManager().getWorkflow("internal", result.getRootNode().getNode("hippo:log"));
+                        if(workflow instanceof EventLoggerWorkflow) {
+                            ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
+                        }
+                    }
+                } catch(RemoteException ex) {
+                }
             }
         } catch (LoginException e) {
             log.info("[" + getRemoteAddr() + "] Invalid login as user: " + credentials.getString("username"));

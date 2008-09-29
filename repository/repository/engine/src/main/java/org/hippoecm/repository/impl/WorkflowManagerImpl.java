@@ -47,7 +47,6 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -60,6 +59,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +186,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         continue;
                     }
                     if (log.isDebugEnabled()) {
-                        log.debug("matching document type against "+
+                        log.debug("matching document type against " +
                                 workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
                     }
                     try {
@@ -474,7 +474,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (returnObject instanceof Document) {
                     returnObject = new Document(((Document)returnObject).getIdentity());
                 }
-                EventLogger eventLogger = new EventLogger(rootSession);
+                EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
                 eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                         targetMethod.getName(), args, returnObject, path);
 

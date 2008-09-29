@@ -18,7 +18,6 @@ package org.hippoecm.repository.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -67,7 +66,6 @@ import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.spi.Path;
 
 import org.hippoecm.repository.DerivedDataEngine;
-import org.hippoecm.repository.EventLogger;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
