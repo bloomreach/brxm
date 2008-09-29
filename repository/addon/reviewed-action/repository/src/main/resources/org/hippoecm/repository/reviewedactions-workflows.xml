@@ -34,7 +34,7 @@
             <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:roles" sv:type="String">
-            <sv:value>role_editor</sv:value>
+            <sv:value>editor</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:display" sv:type="String">
             <sv:value>Reviewed actions workflow</sv:value>
