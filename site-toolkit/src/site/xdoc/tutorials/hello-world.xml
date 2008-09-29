@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Hello World</title>
+    </properties>
+    <body>
+        <section name="Hello World">
+
+            <p>
+                Before starting this tutorial, follow the
+                <a href="getting-started-archetype.html">Create a project</a> tutorial to
+                get up and running with your HST2 project.
+            </p>
+            
+            <subsection name="Add the document">
+                <p>
+                    Open Hippo CMS in your browser, and login. Click on the
+                    folder icon on the left to open the browse tab. In the
+                    'Folders' column, click on 'Documents'. In the right
+                    column, click on 'pagecontent'. Create a new document
+                    by selecting 'New Document' in the dropdown.
+                    A pop-up window will appear.
+                </p>
+                <p>
+                    <a href="../../images/tutorials/hello-world-new-document.png"><img alt="screenshot" src="../../images/tutorials/hello-world-new-document-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Give your new document a name, e.g. "Hello World". Click on 'OK'. Your
+                    new document will be opened in the document editor.
+                </p>
+                <p>
+                    <a href="../../images/tutorials/hello-world-document-editor.png"><img alt="screenshot" src="../../images/tutorials/hello-world-document-editor-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    Your document is of the 'textpage' type, which has a number
+                    of different fields defined (Title, Date, Summary and Body).
+                    For now, just type "Hello World!" in the 'Title' field and
+                    click on 'Save and close'.
+                </p>
+            </subsection>
+            
+            <subsection name="View the document on the website">
+                <p>
+                    Open the website in your browser. The sample website uses a
+                    repository based navigation. This means that any content
+                    added under the <code>/content/pagecontent</code> node will
+                    automatically appear in the menu on the site. A link to
+                    your Hello World document should be visible. Click on it
+                    and you should see "Hello World!" in the content part of
+                    the page.
+                </p>
+                <p>
+                    <a href="../../images/tutorials/hello-world-site.png"><img alt="screenshot" src="../../images/tutorials/hello-world-site-thumbnail.jpg" width="400" height="310" /></a>
+                </p>
+                <p>
+                    That's all! No need to write any code!
+                </p>
+            </subsection>
+            
+            <subsection name="Under the hood">
+                <p>
+                    If you are wondering how your document automagically appeared
+                    in the menu, you can take a look at the JSP module that's
+                    behind this magic. Open the file
+                    <code>myproject/site/src/main/webapp/jsp/modules/mainnav.jsp</code>.
+                </p>
+<source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
+
+<hst-tmpl:module name="mainnav" var="navitems"
+  className="org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule"
+  execute="false" render="true" />
+
+<c:forEach var="item" items="${navitems}">
+  <div id="nav${item.name}">
+  <ul>
+    <li>${item.decodedName}</li>
+    <c:forEach var="subItem" items="${item.children}">
+      <ul class="subnav">
+        <c:set var="firstSubSubItem" value="${subItem.children[0]}" />
+        <c:choose>
+          <c:when test="${firstSubSubItem!=null}">
+            <hst-tmpl:link var="link" item="${firstSubSubItem}" />
+            <li><a href="${link.href}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
+          </c:when>
+          <c:otherwise>
+            <hst-tmpl:link var="link" item="${subItem}" />
+            <li><a href="${link.href}" title="${subItem.decodedName}">${subItem.decodedName}</a></li>
+          </c:otherwise>
+        </c:choose>
+      </ul>
+    </c:forEach>
+  </ul>
+  </div>
+</c:forEach>
+]]>
+</source>                
+            </subsection>
+            <p>
+                As you can see, an HST2 module called <code>RepositoryBasedNavigationModule</code>
+                is loaded using the tag <a href="../reference/tag/module-tag.html"><code>hst-tmpl:module</code></a>,
+                and given the local name
+                <code>mainnav</code>. This modules retrieves the relevant items from the repository.
+                Then a <code>forEach</code> loop iterates over those items, and creates links
+                using the tag <a href="../reference/tag/link-tag.html"><code>hst-tmpl:link</code></a>.
+            </p>
+
+        </section>
+        
+        <section name="Next Step">
+            <p>
+                Learn how to create your own document type, and how to use it in your website,
+                by following the <a href="facebook.html">Create a Facebook</a> tutorial.
+            </p>
+        </section>
+
+    </body>
+</document>

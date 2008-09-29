@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+        <section name="HST Configuration in web.xml">
+        <p>This example web.xml shows the installation of the hst.properties, 
+            of the 3 filters and a servlet for binaries.</p>
+            <source><![CDATA[  <!-- General configuration -->
+  <context-param>
+    <description>Comma separated list of configuration files.</description>
+    <param-name>configurationFiles</param-name>
+    <param-value>/WEB-INF/hst.properties</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.hippoecm.hst.core.HSTConfiguration</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>ContextBaseFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.URIFragmentContextBaseFilter</filter-class>    
+    <init-param>      
+      <param-name>levels</param-name>
+      <param-value>1</param-value>    
+    </init-param>
+    <init-param>      
+      <param-name>contentBase</param-name>
+      <param-value>/</param-value>    
+    </init-param>
+    <init-param>      
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+    </init-param>
+  </filter>
+  
+  <filter>
+    <filter-name>TemplateContext</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.URLMappingTemplateContextFilter</filter-class>    
+    <init-param>      
+      <param-name>hstConfigurationUrl</param-name>
+      <param-value>/hst:configuration/hst:configuration</param-value>    
+    </init-param>
+    <init-param>      
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+    </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>ModuleFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.ModuleFilter</filter-class>
+    <init-param>      
+      <param-name>ignorePaths</param-name>
+      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+    </init-param>   
+  </filter> 
+
+  <filter>
+    <filter-name>ModuleFilter</filter-name>
+    <filter-class>org.hippoecm.hst.core.template.ModuleFilter</filter-class>   
+  </filter> 
+
+  <filter-mapping>
+    <filter-name>previewContext</filter-name>
+    <url-pattern>/preview/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>ModuleFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping> 
+  
+  <filter-mapping>
+    <filter-name>TemplateContext</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping> 
+
+  
+  <!-- Installation of a servlet serving binaries from repository. -->
+  <servlet>
+    <servlet-name>BinariesServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.core.BinariesServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>BinariesServlet</servlet-name>
+    <url-pattern>/binaries/*</url-pattern>
+  </servlet-mapping>]]></source>
+         
+      </section>
+
+    </body>
+</document>
