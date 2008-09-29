@@ -36,10 +36,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
@@ -48,9 +44,11 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     @SuppressWarnings("unused")
@@ -58,12 +56,13 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
 
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
 
-    private SessionImplHelper helper;
+    private final SessionImplHelper helper;
 
     protected XASessionImpl(RepositoryImpl rep, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
         super(rep, loginContext, wspConfig);
         helper = new SessionImplHelper(this, ntMgr, rep, loginContext.getSubject()) {
+            @Override
             SessionItemStateManager getItemStateManager() {
                 return itemStateMgr;
             }
@@ -76,6 +75,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
                                                                                                    RepositoryException {
         super(rep, subject, wspConfig);
         helper = new SessionImplHelper(this, ntMgr, rep, subject) {
+            @Override
             SessionItemStateManager getItemStateManager() {
                 return itemStateMgr;
             }
@@ -95,7 +95,8 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
                     getItemStateManager(),
                     ((RepositoryImpl)rep).getNamespaceRegistry(),
                     getWorkspace().getName(),
-                    ntMgr);
+                    ntMgr,
+                    getNamePathResolver());
             AccessManager accessMgr = (AccessManager)amConfig.newInstance();
             accessMgr.init(ctx);
             return accessMgr;
@@ -131,6 +132,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
         return new ItemManager(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
     }
     
+    @Override
     public String getUserID() {
         return helper.getUserID();
     }

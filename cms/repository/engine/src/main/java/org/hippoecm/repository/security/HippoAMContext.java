@@ -25,6 +25,7 @@ import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 
 /**
@@ -49,6 +50,11 @@ public class HippoAMContext extends AMContext {
      */
     private final SessionItemStateManager itemMgr;
 
+    /** 
+     * NamePathResolver
+     */
+    private final NamePathResolver npResolver;
+
     /**
      * Creates a new <code>AMContext</code>.
      *
@@ -66,10 +72,12 @@ public class HippoAMContext extends AMContext {
                      SessionItemStateManager itemMgr,
                      NamespaceResolver nsResolver,
                      String workspaceName,
-                     NodeTypeManager ntMgr) {
+                     NodeTypeManager ntMgr,
+                     NamePathResolver npResolver) {
         super(physicalHomeDir, fs, subject, hierMgr, nsResolver, workspaceName);
         this.ntMgr = ntMgr;
         this.itemMgr = itemMgr;
+        this.npResolver = npResolver;
     }
 
     /**
@@ -87,5 +95,9 @@ public class HippoAMContext extends AMContext {
      */
     public SessionItemStateManager getSessionItemStateManager() {
         return itemMgr;
+    }
+    
+    public NamePathResolver getNamePathResolver() {
+        return npResolver;
     }
 }

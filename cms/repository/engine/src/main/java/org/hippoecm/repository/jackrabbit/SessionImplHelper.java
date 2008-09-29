@@ -35,10 +35,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.NodeImpl;
@@ -59,12 +55,14 @@ import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
 
 abstract class SessionImplHelper {
     @SuppressWarnings("unused")
@@ -97,16 +95,16 @@ abstract class SessionImplHelper {
      */
     protected void setUserId() {
         if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
-            Principal principal = (Principal)subject.getPrincipals(SystemPrincipal.class).iterator().next();
+            Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
             userId = principal.getName();
         } else if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
-            Principal principal = (Principal)subject.getPrincipals(AdminPrincipal.class).iterator().next();
+            Principal principal = subject.getPrincipals(AdminPrincipal.class).iterator().next();
             userId = principal.getName();
         } else if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
-            Principal principal = (Principal)subject.getPrincipals(UserPrincipal.class).iterator().next();
+            Principal principal = subject.getPrincipals(UserPrincipal.class).iterator().next();
             userId = principal.getName();
         } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-            Principal principal = (Principal)subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
+            Principal principal = subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
             userId = principal.getName();
         } else {
             userId = "Unknown";
@@ -128,25 +126,38 @@ abstract class SessionImplHelper {
         return Collections.unmodifiableSet(subject.getPrincipals());
     }
 
+    /**
+     * Before this method the JackRabbiit Session.checkPermission is called. 
+     * That function checks the validity of absPath and the default JCR permissions: 
+     * read, remove, add_node and set_property. So we don't have to check for those 
+     * things again here. 
+     * @param absPath
+     * @param actions
+     * @throws AccessControlException
+     * @throws RepositoryException
+     */
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
         AccessManager accessMgr = sessionImpl.getAccessManager();
         if(accessMgr instanceof HippoAccessManager) {
+            
+            // build the set of actions to be checked
             String[] strings = actions.split(",");
-            int len = strings.length;
-            for(int i=strings.length-1; i>=0; i--) {
-                if(SessionImpl.READ_ACTION.equals(strings[i]) ||
-                   SessionImpl.REMOVE_ACTION.equals(strings[i]) ||
-                   SessionImpl.ADD_NODE_ACTION.equals(strings[i]) ||
-                   SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
-                    len -= 1;
-                    System.arraycopy(strings, i, strings, i+1, len-i);
+            HashSet<String> privileges = new HashSet<String>();
+            for (int i = 0; i < strings.length; i++) {
+                // skip the default jcr permissions as the have already been checked.
+                if(!SessionImpl.READ_ACTION.equals(strings[i]) &&
+                        !SessionImpl.REMOVE_ACTION.equals(strings[i]) &&
+                        !SessionImpl.ADD_NODE_ACTION.equals(strings[i]) &&
+                        !SessionImpl.SET_PROPERTY_ACTION.equals(strings[i])) {
+
+                    privileges.add(strings[i]);
                 }
             }
-            if(len > 0) {
-                String[] privileges = new String[len];
-                System.arraycopy(privileges, 0, strings, 0, len);
-                if(!((HippoAccessManager)accessMgr).hasPrivilege(absPath, privileges))
-                    throw new AccessControlException("No access to "+absPath);
+            
+            if (privileges.size() > 0) {                
+                if (!((HippoAccessManager) accessMgr).hasPrivileges(absPath, privileges.toArray(new String[privileges
+                        .size()])))
+                    throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
             }
         }
     }
@@ -231,7 +242,7 @@ abstract class SessionImplHelper {
 
         return new NodeIterator() {
             private final org.apache.jackrabbit.core.ItemManager itemMgr = sessionImpl.getItemManager();
-            private Iterator<NodeId> iterator = filteredResults.iterator();
+            private final Iterator<NodeId> iterator = filteredResults.iterator();
             private int pos = 0;
 
             public Node nextNode() {

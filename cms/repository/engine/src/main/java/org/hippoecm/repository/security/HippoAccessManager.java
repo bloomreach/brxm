@@ -24,6 +24,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -50,6 +51,8 @@ import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.CachingNameResolver;
+import org.apache.jackrabbit.spi.commons.conversion.NameException;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingPathResolver;
@@ -115,15 +118,22 @@ public class HippoAccessManager implements AccessManager {
      */
     private NamespaceResolver nsRes;
 
+    /** 
+     * NamePathResolver
+     */
+    private NamePathResolver npRes;
+
     /**
      * NameResolver
      */
     private NameResolver nRes;
+    
+
 
     /**
      * Hippo Namespace, TODO: move to better place
      */
-    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
+    //public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
 
     /**
      * Name of hippo:handle, needed for document model checking
@@ -220,6 +230,8 @@ public class HippoAccessManager implements AccessManager {
         if (context instanceof HippoAMContext) {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
+            // This will be part of the new AMContext in JR 1.5
+            npRes = ((HippoAMContext) context).getNamePathResolver();
         }
         nRes = new CachingNameResolver(new ParsingNameResolver(NameFactoryImpl.getInstance(), nsRes));
 
@@ -293,8 +305,6 @@ public class HippoAccessManager implements AccessManager {
             }
         } catch (NoSuchItemStateException e) {
             // not configured, expected
-        } catch (ItemStateException e) {
-            // too bad.. no correct config found
         } catch (RepositoryException e) {
             // too bad.. no correct config found
         }
@@ -307,10 +317,9 @@ public class HippoAccessManager implements AccessManager {
      * @param permissions the (bitset) of the permissions
      * @return true if the user is allowed the requested permissions on the node
      * @throws RepositoryException
-     * @throws ItemStateException
      * @throws NoSuchItemStateException
      */
-    protected boolean canAccessNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException, ItemStateException {
+    protected boolean canAccessNode(NodeState nodeState, int permissions) throws RepositoryException, NoSuchItemStateException {
         // system and admin have all permissions
         if (isSystem) {
             return true;
@@ -343,7 +352,7 @@ public class HippoAccessManager implements AccessManager {
      * @return true if the user is allowed the requested permissions on the node
      * @throws RepositoryException
      */
-    protected boolean checkFacetAuth(NodeState nodeState, int permissions) throws NoSuchItemStateException, ItemStateException, RepositoryException {
+    protected boolean checkFacetAuth(NodeState nodeState, int permissions) throws NoSuchItemStateException, RepositoryException {
         if (log.isTraceEnabled()) {
             log.trace("Checking [" + pString(permissions) + "] for: " + nodeState.getId());
         }
@@ -375,7 +384,7 @@ public class HippoAccessManager implements AccessManager {
                     break;
                 }
             }
-            if (allowed == true) {
+            if (allowed) {
                 break;
             }
         }
@@ -391,7 +400,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException
      * @see FacetAuthPrincipal
      */
-    protected boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws NoSuchItemStateException, ItemStateException, RepositoryException {
+    protected boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws NoSuchItemStateException, RepositoryException {
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
         boolean isInDomain = false;
 
@@ -426,17 +435,18 @@ public class HippoAccessManager implements AccessManager {
         return isInDomain;
     }
 
+
+    
     /**
      * Check if a node matches the current FacetRule
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
      * @return true if the node matches the facet rule
      * @throws RepositoryException 
-     * @throws ItemStateException 
      * @throws NoSuchItemStateException 
      * @see FacetRule
      */
-    protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
+    protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) throws NoSuchItemStateException, RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
 
         // is this a 'NodeType' facet?
@@ -480,8 +490,38 @@ public class HippoAccessManager implements AccessManager {
         }
     }
 
-    public boolean hasPrivilege(String absPath, String[] privileges) {
-        // FIXME TODO HREPTWO-1628
+    public boolean hasPrivileges(String absPath, String[] privileges) throws PathNotFoundException, RepositoryException {
+        boolean allowed;
+        NodeState nodeState;
+        
+        for (String priv : privileges) {
+            log.debug("Checking [{}] : {}", priv, absPath); 
+            allowed = false;
+            nodeState = null;
+            for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
+                if (nodeState == null) {
+                    nodeState = getNodeState(absPath);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking [" + priv + "] : " + absPath + " against FacetAuthPrincipal: " + fap);
+                }
+                if (fap.getRoles().contains(priv)) {
+                    try {
+                        if (isNodeInDomain(nodeState, fap)) {
+                            allowed = true;
+                            log.info("Privilege [{}] for {} for: {} found for domain {}", new Object[] { priv, userId,
+                                    absPath, fap });
+                            break;
+                        }
+                    } catch (NoSuchItemStateException e) {
+                        throw new PathNotFoundException("Unable to find path: " + absPath);
+                    }
+                }
+            }
+            if (!allowed) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -560,37 +600,75 @@ public class HippoAccessManager implements AccessManager {
         } catch (NoSuchItemStateException e) {
             log.debug("NoSuchItemStateException for: " + id, e);
             return false;
-        } catch (ItemStateException e) {
-            log.error("ItemStateException for id: " + id, e);
-            throw new RepositoryException("ItemStateException: " + e.getMessage(), e);
         }
     }
 
+
+    /**
+     * Get the <code>NodeState</code> for the absolute path. If the absolute path points 
+     * to a property get the NodeState the property belongs to.
+     * @param absPath the absolute path
+     * @return the NodeState of the node (holding the property)
+     * @throws PathNotFoundException
+     * @throws RepositoryException
+     */
+    private NodeState getNodeState(String absPath) throws PathNotFoundException, RepositoryException {
+        Path targetPath;
+        try {
+            targetPath = npRes.getQPath(absPath).getNormalizedPath();
+        } catch (NameException e) {
+            String msg = "invalid path: " + absPath;
+            log.debug(msg, e);
+            throw new RepositoryException(msg, e);
+        }
+        if (!targetPath.isAbsolute()) {
+            throw new RepositoryException("not an absolute path: " + absPath);
+        }
+        ItemId id = hierMgr.resolveNodePath(targetPath);
+        if (id == null) {
+            throw new PathNotFoundException("Unable to find path: " + absPath);
+        }
+        if (!id.denotesNode()) {
+            id = ((PropertyId) id).getParentId();
+        }
+        try {
+            return (NodeState) getItemState(id);
+        } catch (NoSuchItemStateException e) {
+            throw new PathNotFoundException("Unable to find path: " + absPath);
+        }
+    }
+    
     /**
      * Try to get a state from the item manager by first checking the normal states,
      * then checking the transient states and last checking the attic state.
      * @param id the item id
      * @return the item state
      * @throws NoSuchItemStateException when the state cannot be found
-     * @throws ItemStateException when something goes wrong while fetching the state
+     * @throws RepositoryException when something goes wrong while fetching the state
      */
-    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
+    public ItemState getItemState(ItemId id) throws NoSuchItemStateException, RepositoryException {
         if (id == null) {
-            throw new ItemStateException("ItemId cannot be null");
+            throw new RepositoryException("ItemId cannot be null");
         }
         synchronized (requestItemStateCache) {
             if (requestItemStateCache.containsKey(id)) {
                 return requestItemStateCache.get(id);
             }
-            if (itemMgr.hasItemState(id)) {
-                ItemState itemState = itemMgr.getItemState(id);
-                requestItemStateCache.put(id, itemState);
-                return itemState;
-            }
-            if (itemMgr.hasTransientItemStateInAttic(id)) {
-                ItemState itemState = itemMgr.getAtticItemState(id);
-                requestItemStateCache.put(id, itemState);
-                return itemState;
+            try {
+                if (itemMgr.hasItemState(id)) {
+                    ItemState itemState = itemMgr.getItemState(id);
+                    requestItemStateCache.put(id, itemState);
+                    return itemState;
+                }
+                if (itemMgr.hasTransientItemStateInAttic(id)) {
+                    ItemState itemState = itemMgr.getAtticItemState(id);
+                    requestItemStateCache.put(id, itemState);
+                    return itemState;
+                }
+            } catch (ItemStateException e) {
+                String msg = "invalid item id: " + id;
+                log.debug(msg, e);
+                throw new RepositoryException(msg, e);
             }
         }
         throw new NoSuchItemStateException("Item state not found in normal, transient or attic: " + id);
@@ -602,9 +680,8 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState
      * @return the parent nodestate
      * @throws NoSuchItemStateException when the state cannot be found
-     * @throws ItemStateException when something goes wrong while fetching the state
      */
-    public NodeState getParentState(NodeState nodeState) throws NoSuchItemStateException, ItemStateException {
+    public NodeState getParentState(NodeState nodeState) throws NoSuchItemStateException {
         if (rootNodeId.equals(nodeState.getId())) {
             throw new NoSuchItemStateException("RootNode doesn't have a parent state.");
         }
@@ -713,7 +790,7 @@ public class HippoAccessManager implements AccessManager {
      * @throws RepositoryException 
      * @see FacetRule
      */
-    private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, ItemStateException, RepositoryException {
+    private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, RepositoryException {
 
         boolean match = false;
         
@@ -812,7 +889,7 @@ public class HippoAccessManager implements AccessManager {
      * @return true if the node has the mixin type
      * @throws RepositoryException 
      */
-    private boolean hasMixinWithValue(NodeState nodeState, String value) throws NoSuchItemStateException, ItemStateException, RepositoryException {
+    private boolean hasMixinWithValue(NodeState nodeState, String value) throws NoSuchItemStateException, RepositoryException {
         if (!nodeState.hasPropertyName(NameConstants.JCR_MIXINTYPES)) {
             return false;
         }
@@ -846,11 +923,10 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the node of which to check the parents
      * @return NodeState the parent node state or null
      * @throws NoSuchItemStateException
-     * @throws ItemStateException
      * @throws RepositoryException 
      * @throws NamespaceException 
      */
-    private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, ItemStateException, NamespaceException, RepositoryException {
+    private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, NamespaceException, RepositoryException {
 
         if (log.isTraceEnabled()) {
             log.trace("Checking " + nodeState.getId() + " ntn: " + nodeState.getNodeTypeName() + " for being part of a document model.");
