@@ -43,14 +43,18 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     private long maxSize;
 
     public EventLoggerImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
-        try {
-            logFolder = rootSession.getRootNode().getNode(subject.getPath().substring(1));
-            enabled = logFolder.getProperty("hippolog:enabled").getBoolean();
-            appender = logFolder.getProperty("hippolog:appender").getString();
-            maxSize = logFolder.getProperty("hippolog:maxsize").getLong();
-        } catch(RepositoryException ex) {
+        if(subject != null) {
+            try {
+                logFolder = rootSession.getRootNode().getNode(subject.getPath().substring(1));
+                enabled = logFolder.getProperty("hippolog:enabled").getBoolean();
+                appender = logFolder.getProperty("hippolog:appender").getString();
+                maxSize = logFolder.getProperty("hippolog:maxsize").getLong();
+            } catch(RepositoryException ex) {
+                enabled = false;
+                log.error("Event logger configuration failed: " + ex.getMessage());
+            }
+        } else {
             enabled = false;
-            log.error("Event logger configuration failed: " + ex.getMessage());
         }
         if (!enabled) {
             log.info("Event logging disabled, workflow steps will not be logged");
@@ -58,7 +62,7 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     }
 
     public EventLoggerImpl(Session rootSession) throws RemoteException, RepositoryException {
-        this(rootSession, rootSession, rootSession.getRootNode().getNode("hippo:log"));
+        this(rootSession, rootSession, (rootSession.getRootNode().hasNode("hippo:log") ? rootSession.getRootNode().getNode("hippo:log") : null));
     }
 
     public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath) {
