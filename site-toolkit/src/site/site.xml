@@ -41,7 +41,7 @@
     </links>
 
     <menu name="About Hippo Site Toolkit 2">
-      <item name="What is Hippo Site Toolkit 2?" href="/about-hst2/what-is-hst2.html"/>
+      <item name="What is HST2?" href="/about-hst2/what-is-hst2.html"/>
     </menu>
 
     <menu name="Documentation">
@@ -54,9 +54,10 @@
       </item>
       <item name="Reference" href="/reference/index.html" collapse="true">
         <item name="Concepts" href="/reference/concepts.html"/>
-        <item name="Configuration" href="/reference/configuration.html" collapse="true">
-          <item name="hst.properties" href="/reference/configuration-hstproperties.html"/>
-          <item name="web.xml" href="/reference/configuration-webxml.html"/>
+        <item name="Configuration" href="/reference/configuration/configuration.html" collapse="true">
+          <item name="hst.properties" href="/reference/configuration/hstproperties.html"/>
+          <item name="web.xml" href="/reference/configuration/webxml.html"/>
+          <item name="Repository" href="/reference/configuration/repository.html"/>
         </item>
         <item name="Filters" href="/reference/filters.html"/>
         <item name="JSP Taglib" href="/reference/jsp-taglib.html"/>

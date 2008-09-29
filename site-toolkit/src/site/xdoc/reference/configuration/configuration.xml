@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>HST Configuration</title>
+    </properties>
+    <body>
+      <section name="HST Configuration">
+        <p>
+          In the application's web deployment descriptor (web.xml), a general HST configuration file is set 
+          up holding configuration for the connection to the repository. You 
+          may add your own configuration files at will.</p>
+        <p>  
+          Secondly, the basic HST functionality is set up by configuring one or more filters in your 
+          web.xml. These filters will make access to the repository from your jsp files available.</p>
+         <p> 
+          Thirdly, when wanting to view images or other binaries, a servlet for binaries has to be set up
+          in the web.xml as well. 
+        </p>
+        <subsection name="General configuration file(s)">
+          <p>Repository configuration is set up in a separate properties file.
+            The file plus an accompanying configuration object is set up in web.xml with a combination 
+            <code>&lt;context-param&gt;</code> and <code>&lt;listener&gt;</code>.</p>
+           <p>The context parameter is called <code>configurationFiles</code> which represents a 
+              comma-separated list of configuration file locations. The object's listener class is 
+              <code>org.hippoecm.hst.core.HSTConfiguration</code>.
+           </p>
+          <p>For an example <a href="hstproperties.html">see here!</a></p>      
+        </subsection>
+        <a name="BinariesServlet"></a>
+        <subsection name="Configuration of the servlet for binaries">
+          <p>A separate servlet is available in the HST, that can serve binaries such as images and documents 
+            from any location within the repository based on the URL path it recieves.</p>
+          <p>If you need binaries in your application, use a regular <code>&lt;servlet&gt;</code>
+            configuration with class <code>org.hippoecm.hst.BinariesServlet</code>. 
+            Set up a descriptive <code>&lt;url-pattern&gt;</code> like <code>/binaries/*</code>, 
+            that you will have to use as prefix in your jsp's, for instance in the in a the <code>src</code> 
+            attribute of the &lt;img&gt; tag (<a href="binaries.html">more here</a>).</p>  
+        </subsection>
+         
+        <p>For an example web.xml, <a href="webxml.html#2">see here!</a></p>      
+      </section>
+
+    </body>
+</document>
