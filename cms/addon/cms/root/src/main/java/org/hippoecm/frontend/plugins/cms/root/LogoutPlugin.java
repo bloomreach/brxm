@@ -15,20 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.ValueMap;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 
 public class LogoutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -63,6 +70,16 @@ public class LogoutPlugin extends RenderPlugin {
                     }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
+                }
+                try {
+                    if(userSession.getRootNode().hasNode("hippo:log")) {
+                        Workflow workflow = ((HippoWorkspace)userSession.getJcrSession().getWorkspace()).getWorkflowManager().getWorkflow("internal", userSession.getRootNode().getNode("hippo:log"));
+                        if(workflow instanceof EventLoggerWorkflow) {
+                            ((EventLoggerWorkflow)workflow).logEvent(userSession.getJcrSession().getUserID(), "Repository", "logout");
+                        }
+                    }
+                } catch(RemoteException ex) {
+                } catch(RepositoryException ex) {
                 }
                 userSession.logout();
             }

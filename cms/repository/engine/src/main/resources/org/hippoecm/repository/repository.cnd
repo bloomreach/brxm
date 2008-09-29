@@ -283,26 +283,6 @@
 - hippo:uuid (string) mandatory
 - hippo:paths (string) multiple mandatory
 
-[hippo:logconfig] > nt:base
-- hippo:logenabled (boolean) = 'true' mandatory autocreated
-- hippo:logpath (string) = '/hippo:log'  mandatory autocreated
-- hippo:logappender (string) = 'rolling' mandatory autocreated < 'rolling', 'folding'
-- hippo:logmaxsize (long) = '100' mandatory autocreated 
-
-[hippo:logitem] > nt:base
-- hippo:timestamp (long) mandatory
-- hippo:eventUser (string) mandatory
-- hippo:eventClass (string) mandatory
-- hippo:eventMethod (string) mandatory
-- hippo:eventArguments (string) multiple
-- hippo:eventReturnType (string)
-- hippo:eventReturnValue (string)
-- hippo:eventDocument (string)
-
-[hippo:logfolder] > nt:base orderable
-+ * (hippo:logfolder) = hippo:logfolder
-+ * (hippo:logitem) = hippo:logitem
-
 [hippo:basequeryfolder] > nt:unstructured // FIXME
 + * (nt:query) = hippo:query
 
@@ -320,6 +300,5 @@
 + hippo:domains (hippo:domainfolder) = hippo:domainfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
 + hippo:frontend (hippo:application) = hippo:application
-+ hippo:logging (hippo:logconfig) = hippo:logconfig
 + hippo:queries (hippo:basequeryfolder) = hippo:queryfolder mandatory autocreated
 + hippo:security (hippo:securityfolder) = hippo:securityfolder

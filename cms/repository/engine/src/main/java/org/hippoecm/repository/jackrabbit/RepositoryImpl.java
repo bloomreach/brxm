@@ -24,6 +24,9 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
@@ -37,12 +40,10 @@ import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.hippoecm.repository.EventLogger;
+
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @SuppressWarnings("unused")
@@ -182,10 +183,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         sc.setAttribute("rootSession", rootSession);
         Session session = super.login(sc, workspaceName);
 
-        if (session != null && session.isLive()) {
-            EventLogger logger = new EventLogger(rootSession);
-            logger.logEvent(session.getUserID(), "Repository", "login");
-        }
         return session;
     }
 

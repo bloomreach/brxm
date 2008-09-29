@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository;
+package org.hippoecm.repository.standardworkflow;
 
+import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
@@ -22,12 +23,15 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventLogger {
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+
+public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,42 +42,23 @@ public class EventLogger {
     private String appender;
     private long maxSize;
 
-    public EventLogger(Session session) {
+    public EventLoggerImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
         try {
-            String configPath = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.LOGGING_PATH;
-            if (session.itemExists("/" + configPath)) {
-                Node configuration = session.getRootNode().getNode(configPath);
-                enabled = configuration.getProperty(HippoNodeType.HIPPO_LOGENABLED).getBoolean();
-                if (enabled) {
-                    appender = configuration.getProperty(HippoNodeType.HIPPO_LOGAPPENDER).getString();
-                    maxSize = configuration.getProperty(HippoNodeType.HIPPO_LOGMAXSIZE).getLong();
-
-                    String logPath = configuration.getProperty(HippoNodeType.HIPPO_LOGPATH).getString();
-                    if (!session.itemExists(logPath)) {
-                        String logParentPath = logPath.substring(0, logPath.lastIndexOf("/"));
-                        logParentPath = logParentPath.length() == 0 ? "/" : logParentPath;
-                        if (session.itemExists(logParentPath)) {
-                            Node logParent = (Node) session.getItem(logParentPath);
-                            String logFolderName = logPath.substring(logPath.lastIndexOf("/") + 1, logPath.length());
-                            logParent.addNode(logFolderName, HippoNodeType.NT_LOGFOLDER);
-                            logParent.save();
-                            log.info("Event logging configuration: created logging base node '" + logPath + "'");
-                        } else {
-                            enabled = false;
-                            log.error("Event logging configuration failed: logging base node '" + logPath
-                                    + "' does not exist.");
-                            return;
-                        }
-                    }
-                    logFolder = (Node) session.getItem(logPath);
-                }
-            }
-            if (!enabled) {
-                log.info("Event logging disabled, workflow steps will not be logged");
-            }
-        } catch (RepositoryException e) {
-            log.error("Event logger configuration failed: " + e.getMessage());
+            logFolder = rootSession.getRootNode().getNode(subject.getPath().substring(1));
+            enabled = logFolder.getProperty("hippolog:enabled").getBoolean();
+            appender = logFolder.getProperty("hippolog:appender").getString();
+            maxSize = logFolder.getProperty("hippolog:maxsize").getLong();
+        } catch(RepositoryException ex) {
+            enabled = false;
+            log.error("Event logger configuration failed: " + ex.getMessage());
         }
+        if (!enabled) {
+            log.info("Event logging disabled, workflow steps will not be logged");
+        }
+    }
+
+    public EventLoggerImpl(Session rootSession) throws RemoteException, RepositoryException {
+        this(rootSession, rootSession, rootSession.getRootNode().getNode("hippo:log"));
     }
 
     public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath) {
@@ -82,7 +67,7 @@ public class EventLogger {
                 applyAppender();
                 long timestamp = System.currentTimeMillis();
 
-                Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippo:logitem");
+                Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
                 if (logFolder.hasNodes()) {
                     Node firstNode = logFolder.getNodes().nextNode();
                     logFolder.orderBefore(logNode.getName(), firstNode.getName());
@@ -127,7 +112,7 @@ public class EventLogger {
                 applyAppender();
                 long timestamp = System.currentTimeMillis();
 
-                Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippo:logitem");
+                Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
                 if (logFolder.hasNodes()) {
                     Node firstNode = logFolder.getNodes().nextNode();
                     logFolder.orderBefore(logNode.getName(), firstNode.getName());

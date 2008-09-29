@@ -18,6 +18,7 @@
   xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
   xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"
   xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+  xmlns:hippolog="http://www.hippoecm.org/hippolog/nt/1.0"
   xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
 
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -564,7 +565,7 @@
           <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:logfolder</sv:value>
+          <sv:value>hippolog:folder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
           <sv:value/>
@@ -1109,7 +1110,7 @@
           <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:logfolder</sv:value>
+          <sv:value>hippolog:folder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
           <sv:value/>
@@ -1602,7 +1603,7 @@
           <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:logfolder</sv:value>
+          <sv:value>hippolog:folder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
           <sv:value/>
@@ -2095,7 +2096,7 @@
           <sv:value/>
         </sv:property>
         <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:logfolder</sv:value>
+          <sv:value>hippolog:folder</sv:value>
         </sv:property>
         <sv:property sv:name="target" sv:type="String">
           <sv:value/>

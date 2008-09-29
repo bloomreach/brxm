@@ -93,9 +93,8 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             Node node = (Node) item.getModelObject();
             Session session = ((UserSession) getSession()).getJcrSession();
             try {
-                if (!node.isNodeType(HippoNodeType.NT_LOGITEM)) {
-                    throw new IllegalArgumentException("CurrentActivityPlugin can only process Nodes of type "
-                            + HippoNodeType.NT_LOGITEM + ".");
+                if (!node.isNodeType("hippolog:item")) {
+                    throw new IllegalArgumentException("CurrentActivityPlugin can only process Nodes of type hippolog:item.");
                 }
 
                 // Add even/odd row css styling
