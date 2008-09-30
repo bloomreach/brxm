@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.Utilities;
 
 public class MirrorTest extends TestCase {
     @SuppressWarnings("unused")
@@ -75,8 +74,6 @@ public class MirrorTest extends TestCase {
 
     @Test
     public void testMirror() throws Exception {
-        PrintStream pstream = new PrintStream("dump.txt");
-
         assertNotNull(session.getRootNode());
         assertTrue(session.getRootNode().hasNode("navigation"));
         assertNotNull(session.getRootNode().getNode("navigation"));
@@ -87,17 +84,11 @@ public class MirrorTest extends TestCase {
         assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test1"));
         assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test1"));
 
-        Utilities.dump(pstream, session.getRootNode());
-        pstream.println("===");
-
         session.getRootNode().addNode("dummy");
         session.getRootNode().getNode("documents").addNode("test-a","nt:unstructured").setProperty("test-b","test-c");
         session.getRootNode().getNode("documents").getNode("test1").addNode("test-x");
         session.save();
         session.refresh(true);
-
-        Utilities.dump(pstream, session.getRootNode());
-        pstream.println("===");
 
         assertTrue(session.getRootNode().getNode("navigation").getNode("mirror").hasNode("test-a"));
         assertNotNull(session.getRootNode().getNode("navigation").getNode("mirror").getNode("test-a"));
