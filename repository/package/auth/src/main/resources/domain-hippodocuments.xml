@@ -74,7 +74,7 @@
             <sv:value>editor</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">
-            <sv:value>jcrall</sv:value>
+            <sv:value>editor</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:authrole">

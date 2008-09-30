@@ -92,6 +92,7 @@
                 <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
+        <!-- 
         <sv:node sv:name="hippo:facetrule">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:facetrule</sv:value>
@@ -109,6 +110,7 @@
                 <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
+         -->
     </sv:node>
     <sv:node sv:name="hippo:domainrule">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -131,6 +133,7 @@
                 <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
+        <!-- 
         <sv:node sv:name="hippo:facetrule">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
                 <sv:value>hippo:facetrule</sv:value>
@@ -148,6 +151,7 @@
                 <sv:value>true</sv:value>
             </sv:property>
         </sv:node>
+         -->
     </sv:node>
     <sv:node sv:name="hippo:domainrule">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -220,21 +224,10 @@
             <sv:value>hippo:authrole</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:groups" sv:type="String">
-            <sv:value>editor</sv:value>
+            <sv:value>everybody</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">
-            <sv:value>editor</sv:value>
-        </sv:property>
-    </sv:node>
-    <sv:node sv:name="hippo:authrole">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:authrole</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:groups" sv:type="String">
-            <sv:value>author</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:role" sv:type="String">
-            <sv:value>author</sv:value>
+            <sv:value>jcrread</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>
