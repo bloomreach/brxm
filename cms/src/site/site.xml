@@ -41,14 +41,32 @@
     </links>
 
     <menu name="About Hippo ECM">
-      <item name="What is Hippo ECM?" href="/index.html"/>
+      <item name="What is Hippo ECM?" href="/about-hippo-ecm/index.html"/>
       <item name="ECM Use Cases" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
       <item name="ECM Features" href="/about-hippo-ecm/features.html"/>
       <item name="ECM Architecture" href="/about-hippo-ecm/architecture.html"/>
       <!--<item name="Future" href="/about-hippo-ecm/future.html"/>-->
     </menu>
 
-    <menu name="Support">
+    <menu name="To other ECM docs">
+      <item name="ECM" href="http://docs.onehippo.org"/>
+      <item name="CMS" href="/index.html"/>
+     <!--
+      <item name="Site Toolkit" href="http://docs.onehippo.org/sitetoolkit2"/>
+      <item name="Portal" href="http://docs.onehippo.org/portal2"/>
+     -->
+    </menu>
+
+    <menu name="About Hippo CMS">
+      <item name="What is Hippo CMS?" href="/index.html"/>
+   <!-- 
+      <item name="CMS Use Cases" href="/about/usages-for-hippo-ecm.html"/>
+      <item name="CMS Features" href="/about/features.html"/>
+      <item name="CMS Architecture" href="/about/architecture.html"/>
+  -->
+    </menu>
+
+    <menu name="Hippo CMS Support">
       <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
       <item name="Community support" href="/support/community-support.html"/>

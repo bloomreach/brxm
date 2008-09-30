@@ -19,98 +19,33 @@
 -->
 <document>
   <properties>
-    <title>What is Hippo ECM?</title>
+    <title>What is Hippo CMS?</title>
   </properties>
   <body>
-    <section name="What is Hippo ECM?">
+    <section name="What is Hippo CMS?">
       <p>
-        The Hippo Enterprise Content Management system
-        is an application suite to use information efficiently.
-        With Hippo ECM information can be: created, acquired, structured, managed,
-        stored, preserved, shared, published on the internet, printed and searched. 
-        If desired, other applications can be integrated into the Hippo ECM application suite.
-        Hippo ECM is targeted at medium to large organizations and can be used in many
-        different ways. For examples of uses see
-        <a href="/about-hippo-ecm/usages-for-hippo-ecm.html">Hippo ECM Use Cases</a>.
-        More about all the features of Hippo ECM can be found 
-        at <a href="/about-hippo-ecm/features.html">Hippo ECM Features</a>.
+        The Hippo Content Management System is one component of the 
+        Hippo ECM.
+        With Hippo CMS information can be: created, acquired, structured, managed,
+        stored, preserved, shared, printed, searched and published on the web as a flat website.
+
+ <!--
+        Any applications conforming to the JCR API can be linked to Hippo CMS. 
+        >> That is linking to the repository, but what about to Hippo CMS itself? 
+
+   <m:inconsistent>
+    <m:statement>Hippo CMS is a product containing the repository.</m:statement>
+    <m:statement>Hippo CMS is a component of the Hippo ECM which does not contain the repository.</m:statement>
+   <m:inconsistent>
+
+        For examples of uses see
+        <a href="/about/usages-for-hippo-ecm.html">Hippo CMS Use Cases</a>.
+        More about all the features of Hippo CMS can be found 
+        at <a href="/about/features.html">Hippo CMS Features</a>.
+ -->
+ 
       </p>
 
-    <subsection name="Why use Hippo ECM?">
-      <p>
-        Managing all information in an organization is a daunting task. Knowledge is stored in
-        numerous files, emails, webpages, forms, Excel sheets, and so on, and is handled differently
-        for every organization. To work with all this information, every organization employs a
-        diverse set of applications that adds logic and behaviour. Hippo ECM can integrate those
-        applications, manage the underlaying information and present the end user with a simple,
-        unified environment for all their information management.
-      </p>
-    </subsection>
-
-    <subsection name='Why choose Hippo ECM?'>
-
-      <ul>
-       <li><b>Hippo ECM, 100% Open Source Enterprise Content Management:</b>
-
-          Hippo ECM facilitates an open and flexible way of
-          using your information by following internationally accepted open standards.
-          This allows integration of other applications, ensures freedom to 
-          change to other ECM systems, if so desired  
-       </li>
-       <li>
-        <b>Extensively Modular:</b>  
-
-          Hippo EMC differentiates itself from other ECM and CMS systems by its clean separation of
-          content storage, management and presentation. These modules (independent units) are
-          even subdivided into smaller modules. This extensive modularity allows for fast development
-          and for extensibility, even by other parties.
-
-          An overview of the higher level modules and their interconnection
-          can be found at <a href="/about-hippo-ecm/architecture.html">ECM Architecture</a>.
-       </li>
-      </ul>
-
-    
-     </subsection>
     </section>
-
-        <!-- Hippo is targeted at medium to large organizations managing content for multi-channel
-           distribution like web sites, intranet and print. 
-
-        Hippo ECM structures information, offers integration possibilities on both content and
-        presentation level, in a simple and for users understandable way.
-
-        -->
-
-    <!--
-    <section name="History of Hippo ECM">
-      <p>
-        The first stable distribution of Hippo CMS version 6 was released in June 2004. This new
-        release introduced a fresh architecture where Hippo CMS, a frontend application, and the
-        content repository were seperated in different server applications. This seperation of
-        concerns on setup level has been one of the main drivers of the success of Hippo CMS 6.
-        It allowed for complex integrations with external systems while keeping a strong focus on a
-        standardized user interface for the end-user. The focus on standardized protocols and XML
-        technologies opened up the possibilities needed for enterprise wide CMS usage. Scalability
-        and load balancing functionalities have added to the stability of the platform and allowed
-        it to be used in the largest, content rich environments. A familiar user interface driven by
-        AJAX technologies to update only those parts of the application that needed to do so brought
-        wide user acceptance. On the developer's side, the concept of deployments and custom builds
-        allowed external developers to setup and use the Hippo CMS platform for a diverse set of
-        applications.
-      </p>
-      <p>
-        All of these developments combined have led to the current stable 6.05 release, rich in
-        functionalities and possibilities. They have also inspired developers and customers to raise
-        ideas and whishes that go far beyond what's possible today. But the architectural concept
-        has proven itself, and those new ideas only intensify the feeling that we're on the right
-        track. We are facing new horizons and need to take that leap to jump to the next level of
-        extendibility, user experience and scalability. Together with the HippoCMS.org community,
-        Hippo will be driving the development of the future version of the Hippo Content Platform,
-        consisting of Hippo CMS 7, Hippo Repository 2 and Hippo Portal 1.
-      </p>
-    </section>
-    -->
-
   </body>
 </document>
