@@ -110,16 +110,18 @@ public class DerivedDataTest extends TestCase {
         Property p = session.getRootNode().getNode("test/folder2/document").getProperty("hippo:paths");
         assertTrue(p.getDefinition().isMultiple());
         Value[] values = p.getValues();
-        assertEquals(1, values.length);
-        values[0].getString().equals(folder2.getUUID());
+        assertEquals(2, values.length);
+        values[0].getString().equals(session.getRootNode().getUUID());
+        values[1].getString().equals(folder2.getUUID());
 
         session.move(document.getPath(), folder1.getPath()+"/"+document.getName());
         session.save();
         p = session.getRootNode().getNode("test/folder1/document").getProperty("hippo:paths");
         assertTrue(p.getDefinition().isMultiple());
         values = p.getValues();
-        assertEquals(1, values.length);
-        values[0].getString().equals(folder1.getUUID());
+        assertEquals(2, values.length);
+        values[0].getString().equals(session.getRootNode().getUUID());
+        values[1].getString().equals(folder1.getUUID());
     }
 
     private void disabledTest() throws RepositoryException {
