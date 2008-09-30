@@ -93,7 +93,7 @@
           <sv:value>admin</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:role" sv:type="String">
-          <sv:value>jcrall</sv:value>
+          <sv:value>admin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
@@ -194,7 +194,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:rolefolder</sv:value>
     </sv:property>
-    <sv:node sv:name="jcrall">
+    <sv:node sv:name="admin">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:role</sv:value>
       </sv:property>
