@@ -23,6 +23,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndExportDialog;
 import org.hippoecm.frontend.plugins.console.menu.cnd.CndImportDialog;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentExportDialog;
@@ -174,6 +175,16 @@ public class MenuPlugin extends RenderPlugin {
         
         sorter = new Sorter("sorter-panel");
         add(sorter);
+
+        dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService service) {
+                return new WorkflowDialog(MenuPlugin.this, getPluginContext(), service);
+            }
+        };
+        add(new DialogLink("workflow-dialog", new Model("Workflow"), dialogFactory, dialogService));
+
     }
     
     @Override
