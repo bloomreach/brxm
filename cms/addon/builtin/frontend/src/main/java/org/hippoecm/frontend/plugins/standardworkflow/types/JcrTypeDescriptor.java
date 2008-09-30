@@ -29,14 +29,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,20 +159,25 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
             case PropertyType.BOOLEAN:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(false);
             case PropertyType.DATE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(Calendar.getInstance());
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
+                        Calendar.getInstance());
             case PropertyType.DOUBLE:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0.0);
             case PropertyType.LONG:
                 return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(0L);
             case PropertyType.NAME:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.NAME);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
+                        PropertyType.NAME);
             case PropertyType.PATH:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/", PropertyType.PATH);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("/",
+                        PropertyType.PATH);
             case PropertyType.REFERENCE:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(UUID.randomUUID().toString(), PropertyType.REFERENCE);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(
+                        UUID.randomUUID().toString(), PropertyType.REFERENCE);
             case PropertyType.STRING:
             case PropertyType.UNDEFINED:
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("", PropertyType.STRING);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("",
+                        PropertyType.STRING);
             default:
                 return null;
             }
@@ -237,6 +242,20 @@ public class JcrTypeDescriptor extends NodeModelWrapper implements ITypeDescript
         } else {
             log.warn("field " + name + " was not found");
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof JcrTypeDescriptor) {
+            JcrTypeDescriptor that = (JcrTypeDescriptor) object;
+            return new EqualsBuilder().append(this.name, that.name).isEquals();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(53, 7).append(this.name).toHashCode();
     }
 
     @Override
