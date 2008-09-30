@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007-2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+
+    <title>Welcome</title>
+  </properties>
+  <body>
+    <section name="Delve into Hippo CMS">
+
+      <!-- [TODO] requires new infographic
+        <img src="images/old-infographic.jpg" alt="Clean separation of content storage, management and presentation"/>
+              <a href="use-hippo-ecm/index.html"><img alt="use" src="/images/frontpage/use.png" /></a>
+        -->
+
+        <p>The Hippo CMS component of the Hippo ECM can manage all content in your company. 
+           The userinterface is webbased: content is created and managed via your normal webbrowser, anywhere 
+           you have access to your companies intranet. Several users may work on the same document, picture, soundtrack 
+           or other piece of content. Rights to change pieces of content or just to read them can be assigned.
+           Previous versions of content are stored automatically. Advanced methods to search content are 
+           provided.
+        </p>
+
+        <p>
+          Companies that use Hippo CMS, design their own content structure. Hippo CMS ensures that all content  
+          fits into this single structure. Thus, the content base of the company will be filled with information 
+          actually useful to the company; required information will actually be there 
+          and the content base will be easily understandable and searchable, thanks to its uniformity.    
+        </p>
+
+        <table style='td { border:solid;}'>
+          <tr>
+            <td>
+              <a href="quickstart.html"><img class='leftflow' src="../images/frontpage/quickstart.png" />
+
+                <h3>CMS Quickstart Guide</h3></a>
+
+               <p>You can try out Hippo CMS with example content having predefined structure, to see possible features `in action',
+                  before designing your own content structure. 
+                  To install Hippo CMS with example content, download a quickstart Hippo CMS package. After you studied
+                  the example content, your system adminstrator can configure the package for actual use in your company. 
+               </p>
+            </td>
+            <td>
+              <a href="use-hippo-ecm/index.html"><img width='50' alt="use" src="../images/frontpage/use.png" />
+
+               <h3>Hippo CMS User Guide</h3></a>
+
+                If you are a (new) user to Hippo CMS and the Hippo CMS is already installed on your system,  
+                read the User Guide for a tour through Hippo CMS and to learn Hippo CMS concepts.
+
+            </td>
+            <td>
+              <a href="run-hippo-ecm/index.html"><img alt="run" src="../images/frontpage/run.png" /></a>
+
+               <h3>CMS System administration Guide</h3>
+           
+               <p>
+                Here, all system administration information for Hippo CMS can found, i.e. installation and configuration.
+                The description of installation includes details not
+                in the quickstart guide. Configuration of Hippo CMS is often as simple as 
+                adding the path to your companies data base server. Without this path, Hippo CMS will use
+                a folder on your filesystem to store the content.
+	       </p>
+               <p>
+                If a quickstart package was installed, configuration for actual use requires two
+                settings that ensure that the example content is not used and not recreated on your data base server.
+	       </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="implement-hippo-ecm/index.html"><img alt="implement" src="../images/frontpage/implement.png" /></a>
+
+               <h3>CMS implementation guide</h3>
+
+               <p>
+                The Hippo ECM can be tailored to your needs, augmented with your own website-design, 
+                and integrated with your other applications to create your own Hippo ECM implementation. 
+               </p>
+               <p>
+                This guides describes the CMS related aspects of the Hippo ECM implementation.
+	       </p>
+            </td>
+            <td>
+              <a href="extend-hippo-ecm/index.html"><img alt="extend" src="../images/frontpage/extend.png" /></a>
+
+               <h3>CMS Extension Guide</h3>
+
+                 This guide is for developers of custom plugins for Hippo CMS. Examples are plugins for extra properties
+                 of content nodes and plugins for custom userinterfaces for the Hippo CMS.
+            </td>
+            <td>
+              <a href="building/index.html"><img alt="build" src="../images/frontpage/build.png" /></a>
+
+               <h3>CMS Developers Guide</h3>
+
+                 This guide is for Hippo CMS developers, who develop the CMS core engines and the CMS core plugins and
+                 the CMS standard package, containing the CMS core engines and a selection of the CMS core plugins.
+
+            </td>
+            <!--<li>
+              <p>
+                <b>Develop Hippo ECM</b>
+              </p>
+              <p>
+                Information for Hippo ECM core developers.
+              </p>
+            </li>-->
+          </tr>
+        </table>
+    </section>
+
+  </body>
+</document>
