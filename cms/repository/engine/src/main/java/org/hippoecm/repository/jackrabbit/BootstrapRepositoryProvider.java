@@ -94,7 +94,7 @@ public class BootstrapRepositoryProvider extends HippoVirtualProvider
         state.setDefinitionId(upstream.getDefinitionId());
         for(Iterator iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
             Name propName = (Name) iter.next();
-            PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), propName);
+            PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), upstream.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             PropDefId propDefId = upstreamPropState.getDefinitionId();
             if(propName.equals(jcrUUIDdocbaseName)) {
