@@ -22,6 +22,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -46,18 +48,19 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.misc.BASE64Decoder;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.HippoNodeType;
+
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
@@ -66,18 +69,25 @@ public class RepositoryServlet extends HttpServlet {
     private final static String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(HippoRepository.class);
+
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+
     /** Parameter name of the binging address */
     public final static String REPOSITORY_BINDING_PARAM = "repository-address";
+
     /** Parameter name of the repository config file */
     public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
+
     /** Default binding address for server */
     public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/hipporepository";
+
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
+
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+
     HippoRepository repository;
     String bindingAddress;
     String storageLocation;
@@ -178,10 +188,14 @@ public class RepositoryServlet extends HttpServlet {
             if (bindingAddress.startsWith("rmi://")) {
                 int port = Registry.REGISTRY_PORT;
                 try {
-                    if (bindingAddress.startsWith("rmi://localhost:")) {
-                        String portString = bindingAddress.substring("rmi://localhost:".length());
-                        portString = portString.substring(0, portString.indexOf("/"));
-                        port = Integer.parseInt(portString);
+                    if (bindingAddress.startsWith("rmi://")) {
+                        if (bindingAddress.indexOf('/', 6) >= 0) {
+                            if (bindingAddress.indexOf(':', 6) >= 0 &&
+                                bindingAddress.indexOf(':', 6) < bindingAddress.indexOf('/', 6)) {
+                                port = Integer.parseInt(bindingAddress.substring(bindingAddress.indexOf(':', 6)+1,
+                                                                   bindingAddress.indexOf('/',bindingAddress.indexOf(':',6)+1)));
+                            }
+                        }
                     }
                     Registry registry = LocateRegistry.createRegistry(port);
                     log.info("Started an RMI registry on port " + port);
@@ -309,10 +323,8 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    <ul>");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();
-                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/"
-                        + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
-                String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode) child)
-                        .getDisplayName()));
+                writer.print("    <li type=\"circle\"><a href=\"" + req.getContextPath() + req.getServletPath() + "/" + StringEscapeUtils.escapeHtml(child.getPath()) + "/" + "\">");
+                String displayName = StringEscapeUtils.escapeHtml(ISO9075Helper.decodeLocalName(((HippoNode)child).getDisplayName()));
                 if (child.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     writer.print(displayName + " [" + child.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]");
                 } else {
@@ -336,6 +348,7 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
             writer.println("    </ul>");
+
 
             String queryString = null;
             if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
