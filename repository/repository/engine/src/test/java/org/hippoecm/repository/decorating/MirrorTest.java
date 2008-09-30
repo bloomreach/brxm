@@ -21,9 +21,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.PrintStream;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.Utilities;
-import org.junit.Test;
 
 public class MirrorTest extends TestCase {
     @SuppressWarnings("unused")
@@ -33,10 +36,6 @@ public class MirrorTest extends TestCase {
         "/documents", "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "niet", "hier",
-        "/navigation", "nt:unstructured",
-        "/navigation/mirror", "hippo:mirror",
-        "hippo:docbase", "/documents",
-
         "/documents/test1", "nt:unstructured",
         "/documents/test2", "nt:unstructured",
         "wel","anders",
@@ -44,19 +43,39 @@ public class MirrorTest extends TestCase {
         "/documents/test3/test4", "nt:unstructured",
         "lachen", "zucht",
         "/documents/test3/test4/test5", "nt:unstructured",
-        "/documents/test3/test4/test5", "nt:unstructured"
+        "/navigation", "nt:unstructured",
+        "/navigation/mirror", "hippo:mirror",
+        "hippo:docbase", "/documents"
     };
 
-    @Test public void testMirror() throws Exception {
-        PrintStream pstream = new PrintStream("dump.txt");
-
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        if(session.getRootNode().hasNode("documents")) {
+            session.getRootNode().getNode("documents").remove();
+        }
+        if(session.getRootNode().hasNode("navigation")) {
+            session.getRootNode().getNode("navigation").remove();
+        }
         build(session, contents);
         session.save();
-        session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+    }
 
-        Utilities.dump(pstream, session.getRootNode());
-        pstream.println("===");
+    @After
+    public void tearDown() throws Exception {
+        if(session.getRootNode().hasNode("documents")) {
+            session.getRootNode().getNode("documents").remove();
+        }
+        if(session.getRootNode().hasNode("navigation")) {
+            session.getRootNode().getNode("navigation").remove();
+        }
+        session.save();
+        super.tearDown();
+    }
+
+    @Test
+    public void testMirror() throws Exception {
+        PrintStream pstream = new PrintStream("dump.txt");
 
         assertNotNull(session.getRootNode());
         assertTrue(session.getRootNode().hasNode("navigation"));

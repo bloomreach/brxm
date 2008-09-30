@@ -91,7 +91,8 @@ public class PathsTest extends TestCase {
         for (int i = 0; i < values.length; i++) {
             valuesSet.add(values[i].getString());
         }
-        assertTrue(values.length == 2);
+        assertTrue(values.length == 3);
+        assertTrue(valuesSet.contains(session.getRootNode().getUUID()));
         assertTrue(valuesSet.contains(session.getRootNode().getNode("test").getUUID()));
         assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub").getUUID()));
     }
