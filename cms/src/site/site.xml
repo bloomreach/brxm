@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project name="Hippo ECM">
+<project name="Hippo CMS">
 
   <skin>
     <groupId>org.hippoecm</groupId>
@@ -40,136 +40,115 @@
       <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
     </links>
 
-    <menu name="Main">
-      <item name="Welcome" href="/index.html"/>
-    </menu>
-
     <menu name="About Hippo ECM">
-      <item name="What is Hippo ECM?" href="/about-hippo-ecm/what-is-hippo-ecm.html"/>
-      <item name="Use Cases" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
-      <item name="Features" href="/about-hippo-ecm/features.html"/>
-      <item name="Architecture" href="/about-hippo-ecm/architecture.html"/>
-      <item name="Components" href="/about-hippo-ecm/components.html"/>
+      <item name="What is Hippo ECM?" href="/index.html"/>
+      <item name="ECM Use Cases" href="/about-hippo-ecm/usages-for-hippo-ecm.html"/>
+      <item name="ECM Features" href="/about-hippo-ecm/features.html"/>
+      <item name="ECM Architecture" href="/about-hippo-ecm/architecture.html"/>
       <!--<item name="Future" href="/about-hippo-ecm/future.html"/>-->
     </menu>
 
-    <menu name="ECM Documentation">
+    <menu name="Support">
+      <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
+      <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
+      <item name="Community support" href="/support/community-support.html"/>
+      <item name="Contributing" href="/support/contribute.html"/>
+    </menu>
 
-      <item name="Quickstart" href="/quickstart.html" collapse="false" inherit="top"/>
+    <menu name="Delve into Hippo CMS">
 
-      <item name="Run Hippo ECM" href="/run-hippo-ecm/index.html" collapse="true">
-        <item name="Requirements" href="/run-hippo-ecm/requirements.html"/>
-        <item name="Deploying the WAR" href="/run-hippo-ecm/deploying-the-war.html"/>
-        <item name="Deploying the EAR" href="/run-hippo-ecm/deploying-the-ear.html"/>
-        <item name="Bootstrapping the Repository" href="/run-hippo-ecm/repository-bootstrap.html"/>
-        <item name="Installing Plugins" href="/run-hippo-ecm/installing-plugins.html"/>
-        <item name="Configuration" href="/run-hippo-ecm/configuration/index.html" collapse="true">
-          <item name="Repository" href="/run-hippo-ecm/configuration/repository/index.html" collapse="true">
-            <item name="Workspace" href="/run-hippo-ecm/configuration/repository/workspace.html"/>
-            <item name="Search Index" href="/run-hippo-ecm/configuration/repository/searchindex.html"/>
-            <item name="Authentication" href="/run-hippo-ecm/configuration/repository/authentication.html"/>
+      <item name="CMS guides overview" href="/delve-into/directions.html" collapse="false" inherit="top"/>
+      <item name="CMS Quickstart guide" href="/delve-into/quickstart.html" collapse="false" inherit="top"/>
+
+      <item name="CMS User Guide" href="/delve-into/use-hippo-ecm/index.html" collapse="true">
+        <item name="Usage tour" collapse="true" href="/delve-into/use-hippo-ecm/tour/index.html">
+          <item name="Logging in" href="/delve-into/use-hippo-ecm/tour/logging_in.html"/>
+          <item name="The dashboard" href="/delve-into/use-hippo-ecm/tour/dashboard.html"/>
+          <item name="Navigating the CMS" href="/delve-into/use-hippo-ecm/tour/navigating_the_cms.html"/>
+          <item name="Editing a document" href="/delve-into/use-hippo-ecm/tour/editing_a_document.html"/>
+          <item name="Creating a document type and template" href="/delve-into/use-hippo-ecm/tour/creating_a_document_type_and_template.html"/>
+          <item name="Managing users and groups" href="/delve-into/use-hippo-ecm/tour/managing_users_and_groups.html"/>
+          <item name="Workflow" href="/delve-into/use-hippo-ecm/tour/workflow.html"/>
+          <item name="Versioning" href="/delve-into/use-hippo-ecm/tour/versioning.html"/>
+          <item name="Working with authorizations" href="/delve-into/use-hippo-ecm/tour/working_with_authorizations.html"/>
+        </item>
+        <item name="CMS concepts" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/index.html" collapse="true">
+          <item name="Navigating" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/navigating.html" collapse="true"/>
+          <item name="Searching" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/searching.html" collapse="true"/>
+          <item name="Facet Search" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/facets/facetsearch.html" collapse="true"/>
+          <item name="Facet Select" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/facets/facetselect.html" collapse="true"/>
+          <item name="Authorization" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/authorization.html" collapse="true"/>
+          <item name="Content Modelling" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/contentmodel/index.html" collapse="true">
+          <item name="Example" href="/delve-into/use-hippo-ecm/hippo-ecm-concepts/contentmodel/contentmodelling_example.html" collapse="true"/>
           </item>
-          <item name="Configuration Nodes" href="/run-hippo-ecm/configuration/nodes/index.html" collapse="true">
-            <item name="Users" href="/run-hippo-ecm/configuration/nodes/users.html"/>
-            <item name="Groups" href="/run-hippo-ecm/configuration/nodes/groups.html"/>
-            <item name="Roles" href="/run-hippo-ecm/configuration/nodes/roles.html"/>
-            <item name="Domains" href="/run-hippo-ecm/configuration/nodes/domains.html"/>
-            <item name="Workflow" href="/run-hippo-ecm/configuration/nodes/workflow.html"/>
-          </item>
-          <item name="Console" href="/run-hippo-ecm/configuration/console.html"/>
+        </item>
+        <item name="Workflow" href="/delve-into/use-hippo-ecm/workflow/index.html" collapse="true">
+        </item>
+        <item name="Derived Data" href="/delve-into/use-hippo-ecm/derived-data.html" collapse="true">
+        </item>
+        <item name="Roadmap" href="/delve-into/use-hippo-ecm/roadmap.html" collapse="true">
         </item>
       </item>
-
-      <item name="Use Hippo ECM" href="/use-hippo-ecm/index.html" collapse="true">
-        <item name="Hippo ECM concepts" href="/use-hippo-ecm/hippo-ecm-concepts/index.html" collapse="true">
-          <item name="Navigating" href="/use-hippo-ecm/hippo-ecm-concepts/navigating.html" collapse="true"/>
-          <item name="Searching" href="/use-hippo-ecm/hippo-ecm-concepts/searching.html" collapse="true"/>
-          <item name="Facet Search" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetsearch.html" collapse="true"/>
-          <item name="Facet Select" href="/use-hippo-ecm/hippo-ecm-concepts/facets/facetselect.html" collapse="true"/>
-          <item name="Authorization" href="/use-hippo-ecm/hippo-ecm-concepts/authorization.html" collapse="true"/>
-          <item name="Content Modelling" href="/use-hippo-ecm/hippo-ecm-concepts/contentmodel/index.html" collapse="true">
-            <item name="Example" href="/use-hippo-ecm/hippo-ecm-concepts/contentmodel/contentmodelling_example.html" collapse="true"/>
+ 
+      <item name="CMS Administration guide" href="delve-into/run-hippo-ecm/index.html" collapse="true">
+        <item name="Requirements" href="/delve-into/run-hippo-ecm/requirements.html"/>
+        <item name="Deploying the WAR" href="/delve-into/run-hippo-ecm/deploying-the-war.html"/>
+        <item name="Deploying the EAR" href="/delve-into/run-hippo-ecm/deploying-the-ear.html"/>
+        <item name="Bootstrapping the Repository" href="/delve-into/run-hippo-ecm/repository-bootstrap.html"/>
+        <item name="Installing Plugins" href="/delve-into/run-hippo-ecm/installing-plugins.html"/>
+        <item name="Configuration" href="/delve-into/run-hippo-ecm/configuration/index.html" collapse="true">
+          <item name="Repository" href="/delve-into/run-hippo-ecm/configuration/repository/index.html" collapse="true">
+            <item name="Workspace" href="/delve-into/run-hippo-ecm/configuration/repository/workspace.html"/>
+            <item name="Search Index" href="/delve-into/run-hippo-ecm/configuration/repository/searchindex.html"/>
+            <item name="Authentication" href="/delve-into/run-hippo-ecm/configuration/repository/authentication.html"/>
           </item>
-        </item>
-        <item name="Workflow" href="/use-hippo-ecm/workflow/index.html" collapse="true">
-        </item>
-        <item name="Derived Data" href="/use-hippo-ecm/derived-data.html" collapse="true">
-        </item>
-        <item name="Roadmap" href="/use-hippo-ecm/roadmap.html" collapse="true">
-        </item>
-        <item name="Usage tour" collapse="true" href="/use-hippo-ecm/tour/index.html">
-          <item name="Logging in" href="/use-hippo-ecm/tour/logging_in.html"/>
-          <item name="The dashboard" href="/use-hippo-ecm/tour/dashboard.html"/>
-          <item name="Navigating the CMS" href="/use-hippo-ecm/tour/navigating_the_cms.html"/>
-          <item name="Editing a document" href="/use-hippo-ecm/tour/editing_a_document.html"/>
-          <item name="Creating a document type and template" href="/use-hippo-ecm/tour/creating_a_document_type_and_template.html"/>
-          <item name="Managing users and groups" href="/use-hippo-ecm/tour/managing_users_and_groups.html"/>
-          <item name="Workflow" href="/use-hippo-ecm/tour/workflow.html"/>
-          <item name="Versioning" href="/use-hippo-ecm/tour/versioning.html"/>
-          <item name="Working with authorizations" href="/use-hippo-ecm/tour/working_with_authorizations.html"/>
+          <item name="Configuration Nodes" href="/delve-into/run-hippo-ecm/configuration/nodes/index.html" collapse="true">
+            <item name="Users" href="/delve-into/run-hippo-ecm/configuration/nodes/users.html"/>
+            <item name="Groups" href="/delve-into/run-hippo-ecm/configuration/nodes/groups.html"/>
+            <item name="Roles" href="/delve-into/run-hippo-ecm/configuration/nodes/roles.html"/>
+            <item name="Domains" href="/delve-into/run-hippo-ecm/configuration/nodes/domains.html"/>
+            <item name="Workflow" href="/delve-into/run-hippo-ecm/configuration/nodes/workflow.html"/>
+          </item>
+          <item name="Console" href="/delve-into/run-hippo-ecm/configuration/console.html"/>
         </item>
       </item>
       
-      <item name="Implement Hippo ECM" href="/implement-hippo-ecm/index.html" collapse="true">
-        <item name="Website Development" href="/implement-hippo-ecm/website-development/index.html" collapse="true">
-          <item name="Quick Start" href="/implement-hippo-ecm/website-development/getting-started.html"/>
-          <item name="Start a project" href="/implement-hippo-ecm/website-development/getting-started-archetype.html"/>
-          <item name="Hello World" href="/implement-hippo-ecm/website-development/hello-world.html"/>
-          <item name="Facebook" href="/implement-hippo-ecm/website-development/facebook.html"/>
-        </item>
-        <item name="Advanced" href="/implement-hippo-ecm/advanced/index.html" collapse="true">
-          <item name="JCR Interface" href="/implement-hippo-ecm/advanced/jcr.html"/>
-          <item name="Dropbox Example" href="/implement-hippo-ecm/advanced/jcr-dropbox-example.html"/>
-        </item>
-        <item name="Reference" href="/implement-hippo-ecm/reference/index.html" collapse="true">
-          <item name="Concepts" href="/implement-hippo-ecm/reference/concepts.html"/>
-          <item name="Configuration" href="/implement-hippo-ecm/reference/configuration.html" collapse="true">
-            <item name="hst.properties" href="/implement-hippo-ecm/reference/configuration-hstproperties.html"/>
-            <item name="web.xml" href="/implement-hippo-ecm/reference/configuration-webxml.html"/>
-          </item>
-          <item name="Filters" href="/implement-hippo-ecm/reference/filters.html"/>
-          <item name="JSP Taglib" href="/implement-hippo-ecm/reference/jsp-taglib.html"/>
-          <item name="Expression Language" href="/implement-hippo-ecm/reference/el-index.html"/>
-          <item name="URL Mapping" href="/implement-hippo-ecm/reference/url-mapping.html"/>
-          <item name="Binaries" href="/implement-hippo-ecm/reference/binaries.html"/>
-        </item>
+      <item name="CMS Implementation Guide" href="/delve-into/implement-hippo-ecm/index.html" collapse="true">
+        <item name="JCR Interface" href="/delve-into/implement-hippo-ecm/advanced/jcr.html"/>
+        <item name="Dropbox Example" href="/delve-into/implement-hippo-ecm/advanced/jcr-dropbox-example.html"/>
       </item>
 
-      <item name="Build Hippo ECM" href="/building/index.html" collapse="true">
-        <item name="Project Structure" href="/building/project-structure.html"/>
-        <item name="Building with Maven" href="/building/maven.html"/>
-        <item name="Building with Eclipse" href="/building/eclipse.html" collapse="true"/>
-        <item name="Building with Netbeans" href="/building/netbeans.html"/>
+      <item name="CMS Extension Guide" href="/delve-into/extend-hippo-ecm/index.html" collapse="true">
+        <item name="Document Templates" href="/delve-into/extend-hippo-ecm/document-templates/index.html" collapse="true">
+          <item name="Tutorial" href="/delve-into/extend-hippo-ecm/document-templates/tutorial.html" />
+          <item name="Examples" href="/delve-into/extend-hippo-ecm/document-templates/examples.html" />
+          <item name="Importing Content" href="/delve-into/extend-hippo-ecm/document-templates/importing-content.html" />
+        </item>
+        <item name="Plugins" href="/delve-into/extend-hippo-ecm/plugins/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve-into/extend-hippo-ecm/plugins/repository/index.html">
+            <item name="Workflow" href="/delve-into/extend-hippo-ecm/plugins/repository/workflow.html"/>
+          </item>
+          <item name="Frontend Plugins" href="/delve-into/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
+            <item name="Architecture" href="/delve-into/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication" href="/delve-into/extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html"/>
+            <item name="Skin" href="/delve-into/extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html"/>
+          </item>
+        </item>
+        <item name="Hello World" href="/delve-into/extend-hippo-ecm/hello-world.html"/>
       </item>
 
-      <item name="Extend Hippo ECM" href="/extend-hippo-ecm/index.html" collapse="true">
-        <item name="Document Templates" href="/extend-hippo-ecm/document-templates/index.html" collapse="true">
-          <item name="Tutorial" href="/extend-hippo-ecm/document-templates/tutorial.html" />
-          <item name="Examples" href="/extend-hippo-ecm/document-templates/examples.html" />
-          <item name="Importing Content" href="/extend-hippo-ecm/document-templates/importing-content.html" />
-        </item>
-        <item name="Plugins" href="/extend-hippo-ecm/plugins/index.html" collapse="true">
-          <item name="Repository Plugins" href="/extend-hippo-ecm/plugins/repository/index.html">
-            <item name="Workflow" href="/extend-hippo-ecm/plugins/repository/workflow.html"/>
-          </item>
-          <item name="Frontend Plugins" href="/extend-hippo-ecm/plugins/frontend/index.html" collapse="true">
-            <item name="Architecture" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
-            <item name="Communication" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html"/>
-            <item name="Skin" href="/extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html"/>
-          </item>
-        </item>
-        <item name="Hello World" href="/extend-hippo-ecm/hello-world.html"/>
+      <item name="CMS Development Guide" href="/delve-into/building/index.html" collapse="true">
+        <item name="Project Structure" href="/delve-into/building/project-structure.html"/>
+        <item name="Project reportsss"/>
+        <item name="Project reports" ref="reports" collapse="true"/>
+        <item name="Building with Maven" href="/delve-into/building/maven.html"/>
+        <item name="Building with Eclipse" href="/delve-into/building/eclipse.html" collapse="true"/>
+        <item name="Building with Netbeans" href="/delve-into/building/netbeans.html"/>
       </item>
     </menu>
 
-    <menu name="Community">
-      <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
-      <item name="Contributing" href="/community/contribute.html"/>
-    </menu>
-
-    <menu ref="reports" name="Other"/>
     
-    <menu name="Documentation versions">
+    <menu name="Versions of this Documentation">
       <item name="Latest release" href="http://docs.onehippo.org/hippo-ecm/"/>
       <item name="M6.4" href="http://docs.onehippo.org/hippo-ecm/2.01.00.13536/"/>
       <item name="M6.3" href="http://docs.onehippo.org/hippo-ecm/2.01.00.12907/"/>

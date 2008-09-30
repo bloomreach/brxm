@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007-2008 Hippo
+  Copyright 2007 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,76 +19,98 @@
 -->
 <document>
   <properties>
-    <title>Welcome</title>
+    <title>What is Hippo ECM?</title>
   </properties>
   <body>
-    <section name="Hippo ECM, 100% Open Source Enterprise Content Management.">
-      <p> Hippo is targeted at medium to large organizations managing content for multi-channel
-        distribution like web sites, intranet and print. It facilitates an open and flexible way of
-        using your information by following internationally accepted open standards.<br/><br/>
-        <b>Hippo differentiates itself from other ECM and CMS systems by its clean separation of
-          content storage, management and presentation.</b>
+    <section name="What is Hippo ECM?">
+      <p>
+        The Hippo Enterprise Content Management system
+        is an application suite to use information efficiently.
+        With Hippo ECM information can be: created, acquired, structured, managed,
+        stored, preserved, shared, published on the internet, printed and searched. 
+        If desired, other applications can be integrated into the Hippo ECM application suite.
+        Hippo ECM is targeted at medium to large organizations and can be used in many
+        different ways. For examples of uses see
+        <a href="/about-hippo-ecm/usages-for-hippo-ecm.html">Hippo ECM Use Cases</a>.
+        More about all the features of Hippo ECM can be found 
+        at <a href="/about-hippo-ecm/features.html">Hippo ECM Features</a>.
       </p>
 
-      <!-- [TODO] requires new infographic
-        <img src="images/old-infographic.jpg" alt="Clean separation of content storage, management and presentation"/>
-        -->
+    <subsection name="Why use Hippo ECM?">
+      <p>
+        Managing all information in an organization is a daunting task. Knowledge is stored in
+        numerous files, emails, webpages, forms, Excel sheets, and so on, and is handled differently
+        for every organization. To work with all this information, every organization employs a
+        diverse set of applications that adds logic and behaviour. Hippo ECM can integrate those
+        applications, manage the underlaying information and present the end user with a simple,
+        unified environment for all their information management.
+      </p>
+    </subsection>
 
-      <subsection name="Learning about Hippo ECM">
-        <p> This site is separated into the following sections, depending on how you'd like to use
-          Hippo ECM: </p>
-        <table>
-          <tr>
-            <td>
-              <a href="quickstart.html"><img alt="quickstart" src="images/frontpage/quickstart.png" /></a>
-            </td>
-            <td>
-              <a href="run-hippo-ecm/index.html"><img alt="run" src="images/frontpage/run.png" /></a>
-            </td>
-            <td>
-              <a href="use-hippo-ecm/index.html"><img alt="use" src="images/frontpage/use.png" /></a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="implement-hippo-ecm/index.html"><img alt="implement" src="images/frontpage/implement.png" /></a>
-            </td>
-            <td>
-              <a href="building/index.html"><img alt="build" src="images/frontpage/build.png" /></a>
-            </td>
-            <td>
-              <a href="extend-hippo-ecm/index.html"><img alt="extend" src="images/frontpage/extend.png" /></a>
-            </td>
-            <!--<li>
-              <p>
-                <b>Develop Hippo ECM</b>
-              </p>
-              <p>
-                Information for Hippo ECM core developers.
-              </p>
-            </li>-->
-          </tr>
-        </table>
-      </subsection>
-      <subsection name="How to get support">
-        <p> Support for Hippo ECM is available in a variety of different forms. </p>
+    <subsection name='Why choose Hippo ECM?'>
 
-        <p> To get started, search the documentation, the <a
-            href="http://wiki.hippo.nl/display/HIPPOECM/">wiki</a>, <a
-            href="http://issues.hippo.nl/browse/HREPTWO">issue tracker</a>, or the <a
-            href="http://lists.hippo.nl/pipermail/hipporepos-dev/">mailing list archives</a> to see
-          if the problem has been solved or reported before. </p>
+      <ul>
+       <li><b>Hippo ECM, 100% Open Source Enterprise Content Management:</b>
 
-        <p> If the problem has not been reported before, the recommended way to get help is to
-          subscribe to the <a href="mail-lists.html">Hippo ECM mailing list</a>. Many other users
-          and Hippo ECM developers will answer your questions there, and the answer will be archived
-          for others in the future. </p>
+          Hippo ECM facilitates an open and flexible way of
+          using your information by following internationally accepted open standards.
+          This allows integration of other applications, ensures freedom to 
+          change to other ECM systems, if so desired  
+       </li>
+       <li>
+        <b>Extensively Modular:</b>  
 
-        <p> Commercial support is provided by <a href="http://www.onehippo.com">Hippo</a>. </p>
-      </subsection>
+          Hippo EMC differentiates itself from other ECM and CMS systems by its clean separation of
+          content storage, management and presentation. These modules (independent units) are
+          even subdivided into smaller modules. This extensive modularity allows for fast development
+          and for extensibility, even by other parties.
 
+          An overview of the higher level modules and their interconnection
+          can be found at <a href="/about-hippo-ecm/architecture.html">ECM Architecture</a>.
+       </li>
+      </ul>
+
+    
+     </subsection>
     </section>
 
+        <!-- Hippo is targeted at medium to large organizations managing content for multi-channel
+           distribution like web sites, intranet and print. 
+
+        Hippo ECM structures information, offers integration possibilities on both content and
+        presentation level, in a simple and for users understandable way.
+
+        -->
+
+    <!--
+    <section name="History of Hippo ECM">
+      <p>
+        The first stable distribution of Hippo CMS version 6 was released in June 2004. This new
+        release introduced a fresh architecture where Hippo CMS, a frontend application, and the
+        content repository were seperated in different server applications. This seperation of
+        concerns on setup level has been one of the main drivers of the success of Hippo CMS 6.
+        It allowed for complex integrations with external systems while keeping a strong focus on a
+        standardized user interface for the end-user. The focus on standardized protocols and XML
+        technologies opened up the possibilities needed for enterprise wide CMS usage. Scalability
+        and load balancing functionalities have added to the stability of the platform and allowed
+        it to be used in the largest, content rich environments. A familiar user interface driven by
+        AJAX technologies to update only those parts of the application that needed to do so brought
+        wide user acceptance. On the developer's side, the concept of deployments and custom builds
+        allowed external developers to setup and use the Hippo CMS platform for a diverse set of
+        applications.
+      </p>
+      <p>
+        All of these developments combined have led to the current stable 6.05 release, rich in
+        functionalities and possibilities. They have also inspired developers and customers to raise
+        ideas and whishes that go far beyond what's possible today. But the architectural concept
+        has proven itself, and those new ideas only intensify the feeling that we're on the right
+        track. We are facing new horizons and need to take that leap to jump to the next level of
+        extendibility, user experience and scalability. Together with the HippoCMS.org community,
+        Hippo will be driving the development of the future version of the Hippo Content Platform,
+        consisting of Hippo CMS 7, Hippo Repository 2 and Hippo Portal 1.
+      </p>
+    </section>
+    -->
 
   </body>
 </document>
