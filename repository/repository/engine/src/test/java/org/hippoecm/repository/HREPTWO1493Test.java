@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class HREPTWO1493IssueTest extends TestCase {
+public class HREPTWO1493Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -67,7 +67,7 @@ public class HREPTWO1493IssueTest extends TestCase {
         String value = prop.getString();
         String sameValue = sameProp.getString();
         
-        assertFalse(value.equals(sameValue));
+        assertTrue(value.equals(sameValue));
        
         secondSession.logout();
         thirdSession.logout();
