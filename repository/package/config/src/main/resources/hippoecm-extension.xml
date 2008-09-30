@@ -24,6 +24,22 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:initializefolder</sv:value>
     </sv:property>
+    
+    <!-- CMS application-->
+    <sv:node sv:name="cms">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>900</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>cms.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+        </sv:property>
+    </sv:node>
        
     <!-- CMS static configuration-->
     <sv:node sv:name="cms-static">
@@ -37,7 +53,7 @@
             <sv:value>cms-static.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
     
@@ -53,7 +69,7 @@
             <sv:value>cms-editor.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
     
@@ -69,7 +85,7 @@
             <sv:value>cms-preview.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
     
@@ -85,7 +101,7 @@
             <sv:value>cms-shortcuts.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
 
@@ -101,7 +117,7 @@
             <sv:value>cms-dashboard.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
 
@@ -117,7 +133,7 @@
             <sv:value>cms-reports.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
 
@@ -133,7 +149,7 @@
             <sv:value>cms-folder-views.xml</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:contentroot" sv:type="String">
-            <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
 

@@ -132,7 +132,7 @@
 
 [hippo:temporaryfolder] > nt:unstructured
 
-[hippo:application] > nt:unstructured orderable
+[hippo:applicationfolder] > nt:unstructured orderable
 
 [hippo:accessmanager] > nt:base
 - hippo:permissioncachesize (long) = '20000' mandatory autocreated 
@@ -299,6 +299,6 @@
 + hippo:groups (hippo:groupfolder) = hippo:groupfolder
 + hippo:domains (hippo:domainfolder) = hippo:domainfolder
 + hippo:derivatives (hippo:derivativesfolder) = hippo:derivativesfolder autocreated mandatory
-+ hippo:frontend (hippo:application) = hippo:application
++ hippo:frontend (hippo:applicationfolder) = hippo:applicationfolder
 + hippo:queries (hippo:basequeryfolder) = hippo:queryfolder mandatory autocreated
 + hippo:security (hippo:securityfolder) = hippo:securityfolder

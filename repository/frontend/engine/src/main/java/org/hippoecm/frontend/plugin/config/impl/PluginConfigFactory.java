@@ -28,12 +28,14 @@ import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginConfigFactory implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
+    private final static Logger log = LoggerFactory.getLogger(PluginConfigFactory.class);
 
     private IPluginConfigService pluginConfigService;
 
@@ -46,15 +48,35 @@ public class PluginConfigFactory implements IClusterable {
                 baseService = new JavaConfigService("login");
             } else {
                 String config = ((Main) Application.get()).getConfigurationParameter("config", null);
-                String basePath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-                Node baseNode = (Node) session.getItem(basePath);
-                if (config == null && baseNode.hasNodes()) {
-                    Node configNode = baseNode.getNodes().nextNode();
-                    baseService = new JcrConfigService(new JcrNodeModel(baseNode), configNode.getName());
-                } else if (baseNode.hasNode(config)) {
-                    baseService = new JcrConfigService(new JcrNodeModel(baseNode), config);
+                if (config == null) {
+                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+                    Node configNode = (Node) session.getItem(configPath);
+                    if (configNode.hasNodes()) {
+                        Node applicationNode = configNode.getNodes().nextNode();
+                        if (applicationNode.hasNodes()) {
+                            Node clusterNode = applicationNode.getNodes().nextNode();
+                            baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
+                        } else {
+                            log.error("Application configuration '" + applicationNode.getName()+ "' contains no plugin cluster");
+                            baseService = new JavaConfigService("console");
+                        }
+                    } else {
+                        baseService = new JavaConfigService("console");
+                    }
                 } else {
-                    baseService = new JavaConfigService("console");
+                    String configPath = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH + "/" + config;
+                    if (session.itemExists(configPath)) {
+                        Node applicationNode = (Node) session.getItem(configPath);
+                        if (applicationNode.hasNodes()) {
+                            Node clusterNode = applicationNode.getNodes().nextNode();
+                            baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
+                        } else {
+                            log.error("Application configuration '" + applicationNode.getName()+ "' contains no plugin cluster");
+                            baseService = new JavaConfigService("console");                            
+                        }
+                    } else {
+                        baseService = new JavaConfigService("console");
+                    }
                 }
             }
         } catch (RepositoryException e) {
