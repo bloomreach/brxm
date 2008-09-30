@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+    <title>Community support</title>
+  </properties>
+  <body>
+    <section name="Community Support">
+  
+      Apart from this documentation and <a href="http://www.onehippo.com/en/support">commercial support</a>,
+      support can be obtained from the Hippo community:
+
+      <ul>
+       <li><a href="mail-lists.html">Hippo ECM mailing list</a>: if you subscribe to this
+          mailing list, you can ask you questions here.
+          Many other users and Hippo ECM developers will answer your questions. 
+          Allow for a few hours or days to receive answers. Allthough many questions
+          are answered in the mailing list, no guarantees can be given.
+         <p>
+          Note that it is general mailing list etiquete to ask only after you checked
+          that your question was not answered before. Checking for previously answered
+          questions is done in the mailing list archive, see below.
+	 </p>
+       </li>
+       <li>
+        <a href="http://lists.hippo.nl/pipermail/hipporepos-dev/">CMS mailing list archive</a>: 
+            The archive of all previously asked questions and their responses. Search
+            in the archive for your question. In many cases you will find the answer to your
+            question within a few minutes.
+       </li>
+
+       <li>
+        <a href="http://issues.hippo.nl/browse/HREPTWO">Hippo CMS issue tracker</a>:
+          Read here what issues the developers of Hippo CMS have been and are currently working on.  
+          Only Hippo developers and some partners can open issues in the issue tracker, but 
+          anyone can contact the developers by email. They are listed as administrators of the Hippo issue
+          tracker at the <a href="http://issues.hippo.nl">Hippo issue tracker homepage</a>, with their
+          email adresses (see the bottom of the Login box).            
+       </li>
+
+       <li>
+        <a href="http://wiki.hippo.nl/display/CMS/">Hippo CMS wiki</a>: Sign up yourself and join 
+           the community effort to create more documentation. You can also just read the community 
+           created documentation. This is possible without signing up. You will find documenation 
+           written by other users and by Hippo developers.
+       </li>
+
+      <!--
+        <a href="http://wiki.hippo.nl/display/HIPPOECM/">Hippo ECM wiki</a>: Sign up yourself and join 
+      -->
+
+      </ul>
+    </section>
+  </body>
+</document>
