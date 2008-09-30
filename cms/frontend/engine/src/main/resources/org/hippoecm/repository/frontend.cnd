@@ -40,6 +40,11 @@
 [frontend:clusterfolder] > nt:base orderable
 + * (frontend:plugincluster) = frontend:plugincluster
 
+[frontend:application] > nt:base orderable
++ * (frontend:plugincluster) multiple
++ * (frontend:clusterfolder) multiple
++ * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
+
 [frontend:workflow] > hippo:workflow
 - frontend:renderer (string)
 - * (string)
