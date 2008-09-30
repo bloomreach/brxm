@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 import org.hippoecm.repository.api.HippoNodeType;
 
-public class IssueHREPTWO1493Test extends TestCase {
+public class HREPTWO1493IssueTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -42,11 +42,7 @@ public class IssueHREPTWO1493Test extends TestCase {
         }
     }
 
-    public void testIssuetest() throws RepositoryException {
-        // the test below is the real test
-    }
-    
-    public void xxxIssue() throws RepositoryException {
+    public void testIssue() throws RepositoryException {
         session.getRootNode().getNode("hippo:configuration").addMixin("mix:referenceable");
         
         Node node = session.getRootNode().addNode("mirror", HippoNodeType.NT_FACETSELECT);
