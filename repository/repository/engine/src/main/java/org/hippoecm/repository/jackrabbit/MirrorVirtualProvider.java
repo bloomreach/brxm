@@ -78,6 +78,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         super();
     }
 
+    @Override
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
@@ -90,12 +91,13 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         return state;
     }
 
+    @Override
     public NodeState populate(HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
         NodeState upstream = getNodeState(((MirrorNodeId)nodeId).upstream);
         NodeState state = createNew(nodeId, upstream.getNodeTypeName(), parentId);
         state.setNodeTypeName(upstream.getNodeTypeName());
 
-        Set mixins = new HashSet(((NodeState) upstream).getMixinTypeNames());
+        Set<Name> mixins = new HashSet<Name>(((NodeState) upstream).getMixinTypeNames());
         if(mixins.contains(mixinReferenceableName)) {
             mixins.remove(mixinReferenceableName);
         }
@@ -108,7 +110,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         state.setDefinitionId(upstream.getDefinitionId());
         for(Iterator iter = upstream.getPropertyNames().iterator(); iter.hasNext(); ) {
             Name propName = (Name) iter.next();
-            PropertyId upstreamPropId = new HippoPropertyId(upstream.getNodeId(), propName);
+            PropertyId upstreamPropId = new PropertyId(upstream.getNodeId(), propName);
             PropertyState upstreamPropState = getPropertyState(upstreamPropId);
             PropDefId propDefId = upstreamPropState.getDefinitionId();
             if(propName.equals(jcrUUIDName)) {
