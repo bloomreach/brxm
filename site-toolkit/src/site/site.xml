@@ -63,6 +63,7 @@
         <item name="JSP Taglib" href="/reference/jsp-taglib.html"/>
         <item name="Expression Language" href="/reference/el-index.html"/>
         <item name="URL Mapping" href="/reference/url-mapping.html"/>
+        <item name="Modules" href="/reference/modules.html"/>
         <item name="Binaries" href="/reference/binaries.html"/>
       </item>
 
