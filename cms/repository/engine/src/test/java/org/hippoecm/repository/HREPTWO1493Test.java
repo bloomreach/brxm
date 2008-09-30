@@ -1,85 +1,169 @@
+/*
+ *  Copyright 2008 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.Value;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import junit.framework.TestCase;
-
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class HREPTWO1493Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-
-    protected HippoRepository server;
-    protected Session session;
+    private String[] content1 = {
+        "/test",              "nt:unstructured",
+        "/test/docs",         "nt:unstructured",
+        "jcr:mixinTypes",     "mix:referenceable",
+        "/test/docs/doc",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/doc",     "hippo:handle",
+        "jcr:mixinTypes",     "hippo:hardhandle",
+        "/test/docs/doc/doc", "hippo:testdocument",
+        "jcr:mixinTypes",     "hippo:harddocument",
+        "hippo:x",            "test"
+    };
 
     public void setUp() throws Exception {
+        super.setUp(true);
+    }
+
+    @Test
+    public void testParentOfProperty() throws RepositoryException {
+        Property property;
+        Node node;
+        build(session, content1);
+
+        node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:modes", new Value[0]);
+        node.setProperty("hippo:facets", new Value[0]);
+        node.setProperty("hippo:values", new Value[0]);
+        session.save();
+
+        node = traverse(session, "/test/virtual/doc/doc");
+        property = node.getProperty("hippo:x");
+        assertEquals("/test/virtual/doc/doc/hippo:x", property.getPath());
+        assertEquals("/test/virtual/doc/doc", property.getParent().getPath());
+    }
+
+    @Test
+    public void testModifyVirtualProperty() throws RepositoryException {
+        Property property;
+        Node node;
+        build(session, content1);
+
+        node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:modes", new Value[0]);
+        node.setProperty("hippo:facets", new Value[0]);
+        node.setProperty("hippo:values", new Value[0]);
+        session.save();
+
+        node = traverse(session, "/test/virtual/doc/doc");
+        node.setProperty("hippo:x", "modified");
+        session.save();
+
+        node = traverse(session, "/test/docs/doc/doc");
+        assertTrue(node.hasProperty("hippo:x"));
+        assertEquals("test", node.getProperty("hippo:x").getString());
+
+        node = traverse(session, "/test/virtual/doc/doc");
+        node.setProperty("hippo:x", "modified");
+        session.save();
+
+        node = traverse(session, "/test/docs/doc/doc");
+        assertTrue(node.hasProperty("hippo:x"));
+        assertEquals("test", node.getProperty("hippo:x").getString());
+    }
+
+    @Test
+    public void testModifyPropertyAfterBrowsingVirtual() throws RepositoryException {
+        Node node;
+        build(session, content1);
+        session.save();
+        session.refresh(false);
+
+        node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:modes", new Value[0]);
+        node.setProperty("hippo:facets", new Value[0]);
+        node.setProperty("hippo:values", new Value[0]);
+        session.save();
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        node = traverse(session, "/test/docs/doc/doc");
+        node.setProperty("hippo:x", "changed");
+        session.save();
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        node = traverse(session, "/test/docs/doc/doc");
+        assertEquals("changed", node.getProperty("hippo:x").getString());
+
+        restart();
+
+        /*
+        node = traverse(session, "/test/virtual/doc/doc");
+        assertNotNull(node);
+        assertEquals("changed", node.getProperty("hippo:x").getString());
+        node.setProperty("hippo:x", "invalid");
+        node.save();
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        node = traverse(session, "/test/docs/doc/doc");
+        assertEquals("changed", node.getProperty("hippo:x").getString());
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        */
+
+        node = traverse(session, "/test/virtual/doc/doc");
+        assertNotNull(node);
+        assertEquals("changed", node.getProperty("hippo:x").getString());
+
+        node = traverse(session, "/test/docs/doc/doc");
+        node.setProperty("hippo:x", "reset");
+        session.save();
+
+        session.logout();
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+
+        node = traverse(session, "/test/docs/doc/doc");
+        assertEquals("reset", node.getProperty("hippo:x").getString());
+    }
+
+    private void restart() throws RepositoryException {
+        session.refresh(false);
+        session.logout();
+        server.close();
+        try {
+            Thread.sleep(3000);
+        } catch(InterruptedException ex) {
+        }
         server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-    }
-
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        if(session != null) {
-            session.logout();
-        }
-        if (server != null) {
-            server.close();
-        }
-    }
-
-    public void testIssue() throws RepositoryException {
-        session.getRootNode().getNode("hippo:configuration").addMixin("mix:referenceable");
-        
-        Node node = session.getRootNode().addNode("mirror", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("hippo:configuration").getUUID());
-        node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
-        node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
-        node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
-        session.save();
-        
-        
-        traverse(session.getRootNode().getNode("mirror"));
-        
-        Session secondSession  = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node changeNode = (Node)secondSession.getItem("/hippo:configuration/hippo:documents/embedded");
-        changeNode.setProperty("jcr:statement", "changedval");
-        secondSession.save();
-      
-        Session thirdSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Property prop = (Property)thirdSession.getItem("/hippo:configuration/hippo:documents/embedded/jcr:statement");
-        Property sameProp = (Property)secondSession.getItem("/hippo:configuration/hippo:documents/embedded/jcr:statement");
- 
-        String value = prop.getString();
-        String sameValue = sameProp.getString();
-        
-        assertTrue(value.equals(sameValue));
-       
-        secondSession.logout();
-        thirdSession.logout();
-    }
-
-    
-    protected void traverse(Node node) throws RepositoryException {
-      
-        for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if (!child.getPath().equals("/jcr:system"))
-                traverse(child);
-        }
     }
 }
