@@ -28,7 +28,7 @@ import org.hippoecm.repository.query.lucene.caching.CachedAuthorizationBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthorizationFilter extends Filter{
+public class AuthorizationFilter extends Filter {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -38,39 +38,40 @@ public class AuthorizationFilter extends Filter{
     private static final long serialVersionUID = 1L;
     private BitSet authorized;
 
-    public AuthorizationFilter(BitSet authorized){
+    public AuthorizationFilter(BitSet authorized) {
         this.authorized = authorized;
     }
 
     public AuthorizationFilter(IndexReader indexReader, AuthorizationQuery authorizationQuery,
             Map<String, CachedAuthorizationBitSet> cachedAuthorizationBitSetsMap) throws IOException {
         BooleanQuery authQuery = authorizationQuery.getQuery();
-        if(authQuery == null) {
+        if (authQuery == null) {
             // should never happen: add bitset of all 0
             this.authorized = new BitSet(indexReader.maxDoc());
-        }
-        if (authQuery.clauses().size() > 0) {
+        } else if (authQuery.clauses().size() > 0) {
             String cachekey = authQuery.toString();
             CachedAuthorizationBitSet cabs = cachedAuthorizationBitSetsMap.get(cachekey);
-                if (cabs == null || !cabs.isValid(indexReader)) {
-                    long start = System.currentTimeMillis();
-                    Filter authFilter = new QueryWrapperFilter(authQuery);
-                    BitSet bits = authFilter.bits(indexReader);
-                    cachedAuthorizationBitSetsMap.put(cachekey, new CachedAuthorizationBitSet(bits , indexReader.maxDoc()));
-                    this.authorized = bits;
-                    log.debug("authorization BitSet creation took: " + (System.currentTimeMillis() - start) + " ms for query : " + authQuery.toString());
-                    System.out.println("authorization BitSet creation took: " + (System.currentTimeMillis() - start) + " ms for query : " + authQuery.toString());
+            if (cabs == null || !cabs.isValid(indexReader)) {
+                long start = System.currentTimeMillis();
+                Filter authFilter = new QueryWrapperFilter(authQuery);
+                BitSet bits = authFilter.bits(indexReader);
+                cachedAuthorizationBitSetsMap.put(cachekey, new CachedAuthorizationBitSet(bits, indexReader.maxDoc()));
+                this.authorized = bits;
+                log.debug("authorization BitSet creation took: " + (System.currentTimeMillis() - start)
+                        + " ms for query : " + authQuery.toString());
+                System.out.println("authorization BitSet creation took: " + (System.currentTimeMillis() - start)
+                        + " ms for query : " + authQuery.toString());
 
-                } else {
-                    log.debug("Valid cached authorization BitSet found");
-                    this.authorized = cachedAuthorizationBitSetsMap.get(cachekey).getBitSet();
-                }
+            } else {
+                log.debug("Valid cached authorization BitSet found");
+                this.authorized = cachedAuthorizationBitSetsMap.get(cachekey).getBitSet();
+            }
 
         } else {
             // user is allowed to see everything: add bitset of all 1
             BitSet bits = new BitSet(indexReader.maxDoc());
-            bits.flip(0,indexReader.maxDoc());
-            this.authorized  = bits;
+            bits.flip(0, indexReader.maxDoc());
+            this.authorized = bits;
         }
 
     }
