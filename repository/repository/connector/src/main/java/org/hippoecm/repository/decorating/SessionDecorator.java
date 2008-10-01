@@ -29,46 +29,28 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFactory;
-import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.spi.Path;
-
+import org.hippoecm.repository.SessionClassLoader;
+import org.hippoecm.repository.api.HippoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
-import org.hippoecm.repository.SessionClassLoader;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoSession;
 
 /**
  */
@@ -101,7 +83,7 @@ public abstract class SessionDecorator implements XASession, HippoSession {
         if (session == null) {
             return null;
         } else if (session instanceof SessionDecorator) {
-            return session = ((SessionDecorator)session).session;
+            return ((SessionDecorator)session).session;
         } else {
             return session;
         }
