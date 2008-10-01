@@ -96,42 +96,32 @@ public class Main extends WebApplication {
         });
 
         IResourceSettings resourceSettings = getResourceSettings();
-
-        String app = getConfigurationParameter("config", null);
-        final String[] layouts;
-        if (app == null) {
-            layouts = new String[] { "/WEB-INF/default" };
-        } else {
-            layouts = new String[] { "/WEB-INF/" + app, "/WEB-INF/default" };
-        }
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
+        final String layout = "/WEB-INF/" + getConfigurationParameter("config", "default") + "/";
+        
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
             public IResourceStream locate(final Class clazz, final String path) {
                 ServletContext layoutContext = getServletContext().getContext("/layout");
                 if (layoutContext != null) {
                     // EAR packaging
-                    for (String prefix : layouts) {
-                        try {
-                            URL url = layoutContext.getResource(prefix + "/" + path);
-                            if (url != null) {
-                                return new UrlResourceStream(url);
-                            }
-                        } catch (MalformedURLException ex) {
-                            log.warn("malformed url for layout override " + ex.getMessage());
+                    try {
+                        URL url = layoutContext.getResource(layout + path);
+                        if (url != null) {
+                            return new UrlResourceStream(url);
                         }
+                    } catch (MalformedURLException ex) {
+                        log.warn("malformed url for layout override " + ex.getMessage());
                     }
                 } else {
                     // WAR packaging
-                    for (String prefix : layouts) {
-                        try {
-                            URL url = getServletContext().getResource("/layout" + prefix + "/" + path);
-                            if (url != null) {
-                                return new UrlResourceStream(url);
-                            }
-                        } catch (MalformedURLException ex) {
-                            log.warn("malformed url for layout override " + ex.getMessage());
+                    try {
+                        URL url = getServletContext().getResource("/layout" + layout + path);
+                        if (url != null) {
+                            return new UrlResourceStream(url);
                         }
+                    } catch (MalformedURLException ex) {
+                        log.warn("malformed url for layout override " + ex.getMessage());
                     }
                 }
                 return oldLocator.locate(clazz, path);

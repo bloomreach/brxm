@@ -320,7 +320,7 @@
       <sv:value>shortcuts.id</sv:value>
     </sv:property>
     <sv:property sv:name="shortcuts.query" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms-shortcuts/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms/cms-shortcuts/node()</sv:value>
     </sv:property>
   </sv:node>
 
@@ -353,7 +353,7 @@
       <sv:value>shortcutstoo.id</sv:value>
     </sv:property>
     <sv:property sv:name="shortcuts.query" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms-shortcuts/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:frontend/cms/cms-shortcuts/node()</sv:value>
     </sv:property>
   </sv:node>
 
@@ -384,7 +384,7 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="browser.viewers" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms-folder-views</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-folder-views</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>
