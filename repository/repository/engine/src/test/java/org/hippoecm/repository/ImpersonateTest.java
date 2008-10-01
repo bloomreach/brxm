@@ -46,6 +46,7 @@ public class ImpersonateTest extends TestCase {
         session.save();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -71,7 +72,7 @@ public class ImpersonateTest extends TestCase {
         // setup user session
         Session userSession = server.login();
         try {
-            Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
+            userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
             fail("User anonymous should not be allowed to impersonate.");
         } catch (LoginException e) {
             // correct
