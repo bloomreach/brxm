@@ -30,7 +30,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-
 import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.WorkflowException;
@@ -126,8 +125,7 @@ public class NewFolderWorkflowDialog extends AbstractWorkflowDialog {
             }
             String path = workflow.add(category, prototype, name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-            NewFolderWorkflowPlugin plugin = (NewFolderWorkflowPlugin) getPlugin();
-            plugin.select(nodeModel);
+            folderWorkflowPlugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");
         }

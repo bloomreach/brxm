@@ -15,13 +15,9 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="actionspanel">
-      <h3><span wicket:id="foldername"></span>&nbsp;folder</h3>
-       <ul wicket:id="items">
-        <li>
-          <span wicket:id="workflow-action-dialog-link"></span>
-        </li>
-      </ul>
-    </div>
+    <ul class="toolbarSection">
+      <li class="hideme"><h3><span wicket:id="foldername"></span>&nbsp;folder</h3></li>
+      <li class="alignright"><select wicket:id="items">[ items ]</select></li>
+    </ul>
   </wicket:panel>
 </html>
