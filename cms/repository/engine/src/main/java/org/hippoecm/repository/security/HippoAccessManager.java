@@ -624,12 +624,15 @@ public class HippoAccessManager implements AccessManager {
         if (!targetPath.isAbsolute()) {
             throw new RepositoryException("not an absolute path: " + absPath);
         }
-        ItemId id = hierMgr.resolveNodePath(targetPath);
+        
+        NodeId id = hierMgr.resolveNodePath(targetPath);
         if (id == null) {
-            throw new PathNotFoundException("Unable to find path: " + absPath);
-        }
-        if (!id.denotesNode()) {
-            id = ((PropertyId) id).getParentId();
+            // id could be a property
+            PropertyId pId = hierMgr.resolvePropertyPath(targetPath);
+            if (pId == null) {
+                throw new PathNotFoundException("Unable to find path: " + absPath);
+            }
+            id = pId.getParentId();
         }
         try {
             return (NodeState) getItemState(id);
