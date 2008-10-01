@@ -103,17 +103,16 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     private void addFacetSearch() throws RepositoryException {
         Node facetsearchNode = session.getRootNode().addNode(FACETSEARCHNODE, HippoNodeType.NT_FACETSEARCH);
         facetsearchNode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, "/documents");
+        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
         facetsearchNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
     }
 
     private void addFacetSelect() throws RepositoryException {
         Node facetselectNode = session.getRootNode().addNode(FACETSELECTNODE, HippoNodeType.NT_FACETSELECT);
-        facetselectNode.setProperty("hippo:docbase", "/documents");
+        facetselectNode.setProperty("hippo:docbase", session.getRootNode().getNode("test/documents").getUUID());
         facetselectNode.setProperty("hippo:facets", new String[] {});
         facetselectNode.setProperty("hippo:values", new String[] {});
         facetselectNode.setProperty("hippo:modes", new String[] {});
-
     }
 
     class Result {
@@ -130,9 +129,9 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     }
 
     class ContentHandlerImpl implements ContentHandler {
-        private Result result;
+        private final Result result;
         private boolean noMoreNodes = false;
-        private Set<String> noNodesBelowName;
+        private final Set<String> noNodesBelowName;
 
         public ContentHandlerImpl(Result result, String[] noNodesBelowName) {
             this.result = result;
