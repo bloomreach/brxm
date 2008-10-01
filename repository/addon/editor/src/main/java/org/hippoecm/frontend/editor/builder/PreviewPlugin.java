@@ -105,11 +105,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
 
             IPluginContext context = getPluginContext();
 
-            if ("edit".equals(mode)) {
-                typeStore = new JcrTypeStore(prefix);
-            } else {
-                typeStore = new JcrTypeStore();
-            }
+            typeStore = new JcrTypeStore(prefix);
 
             TemplateEngine engine = new TemplateEngine(context, typeStore);
             context.registerService(engine, ITemplateEngine.class.getName());
