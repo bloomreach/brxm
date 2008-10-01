@@ -19,18 +19,20 @@ import java.util.Iterator;
 
 import javax.jcr.ReferentialIntegrityException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 
 public class HippoSessionItemStateManager extends SessionItemStateManager {
     @SuppressWarnings("unused")
@@ -42,20 +44,13 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
     HippoLocalItemStateManager localStateMgr;
     NodeId rootNodeId;
 
-    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, SessionImpl session) {
-        super(rootNodeId, manager, session);
+    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager mgr, PathResolver resolver, NodeTypeRegistry ntReg) {
+        super(rootNodeId, mgr, resolver, ntReg);
         this.rootNodeId = rootNodeId;
-        this.localStateMgr = (HippoLocalItemStateManager) manager;
-        if(wrappedHierMgr == null)
+        this.localStateMgr = (HippoLocalItemStateManager) mgr;
+        if (wrappedHierMgr == null) {
             wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
-    }
-
-    HippoSessionItemStateManager(NodeId rootNodeId, LocalItemStateManager manager, XASessionImpl session) {
-        super(rootNodeId, manager, session);
-        this.rootNodeId = rootNodeId;
-        this.localStateMgr = (HippoLocalItemStateManager) manager;
-        if(wrappedHierMgr == null)
-            wrappedHierMgr = new HippoHierarchyManager(this, super.getHierarchyMgr());
+        }
     }
 
     public void disposeAllTransientItemStates() {

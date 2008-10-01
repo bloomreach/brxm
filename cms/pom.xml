@@ -53,7 +53,6 @@
     <atomikos.version>3.1.4</atomikos.version>
 
     <!-- Project Dependencies -->
-    <jackrabbit.version>1.4</jackrabbit.version>
     <commons-collections.version>3.1</commons-collections.version>
     <commons-httpclient.version>3.0</commons-httpclient.version>
     <commons-lang.version>2.1</commons-lang.version>
@@ -389,47 +388,47 @@
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-api</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-text-extractors</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-rmi</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-classloader</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-core</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4.5</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-tests</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-webdav</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-server</artifactId>
-        <version>${jackrabbit.version}</version>
+        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.wicket</groupId>

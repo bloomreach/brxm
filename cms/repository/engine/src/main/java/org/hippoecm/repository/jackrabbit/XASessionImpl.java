@@ -124,7 +124,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
 
     @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, this);
+        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, getNamePathResolver(), ((RepositoryImpl)rep).getNodeTypeRegistry());
     }
 
     @Override

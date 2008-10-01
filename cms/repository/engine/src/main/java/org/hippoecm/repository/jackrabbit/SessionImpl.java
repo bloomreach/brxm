@@ -124,7 +124,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
 
     @Override
     protected SessionItemStateManager createSessionItemStateManager(LocalItemStateManager manager) {
-        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, this);
+        return new HippoSessionItemStateManager(((RepositoryImpl)rep).getRootNodeId(), manager, getNamePathResolver(), ((RepositoryImpl)rep).getNodeTypeRegistry());
     }
 
     @Override
