@@ -90,7 +90,7 @@
           
           <dd>
           For example, add a file 'mystyle.css' next to 'screen.css' and set the property
-          /hippo:configuration/hippo:frontend/cms-static/root/wicket.skin to 'skin/mystyle.css'
+          /hippo:configuration/hippo:frontend/cms/cms-static/root/wicket.skin to 'skin/mystyle.css'
           </dd>
 
           <dt>Icons</dt>

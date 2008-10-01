@@ -136,8 +136,7 @@ class RootPlugin extends RenderPlugin {
         <p>
           Web applications that are completely configured from the repository
           consist of one page, "Home".  Applications consist of a configured
-          collection of plugins, a <em>plugin cluster</em>.  The configuration
-          is stored in the repository under
+          collection of plugins.  The configuration is stored in the repository under
           <b>/hippo:configuration/hippo:frontend</b>.  The example below shows
           two application configurations ("foo" and "bar").
         </p>
@@ -145,8 +144,8 @@ class RootPlugin extends RenderPlugin {
 [repository root]
 `-- hippo:configuration
     `-- hippo:frontend
-        |-- foo [frontend:plugincluster]
-        `-- bar [frontend:plugincluster]
+        |-- foo [frontend:application]
+        `-- bar [frontend:application]
 </source>
         <p>
           Each application has a plugin that registers an IRenderService under
