@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.tree.TreeNode;
@@ -61,6 +62,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
         tree = new CmsJcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
+
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
@@ -99,22 +101,16 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
 
         JcrNodeModel model = (JcrNodeModel) getModel();
         AbstractTreeNode node = null;
-        boolean nodesSelected = false;
 
         while (model != null) {
             node = rootNode.getTreeModel().lookup(model);
-            if(node == null) {
+            if (node == null) {
+                Collection<TreeNode> selected = tree.getTreeState().getSelectedNodes();
+                for (TreeNode selectedNode : selected) {
+                    tree.getTreeState().selectNode(selectedNode, false);
+                }
                 redraw();
                 break;
-            }
-            try {
-                if(node.getNodeModel().getNode() != null) {
-                    if (node.getNodeModel().getNode().getPath().startsWith(startingPath)) {
-                        nodesSelected = true;
-                    }
-                }
-            } catch(RepositoryException ex) {
-                // FIXME log some warning
             }
             if (node != null) {
                 TreeNode parentNode = node.getParent();

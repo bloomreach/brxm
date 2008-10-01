@@ -32,9 +32,6 @@ import java.util.Map.Entry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -43,9 +40,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -67,6 +62,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -87,37 +84,6 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
         super(context, config);
         templates = new LinkedHashMap<String, FolderWorkflowActionComponent>();
         add(folderName = new Label("foldername"));
-        
-        DialogAction action = new DialogAction(new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                // FIXME: fixed (in code) dialog text
-                String text = "Are you sure you want to delete ";
-                try {
-                    text += "folder ";
-                    text += ((WorkflowsModel) NewAbstractFolderWorkflowPlugin.this.getModel()).getNodeModel().getNode().getName();
-                } catch (RepositoryException ex) {
-                    text += "this folder";
-                }
-                text += " and all of its contents permanently?";
-                return new AbstractWorkflowDialog(NewAbstractFolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
-                    @Override
-                    protected void execute() throws Exception {
-                        // FIXME: this assumes that folders are always embedded in other folders
-                        // and there is some logic here to look up the parent.  The real solution is
-                        // in the visual component to merge two workflows.
-                        WorkflowsModel model = (WorkflowsModel) NewAbstractFolderWorkflowPlugin.this.getModel();
-                        Node node = model.getNodeModel().getNode();
-                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                        workflow.delete(node.getName());
-                    }
-                };
-            }
-        }, getDialogService());
-        
-        addWorkflowAction("Delete Folder", "editmodel_ico", null, action);
         add(createDialogLinksComponent());
     }
     
