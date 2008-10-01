@@ -15,55 +15,34 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.io.InputStream;
-import java.util.Calendar;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.MergeException;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
-import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
 
 import org.apache.jackrabbit.core.NodeImpl;
-
+import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.jackrabbit.HippoNodeId;
 import org.hippoecm.repository.decorating.DecoratorFactory;
-import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.jackrabbit.HippoNodeId;
 
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator implements HippoNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected Node node;
-    protected HippoSession session;
+//    protected Node node;
+//    protected HippoSession session;
 
     protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
@@ -71,6 +50,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         this.node = node;
     }
 
+    @Override
     public Node getCanonicalNode() throws RepositoryException {
         if (hasProperty("hippo:uuid")) {
             return getSession().getNodeByUUID(getProperty("hippo:uuid").getString());
@@ -82,6 +62,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     }
 
     /** {@inheritDoc} */
+    @Override
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             ReferentialIntegrityException, VersionException, LockException, RepositoryException {
         if(item.isNode()) {
@@ -91,13 +72,15 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     }
 
     /** {@inheritDoc} */
+    @Override
     public void remove() throws VersionException, LockException, RepositoryException {
         if(isNode()) {
-            DerivedDataEngine.removal((Node)this);
+            DerivedDataEngine.removal(this);
         }
         super.remove();
     }
 
+    @Override
     public String getDisplayName() throws RepositoryException {
         //if (hasProperty(HippoNodeType.HIPPO_UUID) && hasProperty(HippoNodeType.HIPPO_SEARCH)) {
         if (hasProperty(HippoNodeType.HIPPO_SEARCH)) {
