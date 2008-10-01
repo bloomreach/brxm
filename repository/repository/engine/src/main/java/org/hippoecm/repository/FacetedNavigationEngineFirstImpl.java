@@ -44,6 +44,7 @@ public class FacetedNavigationEngineFirstImpl
         public QueryImpl(String xpath) {
             this.xpath = xpath;
         }
+        @Override
         public String toString() {
             return xpath;
         }
@@ -56,12 +57,15 @@ public class FacetedNavigationEngineFirstImpl
             this.length = length;
             this.iter = iter;
         }
+        @Override
         public int length() {
             return length;
         }
+        @Override
         public Iterator<NodeId> iterator() {
             return iter;
         }
+        @Override
         public String toString() {
             return getClass().getName()+"[length="+length+"]";
         }
@@ -76,12 +80,14 @@ public class FacetedNavigationEngineFirstImpl
             this.principal = principal;
             this.subject = subject;
         }
+        @Override
         public String toString() {
-            StringBuffer sb = null;
+            StringBuffer sb = new StringBuffer();
             if(subject != null) {
                 sb.append("+authorization-query+");
-            } else
-                sb = new StringBuffer("(null)");
+            } else {
+                sb.append("(null)");
+            }
             sb.insert(0,"query=");
             sb.insert(0,",");
             sb.insert(0,principal);
