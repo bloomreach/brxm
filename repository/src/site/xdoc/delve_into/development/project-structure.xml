@@ -106,16 +106,6 @@ hippo-ecm                    Pom       hippo-ecm
 |   |-- engine               Jar       hippo-ecm-frontend-engine
 |   |-- application          War       hippo-ecm-frontend-application
 |   `-- plugins              Jar       hippo-ecm-frontend-plugins
-|-- hst                      Pom       hippo-ecm-hst
-|   |-- addon                Pom       hippo-ecm-hst-addon
-|   |   `-- repository       Jar       hippo-ecm-hst-addon-repository
-|   |-- core                 Jar       hippo-ecm-hst-core
-|   |-- sample               Pom       hippo-ecm-hst-sample
-|   |   |-- content          Jar       hippo-ecm-hst-sample-content
-|   |   `-- site             War       hippo-ecm-hst-sample-site
-|   |-- skeleton             War       hippo-ecm-hst-skeleton
-|   `-- taglib               Jar       hippo-ecm-hst-taglib
-|-- maven-skin               Jar       hippo-ecm-maven-skin
 |-- package                  Pom       hippo-ecm-package
 |   |-- config               Jar       hippo-ecm-package-config
 |   |-- skin                 War       hippo-ecm-package-skin
@@ -267,11 +257,6 @@ hippo-ecm                    Pom       hippo-ecm
 
 
     <section name="Package">
-      <p>
-      </p>
-    </section>
-
-    <section name="Hst">
       <p>
       </p>
     </section>
