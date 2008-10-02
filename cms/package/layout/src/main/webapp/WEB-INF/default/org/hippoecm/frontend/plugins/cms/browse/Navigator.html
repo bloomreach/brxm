@@ -15,22 +15,22 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
     <wicket:panel>
-        <div yui:id="navigator-wrapper">
+        <div class="hippo-browser-documents-small" yui:id="navigator-wrapper">
             <div yui:id="navigator-top">
                 <div yui:id="navigator-top-body">
-                    <div class="toolbar" wicket:id="extension.workflows">workflow here</div>
-                    <h2 class="perspectiveTitle"><wicket:message key="perspective-title"/></h2>
+                    <h2 class="hippo-perspective-title"><wicket:message key="perspective-title"/></h2>
+                    <div class="hippo-browser-documents-workflow" wicket:id="extension.workflows">workflow here</div>
                 </div>
             </div>
-            <div class="folderlist" yui:id="navigator-left">
+            <div class="hippo-browser-documents-small-folders" yui:id="navigator-left">
                 <div yui:id="navigator-left-body">
                     <h3><wicket:message key="folders-title"/></h3>
-                    <div wicket:id="extension.browser" class="Tree plugin">tree here</div>
+                    <div wicket:id="extension.browser" class="hippo-tree">tree here</div>
                 </div>
             </div>
-            <div class="documentlist" yui:id="navigator-center">
+            <div class="hippo-list-details" yui:id="navigator-center">
                 <div yui:id="navigator-center-body">
-                    <div wicket:id="extension.list" class="plugin Doclist">documents here</div>
+                    <div wicket:id="extension.list">documents here</div>
                 </div>
             </div>
         </div>

@@ -15,22 +15,19 @@
 -->
 <wicket:panel>
   <wicket:extend>
-    
-    <div class="link-picker">
+   <div class="link-picker">
       <select wicket:id="linkTypeDropDown">[ LinkTypeDropDown ]</select>
     </div>
     <div class="link-picker">
       <wicket:panel wicket:id="linkPickerWidget">[ LinkPickerWidget ]</wicket:panel>
     </div>  
-
     <wicket:fragment wicket:id="externalLink">
       <h3>Type a url</h3>
       <input type="text" wicket:id="externalLinkUrl" />
     </wicket:fragment>
-    
     <wicket:fragment wicket:id="internalLink">
       <div wicket:id="pathLabel" class="internal-link-label"> [ pathLabel ]</div>
-      <table class="dataview">
+      <table>
         <tr>
           <td>
             <div wicket:id="wrapper" class="internal-link-wrapper">

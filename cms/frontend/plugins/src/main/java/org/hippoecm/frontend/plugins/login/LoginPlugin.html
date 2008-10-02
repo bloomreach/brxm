@@ -19,12 +19,12 @@
 </wicket:head>
 <body>
 <wicket:panel>
-  <div id="loginWrapper">
-    <div>
-      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
+  <div class="hippo-login">
+    <div class="hippo-login-panel">
+      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
       <form wicket:id="signInForm" name="signInForm">
         <h2><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
-        <div id="login-input">
+        <div class="hippo-login-panel-form">
           <table>
             <tr>
               <td width="50%"><wicket:message key="username-label" />&nbsp;</td>
@@ -40,7 +40,7 @@
             </tr>
             <tr>
               <td>&nbsp;</td>
-              <td style="text-align: right; padding-top: 4px;">
+              <td class="hippo-global-alignright">
                 <input type="submit" name="submit" wicket:id="submit" value="label" />
               </td>
             </tr>

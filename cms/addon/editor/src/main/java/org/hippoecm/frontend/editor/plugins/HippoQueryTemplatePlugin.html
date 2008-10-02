@@ -15,19 +15,19 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
     <wicket:panel>
-        <div class="templateItem">
+        <div>
         <div wicket:id="incorrectquery" style="color:red">[incorrect query]</div>
         <div>Language (xpath/sql)</div>
-        <div wicket:id="language" class="fields"></div>
+        <div wicket:id="language"></div>
         <div>Statement</div>
-        <div wicket:id="statement" class="fields">
+        <div wicket:id="statement">
         </div>
         <!-- temporary Statement examples while we do not have a query wizard -->
         <div>Statement examples (all xpath)</div>
         <div><strong>NOTE:</strong> Parameterized queries: The hst can resolve parameterized queries: Using $xxx where xxx is some 
             name, can be used in the queries and will be substituted by the hst by parameters defined there</div>
         <div>
-            <table style="background-color:lightgrey;">
+            <table>
                 <tr>
                     <th><strong>What does it</strong></th>
                     <th><strong>The Query</strong></th>

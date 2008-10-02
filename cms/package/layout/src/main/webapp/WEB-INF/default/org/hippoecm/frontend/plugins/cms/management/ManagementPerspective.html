@@ -15,27 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/" xmlns:yui="http://www.hippoecm.org/frontend/yui">
   <wicket:panel>
-    <div class="management" yui:id="management-perspective-wrapper">
-      <div class="managementleft" yui:id="management-perspective-left">
-        <h2><span class="userman">Management</span></h2>
-        <div class="panel iconListSmall users_list_ico">
+    <div class="hippo-perspective-management" yui:id="management-perspective-wrapper">
+      <div class="hippo-perspective-management-left" yui:id="management-perspective-left">
+        <h2 class="hippo-perspective-management-title"><span>Management</span></h2>
           <div wicket:id="extension.listUsers">[ ListUsersPlugin ]</div>
-        </div>
-        
-        <div class="panel iconListSmall list_ico groups_list_ico">
           <div wicket:id="extension.listGroups">[ ListGroupsPlugin ]</div>
-        </div>
-        
-        <div class="panel iconListSmall domains_list_ico">
           <div wicket:id="extension.listDomains">[ ListDomainsPlugin ]</div>
-        </div>
-        
-        <div class="panel iconListSmall roles_list_ico">
           <div wicket:id="extension.listRoles">[ ListRolesPlugin ]</div>
-        </div>
-        
       </div>
-      <div  class="managementcenter" yui:id="management-perspective-center">
+      <div class="hippo-perspective-management-center" yui:id="management-perspective-center">
         <div wicket:id="extension.editor">[ Editor ]</div>
       </div>  
     </div>  
