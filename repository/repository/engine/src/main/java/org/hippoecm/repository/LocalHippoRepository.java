@@ -727,21 +727,53 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
             session.save();
         } catch (IOException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (PathNotFoundException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (ItemExistsException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (ConstraintViolationException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (VersionException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (InvalidSerializedDataException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (LockException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } catch (RepositoryException ex) {
-            log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            if (log.isDebugEnabled()) {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getMessage());
+            }
         } finally {
             try {
                 session.refresh(false);
