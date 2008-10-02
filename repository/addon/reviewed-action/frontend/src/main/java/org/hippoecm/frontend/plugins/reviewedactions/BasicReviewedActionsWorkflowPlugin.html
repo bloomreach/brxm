@@ -15,8 +15,8 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-      <ul class="toolbarSection">
-        <li>
+      <ul class="hippo-toolbar-section">    
+      <li>
           <a class="edit_ico" wicket:id="edit-dialog">Edit</a>
         </li>
         <li>
@@ -29,12 +29,12 @@
           <a class="reqdelete_ico" wicket:id="requestDeletion-dialog">Delete (request)</a>
         </li>
       </ul>
-      <ul class="toolbarSection">
+   <ul class="hippo-toolbar-section">
 	<wicket:enclosure child="locked">
-        <li class="documentLocked document-lock-16"><span wicket:id="locked"></span></li>
+	  <li class="hippo-toolbar-textitem-locked document-lock-16"><span wicket:id="locked"></span></li>
 	</wicket:enclosure>
-        <li class="documentCaption"><span wicket:id="caption"></span></li>
-        <li class="documentStatus"><span wicket:id="status"></span></li>
+     <li class="hippo-toolbar-textitem-caption"><span wicket:id="caption"></span></li>
+     <li class="hippo-toolbar-textitem-status"><span wicket:id="status"></span></li>
       </ul>
   </wicket:panel>
 </html>

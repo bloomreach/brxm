@@ -90,11 +90,11 @@ public class ListTableHeader extends Border {
                     int dir = sortState.getPropertySortOrder(tableHeader.property);
 
                     if (dir == ISortState.ASCENDING) {
-                        return "orderAscending";
+                        return "hippo-list-order-ascending";
                     } else if (dir == ISortState.DESCENDING) {
-                        return "orderDescending";
+                        return "hippo-list-order-descending";
                     } else {
-                        return "orderNone";
+                        return "hippo-list-order-none";
                     }
                 }
             });

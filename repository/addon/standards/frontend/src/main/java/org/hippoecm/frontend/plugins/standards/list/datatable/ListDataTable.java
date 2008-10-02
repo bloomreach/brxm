@@ -68,7 +68,7 @@ public class ListDataTable extends DataTable {
 
         IModel selected = getModel();
         if (selected != null && selected.equals(model)) {
-            item.add(new AttributeAppender("class", new Model("selected"), " "));
+            item.add(new AttributeAppender("class", new Model("hippo-list-selected"), " "));
         }
 
         item.add(new AjaxEventBehavior("onclick") {
