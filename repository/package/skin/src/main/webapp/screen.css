@@ -19,7 +19,7 @@ caption,th { text-align : left; }
 
 /* Hide this */
 /* ================================================ */
-body #wicketDebugLink, body #wicketAjaxDebugWindow{display: none}
+/* body #wicketDebugLink, body #wicketAjaxDebugWindow{display: none} */
 
 /* Hippo Global CSS tools */
 /* ================================================ */
