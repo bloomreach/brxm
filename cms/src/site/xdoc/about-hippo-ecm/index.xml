@@ -26,6 +26,8 @@
       <p>
         The Hippo Enterprise Content Management system
         is an application suite to use information efficiently.
+      </p>
+      <p>
         With Hippo ECM information can be: created, acquired, structured, managed,
         stored, preserved, shared, published on the internet, printed and searched. 
         If desired, other applications can be integrated into the Hippo ECM application suite.
@@ -36,51 +38,7 @@
         at <a href="/about-hippo-ecm/features.html">Hippo ECM Features</a>.
       </p>
 
-    <subsection name="Why use Hippo ECM?">
-      <p>
-        Managing all information in an organization is a daunting task. Knowledge is stored in
-        numerous files, emails, webpages, forms, Excel sheets, and so on, and is handled differently
-        for every organization. To work with all this information, every organization employs a
-        diverse set of applications that adds logic and behaviour. Hippo ECM can integrate those
-        applications, manage the underlaying information and present the end user with a simple,
-        unified environment for all their information management.
-      </p>
-    </subsection>
-
-    <subsection name='Why choose Hippo ECM?'>
-
-      <ul>
-       <li><b>Hippo ECM, 100% Open Source Enterprise Content Management:</b>
-
-          Hippo ECM facilitates an open and flexible way of
-          using your information by following internationally accepted open standards.
-          This allows integration of other applications, ensures freedom to 
-          change to other ECM systems, if so desired  
-       </li>
-       <li>
-        <b>Extensively Modular:</b>  
-
-          Hippo EMC differentiates itself from other ECM and CMS systems by its clean separation of
-          content storage, management and presentation. These modules (independent units) are
-          even subdivided into smaller modules. This extensive modularity allows for fast development
-          and for extensibility, even by other parties.
-
-          An overview of the higher level modules and their interconnection
-          can be found at <a href="/about-hippo-ecm/architecture.html">ECM Architecture</a>.
-       </li>
-      </ul>
-
-    
-     </subsection>
     </section>
-
-        <!-- Hippo is targeted at medium to large organizations managing content for multi-channel
-           distribution like web sites, intranet and print. 
-
-        Hippo ECM structures information, offers integration possibilities on both content and
-        presentation level, in a simple and for users understandable way.
-
-        -->
 
     <!--
     <section name="History of Hippo ECM">
