@@ -175,13 +175,16 @@
         <item name="Hello World" href="/delve_into/extend-hippo-ecm/hello-world.html"/>
       </item>
 
-      <item name="CMS Develop Guide" href="/delve_into/building/index.html" collapse="true">
-        <item name="Project Structure" href="/delve_into/building/project-structure.html"/>
-        <item name="Project reportsss"/>
+      <item name="CMS Develop Guide" href="/delve_into/development/index.html" collapse="true">
+        <item name="Project Structure" href="/delve_into/development/project-structure.html"/>
+        <item name="Building from source" href="/delve_into/development/building/index.html">
+          <item name="Building with Maven" href="/delve_into/development/building/maven.html"/>
+          <item name="Building with Eclipse" href="/delve_into/development/building/eclipse.html"/>
+          <item name="Building with Netbeans" href="/delve_into/development/building/netbeans.html"/>
+        </item>
+        <item name="Concepts" href="/delve_into/development/concepts/index.html"/>
+        <item name="Architecture" href="/delve_into/development/architecture/index.html"/>
         <item name="Project reports" ref="reports" collapse="true"/>
-        <item name="Building with Maven" href="/delve_into/building/maven.html"/>
-        <item name="Building with Eclipse" href="/delve_into/building/eclipse.html" collapse="true"/>
-        <item name="Building with Netbeans" href="/delve_into/building/netbeans.html"/>
       </item>
     </menu>
 

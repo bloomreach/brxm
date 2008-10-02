@@ -33,9 +33,6 @@
 
         <ul>
           <li>
-            <a href="project-structure.html">Project structure</a>
-          </li>
-          <li>
             <a href="maven.html">Building with Maven</a>
           </li>
           <li>
