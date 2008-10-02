@@ -23,8 +23,6 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -48,19 +46,16 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +100,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
             return null;
         }
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("looking for workflow in category "+category+" for node "+(item==null ? "<none>" : item.getPath()));
+            }
+            
             // if the user session has not yet been saved, no workflow is possible
             // as the root session will not be able to find it.  (ItemNotFoundException)
             if (!item.isNodeType("mix:referenceable") && !item.isNodeType("rep:root")) {
@@ -115,7 +114,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 rootSession.getNodeByUUID(item.getUUID());
             }
 
-            log.debug("looking for workflow in category "+category+" for node "+(item==null ? "<none>" : item.getPath()));
             Node node = session.getNodeByUUID(configuration);
             if (node.hasNode(category)) {
                 node = node.getNode(category);
@@ -562,6 +560,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.workflowSubject = document;
         }
 
+        @Override
         protected void invoke(Method method, Object[] args) {
             invocationIndex.add(new WorkflowInvocation(documentManager, workflowNode, workflowSubject, method, args));
         }
@@ -575,6 +574,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.workflowSubject = item;
         }
 
+        @Override
         protected void invoke(Method method, Object[] args) {
             invocationIndex.add(new WorkflowInvocation(documentManager, workflowNode, workflowSubject, method, args));
         }
