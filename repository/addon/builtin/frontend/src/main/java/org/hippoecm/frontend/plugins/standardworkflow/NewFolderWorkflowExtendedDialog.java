@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
@@ -52,14 +53,14 @@ public class NewFolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
         super(folderWorkflowPlugin, dialogWindow, "Add " + category);
         this.category = category;
 
-        WorkflowsModel model = (WorkflowsModel)folderWorkflowPlugin.getModel();
-        if (model.getNodeModel().getNode() == null) {
-            ok.setEnabled(false);
-        } else {
-            ok.setEnabled(true);
-        }
+        add(new TextFieldWidget("name", new PropertyModel(this, "name")) {
+            private static final long serialVersionUID = 1L;
 
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                enableButtons();
+            }
+        });
         add(new TextFieldWidget("docbase", new PropertyModel(this, "docbase")));
         add(new TextFieldWidget("facet", new PropertyModel(this, "facet")));
         add(new TextFieldWidget("value", new PropertyModel(this, "value")));
@@ -71,8 +72,14 @@ public class NewFolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
                     private static final long serialVersionUID = 1L;
                     
                     @Override
-                        protected boolean wantOnSelectionChangedNotifications() {
+                    protected boolean wantOnSelectionChangedNotifications() {
                         return true;
+                    }
+                    
+                    @Override
+                    protected void onSelectionChanged(Object newSelection) {
+                        super.onSelectionChanged();
+                        enableButtons();
                     }
                 });
             folderChoice.setNullValid(false);
@@ -88,6 +95,14 @@ public class NewFolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
             component.setVisible(false);
             prototype = null;
         }
+
+        enableButtons();
+    }
+
+    private void enableButtons() {
+        NewAbstractFolderWorkflowPlugin folderWorkflowPlugin = (NewAbstractFolderWorkflowPlugin) getPlugin();
+        WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
+        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null && name != null && !"".equals(name));
     }
 
     @Override
