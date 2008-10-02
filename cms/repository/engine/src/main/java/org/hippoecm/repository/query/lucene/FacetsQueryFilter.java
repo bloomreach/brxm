@@ -38,7 +38,7 @@ public class FacetsQueryFilter extends Filter{
     private BitSet bits;
 
     public FacetsQueryFilter(BitSet authorized){
-        this.bits = bits;
+        this.bits = authorized;
     }
 
     public FacetsQueryFilter(IndexReader indexReader, BooleanQuery query,
