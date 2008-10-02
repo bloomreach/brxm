@@ -265,7 +265,7 @@
                 <sv:value>Name</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:value" sv:type="String">
-                <sv:value>hippo:application</sv:value>
+                <sv:value>frontend:application</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:equals" sv:type="Boolean">
                 <sv:value>true</sv:value>
