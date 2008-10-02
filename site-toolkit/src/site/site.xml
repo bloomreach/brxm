@@ -19,7 +19,7 @@
   <skin>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-maven-skin</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>1.01.00</version>
   </skin>
 
   <publishDate position="navigation-bottom" format="MM-dd-yy"/>
