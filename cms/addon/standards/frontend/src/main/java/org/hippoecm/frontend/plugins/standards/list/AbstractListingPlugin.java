@@ -63,7 +63,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
         pageSize = config.getInt("list.page.size", 15);
 
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
+        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
         add(dataTable);
         
         if(!isOrderable()) {
@@ -73,6 +73,11 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         modelChanged();
     }
 
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
+            TableSelectionListener selectionListener, final int rowsPerPage, final boolean triState) {
+        return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+    }
+    
     protected abstract ISortableDataProvider getDataProvider();
 
     protected abstract TableDefinition getTableDefinition();
@@ -104,7 +109,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
     @Override
     @SuppressWarnings("unchecked")
     public void onModelChanged() {
-        dataTable = new ListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
+        dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
         replace(dataTable);
         IPluginConfig config = getPluginConfig();
         if (config.getString("model.document") != null) {
