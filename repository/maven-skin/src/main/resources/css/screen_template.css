@@ -15,6 +15,21 @@
  *
  * this is complementary css loaded after the default hippo css located at http://www.hippo.nl/css/screen.css
 
+div.section ol { 
+ background: #B0B0B0;
+}
+
+div.section li {
+  background: #202020;
+  font-size: 20pt;
+}
+
+div.section ol li {
+  font-size: 20pt;
+}
+
+ */
+
 /*
  * Aug 2008, this css is used after http://static.hippo.nl/css/screen.css
  *
@@ -125,14 +140,12 @@ body {
   margin-right: auto;
   font-size: medium;
   font-weight: normal; 
-/* background-image: url('http://static.hippo.nl/images/hippo.gif');
- * background-repeat: repeat;
- */
+  background: blue;
 }
 
 div#container {
   width: auto;
-  background: #EFEFFF;
+  background: yellow;
 }
 
 
@@ -141,38 +154,25 @@ div#leftnav {
   width: 23ex;
   padding: 3pt;
   margin: 0;
-  background: #E6E6FF;
+  background: pink;
 }
-
 
 div#content_main {
   width: auto; 
-  padding: 3pt;
-  padding-left: 3ex;
-  vertical-align: middle;
   float: none;
-  margin-left: 23ex;  
+  margin-left: 23ex;
+  padding: 3pt;
+  padding-left: 2ex;
+  background: red;
 }
-/* Has to be same width as div#leftnav. Such dependencies interfere with adjustability. */
-/* 
- * background: #DFDFFF;
- * height: 100%; Does not work, is ignored. 
- */
 
- * float: none;
- * margin-left: 23ex;  /* Has to be same width as div#leftnav. Such dependencies interfere with adjustability. */
- */
-
+div#content {
+  background: #EFEFFF;
+}
 
 #content_main ul, #content_main ol { 
   margin-top: 3ex;
   margin-bottom: 3ex;
-}
-
-
-em img {
-  vertical-align: middle;
-  height: 2cm;
 }
 
 #content_main p { 
@@ -184,11 +184,13 @@ em img {
 div#footer {
  clear: both;
  margin: 0;
- width: auto;
+ width: auto
+ background: #909090;
 }
 
 select#versionselect  {
  width: 200px; 
+ background: green;
  font-size: larger; 
  margin-bottom: 10px;
 }
@@ -199,15 +201,18 @@ select#versionselect option {
 
 div#navigation { 
   width: auto; 
+  background: purple;
   background-repeat: repeat-x
 }
 
 div#navigation_main { 
   width: auto;
+  background: #703030;
 }
 
 ul#nav_main { 
   width: auto;
+  background: #602020;  
 }
 
 div#lastPublished {
@@ -217,6 +222,7 @@ div#lastPublished {
 div.section {
   width: auto;
   padding: 3pt;
+  background: green;
 }
 
 div#teaser { 
@@ -232,15 +238,15 @@ div#teaser {
 
 
 div#content_main h2 {
-  margin-bottom: 1ex;
+  margin-bottom: 10px;
 }
 
-div#content_main h3 {  
+div#content_main h3 { 
   padding-bottom: 3px; 
   display: block; 
   border-bottom: 1px dotted #666666; 
-  margin-bottom: 2ex; 
-  margin-top: 2ex;
+  margin-bottom: 8px; 
+  margin-top: 20px;
 }
 
 div#content_main img { 
@@ -265,6 +271,8 @@ p {
 div#content_main ol {
   margin-left:1em;
 }
+
+
 
 dl dt { 
   font-weight:bold; 

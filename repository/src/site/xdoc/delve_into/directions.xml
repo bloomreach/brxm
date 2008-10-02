@@ -45,52 +45,60 @@
           and the content base will be easily understandable and searchable, thanks to its uniformity.    
         </p>
 
-        <table style='td { border:solid;}'>
-          <tr>
-            <td>
-              <a href="quickstart.html"><img class='leftflow' src="../images/frontpage/quickstart.png" />
 
-                <h3>CMS Quickstart Guide</h3></a>
-
-               <p>You can try out Hippo CMS with example content having predefined structure, to see possible features `in action',
-                  before designing your own content structure. 
-                  To install Hippo CMS with example content, download a quickstart Hippo CMS package. After you studied
-                  the example content, your system adminstrator can configure the package for actual use in your company. 
-               </p>
-            </td>
-            <td>
-              <a href="use-hippo-ecm/index.html"><img width='50' alt="use" src="../images/frontpage/use.png" />
-
-               <h3>Hippo CMS User Guide</h3></a>
-
-                If you are a (new) user to Hippo CMS and the Hippo CMS is already installed on your system,  
-                read the User Guide for a tour through Hippo CMS and to learn Hippo CMS concepts.
-
-            </td>
-            <td>
-              <a href="run-hippo-ecm/index.html"><img alt="run" src="../images/frontpage/run.png" /></a>
-
-               <h3>CMS System administration Guide</h3>
-           
-               <p>
-                Here, all system administration information for Hippo CMS can found, i.e. installation and configuration.
-                The description of installation includes details not
-                in the quickstart guide. Configuration of Hippo CMS is often as simple as 
+        <table> 
+         <tr>
+          <td>
+           <a href="quickstart.html"><em><img class='leftflow' src="../images/frontpage/quickstart.png" /></em></a>
+          </td>
+          <td>
+           <a href="quickstart.html"><em>CMS Quickstart Installation</em></a></td>
+          <td>
+              Easy install of standard Hippo CMS with example content.
+          </td>
+         </tr>
+         <tr>
+          <td>   
+           <a href="use-hippo-ecm/index.html"><em><img width='50' alt="use" src="../images/frontpage/use.png"/></em></a>
+	  </td>
+          <td>
+            <a href="use-hippo-ecm/index.html"><em>CMS User Guide</em></a>
+          </td>
+          <td>
+                For users who have Hippo CMS available.
+	  </td>
+	 </tr>
+         <tr>
+          <td>
+           <a href="run-hippo-ecm/index.html"><em><img alt="run" src="../images/frontpage/run.png" /></em></a>  
+	  </td>
+          <td>
+           <a href="run-hippo-ecm/index.html"><em>CMS Admin Guide</em></a>
+	  </td>
+          <td>
+               For system administrators, for installing and configuring to integrate in your system.           
+	  </td>
+               <!--
+                Configuration of Hippo CMS is often as simple as 
                 adding the path to your companies data base server. Without this path, Hippo CMS will use
                 a folder on your filesystem to store the content.
-	       </p>
-               <p>
+
                 If a quickstart package was installed, configuration for actual use requires two
                 settings that ensure that the example content is not used and not recreated on your data base server.
-	       </p>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <a href="implement-hippo-ecm/index.html"><img alt="implement" src="../images/frontpage/implement.png" /></a>
+               -->
 
-               <h3>CMS implementation guide</h3>
-
+	 </tr>
+         <tr>
+          <td>         
+           <a href="implement-hippo-ecm/index.html"><em><img alt="implement" src="../images/frontpage/implement.png" /></em>
+	   </a>
+	  </td>
+          <td>
+           <a href="implement-hippo-ecm/index.html"><em>CMS Implement Guide</em></a>
+	  </td>
+          <td>
+	  </td>
+              <!--
                <p>
                 The Hippo ECM can be tailored to your needs, augmented with your own website-design, 
                 and integrated with your other applications to create your own Hippo ECM implementation. 
@@ -98,24 +106,34 @@
                <p>
                 This guides describes the CMS related aspects of the Hippo ECM implementation.
 	       </p>
-            </td>
-            <td>
-              <a href="extend-hippo-ecm/index.html"><img alt="extend" src="../images/frontpage/extend.png" /></a>
+              -->
+	 </tr>
+         <tr>
+          <td>
+           <a href="extend-hippo-ecm/index.html"><em><img alt="extend" src="../images/frontpage/extend.png" /></em></a>
+	  </td>
+          <td>
+            <a href="extend-hippo-ecm/index.html"><em>CMS Extension Guide</em></a>
+	  </td>
+          <td>
+                 For developers of custom plugins such as for extra properties
+                 of content nodes and custom userinterfaces.
+	  </td>
+	 </tr>
+         <tr>
+          <td>         
+           <a href="building/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
+	  </td>
+          <td>
+           <a href="building/index.html"><em>CMS Develop Guide</em></a>
+	  </td>
+          <td>
+             For Hippo CMS core developers, who develop the CMS core engines and the CMS core plugins and
+             the CMS standard package, containing the CMS core engines and a selection of the CMS core plugins.
+	  </td>
+	 </tr>
+	</table>
 
-               <h3>CMS Extension Guide</h3>
-
-                 This guide is for developers of custom plugins for Hippo CMS. Examples are plugins for extra properties
-                 of content nodes and plugins for custom userinterfaces for the Hippo CMS.
-            </td>
-            <td>
-              <a href="building/index.html"><img alt="build" src="../images/frontpage/build.png" /></a>
-
-               <h3>CMS Developers Guide</h3>
-
-                 This guide is for Hippo CMS developers, who develop the CMS core engines and the CMS core plugins and
-                 the CMS standard package, containing the CMS core engines and a selection of the CMS core plugins.
-
-            </td>
             <!--<li>
               <p>
                 <b>Develop Hippo ECM</b>
@@ -124,8 +142,7 @@
                 Information for Hippo ECM core developers.
               </p>
             </li>-->
-          </tr>
-        </table>
+
     </section>
 
   </body>
