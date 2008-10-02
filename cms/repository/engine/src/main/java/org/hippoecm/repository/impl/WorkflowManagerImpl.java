@@ -23,6 +23,7 @@ import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.AccessControlException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -134,7 +135,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                             for(int i=0; i<privileges.length; i++) {
                                 try {
                                     item.getSession().checkPermission(item.getPath(), privileges[i].getString());
-                                } catch(AccessDeniedException ex) {
+                                } catch(AccessControlException ex) {
                                     hasPermission = false;
                                     break;
                                 }

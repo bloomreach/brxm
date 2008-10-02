@@ -344,8 +344,6 @@ public class DerivedDataEngine {
                                             Value[] values = parameters.get(propName);
                                             if(values != null && values.length >= 1) {
                                                     try {
-                                                        modified.getSession().checkPermission(modified.getPath()+"/"+propertyPath,
-                                                                                              "set_property");
                                                         modified.setProperty(propertyPath, values[0]);
                                                         if(logger.isDebugEnabled()) {
                                                             sb.append(values[0].getString());
@@ -373,7 +371,6 @@ public class DerivedDataEngine {
                                                 sb.append(" }");
                                             }
                                             try {
-                                                modified.getSession().checkPermission(modified.getPath()+"/"+propertyPath, "set_property");
                                                 modified.setProperty(propertyPath, values);
                                                 if(logger.isDebugEnabled()) {
                                                     sb.append(" created");
