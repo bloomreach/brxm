@@ -19,7 +19,7 @@
   <skin>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-maven-skin</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>1.01.01-SNAPSHOT</version>
     <!-- To change
      - Edit trunk/maven-skin/src/main/resources/css/screen.css      
      - Run mvn install in trunk/maven-skin/ to get changed screen.css in $HOME/.m2/repository/org/hippoecm/hippo-ecm-maven-skin/2.01.00-SNAPSHOT/hippo-ecm-maven-skin-2.01.00-SNAPSHOT.jar 

@@ -40,7 +40,6 @@
     <module>addon</module>
     <module>package</module>
     <module>tools</module>
-    <module>maven-skin</module>
     <module>quickstart</module>
     <module>archetypes</module>
   </modules>
