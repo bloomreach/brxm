@@ -132,8 +132,13 @@
       </item>
       
       <item name="CMS Implementation Guide" href="/delve_into/implement-hippo-ecm/index.html" collapse="true">
-        <item name="JCR Interface" href="/delve_into/implement-hippo-ecm/advanced/jcr.html"/>
-        <item name="Dropbox Example" href="/delve_into/implement-hippo-ecm/advanced/jcr-dropbox-example.html"/>
+        <item name="Toolkits" href="/delve_into/implement-hippo-ecm/toolkits/index.html"/>
+        <item name="JCR Interface" href="/delve_into/implement-hippo-ecm/jcr/index.html" collapse="true">
+          <item name="Basics" href="/delve_into/implement-hippo-ecm/jcr/jcr.html"/>
+          <item name="Examples" href="/delve_into/implement-hippo-ecm/jcr/examples.html"/>
+          <item name="Importing Content" href="/delve_into/implement-hippo-ecm/jcr/importing-content.html"/>
+        </item>
+        <!--<item name="Dropbox Example" href="/delve_into/implement-hippo-ecm/advanced/jcr-dropbox-example.html"/>-->
       </item>
 
       <item name="CMS Extension Guide" href="/delve_into/extend-hippo-ecm/index.html" collapse="true">
