@@ -47,11 +47,17 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:implementation</sv:value>
+    </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
       <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
@@ -105,11 +111,17 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:implementation</sv:value>
+    </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
       <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
