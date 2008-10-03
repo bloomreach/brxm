@@ -18,42 +18,15 @@ package org.hippoecm.repository.standardworkflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
-
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
-/**
- *  DO NOT USE THIS WORKFLOW
- */
-public interface RemodelWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
-
-    /**
-     * Instruct the repository to apply the new node definition overriding the
-     * earlier node definition.
-     */
-    public String[] remodel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
-
-    /**
-     * create a new namespace
-     */
-    public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
-            RepositoryException, RemoteException;
-
-    /**
-     * Create a new node type definition
-     * FIXME: also create a template and return its path
-     */
-    public void createType(String name) throws WorkflowException, MappingException, RepositoryException,
-            RemoteException;
-
-    // BIG FIXME: no such classes should be here, this cannot be done in a generic way, it should be dropped.
-
-    public final class TypeUpdate implements Serializable {
+public interface TemplateEditorWorkflow extends RepositoryWorkflow, Workflow {
+    public final static class TypeUpdate implements Serializable {
         private static final long serialVersionUID = 1L;
 
         public String newName;
@@ -63,7 +36,7 @@ public interface RemodelWorkflow extends Workflow {
         public Map<FieldIdentifier, FieldIdentifier> renames;
     }
 
-    public final class FieldIdentifier implements Serializable {
+    public final static class FieldIdentifier implements Serializable {
         private static final long serialVersionUID = 1L;
 
         public String path;
@@ -86,4 +59,12 @@ public interface RemodelWorkflow extends Workflow {
             return (path.hashCode() * type.hashCode()) % 1001;
         }
     }
+
+    public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public void createType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public void updateModel(String prefix, String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public void updateModel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

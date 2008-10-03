@@ -174,9 +174,6 @@
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${engine}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="template" sv:type="String">
             <sv:value>${cluster.id}.template</sv:value>
           </sv:property>
@@ -216,9 +213,6 @@
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${engine}</sv:value>
           </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
-          </sv:property>
           <sv:property sv:name="css" sv:type="String">
             <sv:value>templateactions</sv:value>
             <sv:value>actionspanel</sv:value>
@@ -226,7 +220,6 @@
           <sv:property sv:name="templates" sv:type="String">
             <sv:value>String</sv:value>
             <sv:value>Html</sv:value>
-            <sv:value>Text</sv:value>
             <sv:value>Date</sv:value>
             <sv:value>Boolean</sv:value>
             <sv:value>hippo:resource</sv:value>
@@ -250,9 +243,6 @@
           </sv:property>
           <sv:property sv:name="engine" sv:type="String">
             <sv:value>${engine}</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
           </sv:property>
         </sv:node>
 
@@ -820,7 +810,6 @@
 
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
-          <sv:value>mode</sv:value>
         </sv:property>
 
         <sv:property sv:name="wicket.model" sv:type="String">
@@ -869,9 +858,6 @@
           </sv:property>
           <sv:property sv:name="wicket.model" sv:type="String">
             <sv:value>${cluster.id}.model</sv:value>
-          </sv:property>
-          <sv:property sv:name="mode" sv:type="String">
-            <sv:value>${mode}</sv:value>
           </sv:property>
           <sv:property sv:name="types" sv:type="String">
             <sv:value>png=image/png,jpeg=image/jpeg,jpg=image/jpeg,gif=image/gif</sv:value>
