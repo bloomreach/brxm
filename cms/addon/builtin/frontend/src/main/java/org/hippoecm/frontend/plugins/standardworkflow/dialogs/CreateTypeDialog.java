@@ -23,7 +23,7 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class CreateTypeDialog extends AbstractWorkflowDialog {
 
     @Override
     protected void execute() throws Exception {
-        RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
+        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
         workflow.createType(name);
 
         WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();

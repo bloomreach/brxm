@@ -23,7 +23,7 @@
 [hippo:ntunstructured] > nt:unstructured
 
 [hippo:testdocument] > hippo:document
-+ * = hippo:ntunstructured multiple
++ * (nt:base) = hippo:ntunstructured multiple
 - *
 
 [hippo:testderived] > hippo:derived mixin

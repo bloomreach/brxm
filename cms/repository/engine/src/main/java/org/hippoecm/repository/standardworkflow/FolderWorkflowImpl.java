@@ -149,11 +149,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     }
 
     public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        if (template == null || template.startsWith("hippo:") || template.startsWith("reporting:")
-                || template.equals("nt:unstructured")) {
-            throw new WorkflowException("Invalid template "+template);
-        }
-
         String name = ISO9075Helper.encodeLocalName(arguments.get("name"));
         QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
         Node foldertype = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);

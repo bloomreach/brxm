@@ -38,8 +38,8 @@ import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,12 +103,12 @@ public class RemodelDialog extends AbstractWorkflowDialog {
 
         sessionModel.getSession().save();
 
-        RemodelWorkflow workflow = (RemodelWorkflow) getWorkflow();
+        TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
         if (workflow != null) {
             log.info("remodelling namespace " + namespace);
             try {
                 /* String[] nodes = */
-                workflow.remodel(cnd, update);
+                workflow.updateModel(namespace, cnd, update);
                 sessionModel.getSession().save();
 
                 // log out; the session model will log in again.

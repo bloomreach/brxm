@@ -21,18 +21,18 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:workflowcategory</sv:value>
   </sv:property>
-  <sv:node sv:name="namespace-management">
+  <sv:node sv:name="template-editor-namespaces">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
+      <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespacefolder</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>admin</sv:value>
     </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewNamespaceWorkflowPlugin</sv:value>
+    <sv:property sv:name="hippo:classname" sv:type="String">
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Internal workflow to create a namespace</sv:value>
@@ -43,9 +43,9 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="standard-remodel">
+  <sv:node sv:name="template-editor-namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
+      <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippo:namespace</sv:value>
@@ -54,13 +54,10 @@
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewRemodelWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Internal workflow to remodel the namespace</sv:value>
+      <sv:value>Folder based workflow on namespaces folder</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -70,7 +67,7 @@
   </sv:node>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
+      <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>rep:root</sv:value>
@@ -79,13 +76,10 @@
       <sv:value>admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewFolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.repository.standardworkflow.RepositoryWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow on root folder</sv:value>
+      <sv:value>Workflow on root folder (RepositoryWorkflow)</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

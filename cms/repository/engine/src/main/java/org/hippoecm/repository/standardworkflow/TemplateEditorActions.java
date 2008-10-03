@@ -39,18 +39,18 @@ import org.slf4j.LoggerFactory;
 /**
  * @deprecated
  */
-public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflow {
+public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TemplateEditorActions.class);
 
     private Session rootSession;
     private Node subject;
 
-    public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException {
+    public TemplateEditorActions(Session userSession, Session rootSession, Node subject) throws RemoteException {
         this.rootSession = rootSession;
         this.subject = subject;
     }
@@ -218,9 +218,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         }
 
         // copy prototype
+        draft = null;
+        current = null;
         if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPE)) {
-            draft = null;
-            current = null;
             NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPE).getNodes();
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
@@ -233,32 +233,32 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     }
                 }
             }
-            if (draft == null) {
-                if (current == null) {
-                    throw new ItemNotFoundException("Remodel node " + HippoNodeType.HIPPO_PROTOTYPE
-                            + ", current version was not found for type " + subject.getPath());
-                }
-                draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
-                draft.addMixin("mix:referenceable");
-    
-                PropertyIterator propIter = current.getProperties();
-                while (propIter.hasNext()) {
-                    Property prop = propIter.nextProperty();
-                    PropertyDefinition definition = prop.getDefinition();
-                    if (!definition.isProtected()) {
-                        if (definition.isMultiple()) {
-                            draft.setProperty(prop.getName(), prop.getValues());
-                        } else {
-                            draft.setProperty(prop.getName(), prop.getValue());
-                        }
+        }
+        if (draft == null) {
+            if (current == null) {
+                throw new ItemNotFoundException("Remodel node " + HippoNodeType.HIPPO_PROTOTYPE
+                        + ", current version was not found for type " + subject.getPath());
+            }
+            draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
+            draft.addMixin("mix:referenceable");
+
+            PropertyIterator propIter = current.getProperties();
+            while (propIter.hasNext()) {
+                Property prop = propIter.nextProperty();
+                PropertyDefinition definition = prop.getDefinition();
+                if (!definition.isProtected()) {
+                    if (definition.isMultiple()) {
+                        draft.setProperty(prop.getName(), prop.getValues());
+                    } else {
+                        draft.setProperty(prop.getName(), prop.getValue());
                     }
                 }
-    
-                NodeIterator nodeIter = current.getNodes();
-                while (nodeIter.hasNext()) {
-                    Node child = nodeIter.nextNode();
-                    ((HippoSession) current.getSession()).copy(child, draft.getPath() + "/" + child.getName());
-                }
+            }
+
+            NodeIterator nodeIter = current.getNodes();
+            while (nodeIter.hasNext()) {
+                Node child = nodeIter.nextNode();
+                ((HippoSession) current.getSession()).copy(child, draft.getPath() + "/" + child.getName());
             }
         }
     }
