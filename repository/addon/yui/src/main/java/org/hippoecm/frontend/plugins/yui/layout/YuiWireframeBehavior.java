@@ -30,6 +30,8 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.TextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
@@ -41,8 +43,9 @@ public class YuiWireframeBehavior extends AbstractDefaultAjaxBehavior implements
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private YuiWireframeConfig configuration;
+    private static final TextTemplate behaviorJs = new PackagedTextTemplate(YuiWireframeBehavior.class, "YuiWireframeBehavior.js");
+    
+    private final YuiWireframeConfig configuration;
 
     public YuiWireframeBehavior() {
         this(null, false);
@@ -102,7 +105,7 @@ public class YuiWireframeBehavior extends AbstractDefaultAjaxBehavior implements
         YuiHeaderContributor.forModule(HippoNamespace.NS, "layoutmanager").renderHead(response);
 
         fillConfig();
-        TextTemplateHeaderContributor.forJavaScript(YuiWireframeBehavior.class, "YuiWireframeBehavior.js",
+        TextTemplateHeaderContributor.forJavaScript(behaviorJs,
                 getHeaderContributorVariablesModel(configuration)).renderHead(response);
         response.renderOnLoadJavascript("YAHOO.hippo.LayoutManager.onLoad()");
     }
