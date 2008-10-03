@@ -24,6 +24,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -34,8 +35,10 @@ import org.hippoecm.repository.impl.QueryDecorator;
 public class DirectPath implements QueryDecorator.HardcodedQuery {
     public List<Node> execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException {
         String path = query.getStatement();
+	boolean children = false;
         if (path.endsWith("/node()")) {
             path = path.substring(0, path.length() - "/node()".length());
+	    children = true;
         }
         if (path.startsWith("/jcr:root")) {
             path = path.substring("/jcr:root".length());
@@ -46,7 +49,17 @@ public class DirectPath implements QueryDecorator.HardcodedQuery {
         Node root = session.getRootNode();
         Vector results = new Vector<Node>();
         if(root.hasNode(path)) {
-            results.add(root.getNode(path));
+	    Node node = root.getNode(path);
+	    if(children) {
+	        for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+		    node = iter.nextNode();
+		    if(node != null) {
+                        results.add(node);
+		    }
+		}
+	    } else {
+                results.add(root.getNode(path));
+	    }
         }
         return results;
     }
