@@ -23,38 +23,129 @@
  </properties>
 
 <body>
-<section name="Quickstart Installation">
+<section name="Quickstart Guide">
+
+  This quickstart works on all modern, standard computer systems.
+
 <subsection name='Easy install standard Hippo CMS with example content'>
 
- <ol>
-  <li><em><img src='../images/download.png'/></em> Download 
-    <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.zip">zipped quickstart package that includes the Jetty application container</a>.
-    or if you prefer the <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.tar.gz">tar.gz</a>.
-  </li>
-  <li><em><img src='../images/run.png'/></em> Run ...</li>
-  <li><em><img src='../images/open_in_browser.png'/></em> Open <a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> in your browser.</li>
-  <li><em><img src='../images/unknown.png'/></em>...</li>
-  <li><em><img src='../images/unknown.png'/></em>...</li>
- </ol>
+<blockquote>
+ <table>
+  <tr>
+   <td>i.1</td>
+   <td>
+     <em><img src='../images/download.png' alt='download icon'/></em> 
+   </td>
+   <td>
+    Download the
+    <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.zip">zipped quickstart package that includes the Jetty application container</a>
+    (if you prefer the <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.tar.gz">tar.gz</a>, take that).
+   </td>
+  </tr>
+  <tr>
+   <td>i.2</td>
+   <td>
+     <em><img src='../images/unzip.png' alt='unzip icon'/></em> 
+   </td>
+   <td>
+     Unzip the downloaded file (name starts with `hippo-ecm-quickstart-bin'). 
+     A hippo-ecm folder is created.
+   </td>
+  </tr>
+ </table>
+</blockquote>
+
+</subsection>
+
+<subsection name='Easy running of standard Hippo CMS with example content'>
+
+<blockquote>
+ <table summary='First column= step number, second column= action icon, third column= action description'>
+  <tr>
+   <td>r.1</td>
+   <td>
+    <em><img src='../images/command.png' alt='command icon'/></em>
+   </td>
+   <td>
+     Open a commandline interface and start the script hippo-ecm/startup.bat (on MS systems) 
+     or hippo-ecm/startup.sh (on Unices). 
+     The text 
+     
+       <samp>INFO: Started SelectChannelConnector@127.0.0.1:8080</samp>
+
+     indicates Hippo CMS has started.
+     The script will continue running, until you are done.
+     <a href='./bin_startup_help.html'>Need Help?</a>
+   </td>
+  </tr>
+  <tr>
+   <td>r.2</td>
+   <td>
+    <em><img src='../images/open_in_browser.png' alt='webopen icon'/></em> 
+   </td>
+  <td>
+   Open <a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> in your (this) webbrowser.
+   A window `Sign In, Hippo CMS 7' will open.
+   As username use `admin' and as password use also `admin'.
+  </td>
+  </tr>
+  <tr>
+   <td>i.3</td>
+   <td>
+    <em><img src='../images/user.png' alt='user icon'/></em>
+   </td>
+   <td>
+     Try out the Hippo CMS.
+     Use the <a href="use-hippo-ecm/index.html">CMS User Guide</a> for help.  
+   </td>
+  </tr>
+  <tr>
+   <td>i.4</td>
+   <td>
+    <em><img src='../images/stop.png' alt='stop icon'/></em>
+   </td>
+   <td>
+     Stop the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.
+     The text 
+       <samp>INFO: Shutdown hook executing</samp> indicates Hippo CMS is stopping.
+   </td>
+  </tr>
+ </table>
+</blockquote>
 
  </subsection>
 
- <subsection name='Alternatives'>
+ <subsection name='Alternatives' title='What can you do instead of the above?'>
 
    If you already have an Java application container and want to deploy Hippo CMS
    in it, go <a href='quickstart_in_existing_container'>here</a>.
  </subsection>
 
- <subsection name='Next'>
+ <subsection name='Next' title='What can you do after you did the above?'>
 
-  <p><em><img src='../images/user.png'/></em> As a user, learn more about Hippo CMS
-      in the <a href="/delve_into/use-hippo-ecm/index.html">CMS User Guide</a>.  
-  </p>
-  <p><em><img src='../images/admin.png'/></em> As an administrator, you can 
-     adapt the installed quickstart package for
-     production, see the <a href="/delve_into/run-hippo-ecm/index.html">CMS Admin Guide</a>.  
-  </p>
-
+ <blockquote>
+  <table>
+   <tr>
+    <td>User</td>
+    <td>
+     <em><img src='../images/user.png' alt='user icon'/></em>
+    </td>
+    <td>
+     Learn more about Hippo CMS
+     in the <a href="use-hippo-ecm/index.html">CMS User Guide</a>.  
+    </td>
+   </tr>
+   <tr>
+    <td>Admin</td>  
+    <td>
+     <em><img src='../images/admin.png' alt='admin icon'/></em>
+    </td>
+    <td>An installed quickstart package may be addapted for
+     production, see the <a href="admin/index.html">CMS Admin Guide</a>.  
+    </td>
+   </tr>
+  </table>
+ </blockquote>
 
  </subsection>
 
