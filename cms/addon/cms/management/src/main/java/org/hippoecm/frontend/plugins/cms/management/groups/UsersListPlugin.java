@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.management.groups;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -89,7 +90,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
         }
 
         @Override
-        public void onDrop(IModel model, AjaxRequestTarget target) {
+        public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel droppedModel = (JcrNodeModel) model;
                 JcrNodeModel groupModel = (JcrNodeModel) getModel();

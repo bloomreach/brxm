@@ -14,101 +14,90 @@
  * limitations under the License.
  */
 
+/**
+ * @description
+ * <p>
+ * Todo
+ * </p>
+ * @namespace YAHOO.hippo
+ * @requires dragdropmodel, functionqueue, hashmap
+ * @module drapdropmanager
+ */
+
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.DragDropManager) {
+    ( function() {
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        
+        YAHOO.hippo.DragDropManagerImpl = function() {
+        };
+        
+        YAHOO.hippo.DragDropManagerImpl.prototype = {
+        		
+			loader :new YAHOO.hippo.FunctionQueue('DragDropQueue'),
+			draggables : new YAHOO.hippo.HashMap(),
+			droppables : new YAHOO.hippo.HashMap(),
+			
+			onLoad : function() {
+			    this.cleanup();
+				this.loader.handleQueue();
+			},
+			
+			cleanup: function() {
+				//remove old drag or drop components from dom and maps
+			},
+			
+			/**
+			 * TODO: Maybe the draggables and droppables can be merged?
+			 */
+			getModel : function(id) {
+				if(this.draggables.containsKey(id)) {
+					return this.draggables.get(id);
+				} else if (this.droppables.containsKey(id)) {
+					return this.droppables.get(id);
+				}
+				return null;
+			},
+			
+			addDraggable : function(id, modelClass, config) {
+				var clazz = this.getClass(modelClass, YAHOO.hippo.DDModel);
+				YAHOO.log("Add draggable component[" + id + "] of type " + clazz, "info", "DragDropManager");
+				this._add(id, clazz, config, this.draggables);
+			},
 
-    /**
-     * @description <p>Todo</p>
-     * @namespace YAHOO.hippo
-     * @requires dragdropmodel, functionqueue
-     * @module drapdropmanager
-     */
-    YAHOO.hippo.DragDropManager = {
-        loader :new YAHOO.hippo.FunctionQueue('DragDropQueue'),
+			addDroppable : function(id, modelClass, config) {
+				var clazz = this.getClass(modelClass, YAHOO.util.DDTarget);
+				YAHOO.log("Add droppable component[" + id + "] of type " + clazz, "info", "DragDropManager");
+				this._add(id, clazz, config, this.droppables);
+			},
+			
+			_add: function(id, clazz, config, map) {
+				var me = this;
+				var func = function() {
+					var c = null;
+					
+					if (Lang.isArray(config.groups)) {
+						c = new clazz(id, config.groups.shift(), config);
+					} else {
+						c = new clazz(id, null, config);
+					}
+					map.put(id, c);
+				};
+				this.loader.registerFunction(func);
+			},
+			
+			getClass: function(clazz, defaultClazz) {
+				if (!Lang.isUndefined(clazz) && !Lang.isNull(clazz)) { //TODO: test for isObject?
+					return clazz;
+				}
+				return defaultClazz;
+			}
+        };
+    })();
 
-        onLoad : function() {
-            this.loader.handleQueue();
-        },
-
-        addDraggable : function(id, label, groups, callbackFunc, callbackUrl,
-                callbackParameters, modelType, customConfig) {
-            var js = YAHOO.lang;
-            var func = function() {
-
-                var config = {
-                    centerFrame :true,
-                    resizeFrame :false
-                }
-                if(!js.isUndefined(customConfig) && !js.isNull(customConfig)) {
-                    for( p in customConfig) {
-                        if(!js.isFunction(customConfig[p])) {
-                            config[p] = customConfig[p];
-                        }
-                    }
-                }
-                
-                if (!js.isUndefined(label) && !js.isNull(label)) {
-                    config.label = label;
-                }
-                var _class = YAHOO.hippo.DDModel;
-                if(!js.isUndefined(modelType) && !js.isNull(modelType)) {
-                    _class= modelType;
-                }
-                var drag = null;
-                // maybe isArray checks for null/undef but code is obfuscated
-                if (!js.isUndefined(groups) && !js.isNull(groups) && js.isArray(groups)) {
-                    drag = new _class(id, groups.shift(), config);
-                    //drag = new YAHOO.hippo.DDModel(id, groups.shift(), config);
-                    while (groups.length > 0) {
-                        drag.addToGroup(groups.shift());
-                    }
-                } else {
-                    drag = new _class(id, null, config);
-                }
-                
-                if (!js.isArray(callbackParameters)) {
-                    callbackParameters = new Array();
-                }
-
-                drag.onDragDrop = function(ev, dropId) {
-                    
-                    var myCallbackParameters = drag.getCallbackParameters(dropId);
-                    while(callbackParameters.length > 0) {
-                        myCallbackParameters.push(callbackParameters.shift());
-                    }
-                    drag.onDragDropAction(dropId);
-                    
-                    if(drag.cancelCallback()) return;
-                    
-                    var url = callbackUrl;
-                    for (i = 0; i < myCallbackParameters.length; i++) {
-                        var paramKey = myCallbackParameters[i].key, paramValue = Wicket.Form.encode(myCallbackParameters[i].value);
-                        url += (callbackUrl.indexOf('?') > -1) ? '&' : '?';
-                        url += (paramKey + '=' + paramValue);
-                    }
-                    callbackFunc(url);
-                }
-            };
-            this.loader.registerFunction(func);
-        },
-
-        addDroppable : function(id, groups) {
-            var js = YAHOO.lang;
-            var drop = null;
-            if (!js.isUndefined(groups) && !js.isNull(groups)
-                    && js.isArray(groups)) {
-                drop = new YAHOO.util.DDTarget(id, groups.shift());
-                while (groups.length > 0) {
-                    drop.addToGroup(groups.shift());
-                }
-            } else {
-                drop = new YAHOO.util.DDTarget(id);
-            }
-        }
-    };
-
-    YAHOO.register("dragdropmanager", YAHOO.hippo.DragDropManager, {
+    YAHOO.hippo.DragDropManager = new YAHOO.hippo.DragDropManagerImpl();
+    YAHOO.register("layoutmanager", YAHOO.hippo.LayoutManager, {
         version :"2.5.2",
         build :"1076"
     });

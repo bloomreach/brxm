@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Component.IVisitor;
@@ -37,6 +38,7 @@ public class DragBehavior extends AbstractDragDropBehavior {
         super(context, config);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void respond(final AjaxRequestTarget target) {
         if (!lookupDropBehavior()) {
@@ -45,13 +47,15 @@ public class DragBehavior extends AbstractDragDropBehavior {
         final IModel draggedModel = getDragModel();
         if (draggedModel == null)
             return;
-
+        
         final String targetId = getComponent().getRequest().getParameter("targetId");
+        final Map<String, String[]> parameters = getComponent().getRequest().getParameterMap();
+        
         getComponent().getPage().visitChildren(new DropPointVisitor() {
             @Override
             void visit(DropBehavior dropPoint) {
                 if (dropPoint.getComponentMarkupId().equals(targetId)) {
-                    dropPoint.onDrop(draggedModel, target);
+                    dropPoint.onDrop(draggedModel, parameters, target);
                 }
             }
         });
@@ -83,6 +87,14 @@ public class DragBehavior extends AbstractDragDropBehavior {
         return DragBehavior.class;
     }
 
+    @Override
+    protected JavascriptObjectMap getJavacriptConfig() {
+        JavascriptObjectMap config = super.getJavacriptConfig();
+        config.put("centerFrame", true);
+        config.put("resizeFrame", false);
+        return config;
+    }
+
     private abstract class DropPointVisitor implements IVisitor {
         @SuppressWarnings("unchecked")
         public Object component(Component component) {
@@ -99,6 +111,11 @@ public class DragBehavior extends AbstractDragDropBehavior {
         }
 
         abstract void visit(DropBehavior draggable);
+    }
+
+    @Override
+    protected String getModelClass() {
+        return "YAHOO.hippo.DDModel";
     }
 
 }

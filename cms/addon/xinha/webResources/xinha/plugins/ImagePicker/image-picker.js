@@ -104,6 +104,16 @@ ImagePicker.prototype.shouldPrefix = function(url) {
 
 ImagePicker.prototype.insertImage = function(url, openModal) {
 	url = ImagePicker.encode(url);
+	
+	var sel = this.editor.getSelection();
+    var rng = this.editor.createRange(sel);
+    var c = this.editor.activeElement(sel);
+    var w=null,h=null;
+    if(c != null && c.tagName.toLowerCase() == 'img') {
+    	w = c.width;
+    	h = c.height;
+    }
+
     if ( Xinha.is_ie )
     {
       var sel = this.editor.getSelection();
@@ -121,8 +131,6 @@ ImagePicker.prototype.insertImage = function(url, openModal) {
     {
         var img  = new Image();
         img.src = url;
-        //img = document.createElement('img');
-        //img.src = param.f_url;
         this.editor.insertNodeAtSelection(img);
         if ( !img.tagName )
         {
@@ -130,9 +138,13 @@ ImagePicker.prototype.insertImage = function(url, openModal) {
             img = this.editor.range.startContainer.firstChild;
         }
     }
+    
+    if(w != null) img.width = w;
+    if(h != null) img.height = h;
+
     if(openModal) {
-    	img.width = null;
-    	img.height = null;
+    	if(w == null) img.width = null;
+    	if(h == null) img.height = null;
     	this.editor._insertImage(img);
     }
 }

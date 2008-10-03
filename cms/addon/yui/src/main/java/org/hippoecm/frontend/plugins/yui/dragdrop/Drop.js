@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-YAHOO.hippo.DragDropManager.addDroppable('${id}', ${groups});
+YAHOO.hippo.DragDropManager.addDroppable('${id}', ${class}, ${config});

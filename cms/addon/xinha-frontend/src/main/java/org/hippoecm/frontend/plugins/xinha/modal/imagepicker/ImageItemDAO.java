@@ -53,10 +53,10 @@ public class ImageItemDAO implements IClusterable {
         imageItemFactory = new ImageItemFactory(nodeModel);
     }
     
-    public ImageItem insertImageModel(JcrNodeModel imageModel) {
+    public ImageItem attach(JcrNodeModel imageModel) {
         try {
             ImageItem item = imageItemFactory.createImageItem(imageModel.getNode());
-            if(insertImageItem(item)) {
+            if(saveOrUpdate(item)) {
                 return item;
             }
         } catch (RepositoryException e) {
@@ -65,7 +65,7 @@ public class ImageItemDAO implements IClusterable {
         return null;
     }
 
-    public boolean insertImageItem(ImageItem imageItem) {
+    public boolean saveOrUpdate(ImageItem imageItem) {
         if (imageItem.getUuid() != null) {
             Node node = nodeModel.getNode();
             String nodeName = imageItem.getNodeName();
@@ -88,11 +88,11 @@ public class ImageItemDAO implements IClusterable {
         return false;
     }
 
-    public ImageItem createImageItem(EnumMap<XinhaImage, String> enums) {
+    public ImageItem create(EnumMap<XinhaImage, String> enums) {
         return imageItemFactory.createImageItem(enums);
     }
 
-    public List<ImageItem> getImageItems() {
+    public List<ImageItem> getItems() {
         List<ImageItem> items = new ArrayList<ImageItem>();
         
         try {

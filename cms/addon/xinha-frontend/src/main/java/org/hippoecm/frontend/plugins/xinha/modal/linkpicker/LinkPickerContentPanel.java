@@ -22,12 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,10 +42,8 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
@@ -62,7 +56,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
     private final static String SVN_ID = "$Id$";
     private final static Logger log = LoggerFactory.getLogger(LinkPickerContentPanel.class);
 
-    private final static String DEFAULT_JCR_PATH = "/content";
+    protected final static String DEFAULT_JCR_PATH = "/content";
 
     private final static String HTTP_PREFIX = "http://";
     private final static String HTTPS_PREFIX = "https://";
@@ -78,12 +72,12 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
     private String linkTypeDropDownSelected;
     private AbstractLinkPicker linkPicker;
     private Map<String, AbstractLinkPicker> pickerCache = new HashMap<String, AbstractLinkPicker>();
-    private JcrNodeModel nodeModel;
+    private InternalLinkDAO dao;
 
     public LinkPickerContentPanel(final XinhaModalWindow modal, final EnumMap<XinhaLink, String> values,
-            final JcrNodeModel nodeModel) {
+            final InternalLinkDAO dao) {
         super(modal, values);
-        this.nodeModel = nodeModel;
+        this.dao = dao;
 
         final LinkType initialType = getLinkType();
         final String initialHref = values.get(XinhaLink.HREF);
@@ -96,17 +90,8 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                 void remove(AjaxRequestTarget target, Form form) {
                     if (initialType == LinkType.INTERNAL) {
                         //TODO: remove facet
-                        Node node = nodeModel.getNode();
-                        try {
-                            Node facet = node.getNode(initialHref);
-                            facet.remove();
-                            node.save();
-                        } catch (PathNotFoundException e) {
-                            log.warn("Internal link[" + initialHref + "] not found in node["
-                                    + nodeModel.getItemModel().getPath() + "]");
-                        } catch (RepositoryException e) {
-                            log.error("An error occured while removing internal link[" + initialHref + "] from node["
-                                    + nodeModel.getItemModel().getPath() + "]", e);
+                        if (!dao.remove(initialHref)){
+                            log.warn("Failed to remove internallink[" + initialHref + "]");
                         }
                     }
                     values.put(XinhaLink.HREF, "");
@@ -279,37 +264,28 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
             String currentLink = values.get(XinhaLink.HREF);
             if (currentLink != null && !"".equals(currentLink)) {
                 try {
-                    if (nodeModel.getNode().hasNode(currentLink)) {
-                        Node currentLinkNode = nodeModel.getNode().getNode(currentLink);
-                        if (currentLinkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                            try {
-                                uuid = currentLinkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
-                                Item derefItem = currentLinkNode.getSession().getNodeByUUID(uuid);
-                                if (derefItem.isNode()) {
-                                    Node deref = (Node) derefItem;
-                                    if (deref.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                        // get the parent node as start path
-                                        jcrBrowseStartPath = deref.getParent().getPath();
-                                        jcrBrowsePath = deref.getPath();
-                                    } else {
-                                        log
-                                                .error("docbase uuid does not refer to node of type hippo:handle: resetting link. uuid="
-                                                        + uuid);
-                                        values.put(XinhaLink.HREF, "");
-                                    }
-                                } else {
-                                    log.error("docbase uuid does not refer to node but property: resetting link. uuid="
+                    uuid = dao.getUUID(currentLink);
+                    Item derefItem = dao.getItem(uuid);
+                    if (derefItem.isNode()) {
+                        Node deref = (Node) derefItem;
+                        if (deref.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            // get the parent node as start path
+                            jcrBrowseStartPath = deref.getParent().getPath();
+                            jcrBrowsePath = deref.getPath();
+                        } else {
+                            log
+                                    .error("docbase uuid does not refer to node of type hippo:handle: resetting link. uuid="
                                             + uuid);
-                                    values.put(XinhaLink.HREF, "");
-                                }
-                            } catch (ItemNotFoundException e) {
-                                log.error("uuid in docbase not found: resetting link: " + currentLink);
-                                values.put(XinhaLink.HREF, "");
-                            }
+                            values.put(XinhaLink.HREF, "");
                         }
+                    } else {
+                        log.error("docbase uuid does not refer to node but property: resetting link. uuid="
+                                + uuid);
+                        values.put(XinhaLink.HREF, "");
                     }
                 } catch (RepositoryException e) {
-                    log.error("error during nodetest for " + currentLink);
+                    log.error("uuid in docbase not found: resetting link: " + currentLink);
+                    values.put(XinhaLink.HREF, "");
                 }
             }
 
@@ -319,7 +295,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
             pathLabel.setOutputMarkupId(true);
 
             // node listing
-            final List<NodeItem> items = getNodeItems(nodeModel, jcrBrowseStartPath);
+            final List<NodeItem> items = dao.getNodeItems(jcrBrowseStartPath);
             final WebMarkupContainer wrapper = new WebMarkupContainer("wrapper");
             ListView listing = new ListView("item", items) {
                 private static final long serialVersionUID = 1L;
@@ -341,7 +317,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                                     target.addComponent(ok.setEnabled(true));
                             } else {
                                 items.clear();
-                                items.addAll(getNodeItems(nodeModel, nodeItem.getPath()));
+                                items.addAll(dao.getNodeItems(nodeItem.getPath()));
                                 target.addComponent(ok.setEnabled(false));
                                 target.addComponent(wrapper);
                                 link = null;
@@ -386,69 +362,16 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
             super.onBeforeRender();
         }
 
-        private List<NodeItem> getNodeItems(JcrNodeModel nodeModel, String startPath) {
-            List<NodeItem> items = new ArrayList<NodeItem>();
-            startPath = (startPath == null) ? DEFAULT_JCR_PATH : startPath;
-            try {
-                Session session = nodeModel.getNode().getSession();
-                Node rootNode = session.getRootNode();
-                Node startNode = (Node) session.getItem(startPath);
-                if (!startNode.isSame(rootNode) && !startNode.getParent().isSame(rootNode)) {
-                    items.add(new NodeItem(startNode.getParent(), "[..]"));
-                }
-                NodeIterator listingNodesIt = startNode.getNodes();
-                while (listingNodesIt.hasNext()) {
-                    HippoNode listNode = (HippoNode) listingNodesIt.nextNode();
-                    // nextNode can return null
-                    if (listNode == null) {
-                        continue;
-                    }
-                    items.add(new NodeItem(listNode));
-                }
-            } catch (PathNotFoundException e) {
-                // possible for old links
-                log.warn("path not found : " + e.getMessage());
-            } catch (RepositoryException e) {
-                log.error("RepositoryException " + e.getMessage(), e);
-            }
-            return items;
-        }
-
         public String createValidLink() {
             if (uuid == null) {
                 log.error("uuid is null. Should never be possible for internal link");
                 return "";
             }
-
-            Node node = nodeModel.getNode();
-
-            /* test whether link is already present as facetselect. If true then:
-             * 1) if uuid also same, use this link
-             * 2) if uuid is different, create a new link 
-             */
-
-            HtmlLinkValidator htmlLinkValidator = new HtmlLinkValidator(node, link, uuid);
-            String validLink = htmlLinkValidator.getValidLink();
-            if (!htmlLinkValidator.isAlreadyPresent()) {
-                try {
-                    Node facetselect = node.addNode(validLink, HippoNodeType.NT_FACETSELECT);
-                    //todo fetch corresponding uuid of the chosen imageset
-                    facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
-                    facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
-                    facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
-                    facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
-                    // need a node save (the draft so no problem) to visualize images
-                    node.save();
-                } catch (RepositoryException e) {
-                    log.error("An error occured while trying to save new image facetSelect[" + uuid + "]", e);
-                    validLink = "";
-                }
-            }
-            return validLink;
+            return dao.create(link, uuid);
         }
     }
 
-    private static class NodeItem implements IClusterable {
+    static class NodeItem implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         private String path;
@@ -485,57 +408,6 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
 
         public String getDisplayName() {
             return ISO9075Helper.decodeLocalName(displayName);
-        }
-    }
-
-    private static class HtmlLinkValidator {
-
-        private String validLink;
-        private boolean alreadyPresent;
-
-        public HtmlLinkValidator(Node node, String link, String uuid) {
-            visit(node, link, uuid, 0);
-        }
-
-        private void visit(Node node, String link, String uuid, int postfix) {
-            try {
-                String testLink = link;
-                if (postfix > 0) {
-                    testLink += "_" + postfix;
-                }
-                if (node.hasNode(testLink)) {
-                    Node htmlLinkNode = node.getNode(testLink);
-                    if (htmlLinkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        String docbase = htmlLinkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
-                        if (docbase.equals(uuid)) {
-                            // we already have a link for this internal link, so reuse it
-                            validLink = testLink;
-                            alreadyPresent = true;
-                        } else {
-                            // we already have a link of this name, but points to different node, hence, try with another name
-                            visit(node, testLink, uuid, ++postfix);
-                            return;
-                        }
-                    } else {
-                        // there is a node which is has the same name as the testLink, but is not a facetselect, try with another name
-                        visit(node, testLink, uuid, ++postfix);
-                        return;
-                    }
-                } else {
-                    validLink = testLink;
-                    alreadyPresent = false;
-                }
-            } catch (RepositoryException e) {
-                log.error("error occured while saving internal link: ", e);
-            }
-        }
-
-        public String getValidLink() {
-            return validLink;
-        }
-
-        public boolean isAlreadyPresent() {
-            return alreadyPresent;
         }
     }
 }

@@ -29,11 +29,11 @@ public class LinkPickerBehavior extends XinhaModalBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private JcrNodeModel nodeModel;
+    private InternalLinkDAO dao;
 
     public LinkPickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
         super(modalWindow);
-        nodeModel = model;
+        dao = new InternalLinkDAO(model);
     }
 
     @Override
@@ -42,7 +42,10 @@ public class LinkPickerBehavior extends XinhaModalBehavior {
         for (XinhaLink xl : XinhaLink.values()) {
             enums.put(xl, params.get(xl.getValue()));
         }
-        return new LinkPickerContentPanel(modalWindow, enums, nodeModel);
+        return new LinkPickerContentPanel(modalWindow, enums, dao);
     }
-
+    
+    public InternalLinkDAO getInternalLinkDAO() {
+        return dao;
+    }
 }

@@ -13,25 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.plugins.xinha.dragdrop;
 
-package org.hippoecm.frontend.plugins.yui.dragdrop;
+import org.onehippo.yui.YuiNamespace;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-
-public class ImageNodeDragBehavior extends NodeDragBehavior {
+public class XinhaNamespace implements YuiNamespace {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
+    public static final XinhaNamespace NS = new XinhaNamespace();
 
-    public ImageNodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
-        super(context, config, nodePath);
+    private XinhaNamespace() {
     }
 
-    @Override
-    protected String getModelClass() {
-        return "YAHOO.hippo.DDImage";
+    public String getPath() {
+        return "js/";
     }
-
 }
