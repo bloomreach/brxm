@@ -20,10 +20,14 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+
+import org.hippoecm.repository.api.RepositoryMap;
+import org.hippoecm.repository.api.ValueMap;
 
 public interface HippoRepository {
     final static String SVN_ID = "$Id$";
@@ -81,4 +85,14 @@ public interface HippoRepository {
      * @return the JCR repository
      */
     public Repository getRepository();
+
+    /**
+     * This call is not (yet) part of the API, but under evaluation.
+     */
+    public RepositoryMap getRepositoryMap(Node node) throws RepositoryException;
+
+    /**
+     * This call is not (yet) part of the API, but under evaluation.
+     */
+    public ValueMap getValueMap(Node node) throws RepositoryException;
 }

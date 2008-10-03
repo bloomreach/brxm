@@ -25,6 +25,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -34,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.UserTransactionImpl;
+import org.hippoecm.repository.api.RepositoryMap;
+import org.hippoecm.repository.api.ValueMap;
 
 public abstract class HippoRepositoryImpl implements HippoRepository {
     @SuppressWarnings("unused")
@@ -159,5 +162,13 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
     public UserTransaction getUserTransaction(TransactionManager tm, Session session) throws NotSupportedException {
         UserTransaction ut = new UserTransactionImpl(tm, session);
         return ut;
+    }
+
+    public RepositoryMap getRepositoryMap(Node node) throws RepositoryException {
+        return new RepositoryMapImpl(node);
+    }
+
+    public ValueMap getValueMap(Node node) throws RepositoryException {
+        return new RepositoryValueMap(node);
     }
 }

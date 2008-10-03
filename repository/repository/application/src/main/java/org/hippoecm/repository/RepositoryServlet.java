@@ -61,7 +61,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
-
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
 public class RepositoryServlet extends HttpServlet {
@@ -395,6 +395,42 @@ public class RepositoryServlet extends HttpServlet {
                     writer.println("</tr>");
                 }
                 writer.println("  </ol>");
+            }
+            if ((queryString = req.getParameter("map")) != null) {
+                queryString = URLDecoder.decode(queryString, "UTF-8");
+                writer.println("  <h3>Repository as map</h3>");
+                Map map = repository.getRepositoryMap(node);
+                if(!queryString.equals("")) {
+                    StringTokenizer queryElts = new StringTokenizer(queryString, ".");
+                    while (queryElts.hasMoreTokens()) {
+                        map = (Map)map.get(queryElts.nextToken());
+                    }
+                }
+                writer.println("  <blockquote>");
+                writer.println("    _name = " + map.get("_name")+"<br/>");
+                writer.println("    _location = " + map.get("_location")+"<br/>");
+                writer.println("    _path = " + map.get("_path")+"<br/>");
+                //writer.println("    _parent._path = " + ((Map)map.get("_parent")).get("_path").toString()+"<br/>");
+                writer.println("    _index = " + map.get("_index")+"<br/>");
+                writer.println("    _size = " + map.get("_size")+"<br/>");
+                for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
+                    //Object e = iter.next();
+                    //writer.println("X"+e.getClass()+"<br/>");
+                    //if(e instanceof Map.Entry) {
+                    //Map.Entry entry = (Map.Entry)e;
+                    //String key = entry.getKey().toString();
+                    //Object value = entry.getValue().toString();
+                    
+                    String key = (String) iter.next();
+                    Object value = map.get(key);
+                    if (value instanceof Map) {
+                        writer.println("    " + key + "._path = " + ((Map)value).get("_path")+"<br/>");
+                    } else {
+                        writer.println("    " + key + " = " + (value != null ? value.toString() : "null" )+"<br/>");
+                    }
+                    //}
+                }
+                writer.println("  </blockquote>");
             }
             if ((queryString = req.getParameter("uuid")) != null) {
                 queryString = URLDecoder.decode(queryString, "UTF-8");
