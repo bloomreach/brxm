@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -30,10 +33,14 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.service.IRenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    final static Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -67,6 +74,7 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
 
     @Override
     public void onModelChanged() {
+        updateProvider();
         replace(createAddLink());
         redraw();
     }
@@ -98,7 +106,20 @@ public class NodeFieldPlugin extends FieldPlugin<JcrNodeModel, JcrNodeModel> {
         };
         if (!ITemplateEngine.EDIT_MODE.equals(mode) || field == null || !field.isMultiple() || !field.isOrdered()) {
             upLink.setVisible(false);
+        } else if (model != null) {
+            Node node = model.getNode();
+            if (node != null) {
+                try {
+                    int index = node.getIndex();
+                    if (index == 1) {
+                        upLink.setVisible(false);
+                    }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
+                }
+            }
         }
+
         if (item.getIndex() == 0) {
             upLink.setEnabled(false);
         }
