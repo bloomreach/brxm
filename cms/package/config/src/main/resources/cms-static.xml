@@ -2606,7 +2606,7 @@
       <sv:value>workflow.internal.id</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
-      <sv:value>default</sv:value>
+      <sv:value>threepane</sv:value>
     </sv:property>
   </sv:node>
 
