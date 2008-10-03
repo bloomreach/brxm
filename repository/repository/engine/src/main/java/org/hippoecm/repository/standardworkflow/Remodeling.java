@@ -15,8 +15,7 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,6 +47,9 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
@@ -58,12 +60,12 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.value.ReferenceValue;
+
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow.FieldIdentifier;
-import org.hippoecm.repository.standardworkflow.RemodelWorkflow.TypeUpdate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.FieldIdentifier;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 
 public class Remodeling {
     @SuppressWarnings("unused")
@@ -103,11 +105,16 @@ public class Remodeling {
      */
     transient Session session;
 
-    Remodeling(Session session, String newPrefix, String oldUri, Map<String, TypeUpdate> updates)
+    Remodeling(Session session, String newPrefix, String oldUri)
+            throws RepositoryException {
+        this(session, newPrefix, oldUri, "", new HashMap<String,TypeUpdate>());
+    }
+
+    Remodeling(Session session, String newPrefix, String oldUri, String contentUpdater, Object contentUpdaterCargo)
             throws RepositoryException {
         this.session = session;
         this.newPrefix = newPrefix;
-        this.updates = updates;
+        this.updates = (Map<String,TypeUpdate>) contentUpdaterCargo;
 
         conversion = new HashMap<NodeType, NodeType>();
 
@@ -137,54 +144,6 @@ public class Remodeling {
         typeUpdates = new HashSet<Node>();
     }
 
-    public NodeIterator getNodes() {
-        return new ChangedNodesIterator();
-    }
-
-    private class ChangedNodesIterator implements NodeIterator {
-        Iterator<Node> iter;
-        int index;
-
-        ChangedNodesIterator() {
-            iter = changes.iterator();
-            index = 0;
-        }
-
-        public Node nextNode() {
-            Node node = iter.next();
-            ++index;
-            return node;
-        }
-
-        public boolean hasNext() {
-            return iter.hasNext();
-        }
-
-        public Object next() throws NoSuchElementException {
-            Object object = iter.next();
-            ++index;
-            return object;
-        }
-
-        public void remove() throws UnsupportedOperationException {
-            throw new UnsupportedOperationException();
-        }
-
-        public void skip(long skipNum) {
-            while (skipNum-- > 0) {
-                iter.next();
-                ++index;
-            }
-        }
-
-        public long getSize() {
-            return changes.size();
-        }
-
-        public long getPosition() {
-            return index;
-        }
-    }
 
     private String getNewName(String name) {
         if (name.startsWith(prefix + ":")) {
@@ -242,13 +201,12 @@ public class Remodeling {
                         if (values.length == 1) {
                             target.setProperty(name, values[0]);
                         } else if (values.length > 1) {
-                            throw new ValueFormatException("Property " + prop.getPath()
-                                    + " cannot be converted to a single value");
+                            throw new ValueFormatException("Property " + prop.getPath() + " cannot be converted to a single value");
                         }
                     }
                 } else {
                     if (targetDefinition.isMultiple()) {
-                        target.setProperty(name, new Value[] { prop.getValue() });
+                        target.setProperty(name, new Value[] {prop.getValue()});
                     } else {
                         target.setProperty(name, prop.getValue());
                     }
@@ -266,8 +224,7 @@ public class Remodeling {
                     if (values.length == 1) {
                         target.setProperty(name, values[0]);
                     } else if (values.length > 1) {
-                        throw new ValueFormatException("Property " + prop.getPath()
-                                + " cannot be converted to a single value");
+                        throw new ValueFormatException("Property " + prop.getPath() + " cannot be converted to a single value");
                     }
                 } else {
                     log.warn("Dropping property " + prop.getName() + " as there is no new definition.");
@@ -289,7 +246,7 @@ public class Remodeling {
 
     private void copyNode(Node target, Node child, String name, List<NodeDefinition> nodeDefs)
             throws ValueFormatException, VersionException, LockException, ConstraintViolationException,
-            RepositoryException {
+                   RepositoryException {
 
         for (NodeDefinition targetDefinition : nodeDefs) {
             String targetName = targetDefinition.getName();
@@ -305,8 +262,7 @@ public class Remodeling {
                             traverse(child, true, copy);
                             return;
                         } else {
-                            log.warn("Not copying node " + child.getPath()
-                                    + " as the new type doesn't allow same name siblings");
+                            log.warn("Not copying node " + child.getPath() + " as the new type doesn't allow same name siblings");
                         }
                     }
                 }
@@ -675,7 +631,8 @@ public class Remodeling {
         }
     }
 
-    public static Remodeling remodel(Session session, String prefix, InputStream cnd, Map<String, TypeUpdate> updates)
+    public static Remodeling remodel(Session session, String prefix, Reader cnd,
+                                     String contentUpdater, Object contentUpdaterCargo)
             throws NamespaceException, RepositoryException {
         Workspace workspace = session.getWorkspace();
         NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) workspace.getNamespaceRegistry();
@@ -686,13 +643,11 @@ public class Remodeling {
 
         // push new node type definition such that it will be loaded
         try {
-            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(new InputStreamReader(cnd),
-                    "remodeling input stream");
+            CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(cnd, "remodeling input stream");
             NamespaceMapping mapping = cndReader.getNamespaceMapping();
 
             String newNamespaceURI = mapping.getURI(prefix);
-            String newPrefix = prefix + "_"
-                    + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
+            String newPrefix = prefix + "_" + newNamespaceURI.substring(newNamespaceURI.lastIndexOf('/') + 1).replace('.', '_');
 
             nsreg.registerNamespace(newPrefix, newNamespaceURI);
 
@@ -706,7 +661,7 @@ public class Remodeling {
                 /* EffectiveNodeType effnt = */ntreg.registerNodeType(ntd);
             }
 
-            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, updates);
+            Remodeling remodel = new Remodeling(session, newPrefix, oldNamespaceURI, contentUpdater, contentUpdaterCargo);
             remodel.traverse(session.getRootNode(), false, session.getRootNode());
             remodel.updateTypes();
 
