@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.decorating.remote;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -27,7 +28,7 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 public interface RemoteHierarchyResolver extends Remote {
     final static String SVN_ID = "$Id$";
 
-    public class RemoteHierarchyResult {
+    public class RemoteHierarchyResult implements Serializable {
         public RemoteItem item;
         public RemoteNode node;
         public String relPath;

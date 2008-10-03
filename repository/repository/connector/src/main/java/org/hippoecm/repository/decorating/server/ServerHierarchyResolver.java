@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -46,11 +47,20 @@ public class ServerHierarchyResolver extends ServerObject implements RemoteHiera
     public RemoteHierarchyResolver.RemoteHierarchyResult getItem(String ancestor, String path, boolean isProperty)
         throws InvalidItemStateException, RepositoryException, RemoteException {
         try {
-            Node node = session.getRootNode().getNode(ancestor.substring(1));
+            Node node;
+            if ("/".equals(ancestor)) {
+                node = session.getRootNode();
+            } else {
+                node = session.getRootNode().getNode(ancestor.substring(1));
+            } 
             RemoteHierarchyResult result = new RemoteHierarchyResult();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             Item item = resolver.getItem(node, path, isProperty, last);
-            result.item = getFactory().getRemoteItem(item);
+            if(item.isNode()) {
+                result.item = getFactory().getRemoteNode((Node)item);
+            } else {
+                result.item = getFactory().getRemoteProperty((Property)item);
+            }
             result.node = getFactory().getRemoteNode(node);
             result.relPath = last.relPath;
             return result;
