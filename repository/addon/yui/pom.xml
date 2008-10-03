@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.onehippo.yui</groupId>
       <artifactId>yui-2.5.2-sources</artifactId>
-      <version>1.01.01</version>
+      <version>1.01.02</version>
     </dependency>
     
     <dependency>
