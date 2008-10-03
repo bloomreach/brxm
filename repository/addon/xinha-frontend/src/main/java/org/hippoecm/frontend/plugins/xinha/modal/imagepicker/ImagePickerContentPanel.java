@@ -50,7 +50,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
         super(modal, values);
 
         this.imageItemDAO = imageItemDAO;
-        this.selectedItem = imageItemDAO.createImageItem(values);
+        this.selectedItem = imageItemDAO.create(values);
 
         ok.setEnabled(selectedItem.isValid());
 
@@ -94,7 +94,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
         // ******************************************************************
         // image listing
-        final List<ImageItem> items = imageItemDAO.getImageItems();
+        final List<ImageItem> items = imageItemDAO.getItems();
         form.add(new ListView("item", items) {
             private static final long serialVersionUID = 1L;
 
@@ -146,7 +146,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     @Override
     protected void onOk() {
-        if (imageItemDAO.insertImageItem(selectedItem)) {
+        if (imageItemDAO.saveOrUpdate(selectedItem)) {
             values.put(XinhaImage.URL, selectedItem.getUrl());
         }
     }

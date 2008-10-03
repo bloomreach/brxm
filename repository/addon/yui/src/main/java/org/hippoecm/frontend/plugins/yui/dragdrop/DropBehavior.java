@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
+import java.util.Map;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
@@ -35,21 +37,25 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     protected String getHeaderContributorFilename() {
         return "Drop.js";
     }
-    
+
     @Override
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return DropBehavior.class;
+    }
+    
+    public String getComponentMarkupId() {
+        return getComponent().getMarkupId();
     }
     
     @Override
     protected void respond(AjaxRequestTarget target) {
     }
     
-    public abstract void onDrop(IModel model, AjaxRequestTarget target);
-    
-    
-    public String getComponentMarkupId() {
-        return getComponent().getMarkupId();
+    @Override
+    protected String getModelClass() {
+        return "YAHOO.hippo.DDDropModel";
     }
     
+    public abstract void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target);
+
 }

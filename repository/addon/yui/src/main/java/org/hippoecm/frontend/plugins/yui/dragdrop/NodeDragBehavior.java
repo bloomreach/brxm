@@ -16,10 +16,15 @@
 
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NodeDragBehavior extends DragBehavior {
     @SuppressWarnings("unused")
@@ -27,16 +32,35 @@ public class NodeDragBehavior extends DragBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    final String nodePath;
+    static final Logger log = LoggerFactory.getLogger(NodeDragBehavior.class);
 
+    final String nodePath;//TODO: remove this
+    final JcrNodeModel nodeModel;
+    
     public NodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
         super(context, config);
         this.nodePath = nodePath;
+        this.nodeModel = new JcrNodeModel(nodePath);
     }
 
     @Override
     protected IModel getDragModel() {
-        return new JcrNodeModel(nodePath);
+        return nodeModel;
     }
-
+    
+    @Override
+    protected String getLabel() {
+        try {
+            return nodeModel.getNode().getDisplayName();
+        } catch (RepositoryException e) {
+            log.error("Failed to retrieve displayname", e);
+        }
+        return nodeModel.getItemModel().getPath();
+    }
+    
+    @Override
+    public void detach(Component component) {
+        super.detach(component);
+        this.nodeModel.detach();
+    }
 }

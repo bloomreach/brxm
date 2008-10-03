@@ -41,6 +41,40 @@ CustomLinker.prototype._lc = function(string) {
     return Xinha._lc(string, 'CustomLinker');
 };
 
+CustomLinker.prototype.createLink = function(url, openModal) {
+	
+	var a = null;
+    var tmp = Xinha.uniq('http://www.example.com/Link');
+    this.editor._doc.execCommand('createlink', false, tmp);
+
+    var atr = {
+        href : url,
+        target :'',
+        title :'',
+        onclick :''
+    };
+    
+    // Fix them up
+    var anchors = this.editor._doc.getElementsByTagName('a');
+    for ( var i = 0; i < anchors.length; i++) {
+        var anchor = anchors[i];
+        if (anchor.href == tmp) {
+            // Found one.
+            if (!a)
+                a = anchor;
+            for ( var j in atr) {
+                anchor.setAttribute(j, atr[j]);
+            }
+        }
+    }
+    this.editor.selectNodeContents(a);
+    this.editor.updateToolbar();
+    
+    if(openModal) {
+    	this._createLink(a);
+    }
+}
+
 CustomLinker.prototype._createLink = function(a) {
     if (!a && this.editor.selectionEmpty(this.editor.getSelection())) {
         alert(this._lc("You must select some text before making a new link."));

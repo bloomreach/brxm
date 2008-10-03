@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.RepositoryException;
 
@@ -107,50 +108,144 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
         }
     }
     
-    /*
-    id, label, groups, callbackUrl, callbackParameters
-   */
-   Map<String, Object> getHeaderContributorVariables() {
+   private Map<String, Object> getHeaderContributorVariables() {
        Component component = getComponent();
 
-       Map<String, Object> variables = new MiniMap(7);
+       Map<String, Object> variables = new MiniMap(3);
        variables.put("id", component.getMarkupId(true));
-       variables.put("label", getLabel());
-
-       String[] groups = config.getStringArray("yui.dd.groups");
-       if (groups == null || groups.length == 0) {
-           groups = new String[] { "default" };
-       }
-
-       StringBuilder buf = new StringBuilder(16 * groups.length);
-       buf.append('[');
-       for (int i = 0; i < groups.length; i++) {
-           if (i > 0) {
-               buf.append(',');
-           }
-           buf.append('\'').append(groups[i]).append('\'');
-       }
-       buf.append("]");
-       variables.put("groups", buf.toString());
-
-       variables.put("callbackUrl", getCallbackUrl());
-       variables.put("callbackParameters", getCallbackParameters());
-       variables.put("callbackFunction", getCallbackScript());
-       variables.put("modelType", getModelType());
-
+       variables.put("class", getModelClass());
+       variables.put("config", getJavacriptConfig());
        return variables;
    }
-
-   protected String getCallbackParameters() {
-       return "[]";
+   
+   protected JavascriptObjectMap getJavacriptConfig() {
+       JavascriptObjectMap jsConfig = new JavascriptObjectMap();
+       jsConfig.put("label", getLabel());
+       jsConfig.put("groups", config.getStringArray("yui.dd.groups"));
+       jsConfig.put("callbackUrl", getCallbackUrl().toString());
+       jsConfig.put("callbackFunction", getCallbackScript().toString(), false);
+       jsConfig.put("callbackParameters", getCallbackParameters());
+       return jsConfig;
    }
-
+   
+   /**
+    * Provide custom callbackParameters
+    * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
+    */
+   protected JavascriptObjectMap getCallbackParameters() {
+       return null;
+   }
     
     /**
-     * Specify the clientside class that is used as the DragModel, default is YAHOO.hippo.DDModel 
+     * Specify the clientside class that is used as the DragDropModel 
      */
-    String getModelType() {
-        return "YAHOO.hippo.DDModel";
-    };
+    abstract protected String getModelClass();
+    
+    static class JavascriptObjectMap {
+        private static final String SINGLE_QUOTE = "'";
+        private static final String SINGLE_QUOTE_ESCAPED = "\\'";
+        private MiniMap map = new MiniMap(15);
+        
+        private void store(String key, Object value) {
+            ensureCapacity();
+            map.put(key, value);
+        }
+        
+        private void ensureCapacity() {
+            if(map.isFull()) {
+                MiniMap newMap = new MiniMap(map.size()*2);
+                newMap.putAll(map);
+                map = newMap;
+            }
+        }
 
+        /**
+         * Store boolean value
+         */
+        public void put(String key, boolean value) {
+           store(key, Boolean.toString(value));
+        }
+
+        /**
+         * Store int value
+         */
+        public void put(String key, int value) {
+            store(key, Integer.toString(value));
+        }
+        
+        /**
+         * Convenience method, auto wraps and escapes String value
+         * @param key
+         * @param value
+         */
+        public void put(String key, String value) {
+            put(key, value, true);
+        }
+
+        /**
+         * 
+         * @param key
+         * @param value
+         * @param escapeAndWrap
+         */
+        public void put(String key, String value, boolean escapeAndWrap) {
+            //escape single quotes and wrap
+            if(escapeAndWrap) {
+                value = escapeAndWrap(value);
+            }
+            store(key, value);
+        }
+
+        public void put(String key, String[] values) {
+            put(key, values, true);
+        }
+        
+        public void put(String key, String[] values, boolean escapeAndWrap) {
+            StringBuilder buf = new StringBuilder();
+            buf.append('[');
+            if(values != null) {
+                for (int i = 0; i < values.length; i++) {
+                    if (i > 0) {
+                        buf.append(',');
+                    }
+                    if(escapeAndWrap) {
+                        buf.append(escapeAndWrap(values[i]));
+                    } else {
+                        buf.append(values[i]);    
+                    }
+                }
+            }
+            buf.append("]");
+            store(key, buf.toString());
+        }
+        
+        public void put(String key, JavascriptObjectMap values) {
+            store(key, values);
+        }
+        
+        private String escapeAndWrap(String value) {
+            value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
+            return value;
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append('{');
+            boolean first= true;
+
+            for(Object o : map.entrySet()) {
+                Entry e = (Entry)o;
+                if(first) {
+                    first = false;
+                } else {
+                    sb.append(',');
+                }
+                sb.append(e.getKey()).append(':').append(e.getValue());
+            }
+            sb.append('}');
+            return sb.toString();
+        }
+    }
 }

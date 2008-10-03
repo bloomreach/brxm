@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.management.users;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
@@ -63,7 +64,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onDrop(IModel model, AjaxRequestTarget target) {
+            public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {
                 if (model instanceof JcrNodeModel) {
                     JcrNodeModel droppedGroup = (JcrNodeModel) model;
                     String myUsername = getUsername();

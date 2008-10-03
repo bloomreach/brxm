@@ -50,6 +50,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
@@ -110,6 +111,51 @@ public class XinhaPlugin extends RenderPlugin {
             fragment.add(modalWindow = new XinhaModalWindow("modalwindow"));
             fragment.add(imagePickerBehavior = new ImagePickerBehavior(modalWindow, nodeModel));
             fragment.add(linkPickerBehavior = new LinkPickerBehavior(modalWindow, nodeModel));
+            
+            add(new XinhaDropBehavior(context, config) {
+                private static final long serialVersionUID = 1L;
+                
+                @Override
+                protected void insertImage(JcrNodeModel model, AjaxRequestTarget target) {
+                    ImageItem item = imagePickerBehavior.getImageItemDAO().attach(model);
+                    if (item != null) {
+                        boolean openModal = item.getResourceDefinitions().size() > 1;
+                        String script = "xinha_editors." + configuration.getName()
+                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', "
+                                + openModal + ");";
+                        target.getHeaderResponse().renderOnDomReadyJavascript(script);
+                    }
+                }
+
+                @Override
+                protected void updateImage(JcrNodeModel model, AjaxRequestTarget target) {
+                    //TODO: check if old image facet select should be deleted
+                    insertImage(model, target);
+                }
+
+                @Override
+                protected void insertLink(JcrNodeModel model, AjaxRequestTarget target) {
+                    HippoNode node = model.getNode();
+                    try {
+                        String name = node.getDisplayName();
+                        String uuid = node.getUUID();
+                        String link = linkPickerBehavior.getInternalLinkDAO().create(name, uuid);
+                        boolean openModal = false;
+                        String script = "xinha_editors." + configuration.getName()
+                        + ".plugins.CustomLinker.instance.createLink('" + link + "', "
+                        + openModal + ");";
+                        target.getHeaderResponse().renderOnDomReadyJavascript(script);
+                    } catch (RepositoryException e) {
+                        log.error("Failed to create internal link", e);
+                    }
+                }
+
+                @Override
+                protected void updateLink(JcrNodeModel model, AjaxRequestTarget target) {
+                    //TODO: check if old link facet select should be deleted
+                    insertLink(model, target);
+                }
+            });
         } else {
             fragment.add(new WebMarkupContainer("value", getModel()) {
                 private static final long serialVersionUID = 1L;
@@ -119,7 +165,9 @@ public class XinhaPlugin extends RenderPlugin {
                     String text = (String) getModelObject();
                     if (text != null) {
                         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getModel();
-                        String prefix = BINARIES_PREFIX + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath() + "/";
+                        String prefix = BINARIES_PREFIX
+                                + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath()
+                                + "/";
 
                         StringBuffer processed = new StringBuffer();
                         Matcher m = IMG_PATTERN.matcher(text);
@@ -129,7 +177,8 @@ public class XinhaPlugin extends RenderPlugin {
                             Matcher s = SRC_PATTERN.matcher(img);
                             while (s.find()) {
                                 String src = s.group();
-                                s.appendReplacement(newImg, "src=\"" + prefix + src.substring(5, src.length() - 1) + "\"");
+                                s.appendReplacement(newImg, "src=\"" + prefix + src.substring(5, src.length() - 1)
+                                        + "\"");
                             }
                             s.appendTail(newImg);
                             m.appendReplacement(processed, newImg.toString());
@@ -141,41 +190,6 @@ public class XinhaPlugin extends RenderPlugin {
                 }
             });
         }
-
-        add(new DropBehavior(context, config) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onDrop(IModel model, AjaxRequestTarget target) {
-                if (model instanceof JcrNodeModel) {
-                    JcrNodeModel nodeModel = (JcrNodeModel) model;
-
-                    HippoNode node = nodeModel.getNode();
-                    try {
-                        if (node.isNodeType(HippoNodeType.NT_RESOURCE)) {
-                            //String mimeType = node.getProperty("jcr:mimeType").getValue().getString();
-
-                            //The ImagePicker expects a node of type ImageSet but as this is not a 'generic' nodeType we assume
-                            //that the node dropped on Xinha is the thumbnail of an Imageset and calling parent
-                            //will give us the ImageSet node
-                            ImageItem item = imagePickerBehavior.getImageItemDAO().insertImageModel(
-                                    nodeModel.getParentModel());
-
-                            if (item != null) {
-                                boolean openModal = item.getResourceDefinitions().size() > 1;
-                                target.getHeaderResponse().renderOnDomReadyJavascript(
-                                        "xinha_editors." + configuration.getName()
-                                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', "
-                                                + openModal + ");");
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("An error occurred while handling the onDrop event with node["
-                                + nodeModel.getItemModel().getPath() + "]", e);
-                    }
-                }
-            }
-        });
     }
 
     @Override
