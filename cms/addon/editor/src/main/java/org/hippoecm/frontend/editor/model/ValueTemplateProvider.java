@@ -157,7 +157,25 @@ public class ValueTemplateProvider extends AbstractProvider<JcrPropertyValueMode
 
     @Override
     public void moveUp(JcrPropertyValueModel model) {
-        log.error("reordering values is not supported");
+        load();
+        int index = model.getIndex();
+        if (descriptor.isMultiple() && index > 0) {
+            try {
+                Property property = (Property) getItemModel().getObject();
+                Value[] oldValues = property.getValues();
+                Value[] newValues = new Value[oldValues.length];
+                System.arraycopy(oldValues, 0, newValues, 0, oldValues.length);
+
+                newValues[index] = oldValues[index - 1];
+                newValues[index - 1] = oldValues[index];
+
+                property.setValue(newValues);
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        } else {
+            log.error("Cannot move first value further up.");
+        }
     }
 
     @Override

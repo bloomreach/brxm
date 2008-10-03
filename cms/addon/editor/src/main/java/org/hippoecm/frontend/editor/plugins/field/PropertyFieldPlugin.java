@@ -105,7 +105,8 @@ public class PropertyFieldPlugin extends FieldPlugin<JcrNodeModel, JcrPropertyVa
                 onMoveItemUp(model, target);
             }
         };
-        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()) {
+        if (!ITemplateEngine.EDIT_MODE.equals(mode) || (field == null) || !field.isMultiple() || !field.isOrdered()
+                || model.getIndex() == 0) {
             upLink.setVisible(false);
         }
         if (item.getIndex() == 0) {

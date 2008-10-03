@@ -17,15 +17,16 @@
   <wicket:panel>
     <div class="hippo-editor-field">
     <h3 class="hippo-editor-field-title"><span wicket:id="name">[ field name ]</span><span class="required" wicket:id="required">*</span></h3>
-    <wicket:container wicket:id="view">
-      <div class="field" wicket:id="item">[ field goes here ]</div>
+      <wicket:container wicket:id="view">
+        <div style="float:left;" class="field" wicket:id="item"></div>
+        <div style="float: right">
+          <a class="up_ico icon-16 iconsSmall" wicket:id="up"></a>
+          <a class="delete_ico icon-16 iconsSmall" wicket:id="remove"></a>
+        </div>
+        <div style="clear: both;"></div>
+      </wicket:container>
       <div class="iconsSmall">
-      <a class="delete_ico iconsSmall" wicket:id="remove">(delete)</a>
-      <a class="up_ico iconsSmall" wicket:id="up">(up)</a>
-      </div>
-    </wicket:container>
-      <div class="iconsSmall">
-      <a class="add_ico" wicket:id="add">(add)</a>
+        <a class="add_ico icon-16" wicket:id="add"></a>
       </div>
     </div>
   </wicket:panel>
