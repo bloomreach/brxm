@@ -157,6 +157,7 @@ public interface HippoNodeType {
     final public static String HIPPO_USERS = "hippo:users";
     final public static String HIPPO_USERSPATH = "hippo:userspath";
     final public static String HIPPO_UUID = "hippo:uuid";
+    final public static String HIPPO_VERSION = "hippo:version";
     final public static String HIPPO_VALUE = "hippo:value";
     final public static String HIPPO_VALUES = "hippo:values";
     final public static String HIPPO_WORKFLOW = "hippo:workflow";
