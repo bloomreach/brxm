@@ -31,23 +31,22 @@ import javax.jcr.Value;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.impl.QueryDecorator;
 
-public class EnclosingDocument implements QueryDecorator.HardcodedQuery {
+public class DirectPath implements QueryDecorator.HardcodedQuery {
     public List<Node> execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException {
+        String path = query.getStatement();
+        if (path.endsWith("/node()")) {
+            path = path.substring(0, path.length() - "/node()".length());
+        }
+        if (path.startsWith("/jcr:root")) {
+            path = path.substring("/jcr:root".length());
+        }
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        Node root = session.getRootNode();
         Vector results = new Vector<Node>();
-        String uuid = arguments.get("id").getString();
-        try {
-            Node node = session.getNodeByUUID(uuid);
-            for (int depth = node.getDepth() - 1; depth >= 0; depth--) {
-                try {
-                    Node ancestor = (Node)node.getAncestor(depth);
-                    if (ancestor.isNodeType("hippo:document")) {
-                        results.add(ancestor);
-                    }
-                } catch (ItemNotFoundException ex) {
-                } catch (AccessDeniedException ex) {
-                }
-            }
-        } catch (ItemNotFoundException ex) {
+        if(root.hasNode(path)) {
+            results.add(root.getNode(path));
         }
         return results;
     }

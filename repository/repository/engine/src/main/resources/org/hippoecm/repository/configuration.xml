@@ -51,11 +51,17 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:query</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:implementation</sv:value>
+      </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
         <sv:value>/node()</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:language" sv:type="String">
         <sv:value>xpath</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:classname" sv:type="String">
+        <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
