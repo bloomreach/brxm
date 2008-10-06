@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Extension Guide</title>
+    </properties>
+    <body>
+      <section name="Extension Guide">
+
+        <p>
+          Hippo CMS provides a full enterprise content management system that
+          can be used straight out of the box. Should the default functionality
+          however not suit your organization's needs, then its open
+          component based architecture allows for easy customization and extension
+          of the system.
+        </p>
+
+        <ul>
+          <li>
+            <a href="document-types/index.html">Document Types</a>
+            - Customize the Hippo ECM document types or create your own
+          </li>
+          <li>
+            <a href="plugins/index.html">Add-ons</a>
+            - Extend Hippo ECM with your own add-ons.
+          </li>
+          <li>
+            <a href="packaging.html">Custom Packaging</a>
+            - Create a custom war file on top of the quickstart war
+          </li>
+        </ul>
+
+      </section>
+    </body>
+</document>
