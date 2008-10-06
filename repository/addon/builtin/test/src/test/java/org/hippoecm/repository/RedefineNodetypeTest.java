@@ -34,7 +34,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
+import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -175,10 +175,10 @@ public class RedefineNodetypeTest extends TestCase {
         nsNode.getParent().save();
 
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-        Workflow wf = wfmgr.getWorkflow("internal", nsNode);
+        Workflow wf = wfmgr.getWorkflow("default", nsNode);
         assertNotNull(wf);
-        assertTrue(wf instanceof RepositoryWorkflow);
-        ((RepositoryWorkflow)wf).updateModel("hippotest2", cnd2);
+        assertTrue(wf instanceof TemplateEditorWorkflow);
+        ((TemplateEditorWorkflow)wf).updateModel("hippotest2", cnd2, new HashMap());
 
         session.logout();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);

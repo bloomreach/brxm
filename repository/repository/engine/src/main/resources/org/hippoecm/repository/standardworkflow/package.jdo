@@ -19,7 +19,6 @@
   <package name="org.hippoecm.repository.standardworkflow">
     <class name="TemplateEditorWorkflowImpl" detachable="true" identity-type="datastore" table="documents">
       <datastore-identity strategy="native"/>
-      <field name="name" column="{.}"/>
     </class>
   </package>
 </jdo>

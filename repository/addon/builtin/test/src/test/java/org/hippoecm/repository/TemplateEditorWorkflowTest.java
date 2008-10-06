@@ -106,7 +106,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
         Workflow workflow = workflowManager.getWorkflow("default", node);
         assertNotNull(workflow);
 
-        ((RepositoryWorkflow)workflow).createNamespace("hippotest2", "http://www.hippoecm.org/test/1.1");
+        ((TemplateEditorWorkflow)workflow).createNamespace("hippotest2", "http://www.hippoecm.org/test/1.1");
         session.refresh(false);
         assertTrue(session.getRootNode().hasNode("hippo:namespaces"));
         assertTrue(session.getRootNode().hasNode("hippo:namespaces/hippotest2"));
@@ -186,7 +186,7 @@ public class TemplateEditorWorkflowTest extends TestCase {
             ((TemplateEditorWorkflow)workflow).createNamespace("hippotest4", "http://www.hippoecm.org/test/1.0");
             session.refresh(false);
 
-            ((TemplateEditorWorkflow)workflow).updateModel("hippotest4", cnd1);
+            ((TemplateEditorWorkflow)workflow).updateModel("hippotest4", cnd1, new HashMap());
         }
 
         session.logout();
@@ -217,9 +217,9 @@ public class TemplateEditorWorkflowTest extends TestCase {
             fieldIdentifier2.path = "hippotest4:seconds";
             fieldIdentifier2.type = "String";
             typeUpdate.renames.put(fieldIdentifier1, fieldIdentifier2);
-            updates.put("", typeUpdate);
+            updates.put("hippotest4:test", typeUpdate);
 
-            ((TemplateEditorWorkflow)workflow).updateModel("hippotest4", cnd2);
+            ((TemplateEditorWorkflow)workflow).updateModel("hippotest4", cnd2, updates);
         }
 
         session.logout();

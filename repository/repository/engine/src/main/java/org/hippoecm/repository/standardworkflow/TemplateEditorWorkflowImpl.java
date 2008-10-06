@@ -27,7 +27,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class TemplateEditorWorkflowImpl extends WorkflowImpl implements TemplateEditorWorkflow {
-    private String name;
 
     public TemplateEditorWorkflowImpl() throws RemoteException {
         super();
@@ -54,21 +53,9 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         folderWorkflow.add("Template Editor Type", "type", replacements);
     }
 
-    public void updateModel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        this.updateModel(name, cnd, updates);
-    }
-
     public void updateModel(String prefix, String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", getWorkflowContext().getDocument("root","root"));
-        repositoryWorkflow.updateModel(name, cnd, "org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl", updates);
+        repositoryWorkflow.updateModel(prefix, cnd, "org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl", updates);
     }
 
-    public void updateModel(String prefix, String cnd) throws WorkflowException, MappingException, RepositoryException, RemoteException{
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getWorkflowContext().getWorkflow("internal", getWorkflowContext().getDocument("root","root"));
-        repositoryWorkflow.updateModel(name, cnd);
-    }
-
-    public void updateModel(String prefix, String cnd, String module, Object cargo) throws WorkflowException, MappingException, RepositoryException, RemoteException{
-        this.updateModel(prefix, cnd, module, (Map<String, TypeUpdate>) cargo);
-    }
 }
