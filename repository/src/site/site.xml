@@ -123,26 +123,26 @@
         </item>
       </item>
  
-      <item name="CMS Admin Guide" href="delve_into/run-hippo-ecm/index.html" collapse="true">
-        <item name="Requirements" href="/delve_into/run-hippo-ecm/requirements.html"/>
-        <item name="Deploying the WAR" href="/delve_into/run-hippo-ecm/deploying-the-war.html"/>
-        <item name="Deploying the EAR" href="/delve_into/run-hippo-ecm/deploying-the-ear.html"/>
-        <item name="Bootstrapping the Repository" href="/delve_into/run-hippo-ecm/repository-bootstrap.html"/>
-        <item name="Installing Plugins" href="/delve_into/run-hippo-ecm/installing-plugins.html"/>
-        <item name="Configuration" href="/delve_into/run-hippo-ecm/configuration/index.html" collapse="true">
-          <item name="Repository" href="/delve_into/run-hippo-ecm/configuration/repository/index.html" collapse="true">
-            <item name="Workspace" href="/delve_into/run-hippo-ecm/configuration/repository/workspace.html"/>
-            <item name="Search Index" href="/delve_into/run-hippo-ecm/configuration/repository/searchindex.html"/>
-            <item name="Authentication" href="/delve_into/run-hippo-ecm/configuration/repository/authentication.html"/>
+      <item name="CMS Admin Guide" href="delve_into/admin/index.html" collapse="true">
+        <item name="Requirements" href="/delve_into/admin/requirements.html"/>
+        <item name="Deploying the WAR" href="/delve_into/admin/deploying-the-war.html"/>
+        <item name="Deploying the EAR" href="/delve_into/admin/deploying-the-ear.html"/>
+        <item name="Bootstrapping the Repository" href="/delve_into/admin/repository-bootstrap.html"/>
+        <item name="Installing Plugins" href="/delve_into/admin/installing-plugins.html"/>
+        <item name="Configuration" href="/delve_into/admin/configuration/index.html" collapse="true">
+          <item name="Repository" href="/delve_into/admin/configuration/repository/index.html" collapse="true">
+            <item name="Workspace" href="/delve_into/admin/configuration/repository/workspace.html"/>
+            <item name="Search Index" href="/delve_into/admin/configuration/repository/searchindex.html"/>
+            <item name="Authentication" href="/delve_into/admin/configuration/repository/authentication.html"/>
           </item>
-          <item name="Configuration Nodes" href="/delve_into/run-hippo-ecm/configuration/nodes/index.html" collapse="true">
-            <item name="Users" href="/delve_into/run-hippo-ecm/configuration/nodes/users.html"/>
-            <item name="Groups" href="/delve_into/run-hippo-ecm/configuration/nodes/groups.html"/>
-            <item name="Roles" href="/delve_into/run-hippo-ecm/configuration/nodes/roles.html"/>
-            <item name="Domains" href="/delve_into/run-hippo-ecm/configuration/nodes/domains.html"/>
-            <item name="Workflow" href="/delve_into/run-hippo-ecm/configuration/nodes/workflow.html"/>
+          <item name="Configuration Nodes" href="/delve_into/admin/configuration/nodes/index.html" collapse="true">
+            <item name="Users" href="/delve_into/admin/configuration/nodes/users.html"/>
+            <item name="Groups" href="/delve_into/admin/configuration/nodes/groups.html"/>
+            <item name="Roles" href="/delve_into/admin/configuration/nodes/roles.html"/>
+            <item name="Domains" href="/delve_into/admin/configuration/nodes/domains.html"/>
+            <item name="Workflow" href="/delve_into/admin/configuration/nodes/workflow.html"/>
           </item>
-          <item name="Console" href="/delve_into/run-hippo-ecm/configuration/console.html"/>
+          <item name="Console" href="/delve_into/admin/configuration/console.html"/>
         </item>
       </item>
       
