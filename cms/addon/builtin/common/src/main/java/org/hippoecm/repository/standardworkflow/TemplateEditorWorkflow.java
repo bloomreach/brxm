@@ -18,14 +18,14 @@ package org.hippoecm.repository.standardworkflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
-public interface TemplateEditorWorkflow extends RepositoryWorkflow, Workflow {
+public interface TemplateEditorWorkflow extends Workflow {
     public final static class TypeUpdate implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -65,6 +65,4 @@ public interface TemplateEditorWorkflow extends RepositoryWorkflow, Workflow {
     public void createType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     public void updateModel(String prefix, String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
-
-    public void updateModel(String cnd, Map<String, TypeUpdate> updates) throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

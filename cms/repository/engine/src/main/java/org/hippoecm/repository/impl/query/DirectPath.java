@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.Item;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -33,7 +30,8 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.impl.QueryDecorator;
 
 public class DirectPath implements QueryDecorator.HardcodedQuery {
-    public List<Node> execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException {
+    public List<Node> execute(Session session, HippoQuery query, Map<String, Value> arguments)
+            throws RepositoryException {
         String path = query.getStatement();
         boolean children = false;
         if (path.endsWith("/node()")) {
@@ -47,18 +45,27 @@ public class DirectPath implements QueryDecorator.HardcodedQuery {
             path = path.substring(1);
         }
         Node root = session.getRootNode();
-        Vector results = new Vector<Node>();
-        if(root.hasNode(path)) {
-            Node node = root.getNode(path);
-            if(children) {
-                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+        Vector<Node> results = new Vector<Node>();
+
+        Node node;
+        if ("".equals(path)) {
+            node = root;
+        } else if (root.hasNode(path)) {
+            node = root.getNode(path);
+        } else {
+            node = null;
+        }
+
+        if (node != null) {
+            if (children) {
+                for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                     node = iter.nextNode();
-                    if(node != null) {
+                    if (node != null) {
                         results.add(node);
                     }
                 }
             } else {
-                results.add(root.getNode(path));
+                results.add(node);
             }
         }
         return results;

@@ -55,7 +55,7 @@
         <sv:value>hippo:implementation</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>/node()</sv:value>
+        <sv:value>/jcr:root</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:language" sv:type="String">
         <sv:value>xpath</sv:value>
