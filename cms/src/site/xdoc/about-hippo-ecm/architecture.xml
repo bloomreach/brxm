@@ -102,7 +102,7 @@
             can integrate with any application, new or existing, as long as it uses the JCR
             API. Examples of applications that can integrate with Hippo ECM are email and
             calendar software, data import and export, wikis, blogs. Details and examples are
-            given in the <a href="../delve_into/implement-hippo-ecm/jcr/index.html">JCR Interface</a> section.
+            given in the <a href="../delve_into/implementation/jcr/index.html">JCR Interface</a> section.
           </p>
         </subsection>
 

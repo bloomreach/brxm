@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+      <title>Example: Hello World plugin</title>
+  </properties>
+  <body>
+      <section name="Hello World">
+        <p>Most programmers seem to be interested in telling the world "Hello World!"
+          Luckily, this is also possible with a plugin for Hippo ECM frontend
+          applications. This tutorial describes how such a simple plugin can be created.
+        </p>
+      </section>
+
+      <section name="Creating the Hello World plugin">
+        <p>
+          We'll create a small project to contain our Hello World Plugin, which we can
+          later on add to the Hippo ECM frontend application.
+        </p>
+
+        <subsection name="Maven structure">
+          <p>
+            We'll use Maven 2 to automate the build process. In a location of your choice,
+            create a directory for our plugin project and create the following directory
+            structure:
+          </p>
+<source>
+|-- pom.xml
+`-- src
+    `-- main
+        `-- java
+            `-- org
+                `-- example
+                    `-- helloworld
+                        |-- HelloWorldPlugin.html
+                        `-- HelloWorldPlugin.java
+</source>
+
+          <p>
+            The contents of the individual files are described in the following sections.
+          </p>
+        </subsection>
+
+        <subsection name="pom.xml">
+          <p>
+            The Maven POM contains one dependency, on hippo-ecm-frontend-engine.
+            This component contains the abstract Plugin class which we need to extend
+            in our Hello World Plugin.
+          </p>
+
+          <p>
+            We will package our plugin as a JAR so we can easily add it as a dependency
+            to the Hippo ECM frontend application.
+          </p>
+<source>
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>Hello World</name>
+  <description>Hello World plugin</description>
+  <groupId>org.example</groupId>
+  <artifactId>hello-world-plugin</artifactId>
+  <version>1.01.00</version>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-frontend-engine</artifactId>
+      <version>2.01.00.13536</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>]]>
+</source>
+        </subsection>
+
+        <subsection name="HelloWorldPlugin.java">
+          <p>
+            Our HelloWorldPlugin class extends the Plugin class. In the
+            constructor we add a static label.
+          </p>
+<source>
+<![CDATA[package org.example.helloworld;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+
+public class HelloWorldPlugin extends RenderPlugin {
+    private static final long serialVersionUID = 1L;
+
+    public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        add(new Label("label", "Hello World!"));
+    }
+
+}]]>
+</source>
+        </subsection>
+
+        <subsection name="HelloWorldPlugin.html">
+          <p>
+            Just like any other Wicket component, a Plugin needs an HTML page
+            defining its presentation.  For our HelloWorldPlugin this could
+            look like this:
+          </p>
+<source>
+<![CDATA[<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+
+    <div wicket:id="label">text goes here</div>
+
+  </wicket:panel>
+</html>]]>
+</source>
+        </subsection>
+
+        <subsection name="Building the plugin JAR">
+          <p>
+            Now build the JAR for the plugin and install it in your local Maven repository
+            using the following Maven command:
+          </p>
+<source>
+mvn install
+</source>
+        </subsection>
+
+      </section>
+
+      <section name="Testing the Hello World plugin">
+        <p>
+          To test our HelloWorldPlugin we need to add our hello world jar to the classpath
+          of our WAR application. Make sure you
+          have a <a href="../building/maven.html">complete SVN checkout of Hippo ECM</a>.
+          You will find the WAR application under <b>quickstart/war</b> in the Hippo ECM project tree:
+        </p>
+
+<source>
+hippo-ecm
+`-- quickstart    hippo-ecm-quickstart
+  `-- war         hippo-ecm-quickstart-war
+</source>
+
+        <subsection name="Adding a dependency on our plugin">
+          <p>
+            To be able to use our plugin we need to add a dependency on it to Maven POM of the WAR
+            application (<b>quickstart/war/pom.xml</b>).
+          </p>
+          <source>
+<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  ...
+
+  <dependencies>
+
+    ...
+
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>hello-world-plugin</artifactId>
+      <version>1.01.00</version>
+      <type>jar</type>
+    </dependency>
+
+    ...
+
+  </dependencies>
+
+  ...
+
+</project>]]>
+          </source>
+      </subsection>
+
+      <subsection name="Running the application">
+        <p>
+          Now run the application using the following Maven command:
+        </p>
+<source>
+cd hippo-ecm/package/war
+mvn jetty:run-war
+</source>
+        <p>
+          You should now be able to approach the Console application with your web browser
+          on <a href="http://localhost:8080/cms/console/">http://localhost:8080/cms/console/</a>.
+          Login with username "admin" and password "admin". The full CMS is accessible at
+          <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>, using the same credentials.
+        </p>
+      </subsection>
+
+      <subsection name="Configuring to application to use the plugin">
+        <p>
+          All it takes to see our plugin in all its glory is to replace one of
+          the standard plugins in the plugin configuration with our own, using
+          the Console interface. To do this, navigate to the
+          <b>/hippo:configuration/hippo:frontend/cms/cms-static/listPlugin</b> node.  The
+          properties of the listPlugin node are displayed on the right side of
+          the page.  Change the class name in the <code>plugin.class</code>
+          property of this node to
+          <code>org.example.helloworld.HelloWorldPlugin</code>.
+        </p>
+        <img src="../images/configure-hello-world-plugin.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
+        <p>
+          Now login to <a href="http://localhost:8080/">http://localhost:8080/</a>,
+          and admire your work!  The Hello World plugin should be visible in
+          the center of the Browse tab (since you replaced the ListPlugin with
+          your HelloWorld plugin).
+        </p>
+        <img src="../images/hello-world-plugin.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
+        <br/>
+      </subsection>
+
+    </section>
+
+    <section name="Giving our plugin a place on the dashboard">
+      <p>
+        Now instead of replacing an existing plugin it would be nice if our plugin 
+        had it's own pace on the dashboard. For this we have to edit the file 
+        <b>/package/skin/src/main/webapp/WEB-INF/layouts/default/org/hippoecm/frontend/plugins/cms/dashboard/DashboardPerspective.html</b>.
+        Here we add the following code at the location we want to render our plugin.
+      </p>
+      <source>
+<![CDATA[<h2>
+  <span class="task">HelloWorld</span>
+</h2>
+<div class="panel">
+  <div class="plugin" wicket:id="extension.helloworld">HelloWorld</div>
+</div>]]>
+      </source>
+      
+      <subsection name="Adding you plugin to the repository">
+        <p>
+          First we need to create a node for our plugin. To do this navigate (in the console) to 
+          <b>/hippo:configuration/hippo:frontend/cms/cms-static</b>. Make sure you have the "cms-static" node selected. 
+          Now add a node called "helloWorldPlugin" and give the primary type "frontend:plugin". 
+          Then two properties to your new node. One called "plugin.class" with the value of your 
+          plugin (org.example.helloworld.HelloWorldPlugin)
+          and a second one called "wicket.id" with the value "service.helloworld".
+          Now the plugin is added to the repository and it is time for the dashboard to find it. 
+          (Oh and make sure you save your changes.)
+        </p>
+        
+        <p>
+          Our plugin is in the repository but the dashboard doesn't know that, so time to
+          update the dashboard. Using the console, navigate to 
+          "hippo:configuration/hippo:frontend/cms/cms-static/dashboardPerspective". Under wicket.extensions 
+          you will see the current plugins shown on the dashboard. Add an entry "extension.helloworld".
+          Next add a property called "extension.helloworld" and give it the value "service.helloworld".
+          Now the dashboard knows where to find the plugin that is referenced by extension.helloworld 
+          and our plugin will show up on the dashboard (after you saved your changes of course).
+        </p>
+        
+      </subsection>
+      
+    </section>
+
+    <section name="Making the Hello World plugin context sensitive">
+      <p>
+        Now let's make our plugin a little bit less static. We can make the label show
+        the name of the node that is selected in the tree. To do this, we use a Wicket
+        PropertyModel.
+      </p>
+
+      <p>
+        First, import the PropertyModel class:
+      </p>
+
+      <source>import org.apache.wicket.model.PropertyModel;</source>
+
+      <p>
+        Then change the constructor so it looks like this:
+      </p>
+
+<source>
+<![CDATA[    public HelloWorldPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        add(new Label("label", new PropertyModel(this, "model.node.name")));
+    }]]>
+</source>
+
+      <p>
+        To let the plugin update its model and view once a different node has
+        been selected in the tree, we need to override the onModelChanged()
+        method of Plugin:
+      </p>
+
+<source>
+<![CDATA[    @Override
+    public void onModelChanged() {
+        redraw();
+    }]]>
+</source>
+
+      <p>
+        Now rebuild your plugin project as described above, and restart the
+        frontend application.  Follow the same procedure as before to test your
+        plugin.  The Hello World plugin should now display the name of the node
+        selected in the tree.
+      </p>
+
+    </section>
+
+  </body>
+</document>

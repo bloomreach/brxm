@@ -70,10 +70,10 @@
 	 </tr>
          <tr>
           <td>
-           <a href="run-hippo-ecm/index.html"><em><img alt="run" src="../images/frontpage/run.png" /></em></a>  
+           <a href="admin/index.html"><em><img alt="run" src="../images/frontpage/run.png" /></em></a>  
 	  </td>
           <td>
-           <a href="run-hippo-ecm/index.html"><em>CMS Admin Guide</em></a>
+           <a href="admin/index.html"><em>CMS Admin Guide</em></a>
 	  </td>
           <td>
                For system administrators, for installing and configuring to integrate in your system.           
@@ -90,11 +90,11 @@
 	 </tr>
          <tr>
           <td>         
-           <a href="implement-hippo-ecm/index.html"><em><img alt="implement" src="../images/frontpage/implement.png" /></em>
+           <a href="implementation/index.html"><em><img alt="implement" src="../images/frontpage/implement.png" /></em>
 	   </a>
 	  </td>
           <td>
-           <a href="implement-hippo-ecm/index.html"><em>CMS Implement Guide</em></a>
+           <a href="implementation/index.html"><em>CMS Implement Guide</em></a>
 	  </td>
           <td>
 	  </td>
@@ -110,10 +110,10 @@
 	 </tr>
          <tr>
           <td>
-           <a href="extend-hippo-ecm/index.html"><em><img alt="extend" src="../images/frontpage/extend.png" /></em></a>
+           <a href="extension/index.html"><em><img alt="extend" src="../images/frontpage/extend.png" /></em></a>
 	  </td>
           <td>
-            <a href="extend-hippo-ecm/index.html"><em>CMS Extension Guide</em></a>
+            <a href="extension/index.html"><em>CMS Extension Guide</em></a>
 	  </td>
           <td>
                  For developers of custom plugins such as for extra properties
@@ -122,10 +122,10 @@
 	 </tr>
          <tr>
           <td>         
-           <a href="building/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
+           <a href="development/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
 	  </td>
           <td>
-           <a href="building/index.html"><em>CMS Develop Guide</em></a>
+           <a href="development/index.html"><em>CMS Develop Guide</em></a>
 	  </td>
           <td>
              For Hippo CMS core developers, who develop the CMS core engines and the CMS core plugins and
