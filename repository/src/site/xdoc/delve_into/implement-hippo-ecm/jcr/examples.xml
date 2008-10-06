@@ -28,6 +28,15 @@
           TODO
         </p>
         
+        <ul>
+          <li>Get a document</li>
+          <li>Get a document's workflow</li>
+          <li>Get an older version of a document</li>
+          <li>Get latest 10 news articles</li>
+          <li>Publish all documents</li>
+          <li>...</li>
+        </ul>
+        
       </section>
     </body>
 </document>

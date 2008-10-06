@@ -19,29 +19,33 @@
 -->
 <document>
     <properties>
-        <title>Document Templates</title>
+        <title>Document Types</title>
     </properties>
     <body>
-      <section name="Document Templates">
+      <section name="Document Types">
 
         <p>
-          Document templates describe how your content is edited and stored. This section
-          describes how to customize or create your own templates through the Hippo CMS
+          Document types describe how your content is edited and stored. This section
+          describes how to customize or create your own types through the Hippo CMS
           user interface.
         </p>
 
         <ul>
           <li>
+            <a href="editor.html">The Document Type Editor</a>
+            - Introduction of the document type editing interface, through which you create and maintain your document types.
+          </li>
+          <li>
             <a href="tutorial.html">Tutorial</a>
-            - Learn how to create your own document template step by step
+            - Learn how to create your own document type step by step.
           </li>
           <li>
             <a href="examples.html">Examples</a>
-            - See examples of a wide variety of document templates
+            - See examples of a wide variety of document types.
           </li>
           <li>
-            <a href="importing-content.html">Importing Content</a>
-            - Learn how to migrate your existing content to Hippo ECM
+            <a href="fieldtypes.html">Field Types Reference</a>
+            - Overview of all the field types you can use in your document types.
           </li>
        </ul>
         

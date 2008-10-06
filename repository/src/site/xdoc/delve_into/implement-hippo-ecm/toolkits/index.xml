@@ -25,19 +25,37 @@
       <section name="Toolkits">
 
         <p>
-          TODO
+          Hippo ECM gives you freedom of choice regarding the technology you
+          use to implement your 'front end'. A number of toolkits is available
+          to make your life easier and speed up the implementation process.
         </p>
         
-        <ul>
-          <li>
-            <a href="http://docs.onehippo.org/hst2">Hippo Site Toolkit 2</a>
-            - Build websites using this JSP toolkit.
-          </li>
-          <li>
-            <a href="#">Hippo Portal</a>
-            - Integrate Hippo CMS in your Jetspeed based portal.
-          </li>
-        </ul>
+        <subsection name="Hippo Site Toolkit">
+          <p>
+            <a href="http://docs.onehippo.org/site-toolkit">docs.onehippo.org/site-toolkit</a>
+          </p>
+          <p>
+            The Hippo Site Toolkit is a set of components that enable rapid development
+            of JSP based websites. Assemble your website by configuring templates,
+            site map, navigation and URL space through a straightforward user interface,
+            that integrates with Hippo CMS. Create a JSP based view layer using the
+            provided tag library and expression language.
+          </p>
+        </subsection>
+        
+        <subsection name="Hippo Portal">
+          <p>
+            <a href="http://docs.onehippo.org/portal">docs.onehippo.org/portal</a>
+          </p>
+          <p>
+            Hippo Portal integrates Hippo CMS with <a href="http://portals.apache.org/jetspeed-2/">Jetspeed 2</a>,
+            the open source enterprise portal. Publish content to your portal from
+            Hippo CMS. Let your users manage their own content through tight integration
+            of Hippo CMS with your portal.
+            Improve your organization's productivity using out-of-the-box CMS-backed
+            collaboration functionality. 
+          </p>
+        </subsection>
 
       </section>
     </body>

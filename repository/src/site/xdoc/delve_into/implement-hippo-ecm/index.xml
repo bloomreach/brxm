@@ -19,14 +19,17 @@
 -->
 <document>
     <properties>
-        <title>Implementing Hippo ECM</title>
+        <title>Implementation Guide</title>
     </properties>
     <body>
-      <section name="Implementing Hippo ECM">
+      <section name="Implementation Guide">
 
         <p>
-          While Hippo ECM can be used out of the box to manage your content, implementing
-          the system in your unique environment will require some work. This section directs
+          While Hippo CMS can be used out of the box to manage your content, implementing
+          the system in your unique environment requires some work. You will have to
+          set up a front end application (website, intranet, portal) to publish your
+          content to. You want to know how to integrate Hippo CMS in your enviroment.
+          This section directs
           you to the right tools, and explains how to access your content through the
           repository's JCR interface.
         </p>
@@ -34,11 +37,14 @@
         <ul>
           <li>
             <a href="toolkits/index.html">Toolkits</a>
-            - Learn about toolkits that help you implement website, portals, etc. using Hippo CMS.
+            - Using one of the available toolkits is the recommended way to implement
+            Hippo CMS. The toolkits help you create websites and portals using the
+            technology of your choice.
           </li>
           <li>
             <a href="jcr/index.html">JCR Interface</a>
-            - Access your content through the standard JCR interface.
+            - Access your content through the standard JCR interface. This will give
+            you direct access and offers almost unlimited possibilities.
           </li>
         </ul>
 
