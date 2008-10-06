@@ -157,12 +157,12 @@
       </item>
 
       <item name="CMS Extension Guide" href="/delve_into/extend-hippo-ecm/index.html" collapse="true">
-        <item name="Document Types" href="/delve_into/extend-hippo-ecm/document-templates/index.html" collapse="true">
-          <item name="Type Editor" href="/delve_into/extend-hippo-ecm/document-templates/editor.html" />
-          <item name="Tutorial" href="/delve_into/extend-hippo-ecm/document-templates/tutorial.html" />
-          <item name="Examples" href="/delve_into/extend-hippo-ecm/document-templates/examples.html" />
-          <item name="Field Types" href="/delve_into/extend-hippo-ecm/document-templates/fieldtypes.html" />
-          <item name="Advanced" href="/delve_into/extend-hippo-ecm/document-templates/advanced.html" />
+        <item name="Document Types" href="/delve_into/extend-hippo-ecm/document-types/index.html" collapse="true">
+          <item name="Type Editor" href="/delve_into/extend-hippo-ecm/document-types/editor.html" />
+          <item name="Tutorial" href="/delve_into/extend-hippo-ecm/document-types/tutorial.html" />
+          <item name="Examples" href="/delve_into/extend-hippo-ecm/document-types/examples.html" />
+          <item name="Field Types" href="/delve_into/extend-hippo-ecm/document-types/fieldtypes.html" />
+          <item name="Advanced" href="/delve_into/extend-hippo-ecm/document-types/advanced.html" />
         </item>
         <item name="Add-ons" href="/delve_into/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/extend-hippo-ecm/plugins/repository/index.html">
