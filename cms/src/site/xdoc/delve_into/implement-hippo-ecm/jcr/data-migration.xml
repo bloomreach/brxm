@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2008 Hippo
+  Copyright 2007 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,16 +19,27 @@
 -->
 <document>
     <properties>
-      <title>ECM Website Development</title>
+        <title>Data Migration</title>
     </properties>
     <body>
-      <section name="HST2 Expression Language">
-        <p>An HST2 web filter provides an object in request scope that is able to access the current pageNode.
-          This object, by default identified by the name <em>pageNode</em>,  can easily be used from within a module jsp
-          using JSP 2.0's standard JSTL Expression Language (or EL, <a href="http://java.sun.com/j2ee/1.4/docs/tutorial/doc/JSPIntro7.html" target="_blank">see here</a>).
-          EL accesses objects through <code>${}</code> notation, and using dots <code>.</code> or square brackets
-          <code>['']</code> to access nested objects and properties.</p>
-      </section>
+      <section name="Data Migration">
 
+        <p>
+          TODO
+        </p>
+        
+        <subsection name="Exporting Content">
+          <p>
+            TODO
+          </p>
+        </subsection>
+        
+        <subsection name="Importing Content">
+          <p>
+            TODO
+          </p>
+        </subsection>
+        
+      </section>
     </body>
 </document>

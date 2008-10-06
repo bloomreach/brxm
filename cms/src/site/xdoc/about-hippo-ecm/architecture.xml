@@ -67,8 +67,8 @@
           <p>
             Hippo Site Toolkit provides the tools for rapid development of websites in a 
             Hippo ECM environment. Features include a templating engine which is easily configurable
-            through the Hippo CMS user interface, and a tag library to accomodate the development of
-            JSP based front ends. 
+            through the Hippo CMS user interface, and a tag library and expression language to
+            accomodate the development of a JSP based view layer. 
           </p>
         </subsection>
 
@@ -89,7 +89,7 @@
           <img src="../images/architecture-hstcocoon.png" 
             alt="Hippo Site Toolkit (Cocoon) in the Hippo ECM architecture" width="250" height="473"/>
           <p>
-            A toolkit similar to the one for JSP is available for the XML based publishing framework
+            A toolkit comparable to the one for JSP is planned for the XML based publishing framework
             Apache Cocoon.
           </p>
         </subsection>
@@ -100,7 +100,9 @@
           <p>
             Through its modular architecture, and its use of the JCR open standard, Hippo ECM
             can integrate with any application, new or existing, as long as it uses the JCR
-            API. Examples of applications that can integrate with Hippo ECM are ...
+            API. Examples of applications that can integrate with Hippo ECM are email and
+            calendar software, data import and export, wikis, blogs. Details and examples are
+            given in the <a href="../delve_into/implement-hippo-ecm/jcr/index.html">JCR Interface</a> section.
           </p>
         </subsection>
 

@@ -157,12 +157,13 @@
       </item>
 
       <item name="CMS Extension Guide" href="/delve_into/extend-hippo-ecm/index.html" collapse="true">
-        <item name="Document Templates" href="/delve_into/extend-hippo-ecm/document-templates/index.html" collapse="true">
+        <item name="Document Types" href="/delve_into/extend-hippo-ecm/document-templates/index.html" collapse="true">
+          <item name="The Document Type Editor" href="/delve_into/extend-hippo-ecm/document-templates/editor.html" />
           <item name="Tutorial" href="/delve_into/extend-hippo-ecm/document-templates/tutorial.html" />
           <item name="Examples" href="/delve_into/extend-hippo-ecm/document-templates/examples.html" />
-          <item name="Importing Content" href="/delve_into/extend-hippo-ecm/document-templates/importing-content.html" />
+          <item name="Field Types" href="/delve_into/extend-hippo-ecm/document-templates/fieldtypes.html" />
         </item>
-        <item name="Plugins" href="/delve_into/extend-hippo-ecm/plugins/index.html" collapse="true">
+        <item name="Add-ons" href="/delve_into/extend-hippo-ecm/plugins/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/extend-hippo-ecm/plugins/repository/index.html">
             <item name="Workflow" href="/delve_into/extend-hippo-ecm/plugins/repository/workflow.html"/>
           </item>
@@ -170,9 +171,10 @@
             <item name="Architecture" href="/delve_into/extend-hippo-ecm/plugins/frontend/frontend-plugin-architecture.html"/>
             <item name="Communication" href="/delve_into/extend-hippo-ecm/plugins/frontend/frontend-plugin-communication.html"/>
             <item name="Skin" href="/delve_into/extend-hippo-ecm/plugins/frontend/frontend-plugin-skin.html"/>
+            <item name="Hello World" href="/delve_into/extend-hippo-ecm/plugins/frontend/hello-world.html"/>
           </item>
         </item>
-        <item name="Hello World" href="/delve_into/extend-hippo-ecm/hello-world.html"/>
+        <item name="Packaging" href="/delve_into/extend-hippo-ecm/packaging.html"/>
       </item>
 
       <item name="CMS Develop Guide" href="/delve_into/development/index.html" collapse="true">

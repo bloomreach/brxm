@@ -38,6 +38,10 @@
           <li>
             <a href="frontend-plugin-skin.html">Frontend Skin Customization</a>
           </li>
+          <li>
+            <a href="hello-world.html">Hello World plugin</a>
+            - Create a trivial front end plugin in this step-by-step tutorial
+          </li>
         </ul>
 
       </section>

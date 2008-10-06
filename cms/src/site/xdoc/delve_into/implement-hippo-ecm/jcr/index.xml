@@ -42,8 +42,8 @@
             - Learn from examples how to work with your content through the JCR interface. 
           </li>
           <li>
-            <a href="importing-content.html">Importing Content</a>
-            - Learn how to import external data as content in your repository.
+            <a href="data-migration.html">Data Migration</a>
+            - Learn how to export and import content to and from your repository.
           </li>
           <!--<li>
             <a href="jcr-dropbox-example.html">Dropbox Demo</a>

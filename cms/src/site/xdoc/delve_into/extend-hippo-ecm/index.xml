@@ -19,31 +19,27 @@
 -->
 <document>
     <properties>
-        <title>Extending Hippo ECM</title>
+        <title>Extension Guide</title>
     </properties>
     <body>
-      <section name="Extending Hippo ECM">
+      <section name="Extension Guide">
 
         <p>
-          Hippo ECM provides a full enterprise content management system that
+          Hippo CMS provides a full enterprise content management system that
           can be used straight out of the box. Should the default functionality
-          however not suit your organization's needs, then Hippo ECM's open
+          however not suit your organization's needs, then its open
           component based architecture allows for easy customization and extension
           of the system.
         </p>
 
         <ul>
           <li>
-            <a href="document-templates/index.html">Document Templates</a>
+            <a href="document-templates/index.html">Document Types</a>
             - Customize the Hippo ECM document types or create your own
           </li>
           <li>
-            <a href="plugins/index.html">Plugins</a>
-            - Extend Hippo ECM with your own plugins
-          </li>
-          <li>
-            <a href="hello-world.html">Hello World add-on</a>
-            - Create a trivial front end plugin in this step-by-step tutorial
+            <a href="plugins/index.html">Add-ons</a>
+            - Extend Hippo ECM with your own add-ons.
           </li>
           <li>
             <a href="packaging.html">Custom Packaging</a>
