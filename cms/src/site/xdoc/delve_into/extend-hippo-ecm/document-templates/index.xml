@@ -47,6 +47,11 @@
             <a href="fieldtypes.html">Field Types Reference</a>
             - Overview of all the field types you can use in your document types.
           </li>
+          <li>
+            <a href="advanced.html">Advanced Document Types</a>
+            - Go beyond the possibilities of the document type editor and create advanced
+            types, you own field types, etc.
+          </li>
        </ul>
         
       </section>
