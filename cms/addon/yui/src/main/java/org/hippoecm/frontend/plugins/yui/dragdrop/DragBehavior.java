@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 
 public class DragBehavior extends AbstractDragDropBehavior {
@@ -88,8 +89,8 @@ public class DragBehavior extends AbstractDragDropBehavior {
     }
 
     @Override
-    protected JavascriptObjectMap getJavacriptConfig() {
-        JavascriptObjectMap config = super.getJavacriptConfig();
+    protected JsConfig getJavacriptConfig() {
+        JsConfig config = super.getJavacriptConfig();
         config.put("centerFrame", true);
         config.put("resizeFrame", false);
         return config;
