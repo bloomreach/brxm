@@ -34,9 +34,9 @@
         nodes. These representations are again exposed as 'normal' JCR nodes (according to JSR-170 specification), and
         can be used to represent all kinds of data in all kinds of different structures purely
         defined by their meta information. This results in virtual node trees
-        providing a faceted navigation. <!--See the
-        <a href="../../implementation/advanced/jcr-dropbox-example.html">example</a>
-        for a ready to use demo project creating faceted navigation.-->
+        providing a faceted navigation. See the
+        <a href="../../implement-hippo-ecm/advanced/jcr-dropbox-example.html">example</a>
+        for a ready to use demo project creating faceted navigation.
       </p>
        <subsection name="Faceted navigation explained: visual">
          <p>

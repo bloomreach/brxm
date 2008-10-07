@@ -19,10 +19,10 @@
   -->
   <document>
     <properties>
-      <title>Using Hippo ECM</title>
+      <title>User Guide Hippo CMS</title>
     </properties>
     <body>
-      <section name="Using Hippo ECM">
+      <section name="User Guide Hippo CMS">
         <p>
           Hippo ECM consists of a number of components that provide "out of the box" functionality. This section
           describes how to make use of those functionalities.
@@ -59,7 +59,7 @@
         <subsection name="Hippo CMS 7">
           <p>
             Hippo CMS 7 is the frontend application. It is implemented with <a href="http://wicket.apache.org">Apache Wicket</a> using
-            a <a href="../extension/plugins/index.html">custom plugin framework</a> which is configured in Hippo Repository.
+            a <a href="../extend-hippo-ecm/plugins/index.html">custom plugin framework</a> which is configured in Hippo Repository.
             We have created <a href="tour/index.html">a tour</a> to show you the key concepts you need to know to start using the CMS.
           </p>
         </subsection>
