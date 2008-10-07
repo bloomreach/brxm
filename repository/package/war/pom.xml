@@ -209,6 +209,14 @@
       <type>jar</type>
     </dependency>
 
+    <!-- search addon -->
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-addon-search-frontend</artifactId>
+      <version>2.01.00-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- image gallery addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>

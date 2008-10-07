@@ -116,7 +116,7 @@ padding:35px 60px 44px 60px;
 /* Header */
 /* ================================================ */
 .hippo-header{background: url("images/headingback.png") repeat-x; height: 45px; margin-top: 4px;}
-.hippo-header a.hippo-header-home{background: url("images/headingback-left.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;}
+.hippo-header a.hippo-header-home{background: url("images/headingback-left.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;margin-right:20px;}
 
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
@@ -172,6 +172,95 @@ padding-top: 24px;
 .hippo-logout li span.hippo-logout-name{color: white; font-weight: bold; text-transform: capitalize}
 .hippo-logout a:hover{text-decoration: underline}
 .hippo-logout li a { color: white;}
+
+/* Header Search */
+/* ================================================*/
+.hippo-search  {
+    width: 350px;
+    position: absolute;/*has to reach outside yui setup*/
+    left: 240px;
+    top:5px;
+}
+
+/* styles for entire widget */
+.hippo-search .yui-ac {
+    position:relative;font-family:arial;font-size:100%;
+}
+
+/* styles for input field */
+.hippo-search .yui-ac-input {
+    position:absolute;width:100%;margin-top: 10px;
+}
+
+/* styles for results container */
+.hippo-search .yui-ac-container {
+    position:absolute;top:1.6em;width:100%;
+}
+
+/* styles for header/body/footer wrapper within container */
+.hippo-search .yui-ac-content {
+    position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:19050;
+}
+
+/* styles for container shadow */
+.hippo-search .yui-ac-shadow {
+    position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity: 0.10;opacity:.10;filter:alpha(opacity=10);z-index:19049;
+}
+
+/* styles for container iframe */
+.hippo-search .yui-ac iframe {
+    opacity:0;filter: alpha(opacity=0);
+    padding-right:.3em; padding-bottom:.3em; /* Bug 2026798: extend iframe to shim the shadow */
+}
+
+/* styles for results list */
+.hippo-search .yui-ac-content ul{
+    margin:0;padding:0;width:100%;
+}
+
+/* styles for result item */
+.hippo-search .yui-ac-content li {
+    margin:0;padding:2px 5px;cursor:default;white-space:nowrap;list-style:none;
+    zoom:1; /* For IE to trigger mouse events on LI */
+}
+
+/* Styles for excerpt, will change */
+.hippo-search .yui-ac-content li span div span {
+    font-size: 0.9em;
+    color:grey;
+}
+
+/* styles for prehighlighted result item */
+.hippo-search .yui-ac-content li.yui-ac-prehighlight {
+    background:#B3D4FF;
+}
+
+/* styles for highlighted result item */
+.hippo-search .yui-ac-content li.yui-ac-highlight {
+    background:#426FD9;color:#FFF;
+}
+/* styles for highlighted excerpt, will change */
+.hippo-search .yui-ac-content li.yui-ac-highlight span div span {
+    color: #fff;
+}
+
+.hippo-search .yui-ac-ft {
+    text-align: right;
+    padding-right:4px;
+    font-weight: bold;
+}
+/*
+.hippo-search .yui-ac{position:relative;font-family:arial;font-size:100%;}
+.hippo-search .yui-ac-input{position:absolute;width:100%;}
+.hippo-search .yui-ac-container{position:absolute;top:1.6em;width:100%;}
+.hippo-search .yui-ac-content{position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:9050;}
+.hippo-search .yui-ac-shadow{position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity:0.10;opacity:.10;filter:alpha(opacity=10);z-index:9049;}
+.hippo-search .yui-ac iframe{opacity:0;filter:alpha(opacity=0);padding-right:.3em;padding-bottom:.3em;}
+.hippo-search .yui-ac-content ul{margin:0;padding:0;width:100%;}
+.hippo-search .yui-ac-content li{margin:0;padding:2px 5px;cursor:default;white-space:nowrap;list-style:none;zoom:1;}
+.hippo-search .yui-ac-content li.yui-ac-prehighlight{background:#B3D4FF;}
+.hippo-search .yui-ac-content li.yui-ac-highlight{background:#426FD9;color:#FFF;}
+*/
 
 /* Default Table lists */
 /* ================================================ */
