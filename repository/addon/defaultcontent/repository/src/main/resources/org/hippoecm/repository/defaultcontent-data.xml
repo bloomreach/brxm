@@ -74,9 +74,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:body" sv:type="String">
-          <sv:value>body</sv:value>
-        </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
         </sv:property>
@@ -104,9 +101,6 @@
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>118b876b-fc73-4400-89b8-5a0e2153628d</sv:value>
-        </sv:property>
-        <sv:property sv:name="defaultcontent:body" sv:type="String">
-          <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
@@ -146,9 +140,6 @@
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
-        </sv:property>
-        <sv:property sv:name="defaultcontent:body" sv:type="String">
-          <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
