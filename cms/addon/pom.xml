@@ -46,6 +46,7 @@
     <module>cms</module>
     <module>gallery</module>
     <module>sample</module>
+    <module>search</module>
     <module>defaultcontent</module>
     <module>versioning</module>
     <module>ldap</module>
