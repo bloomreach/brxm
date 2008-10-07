@@ -181,7 +181,15 @@ public class HeaderContributorHelper implements IHeaderContributor{
         
         private static final String SINGLE_QUOTE = "'";
         private static final String SINGLE_QUOTE_ESCAPED = "\\'";
-        private MiniMap map = new MiniMap(5);
+        private MiniMap map;
+        
+        public JsConfig() {
+            this(10);
+        }
+        
+        public JsConfig(int initialSize) {
+            map = new MiniMap(initialSize);
+        }
         
         private void store(String key, Object value) {
             ensureCapacity();
@@ -273,9 +281,12 @@ public class HeaderContributorHelper implements IHeaderContributor{
             String value = null;
             if(schemaMetaFields != null) {
                 StringBuilder buf = new StringBuilder();
-                buf.append('{');
                 boolean first = true;
                 for(Entry<String, String> e : schemaMetaFields.entrySet()) {
+                    //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks 
+                    //the js-object and shouldn't be present. We could just try and ignore it by wrapping the js-object key's with quotes as well.
+                    if(e.getKey().startsWith("jcr:"))
+                        continue;
                     if(first) { 
                         first = false;
                     } else {
@@ -288,8 +299,10 @@ public class HeaderContributorHelper implements IHeaderContributor{
                         buf.append(e.getValue());
                     }
                 }
-                buf.append('}');
-                value = buf.toString();
+                if(buf.length() > 0) {
+                    buf.insert(0, '{').append('}');
+                    value = buf.toString();
+                }
             }
             store(key, value);
         }
@@ -300,7 +313,8 @@ public class HeaderContributorHelper implements IHeaderContributor{
         
         private String escapeAndWrap(String value) {
             //TODO: backslash should be escaped as well
-            value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
+            if(value != null)
+                value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
             return value;
         }
         

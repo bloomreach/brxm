@@ -140,6 +140,31 @@
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
+    <sv:node sv:name="yui.autocomplete.config">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="containerId" sv:type="String">
+            <sv:value>searchBoxContainer</sv:value>
+        </sv:property>
+        <sv:property sv:name="schemaResultList" sv:type="String">
+            <sv:value>response.results</sv:value>
+        </sv:property>
+        <sv:property sv:name="schemaFields" sv:type="String">
+            <sv:value>label</sv:value>
+            <sv:value>url</sv:value>
+            <sv:value>state</sv:value>
+            <sv:value>excerpt</sv:value>
+        </sv:property>
+        <sv:node sv:name="schemaMetaFields">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="totalHits" sv:type="String">
+              <sv:value>response.totalHits</sv:value>
+            </sv:property>
+        </sv:node>    
+    </sv:node>
   </sv:node>
 
   <sv:node sv:name="centerPlugin">
