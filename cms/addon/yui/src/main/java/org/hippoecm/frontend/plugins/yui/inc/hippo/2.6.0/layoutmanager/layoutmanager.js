@@ -323,8 +323,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                       url += '&targetId=' + id;
                       url += '&sizes=' + jsonStr;
 
-                      console.log('Sent resize!');
-
                       //Don't use Wicket-ajax directly since you want to avoid the pre-call handlers
                       var t = wicketAjaxGetTransport();
                       t.open("GET", url, false);
