@@ -148,7 +148,11 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             if (preview != null) {
                 stopCluster();
                 model = handleModel;
-                openPreview(preview);
+                if (editors.contains(preview)) {
+                    openEditor(preview);
+                } else {
+                    openPreview(preview);
+                }
             } else {
                 log.error("No preview version found of document");
             }
