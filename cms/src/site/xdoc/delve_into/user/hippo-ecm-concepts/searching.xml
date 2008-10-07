@@ -60,7 +60,7 @@ QueryResult res = query.execute();
             <subsection name="How to use a stored search/query">
               <p>
                 A frontend can execute a query node to get the actual search result. The
-                <a href="../../implementation/toolkits/index.html">Hippo Site Toolkit</a> automatically
+                <a href="../../implement-hippo-ecm/website-development/index.html">Hippo Site Toolkit</a> automatically
                 detects a search node, executes the search and let you navigate through the result set.
               </p>
             </subsection>
@@ -70,7 +70,7 @@ QueryResult res = query.execute();
                 want to reuse the same search but only tune a parameter, like the number of results you want.
                 Therefor, we support parameterized queries. This means that at some place in the query, a '$' can
                 be placed, which is substituted by a value during execution.
-                See <a href="../../implementation/toolkits/index.html">Hippo Site Toolkit</a>
+                See <a href="../../implement-hippo-ecm/website-development/index.html">Hippo Site Toolkit</a>
                 on how you can use this.
               </p>
             </subsection>

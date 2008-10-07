@@ -45,7 +45,7 @@
           and the content base will be easily understandable and searchable, thanks to its uniformity.    
         </p>
 
-
+     <blockquote>
         <table> 
          <tr>
           <td>
@@ -59,10 +59,10 @@
          </tr>
          <tr>
           <td>   
-           <a href="use-hippo-ecm/index.html"><em><img width='50' alt="use" src="../images/frontpage/use.png"/></em></a>
+           <a href="user/index.html"><em><img width='50' alt="use" src="../images/frontpage/use.png"/></em></a>
 	  </td>
           <td>
-            <a href="use-hippo-ecm/index.html"><em>CMS User Guide</em></a>
+            <a href="user/index.html"><em>CMS User Guide</em></a>
           </td>
           <td>
                 For users who have Hippo CMS available.
@@ -133,7 +133,7 @@
 	  </td>
 	 </tr>
 	</table>
-
+     </blockquote>
             <!--<li>
               <p>
                 <b>Develop Hippo ECM</b>
