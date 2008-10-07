@@ -118,6 +118,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
     }
     
+    //I guess this should be loaded as a service instead of being an internal class
     private class SearchBuilder {
         private ResultItem[] emptyResults = new ResultItem[0];
         
@@ -201,7 +202,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
     
     
     /**
-     * Helper bean for an easy jcr-nodes 2 JSON transition
+     * Helper bean for an easy jcr-nodes2JSON translation
      */
     public static class SearchResult {
 

@@ -32,12 +32,6 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
     protected final HeaderContributorHelper contribHelper = new HeaderContributorHelper();
     protected final AutoCompleteSettings settings;
 
-    //convenience constructor
-    //TODO: remove?
-    public AutoCompleteBehavior(final String containerId) {
-        this(new AutoCompleteSettings().setContainerId(containerId));
-    }
-
     public AutoCompleteBehavior(final AutoCompleteSettings settings) {
         this.settings = settings;
 
@@ -52,27 +46,20 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
 
             @Override
             public JsConfig getJsConfig() {
-                return AutoCompleteBehavior.this.getJsConfig();
+                return getSettings();
             }
 
         });
         contribHelper.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
     }
 
-    protected JsConfig getJsConfig() {
-        JsConfig conf = settings.getJsConfig();
+    protected AutoCompleteSettings getSettings() {
         StringBuffer buf = new StringBuffer();
         buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
-        conf.put("callbackMethod", buf.toString(), false);
-        conf.put("callbackUrl", getCallbackUrl().toString());
-        return conf;
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        contribHelper.renderHead(response);
+        settings.put("callbackMethod", buf.toString(), false);
+        settings.put("callbackUrl", getCallbackUrl().toString());
+        return settings;
     }
 
     /**
@@ -82,5 +69,12 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
     protected String getModuleClass() {
         return "YAHOO.hippo.HippoAutoComplete";
     }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        contribHelper.renderHead(response);
+    }
+
 
 }

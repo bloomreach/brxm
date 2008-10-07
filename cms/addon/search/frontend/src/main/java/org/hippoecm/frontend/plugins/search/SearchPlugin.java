@@ -1,8 +1,5 @@
 package org.hippoecm.frontend.plugins.search;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -24,12 +21,7 @@ public class SearchPlugin extends RenderPlugin implements IBrowseService<IModel>
         super(context, config);
 
         TextField tx = new TextField("searchBox");
-        AutoCompleteSettings settings = new AutoCompleteSettings();
-        settings.setContainerId("searchBoxContainer").setSubmitOnlyOnEnter(false);
-        settings.setSchemaFields("label", "url", "state", "excerpt");
-        Map<String, String> metaFields = new HashMap<String, String>();
-        metaFields.put("totalHits", "response.totalHits");
-        settings.setSchemaMetaFields(metaFields);
+        AutoCompleteSettings settings = new AutoCompleteSettings(config.getPluginConfig("yui.autocomplete.config"));
         tx.add(new SearchBehavior(settings, this));
         add(tx);
     }
