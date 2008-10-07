@@ -81,13 +81,29 @@
             <sv:value>introduction</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
+            <sv:value>Text</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:introduction</sv:value>
           </sv:property>
         </sv:node>
-
+        
+        <!-- body -->
+        <sv:node sv:name="hippo:field">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:name" sv:type="String">
+            <sv:value>body</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:type" sv:type="String">
+            <sv:value>Html</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:path" sv:type="String">
+            <sv:value>defaultcontent:body</sv:value>
+          </sv:property>
+        </sv:node>
+        
       </sv:node>
 
       <sv:node sv:name="hippo:nodetype">
@@ -135,26 +151,10 @@
             <sv:value>introduction</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
+            <sv:value>Text</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:introduction</sv:value>
-          </sv:property>
-        </sv:node>
-
-        <!-- body -->
-        <sv:node sv:name="hippo:field">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:field</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>body</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:path" sv:type="String">
-            <sv:value>defaultcontent:body</sv:value>
           </sv:property>
         </sv:node>
 
@@ -180,9 +180,6 @@
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
         </sv:property>
-        <sv:property sv:name="defaultcontent:body" sv:type="String">
-          <sv:value>body</sv:value>
-        </sv:property>
         <sv:property sv:name="hippostd:state" sv:type="String">
           <sv:value>unpublished</sv:value>
         </sv:property>
@@ -204,6 +201,9 @@
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="defaultcontent:title" sv:type="String">
           <sv:value>title</sv:value>
+        </sv:property>
+        <sv:property sv:name="defaultcontent:body" sv:type="String">
+          <sv:value>body</sv:value>
         </sv:property>
         <sv:property sv:name="defaultcontent:introduction" sv:type="String">
           <sv:value>introduction</sv:value>
@@ -306,8 +306,41 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
+          <sv:property sv:name="template.cols" sv:type="String">
+            <sv:value>60</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.rows" sv:type="String">
+            <sv:value>10</sv:value>
+          </sv:property>
         </sv:node>
-
+        
+        <sv:node sv:name="body">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.id" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.model" sv:type="String">
+            <sv:value>${cluster.id}.model</sv:value>
+          </sv:property>
+          <sv:property sv:name="mode" sv:type="String">
+            <sv:value>${mode}</sv:value>
+          </sv:property>
+          <sv:property sv:name="engine" sv:type="String">
+            <sv:value>${engine}</sv:value>
+          </sv:property>
+          <sv:property sv:name="field" sv:type="String">
+            <sv:value>body</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>Body</sv:value>
+          </sv:property>
+        </sv:node>
+        
       </sv:node>
     </sv:node>
 
