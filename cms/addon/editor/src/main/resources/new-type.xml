@@ -23,8 +23,6 @@
     <sv:property sv:name="hippostd:modify" sv:type="String">
         <sv:value>./_name</sv:value>
         <sv:value>$name</sv:value>
-        <sv:value>hippo:nodetype/hippo:nodetype/hippo:type</sv:value>
-        <sv:value>$name</sv:value>
     </sv:property>
     <sv:node sv:name="hippostd:templates">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -71,9 +69,6 @@
                         <sv:value>hippo:document</sv:value>
                         <sv:value>hippostd:publishable</sv:value>
                         <sv:value>hippostd:publishableSummary</sv:value>
-                    </sv:property>
-                    <sv:property sv:name="hippo:type" sv:type="String">
-                        <sv:value>type</sv:value>
                     </sv:property>
                 </sv:node>
             </sv:node>
