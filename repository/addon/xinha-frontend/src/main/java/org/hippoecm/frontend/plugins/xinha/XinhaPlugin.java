@@ -111,18 +111,18 @@ public class XinhaPlugin extends RenderPlugin {
             fragment.add(modalWindow = new XinhaModalWindow("modalwindow"));
             fragment.add(imagePickerBehavior = new ImagePickerBehavior(modalWindow, nodeModel));
             fragment.add(linkPickerBehavior = new LinkPickerBehavior(modalWindow, nodeModel));
-            
+
             add(new XinhaDropBehavior(context, config) {
                 private static final long serialVersionUID = 1L;
-                
+
                 @Override
                 protected void insertImage(JcrNodeModel model, AjaxRequestTarget target) {
                     ImageItem item = imagePickerBehavior.getImageItemDAO().attach(model);
                     if (item != null) {
                         boolean openModal = item.getResourceDefinitions().size() > 1;
                         String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', "
-                                + openModal + ");";
+                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', " + openModal
+                                + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     }
                 }
@@ -142,8 +142,7 @@ public class XinhaPlugin extends RenderPlugin {
                         String link = linkPickerBehavior.getInternalLinkDAO().create(name, uuid);
                         boolean openModal = false;
                         String script = "xinha_editors." + configuration.getName()
-                        + ".plugins.CustomLinker.instance.createLink('" + link + "', "
-                        + openModal + ");";
+                                + ".plugins.CustomLinker.instance.createLink('" + link + "', " + openModal + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     } catch (RepositoryException e) {
                         log.error("Failed to create internal link", e);
@@ -175,10 +174,21 @@ public class XinhaPlugin extends RenderPlugin {
                             String img = m.group();
                             StringBuffer newImg = new StringBuffer();
                             Matcher s = SRC_PATTERN.matcher(img);
-                            while (s.find()) {
+                            if (s.find()) {
                                 String src = s.group();
-                                s.appendReplacement(newImg, "src=\"" + prefix + src.substring(5, src.length() - 1)
-                                        + "\"");
+                                // skip src=
+                                String link = src.substring(4);
+                                if (link.charAt(0) == '"') {
+                                    link = link.substring(1);
+                                }
+                                if (link.charAt(link.length() - 1) == '"') {
+                                    link = link.substring(0, link.length() - 1);
+                                }
+                                if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                                    s.appendReplacement(newImg, "src=\"" + prefix + link + "\"");
+                                } else {
+                                    s.appendReplacement(newImg, src);
+                                }
                             }
                             s.appendTail(newImg);
                             m.appendReplacement(processed, newImg.toString());
