@@ -27,6 +27,7 @@ import org.apache.jackrabbit.core.nodetype.PropDef;
 import org.apache.jackrabbit.core.nodetype.PropDefId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 
@@ -53,11 +54,14 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
 
     Name docbaseName;
     Name jcrUUIDName;
+    Name jcrMixinTypesName;
     Name hippoUUIDName;
     Name hardDocumentName;
+    Name hardHandleName;
     Name softDocumentName;
     Name mixinReferenceableName;
-
+    Name mixinVersionableName;
+    
     PropDef hippoUUIDPropDef;
 
     @Override
@@ -66,11 +70,14 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
 
         docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         jcrUUIDName = resolveName("jcr:uuid");
+        jcrMixinTypesName = resolveName("jcr:mixinTypes");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
         hardDocumentName = resolveName(HippoNodeType.NT_HARDDOCUMENT);
+        hardHandleName = resolveName(HippoNodeType.NT_HARDHANDLE);
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         mixinReferenceableName = resolveName("mix:referenceable");
-
+        mixinVersionableName = resolveName("mix:versionable");
+        
         hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
     }
 
@@ -78,7 +85,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         super();
     }
 
-    @Override
+    @Override 
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
@@ -101,6 +108,12 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         if(mixins.contains(mixinReferenceableName)) {
             mixins.remove(mixinReferenceableName);
         }
+        if(mixins.contains(hardHandleName)) {
+            mixins.remove(hardHandleName);
+        }
+        if(mixins.contains(mixinVersionableName)) {
+            mixins.remove(mixinVersionableName);
+        }
         if(mixins.contains(hardDocumentName)) {
             mixins.remove(hardDocumentName);
             mixins.add(softDocumentName);
@@ -121,7 +134,13 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
             PropertyState propState = createNew(propName, state.getNodeId());
             propState.setType(upstreamPropState.getType());
             propState.setDefinitionId(propDefId);
-            propState.setValues(upstreamPropState.getValues());
+            if(propName.equals(jcrMixinTypesName)) {
+                // replace the jcr:mixinTypes properties with the possibly changed mixin types
+                propState.setValues(InternalValue.create((Name[])state.getMixinTypeNames().toArray(new Name[state.getMixinTypeNames().size()])));
+            } else {
+                propState.setValues(upstreamPropState.getValues());
+            }
+            
             propState.setMultiValued(upstreamPropState.isMultiValued());
         }
 
