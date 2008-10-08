@@ -50,7 +50,8 @@ public class SearchBehavior extends AutoCompleteBehavior {
     
     static final Logger log = LoggerFactory.getLogger(SearchBehavior.class);
     
-    private IBrowseService<IModel> browseService; 
+    private IBrowseService<IModel> browseService;
+    private SearchBuilder searchBuilder = new SearchBuilder();
     
     public SearchBehavior(AutoCompleteSettings settings, IBrowseService<IModel> browse) {
         super(settings);
@@ -82,7 +83,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
         
         SearchResult sr;
         try {
-            sr = new SearchBuilder().search(searchParam);
+            sr = searchBuilder.search(searchParam);
         } catch (RepositoryException e) {
             log.error("An error occured during search", e);
             return;
