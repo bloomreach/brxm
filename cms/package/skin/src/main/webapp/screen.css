@@ -457,12 +457,15 @@ background-image:url(images/box-blue2.png);}
 
 /* Input elements */
 .hippo-editor-field select,
-.hippo-editor-field textarea,
 .hippo-editor-field input,
 .hippo-editor-field-input{
 font-size: 11px; background: #edf5ff; border: none; padding: 4px; color: #333333}
 
+/* Textarea Widget */
+.hippo-editor-field-textarea textarea{width:100%}
+
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
+.hippo-editor-field-html textarea{width:100%}
 .hippo-editor-field-html iframe{border: none}
 .hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
