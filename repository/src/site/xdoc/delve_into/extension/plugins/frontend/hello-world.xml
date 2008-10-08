@@ -249,14 +249,14 @@ mvn jetty:run-war
           property of this node to
           <code>org.example.helloworld.HelloWorldPlugin</code>.
         </p>
-        <img src="../images/configure-hello-world-plugin.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
+        <img src="../../../../images/configure-hello-world-plugin.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
         <p>
           Now login to <a href="http://localhost:8080/">http://localhost:8080/</a>,
           and admire your work!  The Hello World plugin should be visible in
           the center of the Browse tab (since you replaced the ListPlugin with
           your HelloWorld plugin).
         </p>
-        <img src="../images/hello-world-plugin.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
+        <img src="../../../../images/hello-world-plugin.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
         <br/>
       </subsection>
 
