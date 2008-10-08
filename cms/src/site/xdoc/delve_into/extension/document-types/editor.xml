@@ -44,7 +44,7 @@
           </p>
           <p>
             To add a field to the document type's template, click on one of the available
-            field types listed at the right side of the editor.
+            <a href="fieldtypes.html">field types</a> listed at the right side of the editor.
           </p>
           <img src="../../../images/extension/document-types/document-type-editor-field-types.png" alt="Screenshot detail of new field type selector"/>
           <p>
