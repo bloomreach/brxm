@@ -94,7 +94,7 @@
 
     <menu name="Delve into Hippo CMS">
 
-      <item name="Overview" href="/delve_into/directions.html" collapse="false" inherit="top"/>
+      <item name="Overview" href="/delve_into/overview.html" collapse="false" inherit="top"/>
       <item name="Quickstart" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
 
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
