@@ -24,10 +24,80 @@
   <body>
     <section name="What is Hippo CMS?">
       <p>
-        The Hippo Content Management System is one component of the 
-        Hippo ECM.
-        With Hippo CMS information can be: created, acquired, structured, managed,
-        stored, preserved, shared, printed, searched and published on the web as a flat website.
+        The Hippo CMS (Content Management System) is the webbased graphical userinterface to the content in the 
+        repository of the Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
+        write or upload, share, print, search, refer to, edit and structure content, asign rights to do so, 
+        have content automatically validated against your business rules and restore previous versions of the content. 
+      </p>
+
+ <blockquote>
+  <table>
+   <tr>
+    <td>
+     Webbased
+    </td>  
+    <td>
+     <em><img src='../images/web.png' alt='web icon'/></em> 
+    </td>
+    <td>
+           Content is managed via your normal webbrowser, anywhere 
+           you have access to your companies intranet. 
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Multi-user
+    </td>  
+    <td>
+     <em><img src='../images/multiuser.png' alt='multiuser icon'/></em> 
+    </td>
+    <td>
+           Several users may work on the same document, picture, soundtrack 
+           or other piece of content. 
+           Rights to change pieces of content or just to read them can be assigned.
+    </td>
+   </tr>
+   <tr>
+   <td>
+    Facetted search
+   </td>
+    <td>
+     <em><img src='../images/search.png' alt='search icon'/></em> 
+    </td>   
+    <td>
+      Advanced methods to search and select content are available to find information to read or
+      the refer to from other documents.
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Versioned
+    </td>
+    <td>
+     <em><img src='../images/version.png' alt='version icon'/></em> 
+    </td>
+    <td>
+           Previous versions of content are stored automatically, so that they can be restored in case
+           users change their mind.
+    </td>
+   </tr>
+   <tr>
+    <td>
+     Structurizable     
+    </td>
+    <td>
+     <em><img src='../images/structure.png' alt='structure icon'/></em> 
+    </td>
+    <td>
+          Companies that use Hippo CMS, design their own content structure. Hippo CMS ensures that all content  
+          fits into this single structure. Thus, the content base of the company will be filled with information 
+          actually useful to the company; required information will actually be there 
+          and the content base will be easily understandable and searchable, thanks to its uniformity.    
+    </td>
+   </tr>
+  </table>
+ </blockquote>
+
 
  <!--
         Any applications conforming to the JCR API can be linked to Hippo CMS. 
@@ -42,9 +112,8 @@
         <a href="/about/usages-for-hippo-ecm.html">Hippo CMS Use Cases</a>.
         More about all the features of Hippo CMS can be found 
         at <a href="/about/features.html">Hippo CMS Features</a>.
+
  -->
- 
-      </p>
 
     </section>
   </body>
