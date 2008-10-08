@@ -30,6 +30,17 @@
               <a href="use-hippo-ecm/index.html"><img alt="use" src="/images/frontpage/use.png" /></a>
         -->
 
+        <blockquote><img src="../images/CMS-IED.png" /></blockquote>
+
+        This particular diagram is not to stay here in this way. 
+        This is a information exchange diagram (just invented by me), that shows 
+        some of the processes occuring with Hippo ECM and the information exchange between them.
+        Processes with direct information exchange between them (arrows), occur simultaneously.
+        Contrary to data flow diagrams, information exchange diagrams only show that information
+        is exchanged between two processes and in what direction(s), but not which and not in what 
+        order, as that is too much detail.
+        I intend to use information exchange diagrams often, as I think they give important 
+        information in a clear way. 
      
      <blockquote>
         <table> 
