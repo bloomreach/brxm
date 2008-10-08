@@ -23,6 +23,9 @@ public class SearchNamespace implements YuiNamespace {
     
     public static final SearchNamespace NS = new SearchNamespace();
     
+    private SearchNamespace() {
+    }
+
     public String getPath() {
         return "js/";
     }
