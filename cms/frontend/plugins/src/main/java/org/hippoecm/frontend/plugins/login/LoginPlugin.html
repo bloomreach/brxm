@@ -19,23 +19,22 @@
 </wicket:head>
 <body>
 <wicket:panel>
-  <div class="hippo-login">
-    <div class="hippo-login-panel">
       <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
-      <form wicket:id="signInForm" name="signInForm">
+    <form class="hippo-login" wicket:id="signInForm" name="signInForm">
+      <div class="hippo-login-panel">
         <h2><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
-        <div class="hippo-login-panel-form">
-          <table>
+        <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
+        <table>
             <tr>
-              <td width="50%"><wicket:message key="username-label" />&nbsp;</td>
+              <td width="50%"><label><wicket:message key="username-label" />&nbsp;</label></td>
               <td><input wicket:id="username" type="text" value="foo@goo.moo" /></td>
             </tr>
             <tr>
-              <td><wicket:message key="password-label" />&nbsp;</td>
+              <td><label><wicket:message key="password-label" />&nbsp;</label></td>
               <td><input wicket:id="password" type="password" value="password" /></td>
             </tr>
             <tr>
-              <td><wicket:message key="locale-label" />&nbsp;</td>
+              <td><label><wicket:message key="locale-label" />&nbsp;</label></td>
               <td><select name="locale" wicket:id="locale"></select></td>
             </tr>
             <tr>
@@ -45,11 +44,8 @@
               </td>
             </tr>
           </table>
-          <div class="feedback" wicket:id="feedback">Feedback panel</div>
-        </div>
+      </div>
       </form>
-    </div>
-  </div>
 </wicket:panel>
 </body>
 </html>
