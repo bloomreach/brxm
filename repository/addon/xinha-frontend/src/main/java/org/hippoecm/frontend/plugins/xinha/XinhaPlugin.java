@@ -44,7 +44,6 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -55,7 +54,6 @@ import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
 import org.hippoecm.frontend.plugins.xinha.modal.linkpicker.LinkPickerBehavior;
-import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -83,7 +81,7 @@ public class XinhaPlugin extends RenderPlugin {
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
 
-    private String mode;
+    private final String mode;
     private TextArea editor;
     private Configuration configuration;
     private AbstractDefaultAjaxBehavior postBehavior;
@@ -94,7 +92,7 @@ public class XinhaPlugin extends RenderPlugin {
 
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
+        
         mode = config.getString("mode", "view");
         Fragment fragment = new Fragment("fragment", mode, this);
         add(fragment);
@@ -370,10 +368,10 @@ public class XinhaPlugin extends RenderPlugin {
         private static final String XINHA_CSS = "Xinha.config.css";
         private static final String XINHA_SKIN = "Xinha.skin";
 
-        private Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
-        private List<String> toolbarItems;
-        private List<String> styleSheets;
-        private String skin;
+        private final Map<String, PluginConfiguration> pluginConfigurations = new HashMap<String, PluginConfiguration>();
+        private final List<String> toolbarItems;
+        private final List<String> styleSheets;
+        private final String skin;
 
         public Configuration(IPluginConfig config) {
             toolbarItems = new ArrayList<String>();

@@ -24,9 +24,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractHeaderContributor;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.Home;
@@ -40,7 +38,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
     protected static final String SINGLE_QUOTE = "'";
 
-    private IPluginContext context;
+    private final IPluginContext context;
 
     Pattern numbers = Pattern.compile("\\d*");
 
@@ -84,8 +82,8 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             private static final long serialVersionUID = 1L;
 
             public void renderHead(IHeaderResponse response) {
-                String xinhaEditorUrl = RequestCycle.get().getRequest().getRelativePathPrefixToContextRoot()
-                        + "xinha/xinha/";
+
+                String xinhaEditorUrl = XinhaPlugin.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
 
                 StringBuffer sb = new StringBuffer();
                 sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
@@ -100,7 +98,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             }
         },
 
-        HeaderContributor.forJavaScript("xinha/xinha/XinhaLoader.js"),
+        XinhaPlugin.forJavaScript("xinha/xinha/XinhaLoader.js"),
 
         new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
