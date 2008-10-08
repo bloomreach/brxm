@@ -72,7 +72,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
             onloads.add(string);
     }
     
-    class StaticTemplate implements IHeaderContributor {
+    private static class StaticTemplate implements IHeaderContributor {
         private static final long serialVersionUID = 1L;
         
         private TextTemplateHeaderContributor headerContributor;
@@ -90,7 +90,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         }
     }
     
-    private class  StaticReadOnlyModel extends AbstractReadOnlyModel {
+    private static class  StaticReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
         private Map<String, Object> values  = new HashMap<String, Object>();
         
@@ -104,7 +104,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         }
     }
 
-    abstract public class DynamicTemplate implements IHeaderContributor {
+    private static abstract class DynamicTemplate implements IHeaderContributor {
         private static final long serialVersionUID = 1L;
         
         private TextTemplateHeaderContributor headerContributor;
@@ -140,7 +140,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         }
     }
     
-    abstract public class HippoTemplate extends DynamicTemplate {
+    public static abstract class HippoTemplate extends DynamicTemplate {
         private static final long serialVersionUID = 1L;
         
         private String moduleClass;
@@ -165,7 +165,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         abstract public String getId();
     }
     
-    private abstract class  DynamicReadOnlyModel extends AbstractReadOnlyModel {
+    private static abstract class  DynamicReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -176,7 +176,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         abstract Map<String, Object> getVariables();
     }
 
-    static public class JsConfig implements IClusterable {
+    public static class JsConfig implements IClusterable {
         private static final long serialVersionUID = 1L;
         
         private static final String SINGLE_QUOTE = "'";

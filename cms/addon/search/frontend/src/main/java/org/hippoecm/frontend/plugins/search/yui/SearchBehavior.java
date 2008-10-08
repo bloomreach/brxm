@@ -29,6 +29,7 @@ import javax.jcr.query.RowIterator;
 
 import net.sf.json.JSONObject;
 
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
@@ -120,8 +121,10 @@ public class SearchBehavior extends AutoCompleteBehavior {
     }
     
     //I guess this should be loaded as a service instead of being an internal class
-    private class SearchBuilder {
-        private ResultItem[] emptyResults = new ResultItem[0];
+    private static class SearchBuilder implements IClusterable {
+        private static final long serialVersionUID = 1L;
+        
+        private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
         
         public SearchBuilder() {
         }
@@ -129,7 +132,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
         private ResultItem[] doSearch(String value) {
             value = value.trim();
             if(value.equals(""))
-                return emptyResults;
+                return EMPTY_RESULTS;
             
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             Node content;
@@ -139,7 +142,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 uuid = content.getUUID();
             } catch (RepositoryException e) {
                log.error("Node /content not found, query buidl fails", e);
-               return emptyResults;
+               return EMPTY_RESULTS;
             }
             String where = "";
             if(uuid!=null) {
@@ -192,7 +195,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 }
             }
                 
-            return emptyResults;
+            return EMPTY_RESULTS;
         }
         
         public SearchResult search(String value) throws RepositoryException {

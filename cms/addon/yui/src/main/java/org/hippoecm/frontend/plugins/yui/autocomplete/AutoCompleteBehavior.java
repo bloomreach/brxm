@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper;
+import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.HippoTemplate;
 import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
 
 public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
@@ -36,7 +37,7 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
         this.settings = settings;
 
         contribHelper.addModule(HippoNamespace.NS, "autocompletemanager");
-        contribHelper.addTemplate(contribHelper.new HippoTemplate(INIT_AUTOCOMPLETE, getModuleClass()) {
+        contribHelper.addTemplate(new HippoTemplate(INIT_AUTOCOMPLETE, getModuleClass()) {
             private static final long serialVersionUID = 1L;
 
             @Override

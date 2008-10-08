@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper;
+import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.HippoTemplate;
 import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
 import org.hippoecm.frontend.service.render.RenderService;
 
@@ -46,7 +47,7 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
 
         headerContribHelper.addModule(HippoNamespace.NS, "dragdropmanager");
 
-        headerContribHelper.addTemplate(headerContribHelper.new HippoTemplate(getHeaderContributorClass(),
+        headerContribHelper.addTemplate(new HippoTemplate(getHeaderContributorClass(),
                 getHeaderContributorFilename(), getModelClass()) {
             private static final long serialVersionUID = 1L;
 
