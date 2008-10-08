@@ -19,7 +19,7 @@ caption,th { text-align : left; }
 
 /* Hide this */
 /* ================================================ */
-/* body #wicketDebugLink, body #wicketAjaxDebugWindow{display: none} */
+body #wicketDebugLink, body #wicketAjaxDebugWindow{display: none} 
 
 /* Hippo Global CSS tools */
 /* ================================================ */
@@ -78,35 +78,35 @@ margin: 2px;
 
 /* Login */
 /* ================================================ */
-.hippo-login {padding-top: 144px; text-align: center; width: 100%; background: none;}
-.hippo-login-panel{text-align: center}
-.hippo-login-panel input[type="submit"]{padding: 3px;}
-.hippo-login-panel input[type="text"], .hippo-login-panel input[type="password"] {padding: 2px}
-.hippo-login-panel h2{
-background: url("images/icons/permissions-48.png") no-repeat;
-margin-bottom: 36px; padding-left: 59px; font-size: 18px; font-weight: normal; color: #666666;
-height: 49px;
-padding-top: 7px;
-width:140px;
-}
-.hippo-login-panel h2 span{font-size: 12px; }
-.hippo-login-panel h2 span{display: block}
-.hippo-login-panel form {
+.hippo-login {text-align: center; width: 100%; background: none; margin-top: 100px;}
+.hippo-login-panel {
 background:transparent url(images/loginback.png) no-repeat scroll left top;
-height:220px;
 margin:0px auto;
 position:relative;
 text-align:left;
-width:227px;
-padding:35px 60px 44px 60px;
+padding:50px;
+width: 250px;
+padding-bottom:80px;
 }
 
-.hippo-login-panel form label {margin-right: 15px;}
-.hippo-login-panel form label.label-right { float: right; width: 180px; margin-right:0px;}
-.hippo-login-panel-form{width: 100%}
-.hippo-login-panel form select{margin-bottom: 5px; border:1px solid #999999;}
-.hippo-login-panel table tr td{padding: 2px; vertical-align: middle; padding-left: 0px; padding-right: 0px}
-.hippo-login select{width: 150px}
+.hippo-login-feedback{color: white; padding: 5px; margin-bottom: 10px;}
+
+.hippo-login-panel h2{
+margin-bottom: 10px; padding-left: 59px; font-size: 18px; font-weight: normal; color: white;
+height: 49px;
+padding-top: 0px;
+}
+.hippo-login-panel label{color: #f2f2f2;}
+.hippo-login-panel h2 span{font-size: 12px;  display: block}
+.hippo-login-panel table tr td{padding: 2px; vertical-align: middle}
+.hippo-login-panel select{width: 149px; border: 1px solid white; background: #284d7a; color: white;}
+.hippo-login-panel select option{color: white; background: #284d7a;}
+.hippo-login-panel input[type="password"], .hippo-login-panel input[type="text"]{
+color: #333333; 
+border: 2px solid #1691e7; 
+padding: 4px; 
+width: 150px;
+}
 
 /* Wicket Ajaxloader */
 /* ================================================ */
@@ -175,38 +175,24 @@ padding-top: 24px;
 
 /* Header Search */
 /* ================================================*/
-.hippo-search  {
-    width: 350px;
-    position: absolute;/*has to reach outside yui setup*/
-    left: 240px;
-    top:5px;
-}
+.hippo-search  {width: 350px; position: absolute;/*has to reach outside yui setup*/ left: 240px; top:5px;}
 
 /* styles for entire widget */
-.hippo-search .yui-ac {
-    position:relative;font-family:arial;font-size:100%;
-}
+.hippo-search .yui-ac {position:relative;font-family:arial;font-size:100%;}
 
 /* styles for input field */
-.hippo-search .yui-ac-input {
-    position:absolute;width:100%;margin-top: 10px;
-}
+.hippo-search .yui-ac-input {position:absolute;width:100%;margin-top: 8px; padding: 2px;}
 
 /* styles for results container */
-.hippo-search .yui-ac-container {
-    position:absolute;top:1.6em;width:100%;
-}
+.hippo-search .yui-ac-container {position:absolute;top:1.6em;width:100%;}
 
 /* styles for header/body/footer wrapper within container */
-.hippo-search .yui-ac-content {
-    position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:19050;
-}
+.hippo-search .yui-ac-content {position:absolute;width:100%;border:1px solid #808080;background:#fff;overflow:hidden;z-index:19050;}
 
 /* styles for container shadow */
 .hippo-search .yui-ac-shadow {
     position:absolute;margin:.3em;width:100%;background:#000;-moz-opacity: 0.10;opacity:.10;filter:alpha(opacity=10);z-index:19049;
 }
-
 /* styles for container iframe */
 .hippo-search .yui-ac iframe {
     opacity:0;filter: alpha(opacity=0);
@@ -237,11 +223,11 @@ padding-top: 24px;
 
 /* styles for highlighted result item */
 .hippo-search .yui-ac-content li.yui-ac-highlight {
-    background:#426FD9;color:#FFF;
+    background:#EDF5FF; color: #666666;
 }
 /* styles for highlighted excerpt, will change */
 .hippo-search .yui-ac-content li.yui-ac-highlight span div span {
-    color: #fff;
+    color: #666666;
 }
 
 .hippo-search .yui-ac-ft {
@@ -477,6 +463,7 @@ background-image:url(images/box-blue2.png);}
 font-size: 11px; background: #edf5ff; border: none; padding: 4px; color: #333333}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
+.hippo-editor-field-html iframe{border: none}
 .hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
 /* hide the xinha status bar we don't need it */
@@ -504,8 +491,8 @@ font-size: 11px; background: #edf5ff; border: none; padding: 4px; color: #333333
 
 .hippo-editor .hippo-editor-template-field-new li{list-style-type: none; margin-bottom: 5px;}
 .hippo-editor .hippo-editor-template-field-new li span em,
-.hippo-editor .hippo-editor-template-field-new li a
-{background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-top: 4px; padding-bottom: 2px; padding-left: 20px; display: block}
+.hippo-editor .hippo-editor-template-field-new li a{
+background-image:url("images/icons/workflow-16.png"); background-repeat: no-repeat;padding-top: 4px; padding-bottom: 2px; padding-left: 20px; display: block}
 .hippo-editor .hippo-editor-template-field-new li a:hover{text-decoration: underline}
 .hippo-editor .hippo-editor-template-field-new li span em{display: none;}
 .hippo-editor-template-field-edit{padding: 15px;}
