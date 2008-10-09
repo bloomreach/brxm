@@ -26,16 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -50,19 +40,24 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sun.misc.BASE64Decoder;
-
-import org.apache.commons.lang.StringEscapeUtils;
-
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.RepositoryMap;
-import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 
 public class RepositoryServlet extends HttpServlet {
     @SuppressWarnings("unused")
@@ -72,21 +67,26 @@ public class RepositoryServlet extends HttpServlet {
 
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-
+    
     /** Parameter name of the binging address */
     public final static String REPOSITORY_BINDING_PARAM = "repository-address";
 
     /** Parameter name of the repository config file */
     public final static String REPOSITORY_CONFIG_PARAM = "repository-config";
 
+    /** Default repository storage directory */
+    public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
+    
     /** Default binding address for server */
-    public final static String DEFAULT_BINDING_ADDRESS = "rmi://localhost:1099/hipporepository";
+    public final static String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
+
+    /** Default config file */
+    public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+
 
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
 
-    /** Default config file */
-    public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
     HippoRepository repository;
     String bindingAddress;
@@ -98,77 +98,33 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     private void parseInitParameters(ServletConfig config) throws ServletException {
-        findStorageLocation(config);
-        findBindingAddress(config);
-        findRepositoryConfig(config);
+        bindingAddress = getConfigurationParameter(REPOSITORY_BINDING_PARAM, DEFAULT_REPOSITORY_BINDING);
+        repositoryConfig = getConfigurationParameter(REPOSITORY_CONFIG_PARAM, DEFAULT_REPOSITORY_CONFIG);
+        storageLocation = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, DEFAULT_REPOSITORY_DIRECTORY);
+
+        // check for absolute path
+        if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
+            // try to parse the relativee path
+            storageLocation = config.getServletContext().getRealPath(storageLocation);
+            if (storageLocation == null) {
+                throw new ServletException("Cannot determin repository location "
+                        + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
+            }
+        }   
+    }
+    
+    public String getConfigurationParameter(String parameterName, String defaultValue) {
+        String result = getInitParameter(parameterName);
+        if (result == null || result.equals("")) {
+            result = getServletContext().getInitParameter(parameterName);
+        }
+        if (result == null || result.equals("")) {
+            result = defaultValue;
+        }
+        return result;
     }
 
-    /**
-     * Try to extract the binding address from the config or use the DEFAULT_BINDING_ADDRESS
-     * @param config
-     */
-    private void findBindingAddress(ServletConfig config) {
-        // try to get bind address from the config or servletContext
-        bindingAddress = config.getInitParameter(REPOSITORY_BINDING_PARAM);
-        if (bindingAddress == null || bindingAddress.equals("")) {
-            // fall back to global context setting
-            bindingAddress = config.getServletContext().getInitParameter(REPOSITORY_BINDING_PARAM);
-        }
-
-        // still got nothing, use default
-        if (bindingAddress == null || bindingAddress.equals("")) {
-            bindingAddress = DEFAULT_BINDING_ADDRESS;
-        }
-    }
-
-    /**
-     *
-     * @param config
-     * @throws ServletException
-     */
-    private void findStorageLocation(ServletConfig config) throws ServletException {
-        storageLocation = config.getInitParameter(REPOSITORY_DIRECTORY_PARAM);
-
-        // basic sanity
-        if (storageLocation == null) {
-            return;
-        }
-        if ("".equals(storageLocation)) {
-            storageLocation = null;
-            return;
-        }
-
-        // absolute path
-        //if (storageLocation.startsWith("/") || storageLocation.startsWith("file:")) {
-        //    return;
-        //}
-
-        // try to parse the path
-        storageLocation = config.getServletContext().getRealPath(storageLocation);
-        if (storageLocation == null) {
-            throw new ServletException("Cannot determin repository location "
-                    + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
-        }
-    }
-
-    /**
-     * Try to extract the repository config file from the config or use the DEFAULT_REPOSITORY_CONFIG
-     * @param config
-     */
-    private void findRepositoryConfig(ServletConfig config) {
-        // try to get repository config file name from the config or servletContext
-        repositoryConfig = config.getInitParameter(REPOSITORY_CONFIG_PARAM);
-        if (repositoryConfig == null || repositoryConfig.equals("")) {
-            // fall back to global context setting
-            repositoryConfig = config.getServletContext().getInitParameter(REPOSITORY_CONFIG_PARAM);
-        }
-
-        // still got nothing, use default
-        if (repositoryConfig == null || repositoryConfig.equals("")) {
-            repositoryConfig = DEFAULT_REPOSITORY_CONFIG;
-        }
-    }
-
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         parseInitParameters(config);
@@ -222,6 +178,7 @@ public class RepositoryServlet extends HttpServlet {
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // if(req.getAuthType() != req.BASIC_AUTH) {
         //     res.setHeader("WWW-Authenticate","Basic realm=\"Repository\"");
@@ -506,6 +463,7 @@ public class RepositoryServlet extends HttpServlet {
         writer.println("</body></html>");
     }
 
+    @Override
     public void destroy() {
         try {
             Context ctx = new InitialContext();

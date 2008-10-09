@@ -60,6 +60,7 @@ public class Main extends WebApplication {
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
+    public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static ValueMap DEFAULT_CREDENTIALS = new ValueMap("username=,password=");
 
     @Override
@@ -196,7 +197,7 @@ public class Main extends WebApplication {
     public HippoRepository getRepository() {
         if (repository == null) {
             String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
-            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, "repository");
+            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, DEFAULT_REPOSITORY_DIRECTORY);
             try {
                 if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
                     repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
