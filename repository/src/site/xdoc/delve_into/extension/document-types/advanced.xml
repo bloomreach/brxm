@@ -26,10 +26,12 @@
 
         <p>
           Using the <a href="editor.html">Document Type Editor</a>, you can create
-          straightforward document types. In most cases, the possibilities of the
-          editor will satisfy your requirements. However, if you cannot achieve
-          what you want using the graphical editor, there is still the option of
-          defining your document type at repository (JCR) level.
+          straightforward document types. The most commonly used field types are
+          available <a href="fieldtypes.html">out of the box</a>. In most cases, these
+          will satisfy your requirements. However, if you cannot achieve
+          what you want using the graphical editor, there is always the option of
+          defining your document type at repository (JCR) level. You can create
+          your own field types, anything is possible, the sky is the limit.
         </p>
         
         <subsection name="TODO">
