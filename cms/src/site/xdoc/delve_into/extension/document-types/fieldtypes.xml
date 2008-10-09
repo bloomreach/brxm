@@ -67,7 +67,7 @@
 
         <subsection name="Boolean">
           <p>
-            A single checkbox to specify a 'true' of 'false' value.
+            A single checkbox to specify a 'true' or 'false' value.
           </p>
           <img src="../../../images/extension/document-types/widget-boolean.png" alt="screenshot detail of boolean widget"/>
         </subsection>
