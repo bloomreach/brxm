@@ -18,10 +18,12 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
+import java.rmi.NoSuchObjectException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -83,10 +85,15 @@ public class RepositoryServlet extends HttpServlet {
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
 
-
     /** System property for overriding the repostiory config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
 
+    /** JNDI context to which to bind the repository. */
+    private Context ctx;
+
+    /** RMI registry to which to bind the repository. */
+    private Registry registry;
+    private boolean registry_locally_created = false;
 
     HippoRepository repository;
     String bindingAddress;
@@ -153,22 +160,21 @@ public class RepositoryServlet extends HttpServlet {
                             }
                         }
                     }
-                    Registry registry = LocateRegistry.createRegistry(port);
+                    registry = LocateRegistry.createRegistry(port);
+                    registry_locally_created = true;
                     log.info("Started an RMI registry on port " + port);
                 } catch (RemoteException ex) {
                     log.info("RMI registry has already been started on port " + port);
                 }
             }
-
             try {
-                Context ctx = new InitialContext();
+                ctx = new InitialContext();
                 ctx.rebind(bindingAddress, remote);
                 log.info("Server " + config.getServletName() + " available in context on " + bindingAddress);
             } catch (NamingException ex) {
                 log.error("Cannot bind to address " + bindingAddress, ex);
                 throw new ServletException("NamingException: " + ex.getMessage());
             }
-
         } catch (RemoteException ex) {
             log.error("Generic remoting exception ", ex);
             throw new ServletException("RemoteException: " + ex.getMessage());
@@ -466,10 +472,26 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     public void destroy() {
         try {
-            Context ctx = new InitialContext();
+            log.info("Unbinding from: " + bindingAddress);
             ctx.unbind(bindingAddress);
         } catch (NamingException ex) {
             log.warn("Cannot unbind from address " + bindingAddress, ex);
+        } finally {
+            if (ctx != null) {
+                try {
+                    ctx.close();
+                } catch (NamingException e) {
+                    log.error("Error during context close for address: " + bindingAddress, e);
+                }
+            }
+        }
+        if (registry_locally_created) {
+            try {
+                log.info("Closing rmiregistry: " + bindingAddress);
+                UnicastRemoteObject.unexportObject(registry, true);
+            } catch (NoSuchObjectException e) {
+                log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+            }
         }
         repository.close();
     }
