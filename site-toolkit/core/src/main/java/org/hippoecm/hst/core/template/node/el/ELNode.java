@@ -25,4 +25,5 @@ public interface ELNode {
     public Map getHasProperty();
     public String getDecodedName();
     public String getName();
+    public String getUuid(); 
 }

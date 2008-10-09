@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.template.node.el;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
@@ -61,6 +63,19 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         this.sourceRewriter = new SourceRewriterImpl(urlMapping);
     }
 
+    public ELNode getParent(){
+    	try {
+			return new ContentELNodeImpl(jcrNode.getParent(),sourceRewriter);
+		} catch (ItemNotFoundException e) {
+			log.error("Error while getting parent node: " + e.getMessage());			
+		} catch (AccessDeniedException e) {
+			log.error("Error while getting parent node: " + e.getMessage());
+		} catch (RepositoryException e) {
+			log.error("Error while getting parent node: " + e.getMessage());
+		}
+		return null;
+    }
+    
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");

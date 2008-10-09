@@ -3,14 +3,18 @@ package org.hippoecm.hst.core.template.node.el;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +34,39 @@ public abstract class AbstractELNode implements ELNode {
 
     public Node getJcrNode() {
         return jcrNode;
+    }
+    
+    public ELNode getParent() {
+    	try {
+			return new AbstractELNode(this.jcrNode.getParent()){
+			};
+		} catch (ItemNotFoundException e) {
+			
+			e.printStackTrace();
+		} catch (AccessDeniedException e) {
+			
+			e.printStackTrace();
+		} catch (RepositoryException e) {
+			
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
+    public String getUuid(){
+    	try {
+      	  if(jcrNode.hasProperty(HippoNodeType.HIPPO_UUID)){
+    		  return jcrNode.getProperty(HippoNodeType.HIPPO_UUID).getValue().getString();
+    	  }else {
+        	  if(jcrNode.isNodeType("mix:referenceable")){
+        		  return jcrNode.getUUID();
+              }
+        	  return null;
+          }			
+		} catch (RepositoryException e) {
+			log.error("RepositoryException " + e.getMessage());
+		}
+		return null;
     }
 
     public Map getHasProperty() {
