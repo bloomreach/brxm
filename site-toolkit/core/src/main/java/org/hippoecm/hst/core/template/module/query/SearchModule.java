@@ -287,13 +287,20 @@ public class SearchModule extends ModuleBase implements Search {
             }
             where += statementWhere;
         }
+        
+        if(where.length() > 0) {
+            where += " and ";
+        }
+        where += "not(@jcr:primaryType='nt:frozenNode')";
+        
         if(where.length() > 0) {
             where = "[" + where + "]";
         }
         
         statement = statementPath + where + statementOrderBy;
         log.debug("xpath statement = " + statement);
-        setStatement(statement);
+        System.out.println("::::::::: " + statement);
+        setStatement(statement); 
         Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
     }
 
