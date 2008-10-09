@@ -25,43 +25,58 @@
       <section name="Field Types Reference">
 
         <p>
-          TODO
+          Field types that come out of the box with Hippo CMS. Use the
+          <a href="editor.html">document type editor</a> to add them to your
+          document type.
         </p>
         
         <subsection name="String">
           <p>
-            TODO
+            A single line text field. The size can be specified in number of characters.
           </p>
+          <img src="../../../images/extension/document-types/widget-string.png" alt="screenshot detail of string widget"/>
         </subsection>
 
         <subsection name="Html">
           <p>
-            TODO
+            A multi line rich text field. The size can be specified in number of pixels.
           </p>
+          <img src="../../../images/extension/document-types/widget-html.png" alt="screenshot detail of html widget"/>
         </subsection>
 
         <subsection name="Text">
           <p>
-            TODO
+            A multi line plain text field, also known as 'textarea' in HTML terminology.
+            The size can be specified in number of characters ('cols') for the width,
+            and number of lines ('rows') for the height.
           </p>
+          <img src="../../../images/extension/document-types/widget-textarea.png" alt="screenshot detail of text widget"/>
         </subsection>
 
         <subsection name="Date">
           <p>
-            TODO
+            A date and time field. The date can be picked from a popup calendar.
+          </p>
+          <p>
+            <img src="../../../images/extension/document-types/widget-date.png" alt="screenshot detail of date widget"/>
+          </p>
+          <p>
+            <img src="../../../images/extension/document-types/widget-date-calendar.png" alt="screenshot detail of date widget with popup calendar"/>
           </p>
         </subsection>
 
         <subsection name="Boolean">
           <p>
-            TODO
+            A single checkbox to specify a 'true' of 'false' value.
           </p>
+          <img src="../../../images/extension/document-types/widget-boolean.png" alt="screenshot detail of boolean widget"/>
         </subsection>
 
         <subsection name="hippo:resource">
           <p>
-            TODO
+            An upload field to attach files or images to a document. An uploaded image is directly visible in a preview.
           </p>
+          <img src="../../../images/extension/document-types/widget-hipporesource.png" alt="screenshot detail of hippo:resource widget"/>
         </subsection>
 
         <subsection name="hippo:query">

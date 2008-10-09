@@ -28,7 +28,7 @@
           Hippo CMS 7 provides a visual tool that makes creating
           and editing document types just as easy as
           <a href="../../user/tour/editing_a_document.html">creating and editing documents</a>.
-          You can add or remove widgets with a single mouse click.
+          You can add or remove <a href="fieldtypes.html">fields</a> with a single mouse click.
         </p>
         
         <a href="../../../images/extension/document-types/document-type-editor.png">
