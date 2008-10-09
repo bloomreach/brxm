@@ -123,7 +123,6 @@
         <item name="Requirements" href="/delve_into/admin/requirements.html"/>
         <item name="Deploying the WAR" href="/delve_into/admin/deploying-the-war.html"/>
         <item name="Deploying the EAR" href="/delve_into/admin/deploying-the-ear.html"/>
-        <item name="Bootstrapping the Repository" href="/delve_into/admin/repository-bootstrap.html"/>
         <item name="Installing Plugins" href="/delve_into/admin/installing-plugins.html"/>
         <item name="Configuration" href="/delve_into/admin/configuration/index.html" collapse="true">
           <item name="Repository" href="/delve_into/admin/configuration/repository/index.html" collapse="true">
