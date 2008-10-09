@@ -135,7 +135,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         if (model instanceof JcrNodeModel) {
             try {
                 Node node = (Node) model.getObject();
-                return node.getPrimaryNodeType().hasOrderableChildNodes();
+                return node == null ? false : node.getPrimaryNodeType().hasOrderableChildNodes();
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
