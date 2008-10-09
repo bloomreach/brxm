@@ -40,6 +40,7 @@ import org.hippoecm.hst.caching.observation.EventListenerImpl;
 import org.hippoecm.hst.core.HSTConfiguration;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
+import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
 import org.hippoecm.hst.jcr.JCRConnectionException;
@@ -130,7 +131,9 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 session = JcrSessionPoolManager.getSession(request);
                 URLMapping urlMapping = URLMappingManager.getUrlMapping(session, request,
                         uriPrefix, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels);
-                request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, urlMapping);
+                
+                URLMapping relativeURLMapping = new RelativeURLMappingImpl(request.getRequestURI(), urlMapping); 
+                request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, relativeURLMapping);
 
                 //content configuration contextbase
                 ContextBase contentContextBase = null;
