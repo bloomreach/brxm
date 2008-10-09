@@ -27,6 +27,7 @@ public interface URLMapping {
     
     public String rewriteLocation(Node node);
     public String rewriteLocation(String path);
+    public String getRelativeLocation(String path);
     public List<String> getCanonicalPathsConfiguration();
     public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase);
 }

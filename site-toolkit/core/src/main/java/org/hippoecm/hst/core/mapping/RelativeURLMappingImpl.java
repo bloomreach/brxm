@@ -38,15 +38,17 @@ public class RelativeURLMappingImpl implements URLMapping{
 
     public String rewriteLocation(Node node) {
         String absoluteLocation = delegatee.rewriteLocation(node);
-        String relativeLocation = computeRelativeUrl(absoluteLocation);
-        return relativeLocation;
+        return computeRelativeUrl(absoluteLocation);
     }
 
 
     public String rewriteLocation(String path) {
         String absoluteLocation = delegatee.rewriteLocation(path);
-        String relativeLocation = computeRelativeUrl(absoluteLocation);
-        return relativeLocation;
+        return computeRelativeUrl(absoluteLocation);
+    }
+    
+    public String getRelativeLocation(String path) {
+        return computeRelativeUrl(path);
     }
   
     private String computeRelativeUrl(String absoluteLocation) {

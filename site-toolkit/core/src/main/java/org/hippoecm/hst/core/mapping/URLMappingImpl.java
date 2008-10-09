@@ -294,6 +294,10 @@ public class URLMappingImpl implements URLMapping {
         return rewrite;
     }
 
+    // Only the RelativeURLMappingImpl can return relative urls. Here, just return the path
+    public String getRelativeLocation(String path){
+        return path;
+    }
     public String rewriteLocation(String path) {
         long start = System.currentTimeMillis();
         String origPath = path;
