@@ -62,19 +62,19 @@
     </links>
 
     <menu name="About Hippo ECM">
-      <item name="What is Hippo ECM?" href="/about-hippo-ecm/index.html"/>
-      <item name="Use Cases" href="/about-hippo-ecm/use_cases.html"/>
-      <item name="Features" href="/about-hippo-ecm/features.html"/>
-      <item name="Architecture" href="/about-hippo-ecm/architecture.html"/>
+      <item name="What is Hippo ECM?" href="/ECM/about/index.html"/>
+      <item name="Use Cases" href="/ECM/about/use_cases.html"/>
+      <item name="Features" href="/ECM/about/features.html"/>
+      <item name="Architecture" href="/ECM/about/architecture.html"/>
       <!--<item name="Future" href="/about-hippo-ecm/future.html"/>-->
     </menu>
 
     <menu name="To other ECM docs">
-      <item name="ECM" href="http://docs.onehippo.org"/>
-      <item name="CMS" href="/index.html"/>
+      <item name="Hippo ECM" href="http://docs.onehippo.org"/>
+      <item name="Hippo CMS" href="/index.html"/>
      <!--
-      <item name="Site Toolkit" href="http://docs.onehippo.org/sitetoolkit2"/>
-      <item name="Portal" href="http://docs.onehippo.org/portal2"/>
+      <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/sitetoolkit2"/>
+      <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/>
      -->
     </menu>
 
