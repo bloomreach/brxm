@@ -50,6 +50,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -174,6 +175,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -239,6 +241,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:node sv:name="myevent1">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -301,6 +304,7 @@
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="gallery">
