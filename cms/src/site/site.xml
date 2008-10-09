@@ -61,14 +61,6 @@
       <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
     </links>
 
-    <menu name="About Hippo ECM">
-      <item name="What is Hippo ECM?" href="/ECM/about/index.html"/>
-      <item name="Use Cases" href="/ECM/about/use_cases.html"/>
-      <item name="Features" href="/ECM/about/features.html"/>
-      <item name="Architecture" href="/ECM/about/architecture.html"/>
-      <!--<item name="Future" href="/about-hippo-ecm/future.html"/>-->
-    </menu>
-
     <menu name="To other ECM docs">
       <item name="Hippo ECM" href="http://docs.onehippo.org"/>
       <item name="Hippo CMS" href="/index.html"/>
