@@ -64,16 +64,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     }
 
     public ELNode getParent(){
-    	try {
-			return new ContentELNodeImpl(jcrNode.getParent(),sourceRewriter);
-		} catch (ItemNotFoundException e) {
-			log.error("Error while getting parent node: " + e.getMessage());			
-		} catch (AccessDeniedException e) {
-			log.error("Error while getting parent node: " + e.getMessage());
-		} catch (RepositoryException e) {
-			log.error("Error while getting parent node: " + e.getMessage());
-		}
-		return null;
+		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
     }
     
     public Map getProperty() {

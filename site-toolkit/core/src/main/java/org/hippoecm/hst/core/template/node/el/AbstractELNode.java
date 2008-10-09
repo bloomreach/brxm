@@ -40,16 +40,13 @@ public abstract class AbstractELNode implements ELNode {
     	try {
 			return new AbstractELNode(this.jcrNode.getParent()){
 			};
-		} catch (ItemNotFoundException e) {
-			
-			e.printStackTrace();
-		} catch (AccessDeniedException e) {
-			
-			e.printStackTrace();
-		} catch (RepositoryException e) {
-			
-			e.printStackTrace();
-		}
+        } catch (ItemNotFoundException e) {
+            log.error("ItemNotFoundException while getting parent node: " + e.getMessage() +". Return null");           
+        } catch (AccessDeniedException e) {
+            log.error("AccessDeniedException while getting parent node: " + e.getMessage() +". Return null");        
+        } catch (RepositoryException e) {
+            log.error("RepositoryException while getting parent node: " + e.getMessage() +". Return null");        
+        }
 		return null;
     }
     
