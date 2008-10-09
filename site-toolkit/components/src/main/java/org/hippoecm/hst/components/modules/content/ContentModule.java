@@ -13,6 +13,7 @@ import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,21 +35,21 @@ public class ContentModule extends ModuleBase {
         if (params && moduleParameters.containsKey(ModuleNode.CONTENTLOCATION_PROPERTY_NAME)) {
             path = moduleParameters.get(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
         }      
+        else if(params && moduleParameters.containsKey("uuid")){
+        	uuid = moduleParameters.get("uuid");
+        }   
         else {
     		try {
     			path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
     		} catch (TemplateException e) {
     			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
     		}
-    		if(path == null) {
+    		if(path == null || uuid==null) {
     			pageContext.setAttribute(getVar(),null);
     			return;
     		}
         }
         
-        if(params && moduleParameters.containsKey("uuid")){
-        	uuid = moduleParameters.get("uuid");
-        }   
 		
 		
 		ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
@@ -62,6 +63,9 @@ public class ContentModule extends ModuleBase {
 		else if(uuid!=null && !uuid.equals("")) {
 			try {
 				node = ctxBase.getSession().getNodeByUUID(uuid);
+				if(node.isNodeType(HippoNodeType.NT_HANDLE)){
+					node = node.getNode(node.getName());
+				}				 
 			} catch (ItemNotFoundException e) {
 				log.error("Connect get Node by uuid ("+uuid+") : + "+ e.getCause());
 			} catch (RepositoryException e) {
