@@ -60,7 +60,7 @@ public class UploadWizard extends Wizard {
     public void onFinish() {
         dialogService.close();
         try {
-            JcrNodeModel gallery = (JcrNodeModel)uploadDialog.getModel();
+            JcrNodeModel gallery = new JcrNodeModel(uploadDialog.getGalleryNode());
             gallery.getNode().getSession().refresh(true);
             uploadDialog.getJcrService().flush(gallery);
         } catch (RepositoryException e) {

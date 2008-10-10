@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.upload;
 
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
@@ -23,7 +24,6 @@ import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -31,6 +31,9 @@ import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.GalleryShortcutPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 public class UploadDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -40,28 +43,17 @@ public class UploadDialog extends AbstractDialog {
     private IServiceReference<IJcrService> jcrServiceRef;
     private IPluginConfig pluginConfig;
 
-    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config, IDialogService dialogWindow) {
+    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
+            IDialogService dialogWindow) {
         super(context, dialogWindow);
         ok.setVisible(false);
         cancel.setVisible(false);
         pluginConfig = config;
-        try {
-            String path = config.getString("gallery.path");
-            if (path != null) {
-                while (path.startsWith("/"))
-                    path = path.substring(1);
-                setModel(new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)));
-            }
-        } catch (PathNotFoundException ex) {
-            // cannot occur anymore because GalleryShortcutPlugin already checked this, however
-            // because of HREPTWO-1218 we cannot use the model of GalleryShortcutPlugin.
-        } catch (RepositoryException ex) {
-            Gallery.log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        }
 
+        setModel(plugin.getModel());
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
-        
+
         wizard = new UploadWizard("wizard", dialogWindow, this);
         add(wizard);
     }
@@ -84,6 +76,35 @@ public class UploadDialog extends AbstractDialog {
 
     public int getThumbnailSize() {
         return pluginConfig.getInt("gallery.thumbnail.size", Gallery.DEFAULT_THUMBNAIL_SIZE);
+    }
+
+    public Node getGalleryNode() {
+        Object modelObject = getModelObject();
+        Node node = null;
+        try {
+            if (modelObject != null && modelObject instanceof Node) {
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                Workflow workflow = manager.getWorkflow(getWorkflowCategory(), (Node) modelObject);
+                if (workflow instanceof GalleryWorkflow) {
+                    return (Node) modelObject;
+                }
+            }
+            String location = pluginConfig.getString("gallery.default");
+            if (location != null) {
+                while (location.startsWith("/")) {
+                    location = location.substring(1);
+                }
+                javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
+                if (jcrSession.getRootNode().hasNode(location)) {
+                    node = jcrSession.getRootNode().getNode(location);
+                }
+            }
+        } catch (PathNotFoundException e) {
+            Gallery.log.error("Cannot locate default upload directory " + e.getMessage());
+        } catch (RepositoryException e) {
+            Gallery.log.error("Error while accessing upload directory " + e.getMessage());
+        }
+        return node;
     }
 
     @Override

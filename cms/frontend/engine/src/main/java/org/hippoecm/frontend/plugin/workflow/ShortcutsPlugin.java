@@ -61,7 +61,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelList
     private Map<String, IPluginControl> plugins;
     private Map<String, ModelService> models;
     private int pluginCount;
-    private String pluginsQuery = "/jcr:root/hippo:configuration/hippo:frontend/shortcuts/node()";
+    private String pluginsQuery = "";
 
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
         super("id"); 
@@ -76,11 +76,10 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelList
         if (config.get(PLUGINSQUERY) != null) {
             pluginsQuery = config.getString(PLUGINSQUERY);
         } else {
-            log.warn("No query defined for {}", factoryId);
+            log.error("No query defined for {}", factoryId);
         }
 
         context.registerService(this, IJcrService.class.getName());
-
         refresh();
     }
 

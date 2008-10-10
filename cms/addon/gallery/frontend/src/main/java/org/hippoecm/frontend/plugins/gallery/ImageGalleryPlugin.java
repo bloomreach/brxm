@@ -44,6 +44,7 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
 
         ListColumn column = new ListColumn(new Model("Image"), null);
         column.setRenderer(new ThumbnailRenderer(getPluginContext(), getPluginConfig()));
+        column.setAttributeModifier(new GalleryFolderAttributeModifier());
         columns.add(column);
 
         column = new ListColumn(new Model("Name"), "name");

@@ -61,6 +61,7 @@
 - hippostd:tags (string) multiple
 
 [hippostd:gallery] > hippostd:folder
+- hippostd:gallerytype (string) multiple copy
 // the children of this node are supposed to be images or other assets
 
 // FIXME: these should be moved into seperate namespace

@@ -37,7 +37,7 @@
     <sv:property sv:name="wicket.model" sv:type="String">
       <sv:value>model.browse.folder</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.path" sv:type="String">
+    <sv:property sv:name="gallery.default" sv:type="String">
       <sv:value>/content</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
@@ -67,7 +67,10 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>shortcut</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.path" sv:type="String">
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>    
+    <sv:property sv:name="gallery.default" sv:type="String">
       <sv:value>/content/gallery</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
@@ -91,7 +94,10 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>shortcut</sv:value>
     </sv:property>
-    <sv:property sv:name="gallery.path" sv:type="String">
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="gallery.default" sv:type="String">
       <sv:value>/content/assets</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">

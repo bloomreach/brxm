@@ -35,7 +35,6 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.lang.Bytes;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
@@ -63,42 +62,47 @@ class UploadForm extends Form {
         setMaxSize(Bytes.megabytes(5));
         add(uploadField = new FileUploadField("input"));
 
-        JcrNodeModel galleryNodeModel = (JcrNodeModel) uploadDialog.getModel();
-        Node galleryNode = galleryNodeModel.getNode();
-        List<String> galleryTypes = null;
-        try {
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-            GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog.getWorkflowCategory(),
-                    galleryNode);
-            if (workflow == null) {
-                Gallery.log.error("No gallery workflow accessible");
-            } else {
-                galleryTypes = workflow.getGalleryTypes();
-            }
-        } catch (MappingException ex) {
-            Gallery.log.error(ex.getMessage(), ex);
-        } catch (RepositoryException ex) {
-            Gallery.log.error(ex.getMessage(), ex);
-        } catch (RemoteException ex) {
-            Gallery.log.error(ex.getMessage(), ex);
-        }
-        if (galleryTypes != null && galleryTypes.size() > 1) {
-            DropDownChoice folderChoice;
-            type = galleryTypes.get(0);
-            add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
-                    new NamespaceFriendlyChoiceRenderer(galleryTypes)));
-            folderChoice.setNullValid(false);
-            folderChoice.setRequired(true);
-        } else if (galleryTypes != null && galleryTypes.size() == 1) {
-            type = galleryTypes.get(0);
-            Component component;
-            add(component = new Label("type", type));
-            component.setVisible(false);
-        } else {
+        Node galleryNode = uploadDialog.getGalleryNode();
+        if (galleryNode == null) {
             type = null;
-            Component component;
-            add(component = new Label("type", "default"));
-            component.setVisible(false);
+            add(new Label("type", "Configuration error: Cannot locate gallery"));
+            uploadField.setVisible(false);
+        } else {
+            List<String> galleryTypes = null;
+            try {
+                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
+                        .getWorkflowCategory(), galleryNode);
+                if (workflow == null) {
+                    Gallery.log.error("No gallery workflow accessible");
+                } else {
+                    galleryTypes = workflow.getGalleryTypes();
+                }
+            } catch (MappingException ex) {
+                Gallery.log.error(ex.getMessage(), ex);
+            } catch (RepositoryException ex) {
+                Gallery.log.error(ex.getMessage(), ex);
+            } catch (RemoteException ex) {
+                Gallery.log.error(ex.getMessage(), ex);
+            }
+            if (galleryTypes != null && galleryTypes.size() > 1) {
+                DropDownChoice folderChoice;
+                type = galleryTypes.get(0);
+                add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
+                        new NamespaceFriendlyChoiceRenderer(galleryTypes)));
+                folderChoice.setNullValid(false);
+                folderChoice.setRequired(true);
+            } else if (galleryTypes != null && galleryTypes.size() == 1) {
+                type = galleryTypes.get(0);
+                Component component;
+                add(component = new Label("type", type));
+                component.setVisible(false);
+            } else {
+                type = null;
+                Component component;
+                add(component = new Label("type", "default"));
+                component.setVisible(false);
+            }
         }
     }
 
@@ -119,53 +123,54 @@ class UploadForm extends Form {
                 String mimetype = upload.getContentType();
                 InputStream istream = upload.getInputStream();
                 WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-                JcrNodeModel model = (JcrNodeModel) getModel();
-                if (model != null && model.getNode() != null) {
-                    try {
-                        Node galleryNode = model.getNode();
-                        GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
-                                .getWorkflowCategory(), galleryNode);
-                        Document document = workflow.createGalleryItem(filename, type);
-                        Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
-                        Item item = node.getPrimaryItem();
-                        if (item.isNode()) {
-                            Node primaryChild = (Node) item;
-                            if (primaryChild.isNodeType("hippo:resource")) {
-                                primaryChild.setProperty("jcr:mimeType", mimetype);
-                                primaryChild.setProperty("jcr:data", istream);
-                            }
-                            NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
-                            for (int i = 0; i < childDefs.length; i++) {
-                                if (childDefs[i].getDefaultPrimaryType() != null
-                                        && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
-                                    if (!node.hasNode(childDefs[i].getName())) {
-                                        Node child = node.addNode(childDefs[i].getName());
-                                        child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
-                                        child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType")
-                                                .getString());
-                                        child.setProperty("jcr:lastModified", primaryChild.getProperty(
-                                                "jcr:lastModified").getDate());
-                                    }
+                try {
+                    Node galleryNode = uploadDialog.getGalleryNode();
+                    GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog.getWorkflowCategory(), galleryNode);
+                    Document document = workflow.createGalleryItem(filename, type);
+                    Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                    Item item = node.getPrimaryItem();
+                    if (item.isNode()) {
+                        Node primaryChild = (Node) item;
+                        if (primaryChild.isNodeType("hippo:resource")) {
+                            primaryChild.setProperty("jcr:mimeType", mimetype);
+                            primaryChild.setProperty("jcr:data", istream);
+                        }
+                        NodeDefinition[] childDefs = node.getPrimaryNodeType().getChildNodeDefinitions();
+                        for (int i = 0; i < childDefs.length; i++) {
+                            if (childDefs[i].getDefaultPrimaryType() != null
+                                    && childDefs[i].getDefaultPrimaryType().isNodeType("hippo:resource")) {
+                                if (!node.hasNode(childDefs[i].getName())) {
+                                    Node child = node.addNode(childDefs[i].getName());
+                                    child.setProperty("jcr:data", primaryChild.getProperty("jcr:data").getStream());
+                                    child.setProperty("jcr:mimeType", primaryChild.getProperty("jcr:mimeType")
+                                            .getString());
+                                    child.setProperty("jcr:lastModified", primaryChild.getProperty("jcr:lastModified")
+                                            .getDate());
                                 }
                             }
-                            description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
-
-                            makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
-                                    .getProperty("jcr:mimeType").getString());
-                            node.save();
                         }
-                        uploadDialog.getWizardModel().next();
-                    } catch (MappingException ex) {
-                        Gallery.log.error(ex.getMessage());
-                        this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null).getString() + ex.getMessage());
-                    } catch (RepositoryException ex) {
-                        Gallery.log.error(ex.getMessage());
-                        this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null).getString() + ex.getMessage());
+                        description = ImageInfo.analyse(filename, primaryChild.getProperty("jcr:data").getStream());
+
+                        makeThumbnail(primaryChild, primaryChild.getProperty("jcr:data").getStream(), primaryChild
+                                .getProperty("jcr:mimeType").getString());
+                        node.save();
                     }
+                    uploadDialog.getWizardModel().next();
+                } catch (MappingException ex) {
+                    Gallery.log.error(ex.getMessage());
+                    this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null)
+                            .getString()
+                            + ex.getMessage());
+                } catch (RepositoryException ex) {
+                    Gallery.log.error(ex.getMessage());
+                    this.uploadDialog.setException(new StringResourceModel("workflow-error-label", this, null)
+                            .getString()
+                            + ex.getMessage());
                 }
             } catch (IOException ex) {
                 Gallery.log.info("upload of image truncated");
-                this.uploadDialog.setException((new StringResourceModel("upload-failed-label", this, null).getString()) + " " + ex.getMessage());
+                this.uploadDialog.setException((new StringResourceModel("upload-failed-label", this, null).getString())
+                        + " " + ex.getMessage());
             }
         } else {
             this.uploadDialog.setException(new StringResourceModel("no-file-uploaded-label", this, null).getString());
@@ -174,7 +179,7 @@ class UploadForm extends Form {
 
     private void makeThumbnail(Node node, InputStream resourceData, String mimeType) throws RepositoryException {
         if (mimeType.startsWith("image")) {
-            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, uploadDialog.getThumbnailSize(),  mimeType);
+            InputStream thumbNail = ImageUtils.createThumbnail(resourceData, uploadDialog.getThumbnailSize(), mimeType);
             node.setProperty("jcr:data", thumbNail);
         } else {
             node.setProperty("jcr:data", resourceData);
