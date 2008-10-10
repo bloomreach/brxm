@@ -239,19 +239,25 @@ public class URLMappingImpl implements URLMapping {
                 if (hippoNode.getCanonicalNode() != null && !hippoNode.getCanonicalNode().isSame(node)) {
                     // take canonical node because virtual node found
                     node = hippoNode.getCanonicalNode();
+                    
                 }
+            }
+            /*
+             * if the parent is handle, we might have the wrong location because for example below the virtual /preview the 
+             * nodepath is x/y/z/Foo but below the handle it might be x/y/z/Foo[2]. Therefor, use the path + name of the handle 
+             * to get the link and not the location of the hippo document if the parent is a handle
+             */  
+            boolean isHandle = false;
+            if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = node.getParent();
+                isHandle = true;
+            } else if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                isHandle = true;
             }
             path = node.getPath();
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                try {
-                    node = node.getNode(node.getName());
-                    path = node.getPath();
-                } catch (PathNotFoundException e) {
-                    log.warn("hippo:handle does not contain a child node of the same name as the handle."
-                            + " Use the handle itself for rewriting the link.");
-                }
+            if(isHandle) {
+                path = path + "/"+node.getName();
             }
-
             LinkRewriter bestRewriter = null;
             int highestScore = 0;
             long linkScoreStart = System.currentTimeMillis();
