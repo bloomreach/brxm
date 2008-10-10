@@ -44,7 +44,7 @@ public class ContentModule extends ModuleBase {
     		} catch (TemplateException e) {
     			log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
     		}
-    		if(path == null || uuid==null) {
+    		if(path == null && uuid==null) {
     			pageContext.setAttribute(getVar(),null);
     			return;
     		}
