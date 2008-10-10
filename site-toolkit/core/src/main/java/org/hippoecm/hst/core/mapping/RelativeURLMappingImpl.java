@@ -78,8 +78,19 @@ public class RelativeURLMappingImpl implements URLMapping{
         while( (++depth) < currentRequestUriParts.length) {
             relativeUrl.append("../");
         }
+        
+        boolean startsWith = false;
+        if(matchDepth == currentRequestUriParts.length) {        	
+        		 relativeUrl.append(currentRequestUriParts[matchDepth-1]);
+        		 startsWith = true;
+        }
+        
         while( matchDepth < absoluteLocationParts.length) {
             if(!absoluteLocationParts[matchDepth].equals("")) {
+            	if(startsWith) {
+            	  relativeUrl.append("/");
+            	  startsWith = false;
+            	}            	
                 relativeUrl.append(absoluteLocationParts[matchDepth]);
                 matchDepth++;
                 if(matchDepth < absoluteLocationParts.length) {
