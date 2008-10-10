@@ -17,10 +17,6 @@ fieldset,img { border : 0; }
 caption,th { text-align : left; }
 /* ======================================== */
 
-/* Hide this */
-/* ================================================ */
-body #wicketDebugLink, body #wicketAjaxDebugWindow{display: none} 
-
 /* Hippo Global CSS tools */
 /* ================================================ */
 .hippo-global-halfwidth{width: 50%;}
