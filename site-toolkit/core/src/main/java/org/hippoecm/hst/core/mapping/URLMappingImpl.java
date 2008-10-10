@@ -257,6 +257,7 @@ public class URLMappingImpl implements URLMapping {
             path = node.getPath();
             if(isHandle) {
                 path = path + "/"+node.getName();
+                node = node.getNode(node.getName());
             }
             LinkRewriter bestRewriter = null;
             int highestScore = 0;
