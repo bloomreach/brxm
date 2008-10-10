@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.test;
 
+import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 
@@ -44,7 +45,7 @@ public class HREPTWO398Test extends TestCase
         server.close();
     }
 
-    public void testRemote() throws RepositoryException, RemoteException, InterruptedException, AlreadyBoundException {
+    public void testRemote() throws RepositoryException, RemoteException, InterruptedException, AlreadyBoundException, MalformedURLException {
         HippoRepositoryServer backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);
