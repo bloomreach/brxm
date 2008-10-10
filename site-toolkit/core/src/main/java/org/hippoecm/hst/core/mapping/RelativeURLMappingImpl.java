@@ -48,13 +48,7 @@ public class RelativeURLMappingImpl implements URLMapping{
     }
     
     public String getLocation(String path) {
-        if(getContextPath()!= null && !getContextPath().equals("")) {
-            if(getContextPath().endsWith("/") || path.startsWith("/")) {
-                path = getContextPath()+path;
-            } else {
-                path = getContextPath()+"/"+path;
-            } 
-        }
+        path = delegatee.getLocation(path);
         return computeRelativeUrl(path);
     }
   

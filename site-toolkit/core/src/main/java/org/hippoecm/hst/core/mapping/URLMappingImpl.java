@@ -300,8 +300,14 @@ public class URLMappingImpl implements URLMapping {
         return rewrite;
     }
 
-    // Only the RelativeURLMappingImpl can return relative urls. Here, just return the path
     public String getLocation(String path){
+        if(getContextPath()!= null && !getContextPath().equals("")) {
+            if(getContextPath().endsWith("/") || path.startsWith("/")) {
+                path = getContextPath()+path;
+            } else {
+                path = getContextPath()+"/"+path;
+            } 
+        }
         return path;
     }
     public String rewriteLocation(String path) {
