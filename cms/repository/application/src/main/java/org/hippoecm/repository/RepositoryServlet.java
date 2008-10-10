@@ -17,8 +17,13 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.rmi.ConnectException;
 import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -43,8 +48,6 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -93,13 +96,15 @@ public class RepositoryServlet extends HttpServlet {
 
     /** RMI registry to which to bind the repository. */
     private Registry registry;
-    private boolean registry_locally_created = false;
+    private boolean registryIsEmbedded = false;
 
+    private static Remote rmiRepository;
+    
     HippoRepository repository;
     String bindingAddress;
     String storageLocation;
     String repositoryConfig;
-
+    
     public RepositoryServlet() {
         storageLocation = null;
     }
@@ -138,50 +143,84 @@ public class RepositoryServlet extends HttpServlet {
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);
 
         try {
-            if (storageLocation == null) {
-                repository = HippoRepositoryFactory.getHippoRepository();
-            } else {
-                repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
-            }
+            // get the local embedded repository
+            repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
             HippoRepositoryFactory.setDefaultRepository(repository);
-            Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
+            
+            // the the remote repository
+            RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
+            rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
-            /* Start rmiregistry if not already started */
-            if (bindingAddress.startsWith("rmi://")) {
-                int port = Registry.REGISTRY_PORT;
-                try {
-                    if (bindingAddress.startsWith("rmi://")) {
-                        if (bindingAddress.indexOf('/', 6) >= 0) {
-                            if (bindingAddress.indexOf(':', 6) >= 0 &&
-                                bindingAddress.indexOf(':', 6) < bindingAddress.indexOf('/', 6)) {
-                                port = Integer.parseInt(bindingAddress.substring(bindingAddress.indexOf(':', 6)+1,
-                                                                   bindingAddress.indexOf('/',bindingAddress.indexOf(':',6)+1)));
-                            }
-                        }
-                    }
-                    registry = LocateRegistry.createRegistry(port);
-                    registry_locally_created = true;
-                    log.info("Started an RMI registry on port " + port);
-                } catch (RemoteException ex) {
-                    log.info("RMI registry has already been started on port " + port);
-                }
-            }
+            
+            // Get or start registry and bind the remote repository
             try {
-                ctx = new InitialContext();
-                ctx.rebind(bindingAddress, remote);
-                log.info("Server " + config.getServletName() + " available in context on " + bindingAddress);
-            } catch (NamingException ex) {
-                log.error("Cannot bind to address " + bindingAddress, ex);
-                throw new ServletException("NamingException: " + ex.getMessage());
+                registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                registry.rebind(url.getName(), rmiRepository); // connection exception happens here
+                log.warn("Using exsisting rmi server on " + url.getHost() + ":" + url.getPort());
+            } catch (ConnectException e) {
+                registry = LocateRegistry.createRegistry(url.getPort());
+                registry.rebind(url.getName(), rmiRepository);
+                log.warn("Started an RMI registry on port " + url.getPort());
+                registryIsEmbedded = true;   
             }
+        } catch (MalformedURLException ex) {
+            log.error("MalformedURLException exception: " + bindingAddress, ex);
+            throw new ServletException("RemoteException: " + ex.getMessage());
         } catch (RemoteException ex) {
-            log.error("Generic remoting exception ", ex);
+            log.error("Generic remoting exception: " + bindingAddress, ex);
             throw new ServletException("RemoteException: " + ex.getMessage());
         } catch (RepositoryException ex) {
             log.error("Error while setting up JCR repository: ", ex);
             throw new ServletException("RepositoryException: " + ex.getMessage());
+        } 
+    }
+    
+
+
+    @Override
+    public void destroy() {
+        log.info("Stopping repository.");
+
+        // unbinding from registry
+        String name = null;
+        try {
+            name = new RepositoryRmiUrl(bindingAddress).getName();
+            log.info("Unbinding '"+name+"' from registry.");
+            registry.unbind(name);
+        } catch (RemoteException e) {
+            log.error("Error during unbinding '" + name + "': " + e.getMessage());
+        } catch (NotBoundException e) {
+            log.error("Error during unbinding '" + name + "': " + e.getMessage());
+        } catch (MalformedURLException e) {
+            log.error("MalformedURLException while parsing '" + bindingAddress + "': " + e.getMessage());
         }
+
+        // unexporting from registry
+        try {
+            log.info("Unexporting rmi repository: " + bindingAddress);
+            UnicastRemoteObject.unexportObject(rmiRepository, true);
+        } catch (NoSuchObjectException e) {
+            log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+        }
+        
+        // shutdown registry
+        if (registryIsEmbedded) {
+            try {
+                log.info("Closing rmiregistry: " + bindingAddress);
+                UnicastRemoteObject.unexportObject(registry, true);
+            } catch (NoSuchObjectException e) {
+                log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+            }
+        }
+        
+        // close repository
+        log.info("Closing repository.");
+        repository.close();
+        repository = null;
+        
+        // done
+        log.info("Repository stopped.");
     }
 
     @Override
@@ -468,31 +507,80 @@ public class RepositoryServlet extends HttpServlet {
         }
         writer.println("</body></html>");
     }
+    
+    private class RepositoryRmiUrl {
+        // defaults
+        public final static String DEFAULT_RMI_NAME = "hipporepository";
+        public final static String RMI_PREFIX = "rmi";
+        private String name;
+        private String host;
+        private int port;
 
-    @Override
-    public void destroy() {
-        try {
-            log.info("Unbinding from: " + bindingAddress);
-            ctx.unbind(bindingAddress);
-        } catch (NamingException ex) {
-            log.warn("Cannot unbind from address " + bindingAddress, ex);
-        } finally {
-            if (ctx != null) {
-                try {
-                    ctx.close();
-                } catch (NamingException e) {
-                    log.error("Error during context close for address: " + bindingAddress, e);
-                }
-            }
-        }
-        if (registry_locally_created) {
+        RepositoryRmiUrl(String str) throws MalformedURLException {
             try {
-                log.info("Closing rmiregistry: " + bindingAddress);
-                UnicastRemoteObject.unexportObject(registry, true);
-            } catch (NoSuchObjectException e) {
-                log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+                URI uri = new URI(str);
+                if (uri.getFragment() != null) {
+                    throw new MalformedURLException("invalid character, '#', in URL name: " + str);
+                } else if (uri.getQuery() != null) {
+                    throw new MalformedURLException("invalid character, '?', in URL name: " + str);
+                } else if (uri.getUserInfo() != null) {
+                    throw new MalformedURLException("invalid character, '@', in URL host: " + str);
+                }
+                String scheme = uri.getScheme();
+                if (scheme != null && !scheme.equals(RMI_PREFIX)) {
+                    throw new MalformedURLException("invalid URL scheme: " + str);
+                }
+
+                name = uri.getPath();
+                if (name != null) {
+                    if (name.startsWith("/")) {
+                        name = name.substring(1);
+                    }
+                    if (name.length() == 0) {
+                        name = DEFAULT_RMI_NAME;
+                    }
+                }
+
+                host = uri.getHost();
+                if (host == null) {
+                    host = "";
+                    if (uri.getPort() == -1) {
+                        /* handle URIs with explicit port but no host
+                         * (e.g., "//:1098/foo"); although they do not strictly
+                         * conform to RFC 2396, Naming's javadoc explicitly allows
+                         * them.
+                         */
+                        String authority = uri.getAuthority();
+                        if (authority != null && authority.startsWith(":")) {
+                            authority = "localhost" + authority;
+                            uri = new URI(null, authority, null, null, null);
+                        }
+                    }
+                }
+                port = uri.getPort();
+                if (port == -1) {
+                    port = Registry.REGISTRY_PORT;
+                }
+            } catch (URISyntaxException ex) {
+                throw (MalformedURLException) new MalformedURLException("invalid URL string: " + str).initCause(ex);
             }
         }
-        repository.close();
+
+        @Override
+        public String toString() {
+            return RMI_PREFIX + host + ":" + port + "/" + name;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getHost() {
+            return host;
+        }
     }
 }

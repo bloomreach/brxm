@@ -15,20 +15,22 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.jcr.Value;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class HREPTWO1493Test extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String[] content1 = {
+    private final String[] content1 = {
         "/test",              "nt:unstructured",
         "/test/docs",         "nt:unstructured",
         "jcr:mixinTypes",     "mix:referenceable",
@@ -41,6 +43,7 @@ public class HREPTWO1493Test extends TestCase {
         "hippo:x",            "test"
     };
 
+    @Override
     public void setUp() throws Exception {
         super.setUp(true);
     }
@@ -158,12 +161,12 @@ public class HREPTWO1493Test extends TestCase {
     private void restart() throws RepositoryException {
         session.refresh(false);
         session.logout();
-        server.close();
-        try {
-            Thread.sleep(3000);
-        } catch(InterruptedException ex) {
-        }
-        server = HippoRepositoryFactory.getHippoRepository();
+//        server.close();
+//        try {
+//            Thread.sleep(30);
+//        } catch(InterruptedException ex) {
+//        }
+//        server = HippoRepositoryFactory.getHippoRepository();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
 }

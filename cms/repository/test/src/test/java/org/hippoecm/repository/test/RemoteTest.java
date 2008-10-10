@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.test;
 
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
@@ -101,6 +102,9 @@ public class RemoteTest extends Suite
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
         } catch(InterruptedException ex) {
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
+            ex.printStackTrace(System.err);
+        } catch (MalformedURLException ex) {
             System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
         } finally {
