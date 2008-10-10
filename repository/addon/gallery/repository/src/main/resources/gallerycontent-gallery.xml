@@ -42,9 +42,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templates</sv:value>
     </sv:property>
-    <sv:node sv:name="gallery">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippostd:gallery</sv:value>
+    <sv:node sv:name="image gallery">
+     <sv:property sv:name="jcr:primaryType" sv:type="Name">
+       <sv:value>hippogallery:stdImageGallery</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
         <sv:value></sv:value>
@@ -54,7 +54,26 @@
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>New Gallery</sv:value>
-        <sv:value>New Image</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:gallerytype" sv:type="String">
+        <sv:value>hippogallery:exampleImageSet</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="asset gallery">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippogallery:stdAssetGallery</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>New Gallery</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:gallerytype" sv:type="String">
+        <sv:value>hippogallery:exampleAssetSet</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

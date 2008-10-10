@@ -378,6 +378,9 @@ background-image:url(images/box-blue2.png);}
 .hippo-reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
 .hippo-reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
 
+.hippo-browser-documents-small .icon-48{background-repeat: no-repeat; background-position: center center; width: 48px; height: 48px;}
+.hippo-browser-documents-small .icon-48 span{display: block}
+
 /* Image gallery Popup */
 /* ================================================ */
 .hippo-window-picker{width: 100%;}

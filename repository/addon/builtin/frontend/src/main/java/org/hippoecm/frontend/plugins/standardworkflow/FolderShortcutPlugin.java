@@ -88,7 +88,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         };
         add(link);
 
-        String path = config.getString("gallery.path");
+        String path = config.getString("gallery.default");
         if (path != null && !path.equals("")) {
             defaultDropLocation = path;
         }

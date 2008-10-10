@@ -50,7 +50,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
 
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException {
         List<String> list = new LinkedList<String>();
-        Value[] values = subject.getProperty("hippostd:foldertype").getValues();
+        Value[] values = subject.getProperty("hippostd:gallerytype").getValues();
         for(int i=0; i<values.length; i++) {
             list.add(values[i].getString());
         }
