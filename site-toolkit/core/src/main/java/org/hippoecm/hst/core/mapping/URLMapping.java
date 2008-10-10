@@ -26,8 +26,9 @@ import org.hippoecm.hst.core.template.node.PageNode;
 public interface URLMapping {
     
     public String rewriteLocation(Node node);
+    public String getContextPath();
     public String rewriteLocation(String path);
-    public String getRelativeLocation(String path);
+    public String getLocation(String path);
     public List<String> getCanonicalPathsConfiguration();
     public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase);
 }

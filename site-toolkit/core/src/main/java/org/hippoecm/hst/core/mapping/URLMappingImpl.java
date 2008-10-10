@@ -295,7 +295,7 @@ public class URLMappingImpl implements URLMapping {
     }
 
     // Only the RelativeURLMappingImpl can return relative urls. Here, just return the path
-    public String getRelativeLocation(String path){
+    public String getLocation(String path){
         return path;
     }
     public String rewriteLocation(String path) {
@@ -377,6 +377,10 @@ public class URLMappingImpl implements URLMapping {
 
     public List<String> getCanonicalPathsConfiguration() {
         return this.canonicalPathConfiguration;
+    }
+
+    public String getContextPath() {
+        return this.contextPath;
     }
 
 }

@@ -19,11 +19,11 @@ public class RelativeURLMappingImpl implements URLMapping{
     
     public RelativeURLMappingImpl(String currentRequestUri, URLMapping mapping){
         this.delegatee = mapping;
-        if(currentRequestUri.startsWith("/")) {
-            currentRequestUri.substring(1);
+        while(currentRequestUri.startsWith("/")) {
+            currentRequestUri = currentRequestUri.substring(1);
         }
-        if(currentRequestUri.endsWith("/")) {
-            currentRequestUri.substring(0, currentRequestUri.length()-1);
+        while(currentRequestUri.endsWith("/")) {
+            currentRequestUri =  currentRequestUri.substring(0,currentRequestUri.length()-1);
         }
         this.currentRequestUri = currentRequestUri;
     }
@@ -47,18 +47,28 @@ public class RelativeURLMappingImpl implements URLMapping{
         return computeRelativeUrl(absoluteLocation);
     }
     
-    public String getRelativeLocation(String path) {
+    public String getLocation(String path) {
+        if(getContextPath()!= null && !getContextPath().equals("")) {
+            if(getContextPath().endsWith("/") || path.startsWith("/")) {
+                path = getContextPath()+path;
+            } else {
+                path = getContextPath()+"/"+path;
+            } 
+        }
         return computeRelativeUrl(path);
     }
   
     private String computeRelativeUrl(String absoluteLocation) {
-        if(absoluteLocation.startsWith("/")) {
-            absoluteLocation.substring(1);
+        while(absoluteLocation.startsWith("/")) {
+            absoluteLocation = absoluteLocation.substring(1);
         }
-        if(absoluteLocation.endsWith("/")) {
-            absoluteLocation.substring(0,absoluteLocation.length()-1);
+        while(absoluteLocation.endsWith("/")) {
+            absoluteLocation =  absoluteLocation.substring(0,absoluteLocation.length()-1);
         }
-        
+
+        System.out.println(absoluteLocation);
+        System.out.println(currentRequestUri);
+
         String[] currentRequestUriParts = currentRequestUri.split("/");
         String[] absoluteLocationParts = absoluteLocation.split("/");
         StringBuffer relativeUrl = new StringBuffer("");
@@ -87,6 +97,10 @@ public class RelativeURLMappingImpl implements URLMapping{
             }
         }
         return relativeUrl.toString();
+    }
+
+    public String getContextPath() {
+        return delegatee.getContextPath();
     }
 
 }
