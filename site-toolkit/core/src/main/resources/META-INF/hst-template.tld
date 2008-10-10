@@ -164,8 +164,14 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <description>If you have a static link, use this one to translate to correct link</description>
+            <description>If you have a link to a sitemap item, use this one to translate to correct link</description>
             <name>location</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>If you have a static link, use this one to translate to correct link</description>
+            <name>static</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>

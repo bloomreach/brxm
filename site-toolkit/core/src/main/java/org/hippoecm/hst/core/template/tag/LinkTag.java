@@ -38,6 +38,7 @@ public class LinkTag extends SimpleTagSupport {
 
     private String var;
     private String location;
+    private String staticattr;
     private ELNode item;
 
     @Override
@@ -51,10 +52,14 @@ public class LinkTag extends SimpleTagSupport {
             href = urlMapping.rewriteLocation(item.getJcrNode());
         } else if(location != null ) {
             href = urlMapping.rewriteLocation(location);
+        } else if(staticattr != null ) {
+            href = urlMapping.getLocation(staticattr);
         }
         
         Link link = new Link();
         link.setHref(href);
+        link.setSrc(href);
+        link.setLocation(href);
         pageContext.setAttribute(getVar(), link);
     }
 
@@ -79,12 +84,42 @@ public class LinkTag extends SimpleTagSupport {
         return location;
     }
 
+    public void setStatic(String staticattr) {
+        this.staticattr = staticattr;
+    }
+    
+    public String getStatic() {
+        return staticattr;
+    }
+
     public void setLocation(String location) {
         this.location = location;
     }
     
     public class Link {
+        /*
+         * three link attributes, all returning the same value. 
+         * in jsp, you can use link.href, link.src or link.location
+         */
         private String href;
+        private String src;
+        private String location;
+       
+        public String getSrc() {
+            return src;
+        }
+
+        public void setSrc(String src) {
+            this.src = src;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
 
         public String getHref() {
             return href;
