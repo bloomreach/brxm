@@ -28,16 +28,14 @@ public class ContentModule extends ModuleBase {
 		String path = null;
 		String uuid = null;
 		
-        boolean params = false;
         if (moduleParameters != null) {
-            params = true;
+            if (moduleParameters.containsKey(ModuleNode.CONTENTLOCATION_PROPERTY_NAME)) {
+                path = moduleParameters.get(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+            }      
+            else if(moduleParameters.containsKey("uuid")){
+            	uuid = moduleParameters.get("uuid");
+            }   
         }
-        if (params && moduleParameters.containsKey(ModuleNode.CONTENTLOCATION_PROPERTY_NAME)) {
-            path = moduleParameters.get(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
-        }      
-        else if(params && moduleParameters.containsKey("uuid")){
-        	uuid = moduleParameters.get("uuid");
-        }   
         else {
     		try {
     			path = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
