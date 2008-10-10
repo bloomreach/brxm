@@ -66,9 +66,6 @@ public class RelativeURLMappingImpl implements URLMapping{
             absoluteLocation =  absoluteLocation.substring(0,absoluteLocation.length()-1);
         }
 
-        System.out.println(absoluteLocation);
-        System.out.println(currentRequestUri);
-
         String[] currentRequestUriParts = currentRequestUri.split("/");
         String[] absoluteLocationParts = absoluteLocation.split("/");
         StringBuffer relativeUrl = new StringBuffer("");
