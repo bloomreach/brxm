@@ -267,6 +267,8 @@ padding-top: 24px;
 .hippo-list-paging td a:hover{background: #f2f2f2}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
 
+.hippo-list-selected {background: #E0E8FF; overflow:hidden;} /*same color as (wicket)tree selected*/
+
 /* Dashboard */
 /* ================================================ */
 .hippo-perspective-dashboard{background: #32629b}
