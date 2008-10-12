@@ -481,6 +481,11 @@ font-size: 11px; background: #edf5ff; border: none; padding: 4px; color: #333333
 .hippo-editor-field-html .htmlarea .toolbar select option{padding: 1px; background: transparent}
 .hippo-editor-field-html .htmlarea .toolbar div{margin-bottom:0px;padding:0px;margin: 0px;}
 
+/* Xinha modal windows */
+div.wicket-modal div.link-picker select { margin-bottom:10px;}
+div.wicket-modal div.link-picker div.internal-link-label {margin-bottom: 10px;}
+div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
+
 /* field template editing */
 .hippo-editor .hippo-editor-template-field-wrapper{clear:both;}
 .hippo-editor .hippo-editor-template-field-wrapper .hippo-editor-field{float: left;}
