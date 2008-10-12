@@ -18,28 +18,29 @@ package org.hippoecm.frontend.plugins.cms.browse.list;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
-import org.hippoecm.frontend.plugins.cms.browse.list.resolvers.StateRenderer;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
+import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
+import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.frontend.service.ITitleDecorator;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
     @SuppressWarnings("unused")
@@ -71,22 +72,45 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        column = new ListColumn(new Model("Type"), "type");
-        column.setComparator(new TypeComparator());
-        column.setRenderer(new TypeRenderer());
-        columns.add(column);
-
         column = new ListColumn(new Model("State"), "state");
         column.setComparator(new StateComparator());
-        column.setRenderer(new StateRenderer());
+        column.setRenderer(new EmptyRenderer());
+        column.setAttributeModifier(new StateIconAttributeModifier());
         columns.add(column);
 
         return new TableDefinition(columns);
     }
 
     @Override
+    protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
+            ISortableDataProvider dataProvider, TableSelectionListener selectionListener, int rowsPerPage,
+            boolean triState) {
+        return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+    }
+
+    @Override
     protected ISortableDataProvider getDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
+    }
+
+    class DraggebleListDataTable extends ListDataTable {
+        private static final long serialVersionUID = 1L;
+        
+        public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
+                TableSelectionListener selectionListener, int rowsPerPage, boolean triState) {
+            super(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
+        }
+
+        @Override
+        protected Item newRowItem(final String id, int index, final IModel model) {
+            Item item = super.newRowItem(id, index, model);
+            if (model instanceof JcrNodeModel) {
+                JcrNodeModel nodeModel = (JcrNodeModel) model;
+                item.add(new NodeDragBehavior(getPluginContext(), getPluginConfig(), nodeModel.getItemModel()
+                                .getPath()));
+            }
+            return item;
+        }
     }
 
 }
