@@ -20,10 +20,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.NodeType;
 import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -39,13 +37,9 @@ import org.slf4j.LoggerFactory;
 public class FolderTreeNode extends AbstractTreeNode {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
-    private boolean onlyHandles = false;
-    private boolean belowFacetSelectSingleMode = false;
     private FolderTreeNode parent;
     private FolderTreeConfig config;
 
@@ -59,28 +53,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         super(model);
         this.parent = parent;
         this.config = parent.config;
-        this.onlyHandles = parent.onlyHandles;
-        this.belowFacetSelectSingleMode = parent.belowFacetSelectSingleMode;
-        try {
-            Node node = nodeModel.getNode();
-            if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                try {
-                    if (node.getProperty(HippoNodeType.HIPPO_MODES).getValues().length > 0
-                            && "single".equals(node.getProperty(HippoNodeType.HIPPO_MODES).getValues()[0].getString()
-                                    .toString())) {
-                        belowFacetSelectSingleMode = true;
-                    }
-                } catch (PathNotFoundException e) {
-                    // no single mode
-                }
-            }
-            if (!belowFacetSelectSingleMode && node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                onlyHandles = true;
-            }
-
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
         setTreeModel(parent.getTreeModel());
         getTreeModel().register(this);
     }
