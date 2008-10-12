@@ -14,37 +14,46 @@
  * limitations under the License.
  */
 
-ModalDialogImpl = function() {
+var openModalDialog = null;
+
+ModalDialog = function(url, plugin, token) {
+    this.callbackUrl = url; 
+    this.callbackUrl += url.indexOf('?') > -1 ? "&" : "?";
+    this.callbackUrl += ('pluginName=' + encodeURIComponent(plugin));
+    this.token = token;
 };
 
-ModalDialogImpl.prototype = {
-    modalAction :null,
-
-    openModal : function(componentUrl, plugin, paramToken, action, init) {
-        var str = componentUrl.indexOf('?') > -1 ? "&" : "?";
-        str += 'pluginName=' + plugin;
-        for ( var i in init) {
-            str += encodeURI(('&' + paramToken + i + '=' + init[i]));
+ModalDialog.prototype = {
+    _values : null,
+        
+    show : function(parameters) {
+        var url = this.callbackUrl;
+        for (var p in parameters) {
+            url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
         }
-        if (str.length > 1)
-            componentUrl += str;
-        var _this = this;
-        var func = function() {
-            _this.modalAction = action;
-        }
-        wicketAjaxGet(componentUrl, func, null, null);
+        wicketAjaxGet(url, null, null, null);
+        openModalDialog = this;
     },
 
-    closeModal : function(value) {
-        if (this.modalAction != null) {
-            this.modalAction(value);
-        }
-        this.modalAction = null;
+    close : function(values) {
+        this._values = values;
+        this.onOk(values);
+        openModalDialog = null;
     },
 
-    cancelModal : function() {
-        this.modalAction = null;
+    cancel : function() {
+        this.onCancel();
+        openModalDialog = null;        
+        this._values = null;
+    },
+    
+    hide : function() {
+        return this._values;
+    },
+    
+    onOk : function(values){
+    },
+    onCancel: function(){
     }
 }
 
-ModalDialog = new ModalDialogImpl();

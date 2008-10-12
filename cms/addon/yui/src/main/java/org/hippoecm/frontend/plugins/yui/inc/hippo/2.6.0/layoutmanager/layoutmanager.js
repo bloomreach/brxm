@@ -143,10 +143,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                                 "resizeEvent" + layoutUnitEl, this);
                     }
                     layoutUnit.customEvent.subscribe(func, obj);
-                    layoutUnit.on('resize', function() {
-                        layoutUnit.customEvent.fire(layoutUnit.getSizes());
-                    });
-                    layoutUnit.customEvent.fire(layoutUnit.getSizes());
+                    var func = function() {
+                        var sizes = layoutUnit.getSizes();
+                        var scrollBottom = layoutUnit.body.scrollHeight - (layoutUnit.body.scrollTop + layoutUnit.body.clientHeight); // height of element scroll
+                        var scroll = layoutUnit.body.scrollTop + scrollBottom > 0;
+                        sizes['scroll'] = scroll;
+                        layoutUnit.customEvent.fire(sizes);
+                    };
+                    layoutUnit.on('resize', func);
+                    func();
                 }
             },
 

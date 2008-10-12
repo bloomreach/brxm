@@ -17,8 +17,8 @@ junction xinha ..\..\..\..\..\addon\xinha\src\main\webapp
 cd ..\..\..\..\..\addon\xinha\src\main\webapp\xinha\plugins
 junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
 junction AutoResize ..\..\..\..\..\webResources\xinha\plugins\AutoResize
-junction CustomLinker ..\..\..\..\..\webResources\xinha\plugins\CustomLinker
-junction ImagePicker ..\..\..\..\..\webResources\xinha\plugins\ImagePicker
+junction CreateLink ..\..\..\..\..\webResources\xinha\plugins\CreateLink
+junction InsertImage ..\..\..\..\..\webResources\xinha\plugins\InsertImage
 junction FullscreenCompatible ..\..\..\..\..\webResources\xinha\plugins\FullscreenCompatible
 
 cd ..\skins
