@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 import javax.jcr.NamespaceException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
@@ -53,8 +54,9 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
     public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,
             NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
-            return getFactory().getRemoteNodeIterator(
-                    session.pendingChanges(session.getRootNode().getNode(absPath.substring(1)), nodeType, prune));
+            Node node = "/".equals(absPath) ? session.getRootNode() : session.getRootNode().getNode(absPath.substring(1)); 
+            return getFactory().getRemoteNodeIterator(session.pendingChanges(node, nodeType, prune));
+
         } catch (NamespaceException ex) {
             throw getRepositoryException(ex);
         } catch (NoSuchNodeTypeException ex) {

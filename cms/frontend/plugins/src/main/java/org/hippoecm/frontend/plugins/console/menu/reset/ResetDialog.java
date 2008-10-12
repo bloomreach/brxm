@@ -28,44 +28,44 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.repository.api.HippoNode;
 
 public class ResetDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
-    private final IServiceReference<MenuPlugin> pluginRef;
+    protected boolean hasPendingChanges;
+    protected IServiceReference<MenuPlugin> pluginRef;
 
     public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
         this.pluginRef = context.getReference(plugin);
 
         Component message;
-        JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
-            if (nodeModel.getNode().getSession().hasPendingChanges()) {
+            HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
+            if (rootNode.getSession().hasPendingChanges()) {
+                hasPendingChanges = true;
                 StringBuffer buf;
                 buf = new StringBuffer("Pending changes:\n");
-                // treat root node differently, pendingChanges works on child nodes
-                // and the root node can never be a child node
-                if (nodeModel.getNode().getDepth() == 0) {
-                    buf.append("/\n");
-                } else {
-                    NodeIterator it = nodeModel.getNode().pendingChanges();
-                    if (it.hasNext()) {
-                        while (it.hasNext()) {
-                            Node node = it.nextNode();
-                            buf.append(node.getPath()).append("\n");
-                        }
+               
+                NodeIterator it = rootNode.pendingChanges();
+                if (it.hasNext()) {
+                    while (it.hasNext()) {
+                        Node node = it.nextNode();
+                        buf.append(node.getPath()).append("\n");
                     }
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-                message = new Label("message", "There are no pending changes, reset anyway?");
+                message = new Label("message", "There are no pending changes");
+                ok.setVisible(false);
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
+            e.printStackTrace();
             ok.setVisible(false);
         }
         add(message);
@@ -75,20 +75,15 @@ public class ResetDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-
-        // The actual JCR refresh
-        nodeModel.getNode().refresh(false);
-
-        // Notify other plugins
-        if (nodeModel.getNode().getDepth() == 0) {
-            plugin.flushNodeModel(nodeModel);
-        } else {
-            plugin.flushNodeModel(nodeModel.getParentModel());
+        Node rootNode = nodeModel.getNode().getSession().getRootNode();
+        if (hasPendingChanges) {
+            rootNode.refresh(false);
+            plugin.flushNodeModel(new JcrNodeModel(rootNode));
         }
     }
 
     public String getTitle() {
-        return "Refresh Session (undo changes)";
+        return "Refresh Session";
     }
 
 }

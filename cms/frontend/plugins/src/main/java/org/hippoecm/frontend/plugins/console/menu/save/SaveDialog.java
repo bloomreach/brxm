@@ -28,15 +28,15 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.repository.api.HippoNode;
 
 public class SaveDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
-    private boolean hasPendingChanges;
-    private IServiceReference<MenuPlugin> pluginRef;
+    protected boolean hasPendingChanges;
+    protected IServiceReference<MenuPlugin> pluginRef;
 
     public SaveDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
@@ -45,21 +45,17 @@ public class SaveDialog extends AbstractDialog {
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
-            if (nodeModel.getNode().getSession().hasPendingChanges()) {
+            HippoNode rootNode = (HippoNode) nodeModel.getNode().getSession().getRootNode();
+            if (rootNode.getSession().hasPendingChanges()) {
                 hasPendingChanges = true;
                 StringBuffer buf;
                 buf = new StringBuffer("Pending changes:\n");
-                // treat root node differently, pendingChanges works on child nodes
-                // and the root node can never be a child node
-                if (nodeModel.getNode().getDepth() == 0) {
-                    buf.append("/\n");
-                } else {
-                    NodeIterator it = nodeModel.getNode().pendingChanges();
-                    if (it.hasNext()) {
-                        while (it.hasNext()) {
-                            Node node = it.nextNode();
-                            buf.append(node.getPath()).append("\n");
-                        }
+               
+                NodeIterator it = rootNode.pendingChanges();
+                if (it.hasNext()) {
+                    while (it.hasNext()) {
+                        Node node = it.nextNode();
+                        buf.append(node.getPath()).append("\n");
                     }
                 }
                 message = new MultiLineLabel("message", buf.toString());
@@ -79,14 +75,10 @@ public class SaveDialog extends AbstractDialog {
     public void ok() throws RepositoryException {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
-        Node saveNode = nodeModel.getNode();
+        Node rootNode = nodeModel.getNode().getSession().getRootNode();
         if (hasPendingChanges) {
-            while (saveNode.isNew() && saveNode.getDepth() > 0) {
-                saveNode = saveNode.getParent();
-            }
-            saveNode.save();
-
-            plugin.flushNodeModel(new JcrNodeModel(saveNode));
+            rootNode.save();
+            plugin.flushNodeModel(new JcrNodeModel(rootNode));
         }
     }
 
