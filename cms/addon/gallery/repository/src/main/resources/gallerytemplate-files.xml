@@ -24,12 +24,12 @@
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
          xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
          xmlns:fn="http://www.w3.org/2005/xpath-functions"
-         sv:name="New Gallery">
+         sv:name="New File Folder">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippostd:templatequery</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:statement" sv:type="String">
-    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Gallery/hippostd:templates/node()</sv:value>
+    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_File_x0020_Folder/hippostd:templates/node()</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:language" sv:type="String">
     <sv:value>xpath</sv:value>
@@ -42,23 +42,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templates</sv:value>
     </sv:property>
-    <sv:node sv:name="image gallery">
-     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-       <sv:value>hippogallery:stdImageGallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value></sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>New Gallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-        <sv:value>hippogallery:exampleImageSet</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="asset gallery">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippogallery:stdAssetGallery</sv:value>
@@ -70,7 +53,7 @@
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>New Gallery</sv:value>
+        <sv:value>New File Folder</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:gallerytype" sv:type="String">
         <sv:value>hippogallery:exampleAssetSet</sv:value>
