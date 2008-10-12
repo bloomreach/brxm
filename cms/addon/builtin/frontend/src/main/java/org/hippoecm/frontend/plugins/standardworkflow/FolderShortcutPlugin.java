@@ -364,7 +364,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 folderChoice.setVisible(false);
                 prototype = null;
             }
-            ok.setEnabled(prototype != null && name != null && !"".equals(name));
+            ok.setEnabled(prototype != null);
             AjaxRequestTarget target = AjaxRequestTarget.get();
             if (target != null) {
                 target.addComponent(ok);
@@ -386,6 +386,9 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
 
         protected void ok() throws Exception {
+            if (name == null || "".equals(name)) {
+                throw new IllegalArgumentException("You need to enter a name");
+            }
             IModel model = getModel();
             if (model != null && model instanceof WorkflowsModel) {
                 Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();

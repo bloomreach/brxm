@@ -116,14 +116,17 @@ public class NewFolderWorkflowDialog extends AbstractWorkflowDialog {
     private void enableButtons() {
         NewAbstractFolderWorkflowPlugin folderWorkflowPlugin = (NewAbstractFolderWorkflowPlugin) getPlugin();
         WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
-        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null && name != null && !"".equals(name));
+        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null);
     }
 
     @Override
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
         if (prototype == null) {
-            throw new WorkflowException("You need to select a type");
+            throw new IllegalArgumentException("You need to select a type");
+        }
+        if (name == null || "".equals(name)) {
+            throw new IllegalArgumentException("You need to enter a name");
         }
         if (workflow != null) {
             NewAbstractFolderWorkflowPlugin folderWorkflowPlugin = (NewAbstractFolderWorkflowPlugin) getPlugin();
