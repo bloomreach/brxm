@@ -140,6 +140,9 @@
     <sv:property sv:name="browser.id" sv:type="String">
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
+    <sv:property sv:name="search.paths" sv:type="String">
+      <sv:value>/content</sv:value>
+    </sv:property>
     <sv:node sv:name="yui.autocomplete.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>

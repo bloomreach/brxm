@@ -22,7 +22,7 @@ public class SearchPlugin extends RenderPlugin implements IBrowseService<IModel>
 
         TextField tx = new TextField("searchBox");
         AutoCompleteSettings settings = new AutoCompleteSettings(config.getPluginConfig("yui.autocomplete.config"));
-        tx.add(new SearchBehavior(settings, this));
+        tx.add(new SearchBehavior(settings, this, config.getStringArray("search.paths")));
         add(tx);
     }
 

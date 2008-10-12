@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.query.QueryManager;
@@ -51,12 +52,13 @@ public class SearchBehavior extends AutoCompleteBehavior {
     
     static final Logger log = LoggerFactory.getLogger(SearchBehavior.class);
     
-    private IBrowseService<IModel> browseService;
-    private SearchBuilder searchBuilder = new SearchBuilder();
+    private final IBrowseService<IModel> browseService;
+    private final SearchBuilder searchBuilder;
     
-    public SearchBehavior(AutoCompleteSettings settings, IBrowseService<IModel> browse) {
+    public SearchBehavior(AutoCompleteSettings settings, IBrowseService<IModel> browse, String[] searchPaths) {
         super(settings);
         this.browseService = browse;
+        searchBuilder = new SearchBuilder(searchPaths);
         contribHelper.addModule(SearchNamespace.NS, "searchbox");
     }
 
@@ -123,44 +125,74 @@ public class SearchBehavior extends AutoCompleteBehavior {
     //I guess this should be loaded as a service instead of being an internal class
     private static class SearchBuilder implements IClusterable {
         private static final long serialVersionUID = 1L;
+
+        private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)";
+        private static final String EXCLUDE_FROZEN_NODE = "not(@jcr:primaryType='nt:frozenNode')";
+        private static final String EXCERPT = "/rep:excerpt(.)";
         
         private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
+        private final String defaultWhere;
         
-        public SearchBuilder() {
+        public SearchBuilder(String[] searchPaths) {
+            if(searchPaths == null || searchPaths.length == 0) {
+                log.error("No search paths configured.");
+                throw new IllegalArgumentException("No search paths configured.");
+            }
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            Node content;
+            StringBuilder sb = new StringBuilder();
+            sb.append(HARDDOCUMENT_QUERY).append('[').append(EXCLUDE_FROZEN_NODE).append(" and (");
+
+            boolean addOr = false;
+            for(String path : searchPaths) {
+                if(!path.startsWith("/")) {
+                    throw new IllegalArgumentException("Search path should be absolute: " + path);
+                }
+                String uuid = null;
+                try {
+                    content = (Node)session.getItem(path);
+                    uuid = content.getUUID();
+                    if(uuid!=null) {
+                        if(addOr) {
+                            sb.append(" or ");
+                        } else {
+                            addOr = true;
+                        }
+                        sb.append("hippo:paths = '").append(uuid).append('\'');
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Could not get UUID from node[" + path + "]", e);
+                    throw new IllegalArgumentException("Could not get UUID from node[" + path + "]", e);
+                }
+            }
+            sb.append(')');
+            defaultWhere = sb.toString();
         }
         
         private ResultItem[] doSearch(String value) {
             value = value.trim();
-            if(value.equals(""))
+            if(value.equals("")) {
                 return EMPTY_RESULTS;
+            }
+            StringBuilder query = new StringBuilder(defaultWhere);
             
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-            Node content;
-            String uuid = null;
-            try {
-                content = (Node)session.getItem("/content");
-                uuid = content.getUUID();
-            } catch (RepositoryException e) {
-               log.error("Node /content not found, query buidl fails", e);
-               return EMPTY_RESULTS;
-            }
-            String where = "";
-            if(uuid!=null) {
-                where = "hippo:paths =  '" + uuid +"'";
-            }
             StringTokenizer st = new StringTokenizer(value, " ");
             while(st.hasMoreTokens()) {
-                where += " and jcr:contains(., '" + st.nextToken() + "*')";
+                query.append(" and jcr:contains(., '").append(st.nextToken()).append("*')");
             }
-            String queryString = "//element(*, hippo:harddocument)[" + where + "]/rep:excerpt(.)";
-            String queryType = "xpath";
+            query.append(']').append(EXCERPT);
+            final String queryString =  query.toString();
+            final String queryType = "xpath";
             QueryResult result = null;
-       
+            
+            System.out.println("Query is " + queryString);
+            
+            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
                 QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
-                HippoQuery query = (HippoQuery) queryManager.createQuery(queryString, queryType);
+                HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(queryString, queryType);
                 session.refresh(true);
-                result = query.execute();
+                result = hippoQuery.execute();
             } catch (RepositoryException e) {
                 log.error("Error executing query[" + queryString + "]", e);
             }
