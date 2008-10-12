@@ -21,13 +21,13 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NewFixedFolderWorkflowPlugin extends NewAbstractFolderWorkflowPlugin {
+public class FixedFolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    transient Logger log = LoggerFactory.getLogger(NewFixedFolderWorkflowPlugin.class);
+    transient Logger log = LoggerFactory.getLogger(FixedFolderWorkflowPlugin.class);
 
-    public NewFixedFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public FixedFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 

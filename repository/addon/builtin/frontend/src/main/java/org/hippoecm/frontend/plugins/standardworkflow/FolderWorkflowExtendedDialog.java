@@ -18,10 +18,12 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
@@ -36,7 +38,7 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id: FolderWorkflowExtendedDialog.java 13107 2008-08-20 15:01:57Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 
@@ -47,57 +49,72 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     private String facet;
     private String value;
 
-    public FolderWorkflowExtendedDialog(FolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow, String category) {
+    public FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow, String category) {
         super(folderWorkflowPlugin, dialogWindow, "Add " + category);
         this.category = category;
 
-        WorkflowsModel model = (WorkflowsModel)folderWorkflowPlugin.getModel();
-        if (model.getNodeModel().getNode() == null) {
-            ok.setEnabled(false);
-        } else {
-            ok.setEnabled(true);
-        }
+        add(new TextFieldWidget("name", new PropertyModel(this, "name")) {
+            private static final long serialVersionUID = 1L;
 
-        add(new TextFieldWidget("name", new PropertyModel(this, "name")));
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                enableButtons();
+            }
+        });
         add(new TextFieldWidget("docbase", new PropertyModel(this, "docbase")));
         add(new TextFieldWidget("facet", new PropertyModel(this, "facet")));
         add(new TextFieldWidget("value", new PropertyModel(this, "value")));
 
-        if(folderWorkflowPlugin.templates.get(category).size() > 1) {
+        Set<String> prototypes = folderWorkflowPlugin.templates.get(category).getPrototypes();
+        if(prototypes.size() > 1) {
             DropDownChoice folderChoice;
-            add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), new LinkedList(folderWorkflowPlugin.templates.get(category))) {
+            add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), new LinkedList<String>(prototypes)) {
                     private static final long serialVersionUID = 1L;
                     
                     @Override
-                        protected boolean wantOnSelectionChangedNotifications() {
+                    protected boolean wantOnSelectionChangedNotifications() {
                         return true;
+                    }
+                    
+                    @Override
+                    protected void onSelectionChanged(Object newSelection) {
+                        super.onSelectionChanged();
+                        enableButtons();
                     }
                 });
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
-        } else if(folderWorkflowPlugin.templates.get(category).size() == 1) {
+        } else if(prototypes.size() == 1) {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
-            prototype = folderWorkflowPlugin.templates.get(category).iterator().next();
+            prototype = prototypes.iterator().next();
         } else {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
             prototype = null;
         }
+
+        enableButtons();
+    }
+
+    private void enableButtons() {
+        AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
+        WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
+        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null && name != null && !"".equals(name));
     }
 
     @Override
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow)getWorkflow();
         if (workflow != null) {
-            FolderWorkflowPlugin folderWorkflowPlugin = (FolderWorkflowPlugin) getPlugin();
-            if (!folderWorkflowPlugin.templates.get(category).contains(prototype)) {
+            AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
+            if (!folderWorkflowPlugin.templates.get(category).getPrototypes().contains(prototype)) {
                 log.error("unknown folder type " + prototype);
                 return;
             }
-            Map arguments = new TreeMap<String,String>();
+            Map<String, String> arguments = new TreeMap<String,String>();
             arguments.put("name", name);
             String path = (docbase.startsWith("/") ? docbase.substring(1) : docbase);
             arguments.put("docbase", ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path).getUUID());
@@ -105,8 +122,8 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
             arguments.put("value", value);
             path = workflow.add(category, prototype, arguments);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-            FolderWorkflowPlugin plugin = (FolderWorkflowPlugin)getPlugin();
-            plugin.select(nodeModel);
+
+            folderWorkflowPlugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");
         }

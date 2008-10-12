@@ -15,15 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import javax.jcr.RepositoryException;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -37,9 +35,7 @@ import org.slf4j.LoggerFactory;
 public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final Logger log = LoggerFactory.getLogger(RemodelWorkflowPlugin.class);
-
     private static final long serialVersionUID = 1L;
 
     public RemodelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
@@ -47,31 +43,27 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
 
         IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
         final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
+        DialogAction action;
+        WorkflowActionComponent choice;
 
-        WorkflowsModel model = (WorkflowsModel) getModel();
-        String ns = "types";
-        try {
-            ns = model.getNodeModel().getNode().getName() + " types";
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
+        Map<String, WorkflowActionComponent> actions = new TreeMap<String, WorkflowActionComponent>();
 
-        add(new Label("title", ns));
-        add(new DialogLink("remodelRequest-dialog", new Model("Update all content"), new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
+        action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new RemodelDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
-        }, getDialogService()));
+        }, getDialogService());
+        choice = new WorkflowActionComponent("remodelRequest-dialog", "Update all content", (String)null, action);
+        actions.put(choice.getId(), choice);
 
-        add(new DialogLink("createTypeRequest-dialog", new Model("Create new type"), new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
-
+        action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new CreateTypeDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
+        }, getDialogService());
+        choice = new WorkflowActionComponent("createTypeRequest-dialog", "Create new type", (String)null, action);
+        actions.put(choice.getId(), choice);
 
-        }, getDialogService()));
+        add(new WorkflowActionComponentDropDownChoice("actions", actions));
     }
 }

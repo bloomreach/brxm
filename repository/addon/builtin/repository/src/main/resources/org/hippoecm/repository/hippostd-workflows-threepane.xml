@@ -32,8 +32,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <!-- sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value -->
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewRemodelWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a type</sv:value>
@@ -55,8 +54,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <!-- sv:value>org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value -->
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewNamespaceWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NamespaceWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a namespace</sv:value>
@@ -107,7 +105,7 @@
       <sv:value>Workflow on gallery folders</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewFolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -129,7 +127,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewOrderableFolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.OrderableFolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on folders</sv:value>
@@ -154,7 +152,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewFixedFolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FixedFolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on fixed directories</sv:value>
@@ -179,7 +177,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewFolderWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.FolderWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Workflow on directories</sv:value>
