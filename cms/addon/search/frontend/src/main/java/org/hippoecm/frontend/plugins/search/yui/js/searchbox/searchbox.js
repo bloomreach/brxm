@@ -35,7 +35,7 @@ YAHOO.extend(YAHOO.hippo.SearchBox, YAHOO.hippo.HippoAutoComplete, {
     },
     
     doBeforeLoadData : function(sQuery, oResponse, oPayload) {
-        this.setFooter(oResponse.meta.totalHits + " hits");
+        this.setFooter(oResponse.meta.totalHits + " hit" + (oResponse.meta.totalHits > 1 ? 's' : ''));
         return true;
     }
 
