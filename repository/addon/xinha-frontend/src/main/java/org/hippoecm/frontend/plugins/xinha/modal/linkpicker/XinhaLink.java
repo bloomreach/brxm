@@ -16,12 +16,13 @@
 package org.hippoecm.frontend.plugins.xinha.modal.linkpicker;
 
 public enum XinhaLink {
-    TYPE ("type"),
-    HREF ("href"),
-    TARGET ("target");
+    HREF ("f_href"),
+    TITLE ("f_title"),
+    TARGET ("f_target"),
+    OTHER_TARGET ("f_other_target");
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id:$";
+    private final static String SVN_ID = "$Id$";
 
     private String value;
     XinhaLink(String val) {

@@ -500,7 +500,7 @@
             <sv:value>underline</sv:value>
             <sv:value>insertorderedlist</sv:value>
             <sv:value>insertunorderedlist</sv:value>
-            <sv:value>imagepicker</sv:value>
+            <sv:value>insertimage</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>hippo-lite</sv:value>
@@ -511,8 +511,8 @@
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
             <sv:value>AutoResize</sv:value>
-            <sv:value>CustomLinker</sv:value>
-            <sv:value>ImagePicker</sv:value>
+            <sv:value>CreateLink</sv:value>
+            <sv:value>InsertImage</sv:value>
             <sv:value>FullscreenCompatible</sv:value>
           </sv:property>
           <sv:property sv:name="AutoSave" sv:type="String">

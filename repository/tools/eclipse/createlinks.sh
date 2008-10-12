@@ -17,8 +17,8 @@ ln -s -v ../../../../../addon/xinha/src/main/webapp xinha
 cd ../../../../../addon/xinha/src/main/webapp/xinha/plugins
 ln -s -v ../../../../../webResources/xinha/plugins/AutoSave AutoSave
 ln -s -v ../../../../../webResources/xinha/plugins/AutoResize AutoResize
-ln -s -v ../../../../../webResources/xinha/plugins/CustomLinker CustomLinker
-ln -s -v ../../../../../webResources/xinha/plugins/ImagePicker ImagePicker
+ln -s -v ../../../../../webResources/xinha/plugins/CreateLink CreateLink
+ln -s -v ../../../../../webResources/xinha/plugins/InsertImage InsertImage
 ln -s -v ../../../../../webResources/xinha/plugins/FullscreenCompatible FullscreenCompatible
 
 cd ../skins

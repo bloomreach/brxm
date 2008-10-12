@@ -119,7 +119,7 @@ public class XinhaPlugin extends RenderPlugin {
                     if (item != null) {
                         boolean openModal = item.getResourceDefinitions().size() > 1;
                         String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.ImagePicker.instance.insertImage('" + item.getUrl() + "', " + openModal
+                                + ".plugins.InsertImage.instance.insertImage({f_url: '" + item.getUrl() + "'}, " + openModal
                                 + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     }
@@ -139,8 +139,11 @@ public class XinhaPlugin extends RenderPlugin {
                         String uuid = node.getUUID();
                         String link = linkPickerBehavior.getInternalLinkDAO().create(name, uuid);
                         boolean openModal = false;
+                        //TODO: refactor XinhaContenPanel + dao since the javascript object shouldn't be constructed here
+                        //but probably in the dao.
+                        //new Xinha CreateLink default methods require the f_target parameter
                         String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.CustomLinker.instance.createLink('" + link + "', " + openModal + ");";
+                                + ".plugins.CreateLink.instance.createLink({f_href: '" + link + "', f_target: ''}, " + openModal + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     } catch (RepositoryException e) {
                         log.error("Failed to create internal link", e);
@@ -210,12 +213,12 @@ public class XinhaPlugin extends RenderPlugin {
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
             configuration.addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
-            if (configuration.getPluginConfiguration("ImagePicker") != null) {
-                configuration.getPluginConfiguration("ImagePicker").addProperty("callbackUrl",
+            if (configuration.getPluginConfiguration("InsertImage") != null) {
+                configuration.getPluginConfiguration("InsertImage").addProperty("callbackUrl",
                         imagePickerBehavior.getCallbackUrl().toString());
             }
-            if (configuration.getPluginConfiguration("CustomLinker") != null) {
-                configuration.getPluginConfiguration("CustomLinker").addProperty("callbackUrl",
+            if (configuration.getPluginConfiguration("CreateLink") != null) {
+                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
                         linkPickerBehavior.getCallbackUrl().toString());
             }
 
