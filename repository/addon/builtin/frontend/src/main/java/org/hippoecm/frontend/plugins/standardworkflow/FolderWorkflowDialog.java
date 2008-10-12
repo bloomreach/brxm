@@ -60,6 +60,9 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                 enableButtons();
             }
         });
+        
+        Label typelabel = new Label("typelabel","Document Type");
+        add(typelabel);
 
         Set<String> prototypes = folderWorkflowPlugin.templates.get(category).getPrototypes();
         if (prototypes.size() > 1) {
@@ -98,6 +101,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             Component notypes;
             add(notypes = new EmptyPanel("notypes"));
             notypes.setVisible(false);
+            typelabel.setVisible(false);
         } else {
             // if the folderWorkflowPlugin.templates.get(category).size() = 0 you cannot add this
             // category currently. 
@@ -108,6 +112,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             add(new Label("notypes", "There are no types available for : [" + category
                     + "] First create document types please."));
             text.setVisible(false);
+            typelabel.setVisible(false);
         }
 
         enableButtons();
