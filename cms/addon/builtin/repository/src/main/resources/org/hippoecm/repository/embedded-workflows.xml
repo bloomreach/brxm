@@ -35,8 +35,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <!-- sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value -->
-      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NewRemodelWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.RemodelWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a type</sv:value>
@@ -58,8 +57,7 @@
       <sv:value>org.hippoecm.repository.standardworkflow.TemplateEditorWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="frontend:renderer" sv:type="String">
-      <!-- sv:value>org.hippoecm.repository.standardworkflow.NamespaceWorkflowPlugin</sv:value -->
-      <sv:value>org.hippoecm.repository.standardworkflow.NewNamespaceWorkflowPlugin</sv:value>
+      <sv:value>org.hippoecm.repository.standardworkflow.NamespaceWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Template engine workflow to create a namespace</sv:value>

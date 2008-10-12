@@ -65,12 +65,12 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPlugin {
+public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    transient Logger log = LoggerFactory.getLogger(NewAbstractFolderWorkflowPlugin.class);
+    transient Logger log = LoggerFactory.getLogger(AbstractFolderWorkflowPlugin.class);
 
     protected static final String WORKFLOW_ACTION_LINK_ID = "workflow-action-dialog-link";
     protected static final String DIALOG_LINKS_COMPONENT_ID = "items";
@@ -80,7 +80,7 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
 
     private Label folderName;
 
-    public NewAbstractFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public AbstractFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         templates = new LinkedHashMap<String, FolderWorkflowActionComponent>();
         add(folderName = new Label("foldername"));
@@ -127,13 +127,13 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        log = LoggerFactory.getLogger(NewAbstractFolderWorkflowPlugin.class);
+        log = LoggerFactory.getLogger(AbstractFolderWorkflowPlugin.class);
     }
 
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        WorkflowsModel model = (WorkflowsModel) NewAbstractFolderWorkflowPlugin.this.getModel();
+        WorkflowsModel model = (WorkflowsModel) AbstractFolderWorkflowPlugin.this.getModel();
         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
         try {
             if (model.getNodeModel() != null) {
@@ -259,9 +259,9 @@ public abstract class NewAbstractFolderWorkflowPlugin extends AbstractWorkflowPl
 
             public AbstractDialog createDialog(IDialogService dialogService) {
                 if (category.contains("New Smart Folder")) // FIXME very bad check on name
-                    return new NewFolderWorkflowExtendedDialog(NewAbstractFolderWorkflowPlugin.this, dialogService, category);
+                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, category);
                 else
-                    return new NewFolderWorkflowDialog(NewAbstractFolderWorkflowPlugin.this, dialogService, category);
+                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, category);
             }
         }, getDialogService());
         

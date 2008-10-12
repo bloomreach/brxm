@@ -18,8 +18,10 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -44,23 +46,25 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private String prototype;
     private String name;
 
-    public FolderWorkflowDialog(FolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow, String category) {
+    public FolderWorkflowDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow,
+            String category) {
         super(folderWorkflowPlugin, dialogWindow, "Add " + category);
         this.category = category;
 
-        WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
-        if (model.getNodeModel().getNode() == null) {
-            ok.setEnabled(false);
-        } else {
-            ok.setEnabled(true);
-        }
-
         TextFieldWidget text;
-        add(text = new TextFieldWidget("name", new PropertyModel(this, "name")));
+        add(text = new TextFieldWidget("name", new PropertyModel(this, "name")) {
+            private static final long serialVersionUID = 1L;
 
-        if (folderWorkflowPlugin.templates.get(category).size() > 1) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                enableButtons();
+            }
+        });
 
-            final List<String> prototypesList = new LinkedList<String>(folderWorkflowPlugin.templates.get(category));
+        Set<String> prototypes = folderWorkflowPlugin.templates.get(category).getPrototypes();
+        if (prototypes.size() > 1) {
+
+            final List<String> prototypesList = new LinkedList<String>(prototypes);
             DropDownChoice folderChoice;
             add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), prototypesList,
                     new NamespaceFriendlyChoiceRenderer(prototypesList)) {
@@ -74,7 +78,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                 @Override
                 protected void onSelectionChanged(Object newSelection) {
                     super.onSelectionChanged(newSelection);
-                    ok.setEnabled(true);
+                    enableButtons();
                 }
 
             });
@@ -82,16 +86,15 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             folderChoice.setRequired(true);
 
             // while not a prototype chosen, disable ok button
-            ok.setEnabled(false);
             Component notypes;
             add(notypes = new EmptyPanel("notypes"));
             notypes.setVisible(false);
 
-        } else if (folderWorkflowPlugin.templates.get(category).size() == 1) {
+        } else if (prototypes.size() == 1) {
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);
-            prototype = folderWorkflowPlugin.templates.get(category).iterator().next();
+            prototype = prototypes.iterator().next();
             Component notypes;
             add(notypes = new EmptyPanel("notypes"));
             notypes.setVisible(false);
@@ -104,27 +107,36 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             prototype = null;
             add(new Label("notypes", "There are no types available for : [" + category
                     + "] First create document types please."));
-            ok.setEnabled(false);
             text.setVisible(false);
         }
+
+        enableButtons();
+    }
+
+    private void enableButtons() {
+        AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
+        WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
+        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null);
     }
 
     @Override
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
         if (prototype == null) {
-            throw new WorkflowException("You need to select a type");
+            throw new IllegalArgumentException("You need to select a type");
+        }
+        if (name == null || "".equals(name)) {
+            throw new IllegalArgumentException("You need to enter a name");
         }
         if (workflow != null) {
-            FolderWorkflowPlugin folderWorkflowPlugin = (FolderWorkflowPlugin) getPlugin();
-            if (!folderWorkflowPlugin.templates.get(category).contains(prototype)) {
+            AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
+            if (!folderWorkflowPlugin.templates.get(category).getPrototypes().contains(prototype)) {
                 log.error("unknown folder type " + prototype);
                 throw new WorkflowException("Unknown folder type " + prototype);
             }
             String path = workflow.add(category, prototype, name);
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
-            FolderWorkflowPlugin plugin = (FolderWorkflowPlugin) getPlugin();
-            plugin.select(nodeModel);
+            folderWorkflowPlugin.select(nodeModel);
         } else {
             log.error("no workflow defined on model for selected node");
         }
