@@ -32,9 +32,8 @@
 <blockquote>
  <table>
   <tr>
-   <td>i.1</td>
    <td>
-     <em><img src='../images/download.png' alt='download icon'/></em> 
+     <em><img src='../images/download_icon.png' alt='download icon'/></em> 
    </td>
    <td>
     Download the
@@ -43,9 +42,8 @@
    </td>
   </tr>
   <tr>
-   <td>i.2</td>
    <td>
-     <em><img src='../images/unzip.png' alt='unzip icon'/></em> 
+     <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
    </td>
    <td>
      Unzip the downloaded file (name starts with `hippo-ecm-quickstart-bin'). 
@@ -62,9 +60,8 @@
 <blockquote>
  <table summary='First column= step number, second column= action icon, third column= action description'>
   <tr>
-   <td>r.1</td>
    <td>
-    <em><img src='../images/command.png' alt='command icon'/></em>
+    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
    </td>
    <td>
      Open a commandline interface and start the script hippo-ecm/startup.bat (on MS systems) 
@@ -79,9 +76,8 @@
    </td>
   </tr>
   <tr>
-   <td>r.2</td>
    <td>
-    <em><img src='../images/open_in_browser.png' alt='webopen icon'/></em> 
+    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
    </td>
   <td>
    Open <a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> in your (this) webbrowser.
@@ -90,19 +86,17 @@
   </td>
   </tr>
   <tr>
-   <td>i.3</td>
    <td>
-    <em><img src='../images/user.png' alt='user icon'/></em>
+    <em><img src='../images/user_icon.png' alt='user icon'/></em>
    </td>
    <td>
      Try out the Hippo CMS.
-     Use the <a href="use-hippo-ecm/index.html">CMS User Guide</a> for help.  
+     Use the <a href="user/index.html">CMS User Guide</a> for help.  
    </td>
   </tr>
   <tr>
-   <td>i.4</td>
    <td>
-    <em><img src='../images/stop.png' alt='stop icon'/></em>
+    <em><img src='../images/quit_icon.png' alt='quit icon'/></em>
    </td>
    <td>
      Stop the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.
@@ -132,7 +126,7 @@
     </td>
     <td>
      Learn more about Hippo CMS
-     in the <a href="use-hippo-ecm/index.html">CMS User Guide</a>.  
+     in the <a href="user/index.html">CMS User Guide</a>.  
     </td>
    </tr>
    <tr>

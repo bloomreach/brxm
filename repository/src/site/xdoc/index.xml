@@ -17,12 +17,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<document>
+<document xmlns:m='http://www.scholarita.nl/meta'>
   <properties>
     <title>What is Hippo CMS?</title>
   </properties>
   <body>
     <section name="What is Hippo CMS?">
+      <span class='listrank'>1</span>
       <p>
         The Hippo CMS (Content Management System) is the webbased graphical userinterface to the content in the 
         repository of the Hippo ECM. It provides an easy way to create and manage your content, i.e. to 
