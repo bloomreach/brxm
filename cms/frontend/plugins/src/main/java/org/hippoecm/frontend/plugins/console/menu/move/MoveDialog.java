@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.move;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -93,6 +94,7 @@ public class MoveDialog extends LookupDialog {
 
         MenuPlugin plugin = (MenuPlugin) pluginRef.getService();
         JcrNodeModel sourceNodeModel = (JcrNodeModel) plugin.getModel();
+        Node rootNode = sourceNodeModel.getNode().getSession().getRootNode();
         if (sourceNodeModel.getParentModel() != null) {
             String nodeName = sourceNodeModel.getNode().getName();
             String sourcePath = sourceNodeModel.getNode().getPath();
@@ -108,10 +110,10 @@ public class MoveDialog extends LookupDialog {
             UserSession wicketSession = (UserSession) getSession();
             HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
             jcrSession.move(sourcePath, targetPath);
-
-            plugin.setModel(targetNodeModel.getNodeModel());
-            plugin.flushNodeModel(targetNodeModel.getNodeModel());
-            plugin.flushNodeModel(sourceNodeModel.getParentModel());
+                      
+            // Refresh the view
+            plugin.flushNodeModel(new JcrNodeModel(rootNode));
+            plugin.setModel(new JcrNodeModel(rootNode.getNode(targetPath.substring(1))));
         }
     }
 
