@@ -37,24 +37,17 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentListingPlugin extends AbstractListingPlugin implements ITitleDecorator {
+public class DocumentListingPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
-
     private static final long serialVersionUID = 1L;
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-    }
-
-    public String getTitle() {
-        return "Document listing";
     }
 
     @Override
