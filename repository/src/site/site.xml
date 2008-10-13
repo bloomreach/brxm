@@ -55,24 +55,18 @@
     
   <body>
     
-    <links>
-      <item name="Hippo" href="http://www.hippo.nl/"/>
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
-      <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
-    </links>
-
-    <menu name="To other ECM docs">
+    <menu name="Applications">
       <item name="Hippo ECM" href="http://docs.onehippo.org"/>
       <item name="Hippo CMS" href="/index.html"/>
+      <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/hst2"/>
      <!--
-      <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/sitetoolkit2"/>
       <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/>
      -->
     </menu>
 
     <menu name="About Hippo CMS">
       <item name="What is Hippo CMS?" href="/index.html"/>
-      <item name="*Use Cases" href="/about/use_cases.html"/>
+      <item name="*Use Cases" href="/about/use-cases.html"/>
       <item name="*Features" href="/about/features.html"/>
       <item name="*Architecture" href="/about/architecture.html"/>
     </menu>
@@ -101,7 +95,7 @@
           <item name="Versioning" href="/delve_into/user/tour/versioning.html"/>
           <item name="Working with authorizations" href="/delve_into/user/tour/working_with_authorizations.html"/>
         </item>
-        <item name="CMS concepts" href="/delve_into/user/hippo-ecm-concepts/index.html" collapse="true">
+        <item name="Concepts" href="/delve_into/user/hippo-ecm-concepts/index.html" collapse="true">
           <item name="Navigating" href="/delve_into/user/hippo-ecm-concepts/navigating.html" collapse="true"/>
           <item name="Searching" href="/delve_into/user/hippo-ecm-concepts/searching.html" collapse="true"/>
           <item name="Facet Search" href="/delve_into/user/hippo-ecm-concepts/facets/facetsearch.html" collapse="true"/>
@@ -111,12 +105,26 @@
           <item name="Example" href="/delve_into/user/hippo-ecm-concepts/contentmodel/contentmodelling_example.html" collapse="true"/>
           </item>
         </item>
-        <item name="Workflow" href="/delve_into/user/workflow/index.html" collapse="true">
+        <item name="Learn" href="/delve_into/user/learn/index.html" collapse="true">
+          <item name="Create and publish documents" href="/delve_into/user/learn/create-publish/index.html" collapse="true">
+            <item name="Create a document" href="/delve_into/user/learn/create-publish/create-document.html" />
+            <item name="Publish document" href="/delve_into/user/learn/create-publish/publish-document.html" />
+            <item name="Link to a document" href="/delve_into/user/learn/create-publish/link.html" />
+            <item name="Add an image" href="/delve_into/user/learn/create-publish/add-image.html" />
+            <item name="Add a PDF" href="/delve_into/user/learn/create-publish/add-pdf.html" />
+          </item>
+          <item name="Work efficiently" href="/delve_into/user/learn/work-efficiently/index.html" collapse="true">
+            <item name="Personalize dashboard" href="/delve_into/user/learn/work-efficiently/personalize-dashboard.html" />
+            <item name="Use the todo list" href="/delve_into/user/learn/work-efficiently/todo-list.html" />
+            <item name="Find your documents" href="/delve_into/user/learn/work-efficiently/find-documents.html" />
+            <item name="Get workflow notifications" href="/delve_into/user/learn/work-efficiently/get-notifications.html" />
+          </item>
         </item>
-        <item name="Derived Data" href="/delve_into/user/derived-data.html" collapse="true">
-        </item>
-        <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true">
-        </item>
+        <!--
+        <item name="Workflow" href="/delve_into/user/workflow/index.html" collapse="true"/>
+        <item name="Derived Data" href="/delve_into/user/derived-data.html" collapse="true"/>
+        <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true"/>
+        -->
       </item>
  
       <item name="Admin Guide" href="delve_into/admin/index.html" collapse="true">
@@ -141,7 +149,7 @@
         </item>
       </item>
       
-      <item name="Implement Guide" href="/delve_into/implementation/index.html" collapse="true">
+      <item name="Build a website" href="/delve_into/implementation/index.html" collapse="true">
         <item name="Toolkits" href="/delve_into/implementation/toolkits/index.html"/>
         <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
           <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
@@ -173,7 +181,7 @@
         <item name="Packaging" href="/delve_into/extension/packaging.html"/>
       </item>
 
-      <item name="Develop Guide" href="/delve_into/development/index.html" collapse="true">
+      <item name="Hacking the core" href="/delve_into/development/index.html" collapse="true">
         <item name="Project Structure" href="/delve_into/development/project-structure.html"/>
         <item name="Building from source" href="/delve_into/development/building/index.html">
           <item name="Building with Maven" href="/delve_into/development/building/maven.html"/>

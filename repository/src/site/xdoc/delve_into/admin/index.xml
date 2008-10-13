@@ -41,10 +41,6 @@
             - Run Hippo ECM in Sun Glassfish V2
           </li>
           <li>
-            <a href="repository-bootstrap.html">Bootstrapping Hippo ECM</a>
-            - How to get your initial data in the Hippo Repository
-          </li>
-          <li>
             <a href="installing-plugins.html">Installing plugins from the Hippo Forge</a>
             - How to install plugins that are available on the Hippo Forge
           </li>

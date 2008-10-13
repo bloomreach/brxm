@@ -38,6 +38,11 @@
           <p>
             TODO
           </p>
+          <ul>
+            <li>Custom field types</li>
+            <li>Populating dropdown with values from other document(s)</li>
+            <li>...</li>
+          </ul>
         </subsection>
 
       </section>
