@@ -79,7 +79,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- Hippo ECM authorization configuration -->
     <dependency>
       <groupId>org.hippoecm</groupId>
