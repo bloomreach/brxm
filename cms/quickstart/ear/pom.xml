@@ -64,7 +64,6 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
     </dependency>
-    
 
     <!-- End applications -->
     <dependency>
@@ -233,7 +232,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- search addon -->
     <dependency>
       <groupId>org.hippoecm</groupId>
