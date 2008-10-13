@@ -125,21 +125,24 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
 
-    public LocalHippoRepository() throws RepositoryException {
+    protected LocalHippoRepository() throws RepositoryException {
         super();
         initialize();
     }
 
-    public LocalHippoRepository(String location) throws RepositoryException {
+    protected LocalHippoRepository(String location) throws RepositoryException {
         super(location);
         initialize();
     }
 
     public static HippoRepository create(String location) throws RepositoryException {
+        HippoRepository localHippoRepository;
         if(location == null)
-            return new LocalHippoRepository();
+            localHippoRepository = new LocalHippoRepository();
         else
-            return new LocalHippoRepository(location);
+            localHippoRepository = new LocalHippoRepository(location);
+        VMHippoRepository.register(location, localHippoRepository);
+        return localHippoRepository;
     }
 
     @Override

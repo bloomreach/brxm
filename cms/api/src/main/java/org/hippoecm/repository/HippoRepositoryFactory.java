@@ -157,6 +157,29 @@ public class HippoRepositoryFactory {
             }
         }
  
+        if(location.startsWith("vm:")) {
+            try {
+                defaultLocation = location;
+                return (HippoRepository) Class.forName("org.hippoecm.repository.VMHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
+            } catch(ClassNotFoundException ex) {
+                throw new RepositoryException(ex);
+            } catch(NoSuchMethodException ex) {
+                throw new RepositoryException(ex);
+            } catch(IllegalAccessException ex) {
+                throw new RepositoryException(ex);
+            } catch(InvocationTargetException ex) {
+                if (ex.getCause() instanceof RepositoryException) {
+                    throw (RepositoryException) ex.getCause();
+                } else if (ex.getCause() instanceof IllegalArgumentException) {
+                    throw new RepositoryException("Invalid data: " + ex.getCause());
+                } else {
+                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                    ex.printStackTrace(System.err);
+                    throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                }
+            }
+        }
+
         // embedded/local with location
         try {
             repository = (HippoRepository) Class.forName("org.hippoecm.repository.LocalHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
