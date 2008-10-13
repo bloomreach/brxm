@@ -180,8 +180,8 @@ mvn archetype:generate \
         </p>
 
         <p>
-          <a href="../../images/tutorials/getting-started-cms-signin.png"><img alt="screenshot" src="../../images/tutorials/getting-started-cms-signin-thumbnail.jpg" width="400" height="310" /></a>
-          <a href="../../images/tutorials/getting-started-site.png"><img alt="screenshot" src="../../images/tutorials/getting-started-site-thumbnail.jpg" width="400" height="310" /></a>
+          <a href="../images/tutorials/getting-started-cms-signin.png"><img alt="screenshot" src="../images/tutorials/getting-started-cms-signin-thumbnail.jpg" width="400" height="310" /></a>
+          <a href="../images/tutorials/getting-started-site.png"><img alt="screenshot" src="../images/tutorials/getting-started-site-thumbnail.jpg" width="400" height="310" /></a>
         </p>
 
         <p>

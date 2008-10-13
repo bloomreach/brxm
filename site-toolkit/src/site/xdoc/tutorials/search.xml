@@ -19,14 +19,33 @@
 -->
 <document>
     <properties>
-        <title>What is Hippo Site Toolkit 2?</title>
+        <title>Search</title>
     </properties>
     <body>
-        <section name="What is Hippo Site Toolkit 2?">
-        
+        <section name="Search">
+
             <p>
+                TODO
             </p>
-        
+            
+            <subsection name="Simple search">
+                <p>
+                    TODO
+                </p>
+            </subsection>
+            
+            <subsection name="Advanced search">
+                <p>
+                    TODO
+                </p>
+            </subsection>
+
         </section>
+        <section name="Next Step">
+            <p>
+                TODO
+            </p>
+        </section>
+
     </body>
 </document>

@@ -40,14 +40,14 @@
                     A pop-up window will appear.
                 </p>
                 <p>
-                    <a href="../../images/tutorials/hello-world-new-document.png"><img alt="screenshot" src="../../images/tutorials/hello-world-new-document-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../images/tutorials/hello-world-new-document.png"><img alt="screenshot" src="../images/tutorials/hello-world-new-document-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Give your new document a name, e.g. "Hello World". Click on 'OK'. Your
                     new document will be opened in the document editor.
                 </p>
                 <p>
-                    <a href="../../images/tutorials/hello-world-document-editor.png"><img alt="screenshot" src="../../images/tutorials/hello-world-document-editor-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../images/tutorials/hello-world-document-editor.png"><img alt="screenshot" src="../images/tutorials/hello-world-document-editor-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Your document is of the 'textpage' type, which has a number
@@ -68,7 +68,7 @@
                     the page.
                 </p>
                 <p>
-                    <a href="../../images/tutorials/hello-world-site.png"><img alt="screenshot" src="../../images/tutorials/hello-world-site-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../images/tutorials/hello-world-site.png"><img alt="screenshot" src="../images/tutorials/hello-world-site-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     That's all! No need to write any code!

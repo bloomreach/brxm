@@ -19,7 +19,7 @@
   <skin>
     <groupId>org.hippoecm</groupId>
     <artifactId>hippo-ecm-maven-skin</artifactId>
-    <version>1.01.00</version>
+    <version>1.01.01-SNAPSHOT</version>
   </skin>
 
   <publishDate position="navigation-bottom" format="MM-dd-yy"/>
@@ -34,19 +34,19 @@
 
   <body>
 
-    <links>
-      <item name="Hippo" href="http://www.hippo.nl/"/>
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
-      <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
-    </links>
+    <menu name="Applications">
+      <item name="Hippo ECM" href="http://docs.onehippo.org"/>
+      <item name="Hippo CMS" href="http://docs.onehippo.org/hippo-ecm"/>
+      <item name="Hippo Site Toolkit" href="/"/>
+    </menu>
 
     <menu name="About Hippo Site Toolkit 2">
-      <item name="What is HST2?" href="/about-hst2/what-is-hst2.html"/>
+      <item name="What is HST2?" href="/index.html"/>
     </menu>
 
     <menu name="Documentation">
 
-      <item name="Quick Start" href="/quickstart/quickstart.html"/>
+      <item name="Quick Start" href="/quickstart/index.html"/>
       <item name="Tutorials" href="/tutorials/index.html" collapse="true">
         <item name="Start a project" href="/tutorials/start-project.html"/>
         <item name="Hello World" href="/tutorials/hello-world.html"/>
