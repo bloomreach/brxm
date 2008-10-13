@@ -42,7 +42,7 @@
 - hippostd:foldertype (string) multiple copy
 + * = hippostd:folder multiple
 
-[hippostd:fixeddirectory] > hippostd:directory
+[hippostd:fixeddirectory] > hippostd:folder orderable
 
 [hippostd:templates] > nt:base
 + *
