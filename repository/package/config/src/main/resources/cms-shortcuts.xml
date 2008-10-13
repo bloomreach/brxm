@@ -41,7 +41,7 @@
       <sv:value>/content</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
-      <sv:value>internal</sv:value>
+      <sv:value>shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
       <sv:value>new-document-label</sv:value>
@@ -74,7 +74,7 @@
       <sv:value>/content/gallery</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
-      <sv:value>internal</sv:value>
+      <sv:value>shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
       <sv:value>add-image-label</sv:value>
@@ -101,7 +101,7 @@
       <sv:value>/content/assets</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.workflow" sv:type="String">
-      <sv:value>internal</sv:value>
+      <sv:value>shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="gallery.text" sv:type="String">
       <sv:value>add-file-label</sv:value>

@@ -16,61 +16,26 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          xmlns:hippo="http://www.hippoecm.org/nt/1.0"
-         xmlns:rep="internal"
-         sv:name="internal">
+         sv:name="shortcuts">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:workflowcategory</sv:value>
   </sv:property>
-  <sv:node sv:name="template-editor-namespaces">
+  <!-- FIXME: this entry should be part of the gallery add on this requires a merging import -->
+  <sv:node sv:name="gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespacefolder</sv:value>
+      <sv:value>hippostd:gallery</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>author</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+      <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Folder based workflow on namespaces folder</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="template-editor-namespace">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippo:namespace</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Folder based workflow on namespaces folder</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="root">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>rep:root</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.RemodelWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow on root folder (RepositoryWorkflow)</sv:value>
+      <sv:value>Shortcut workflow on gallery folders</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -85,11 +50,14 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>author</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow on folders</sv:value>
+      <sv:value>Shortcut workflow on folders</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -104,30 +72,14 @@
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:roles" sv:type="String">
+      <sv:value>author</sv:value>
+    </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow on directories</sv:value>
-    </sv:property>
-    <sv:node sv:name="hippo:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="logging">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetype" sv:type="String">
-      <sv:value>hippolog:folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.EventLoggerImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:display" sv:type="String">
-      <sv:value>Workflow for logging</sv:value>
+      <sv:value>Shortcut workflow on directories</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:types">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

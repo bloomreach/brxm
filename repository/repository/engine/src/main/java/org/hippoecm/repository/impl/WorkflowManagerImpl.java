@@ -146,7 +146,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                 log.debug("found workflow in category " + category + " for node " +
                                           (item==null ? "<none>" : item.getPath()));
                             }
-                        return workflowNode;
+                            return workflowNode;
                         }
                     }
                 }

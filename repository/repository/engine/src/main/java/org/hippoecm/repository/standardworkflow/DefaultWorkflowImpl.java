@@ -90,7 +90,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
 
     public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow("embedded", folder);
+        Workflow workflow = getWorkflowContext().getWorkflow("internal", folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).delete(document);
         else
