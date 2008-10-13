@@ -29,6 +29,7 @@ import javax.jcr.query.RowIterator;
 
 import net.sf.json.JSONObject;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
@@ -102,9 +103,9 @@ public class SearchBehavior extends AutoCompleteBehavior {
                 WebResponse r = (WebResponse) requestCycle.getResponse();
 
                 // Determine encoding
-                //final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
-                //r.setCharacterEncoding(encoding);
-                //r.setContentType("text/xml; charset=" + encoding);
+                final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
+                r.setCharacterEncoding(encoding);
+                r.setContentType("application/json; charset=" + encoding);
 
                 // Make sure it is not cached by a
                 r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
