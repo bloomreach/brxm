@@ -124,8 +124,8 @@ public class FolderWorkflowTest extends TestCase {
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
         assertTrue(types.containsKey("New Folder"));
-        assertTrue(types.get("New Folder").contains("orderable folder"));
-        String path = workflow.add("New Folder", "orderable folder", "d");
+        assertTrue(types.get("New Folder").contains("Folder"));
+        String path = workflow.add("New Folder", "Folder", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
@@ -139,8 +139,8 @@ public class FolderWorkflowTest extends TestCase {
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
         assertTrue(types.containsKey("New Folder"));
-        assertTrue(types.get("New Folder").contains("simple folder"));
-        String path = workflow.add("New Folder", "simple folder", "d");
+        assertTrue(types.get("New Folder").contains("Unordered folder"));
+        String path = workflow.add("New Folder", "Unordered folder", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
