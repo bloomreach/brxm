@@ -55,7 +55,12 @@ public class DocumentsProvider extends SortableDataProvider {
             List<IModel> documents = new ArrayList<IModel>();
             NodeIterator subNodes = filter.filter(node, node.getNodes());
             while (subNodes.hasNext()) {
-                documents.add(new JcrNodeModel(subNodes.nextNode()));
+                Node subNode = subNodes.nextNode();
+                //Skip deleted documents
+                if (subNode.isNodeType(HippoNodeType.NT_HANDLE) && !subNode.hasNode(subNode.getName())) {
+                    continue;
+                }
+                documents.add(new JcrNodeModel(subNode));
             }
             entries = Collections.unmodifiableList(documents);
         } catch (RepositoryException e) {
