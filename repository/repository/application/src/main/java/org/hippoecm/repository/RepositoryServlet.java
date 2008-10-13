@@ -116,7 +116,7 @@ public class RepositoryServlet extends HttpServlet {
 
         // check for absolute path
         if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
-            // try to parse the relativee path
+            // try to parse the relative path
             storageLocation = config.getServletContext().getRealPath(storageLocation);
             if (storageLocation == null) {
                 throw new ServletException("Cannot determin repository location "
@@ -151,7 +151,6 @@ public class RepositoryServlet extends HttpServlet {
             RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
             rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-
             
             // Get or start registry and bind the remote repository
             try {
