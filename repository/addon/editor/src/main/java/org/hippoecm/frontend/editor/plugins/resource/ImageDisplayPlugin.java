@@ -75,7 +75,9 @@ public class ImageDisplayPlugin extends RenderPlugin implements IJcrNodeModelLis
 
     @Override
     public void onDetach() {
-        resource.detach();
+        if (resource != null) {
+            resource.detach();
+        }
         super.onDetach();
     }
 
