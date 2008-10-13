@@ -24,14 +24,19 @@
 
 <body>
 <section name="Quickstart Guide">
+ <span class='shortdesc'>Quickly install and use standard Hippo CMS with example content.</span>
 
+ <p>
   This quickstart works on all modern, standard computer systems.
+ </p>
 
-<subsection name='Easy install standard Hippo CMS with example content'>
+<subsection name='Install standard Hippo CMS with example content'>
+
 
 <blockquote>
  <table>
   <tr>
+   <td>Download</td>
    <td>
      <em><img src='../images/download_icon.png' alt='download icon'/></em> 
    </td>
@@ -42,11 +47,12 @@
    </td>
   </tr>
   <tr>
+   <td>Unzip</td>
    <td>
      <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
    </td>
    <td>
-     Unzip the downloaded file (name starts with `hippo-ecm-quickstart-bin'). 
+     Unzip the downloaded file (name starts with `<span class='expire_event'>release after M6.4 (13536)</span>hippo-ecm-quickstart-bin'). 
      A hippo-ecm folder is created.
    </td>
   </tr>
@@ -55,11 +61,12 @@
 
 </subsection>
 
-<subsection name='Easy running of standard Hippo CMS with example content'>
+<subsection name='Using standard Hippo CMS with example content'>
 
 <blockquote>
  <table summary='First column= step number, second column= action icon, third column= action description'>
   <tr>
+   <td>Startup</td>
    <td>
     <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
    </td>
@@ -76,16 +83,20 @@
    </td>
   </tr>
   <tr>
+   <td>Web Browser</td>
    <td>
     <em><img src='../images/web_icon.png' alt='web icon'/></em> 
    </td>
   <td>
-   Open <a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> in your (this) webbrowser.
+   Open <span class='index' id='localhost'/><span class='index' id='number_8080'/><span class='index' id='URI of Hippo CMS'/><a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> 
+   in your (this) webbrowser.
    A window `Sign In, Hippo CMS 7' will open.
    As username use `admin' and as password use also `admin'.
+  <span class='index'><a name='localhost'/><a name='nr_8080'/><a name='URI of Hippo CMS'/></span>
   </td>
   </tr>
   <tr>
+   <td>Tryout</td>
    <td>
     <em><img src='../images/user_icon.png' alt='user icon'/></em>
    </td>
@@ -95,13 +106,14 @@
    </td>
   </tr>
   <tr>
+   <td>Quit</td>
    <td>
     <em><img src='../images/quit_icon.png' alt='quit icon'/></em>
    </td>
    <td>
-     Stop the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.
+     Quit the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.
      The text 
-       <samp>INFO: Shutdown hook executing</samp> indicates Hippo CMS is stopping.
+       <samp>INFO: Shutdown hook executing</samp> indicates Hippo CMS is shutting down.
    </td>
   </tr>
  </table>
@@ -122,7 +134,7 @@
    <tr>
     <td>User</td>
     <td>
-     <em><img src='../images/user.png' alt='user icon'/></em>
+     <em><img src='../images/user_icon.png' alt='user icon'/></em>
     </td>
     <td>
      Learn more about Hippo CMS
@@ -132,9 +144,9 @@
    <tr>
     <td>Admin</td>  
     <td>
-     <em><img src='../images/admin.png' alt='admin icon'/></em>
+     <em><img src='../images/admin_icon.png' alt='admin icon'/></em>
     </td>
-    <td>An installed quickstart package may be addapted for
+    <td>An installed quickstart package may be adapted for
      production, see the <a href="admin/index.html">CMS Admin Guide</a>.  
     </td>
    </tr>
