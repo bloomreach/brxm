@@ -27,7 +27,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.list.comparators.StateComparator;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -86,11 +85,6 @@ public class DocumentListingPlugin extends AbstractListingPlugin implements ITit
             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, int rowsPerPage,
             boolean triState) {
         return new DraggebleListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
-    }
-
-    @Override
-    protected ISortableDataProvider getDataProvider() {
-        return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
     class DraggebleListDataTable extends ListDataTable {

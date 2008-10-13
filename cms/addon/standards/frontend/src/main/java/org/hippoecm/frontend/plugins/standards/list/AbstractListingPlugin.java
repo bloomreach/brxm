@@ -26,6 +26,7 @@ import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.service.IJcrService;
@@ -78,7 +79,9 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
         return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
     }
     
-    protected abstract ISortableDataProvider getDataProvider();
+    protected ISortableDataProvider getDataProvider() {
+        return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()), getTableDefinition().getComparators());
+    }
 
     protected abstract TableDefinition getTableDefinition();
 

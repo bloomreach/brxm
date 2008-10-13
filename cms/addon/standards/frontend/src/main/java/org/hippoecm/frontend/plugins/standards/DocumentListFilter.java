@@ -13,9 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.tree;
+package org.hippoecm.frontend.plugins.standards;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -25,20 +24,22 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class FolderTreeConfig implements IClusterable {
+public class DocumentListFilter implements IClusterable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    
+    private final static String SVN_ID = "$Id$";   
     private static final long serialVersionUID = 1L;
+    static final Logger log = LoggerFactory.getLogger(DocumentListFilter.class);
     
     String currentState = "";
 
-    private static class FilterDefinition implements Serializable {
+    private static class FilterDefinition implements IClusterable {
+        private static final long serialVersionUID = 1L;
+        
         String state;
         String path;
         String parent;
@@ -79,7 +80,7 @@ class FolderTreeConfig implements IClusterable {
 
     Vector<FilterDefinition> filters;
 
-    public FolderTreeConfig(IPluginConfig config) {
+    public DocumentListFilter(IPluginConfig config) {
         filters = new Vector<FilterDefinition>();
 
         for (IPluginConfig filter : config.getPluginConfig("filters").getPluginConfigSet()) {
@@ -92,15 +93,15 @@ class FolderTreeConfig implements IClusterable {
                                             filter.getString("name", "")));
         }
 
-        if(FolderTreePlugin.log.isDebugEnabled()) {
-            FolderTreePlugin.log.debug("Filter definitions are:");
+        if(log.isDebugEnabled()) {
+            log.debug("Filter definitions are:");
             for(FilterDefinition def : filters) {
-                FolderTreePlugin.log.debug("  ("+def.state+","+def.path+","+def.parent+","+def.child+","+def.targetState+","+def.targetDisplay+","+def.targetName+")");
+                log.debug("  ("+def.state+","+def.path+","+def.parent+","+def.child+","+def.targetState+","+def.targetDisplay+","+def.targetName+")");
             }
         }
     }
 
-    public FolderTreeConfig(FolderTreeConfig parent, String state) {
+    public DocumentListFilter(DocumentListFilter parent, String state) {
         filters = parent.filters;
         currentState = state;
     }
@@ -176,7 +177,7 @@ class FolderTreeConfig implements IClusterable {
 
     public String getDisplayName(Node node) throws RepositoryException {
         String displayName = ((HippoNode)node).getDisplayName();
-        if (node == null) {
+        if (displayName == null) {
             displayName = node.getName();
         }
         for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {

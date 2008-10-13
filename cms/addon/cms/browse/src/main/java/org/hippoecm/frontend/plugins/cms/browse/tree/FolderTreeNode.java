@@ -28,6 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
@@ -41,9 +42,9 @@ public class FolderTreeNode extends AbstractTreeNode {
     static final Logger log = LoggerFactory.getLogger(FolderTreeNode.class);
 
     private FolderTreeNode parent;
-    private FolderTreeConfig config;
+    private DocumentListFilter config;
 
-    public FolderTreeNode(JcrNodeModel model, FolderTreeConfig config) {
+    public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
         super(model);
         this.parent = null;
         this.config = config;

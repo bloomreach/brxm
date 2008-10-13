@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
@@ -54,7 +55,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
     private AjaxLink up;
     private AjaxLink down;
 
-    public ReorderPanel(String id, JcrNodeModel model) {
+    public ReorderPanel(String id, JcrNodeModel model, DocumentListFilter filter) {
         super(id);
         setOutputMarkupId(true);
 
@@ -99,7 +100,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
         columns.add(column);
 
         tableDefinition = new TableDefinition(columns, false);
-        DocumentsProvider documents = new DocumentsProvider(model, new HashMap<String, Comparator<IModel>>());
+        DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<IModel>>());
         dataProvider = new ReorderDataProvider(documents);
         pagesize = dataProvider.size() > 0 ? dataProvider.size() : 1;
         add(dataTable = new ListDataTable("table", tableDefinition, dataProvider, this, pagesize, false));

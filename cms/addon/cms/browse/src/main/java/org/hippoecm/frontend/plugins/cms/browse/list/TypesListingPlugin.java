@@ -19,15 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
-import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
@@ -75,11 +72,6 @@ public class TypesListingPlugin extends AbstractListingPlugin implements ITitleD
         columns.add(column);
         
         return new TableDefinition(columns);
-    }
-
-    @Override
-    protected ISortableDataProvider getDataProvider() {
-        return new DocumentsProvider((JcrNodeModel) getModel(), getTableDefinition().getComparators());
     }
 
 }

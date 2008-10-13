@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
         jcrServiceRef = jcrService;
         
         JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();        
-        panel = new ReorderPanel("reorder-panel", folderModel); 
+        panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(plugin.getPluginConfig())); 
         add(panel);
         String name;
         try {
