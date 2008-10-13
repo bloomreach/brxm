@@ -37,7 +37,6 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
 
     public DialogWindow(String id) {
         super(id);
-        setCookieName(id);
         setPageCreator(this);
         dialogBehaviors = new ArrayList<IBehavior>();
     }
@@ -48,7 +47,7 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
 
     public void show(Page aPage) {
         this.page = aPage;
-
+        setCookieName(aPage.getClass().getName());
         if (page instanceof ITitleDecorator) {
             setTitle(((ITitleDecorator) page).getTitle());
         }
