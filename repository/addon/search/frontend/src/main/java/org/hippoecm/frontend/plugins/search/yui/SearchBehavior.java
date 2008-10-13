@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.jcr.query.QueryManager;
@@ -50,12 +49,12 @@ import org.slf4j.LoggerFactory;
 
 public class SearchBehavior extends AutoCompleteBehavior {
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(SearchBehavior.class);
-    
+
     private final IBrowseService<IModel> browseService;
     private final SearchBuilder searchBuilder;
-    
+
     public SearchBehavior(AutoCompleteSettings settings, IBrowseService<IModel> browse, String[] searchPaths) {
         super(settings);
         this.browseService = browse;
@@ -71,9 +70,9 @@ public class SearchBehavior extends AutoCompleteBehavior {
     @Override
     protected void respond(AjaxRequestTarget ajaxTarget) {
         final RequestCycle requestCycle = RequestCycle.get();
-        
+
         String browse = requestCycle.getRequest().getParameter("browse");
-        if(browse != null && browse.length() > 0) {
+        if (browse != null && browse.length() > 0) {
             if (browseService != null) {
                 browseService.browse(new JcrNodeModel(browse));
             } else {
@@ -84,7 +83,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
         final String callbackMethod = requestCycle.getRequest().getParameter("callback");
         final String searchParam = requestCycle.getRequest().getParameter("query");
-        
+
         SearchResult sr;
         try {
             sr = searchBuilder.search(searchParam);
@@ -92,11 +91,11 @@ public class SearchBehavior extends AutoCompleteBehavior {
             log.error("An error occured during search", e);
             return;
         }
-        
+
         JSONObject JSONRoot = new JSONObject();
         JSONObject results = JSONObject.fromObject(sr);
         JSONRoot.element("response", results);
-            
+
         final String responseStr = callbackMethod + "(" + JSONRoot.toString() + ");";
         IRequestTarget requestTarget = new IRequestTarget() {
             public void respond(RequestCycle requestCycle) {
@@ -122,7 +121,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
         requestCycle.setRequestTarget(requestTarget);
 
     }
-    
+
     //I guess this should be loaded as a service instead of being an internal class
     private static class SearchBuilder implements IClusterable {
         private static final long serialVersionUID = 1L;
@@ -130,12 +129,12 @@ public class SearchBehavior extends AutoCompleteBehavior {
         private static final String HARDDOCUMENT_QUERY = "//element(*, hippo:harddocument)";
         private static final String EXCLUDE_FROZEN_NODE = "not(@jcr:primaryType='nt:frozenNode')";
         private static final String EXCERPT = "/rep:excerpt(.)";
-        
+
         private static ResultItem[] EMPTY_RESULTS = new ResultItem[0];
         private final String defaultWhere;
-        
+
         public SearchBuilder(String[] searchPaths) {
-            if(searchPaths == null || searchPaths.length == 0) {
+            if (searchPaths == null || searchPaths.length == 0) {
                 log.error("No search paths configured.");
                 throw new IllegalArgumentException("No search paths configured.");
             }
@@ -145,16 +144,16 @@ public class SearchBehavior extends AutoCompleteBehavior {
             sb.append(HARDDOCUMENT_QUERY).append('[').append(EXCLUDE_FROZEN_NODE).append(" and (");
 
             boolean addOr = false;
-            for(String path : searchPaths) {
-                if(!path.startsWith("/")) {
+            for (String path : searchPaths) {
+                if (!path.startsWith("/")) {
                     throw new IllegalArgumentException("Search path should be absolute: " + path);
                 }
                 String uuid = null;
                 try {
-                    content = (Node)session.getItem(path);
+                    content = (Node) session.getItem(path);
                     uuid = content.getUUID();
-                    if(uuid!=null) {
-                        if(addOr) {
+                    if (uuid != null) {
+                        if (addOr) {
                             sb.append(" or ");
                         } else {
                             addOr = true;
@@ -169,25 +168,25 @@ public class SearchBehavior extends AutoCompleteBehavior {
             sb.append(')');
             defaultWhere = sb.toString();
         }
-        
+
         private ResultItem[] doSearch(String value) {
             value = value.trim();
-            if(value.equals("")) {
+            if (value.equals("")) {
                 return EMPTY_RESULTS;
             }
             StringBuilder query = new StringBuilder(defaultWhere);
-            
+
             StringTokenizer st = new StringTokenizer(value, " ");
-            while(st.hasMoreTokens()) {
+            while (st.hasMoreTokens()) {
                 query.append(" and jcr:contains(., '").append(st.nextToken()).append("*')");
             }
             query.append(']').append(EXCERPT);
-            final String queryString =  query.toString();
+            final String queryString = query.toString();
             final String queryType = "xpath";
             QueryResult result = null;
-            
+
             System.out.println("Query is " + queryString);
-            
+
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
                 QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
@@ -197,24 +196,31 @@ public class SearchBehavior extends AutoCompleteBehavior {
             } catch (RepositoryException e) {
                 log.error("Error executing query[" + queryString + "]", e);
             }
-            
-            if(result != null) {
+
+            if (result != null) {
                 ResultItem[] results;
                 try {
                     results = new ResultItem[(int) result.getRows().getSize()];
                     int count = 0;
 
-                    for(RowIterator it =result.getRows(); it.hasNext(); ){
+                    for (RowIterator it = result.getRows(); it.hasNext();) {
                         Row row = it.nextRow();
                         try {
                             String path = row.getValue("jcr:path").getString();
-                            HippoNode node = (HippoNode)session.getItem(path);
-                        
-                            String state = node.hasProperty("hippostd:state") ? node.getProperty("hippostd:state").getString() : "";
+                            HippoNode node = (HippoNode) session.getItem(path);
+
+                            String state = node.hasProperty("hippostd:state") ? node.getProperty("hippostd:state")
+                                    .getString() : "null";
+                            //FIXME: HREPTWO-1709, this should be handled elsewhere or by i18n.
+                            if (state.equals("published")) {
+                                state = "live";
+                            } else if (state.equals("unpublished")) {
+                                state = "offline";
+                            }
                             String excerpt = row.getValue("rep:excerpt(.)").getString();
                             String displayName = ISO9075Helper.decodeLocalName(node.getDisplayName());
                             String url = node.getPath();
-                            
+
                             results[count++] = new ResultItem(displayName, url, state, excerpt);
                         } catch (ItemNotFoundException infe) {
                             log.warn("Item not found", infe);
@@ -227,17 +233,16 @@ public class SearchBehavior extends AutoCompleteBehavior {
                     log.error("Error parsing query results[" + queryString + "]", e);
                 }
             }
-                
+
             return EMPTY_RESULTS;
         }
-        
+
         public SearchResult search(String value) throws RepositoryException {
             return new SearchResult(doSearch(value));
         }
 
     }
-    
-    
+
     /**
      * Helper bean for an easy jcr-nodes2JSON translation
      */
@@ -245,7 +250,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
 
         private ResultItem[] results;
         private int totalHits;
-        
+
         public int getTotalHits() {
             return totalHits;
         }
@@ -267,21 +272,21 @@ public class SearchBehavior extends AutoCompleteBehavior {
             this.totalHits = results.length;
         }
     }
-    
+
     public static class ResultItem {
 
         String label;
         String url;
         String state;
         String excerpt;
-        
+
         public ResultItem(String label, String url, String state, String excerpt) {
             this.label = label;
-            this.url=url;
+            this.url = url;
             this.state = state;
             this.excerpt = excerpt;
         }
-        
+
         public String getLabel() {
             return label;
         }
@@ -315,5 +320,5 @@ public class SearchBehavior extends AutoCompleteBehavior {
         }
 
     }
-    
+
 }
