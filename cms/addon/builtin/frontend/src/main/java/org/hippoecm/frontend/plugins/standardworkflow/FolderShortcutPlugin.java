@@ -208,7 +208,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
             String workflowCategory = config.getString("gallery.workflow");
             Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
             try {
-                boolean isDefaultFolder = false;
                 WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
                 Workflow workflow = (folder != null ? manager.getWorkflow(workflowCategory, folder) : null);
                 if (workflow instanceof FolderWorkflow) {
@@ -221,7 +220,6 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     if (workflow instanceof FolderWorkflow) {
                         FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
                         templates = folderWorkflow.list();
-                        isDefaultFolder = true;
                     } else {
                         folder = null;
                     }
@@ -241,7 +239,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         }
                         templates = newTemplates;
                     }
-                } else if (optionSelectOnly != null && isDefaultFolder) {
+                } else if (optionSelectOnly != null) {
                     Map<String, Set<String>> newTemplates = new TreeMap<String, Set<String>>();
                     if (templates.containsKey(optionSelectOnly))
                         newTemplates.put(optionSelectOnly, templates.get(optionSelectOnly));
