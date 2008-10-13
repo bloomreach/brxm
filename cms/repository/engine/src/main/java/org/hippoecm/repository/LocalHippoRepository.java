@@ -28,8 +28,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
@@ -56,6 +54,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
+import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
@@ -99,6 +98,18 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
+    
+    /** Query for finding initialization items
+     * TODO: move this query into the repository as query node 
+     * */
+    public final static String GET_INITIALIZE_ITEMS = 
+        "SELECT * FROM hippo:initializeitem " +
+        "WHERE (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " + 
+        "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +
+        "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " + 
+        "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " + 
+        "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL) " +
+        "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     /** hippo decorated root session */
     private HippoSession rootSession;
@@ -359,7 +370,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             }
             
             refresh();
-
+            
             /* Register a listener for the initialize node.  Whenever a node
              * or property is added, refresh the tree.  Processed properties
              * are deleted, so they will not be processed more than once.
@@ -370,7 +381,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     refresh();
                 }
             };
-            obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/hippo:configuration/hippo:initialize",
+            obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
+                    + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
                     true, null, null, true);
 
         } catch (LoginException ex) {
@@ -385,257 +397,211 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         try {
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
-            
-            
+
+            // {ossibly create a query per type here. That would remove the need for all the if statements
+            Query getInitializeItems = rootSession.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
+            NodeIterator initializeItems = getInitializeItems.execute().getNodes();
             Node configurationNode = rootSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-            if (configurationNode.hasNode(HippoNodeType.INITIALIZE_PATH)) {
-                Node initializationNode = null;
+            Node initializationNode = configurationNode.getNode(HippoNodeType.INITIALIZE_PATH);
+
+            while (initializeItems.hasNext()) {
+                Node node = initializeItems.nextNode();
+                log.info("Initializing configuration from " + node.getName());
                 try {
-                    initializationNode = configurationNode.getNode(HippoNodeType.INITIALIZE_PATH);
-                } catch (PathNotFoundException ex) {
-                    assert (initializationNode != null); // cannot happen
-                }
-                log.info("Looking for custom initializations at " + initializationNode.getPath());
 
-                /* This orderes the list of nodes, according to a hippo:sequence property */
-                double highest = 0.0;
-                for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
-                    Node node = iter.nextNode();
-                    if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
-                        double value = node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
-                        if(value > highest) {
-                            highest = value;
+                    // Namespace
+                    if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found namespace configuration");
                         }
-                    }
-                }
-                SortedMap<Double,List<String>> ordered = new TreeMap<Double,List<String>>();
-                for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
-                    Node node = iter.nextNode();
-                    Double value;
-                    if (node.hasProperty(HippoNodeType.HIPPO_SEQUENCE)) {
-                        value = new Double(- node.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble());
-                    } else {
-                        value = new Double(- highest);
-                        highest += 1.0;
+                        Property p = node.getProperty(HippoNodeType.HIPPO_NAMESPACE);
+                        String namespace = p.getString();
+                        log.info("Initializing namespace: " + node.getName() + " " + namespace);
+                        // Add namespace if it doesn't exist
+                        initializeNamespace(nsreg, node.getName(), namespace);
+                        p.remove();
                     }
 
-                    List<String> siblings;
-                    if(ordered.containsKey(value)) {
-                        siblings = ordered.get(value);
-                    } else {
-                        siblings = new LinkedList<String>();
-                        ordered.put(value, siblings);
-                    }
-                    siblings.add(node.getName());
-                }
-                String previous = null;
-                for (Iterator<List<String>> iter = ordered.values().iterator(); iter.hasNext(); ) {
-                    for (String current : iter.next()) {
-                        initializationNode.orderBefore(current, previous);
-                        previous = current;
-                    }
-                }
-                initializationNode.save();
-
-                for (NodeIterator iter = initializationNode.getNodes(); iter.hasNext();) {
-                    Node node = iter.nextNode();
-                    log.info("Initializing configuration from " + node.getName());
-                    try {
-                        
-                        // Namespace
-                        if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found namespace configuration");
+                    // Nodetypes from FILE
+                    if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found nodetypes resource configuration");
+                        }
+                        Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE);
+                        String cndName = p.getString();
+                        InputStream cndStream = null;
+                        if (cndName.startsWith("file:")) {
+                            if (cndName.startsWith("file://")) {
+                                cndName = cndName.substring(6);
+                            } else if (cndName.startsWith("file:/")) {
+                                cndName = cndName.substring(5);
+                            } else if (cndName.startsWith("file:")) {
+                                cndName = "/" + cndName.substring(5);
                             }
-                            Property p = node.getProperty(HippoNodeType.HIPPO_NAMESPACE);
-                            String namespace = p.getString();
-                            log.info("Initializing namespace: " + node.getName() + " " + namespace);
-                            // Add namespace if it doesn't exist
-                            initializeNamespace(nsreg, node.getName(), namespace);
+                            File localFile = new File(cndName);
+                            try {
+                                cndStream = new BufferedInputStream(new FileInputStream(localFile));
+                            } catch (FileNotFoundException e) {
+                                log.error("Nodetypes initialization file not found: " + cndName, e);
+                            }
+                        } else {
+                            if (node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
+                                URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)
+                                        .getString());
+                                resource = new URL(resource, cndName);
+                                cndName = resource.toString();
+                                cndStream = resource.openStream();
+                            } else {
+                                cndStream = getClass().getResourceAsStream(cndName);
+                            }
+                        }
+                        if (cndStream == null) {
+                            log.error("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
+                        } else {
+                            log.info("Initializing nodetypes from: " + cndName);
+                            initializeNodetypes(workspace, cndStream, cndName);
                             p.remove();
                         }
-
-                        // Nodetypes from FILE
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
-                            if (log.isDebugEnabled()) { 
-                                log.debug("Found nodetypes resource configuration");
-                            }
-                            Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE);
-                            String cndName = p.getString();
-                            InputStream cndStream = null;
-                            if (cndName.startsWith("file:")) {
-                                if (cndName.startsWith("file://")) {
-                                    cndName = cndName.substring(6);
-                                } else if (cndName.startsWith("file:/")) {
-                                    cndName = cndName.substring(5);
-                                } else if (cndName.startsWith("file:")) {
-                                    cndName = "/" + cndName.substring(5);
-                                }
-                                File localFile = new File(cndName);
-                                try {
-                                    cndStream = new BufferedInputStream(new FileInputStream(localFile));
-                                } catch (FileNotFoundException e) {
-                                    log.error("Nodetypes initialization file not found: " + cndName, e);
-                                }
-                            } else {
-                                if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
-                                    URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                                    resource = new URL(resource, cndName);
-                                    cndName = resource.toString();
-                                    cndStream = resource.openStream();
-                                } else {
-                                    cndStream = getClass().getResourceAsStream(cndName);
-                                }
-                            }
-                            if (cndStream == null) {
-                                log.error("Cannot locate nodetype configuration '" + cndName + "', initialization skipped");
-                            } else {
-                                log.info("Initializing nodetypes from: " + cndName);
-                                initializeNodetypes(workspace, cndStream, cndName);
-                                p.remove();
-                            }
-                        }
-                        
-                        // Nodetypes from node
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
-                            if (log.isDebugEnabled()) { 
-                                log.debug("Found nodetypes configuration");
-                            }
-                            Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPES);
-                            String cndName = "<<internal>>";
-                            InputStream cndStream = p.getStream();
-                            if (cndStream == null) {
-                                log.error("Cannot get stream for nodetypes definition property.");
-                            } else {
-                                log.info("Initializing nodetypes from nodetypes property.");
-                                initializeNodetypes(workspace, cndStream, cndName);
-                                p.remove();
-                            }
-                        }
-                        
-                        // Content from file
-                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found content resource configuration");
-                            }
-                            
-                            Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE);
-                            String contentName = contentProperty.getString();
-                            
-                            InputStream contentStream = null;
-                            if (contentName.startsWith("file:")) {
-                                if (contentName.startsWith("file://")) {
-                                    contentName = contentName.substring(6);
-                                } else if (contentName.startsWith("file:/")) {
-                                    contentName = contentName.substring(5);
-                                } else if (contentName.startsWith("file:")) {
-                                    contentName = "/" + contentName.substring(5);
-                                }
-                                File localFile = new File(contentName);
-                                try {
-                                    contentStream = new BufferedInputStream(new FileInputStream(localFile));
-                                } catch (FileNotFoundException e) {
-                                    log.error("Content resource file not found: " + contentStream, e);
-                                }
-                            } else {
-                                if(node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
-                                    URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
-                                    resource = new URL(resource, contentName);
-                                    contentName = resource.toString();
-                                    contentStream = resource.openStream();
-                                } else {
-                                    contentStream = getClass().getResourceAsStream(contentName);    
-                                }
-                            }
-                                
-                            if (contentStream == null) {
-                                log.error("Cannot locate content configuration '" + contentName + "', initialization skipped");
-                            } else {
-                                String root = "/";
-                                Property rootProperty = null;
-                                if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
-                                    root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
-                                }
-
-                                // verify that content root is not under the initialization node
-                                String initPath = initializationNode.getPath();
-                                if (root.length() > initPath.length()
-                                        && root.substring(0, initPath.length()) == initPath) {
-                                    log.error("Refusing to extract content to " + root);
-                                } else {
-                                    log.info("Initializing content from: " + contentName + " to " + root);
-                                    initializeNodecontent(rootSession, root, contentStream, contentName);
-                                }
-                                rootProperty.remove();
-                                contentProperty.remove();
-                            }
-                        }
-                        
-
-                        // CONTENT FROM NODE
-                        if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Found content resource configuration");
-                            }
-                            
-                            Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
-                            String contentName = "<<internal>>";
-                            InputStream contentStream = contentProperty.getStream();
-                                
-                            if (contentStream == null) {
-                                log.error("Cannot locate content configuration '" + contentName + "', initialization skipped");
-                            } else {
-                                String root = "/";
-                                Property rootProperty = null;
-                                if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
-                                    root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
-                                }
-
-                                // verify that content root is not under the initialization node
-                                String initPath = initializationNode.getPath();
-                                if (root.length() > initPath.length()
-                                        && root.substring(0, initPath.length()) == initPath) {
-                                    log.error("Refusing to extract content to " + root);
-                                } else {
-                                    log.info("Initializing content from: " + contentName + " to " + root);
-                                    initializeNodecontent(rootSession, root, contentStream, contentName+":"+node.getPath());
-                                }
-                                rootProperty.remove();
-                                contentProperty.remove();
-                            }
-                        }
-                        rootSession.save();
-                    } catch (MalformedURLException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (IOException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (ParseException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (AccessDeniedException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (ConstraintViolationException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (InvalidItemStateException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (ItemExistsException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (LockException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (NoSuchNodeTypeException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (UnsupportedRepositoryOperationException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (ValueFormatException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } catch (VersionException ex) {
-                        log.error("configuration at specified by " + node.getPath() + " failed", ex);
-                    } finally {
-                        rootSession.refresh(false);
                     }
+
+                    // Nodetypes from node
+                    if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found nodetypes configuration");
+                        }
+                        Property p = node.getProperty(HippoNodeType.HIPPO_NODETYPES);
+                        String cndName = "<<internal>>";
+                        InputStream cndStream = p.getStream();
+                        if (cndStream == null) {
+                            log.error("Cannot get stream for nodetypes definition property.");
+                        } else {
+                            log.info("Initializing nodetypes from nodetypes property.");
+                            initializeNodetypes(workspace, cndStream, cndName);
+                            p.remove();
+                        }
+                    }
+
+                    // Content from file
+                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found content resource configuration");
+                        }
+
+                        Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE);
+                        String contentName = contentProperty.getString();
+
+                        InputStream contentStream = null;
+                        if (contentName.startsWith("file:")) {
+                            if (contentName.startsWith("file://")) {
+                                contentName = contentName.substring(6);
+                            } else if (contentName.startsWith("file:/")) {
+                                contentName = contentName.substring(5);
+                            } else if (contentName.startsWith("file:")) {
+                                contentName = "/" + contentName.substring(5);
+                            }
+                            File localFile = new File(contentName);
+                            try {
+                                contentStream = new BufferedInputStream(new FileInputStream(localFile));
+                            } catch (FileNotFoundException e) {
+                                log.error("Content resource file not found: " + contentStream, e);
+                            }
+                        } else {
+                            if (node.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
+                                URL resource = new URL(node.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)
+                                        .getString());
+                                resource = new URL(resource, contentName);
+                                contentName = resource.toString();
+                                contentStream = resource.openStream();
+                            } else {
+                                contentStream = getClass().getResourceAsStream(contentName);
+                            }
+                        }
+
+                        if (contentStream == null) {
+                            log.error("Cannot locate content configuration '" + contentName
+                                    + "', initialization skipped");
+                        } else {
+                            String root = "/";
+                            Property rootProperty = null;
+                            if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
+                                root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
+                            }
+
+                            // verify that content root is not under the initialization node
+                            String initPath = initializationNode.getPath();
+                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
+                                log.error("Refusing to extract content to " + root);
+                            } else {
+                                log.info("Initializing content from: " + contentName + " to " + root);
+                                initializeNodecontent(rootSession, root, contentStream, contentName);
+                            }
+                            rootProperty.remove();
+                            contentProperty.remove();
+                        }
+                    }
+
+                    // CONTENT FROM NODE
+                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found content resource configuration");
+                        }
+
+                        Property contentProperty = node.getProperty(HippoNodeType.HIPPO_CONTENT);
+                        String contentName = "<<internal>>";
+                        InputStream contentStream = contentProperty.getStream();
+
+                        if (contentStream == null) {
+                            log.error("Cannot locate content configuration '" + contentName
+                                    + "', initialization skipped");
+                        } else {
+                            String root = "/";
+                            Property rootProperty = null;
+                            if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
+                                root = (rootProperty = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT)).getString();
+                            }
+
+                            // verify that content root is not under the initialization node
+                            String initPath = initializationNode.getPath();
+                            if (root.length() > initPath.length() && root.substring(0, initPath.length()) == initPath) {
+                                log.error("Refusing to extract content to " + root);
+                            } else {
+                                log.info("Initializing content from: " + contentName + " to " + root);
+                                initializeNodecontent(rootSession, root, contentStream, contentName + ":"
+                                        + node.getPath());
+                            }
+                            rootProperty.remove();
+                            contentProperty.remove();
+                        }
+                    }
+                    rootSession.save();
+                } catch (MalformedURLException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (IOException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (ParseException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (AccessDeniedException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (ConstraintViolationException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (InvalidItemStateException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (ItemExistsException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (LockException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (NoSuchNodeTypeException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (UnsupportedRepositoryOperationException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (ValueFormatException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } catch (VersionException ex) {
+                    log.error("configuration at specified by " + node.getPath() + " failed", ex);
+                } finally {
+                    rootSession.refresh(false);
                 }
             }
-        } catch (PathNotFoundException ex) {
-            log.error("configuration node still not present");
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
