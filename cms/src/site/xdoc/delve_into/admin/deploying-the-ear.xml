@@ -82,7 +82,7 @@ http://localhost:4848/
                 <p>
                   Select in the left pane &quot;Enterprise applications&quot;
                 </p>
-                <img src="../images/glassfish1.gif" alt=""/>
+                <img src="../../images/glassfish1.gif" alt=""/>
                 <p>
                   Then in the main pane select the button &quot;Deploy&quot;
                 </p>
@@ -91,7 +91,7 @@ http://localhost:4848/
                   server&quot; is checked and use the browse button to select the build or downloaded EAR file
                   of Hippo ECM.  Then just choose &quot;Ok&quot; to perform the deployment.
                 </p>
-                <img src="../images/glassfish2.gif" alt=""/>
+                <img src="../../images/glassfish2.gif" alt=""/>
                 <p>
                   Once the server has finished, the application is now available on your server on the
                   configured hostname and portname, which is by default:

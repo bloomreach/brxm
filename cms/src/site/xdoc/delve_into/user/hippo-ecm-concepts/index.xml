@@ -19,10 +19,23 @@
 -->
 <document>
     <properties>
-        <title>Hippo ECM Concepts</title>
+        <title>Concepts</title>
     </properties>
     <body>
-      <section name="Hippo ECM Concepts">
+      <section name="Concepts">
+        
+        <p>
+          TODO this section needs refactoring
+        </p>
+        <ul>
+          <li>what is "content"</li>
+          <li>what is a document</li>
+          <li>what is workflow</li>
+          <li>author</li>
+          <li>editor</li>
+          <li>document types</li>
+          <li>....</li>
+        </ul>
 
         <ul>
           <li>

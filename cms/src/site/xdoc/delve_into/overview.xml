@@ -30,6 +30,9 @@
               <a href="use-hippo-ecm/index.html"><img alt="use" src="/images/frontpage/use.png" /></a>
         -->
 
+      <!--
+        FIXME image is missing in SVN
+        
         <blockquote><img src="../images/CMS-IED.png" /></blockquote>
 
         This particular diagram is not to stay here in this way. 
@@ -40,7 +43,8 @@
         is exchanged between two processes and in what direction(s), but not which and not in what 
         order, as that is too much detail.
         I intend to use information exchange diagrams often, as I think they give important 
-        information in a clear way. 
+        information in a clear way.
+     -->
      
      <blockquote>
         <table summary='table summary' title='table title' class='tabclassrita'> 
@@ -49,9 +53,9 @@
            <a href="quickstart.html"><em><img title='img title' longdesc='quickstart.html' class='leftflow' src="../images/frontpage/quickstart.png" /></em></a>
           </td>
           <td>
-           <a href="quickstart.html"><em>CMS Quickstart Installation</em></a></td>
+           <a href="quickstart.html"><em>Quickstart</em></a></td>
           <td>
-              Quickly install and use standard Hippo CMS with example content.
+              Quickly install and use Hippo CMS.
           </td>
          </tr>
          <tr>
@@ -59,7 +63,7 @@
            <a href="user/index.html"><em><img width='50' alt="use" src="../images/frontpage/use.png"/></em></a>
 	  </td>
           <td>
-            <a href="user/index.html"><em>CMS User Guide</em></a>
+            <a href="user/index.html"><em>User Guide</em></a>
           </td>
           <td>
                 For users who have Hippo CMS available.
@@ -70,7 +74,7 @@
            <a href="admin/index.html"><em><img alt="run" src="../images/frontpage/run.png" /></em></a>  
 	  </td>
           <td>
-           <a href="admin/index.html"><em>CMS Admin Guide</em></a>
+           <a href="admin/index.html"><em>Admin Guide</em></a>
 	  </td>
           <td>
                For system administrators, for installing and configuring to integrate in your system.           
@@ -91,7 +95,7 @@
 	   </a>
 	  </td>
           <td>
-           <a href="implementation/index.html"><em>CMS Implement Guide</em></a>
+           <a href="implementation/index.html"><em>Build a website</em></a>
 	  </td>
           <td>
 	  </td>
@@ -110,7 +114,7 @@
            <a href="extension/index.html"><em><img alt="extend" src="../images/frontpage/extend.png" /></em></a>
 	  </td>
           <td>
-            <a href="extension/index.html"><em>CMS Extension Guide</em></a>
+            <a href="extension/index.html"><em>Extension Guide</em></a>
 	  </td>
           <td>
                  For developers of custom plugins such as for extra properties
@@ -122,7 +126,7 @@
            <a href="development/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
 	  </td>
           <td>
-           <a href="development/index.html"><em>CMS Develop Guide</em></a>
+           <a href="development/index.html"><em>Hacking the core</em></a>
 	  </td>
           <td>
              For Hippo CMS core developers, who develop the CMS core engines and the CMS core plugins and
@@ -131,14 +135,6 @@
 	 </tr>
 	</table>
      </blockquote>
-            <!--<li>
-              <p>
-                <b>Develop Hippo ECM</b>
-              </p>
-              <p>
-                Information for Hippo ECM core developers.
-              </p>
-            </li>-->
 
     </section>
 

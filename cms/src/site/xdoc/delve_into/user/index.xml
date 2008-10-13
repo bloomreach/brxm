@@ -19,10 +19,26 @@
   -->
   <document>
     <properties>
-      <title>User Guide Hippo CMS</title>
+      <title>User Guide</title>
     </properties>
     <body>
-      <section name="User Guide Hippo CMS">
+      <section name="User Guide">
+        <p>
+          TODO
+        </p>
+        <ul>
+          <li>
+            <a href="tour/index.html">Tour</a>
+          </li>
+          <li>
+            <a href="hippo-ecm-concepts/index.html">Concepts</a>
+          </li>
+          <li>
+            <a href="learn/index.html">Learn</a>
+          </li>
+        </ul>
+      </section>
+      <section name="[OLD] User Guide">
         <p>
           Hippo ECM consists of a number of components that provide "out of the box" functionality. This section
           describes how to make use of those functionalities.
