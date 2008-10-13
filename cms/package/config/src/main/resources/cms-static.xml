@@ -756,7 +756,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="ImagesBrowser">
+  <sv:node sv:name="imagesBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>

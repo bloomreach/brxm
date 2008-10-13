@@ -28,31 +28,22 @@ import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
-import org.hippoecm.frontend.plugins.standards.list.comparators.TypeComparator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 
-public class TypesListingPlugin extends AbstractListingPlugin {
+public class NamespaceListingPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: DocumentListingPlugin.java 12651 2008-07-18 11:59:05Z fvlankvelt $";
+    private final static String SVN_ID = "$Id: $";
     private static final long serialVersionUID = 1L;
 
-    public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
+    public NamespaceListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
     
     @Override
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
-        
-        ListColumn column = new ListColumn(new Model(""), "icon");
-        column.setComparator(new TypeComparator());
-        column.setRenderer(new EmptyRenderer());
-        column.setAttributeModifier(new IconAttributeModifier());
-        columns.add(column);
-        
-        column = new ListColumn(new Model("Name"), "name");
+                
+        ListColumn column = new ListColumn(new Model("Name"), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
@@ -60,7 +51,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
             public Component getRenderer(String id, IModel model) {
-                return new Label(id, "Document type");
+                return new Label(id, "Namespace");
             }
         });
         columns.add(column);
