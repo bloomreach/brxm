@@ -16,31 +16,45 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+    
+____________________________________________________________________________________________
 
 -->
 <document>
-    <properties>
-        <title></title>
-    </properties>
-    <body>
-        <section name="section 1">
+ <properties>
+  <title>Change to the browser title</title>
+ </properties>
 
-            <!-- Within sections, any XHTML can be used -->
-            <p>Hi!</p>
+ <body>
+  <section name="Change to the document title">
+  <span class='description'>Change to document description.</span>
 
-            <!-- in addition to XHTML, any number of subsections can be within a section -->
-            <subsection name="subsection 1">
-                <p>Subsection!</p>
-            </subsection>
-        </section>
+   <p>Introduction</p>
 
-        <section name="other section">
+   <subsection name="subsection 1">
 
-            <!-- You can also include preformatted source blocks in the document -->
-            <source>
-                code line 1
-                code line 2
-            </source>
-        </section>
-    </body>
+    <p>This is text with an <span class='index'>index word</span>.
+    </p>
+
+    <h4>Subsubsection 1</h4> 
+    <p>text</p>
+
+    <h4>Subsubsection 2</h4> 
+    <p>text</p>
+
+   </subsection>
+
+
+   <subsection name="subsection 2">
+
+   <p>This is text</p>
+
+     <source>
+       code line 1
+       code line 2
+     </source>
+   </subsection>
+
+  </section>
+ </body>
 </document>
