@@ -575,7 +575,7 @@
       <sv:value>service.browse.tree.configuration</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="browserPlugin1">
+  <sv:node sv:name="documentsBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -756,7 +756,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="browserPlugin2">
+  <sv:node sv:name="ImagesBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -937,7 +937,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="browserPlugin3">
+  <sv:node sv:name="filesBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -1118,7 +1118,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="browserPlugin4">
+  <sv:node sv:name="configurationBrowser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -1165,6 +1165,32 @@
         </sv:property>
         <sv:property sv:name="name" sv:type="String">
           <sv:value>document types</sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hideChildrenOfNamespace">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="path" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="parent" sv:type="String">
+          <sv:value>hippo:namespace</sv:value>
+        </sv:property>
+        <sv:property sv:name="child" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="target" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="display" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="name" sv:type="String">
+          <sv:value/>
         </sv:property>
       </sv:node>
       <sv:node sv:name="hideHippoNamespace">

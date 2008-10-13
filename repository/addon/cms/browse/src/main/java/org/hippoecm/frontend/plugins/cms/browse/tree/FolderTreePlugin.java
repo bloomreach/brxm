@@ -16,34 +16,28 @@
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.tree.TreeNode;
 
-import javax.jcr.RepositoryException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListener {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
     protected Tree tree;
@@ -56,7 +50,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         context.registerService(this, IJcrService.class.getName());
 
         startingPath = config.getString("path", startingPath);
-        FolderTreeConfig folderTreeConfig = new FolderTreeConfig(config);
+        DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(new JcrNodeModel(startingPath), folderTreeConfig);
 
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);

@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
@@ -46,36 +47,15 @@ public class DocumentsProvider extends SortableDataProvider {
     protected List<IModel> entries = new ArrayList<IModel>();
     private Map<String, Comparator<IModel>> comparators;
 
-    public DocumentsProvider(JcrNodeModel model, Map<String, Comparator<IModel>> comparators) {
+    public DocumentsProvider(JcrNodeModel model, DocumentListFilter filter, Map<String, Comparator<IModel>> comparators) {
         this.comparators = comparators;
+        
         Node node = model.getNode();
         try {
             List<IModel> documents = new ArrayList<IModel>();
-            while (node != null) {
-                boolean isHandle = node.isNodeType(HippoNodeType.NT_HANDLE);
-                boolean isTemplateType = node.isNodeType(HippoNodeType.NT_TEMPLATETYPE);
-                boolean isRequest = node.isNodeType(HippoNodeType.NT_REQUEST);
-                boolean isFolder = node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory");
-                boolean isDocument = node.isNodeType(HippoNodeType.NT_DOCUMENT);
-                boolean isRoot = node.isNodeType("rep:root");
-
-                if (!(isDocument && !isFolder) && !isHandle && !isTemplateType && !isRequest && !isRoot) {
-                    NodeIterator childNodesIterator = node.getNodes();
-                    while (childNodesIterator.hasNext()) {
-                        Node childNode = childNodesIterator.nextNode();
-                        if (childNode.isNodeType(HippoNodeType.NT_HANDLE) && !childNode.hasNode(childNode.getName())) {
-                            continue;
-                        }
-                        documents.add(new JcrNodeModel(childNode));
-                    }
-                    break;
-                }
-                if (!node.isNodeType("rep:root")) {
-                    model = model.getParentModel();
-                    node = model.getNode();
-                } else {
-                    break;
-                }
+            NodeIterator subNodes = filter.filter(node, node.getNodes());
+            while (subNodes.hasNext()) {
+                documents.add(new JcrNodeModel(subNodes.nextNode()));
             }
             entries = Collections.unmodifiableList(documents);
         } catch (RepositoryException e) {
