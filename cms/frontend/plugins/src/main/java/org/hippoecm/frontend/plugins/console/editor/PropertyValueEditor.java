@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,19 +31,17 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
-import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PropertyValueEditor extends DataView {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
     protected JcrPropertyModel propertyModel;
+    private int textAreaMaxColumns = 100;
 
     public PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
@@ -53,31 +52,56 @@ public class PropertyValueEditor extends DataView {
     @Override
     protected void populateItem(Item item) {
         try {
-            boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
-            boolean isMultiple = propertyModel.getProperty().getDefinition().isMultiple();
-            boolean isBinary = isBinary(propertyModel.getProperty());
-
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
-            if (isBinary) {
-                int size = valueModel.getObject().toString().length();
-                Label label = new Label("value", "binary data (" + size + " bytes)");
-                item.add(label);
-            } else if (isProtected) {
-                Label label = new Label("value", valueModel);
-                item.add(label);
+            String asString = valueModel.getValue().getString();
+
+            if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
+                long size = propertyModel.getProperty().getLength();
+                item.add(new Label("value", "binary data (" + size + " bytes)"));
+
+            } else if (Reference.isUid(valueModel)) {
+                item.add(new Reference("value", propertyModel, valueModel));
+
+            } else if (propertyModel.getProperty().getDefinition().isProtected()) {
+                item.add(new Label("value", valueModel));
+
             } else {
-                String value = valueModel.getObject().toString();
-                if (value.contains("\n") || value.length() > 80 || value.contains("<html>")) {
+                if (asString.contains("\n")) {
                     TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
+                    int rowCount = lines.length;
+                    int columnCount = 1;
+                    for (String line : lines) {
+                        int length = line.length();
+                        if (length > columnCount) {
+                            if (length > textAreaMaxColumns) {
+                                columnCount = textAreaMaxColumns;
+                                rowCount += (length / textAreaMaxColumns) + 1;
+                            } else {
+                                columnCount = length;
+                            }
+                        }
+                    }
+                    editor.setCols(String.valueOf(columnCount + 1));
+                    editor.setRows(String.valueOf(rowCount + 1));
                     item.add(editor);
+
+                } else if (asString.length() > textAreaMaxColumns) {
+                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    editor.setCols(String.valueOf(textAreaMaxColumns));
+                    editor.setRows(String.valueOf((asString.length() / 80)));
+                    item.add(editor);
+
                 } else {
-                    TextFieldWidget editor = new TextFieldWidget("value", valueModel);
+                    TextAreaWidget editor = new TextAreaWidget("value", valueModel);
+                    editor.setCols(String.valueOf(textAreaMaxColumns));
+                    editor.setRows("1");
                     item.add(editor);
                 }
             }
 
             //Remove value link
-            if (isMultiple) {
+            if (propertyModel.getProperty().getDefinition().isMultiple()) {
                 item.add(new AjaxLink("remove", valueModel) {
                     private static final long serialVersionUID = 1L;
 
@@ -100,27 +124,11 @@ public class PropertyValueEditor extends DataView {
             } else {
                 item.add(new Label("remove", ""));
             }
-
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+            item.add(new Label("value", e.getClass().getName() + ":" + e.getMessage()));
+            item.add(new Label("remove", ""));
         }
     }
-
-    // privates
-
-    private boolean isBinary(Property property) throws RepositoryException {
-        boolean isBinary;
-        if (property.getDefinition().isMultiple()) {
-            Value[] values = propertyModel.getProperty().getValues();
-            if (values.length > 0) {
-                isBinary = values[0].getType() == PropertyType.BINARY;
-            } else {
-                isBinary = false;
-            }
-        } else {
-            isBinary = (propertyModel.getProperty().getValue().getType() == PropertyType.BINARY);
-        }
-        return isBinary;
-    }
-
+    
 }
