@@ -23,7 +23,7 @@
   <!-- FIXME: this entry should be part of the gallery add on this requires a merging import -->
   <sv:node sv:name="gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:gallery</sv:value>
@@ -33,6 +33,9 @@
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Shortcut workflow on gallery folders</sv:value>
@@ -45,7 +48,7 @@
   </sv:node>
   <sv:node sv:name="folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:folder</sv:value>
@@ -55,6 +58,9 @@
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Shortcut workflow on folders</sv:value>
@@ -67,7 +73,7 @@
   </sv:node>
   <sv:node sv:name="directory">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:workflow</sv:value>
+      <sv:value>frontend:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetype" sv:type="String">
       <sv:value>hippostd:directory</sv:value>
@@ -77,6 +83,9 @@
     </sv:property>
     <sv:property sv:name="hippo:classname" sv:type="String">
       <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="frontend:renderer" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.standardworkflow.NullWorkflowPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:display" sv:type="String">
       <sv:value>Shortcut workflow on directories</sv:value>
