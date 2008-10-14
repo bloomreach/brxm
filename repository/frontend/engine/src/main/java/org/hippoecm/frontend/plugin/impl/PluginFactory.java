@@ -53,7 +53,7 @@ public class PluginFactory implements IClusterable {
     public PluginFactory() {
     }
 
-    public IPlugin createPlugin(IPluginContext context, IPluginConfig config) {
+    public IPlugin createPlugin(PluginContext context, IPluginConfig config) {
         String className = config.getString(IPlugin.CLASSNAME);
         IPlugin plugin = null;
         String message = null;
@@ -77,7 +77,7 @@ public class PluginFactory implements IClusterable {
                 IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
                 IResourceStream stream = locator.locate(null, className.replace('.', '/') + ".html");
                 if (stream != null) {
-                	plugin = new LayoutPlugin(context, config, stream);
+                    plugin = new LayoutPlugin(context, config, stream);
                 } else {
                     message = e.getClass().getName() + ": " + e.getMessage();
                     log.error(e.getMessage());
@@ -97,6 +97,9 @@ public class PluginFactory implements IClusterable {
         if (plugin == null && message != null) {
             message += "\nFailed to instantiate plugin '" + className + "' for id '"
                     + config.getString(RenderService.WICKET_ID) + "'.";
+
+            // reset context, i.e. unregister everything that was registered so far
+            context.stop();
 
             IPluginConfig errorConfig = new JavaPluginConfig();
             errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
@@ -123,7 +126,7 @@ public class PluginFactory implements IClusterable {
 
         // implement IMarkupResourceStreamProvider.
         public IResourceStream getMarkupResourceStream(MarkupContainer container, Class containerClass) {
-        	return stream;
+            return stream;
         }
     }
 

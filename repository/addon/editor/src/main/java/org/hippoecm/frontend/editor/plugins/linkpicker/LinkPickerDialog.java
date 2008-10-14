@@ -23,19 +23,16 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +50,8 @@ public class LinkPickerDialog extends LookupDialog {
     private Label label;
 
     public LinkPickerDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow,
-            JcrPropertyValueModel valueModel, List<String> nodetypes) {
-        super(plugin, context, dialogWindow);
+            JcrPropertyValueModel valueModel, List<String> nodetypes, AbstractTreeNode rootNode) {
+        super(plugin, context, dialogWindow, rootNode);
         this.nodetypes = nodetypes;
         this.valueModel = valueModel;
 
@@ -126,11 +123,6 @@ public class LinkPickerDialog extends LookupDialog {
         }
 
         return validType && isLinkable;
-    }
-
-    @Override
-    protected AbstractTreeNode getRootNode() {
-        return new JcrTreeNode(new JcrNodeModel("/"));
     }
 
     @Override

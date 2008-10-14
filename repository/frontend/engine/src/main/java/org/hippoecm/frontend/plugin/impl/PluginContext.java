@@ -71,7 +71,9 @@ public class PluginContext implements IPluginContext, IClusterable {
 
         public void stopPlugin() {
             for (PluginContext context : contexts) {
-                context.stop();
+                if (context != null) {
+                    context.stop();
+                }
             }
             children.remove(this);
 
@@ -191,12 +193,14 @@ public class PluginContext implements IPluginContext, IClusterable {
     }
 
     void stop() {
-        for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
-            for (IServiceTracker service : entry.getValue()) {
-                manager.unregisterTracker(service, entry.getKey());
+        if (!initializing) {
+            for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
+                for (IServiceTracker service : entry.getValue()) {
+                    manager.unregisterTracker(service, entry.getKey());
+                }
             }
+            listeners = new HashMap<String, List<IServiceTracker>>();
         }
-        listeners = new HashMap<String, List<IServiceTracker>>();
 
         for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
             for (IClusterable service : entry.getValue()) {

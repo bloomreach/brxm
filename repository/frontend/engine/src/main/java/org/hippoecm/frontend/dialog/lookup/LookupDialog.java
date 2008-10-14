@@ -33,11 +33,10 @@ public abstract class LookupDialog extends AbstractDialog {
     protected IServiceReference<RenderPlugin> pluginRef;
     protected LookupTargetTreeView tree;
 
-    protected LookupDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
+    protected LookupDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow, AbstractTreeNode rootNode) {
         super(context, dialogWindow);
         this.pluginRef = context.getReference(plugin);
 
-        AbstractTreeNode rootNode = getRootNode();
         JcrTreeModel treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
@@ -57,8 +56,6 @@ public abstract class LookupDialog extends AbstractDialog {
 
     protected void onSelect(JcrNodeModel nodeModel) {
     }
-
-    protected abstract AbstractTreeNode getRootNode();
 
     protected abstract boolean isValidSelection(AbstractTreeNode targetModel);
 }

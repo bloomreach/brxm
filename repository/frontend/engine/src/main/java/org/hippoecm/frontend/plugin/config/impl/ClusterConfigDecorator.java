@@ -116,17 +116,21 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
         super.detach();
     }
 
-    private String filter(String value) {
+    private Object filter(String value) {
         if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
             String variable = value.substring(2, value.lastIndexOf('}'));
             String remainder = value.substring(value.lastIndexOf('}') + 1);
-            String result;
             if ("cluster.id".equals(variable)) {
-                result = clusterId + remainder;
+                return clusterId + remainder;
             } else {
-                result = ClusterConfigDecorator.this.get(variable) + remainder;
+                Object result = ClusterConfigDecorator.this.get(variable);
+                if (result instanceof String) {
+                    return ((String) result) + remainder;
+                } else {
+                    return result;
+                }
             }
-            return result;
+            // unreachable
         }
         return value;
     }
