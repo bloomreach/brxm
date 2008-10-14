@@ -62,8 +62,10 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                         + " probably not of correct image set type");
                 return null;
             }
+        } else if (node.isNodeType("hippostd:folder") || node.isNodeType("hippostd:directory")) {
+            cssClass = "folder-16";
         } else {
-            Gallery.log.warn("Node " + node.getPath() + " is not a hippo:handle");
+            Gallery.log.warn("Node " + node.getPath() + " is not a handle or a folder");
             return null;
         }
         return new CssClassAppender(new Model(cssClass));

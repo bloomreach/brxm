@@ -53,14 +53,14 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         column.setComparator(new MimeTypeComparator());
         columns.add(column);
 
+        column = new ListColumn(new Model("Name"), "name");
+        column.setComparator(new NameComparator());
+        columns.add(column);
+        
         column = new ListColumn(new Model("Size"), "size");
         column.setRenderer(new SizeRenderer());
         column.setComparator(new SizeComparator());
         columns.add(column);        
-
-        column = new ListColumn(new Model("Name"), "name");
-        column.setComparator(new NameComparator());
-        columns.add(column);
         
         return new TableDefinition(columns);
     }

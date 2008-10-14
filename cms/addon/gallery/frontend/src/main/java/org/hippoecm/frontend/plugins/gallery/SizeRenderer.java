@@ -63,7 +63,6 @@ public class SizeRenderer extends AbstractNodeRenderer {
                 return new Label(id);
             }
         } else {
-            Gallery.log.warn("Node " + node.getPath() + " is not a hippo:handle");
             return new Label(id);
         }
         return new Label(id, size);
