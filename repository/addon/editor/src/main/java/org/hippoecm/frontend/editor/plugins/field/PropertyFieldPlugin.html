@@ -15,17 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-field">
+      <div class="hippo-editor-field">
       <h3 class="hippo-editor-field-title"><span wicket:id="name">[ field name ]</span><span class="hippo-editor-field-required" wicket:id="required">*</span></h3>
-      <div wicket:id="view">
+       <div class="hippo-editor-field-subfield" wicket:id="view">
+        
         <div wicket:id="item"></div>
-        <div style="float: right">
-          <a class="up_ico icon-16 iconsSmall" wicket:id="up"></a>
-          <a class="delete_ico icon-16 iconsSmall" wicket:id="remove"></a>
-        </div>
-        <div style="clear: both;"></div>
+        <a class="up-16 icon-16" wicket:id="up"></a>
+        <a class="delete-16 icon-16" wicket:id="remove"></a>
       </div>
-      <a class="add_ico icon-16" wicket:id="add"></a>
-    </div>
+        <a class="add-16 icon-16" wicket:id="add"></a>
+      </div>
   </wicket:panel>
 </html>
