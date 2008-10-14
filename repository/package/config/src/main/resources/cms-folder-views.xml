@@ -473,6 +473,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
+
       <sv:node sv:name="hideHippoNamespace">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
@@ -482,6 +483,32 @@
         </sv:property>
         <sv:property sv:name="path" sv:type="String">
           <sv:value>/hippo:namespaces/hippo</sv:value>
+        </sv:property>
+        <sv:property sv:name="parent" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="child" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="target" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="display" sv:type="Boolean">
+          <sv:value>false</sv:value>
+        </sv:property>
+        <sv:property sv:name="name" sv:type="String">
+          <sv:value/>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="hideGalleryNamespace">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="state" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="path" sv:type="String">
+          <sv:value>/hippo:namespaces/hippogallery</sv:value>
         </sv:property>
         <sv:property sv:name="parent" sv:type="String">
           <sv:value/>
