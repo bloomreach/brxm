@@ -66,9 +66,9 @@
 
     <menu name="About Hippo CMS">
       <item name="What is Hippo CMS?" href="/index.html"/>
-      <item name="*Use Cases" href="/about/use-cases.html"/>
-      <item name="*Features" href="/about/features.html"/>
-      <item name="*Architecture" href="/about/architecture.html"/>
+      <item name="Use Cases" href="/about/use_cases.html"/>
+      <item name="Features" href="/about/features.html"/>
+      <item name="Architecture" href="/about/architecture.html"/>
     </menu>
 
     <menu name="Hippo CMS Support">
