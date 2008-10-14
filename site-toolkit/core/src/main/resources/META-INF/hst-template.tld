@@ -178,6 +178,36 @@
     </tag>
     
     <tag>
+        <name>image</name>
+        <tagclass>org.hippoecm.hst.core.template.tag.ImageTag</tagclass>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>A tag meant for automatic link rewriting of child image nodes</description>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>If you want a link for a repository source use item</description>
+            <name>item</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Location of the image underneath the current item</description>
+            <name>relPath</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Type of the current image</description>
+            <name>type</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>    
+    
+    <tag>
         <name>cache</name>
         <tagclass>org.hippoecm.hst.caching.CacheTag</tagclass>
         <body-content>JSP</body-content>
