@@ -178,8 +178,8 @@
     </tag>
     
     <tag>
-        <name>image</name>
-        <tagclass>org.hippoecm.hst.core.template.tag.ImageTag</tagclass>
+        <name>imageLink</name>
+        <tagclass>org.hippoecm.hst.core.template.tag.GalleryImageLinkTag</tagclass>
         <body-content>empty</body-content>
         <attribute>
             <description>A tag meant for automatic link rewriting of child image nodes</description>
