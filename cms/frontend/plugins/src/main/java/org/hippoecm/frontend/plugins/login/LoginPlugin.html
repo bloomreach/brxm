@@ -22,7 +22,7 @@
       <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
     <form class="hippo-login" wicket:id="signInForm" name="signInForm">
       <div class="hippo-login-panel">
-        <h2><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
+        <h2 class="hippo-global-hideme"><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
         <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
         <table>
             <tr>
@@ -44,8 +44,12 @@
               </td>
             </tr>
           </table>
+        <div class="hippo-copyright">
+          &copy; 1999-2008 Hippo B.V., All Rights Reserved
+        </div>
       </div>
       </form>
+  
 </wicket:panel>
 </body>
 </html>
