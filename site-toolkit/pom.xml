@@ -45,7 +45,7 @@
   </modules>
   
   <properties>
-    <hippoecm.version>2.01.00-SNAPSHOT</hippoecm.version>
+    <hippoecm.version>2.01.00.13967</hippoecm.version>
   </properties>
   
   <repositories>
