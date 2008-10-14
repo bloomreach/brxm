@@ -29,8 +29,8 @@
 
    <samp>Error: JAVA_HOME is not defined correctly. Unable to execute execute java</samp>
 
-   <p>Your Java is not configured correctly, or is missing. 
-        
+   <p>The Hippo CMS quickstart packages assumes that Java already works on your system, 
+      but your Java is not configured correctly, or is missing.         
       Consult <a href='admin/requirements.html'>Requirements</a> for
       Java requirements for Hippo ECM.
    </p>
