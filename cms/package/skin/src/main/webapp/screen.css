@@ -79,13 +79,13 @@ background:transparent url(images/loginback.png) no-repeat scroll left top;
 margin:0px auto;
 position:relative;
 text-align:left;
-padding:50px;
+padding:30px;
 padding-top: 145px;
-width: 366px;
+width: 460px;
 padding-bottom:95px;
 }
 
-.hippo-login-feedback{color: red; padding: 5px; margin-bottom: 10px;}
+.hippo-login-feedback{color: red; margin-bottom: 6px; text-align: center;}
 
 .hippo-login-panel h2{
 margin-bottom: 50px; padding-left: 100px; font-size: 18px; font-weight: normal; color: white;
@@ -257,6 +257,7 @@ padding-top: 24px;
 .hippo-list-details tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
 .hippo-list-details tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
 .hippo-list-details tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
+.hippo-list-details tr td:hover{cursor: pointer}
 .hippo-list-details th a {color: #666666;}
 .hippo-list-details tr.odd td{}
 .hippo-list-details tr.even td{background: #f2f2f2}
@@ -380,8 +381,6 @@ background-image:url(images/box-blue2.png);}
 .hippo-reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
 .hippo-reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
 
-
-
 /* Image Gallery */
 /* ================================================ */
 .hippo-gallery-images {margin-top: 20px; border-collapse: separate}
@@ -476,7 +475,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-editor-field select,
 .hippo-editor-field input,
 .hippo-editor-field-input{
-font-size: 11px; background: transparent; border: none; padding: 4px; color: #333333; margin: 2px;}
+font-size: 11px; background: transparent; border: none; padding: 4px; color: #333333; margin: 2px; font-family: tahoma, arial,sans-serif,helvetica;}
 .hippo-editor-field input, .hippo-editor-field-input{width: 100%}
 .hippo-editor-field select, .hippo-editor-field-textarea textarea{width:100%}
 .hippo-editor-field input[type="checkbox"]{width: auto;}
