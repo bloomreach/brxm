@@ -41,13 +41,11 @@
     <module>core</module>
     <module>addon</module>
     <module>components</module>
-    <!--<module>skeleton</module>
-    <module>sample</module>-->
     <module>archetype-start</module>
   </modules>
   
   <properties>
-    <hippoecm.version>2.01.00.13171</hippoecm.version>
+    <hippoecm.version>2.01.00-SNAPSHOT</hippoecm.version>
   </properties>
   
   <repositories>
