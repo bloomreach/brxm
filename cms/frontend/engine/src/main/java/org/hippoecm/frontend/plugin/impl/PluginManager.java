@@ -93,8 +93,13 @@ public class PluginManager implements IDetachable {
     public PluginContext start(IPluginConfig config, String controlId) {
         final PluginContext context = new PluginContext(this, controlId);
         IPlugin plugin = factory.createPlugin(context, config);
-        context.connect(plugin);
-        return context;
+        if (plugin != null) {
+            context.connect(plugin);
+            return context;
+        } else {
+            context.stop();
+            return null;
+        }
     }
 
     public <T extends IClusterable> T getService(String name, Class<T> clazz) {

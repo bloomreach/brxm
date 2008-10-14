@@ -32,8 +32,11 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -67,12 +70,15 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
             log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
         }
 
+        DocumentListFilter filter = new DocumentListFilter(config);
+        final AbstractTreeNode rootNode = new FolderTreeNode(new JcrNodeModel(config.getString("path", "/")), filter);
+
         Model linkText = new Model(getValue());
         IDialogFactory dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new LinkPickerDialog(LinkPickerPlugin.this, context, service, valueModel, nodetypes);
+                return new LinkPickerDialog(LinkPickerPlugin.this, context, service, valueModel, nodetypes, rootNode);
             }
         };
         add(link = new DialogLink("value", linkText, dialogFactory, dialogService));

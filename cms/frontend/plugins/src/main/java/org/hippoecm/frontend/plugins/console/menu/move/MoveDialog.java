@@ -47,7 +47,7 @@ public class MoveDialog extends LookupDialog {
     private String target;
 
     public MoveDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(plugin, context, dialogWindow);
+        super(plugin, context, dialogWindow, new JcrTreeNode(new JcrNodeModel("/")));
 
         JcrNodeModel model = (JcrNodeModel) plugin.getModel();
         try {
@@ -82,11 +82,6 @@ public class MoveDialog extends LookupDialog {
     @Override
     protected boolean isValidSelection(AbstractTreeNode targetModel) {
         return true;
-    }
-
-    @Override
-    protected AbstractTreeNode getRootNode() {
-        return new JcrTreeNode(new JcrNodeModel("/"));
     }
 
     @Override

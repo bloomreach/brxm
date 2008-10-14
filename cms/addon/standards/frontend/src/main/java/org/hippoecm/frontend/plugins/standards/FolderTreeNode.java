@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.tree;
+package org.hippoecm.frontend.plugins.standards;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
-import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
@@ -50,7 +49,7 @@ public class FolderTreeNode extends AbstractTreeNode {
         this.config = config;
     }
 
-    public FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
+    private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent) {
         super(model);
         this.parent = parent;
         this.config = parent.config;

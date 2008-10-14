@@ -28,6 +28,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
+import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;

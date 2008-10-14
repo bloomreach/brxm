@@ -14,12 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-  xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-  xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-  xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
-  sv:name="system">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal" xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions" sv:name="system">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:namespace</sv:value>
   </sv:property>
@@ -106,7 +101,7 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:templatetype</sv:value>
     </sv:property>
-    
+
     <sv:node sv:name="hippo:nodetype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
@@ -129,17 +124,17 @@
         </sv:property>
       </sv:node>
     </sv:node>
-    
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
           <sv:value>mode</sv:value>
@@ -147,11 +142,11 @@
           <sv:value>cols</sv:value>
           <sv:value>rows</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${cluster.id}.model</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -178,10 +173,10 @@
             <sv:value>${cols}</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
     </sv:node>
-    
+
   </sv:node>
   <!-- end "Text" type -->
 
@@ -285,7 +280,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
@@ -315,7 +310,7 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      
+
     </sv:node>
   </sv:node>
   <!-- end "Date" type -->
@@ -355,15 +350,15 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${cluster.id}.model</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -378,7 +373,7 @@
             <sv:value>${cluster.id}.model</sv:value>
           </sv:property>
         </sv:node>
-        
+
       </sv:node>
 
     </sv:node>
@@ -630,21 +625,23 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      
+
       <sv:node sv:name="hippo:template">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugincluster</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="frontend:overrides" sv:type="String">
           <sv:value>wicket.id</sv:value>
           <sv:value>mode</sv:value>
+          <sv:value>filters</sv:value>
+          <sv:value>path</sv:value>
         </sv:property>
-        
+
         <sv:property sv:name="wicket.model" sv:type="String">
           <sv:value>${cluster.id}.model</sv:value>
         </sv:property>
-        
+
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -663,6 +660,12 @@
           </sv:property>
           <sv:property sv:name="nodetypes" sv:type="String">
             <sv:value>hippo:handle</sv:value>
+          </sv:property>
+          <sv:property sv:name="filters" sv:type="String">
+            <sv:value>${filters}</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>${path}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
