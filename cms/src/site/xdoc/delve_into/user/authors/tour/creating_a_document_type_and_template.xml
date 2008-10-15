@@ -55,15 +55,15 @@
           It is now possible to customize the type.  Select the newly created
           type and click "edit model" under the Actions.  Initially no fields
           are present, but you can add those in the editor.
-          <ul>
-            <li>Click "String" to add a string property to the document model</li>
-            <li>Click the edit icon next to the String field that appears</li>
-            <li>Change the path to "example:title"</li>
-            <li>Change the Caption to "Title"</li>
-            <li>Press "save"</li>
-            <li>Click "Html" and the edit icon</li>
-          </ul>
         </p>
+        <ul>
+          <li>Click "String" to add a string property to the document model</li>
+          <li>Click the edit icon next to the String field that appears</li>
+          <li>Change the path to "example:title"</li>
+          <li>Change the Caption to "Title"</li>
+          <li>Press "save"</li>
+          <li>Click "Html" and the edit icon</li>
+        </ul>
         <img src="../../images/tour/edit-model.png" alt="edit model" />
       </subsection>
 

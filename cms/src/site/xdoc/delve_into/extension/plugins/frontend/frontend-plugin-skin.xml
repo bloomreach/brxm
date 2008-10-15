@@ -77,46 +77,44 @@
     </subsection>
 
     <subsection name="What to customize">
-      <p>
-        <dl>
-          <dt>Cascading style sheets</dt>
-          <dd>
-            When creating your own skin you can modify the default style sheet in use
-            (<code>screen.css</code>), or create your own style sheet file and
-            configure the application to use that style sheet instead.
-            Configuring an application to use a specific style sheet is done by adding a
-            property 'wicket.skin' to the applications root plugin.
-          </dd>
+      <dl>
+        <dt>Cascading style sheets</dt>
+        <dd>
+          When creating your own skin you can modify the default style sheet in use
+          (<code>screen.css</code>), or create your own style sheet file and
+          configure the application to use that style sheet instead.
+          Configuring an application to use a specific style sheet is done by adding a
+          property 'wicket.skin' to the applications root plugin.
+        </dd>
           
-          <dd>
+        <dd>
           For example, add a file 'mystyle.css' next to 'screen.css' and set the property
           /hippo:configuration/hippo:frontend/cms/cms-static/root/wicket.skin to 'skin/mystyle.css'
-          </dd>
+        </dd>
 
-          <dt>Icons</dt>
-          <dd>
-            Icons in use are placed in the <code>images</code> directory.  Just put any
-            different icons in your own project when you want them different.
-          </dd>
+        <dt>Icons</dt>
+        <dd>
+          Icons in use are placed in the <code>images</code> directory.  Just put any
+          different icons in your own project when you want them different.
+        </dd>
 
-          <dt>Alternate HTML files</dt>
-          <dd>
-            Web pages as served back to a browsing client are not single HTML files in the
-            front-end.  Rather than single files bound to a specific page requested, a web
-            page is composed of HTML fragments.<br/>
+        <dt>Alternate HTML files</dt>
+        <dd>
+          Web pages as served back to a browsing client are not single HTML files in the
+          front-end.  Rather than single files bound to a specific page requested, a web
+          page is composed of HTML fragments.<br/>
 
-            Each item on a web-page is supplied by a piece of program code in the
-            front-end.  Together with this Java program code, a HTML fragment in given.
-            These HTML fragments are merged into a single HTML file.  These HTML fragment
-            files are not defined on a per-page basis, but on the class of the item used.
-            Therefore a change to the HTML file representing, for instance a kind of
-            button, is reflected in all buttons of that kind used everywhere.<br/>
+          Each item on a web-page is supplied by a piece of program code in the
+          front-end.  Together with this Java program code, a HTML fragment in given.
+          These HTML fragments are merged into a single HTML file.  These HTML fragment
+          files are not defined on a per-page basis, but on the class of the item used.
+          Therefore a change to the HTML file representing, for instance a kind of
+          button, is reflected in all buttons of that kind used everywhere.<br/>
 
-            By being able to override the HTML for all items, you are able to further customize
-            the layout of the pages.
-          </dd>
-        </dl>
-      </p>
+          By being able to override the HTML for all items, you are able to further customize
+          the layout of the pages.
+        </dd>
+      </dl>
 
       <p>
         To override HTML files, you need to identify which HTML fragment file you need

@@ -43,6 +43,7 @@
           the JCR node that is selected in the tree.  The main panel shows
           properties and node type information and allows you to edit those.
           The menu operations are also based on this node:
+        </p>
           <ol>
             <li><code>Add Node:</code> adds a child node</li>
             <li><code>Delete Node:</code> deletes the node</li>
@@ -54,7 +55,6 @@
             <li><code>Save:</code> save the node and its descendants</li>
             <li><code>Reset:</code> reset the node and its descendants</li>
           </ol>
-        </p>
 
       </section>
     </body>

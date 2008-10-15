@@ -27,22 +27,22 @@
       The HippoECM security model is build around 4 concepts, users, groups, roles and domains. 
       Users with administrative rights can switch to the management perspective 
       to do CRUD operations on these entities. 
-        <ul>
-          <li>User: representation of an end-user that can log in to the CMS. Users are member(s) of 0-n groups</li>
-          <li>Group: logical categorization of users. Groups have 0-n users as members.</li>
-          <li>Role: collection of permissions read, write and remove. Either can be true or false.</li>
-          <li>Domain: collection of 'Auth roles' and 'Domain rules'.
-            <ul>
-              <li>
-                Auth role: Maps a role to 0-n groups and/or users 
-              </li>
-              <li>
-                Domain rules: todo
-              </li>
-            </ul>
-          </li>
-        </ul>
       </p>
+      <ul>
+        <li>User: representation of an end-user that can log in to the CMS. Users are member(s) of 0-n groups</li>
+        <li>Group: logical categorization of users. Groups have 0-n users as members.</li>
+        <li>Role: collection of permissions read, write and remove. Either can be true or false.</li>
+        <li>Domain: collection of 'Auth roles' and 'Domain rules'.
+          <ul>
+            <li>
+              Auth role: Maps a role to 0-n groups and/or users 
+            </li>
+            <li>
+              Domain rules: todo
+            </li>
+          </ul>
+        </li>
+      </ul>
       <subsection name="Creating a new user">
         <p>
         Click on the 'New user' button (listing 1) in the left pane of the management perspective. A 
@@ -54,17 +54,17 @@
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newuser1.png"/>
+              <img src="../../images/tour/newuser1.png" alt="newuser"/>
               <br/>
               <em style="width:230px;display:block;">Click on the 'New user' button to add a user</em>
             </td>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newuser2.png"/>
+              <img src="../../images/tour/newuser2.png" alt="newuser"/>
               <br/>
               <em style="width:230px;display:block;">Type in the new username and press enter to confirm</em>
             </td>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newuser3.png"/>
+              <img src="../../images/tour/newuser3.png" alt="newuser"/>
               <br/>
               <em style="width:230px;display:block;">The new user will appear in the list, marked with an asterisk</em>
             </td>
@@ -95,17 +95,17 @@
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newgroup1.png"/>
+              <img src="../../images/tour/newgroup1.png" alt="newgroup"/>
               <br/>
               <em style="width:230px;display:block;">Click on the 'New group' button to add a group</em>
             </td>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newgroup2.png"/>
+              <img src="../../images/tour/newgroup2.png" alt="newgroup"/>
               <br/>
               <em style="width:230px;display:block;">Type in the new group name and press enter to confirm</em>
             </td>
             <td style="padding-right: 15px;">
-              <img src="../../images/tour/newgroup3.png"/>
+              <img src="../../images/tour/newgroup3.png" alt="newgroup"/>
               <br/>
               <em style="width:230px;display:block;">The new group will appear in the list, marked with an asterisk</em>
             </td>
