@@ -17,10 +17,7 @@ package org.hippoecm.frontend.plugin.impl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
@@ -29,7 +26,6 @@ import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -80,18 +76,18 @@ public class PluginFactory implements IClusterable {
                     plugin = new LayoutPlugin(context, config, stream);
                 } else {
                     message = e.getClass().getName() + ": " + e.getMessage();
-                    log.error(e.getMessage());
-                    e.printStackTrace();
+                    log.error(message);
+                    log.debug(message,e); 
                 }
 
             } catch (InvocationTargetException e) {
                 message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
-                log.error(e.getMessage());
-                e.printStackTrace();
+                log.error(message);
+                log.debug(message,e); 
             } catch (Exception e) {
                 message = e.getClass().getName() + ": " + e.getMessage();
-                log.error(e.getMessage());
-                e.printStackTrace();
+                log.error(message);
+                log.debug(message,e); 
             }
         }
         if (plugin == null && message != null) {
@@ -112,7 +108,7 @@ public class PluginFactory implements IClusterable {
     private class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
         private static final long serialVersionUID = 1L;
 
-        private IResourceStream stream;
+        private final IResourceStream stream;
 
         public LayoutPlugin(IPluginContext context, IPluginConfig config, IResourceStream stream) {
             super(context, config);
