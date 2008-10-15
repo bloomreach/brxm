@@ -119,7 +119,10 @@ public class PaginatedDataBean {
                 int totalPages = getTotalPages();
                  
                  int fragment = (totalPages % blockSize > 0) && (totalPages >= blockSize) ? 1 : 0; 
-                 return new Long((totalPages / blockSize) + fragment);
+                 int totalBlocks = (totalPages / blockSize) + fragment;
+                 
+                 //since we count the blockno's from 0: correct the last page block number
+                 return new Long(totalBlocks == 0 ? 0 : totalBlocks - 1);
             }
         };
     }

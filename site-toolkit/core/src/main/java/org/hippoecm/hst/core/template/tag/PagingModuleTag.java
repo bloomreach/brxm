@@ -62,6 +62,13 @@ public class PagingModuleTag extends ModuleTagBase {
                 int to = ((pageNo + 1) * pageSize);
                 to = (to > totalItems) ? totalItems : to;
                 
+                if (log.isDebugEnabled()) {
+                    log.debug("paginated pagesize" + pageSize);
+                    log.debug("current page number" + pageNo);
+                    log.debug("total result" + totalItems);
+                    log.debug("current page displays items[" + from + ".." + to + "]");
+                }
+                
                 PaginatedDataBean paginatedData = new PaginatedDataBean();
                 paginatedData.setItems(pagingModule.getElements(from, to));
                 paginatedData.setTotalItems(totalItems);
