@@ -47,6 +47,10 @@ public class LinkTag extends SimpleTagSupport {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         
         URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+        if(urlMapping == null) {
+            log.error("urlMapping not set as attribute on request. Cannot rewrite a link. Return");
+            return;
+        }
         String href = "";
         if(item!= null) {
             href = urlMapping.rewriteLocation(item.getJcrNode());
