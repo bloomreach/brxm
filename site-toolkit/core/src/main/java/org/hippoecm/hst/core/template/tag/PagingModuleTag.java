@@ -61,10 +61,6 @@ public class PagingModuleTag extends ModuleTagBase {
                 int from = (pageNo == 0 ? 0 : (pageNo * pageSize));
                 int to = ((pageNo + 1) * pageSize);
                 to = (to > totalItems) ? totalItems : to;
-                System.out.println("PAGESIZE" + pageSize);
-                System.out.println("PNO" + pageNo);
-                System.out.println("TOTAL" + totalItems);
-                System.out.println("VANNNN" + from + "TOTTTT" + to);
                 
                 PaginatedDataBean paginatedData = new PaginatedDataBean();
                 paginatedData.setItems(pagingModule.getElements(from, to));
