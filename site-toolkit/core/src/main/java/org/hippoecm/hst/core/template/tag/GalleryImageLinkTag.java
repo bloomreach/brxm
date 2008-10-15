@@ -34,6 +34,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
 		String src = "";
         if(item!= null) {
             try {
+            	if(item.getJcrNode().hasNode(relPath)){
 				Node imageNode = item.getJcrNode().getNode(relPath);
 				if(imageNode!=null){
 					  if(imageNode.hasProperty("hippo:docbase")){
@@ -54,6 +55,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
                           pageContext.setAttribute(getVar(), src);
 					  }
 				}
+            	}
 			} catch (PathNotFoundException e) {
 				e.printStackTrace();
 			} catch (RepositoryException e) {
