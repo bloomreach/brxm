@@ -1,4 +1,4 @@
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.editor.tagging;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
