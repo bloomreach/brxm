@@ -172,7 +172,7 @@ Then there are a number of rules the interface and the class should adhere to:
 workflow actions);</li>
 <li>In the methods that implement the interface should always have a throws
 clause for the exceptions <code>WorkflowException</code> and
-<code>RepositoryException</code></li>;
+<code>RepositoryException</code>;</li>
 <li>A WorkflowException may be thrown if the workflow finds that it cannot
 perform the workflow action due to some business rule;</li>
 <li>A RepositoryException may not be thrown by the workflow action itself,
@@ -180,7 +180,7 @@ but can be the result of the repository itself;</li>
 <li>The workflow may use the getWorkflowContext() call from the base class to
 get additional information from the repository;</li>
 <li>The workflow may however <em>not</em> try to access the repository by any
-other means</li>;
+other means;</li>
 <li>Workflows may return serializable objects, or
 <code>org.hippoecm.repository.api.Document</code>.  However not subclasses of
 the class Document, and the Document instance actually delivered to the

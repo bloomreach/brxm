@@ -53,7 +53,7 @@
         <table summary='table summary' title='table title' class='tabclassrita'> 
          <tr>
           <td>
-           <a href="quickstart.html"><em><img title='img title' longdesc='quickstart.html' class='leftflow' src="../images/frontpage/quickstart.png" /></em></a>
+           <a href="quickstart.html"><em><img title='img title' longdesc='quickstart.html' class='leftflow' src="../images/frontpage/quickstart.png" alt="quickstart"/></em></a>
           </td>
           <td>
            <a href="quickstart.html"><em>Quickstart Steps</em></a></td>
