@@ -43,8 +43,8 @@
     -->
   </skin>
 
-    <publishDate position="navigation-bottom" format="MM-dd-yy"/>
-    <version position="navigation-bottom" /> 
+  <publishDate position="navigation-bottom" format="MM-dd-yy"/>
+  <version position="navigation-bottom"/>
 
   <bannerLeft>
     <name>Hippo ECM</name>
@@ -52,14 +52,14 @@
     <href>/</href>
   </bannerLeft>
 
-    
+
   <body>
-    
+
     <menu name="Applications">
       <item name="Hippo ECM" href="http://docs.onehippo.org"/>
       <item name="Hippo CMS" href="/index.html"/>
       <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/hst2"/>
-     <!--
+      <!--
       <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/>
      -->
     </menu>
@@ -82,35 +82,40 @@
     <menu name="Delve into Hippo CMS">
 
       <item name="Overview" href="/delve_into/overview.html" collapse="false" inherit="top"/>
-      <item name="Quickstart Steps" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
+      <item name="Quickstart Steps" href="/delve_into/quickstart.html" collapse="false"
+        inherit="top"/>
 
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
         <item name="Authors" collapse="true" href="/delve_into/user/authors/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/authors/tour/index.html">
-	  </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/authors/howto/index.html">
-	  </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/authors/dictionary/index.html">
-	  </item>
-	</item>
+          <item name="Tour" collapse="true" href="/delve_into/user/authors/tour/index.html"> </item>
+          <item name="Howto" collapse="true" href="/delve_into/user/authors/howto/index.html"> </item>
+          <item name="Dictionary" collapse="true"
+            href="/delve_into/user/authors/dictionary/index.html"> </item>
+        </item>
         <item name="Editors" collapse="true" href="/delve_into/user/editors/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html">
-	  </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html">
-	  </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/editors/dictionary/index.html">
-	  </item>
-	</item>
+          <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html"> </item>
+          <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> </item>
+          <item name="Dictionary" collapse="true"
+            href="/delve_into/user/editors/dictionary/index.html"> </item>
+        </item>
         <item name="Structurizers" collapse="true" href="/delve_into/user/structurizers/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/structurizers/tour/index.html">
-	  </item>
+          <item name="Tour" collapse="true" href="/delve_into/user/structurizers/tour/index.html"/> 
           <item name="Howto" collapse="true" href="/delve_into/user/structurizers/howto/index.html">
-	  </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/structurizers/dictionary/index.html">
-	  </item>
-	</item>
+            <item name="Document Types" href="/delve_into/user/structurizers/howto/document_types/index.html" collapse="true">
+              <!--
+                TODO These have been moved over from the old 'Extension' guide
+                -->
+              <item name="Editor" href="/delve_into/user/structurizers/howto/document_types/editor.html"/>
+              <item name="Tutorial" href="/delve_into/user/structurizers/howto/document_types/tutorial.html"/>
+              <item name="Examples" href="/delve_into/user/structurizers/howto/document_types/examples.html"/>
+              <item name="Field Types" href="/delve_into/user/structurizers/howto/document_types/fieldtypes.html"/>
+            </item>
+          </item> 
+          <item name="Dictionary" collapse="true"
+            href="/delve_into/user/structurizers/dictionary/index.html"> </item>
+        </item>
 
- <!--
+        <!--
         <item name="Usage tour" collapse="true" href="/delve_into/user/tour/index.html">
           <item name="Logging in" href="/delve_into/user/tour/logging_in.html"/>
           <item name="The dashboard" href="/delve_into/user/tour/dashboard.html"/>
@@ -153,19 +158,23 @@
         <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true"/>
         -->
       </item>
- 
+
       <item name="Admin Guide" href="delve_into/admin/index.html" collapse="true">
         <item name="Requirements" href="/delve_into/admin/requirements.html"/>
         <item name="Deploying the WAR" href="/delve_into/admin/deploying-the-war.html"/>
         <item name="Deploying the EAR" href="/delve_into/admin/deploying-the-ear.html"/>
         <item name="Installing Plugins" href="/delve_into/admin/installing-plugins.html"/>
         <item name="Configuration" href="/delve_into/admin/configuration/index.html" collapse="true">
-          <item name="Repository" href="/delve_into/admin/configuration/repository/index.html" collapse="true">
+          <item name="Repository" href="/delve_into/admin/configuration/repository/index.html"
+            collapse="true">
             <item name="Workspace" href="/delve_into/admin/configuration/repository/workspace.html"/>
-            <item name="Search Index" href="/delve_into/admin/configuration/repository/searchindex.html"/>
-            <item name="Authentication" href="/delve_into/admin/configuration/repository/authentication.html"/>
+            <item name="Search Index"
+              href="/delve_into/admin/configuration/repository/searchindex.html"/>
+            <item name="Authentication"
+              href="/delve_into/admin/configuration/repository/authentication.html"/>
           </item>
-          <item name="Configuration Nodes" href="/delve_into/admin/configuration/nodes/index.html" collapse="true">
+          <item name="Configuration Nodes" href="/delve_into/admin/configuration/nodes/index.html"
+            collapse="true">
             <item name="Users" href="/delve_into/admin/configuration/nodes/users.html"/>
             <item name="Groups" href="/delve_into/admin/configuration/nodes/groups.html"/>
             <item name="Roles" href="/delve_into/admin/configuration/nodes/roles.html"/>
@@ -175,24 +184,33 @@
           <item name="Console" href="/delve_into/admin/configuration/console.html"/>
         </item>
       </item>
-      
+
       <item name="Website Development" href="/delve_into/implementation/index.html" collapse="true">
         <item name="Toolkits" href="/delve_into/implementation/toolkits/index.html"/>
         <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
           <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
           <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
-          <item name="Importing Content" href="/delve_into/implementation/jcr/importing-content.html"/>
+          <item name="Importing Content"
+            href="/delve_into/implementation/jcr/importing-content.html"/>
         </item>
         <item name="Add-ons" href="/delve_into/implementation/add-ons/index.html" collapse="true">
-          <item name="Repository Plugins" href="/delve_into/implementation/add-ons/repository/index.html">
-            <item name="Workflow" href="/delve_into/implementation/add-ons/repository/workflow.html"/>
+          <item name="Repository Plugins"
+            href="/delve_into/implementation/add-ons/repository/index.html">
+            <item name="Workflow" href="/delve_into/implementation/add-ons/repository/workflow.html"
+            />
           </item>
-          <item name="Frontend Plugins" href="/delve_into/implementation/add-ons/frontend/index.html" collapse="true">
-            <item name="Architecture" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-architecture.html"/>
-            <item name="Communication" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-communication.html"/>
-            <item name="Skin" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-skin.html"/>
-            <item name="Hello World" href="/delve_into/implementation/add-ons/frontend/hello-world.html"/>
+          <item name="Frontend Plugins"
+            href="/delve_into/implementation/add-ons/frontend/index.html" collapse="true">
+            <item name="Architecture"
+              href="/delve_into/implementation/add-ons/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication"
+              href="/delve_into/implementation/add-ons/frontend/frontend-plugin-communication.html"/>
+            <item name="Skin"
+              href="/delve_into/implementation/add-ons/frontend/frontend-plugin-skin.html"/>
+            <item name="Hello World"
+              href="/delve_into/implementation/add-ons/frontend/hello-world.html"/>
           </item>
+          <item name="Document Types" href="/delve_into/implementation/add-ons/document_types/advanced.html"/>
           <item name="Packaging" href="/delve_into/implementation/add-ons/packaging.html"/>
         </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
@@ -203,7 +221,8 @@
         <item name="Building from source" href="/delve_into/development/building/index.html">
           <item name="Building with Maven" href="/delve_into/development/building/maven.html"/>
           <item name="Building with Eclipse" href="/delve_into/development/building/eclipse.html"/>
-          <item name="Building with Netbeans" href="/delve_into/development/building/netbeans.html"/>
+          <item name="Building with Netbeans" href="/delve_into/development/building/netbeans.html"
+          />
         </item>
         <item name="Concepts" href="/delve_into/development/concepts/index.html"/>
         <item name="Architecture" href="/delve_into/development/architecture/index.html"/>
@@ -212,7 +231,7 @@
     </menu>
 
     <menu name="Autogenerated Docs" ref="reports"/>
-    
+
     <menu name="Versions of these Docs">
       <item name="Latest release" href="http://docs.onehippo.org/hippo-ecm/"/>
       <item name="M6.4" href="http://docs.onehippo.org/hippo-ecm/2.01.00.13536/"/>
