@@ -31,13 +31,14 @@ public abstract class LookupDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     protected IServiceReference<RenderPlugin> pluginRef;
-    protected LookupTargetTreeView tree;
+    private LookupTargetTreeView tree;
+    private JcrTreeModel treeModel;
 
     protected LookupDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow, AbstractTreeNode rootNode) {
         super(context, dialogWindow);
         this.pluginRef = context.getReference(plugin);
 
-        JcrTreeModel treeModel = new JcrTreeModel(rootNode);
+        treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
         add(tree);
@@ -52,6 +53,10 @@ public abstract class LookupDialog extends AbstractDialog {
     // The selected node
     public AbstractTreeNode getSelectedNode() {
         return (AbstractTreeNode) tree.getSelectedNode();
+    }
+    
+    public void setSelectedNode(JcrNodeModel selectedNode) {
+        tree.setSelectedNode(selectedNode, treeModel);
     }
 
     protected void onSelect(JcrNodeModel nodeModel) {

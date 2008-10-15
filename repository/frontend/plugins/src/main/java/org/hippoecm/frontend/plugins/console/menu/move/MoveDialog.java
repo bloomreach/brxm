@@ -18,8 +18,10 @@ package org.hippoecm.frontend.plugins.console.menu.move;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
@@ -29,6 +31,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,28 +39,44 @@ import org.slf4j.LoggerFactory;
 public class MoveDialog extends LookupDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
-    @SuppressWarnings("unused")
-    private String source;
+    private String name;
     @SuppressWarnings("unused")
     private String target;
+    private Label targetLabel;
 
     public MoveDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(plugin, context, dialogWindow, new JcrTreeNode(new JcrNodeModel("/")));
-
         JcrNodeModel model = (JcrNodeModel) plugin.getModel();
+        setSelectedNode(model);
         try {
-            source = model.getNode().getPath();
-            target = model.getNode().getPath();
+            if (model.getParentModel() != null) {
+                add(new Label("source", model.getNode().getPath()));
+
+                target = StringUtils.substringBeforeLast(model.getNode().getPath(), "/") + "/";
+                targetLabel = new Label("target", new PropertyModel(this, "target"));
+                targetLabel.setOutputMarkupId(true);
+                add(targetLabel);
+
+                name = model.getNode().getName();
+                TextFieldWidget nameField = new TextFieldWidget("name", new PropertyModel(this, "name"));
+                nameField.setSize(String.valueOf(name.length() + 5));
+                add(nameField);
+            } else {
+                add(new Label("source", "Cannot move the root node"));
+                add(new EmptyPanel("target"));
+                add(new EmptyPanel("name"));
+                ok.setVisible(false);
+            }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+            add(new Label("source", e.getClass().getName()));
+            add(new Label("target", e.getMessage()));
+            add(new EmptyPanel("name"));
+            ok.setVisible(false);
         }
-        add(new Label("source", new PropertyModel(this, "source")));
-        add(new Label("target", new PropertyModel(this, "target")).setOutputMarkupId(true));
     }
 
     public String getTitle() {
@@ -68,14 +87,14 @@ public class MoveDialog extends LookupDialog {
     public void onSelect(JcrNodeModel model) {
         if (model != null) {
             try {
-                this.target = model.getNode().getPath();
+                target = model.getNode().getPath() + "/";
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
             }
         }
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null) {
-            target.addComponent(get("target"));
+        AjaxRequestTarget requestTarget = AjaxRequestTarget.get();
+        if (requestTarget != null) {
+            requestTarget.addComponent(targetLabel);
         }
     }
 
@@ -86,29 +105,28 @@ public class MoveDialog extends LookupDialog {
 
     @Override
     public void ok() throws RepositoryException {
-
         MenuPlugin plugin = (MenuPlugin) pluginRef.getService();
-        JcrNodeModel sourceNodeModel = (JcrNodeModel) plugin.getModel();
-        Node rootNode = sourceNodeModel.getNode().getSession().getRootNode();
-        if (sourceNodeModel.getParentModel() != null) {
-            String nodeName = sourceNodeModel.getNode().getName();
-            String sourcePath = sourceNodeModel.getNode().getPath();
-            AbstractTreeNode targetNodeModel = getSelectedNode();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
-            String targetPath = targetNodeModel.getNodeModel().getNode().getPath();
+        JcrNodeModel selectedNode = getSelectedNode().getNodeModel();
+        if (selectedNode != null && name != null && !"".equals(name)) {
+            JcrNodeModel targetNodeModel = getSelectedNode().getNodeModel();
+            String targetPath = targetNodeModel.getNode().getPath();
             if (!targetPath.endsWith("/")) {
                 targetPath += "/";
             }
-            targetPath += nodeName;
+            targetPath += name;
 
             // The actual move
             UserSession wicketSession = (UserSession) getSession();
             HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
+            String sourcePath = nodeModel.getNode().getPath(); 
             jcrSession.move(sourcePath, targetPath);
-                      
-            // Refresh the view
+
+            Node rootNode = nodeModel.getNode().getSession().getRootNode();
+            Node targetNode = rootNode.getNode(targetPath.substring(1));
+            plugin.setModel(new JcrNodeModel(targetNode));
             plugin.flushNodeModel(new JcrNodeModel(rootNode));
-            plugin.setModel(new JcrNodeModel(rootNode.getNode(targetPath.substring(1))));
         }
     }
 
