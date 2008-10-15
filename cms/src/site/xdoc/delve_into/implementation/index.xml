@@ -23,15 +23,20 @@
     </properties>
     <body>
       <section name="Website Development">
-
+        <span class="shortdesc">Publish your Hippo CMS managed content on the web.</span>
+        
         <p>
-          While Hippo CMS can be used out of the box to manage your content, implementing
-          the system in your unique environment requires some work. You will have to
-          set up a front end application (website, intranet, portal) to publish your
-          content to. You want to know how to integrate Hippo CMS in your enviroment.
-          This section directs
-          you to the right tools, and explains how to access your content through the
-          repository's JCR interface.
+          Publishing content on the web is the most common use case for Hippo CMS.
+          To integrate Hippo CMS in your new or existing web site, intranet or
+          extranet, you can use the tools provided by Hippo that utilize the
+          standard JCR interface, and the extendable architecture of Hippo CMS.
+        </p>
+        
+        <p>
+          This section directs you to the right tools for your situation, and
+          explains how to customize Hippo CMS by creating your own add-ons.
+          In addition, it tells you how to get direct access to the repository
+          content through the JCR interface.
         </p>
         
         <ul>
@@ -42,13 +47,13 @@
             technology of your choice.
           </li>
           <li>
+            <a href="add-ons/index.html">Add-ons</a>
+            - Extend Hippo CMS with your own add-ons.
+          </li>
+          <li>
             <a href="jcr/index.html">JCR Interface</a>
             - Access your content through the standard JCR interface. This will give
             you direct access and offers almost unlimited possibilities.
-          </li>
-          <li>
-            <a href="add-ons/index.html">Add-ons</a>
-            - Extend Hippo CMS with your own add-ons.
           </li>
         </ul>
 

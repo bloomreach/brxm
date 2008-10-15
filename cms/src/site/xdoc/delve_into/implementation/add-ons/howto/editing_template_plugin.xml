@@ -19,19 +19,18 @@
 -->
 <document>
     <properties>
-        <title>Advanced Document Types</title>
+        <title>Create an Editing Template Plugin</title>
     </properties>
     <body>
-      <section name="Advanced Document Types">
+      <section name="Create an Editing Template Plugin">
 
         <p>
-          Using the <a href="editor.html">Document Type Editor</a>, you can create
+          Using the <a href="../../../user/structurizers/howto/document_types/editor.html">Document Type Editor</a>, you can create
           straightforward document types. The most commonly used field types are
-          available <a href="fieldtypes.html">out of the box</a>. In most cases, these
+          available <a href="../../../user/structurizers/howto/document_types/fieldtypes.html">out of the box</a>. In most cases, these
           will satisfy your requirements. However, if you cannot achieve
           what you want using the graphical editor, there is always the option of
-          defining your document type at repository (JCR) level. You can create
-          your own field types, anything is possible, the sky is the limit.
+          defining your own custom field types at JCR level.
         </p>
         
         <subsection name="TODO">
