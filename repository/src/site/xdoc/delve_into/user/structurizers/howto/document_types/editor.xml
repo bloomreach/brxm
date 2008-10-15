@@ -31,8 +31,8 @@
           You can add or remove <a href="fieldtypes.html">fields</a> with a single mouse click.
         </p>
         
-        <a href="../../../images/extension/document-types/document-type-editor.png">
-          <img src="../../../images/extension/document-types/document-type-editor-thumbnail.png" width="400" height="255" alt="Screenshot of the document type editor"/>
+        <a href="../../../../../images/extension/document-types/document-type-editor.png">
+          <img src="../../../../../images/extension/document-types/document-type-editor-thumbnail.png" width="400" height="255" alt="Screenshot of the document type editor"/>
         </a>
         
         <subsection name="Using the editor">
@@ -46,13 +46,13 @@
             To add a field to the document type's template, click on one of the available
             <a href="fieldtypes.html">field types</a> listed at the right side of the editor.
           </p>
-          <img src="../../../images/extension/document-types/document-type-editor-field-types.png" alt="Screenshot detail of new field type selector"/>
+          <img src="../../../../../images/extension/document-types/document-type-editor-field-types.png" alt="Screenshot detail of new field type selector"/>
           <p>
             The new field will be added at the bottom of the template. To move it to
             a different position, you can use the up and down arrows located in the
             top right corner of the field preview.
           </p>
-          <img src="../../../images/extension/document-types/document-type-editor-field-preview.png" alt="Screenshot detail of field preview"/>
+          <img src="../../../../../images/extension/document-types/document-type-editor-field-preview.png" alt="Screenshot detail of field preview"/>
           <p>
             At the right side of the window,
             below the list of available field types, the properties of the newly added
@@ -70,12 +70,12 @@
             Finally, you can check if the field is mandatory, and if it accepts multiple values.
             <!-- FIXME: what do 'Ordered' and 'Primary' do? -->
           </p>
-          <img src="../../../images/extension/document-types/document-type-editor-field-properties.png" alt="Screenshot detail of field properties editor"/>
+          <img src="../../../../../images/extension/document-types/document-type-editor-field-properties.png" alt="Screenshot detail of field properties editor"/>
           <p>
             When you are done editing your document type, save it by clicking 'Save and close'
             in the top menu bar.
           </p>
-          <img src="../../../images/extension/document-types/document-type-editor-save.png" alt="Screenshot detail of save options"/>
+          <img src="../../../../../images/extension/document-types/document-type-editor-save.png" alt="Screenshot detail of save options"/>
         </subsection>
         
         <subsection name="Applying your changes">
@@ -93,7 +93,7 @@
             Be careful with renaming field names and paths: it is difficult to update
             existing content in these cases and possibly you will lose some data.
           </p>
-          <img src="../../../images/extension/document-types/document-type-editor-update-content.png" alt="Screenshot detail of update content action"/>
+          <img src="../../../../../images/extension/document-types/document-type-editor-update-content.png" alt="Screenshot detail of update content action"/>
         </subsection>
         
         <subsection name="Advanced">
