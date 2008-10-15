@@ -260,9 +260,8 @@ padding-top: 24px;
 .hippo-list-details tr td:hover{cursor: pointer}
 .hippo-list-details th a {color: #666666;}
 .hippo-list-details tr.odd td{}
-.hippo-list-details tr.even td{background: #f2f2f2}
+.hippo-list-details tr.even td{}
 .hippo-list-details .hippo-list-selected td{background: #EDF5FF}
-
 .hippo-list-details .hippo-list-order-ascending{background: url('images/icons/arrow-sort-down-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-none{}
@@ -411,6 +410,8 @@ background-image:url(images/box-blue2.png);}
 .hippo-browser-documents-small .hippo-list-details, 
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #ffffff}
 .hippo-browser-documents-small .hippo-list-details tr.even td{background: none}
+.hippo-browser-documents-small .hippo-list-details tr.even.hippo-list-selected td{background: #EDF5FF}
+
 /* fix for shifting up and down */
 .hippo-browser-documents-small .hippo-tree .wicket-tree .row, .hippo-browser-documents-small .hippo-tree table tr td, .hippo-browser-documents-small .hippo-list-details table tr td {border-bottom: 1px solid #ffffff }
 .hippo-browser-documents-small .hippo-list-details {background: #ffffff url('images/filelistHeaderback.png') repeat-x;}
@@ -430,6 +431,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-tree .wicket-tree .row-selected { overflow:hidden;}
 .hippo-tree .wicket-tree{border: none;}
 .hippo-tree .wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+.hippo-tree div.wicket-tree div.row-selected{background-color: #EDF5FF}
 
 .hippo-tree .wicket-tree span.junction, 
 .hippo-tree .wicket-tree span.junction-last, 
@@ -479,6 +481,7 @@ font-size: 11px; background: transparent; border: none; padding: 4px; color: #33
 .hippo-editor-field input, .hippo-editor-field-input{width: 100%}
 .hippo-editor-field select, .hippo-editor-field-textarea textarea{width:100%}
 .hippo-editor-field input[type="checkbox"]{width: auto;}
+.hippo-editor-field input[type="submit"]{width: auto; background: none;}
 
 /* link pickers plugin */
 .hippo-editor-linkpicker-link a{display: block; padding: 4px;}
