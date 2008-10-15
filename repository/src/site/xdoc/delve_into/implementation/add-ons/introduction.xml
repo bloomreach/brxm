@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,28 +16,23 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+    
+____________________________________________________________________________________________
+
 -->
 <document>
-    <properties>
-        <title>JCR Examples</title>
-    </properties>
-    <body>
-      <section name="JCR Examples">
-        <span class="shortdesc">Examples of accessing Hippo CMS functionality directly through the JCR API</span>
+  <properties>
+    <title>Introduction to add-on development</title>
+  </properties>
+
+  <body>
+    <section name="Introduction to add-on development">
+      <span class="shortdesc">An introduction to Hippo CMS add-on development.</span>
 
         <p>
-          TODO
+           TODO: what is possible, what not
         </p>
-        
-        <ul>
-          <li>Get a document</li>
-          <li>Get a document's workflow</li>
-          <li>Get an older version of a document</li>
-          <li>Get latest 10 news articles</li>
-          <li>Publish all documents</li>
-          <li>...</li>
-        </ul>
-        
-      </section>
-    </body>
+
+    </section>
+  </body>
 </document>

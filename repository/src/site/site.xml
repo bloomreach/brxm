@@ -179,13 +179,8 @@
 
       <item name="Website Development" href="/delve_into/implementation/index.html" collapse="true">
         <item name="Toolkits" href="/delve_into/implementation/toolkits/index.html"/>
-        <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
-          <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
-          <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
-          <item name="Importing Content" href="/delve_into/implementation/jcr/importing-content.html"/>
-        </item>
         <item name="Add-ons" href="/delve_into/implementation/add-ons/index.html" collapse="true">
-
+          <item name="Introduction" href="/delve_into/implementation/add-ons/introduction.html" />
           <item name="Howto" href="/delve_into/implementation/add-ons/howto/index.html" collapse="true">
             <item name="Packaging" href="/delve_into/implementation/add-ons/howto/packaging.html"/>
             <item name="Editing Template Plugin" href="/delve_into/implementation/add-ons/howto/editing_template_plugin.html"/>
@@ -193,7 +188,6 @@
             <item name="Custom Workflow" href="/delve_into/implementation/add-ons/howto/workflow.html"/>
             <item name="GUI Plugin" href="/delve_into/implementation/add-ons/howto/gui_plugin.html"/>
           </item>
-          
           <item name="Reference" href="/delve_into/implementation/add-ons/reference/index.html" collapse="true">
             <item name="Repository Plugins" href="/delve_into/implementation/add-ons/reference/repository/repository_plugins.html"> </item>
             <item name="Frontend Plugins" href="/delve_into/implementation/add-ons/reference/frontend/index.html" collapse="true">
@@ -201,7 +195,11 @@
               <item name="Communication" href="/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html"/>
             </item>
           </item>
-
+        </item>
+        <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
+          <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
+          <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
+          <item name="Data Migration" href="/delve_into/implementation/jcr/data_migration.html"/>
         </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>

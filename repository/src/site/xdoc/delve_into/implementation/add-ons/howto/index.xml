@@ -23,9 +23,15 @@
     </properties>
     <body>
       <section name="Howto">
+        
+        <span class="shortdesc">Learn how to make your own add-ons.</span>
 
         <p>
-          TODO
+          You have read the <a href="../introduction.html">introduction to add-on development</a>,
+          so you have an idea of what is possible. Now you want to know how to do it!
+          You are in the right place.
+          The howto guides in this section teach you how you can create
+          all kinds of different add-ons. Time to get your hands dirty!
         </p>
 
 

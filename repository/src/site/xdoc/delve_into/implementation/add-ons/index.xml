@@ -24,11 +24,19 @@
   <body>
     <section name="Hippo CMS Add-ons">
       
-      <span class="shortdesc">Learn how to develop add-ons for Hippo CMS.</span>
+      <span class="shortdesc">Extend Hippo CMS with your own add-ons.</span>
 
-      <p> TODO </p>
+      <p>
+        Customizability of Hippo CMS is achieved by means of a configurable plugin framework.
+        All functionality outside the core is implemented as plugins, which can be extended and customized.
+        New plugins can be written to add functionality. New functionality will typically be
+        implemented as an add-on, consisting of a number of plugins.        
+      </p>
 
       <ul>
+        <li>
+          <a href="introduction.html">Introduction to add-on development</a>
+        </li>
         <li>
           <a href="howto/index.html">Howto</a>
         </li>
