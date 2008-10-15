@@ -176,36 +176,26 @@
         </item>
       </item>
       
-      <item name="Build a website" href="/delve_into/implementation/index.html" collapse="true">
+      <item name="Website Development" href="/delve_into/implementation/index.html" collapse="true">
         <item name="Toolkits" href="/delve_into/implementation/toolkits/index.html"/>
         <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
           <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
           <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
           <item name="Importing Content" href="/delve_into/implementation/jcr/importing-content.html"/>
         </item>
+        <item name="Add-ons" href="/delve_into/implementation/add-ons/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve_into/implementation/add-ons/repository/index.html">
+            <item name="Workflow" href="/delve_into/implementation/add-ons/repository/workflow.html"/>
+          </item>
+          <item name="Frontend Plugins" href="/delve_into/implementation/add-ons/frontend/index.html" collapse="true">
+            <item name="Architecture" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-communication.html"/>
+            <item name="Skin" href="/delve_into/implementation/add-ons/frontend/frontend-plugin-skin.html"/>
+            <item name="Hello World" href="/delve_into/implementation/add-ons/frontend/hello-world.html"/>
+          </item>
+          <item name="Packaging" href="/delve_into/implementation/add-ons/packaging.html"/>
+        </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
-      </item>
-
-      <item name="Extension Guide" href="/delve_into/extension/index.html" collapse="true">
-        <item name="Document Types" href="/delve_into/extension/document-types/index.html" collapse="true">
-          <item name="Type Editor" href="/delve_into/extension/document-types/editor.html" />
-          <item name="Tutorial" href="/delve_into/extension/document-types/tutorial.html" />
-          <item name="Examples" href="/delve_into/extension/document-types/examples.html" />
-          <item name="Field Types" href="/delve_into/extension/document-types/fieldtypes.html" />
-          <item name="Advanced" href="/delve_into/extension/document-types/advanced.html" />
-        </item>
-        <item name="Add-ons" href="/delve_into/extension/plugins/index.html" collapse="true">
-          <item name="Repository Plugins" href="/delve_into/extension/plugins/repository/index.html">
-            <item name="Workflow" href="/delve_into/extension/plugins/repository/workflow.html"/>
-          </item>
-          <item name="Frontend Plugins" href="/delve_into/extension/plugins/frontend/index.html" collapse="true">
-            <item name="Architecture" href="/delve_into/extension/plugins/frontend/frontend-plugin-architecture.html"/>
-            <item name="Communication" href="/delve_into/extension/plugins/frontend/frontend-plugin-communication.html"/>
-            <item name="Skin" href="/delve_into/extension/plugins/frontend/frontend-plugin-skin.html"/>
-            <item name="Hello World" href="/delve_into/extension/plugins/frontend/hello-world.html"/>
-          </item>
-        </item>
-        <item name="Packaging" href="/delve_into/extension/packaging.html"/>
       </item>
 
       <item name="Hacking the core" href="/delve_into/development/index.html" collapse="true">

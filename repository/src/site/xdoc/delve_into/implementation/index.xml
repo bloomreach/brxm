@@ -19,10 +19,10 @@
 -->
 <document>
     <properties>
-        <title>Implementation Guide</title>
+        <title>Website Development</title>
     </properties>
     <body>
-      <section name="Implementation Guide">
+      <section name="Website Development">
 
         <p>
           While Hippo CMS can be used out of the box to manage your content, implementing
@@ -45,6 +45,10 @@
             <a href="jcr/index.html">JCR Interface</a>
             - Access your content through the standard JCR interface. This will give
             you direct access and offers almost unlimited possibilities.
+          </li>
+          <li>
+            <a href="add-ons/index.html">Add-ons</a>
+            - Extend Hippo CMS with your own add-ons.
           </li>
         </ul>
 

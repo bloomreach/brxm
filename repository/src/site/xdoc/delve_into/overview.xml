@@ -98,7 +98,7 @@
 	   </a>
 	  </td>
           <td>
-           <a href="implementation/index.html"><em>Build a website</em></a>
+           <a href="implementation/index.html"><em>Website Development</em></a>
 	  </td>
           <td>
 	  </td>
@@ -112,19 +112,7 @@
 	       </p>
               -->
 	 </tr>
-         <tr>
-          <td>
-           <a href="extension/index.html"><em><img alt="extend" src="../images/frontpage/extend.png" /></em></a>
-	  </td>
-          <td>
-            <a href="extension/index.html"><em>Extension Guide</em></a>
-	  </td>
-          <td>
-                 For developers of custom plugins such as for extra properties
-                 of content nodes and custom userinterfaces.
-	  </td>
-	 </tr>
-         <tr>
+     <tr>
           <td>         
            <a href="development/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
 	  </td>
