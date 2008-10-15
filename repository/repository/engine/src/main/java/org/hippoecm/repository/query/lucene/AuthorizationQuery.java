@@ -61,13 +61,13 @@ public class AuthorizationQuery {
     /**
      * The lucene query
      */
-    private BooleanQuery query;
-    private NodeTypeManager ntMgr;
-    private NamespaceMappings nsMappings;
-    private ServicingIndexingConfiguration indexingConfig;
-    private Set<FacetAuthPrincipal> facetAuths;
-    private Set<GroupPrincipal> groupPrincipals;
-    private SessionImpl session;
+    private final BooleanQuery query;
+    private final NodeTypeManager ntMgr;
+    private final NamespaceMappings nsMappings;
+    private final ServicingIndexingConfiguration indexingConfig;
+    private final Set<FacetAuthPrincipal> facetAuths;
+    private final Set<GroupPrincipal> groupPrincipals;
+    private final SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
     public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings,
@@ -220,6 +220,10 @@ public class AuthorizationQuery {
                 } else {
                     return QueryHelper.negateQuery(q);
                 }
+            } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
+                // FIXME: implement
+                log.debug("Nodename match not implemented yet.");
+                return QueryHelper.getNoHitsQuery();
             } else if (nodeNameString.equals("jcr:primaryType")) {
                 return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
 
@@ -278,7 +282,7 @@ public class AuthorizationQuery {
             // exception occured
             return QueryHelper.getNoHitsQuery();
         } else if (terms.size() == 1) {
-            return new TermQuery((Term) terms.get(0));
+            return new TermQuery(terms.get(0));
         } else {
             BooleanQuery b = new BooleanQuery();
             for (Iterator<Term> it = terms.iterator(); it.hasNext();) {

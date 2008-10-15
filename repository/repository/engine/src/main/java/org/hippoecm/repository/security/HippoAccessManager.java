@@ -449,7 +449,7 @@ public class HippoAccessManager implements AccessManager {
     protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) throws NoSuchItemStateException, RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
 
-        // is this a 'NodeType' facet?
+        // is this a 'NodeType' facet rule?
         if (facetRule.getFacet().equalsIgnoreCase("nodetype")) {
             boolean match = false;
             log.trace("Checking node : {} for nodeType: {}", nodeState.getId(), facetRule);
@@ -461,16 +461,31 @@ public class HippoAccessManager implements AccessManager {
                 log.trace("Found match : {} for mixinType: {}", nodeState.getId(), facetRule.getValue());
             }
             if (facetRule.isEqual()) {
-                // return true if the node is of the specified nodetype
                 return match;
             } else {
-                // return false if the node is of the specified nodetype
                 return !match;
             }
-        }
-
-        // check if node has the required property value
-        if (matchPropertyWithFacetRule(nodeState, facetRule)) {
+        // is this a 'NodeName' facet rule?
+        } else if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
+            boolean match = false;
+            if (facetRule.getType() == PropertyType.NAME) {
+                log.trace("Checking node : {} for nodeType: {}", nodeState.getNodeId(), facetRule);
+                Name nodeName = hierMgr.getName(nodeState.getId());
+                if (nodeName == null) {
+                    log.warn("Failed to resolve name of {}", nodeState.getNodeId());
+                } else {
+                    if (nodeName.equals(facetRule.getValueName())) {
+                        match = true;
+                    }
+                }
+            }
+            if (facetRule.isEqual()) {
+                return match;
+            } else {
+                return !match;
+            }
+        } else if (matchPropertyWithFacetRule(nodeState, facetRule)) {
+            // check if node has the required property value
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);
             return true;
         }
