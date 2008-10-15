@@ -26,28 +26,36 @@ ________________________________________________________________________________
  </properties>
 
  <body>
-  <section name="Change to the document title">
-  <span class='description'>Change to document description.</span>
+  <section name='Change to the document title'>
+   <span class='shortdesc'>Change to document description.</span>
 
-   <p>Introduction</p>
+   <p>Introductory text.
+      Introductory text.
+   </p>
 
-   <subsection name="subsection 1">
+
+   <subsection name='First subsection title'>
 
     <p>This is text with an <span class='index'>index word</span>.
     </p>
 
-    <h4>Subsubsection 1</h4> 
-    <p>text</p>
+    <h4>First subsubsection title</h4> 
+    <p>Text
+       text
+    </p>
 
-    <h4>Subsubsection 2</h4> 
-    <p>text</p>
+    <h4>First subsubsection title</h4> 
+    <p>Text
+       text
+    </p>
 
    </subsection>
 
 
-   <subsection name="subsection 2">
+   <subsection name="Second subsection title">
 
-   <p>This is text</p>
+   <p>Text
+   </p>
 
      <source>
        code line 1

@@ -24,6 +24,9 @@
   </properties>
   <body>
     <section name="Delve into Hippo CMS">
+     <span class='shortdesc'>Get to know all the details of Hippo CMS.</span>
+
+      <span class='add'>Enlighting and attractive diagram.</span>
 
       <!-- [TODO] requires new infographic
         <img src="images/old-infographic.jpg" alt="Clean separation of content storage, management and presentation"/>
@@ -53,7 +56,7 @@
            <a href="quickstart.html"><em><img title='img title' longdesc='quickstart.html' class='leftflow' src="../images/frontpage/quickstart.png" /></em></a>
           </td>
           <td>
-           <a href="quickstart.html"><em>Quickstart</em></a></td>
+           <a href="quickstart.html"><em>Quickstart Steps</em></a></td>
           <td>
               Quickly install and use Hippo CMS.
           </td>
