@@ -23,6 +23,11 @@
   </properties>
   <body>
     <section name="What is Hippo CMS?">
+      <span class='shortdesc'>What part of the Hippo ECM is it, what are its tasks?</span>
+
+      <span class='add'>Enlightning diagram?</span>
+      <span class='review'>all text: move short features list to feature document?</span>
+
       <span class='listrank'>1</span>
       <p>
         The Hippo CMS (Content Management System) is the webbased graphical userinterface to the content in the 
