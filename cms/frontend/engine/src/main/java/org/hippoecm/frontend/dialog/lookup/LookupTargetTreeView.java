@@ -15,9 +15,15 @@
  */
 package org.hippoecm.frontend.dialog.lookup;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.tree.ITreeState;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.widgets.JcrTree;
@@ -45,5 +51,26 @@ class LookupTargetTreeView extends JcrTree {
 
     TreeNode getSelectedNode() {
         return selectedNode;
+    }
+        
+    void setSelectedNode(JcrNodeModel selectedNode, JcrTreeModel treeModel) {
+        List<JcrNodeModel> parents = new ArrayList<JcrNodeModel>();
+        JcrNodeModel parent = selectedNode.getParentModel();
+        if (parent != null) {
+            while (parent != null) {
+                parents.add(parent);
+                parent = parent.getParentModel();
+            }
+
+            Collections.reverse(parents);
+            ITreeState treeState = getTreeState();
+            for (JcrNodeModel ancestor : parents) {
+                treeState.expandNode(treeModel.lookup(ancestor));
+            }
+            
+            AbstractTreeNode treeNode= treeModel.lookup(selectedNode.getParentModel());
+            treeState.selectNode(treeNode, true);
+            this.selectedNode = treeNode;
+        }
     }
 }
