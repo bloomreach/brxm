@@ -19,28 +19,31 @@
 -->
 <document>
     <properties>
-        <title>Frontend Plugins</title>
+        <title>Howto</title>
     </properties>
     <body>
-      <section name="Frontend Plugins">
+      <section name="Howto">
 
         <p>
-          Hippo ECM offers a fully customizable GUI by means of a frontend plugin architecture.
+          TODO
         </p>
+
 
         <ul>
           <li>
-            <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
+            <a href="packaging.html">Package Hippo CMS with your own add-on</a>
           </li>
           <li>
-            <a href="frontend-plugin-communication.html">Frontend Plugin Communication</a>
+            <a href="editing_template_plugin.html">Create an editing template plugin</a>
           </li>
           <li>
-            <a href="frontend-plugin-skin.html">Frontend Skin Customization</a>
+            <a href="customize_skin.html">Customize the Hippo CMS skin</a>
           </li>
           <li>
-            <a href="hello-world.html">Hello World plugin</a>
-            - Create a trivial front end plugin in this step-by-step tutorial
+            <a href="workflow.html">Create a custom workflow</a>
+          </li>
+          <li>
+            <a href="gui_plugin.html">Create a GUI plugin</a>
           </li>
         </ul>
 

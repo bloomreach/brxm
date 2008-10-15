@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2008 Hippo
+  Copyright 2007 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,26 +18,25 @@
   limitations under the License.
 -->
 <document>
-  <properties>
-    <title>Add-ons</title>
-  </properties>
-  <body>
-    <section name="Hippo CMS Add-ons">
-      
-      <span class="shortdesc">Learn how to develop add-ons for Hippo CMS.</span>
+    <properties>
+        <title>Frontend Plugins</title>
+    </properties>
+    <body>
+      <section name="Frontend Plugins">
 
-      <p> TODO </p>
+        <p>
+          Hippo ECM offers a fully customizable GUI by means of a frontend plugin architecture.
+        </p>
 
-      <ul>
-        <li>
-          <a href="howto/index.html">Howto</a>
-        </li>
-        <li>
-          <a href="reference/index.html">Reference</a>
-        </li>
-      </ul>
+        <ul>
+          <li>
+            <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
+          </li>
+          <li>
+            <a href="frontend-plugin-communication.html">Frontend Plugin Communication</a>
+          </li>
+        </ul>
 
-
-    </section>
-  </body>
+      </section>
+    </body>
 </document>
