@@ -27,6 +27,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -72,28 +73,20 @@ class Reference extends Panel {
                 }
             } else {
                 add(new Label("reference-edit", asString));
-                AjaxLink link = nopLink();
-                add(link);
-                link.setEnabled(false);
-                Label label = new Label("reference-link-text", "(" + targetNode.getClass().getName() + ")");
-                link.add(label);
+                add(new DisabledLink("reference-link", new Model(targetNode.getPath())));
             }
         } catch (ItemNotFoundException e) {
-            AjaxLink link = nopLink();
-            add(link);
-            link.setEnabled(false);
-            Label label = new Label("reference-link-text", "(Broken reference)");
-            add(new AttributeAppender("style", new Model("color:red"), " "));
-            link.add(label);
             TextFieldWidget editor = new TextFieldWidget("reference-edit", new Model(asString));
             editor.setSize("40");
             add(editor);          
-        } catch (RepositoryException e) {
-            add(new Label("reference-edit", e.getClass().getName() + ":" + e.getMessage()));
-            AjaxLink link = nopLink();
+
+            DisabledLink link = new DisabledLink("reference-link", new Model("(Broken reference)"));
+            link.add(new AttributeAppender("style", new Model("color:red"), " "));
             add(link);
-            link.add(new Label("reference-link-text", ""));
-            link.setVisible(false);
+
+        } catch (RepositoryException e) {
+            add(new Label("reference-edit", e.getClass().getName()));
+            add(new DisabledLink("reference-link", new Model(e.getMessage())));
         }
     }
 
@@ -102,13 +95,19 @@ class Reference extends Panel {
         return pattern.matcher(asString).matches();
     }
     
-    private AjaxLink nopLink() {
-        return new AjaxLink("reference-link") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-            }                    
-        };
+    private class DisabledLink extends AjaxLink {
+        private static final long serialVersionUID = 1L;
+
+        public DisabledLink(String id, IModel linktext) {
+            super(id);
+            setEnabled(false);
+            add(new Label("reference-link-text", linktext));
+        }
+        
+        @Override
+        public void onClick(AjaxRequestTarget target) {
+        }                    
+
     }
 
 
