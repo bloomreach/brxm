@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -27,7 +31,10 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 
 public class ListDataTable extends DataTable {
     @SuppressWarnings("unused")
@@ -80,20 +87,52 @@ public class ListDataTable extends DataTable {
             }
         });
 
-//        item.add(new AjaxEventBehavior("ondblclick") {
-//            private static final long serialVersionUID = 1L;
-//            @Override
-//            protected void onEvent(AjaxRequestTarget target) {
-//                String script = "var x = YAHOO.util.Dom.getElementsByClassName('edit_ico'); var y = x[0];y.onclick();this.blur()";
-//                target.appendJavascript(script);
-//            }
-//        });
+        item.add(new AttributeAppender("title", getDocumentType(model), " "));
 
         return item;
     }
 
     public TableSelectionListener getSelectionListener() {
         return selectionListener;
+    }
+
+    private IModel getDocumentType(IModel model) {
+        String documentType;
+        if (model instanceof JcrNodeModel) {
+            HippoNode node = (HippoNode) model.getObject();
+            try {
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    documentType = node.getPrimaryNodeType().getName();
+                    NodeIterator nodeIt = node.getNodes();
+                    while (nodeIt.hasNext()) {
+                        Node childNode = nodeIt.nextNode();
+                        if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                            documentType = childNode.getPrimaryNodeType().getName();
+                            break;
+                        }
+                    }
+                } else if (node.isNodeType("hippostd:folder")) {
+                    documentType = "folder";
+                } else if (node.isNodeType("hippostd:directory")) {
+                    documentType = "Unordered folder";
+                } else {
+                    documentType = node.getPrimaryNodeType().getName();
+                }
+                if (documentType.indexOf(":") > -1) {
+                    documentType = documentType.substring(documentType.indexOf(":") + 1);
+                }
+            } catch (RepositoryException e) {
+                documentType = "unknown";
+            }
+        } else {
+            documentType = "unknown";
+        }
+        if (documentType.endsWith("folder")) {
+            documentType = "This is a " + documentType;
+        } else {
+            documentType = "This is a " + documentType + " document";
+        }
+        return new Model(documentType);
     }
 
 }
