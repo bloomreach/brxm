@@ -1,4 +1,4 @@
-package org.hippoecm.hst.components.modules.list;
+package org.hippoecm.hst.components.modules.query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,9 +71,7 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	            NodeIterator iter = result.getNodes();
 	            while (iter.hasNext()) {
 	                Node node = iter.nextNode();
-	                if (node != null && !node.getName().equals("hippo:prototype")) {
-	                	wrappedNodes.add(new ContentELNodeImpl(node,urlMapping));
-	                }
+                	wrappedNodes.add(new ContentELNodeImpl(node,urlMapping));
 	            }
 	            
 	        } catch (RepositoryException ex) {
