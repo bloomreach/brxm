@@ -21,6 +21,7 @@ public interface HSTHttpAttributes {
 	public static final String CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE = "current.contextbase.hstconfiguration";
 	public static final String URI_PREFIX_REQ_ATTRIBUTE = "currentUrlbase";
 	public static final String URL_MAPPING_ATTR = "hst.urlmapping";
+	public static final String JCRSESSION_MAPPING_ATTR = "hst.jcrsession.attr";
 	
 	//request attributes
     public static final String CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE = "currentPageContainer";

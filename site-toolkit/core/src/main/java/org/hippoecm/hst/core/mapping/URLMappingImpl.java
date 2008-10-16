@@ -34,6 +34,7 @@ import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
@@ -174,7 +175,7 @@ public class URLMappingImpl implements URLMapping {
     }
 
     public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase) {
-        Session session = JcrSessionPoolManager.getSession(request);
+        Session session =  (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
         Iterator<String> patternIter = siteMapNodes.keySet().iterator();
         String requestURI = request.getRequestURI();
         PageNode pageNode = null;

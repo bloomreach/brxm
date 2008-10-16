@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.jcr.JcrSessionPoolManager;
@@ -17,7 +18,7 @@ import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 public class ReplyDisplayModule extends ModuleBase {
 
     public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException {   
-        Session session =  JcrSessionPoolManager.getSession(request);
+        Session session =   (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
         try {
             Node rootNode = session.getRootNode();  
             
@@ -47,7 +48,8 @@ public class ReplyDisplayModule extends ModuleBase {
 
 
     public void render(PageContext pageContext) {
-        Session session =  JcrSessionPoolManager.getSession((HttpServletRequest)pageContext.getRequest());
+        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+        Session session =  (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
         try {
             Node rootNode = session.getRootNode();  
             

@@ -125,7 +125,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
-		Session session =  JcrSessionPoolManager.getTemplateSession(request);
+		Session session =   (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
 		ContextBase hstConfigurationContextBase = getHstConfigurationContextBase(request, TEMPLATE_CONFIGURATION_LOCATION);
 			
 		Node siteMapNodes = hstConfigurationContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);
@@ -186,7 +186,7 @@ public abstract class HstFilterBase implements Filter {
 	protected ContextBase getHstConfigurationContextBase(HttpServletRequest request, String hstConfigurationLocation) throws TemplateException {
 		ContextBase hstConfigurationContextBase = null;
 		if (request.getAttribute(HSTHttpAttributes.CURRENT_HSTCONFIGURATION_CONTEXTBASE_REQ_ATTRIBUTE) == null) {
-			Session session =  JcrSessionPoolManager.getTemplateSession(request);
+			Session session =   (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
 			try {
 				hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, hstConfigurationLocation, request, session);
 			} catch (PathNotFoundException e) {

@@ -46,6 +46,8 @@ public class BinariesServlet extends HttpServlet {
 
     public static final Logger log = LoggerFactory.getLogger(BinariesServlet.class);
 
+    private final JcrSessionPoolManager jcrSessionPoolManager = new JcrSessionPoolManager();
+    
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
@@ -72,7 +74,7 @@ public class BinariesServlet extends HttpServlet {
         path = UrlUtilities.decodeUrl(path);
         Session session = null;
         try {
-            session = JcrSessionPoolManager.getSession(req);
+            session = jcrSessionPoolManager.getSession(req);
             
             Item item = session.getItem(path);
 

@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class CacheManager {
     }
     
     public static Cache getCache(HttpServletRequest request, String clazz) {
-        Session session = JcrSessionPoolManager.getSession(request);
+        Session session = (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
         String cacheName = session.getUserID();
         if(cacheName == null) {
             cacheName = "anonymous";

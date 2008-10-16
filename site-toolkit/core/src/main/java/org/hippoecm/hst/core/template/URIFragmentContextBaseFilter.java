@@ -76,6 +76,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
     private EventListener listener;
     private volatile boolean isListenerRegistered = false;
     private FilterConfig filterConfig;
+    private final JcrSessionPoolManager jcrSessionPoolManager = new JcrSessionPoolManager();
     
     
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -92,7 +93,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
 
     
     public void destroy() {
-        JcrSessionPoolManager.dispose();
+        jcrSessionPoolManager.dispose();
         try {
             ObservationManager obMgr = observer.getWorkspace().getObservationManager();
             obMgr.removeEventListener(listener);
@@ -137,13 +138,14 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
             Session session = null;
             long requesttime = System.currentTimeMillis();
             try {
-                session = JcrSessionPoolManager.getSession(request);
+                session = jcrSessionPoolManager.getSession(request);
+                request.setAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR, session);
+                
                 URLMapping urlMapping = URLMappingManager.getUrlMapping(session, request,
                         uriPrefix, contentBase + uriPrefix + RELATIVE_HST_CONFIGURATION_LOCATION, uriLevels);
                 
                 URLMapping relativeURLMapping = new RelativeURLMappingImpl(request.getRequestURI(), urlMapping); 
                 request.setAttribute(HSTHttpAttributes.URL_MAPPING_ATTR, relativeURLMapping);
-
                 //content configuration contextbase
                 ContextBase contentContextBase = null;
                 try {

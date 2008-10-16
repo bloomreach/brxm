@@ -30,16 +30,16 @@ import org.slf4j.LoggerFactory;
 
 public class JcrSessionPoolManager {
     
-    private static final Logger log = LoggerFactory.getLogger(JcrSessionPoolManager.class);
-    private static final Map<String,JcrSessionPool> jcrSessionPools = new HashMap<String,JcrSessionPool>();
+    private final Logger log = LoggerFactory.getLogger(JcrSessionPoolManager.class);
+    private final Map<String,JcrSessionPool> jcrSessionPools = new HashMap<String,JcrSessionPool>();
     
-    public final static Session getTemplateSession(HttpServletRequest request){
+    public Session getTemplateSession(HttpServletRequest request){
         // TODO a session needed to fetch templates might need other credentials. For now, just fetch a normal 
         // jcr session
         return getSession(request);
     }
     
-    public final static ReadOnlyPooledSession getSession(HttpServletRequest request){
+    public ReadOnlyPooledSession getSession(HttpServletRequest request){
         
         // TODO improve speed of getting a session from the pool. 
         
@@ -67,7 +67,7 @@ public class JcrSessionPoolManager {
         }
     }
     
-    public static void dispose() {
+    public void dispose() {
        // logout *all* jcr sessions. 
         synchronized(jcrSessionPools) {
             for(Iterator<JcrSessionPool> si = jcrSessionPools.values().iterator(); si.hasNext(); ) {

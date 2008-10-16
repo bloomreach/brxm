@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class ContextBase {
     
 	
 	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-		this(contextName, repositoryPath, request,JcrSessionPoolManager.getSession(request));
+		this(contextName, repositoryPath, request, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
 	}
 	
 	public ContextBase (String contextName, String repositoryPath, HttpServletRequest request, Session session) throws PathNotFoundException, RepositoryException {
