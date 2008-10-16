@@ -1,4 +1,18 @@
-
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * @class a YAHOO.hippo.HippoAutocomplete extension
@@ -15,14 +29,28 @@ YAHOO.hippo.SearchBox = function(id, config) {
 };
     
 YAHOO.extend(YAHOO.hippo.SearchBox, YAHOO.hippo.HippoAutoComplete, {
+    
     initConfig : function(config) {
         YAHOO.hippo.SearchBox.superclass.initConfig.call(this, config);
         _this = this;
         this.itemSelectEvent.subscribe(function(sType, aArgs) {
-            var obj = aArgs[2];
-            var nodePath = obj[1];
-            var url = _this.callbackUrl + '&browse=' + encodeURIComponent(nodePath);
+            var data = aArgs[2];
+            var url = _this.callbackUrl + '&browse=' + encodeURIComponent(data.url);
             _this.callbackMethod(url);
+            this._clearTextboxValue();
         });
+        
+        this.suppressInputUpdate = true;
+        this.resultTypeList = false; 
+    },
+    
+    formatResult : function(oResultData, sQuery, sResultMatch) {
+        return "<span>" + oResultData.label + " (" + oResultData.state + ")<br/>" +  oResultData.excerpt + "</span>";
+    },
+    
+    doBeforeLoadData : function(sQuery, oResponse, oPayload) {
+        this.setFooter(oResponse.meta.totalHits + " hit" + (oResponse.meta.totalHits > 1 ? 's' : ''));
+        return true;
     }
+
 });
