@@ -26,7 +26,10 @@
 <section name="Your own Quickstart">
  <span class='shortdesc'>Quickstart in your own servlet container.</span>
 
-  <span class='rewrite'>Move as much as possible to admin guide and refer to it from here.</span>  
+  <span class='rewrite'>This text contains much that is admin information and is mostly redundant.
+                        Merge this document into the admin guide and leave the new version very small, 
+                        mainly refering to the necessary admin documents. 
+  </span>  
  
 
 <subsection name='Rubbish'>
