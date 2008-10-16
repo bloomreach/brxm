@@ -1,4 +1,4 @@
-package org.hippoecm.frontend.editor.tagging;
+package org.hippoecm.frontend.plugins.tagging.editor;
 
 import java.util.LinkedHashSet;
 
