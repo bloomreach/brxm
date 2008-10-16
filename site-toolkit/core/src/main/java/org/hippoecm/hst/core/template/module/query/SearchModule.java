@@ -290,11 +290,6 @@ public class SearchModule extends ModuleBase implements Search {
         }
         
         if(where.length() > 0) {
-            where += " and ";
-        }
-        where += "not(@jcr:primaryType='nt:frozenNode')";
-        
-        if(where.length() > 0) {
             where = "[" + where + "]";
         }
         

@@ -112,9 +112,9 @@ public class ContextWhereClause {
         }
         
         if(contextClauses.length() > 0) {
-            contextClauses += " and " + "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
+            contextClauses += " and " + "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "' and not(@jcr:primaryType='nt:frozenNode')" ;
         } else {
-            contextClauses =  "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
+            contextClauses =  "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "' and not(@jcr:primaryType='nt:frozenNode')"; 
         }
         Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
         return contextClauses;
