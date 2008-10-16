@@ -511,6 +511,10 @@ public class SearchModule extends ModuleBase implements Search {
         this.where = where;
     }
 
+    public String getWhere() {
+        return this.where;
+    }
+
     public int getCurrentPageNumber() {
         return currentPageNumber;
     }
