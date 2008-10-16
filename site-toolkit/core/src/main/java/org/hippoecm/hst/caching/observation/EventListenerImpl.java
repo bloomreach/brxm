@@ -53,7 +53,7 @@ public class EventListenerImpl implements EventListener, Serializable{
                   String path =  event.getPath();
                   // for now hardcode these paths to ignore, because currently getting a jcr session logs 
                   // and created jcr nodes
-                  if(!path.startsWith("/hippo:log") && !path.startsWith("/hippo:configuration")) {
+                  if(!path.startsWith("/hippo:log") && !path.startsWith("/hippo:configuration") && !path.startsWith("/jcr:system")) {
                       namedEvents.addAll(createEvents(path));
                   }
             } catch (RepositoryException e) {
