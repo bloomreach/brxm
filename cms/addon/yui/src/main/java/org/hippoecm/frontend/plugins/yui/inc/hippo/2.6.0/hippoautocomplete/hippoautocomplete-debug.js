@@ -84,23 +84,32 @@ YAHOO.namespace("hippo");
             pos[1] += Dom.get(oTextbox).offsetHeight + 2; 
             Dom.setXY(oContainer,pos); 
             return true; 
-        }
-        /*,
-        _selectItem : function(elListItem) {
-            this._bItemSelected = true;
-            this._updateValue(elListItem);
-            this._sPastSelections = this._elTextbox.value;
-            this._clearInterval();
-            this.itemSelectEvent.fire(this, elListItem, elListItem._oResultData);
-            YAHOO.log("Item selected: " + YAHOO.lang.dump(elListItem._oResultData), "info", this.toString());
-            this._toggleContainer(false);
-            
-            var nodePath = elListItem._oResultData[1]; 
-            var url = this.callbackUrl + '&browse=' + encodeURIComponent(nodePath);
-            YAHOO.log("Calling url: " + url, "info", this.toString());
-            this.callbackMethod(url);
-        }
-        */
+        },
         
+        _onTextboxKeyDown : function(v,oSelf) {
+            var nKeyCode = v.keyCode;
+
+            // Clear timeout
+            if(oSelf._nTypeAheadDelayID != -1) {
+                clearTimeout(oSelf._nTypeAheadDelayID);
+            }
+            if(nKeyCode == 27) { //esc
+                oSelf._toggleContainer(false);
+                oSelf._clearTextboxValue();
+                return;
+            } else {
+                return YAHOO.hippo.HippoAutoComplete.superclass._onTextboxKeyDown.call(this, v, oSelf);
+            }
+        },
+        
+        _onTextboxBlur : function(v, oSelf) {
+            oSelf._clearTextboxValue();
+            return YAHOO.hippo.HippoAutoComplete.superclass._onTextboxBlur.call(this, v, oSelf);
+        },
+        
+        _clearTextboxValue : function() {
+            this._elTextbox.value = '';
+        }
+
     });
  })();
