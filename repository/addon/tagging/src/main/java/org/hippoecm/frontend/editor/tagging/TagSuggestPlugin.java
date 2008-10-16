@@ -27,20 +27,20 @@ import org.slf4j.LoggerFactory;
 public class TagSuggestPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     static final Logger log = LoggerFactory.getLogger(TagSuggestPlugin.class);
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private JcrNodeModel nodeModel;
     private IJcrService jcrService;
 
     public TagSuggestPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         nodeModel = (JcrNodeModel) getModel();
         jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-        
+
         String mode = config.getString("mode");
         if (ITemplateEngine.EDIT_MODE.equals(mode)) {
             Fragment fragment = new Fragment("tag-view", "suggestions", this);
@@ -50,53 +50,54 @@ public class TagSuggestPlugin extends RenderPlugin {
             add(new Fragment("tag-view", "empty", this));
         }
     }
-    
+
     private class TagSuggestView extends RefreshingView {
         private static final long serialVersionUID = 1L;
 
         final JcrNodeModel nodeModel;
         final IJcrService jcrService;
-        
+
         public TagSuggestView(String id, IModel model, final IJcrService jcrService) {
             super(id, model);
-            
+
             nodeModel = (JcrNodeModel) model;
             this.jcrService = jcrService;
-            
+
             /**
              * Construct the backend and pass it the node model
              */
-            
+
         }
-        
+
         @Override
-        protected void populateItem(Item item){
+        protected void populateItem(Item item) {
             final String keyword = (String) item.getModelObject();
             Fragment fragment = new Fragment("keyword", "tag-fragment", this);
-            AjaxFallbackLink link = new AjaxFallbackLink("link"){
+            AjaxFallbackLink link = new AjaxFallbackLink("link") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     try {
-                        TagsModel tagsModel = new TagsModel(new JcrPropertyModel(nodeModel.getNode().getProperty(TagsPlugin.FIELD_NAME)));
+                        TagsModel tagsModel = new TagsModel(new JcrPropertyModel(nodeModel.getNode().getProperty(
+                                TagsPlugin.FIELD_NAME)));
                         tagsModel.addTag(keyword);
                         jcrService.flush(nodeModel);
                         log.debug("Send flush");
                     } catch (PathNotFoundException e) {
                         log.info(TagsPlugin.FIELD_NAME + " does not exist for this node. Attempting to create it.");
                         // the property hippostd:tags does not exist
-                        String[] tags = {keyword};
-                        try{
+                        String[] tags = { keyword };
+                        try {
                             nodeModel.getNode().setProperty(TagsPlugin.FIELD_NAME, tags);
-                        }catch (RepositoryException re){
+                        } catch (RepositoryException re) {
                             log.error("Creation of " + TagsPlugin.FIELD_NAME + " failed.", e);
                         }
                     } catch (RepositoryException e) {
                         log.error("Repository error", e);
                     }
                 }
-                
+
             };
             link.add(new Label("link-text", keyword));
             fragment.add(link);
@@ -109,9 +110,9 @@ public class TagSuggestPlugin extends RenderPlugin {
             items.add(new Model("wine"));
             items.add(new Model("beer"));
             items.add(new Model("hippos"));
-            return  items.iterator();
+            return items.iterator();
         }
-        
+
     }
 
 }

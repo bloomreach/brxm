@@ -49,20 +49,21 @@ public class TagsPlugin extends RenderPlugin implements IJcrNodeModelListener {
                 ITemplateEngine.class);
 
         nodeModel = (JcrNodeModel) getModel();
-        
+
+        // check if the property exist, else try to create it
         try {
             nodeModel.getNode().getProperty(FIELD_NAME);
         } catch (PathNotFoundException e) {
             log.warn(FIELD_NAME + " does not exist, attempting to create it.");
-            try{
+            try {
                 nodeModel.getNode().setProperty(TagsPlugin.FIELD_NAME, new String[0]);
-            }catch (RepositoryException re){
+            } catch (RepositoryException re) {
                 log.error("Creation of " + FIELD_NAME + " failed.", re);
             }
         } catch (RepositoryException e) {
             log.error("Repository error", e);
         }
-        
+
         String mode = config.getString("mode");
         TagsModel tagModel = createTagModel(nodeModel);
         if (tagModel == null) {
@@ -108,7 +109,5 @@ public class TagsPlugin extends RenderPlugin implements IJcrNodeModelListener {
         log.debug((String) tagModel.getObject());
         return tagModel;
     }
-
-    
 
 }
