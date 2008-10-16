@@ -19,6 +19,7 @@ import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
+import org.hippoecm.hst.core.template.module.query.ContextWhereClause;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class DocumentsOfTypeModule extends ModuleBase {
         }
         
         Session jcrSession = ctxBase.getSession();
-        wrappedNodes = getDocuments(jcrSession,urlMapping);
+        wrappedNodes = getDocuments(jcrSession,urlMapping,ctxBase.getContextRootNode());
         pageContext.setAttribute(getVar(), wrappedNodes);
 	
 	}
@@ -57,13 +58,16 @@ public class DocumentsOfTypeModule extends ModuleBase {
       this.docType=type;	
     }
 	
-	private List<ELNode> getDocuments(Session jcrSession, URLMapping urlMapping){
+	private List<ELNode> getDocuments(Session jcrSession, URLMapping urlMapping, Node contextNode){
 		List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 		if(docType!=null || !docType.equals("")) {
 	        try {
+	            ContextWhereClause ctxWhereClause = new ContextWhereClause(contextNode, "content");
+	            String contextWhereClauses = ctxWhereClause.getWhereClause();
+	            String xpath = "//*["+contextWhereClauses+ " and @jcr:primaryType='"+docType+"']";
+	            
 	            QueryManager qMgr = jcrSession.getWorkspace().getQueryManager();
-	            QueryResult result = qMgr.createQuery("select * from " + docType + " where hippostd:state<>'draft'",
-	                    Query.SQL).execute();
+	            QueryResult result = qMgr.createQuery(xpath,Query.XPATH).execute();
 	            NodeIterator iter = result.getNodes();
 	            while (iter.hasNext()) {
 	                Node node = iter.nextNode();
