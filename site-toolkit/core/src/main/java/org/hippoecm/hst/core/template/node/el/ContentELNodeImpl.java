@@ -67,6 +67,52 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
     }
     
+    public Map hasNode(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+
+            @Override
+            public Object get(Object node) {
+                String nodeName = (String) node;
+                try {
+                    return jcrNode.hasNode(nodeName);
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException " + e.getMessage());
+                    return false;
+                }
+
+            }
+        };
+    }
+    
+    public Map getNode(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            public Object get(Object nodeName) {
+            	String name = (String) nodeName;
+            	 try {
+                     if (!jcrNode.hasNode(name)) {
+                         log.warn("Node " + name + " not found. Return empty string");
+                         return "";
+                     } else{
+                    	 return new ContentELNodeImpl(jcrNode.getNode(name),sourceRewriter);
+                     }
+                 } catch (PathNotFoundException e) {
+                     e.printStackTrace();
+                 } catch (RepositoryException e) {
+                     e.printStackTrace();
+                 }
+                 return null;
+            }
+        };
+    }
+    
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -227,5 +273,23 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             }
         };
     }
-
+    
+    // TODO: Is this necessary? Maybe we should use a facetselect instead?
+    public ELNode getFacetlink(){
+      	try {
+      		if(jcrNode != null && jcrNode.hasProperty("hippo:docbase")){
+			  Node facetedNode = jcrNode.getSession().getNodeByUUID(jcrNode.getProperty("hippo:docbase").getValue().getString());
+			  Node childFacetNode = facetedNode.getNode(facetedNode.getName());
+			  return new ContentELNodeImpl(childFacetNode,sourceRewriter);
+			}
+            else{
+              return null;
+            }
+         } catch (PathNotFoundException e) {
+              e.printStackTrace();
+         } catch (RepositoryException e) {
+              e.printStackTrace();
+        }
+        return null;
+    }
 }
