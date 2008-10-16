@@ -28,6 +28,9 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>17e27a8b-7b53-40d3-a94d-8f6f64cf9d95</sv:value>
+        </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String"/>
         <sv:property sv:name="hippostd:state" sv:type="String">
             <sv:value>unpublished</sv:value>
@@ -42,6 +45,10 @@
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:harddocument</sv:value>
             </sv:property>
+            
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>40d6f30c-07b2-4618-8751-af13da1d13c0</sv:value>
+            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String"/>
         </sv:node>
         <sv:node sv:name="hst:sitemap">
@@ -50,6 +57,9 @@
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>662281d6-37bc-48ae-85ad-4bbb7f75c678</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String"/>
             <sv:node sv:name="binaries">
@@ -78,6 +88,9 @@
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:harddocument</sv:value>
             </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>1c7595a6-1964-4016-a72a-27b7fbc2ee18</sv:value>
+            </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String"/>
         </sv:node>
         <sv:node sv:name="hst:layouts">
@@ -86,6 +99,9 @@
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                 <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>7332593e-e16b-45df-a3a2-9f59f5ab1930</sv:value>
             </sv:property>
             <sv:property sv:name="hippo:paths" sv:type="String"/>
         </sv:node>

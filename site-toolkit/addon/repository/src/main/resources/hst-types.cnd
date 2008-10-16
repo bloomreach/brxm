@@ -62,10 +62,10 @@
 + * (hst:layout) = hst:layout
 
 [hst:configuration] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
-+ hst:modules (hst:modules) = hst:modules mandatory 
-+ hst:sitemap (hst:sitemap) = hst:sitemap mandatory 
-+ hst:navigation (hst:navigation) = hst:navigation mandatory 
-+ hst:layouts (hst:layouts) = hst:layouts mandatory 
++ hst:modules (hst:modules) = hst:modules  
++ hst:sitemap (hst:sitemap) = hst:sitemap  
++ hst:navigation (hst:navigation) = hst:navigation  
++ hst:layouts (hst:layouts) = hst:layouts 
 
 
 
