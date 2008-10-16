@@ -234,7 +234,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
-        Node contextNode = (HippoNode) ctxBase.getContextRootNode();
+        Node contextNode = ctxBase.getContextRootNode();
         
         /*
          * if the contextNode is a facetselect node --> take the uuid
