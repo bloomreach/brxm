@@ -73,18 +73,21 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
     private String contentBase;
     private int uriLevels;
     private Session observer; 
-    private EventListener listener;  
-   
+    private EventListener listener;
+    private volatile boolean isListenerRegistered = false;
+    private FilterConfig filterConfig;
+    
     
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
+        this.filterConfig = filterConfig;
         contentBase = ContextBase.stripFirstSlash(getInitParameter(filterConfig, CONTENT_BASE_INIT_PARAMETER, true));
         try {
             uriLevels = Integer.parseInt(getInitParameter(filterConfig, URI_LEVEL_INIT_PARAMETER, true));
         } catch (NumberFormatException e) {
             throw new ServletException("The init-parameter " + URI_LEVEL_INIT_PARAMETER + " is not an int.");
         }
-         registerEventListener(filterConfig);
+         
     }
 
     
@@ -106,7 +109,13 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
             ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-
+        
+        synchronized(this) {
+            if(!isListenerRegistered) {
+                registerEventListener(filterConfig);
+                isListenerRegistered = true;
+            }
+        }
         if (ignoreRequest(request)) {
             filterChain.doFilter(request, response);
         } else {
