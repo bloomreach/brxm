@@ -56,12 +56,23 @@ public class ReadOnlyPooledSession implements Session{
     private long lastRefreshTime;
     private JcrSessionPool jcrSessionPool;
     private static final int TIME_TO_LIVE_SECONDS = 1000;
+    private int refCount;
     
     public ReadOnlyPooledSession(Session session, JcrSessionPool  jcrSessionPool) {
         this.delegatee = session;
         this.creationTime = System.currentTimeMillis();
         this.lastRefreshTime = creationTime;
         this.jcrSessionPool = jcrSessionPool;
+    }
+    
+    public void increaseRefCount(){
+        refCount++;
+    } 
+    public void decreaseRefCount(){
+        refCount--;
+    }
+    public int getRefCount(){
+        return this.refCount;
     }
     
     public boolean isValid(){

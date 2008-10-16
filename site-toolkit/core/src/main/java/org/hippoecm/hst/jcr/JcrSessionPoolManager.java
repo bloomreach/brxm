@@ -47,10 +47,10 @@ public class JcrSessionPoolManager {
         String repositoryLocation = HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS);
         String username = HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME);
         String password = HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_PASSWORD);
-        SimpleCredentials smplCred = new SimpleCredentials(username, (password != null ? password.toCharArray() : null));
+        SimpleCredentials simpleCredentials = new SimpleCredentials(username, (password != null ? password.toCharArray() : null));
         
         // TODO a less blocking synronization
-        String userId = smplCred.getUserID();
+        String userId = simpleCredentials.getUserID();
         if(userId == null) {
             userId = "anonymous";
         }
@@ -58,7 +58,7 @@ public class JcrSessionPoolManager {
             JcrSessionPool jcrSessionPool = jcrSessionPools.get(userId);
             if(jcrSessionPool == null) {
                 log.debug("No session pool present for user '" +username+ "'. Create one" );
-                jcrSessionPool = new JcrSessionPool(smplCred, repositoryLocation);
+                jcrSessionPool = new JcrSessionPool(simpleCredentials, repositoryLocation);
                 jcrSessionPools.put(userId,jcrSessionPool);
                 return jcrSessionPool.getSession(request.getSession());
             }

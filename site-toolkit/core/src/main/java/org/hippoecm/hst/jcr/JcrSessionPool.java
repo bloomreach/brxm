@@ -59,6 +59,7 @@ public class JcrSessionPool {
             session = this.activeSessions.get(httpSession);
             if (session != null) {
                 if (session.isLive()) {
+                    session.increaseRefCount();
                     log.debug("return found active session in pool for the request. ");
                     return session;
                 } else {
@@ -78,6 +79,7 @@ public class JcrSessionPool {
                 if (session.isLive() && session.isValid()) {
                     this.activeSessions.put(httpSession, session);
                     log.debug("Return  found idle session.");
+                    session.increaseRefCount();
                     return session;
                 } else {
                     // try next in the idleSessions untill none left
@@ -105,6 +107,7 @@ public class JcrSessionPool {
         }
         session = new ReadOnlyPooledSession(jcrSession, this);
         synchronized (this.activeSessions) {
+            session.increaseRefCount();
             this.activeSessions.put(httpSession, session);
         }
         return session;
@@ -112,25 +115,27 @@ public class JcrSessionPool {
 
 
     public void release(HttpSession httpSession) {
-        log.debug("release used session");
         synchronized (this) {
-            ReadOnlyPooledSession finishedSession = this.activeSessions.remove(httpSession);
+            ReadOnlyPooledSession finishedSession  = this.activeSessions.get(httpSession);
             if (finishedSession != null) {
-                if (!finishedSession.isLive()) {
-                    log.debug("Used session is not live anymore: log out");
-                    finishedSession.getDelegatee().logout();
-                    return;
+                finishedSession.decreaseRefCount();
+                if(finishedSession.getRefCount() == 0) {
+                    this.activeSessions.remove(httpSession);
+                    if (!finishedSession.isLive()) {
+                        log.debug("Used session is not live anymore: log out");
+                        finishedSession.getDelegatee().logout();
+                        return;
+                    }
+                    if (finishedSession.isValid()) {
+                        log.debug("Return the used session to the pool");
+                        refresh(finishedSession);
+                        idleSessions.add(finishedSession);
+                    } else {
+                        log.debug("Used session is expired. Log out");
+                        finishedSession.getDelegatee().logout();
+                    }
                 }
-
-                if (finishedSession.isValid()) {
-                    log.debug("Return the used session to the pool");
-                    refresh(finishedSession);
-                    idleSessions.add(finishedSession);
-                } else {
-                    log.debug("Used session is expired. Log out");
-                    finishedSession.getDelegatee().logout();
-                }
-            }
+             }
         }
     }
 
