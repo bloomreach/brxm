@@ -249,7 +249,8 @@ public class SearchModule extends ModuleBase implements Search {
         String contextWhereClauses = "";
         String statementOrderBy = "";
         
-        contextWhereClauses = getContextWhereClause(contextNode);
+        ContextWhereClause ctxWhereClause = new ContextWhereClause(contextNode, target);
+        contextWhereClauses = ctxWhereClause.getWhereClause();
         
         if (this.where != null) {
             statementWhere = "(" + this.where + ")";
@@ -301,90 +302,6 @@ public class SearchModule extends ModuleBase implements Search {
         log.debug("xpath statement = " + statement);
         setStatement(statement); 
         Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
-    }
-
-    private String getContextWhereClause(Node contextNode) {
-        HippoNode contentBaseNode = null;
-        String contextBasePath = null;
-        String contentBaseUuid = null;
-        String contextClauses = "";
-        long start = System.currentTimeMillis();
-        try {
-            contextBasePath = contextNode.getPath();
-            try {
-                contentBaseNode = (HippoNode) contextNode.getNode(target);
-            } catch (PathNotFoundException e) {
-                log.warn("target '" + target + "' is not a subnode of '" + contextBasePath + "'.");
-                validStatement = false;
-                return null;
-            }
-            /*
-             * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
-             * add the filter as a query
-             */
-            Node rootNode = contentBaseNode.getSession().getRootNode();
-            
-            while (!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
-                
-                // the contentBaseUuid will be the uuid of the first 'referenceable node' or docbase of a facetselect
-                if(contentBaseUuid == null) {
-                    if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        contentBaseUuid = contentBaseNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                        
-                    } else if (contentBaseNode.getCanonicalNode() != null
-                            && contentBaseNode.getCanonicalNode().isNodeType("mix:referenceable")) {
-                        contentBaseUuid = contentBaseNode.getCanonicalNode().getUUID();
-                    } else {
-                        log.warn("Target '"+target+"' is not pointing to a referenceable node or facetselect. Trying to search from the parent");
-                    }
-                }
-                if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    // below all mandatory multivalued props
-                    Value[] modes = contentBaseNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
-                    Value[] facets = contentBaseNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
-                    Value[] values = contentBaseNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
-                    if (modes.length == facets.length && facets.length == values.length) {
-                        for (int i = 0; i < modes.length; i++) {
-                            String mode = modes[i].getString();
-                            String facet = facets[i].getString();
-                            String value = values[i].getString();
-                            if (mode.equals("clear") || mode.equals("stick")) {
-                                // do not know how to handle these in a query
-                                log.debug("skipping mode 'clear' or 'stick' because ambigous how to handle them");
-                                continue;
-                            } else {
-                                if(contextClauses.length() > 0) {
-                                    contextClauses += " and ";
-                                }
-                                if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
-                                    // special case
-                                    contextClauses += "(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))";
-                                } else {
-                                    contextClauses += "@" + facet + "='" + value + "'";
-                                }
-                            }
-                        }
-                    } else {
-                        log
-                                .warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
-                    }
-                }
-                contentBaseNode = (HippoNode) contentBaseNode.getParent();
-            }
-
-        } catch (RepositoryException e) {
-            log.error("Cannot prepare statement: RepositoryException " + e.getMessage());
-            validStatement = false;
-            return null;
-        }
-        
-        if(contextClauses.length() > 0) {
-            contextClauses += " and " + "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
-        } else {
-            contextClauses =  "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "'";
-        }
-        Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
-        return contextClauses;
     }
 
     /**
