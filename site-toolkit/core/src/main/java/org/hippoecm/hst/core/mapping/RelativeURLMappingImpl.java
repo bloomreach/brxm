@@ -16,6 +16,7 @@ public class RelativeURLMappingImpl implements URLMapping{
     
     private String currentRequestUri;
     private URLMapping delegatee;
+    private boolean currentUriEndsWithSlash = false;
     
     public RelativeURLMappingImpl(String currentRequestUri, URLMapping mapping){
         this.delegatee = mapping;
@@ -23,6 +24,7 @@ public class RelativeURLMappingImpl implements URLMapping{
             currentRequestUri = currentRequestUri.substring(1);
         }
         while(currentRequestUri.endsWith("/")) {
+            this.currentUriEndsWithSlash = true;
             currentRequestUri =  currentRequestUri.substring(0,currentRequestUri.length()-1);
         }
         this.currentRequestUri = currentRequestUri;
@@ -75,6 +77,9 @@ public class RelativeURLMappingImpl implements URLMapping{
             }
         }
         int depth = matchDepth; 
+        if(currentUriEndsWithSlash) {
+            relativeUrl.append("../"); 
+        }
         while( (++depth) < currentRequestUriParts.length) {
             relativeUrl.append("../");
         }
