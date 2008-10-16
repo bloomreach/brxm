@@ -39,6 +39,10 @@ public abstract class PagingModuleBase extends ModuleBase implements PagingModul
             pageParameter = getPageParameter();
             HttpServletRequest request = (HttpServletRequest) context.getRequest();
             String pageParameterValue = request.getParameter(pageParameter);
+            if (pageParameterValue == null) {
+                // value is not set
+                return 0;
+            }
             try {
                 return Integer.parseInt(pageParameterValue);
             } catch (NumberFormatException e) {
