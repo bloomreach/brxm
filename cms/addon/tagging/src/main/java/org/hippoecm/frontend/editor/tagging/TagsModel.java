@@ -15,10 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TagsModel extends Model {
+    @SuppressWarnings("unused")
+    private static final String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TagsModel.class);
-    
+
     private JcrPropertyModel propertyModel;
     private LinkedHashSet<String> tags;
 
@@ -29,38 +32,38 @@ public class TagsModel extends Model {
         tags = parsePropertyModel(this.propertyModel);
         super.setObject(buildModelObject(tags));
     }
-    
-    private String buildModelObject(LinkedHashSet<String> set){
+
+    private String buildModelObject(LinkedHashSet<String> set) {
         StringBuffer buffer = new StringBuffer();
-        for (String tag : set){
+        for (String tag : set) {
             buffer.append(tag);
             buffer.append(TAG_SEPERATOR);
             buffer.append(" ");
         }
         return buffer.toString();
     }
-    
+
     private String[] buildPropertyModel(String tags) {
         if (tags == null || tags.equals("")) {
             return new String[] {};
         } else {
             String[] tagsArray = tags.split(TAG_SEPERATOR);
             LinkedHashSet<String> set = new LinkedHashSet<String>();
-            for (int i = 0; i < tagsArray.length; i++){
+            for (int i = 0; i < tagsArray.length; i++) {
                 set.add(tagsArray[i].trim());
             }
             return set.toArray(new String[0]);
         }
     }
-    
-    private LinkedHashSet<String> parsePropertyModel(JcrPropertyModel model){
+
+    private LinkedHashSet<String> parsePropertyModel(JcrPropertyModel model) {
         LinkedHashSet<String> set = new LinkedHashSet<String>();
         // the property does not exist so don't even try
-        if (model.getProperty() == null){
+        if (model.getProperty() == null) {
             return set;
         }
         try {
-            for (Value val : model.getProperty().getValues()){
+            for (Value val : model.getProperty().getValues()) {
                 String tag = val.getString();
                 set.add(tag.trim());
             }
@@ -71,17 +74,17 @@ public class TagsModel extends Model {
         }
         return set;
     }
-    
-    public void addTag(String tag){
-        if (!tag.trim().equals("")){
+
+    public void addTag(String tag) {
+        if (!tag.trim().equals("")) {
             log.debug("Adding tag: " + tag);
             tags.add(tag.trim());
             saveProperty(tags.toArray(new String[0]));
             super.setObject(buildModelObject(tags));
         }
     }
-    
-    private void saveProperty(String[] tags){
+
+    private void saveProperty(String[] tags) {
         try {
             propertyModel.getProperty().setValue(tags);
         } catch (ValueFormatException e) {
@@ -109,5 +112,4 @@ public class TagsModel extends Model {
         tags = parsePropertyModel(propertyModel);
     }
 
-    
 }
