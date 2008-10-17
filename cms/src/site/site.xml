@@ -73,9 +73,8 @@
     </menu>
 
     <menu name="Hippo CMS Support">
-      <!--<item name="Hippo Forge" href="/community/hippo-forge.html"/>-->
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
-      <item name="Community support" href="/support/community-support.html"/>
+      <item name="Community support" href="/support/community_support.html"/>
       <item name="Contributing" href="/support/contribute.html"/>
     </menu>
 
