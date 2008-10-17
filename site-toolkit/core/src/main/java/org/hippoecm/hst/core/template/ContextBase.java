@@ -23,18 +23,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ContextBase {
-	private static final Logger log = LoggerFactory.getLogger(ContextBase.class);
+	private static final org.slf4j.Logger log = LoggerFactory.getLogger(ContextBase.class);
 	private static final String DEFAULT_CONTEXT_NAME = "content";
 	private static final String DEFAULT_CONTENT_LOCATION = "/content";
 	
-	private String contextName;
+	private final String contextName;
 	private Node contextRootNode;
-	private Session jcrSession;
+	private final Session jcrSession;
 	private URLMapping urlMapping;
     
 	
@@ -83,12 +81,16 @@ public class ContextBase {
 	    String strPath = "";
 		try {
 		    strPath = contextRootNode.getPath();
-            log.info("get RelativeNode with rootNode " + strPath + " path=" + path);
+		    if (log.isDebugEnabled()) {
+		        log.debug("Get RelativeNode with rootNode " + strPath + " path=" + path);
+		    }
             return contextRootNode.getNode(stripFirstSlash(path));
         } catch (PathNotFoundException e) {
-            log.warn("Node " + stripFirstSlash(path) + " cannot be found in the repository below '"+strPath+"'. Returning null");
+            if (log.isDebugEnabled()) {
+                log.debug("Node " + stripFirstSlash(path) + " cannot be found in the repository below '"+strPath+"'. Returning null");
+            }
         } catch (RepositoryException e) {
-           log.error("RepositoryException " + e.getMessage());
+            log.error("Unable to find node " + stripFirstSlash(path) + " in the repository below '"+strPath+"': " + e.getMessage(), e);
         }
         return null;
 	}
@@ -101,7 +103,8 @@ public class ContextBase {
 		return s.startsWith("/") ? s.substring(1) : s;
 	}
 	
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("(").append(this.getClass().getName()).append(":[");
 		sb.append("contextName=").append(contextName);
