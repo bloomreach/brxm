@@ -33,24 +33,27 @@
  
 
 <subsection name='Rubbish'>
-
+<p>
    download either the WAR or EAR package, whichever type you prefer:
-
+</p>
+<ul>
    <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war">quickstart war package</a></li>
    <li><a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear">quickstart ear package</a></li>
-
+</ul>
+<p>
   Note that other application containers and Linux packages of the mentioned application containers 
   should in principle also work, but have not yet been tested.
-
-
+</p>
+<p>
  try out Hippo CMS with example content having predefined structure, 
-
+</p>
+<p>
  to see possible features `in action',  before designing your own content structure. 
-
- , download a quickstart Hippo CMS package. After you studied
+</p>
+ <p>
+, download a quickstart Hippo CMS package. After you studied
  the example content, your system adminstrator can configure the package for actual use in your company. 
-
-
+</p>
 </subsection>
 
 <subsection name="Deploy, run and access">
@@ -71,7 +74,7 @@ machine other than your local machine you need to change &quot;localhost&quot;
 to the correct machine name.
 </p>
 
-            <subsection name="Deploying in Tomcat 6.0">
+            <h3>Deploying in Tomcat 6.0</h3>
                 <ol>
                     <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
                     <li>Unpack the zip</li>
@@ -80,9 +83,8 @@ to the correct machine name.
                     <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
                     <li>Open your browser and surf to http://localhost:8080/cms/</li>
                 </ol>
-            </subsection>
 
-            <subsection name="Deploying in Glassfish or other application servers">
+            <h3>Deploying in Glassfish or other application servers</h3>
                 <p>
                   Once your have obtained the sample EAR and have started and configured your application
                   server, you can proceed with deploying the EAR in the application server.  This procedure
@@ -129,7 +131,6 @@ http://localhost:8080/
                 <p>
                   Note that the deployed location does not end with <code>/cms</code>
                 </p>
-            </subsection>
             
  </subsection>
  <subsection name="Deploy the binary distribution">
