@@ -23,7 +23,7 @@
     </properties>
     <body>
         <section name="Contributing">
-         <span class='shortdesc'>Contributing to Hippo ECM.</span>
+         <span class='shortdesc'>Contributing to Hippo CMS.</span>
 
          <span class='add'>information about Hippo Forge</span>
 
@@ -39,7 +39,7 @@
           </p>
 
           <p>
-            A <a href="http://wiki.hippo.nl/display/HIPPOECM/">public Wiki</a> is
+            A <a href="http://wiki.hippo.nl/display/HIPPOCMS/">public Wiki</a> is
             available for contributing documentation.
           </p>
 
