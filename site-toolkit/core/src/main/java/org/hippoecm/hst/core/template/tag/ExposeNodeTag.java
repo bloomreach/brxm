@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -66,12 +65,13 @@ public void doTag() throws JspException, IOException {
             if(node.getJcrNode().isNodeType("mix:referenceable")) {
                 request.getSession().setAttribute("UUID", node.getJcrNode().getUUID());
             } else {
-                log.warn("Node is not referenceable hence cannot get uuid. ");
+                log.debug("Node is not referenceable hence cannot get uuid. ");
             }
 		} catch (UnsupportedRepositoryOperationException e) {			
-			log.error(e.getMessage());
-		} catch (RepositoryException e) {		
-			log.error(e.getMessage());
+			log.warn("Method not supported by the repository: {}",e.getMessage());
+		} catch (RepositoryException e) {
+			log.error("Error while getting checking if node is referenceable: {}",e.getMessage());
+			log.debug("RepositoryException:", e);
 		}
     }
 }

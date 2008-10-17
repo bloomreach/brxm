@@ -9,7 +9,6 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractELNode implements ELNode {
 
-    private Logger log = LoggerFactory.getLogger(AbstractELNode.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractELNode.class);
     protected Node jcrNode;
 
     public AbstractELNode(Node node) {
@@ -72,6 +71,7 @@ public abstract class AbstractELNode implements ELNode {
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
+            @Override
             public Object get(Object propertyName) {
                 try {
                     return jcrNode.hasProperty((String) propertyName);
@@ -90,6 +90,7 @@ public abstract class AbstractELNode implements ELNode {
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
+            @Override
             public Object get(Object propertyName) {
                 try {
                     Value val = jcrNode.getProperty((String) propertyName).getValue();
@@ -120,11 +121,12 @@ public abstract class AbstractELNode implements ELNode {
                         return "";
                     }
                 } catch (ValueFormatException e) {
-                    log.warn("Property is multivalued: not applicable for AbstractELNode. Return null");
+                    log.debug("Property is multivalued: not applicable for AbstractELNode. Return null");
                 } catch (PathNotFoundException e) {
-                    log.warn("Property " + propertyName + " not found. Return null");
+                    log.debug("Property '{}' not found. Return null.", propertyName);
                 } catch (RepositoryException e) {
-                    log.warn("RepositoryException " + e.getMessage());
+                    log.warn("RepositoryException while getting property: '{}", e.getMessage());
+                    log.debug("RepositoryException:", e);
                 }
                 return null;
             }
