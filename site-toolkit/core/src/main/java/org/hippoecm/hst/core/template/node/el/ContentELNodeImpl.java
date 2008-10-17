@@ -18,8 +18,6 @@ package org.hippoecm.hst.core.template.node.el;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
@@ -29,7 +27,6 @@ import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.node.content.PathTranslator;
 import org.hippoecm.hst.core.template.node.content.SourceRewriter;
 import org.hippoecm.hst.core.template.node.content.SourceRewriterImpl;
 import org.hippoecm.repository.api.HippoNode;
@@ -39,9 +36,9 @@ import org.slf4j.LoggerFactory;
 
 public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
-    private Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
+    private final Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
 
-    private SourceRewriter sourceRewriter;
+    private final SourceRewriter sourceRewriter;
 
     /*
      * If you want a custom source rewriter, use this constructor
@@ -63,6 +60,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         this.sourceRewriter = new SourceRewriterImpl(urlMapping);
     }
 
+    @Override
     public ELNode getParent(){
 		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
     }
@@ -80,7 +78,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 try {
                     return jcrNode.hasNode(nodeName);
                 } catch (RepositoryException e) {
-                    log.error("RepositoryException " + e.getMessage());
+                    log.error("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
                     return false;
                 }
 
@@ -94,36 +93,40 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
+            @Override
             public Object get(Object nodeName) {
             	String name = (String) nodeName;
             	 try {
                      if (!jcrNode.hasNode(name)) {
-                         log.warn("Node " + name + " not found. Return empty string");
+                         log.warn("Node '{}' not found. Return empty string", name);
                          return "";
                      } else{
                     	 return new ContentELNodeImpl(jcrNode.getNode(name),sourceRewriter);
                      }
                  } catch (PathNotFoundException e) {
-                     e.printStackTrace();
+                     log.warn("PathNotFoundException: {}", e.getMessage());
                  } catch (RepositoryException e) {
-                     e.printStackTrace();
+                     log.error("RepositoryException: {}", e.getMessage());
+                     log.debug("RepositoryException:", e);
                  }
                  return null;
             }
         };
     }
     
+    @Override
     public Map getProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
+            @Override
             public Object get(Object propertyName) {
                 String prop = (String) propertyName;
                 try {
                     if (!jcrNode.hasProperty(prop)) {
-                        log.warn("Property " + prop + " not found. Return empty string");
+                        log.warn("Property '{}' not found. Return empty string", prop);
                         return "";
                     }
                     if (jcrNode.getProperty(prop).getDefinition().isMultiple()) {
@@ -140,9 +143,10 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                     }
 
                 } catch (PathNotFoundException e) {
-                    e.printStackTrace();
+                    log.warn("PathNotFoundException: {}", e.getMessage());
                 } catch (RepositoryException e) {
-                    e.printStackTrace();
+                    log.error("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
                 }
                 return "";
             }
@@ -157,7 +161,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             case PropertyType.BOOLEAN:
                 return val.getBoolean();
             case PropertyType.DATE:
-                // todo : format date
+                // TODO : format date
                 return val.getDate();
             case PropertyType.DOUBLE:
                 return val.getDouble();
@@ -178,7 +182,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                     log.warn("sourceRewriter is null. No linkrewriting or srcrewriting will be done");
                     return val.getString();
                 } else {
-                    log.debug("parsing string property for source rewriting for property: " + prop);
+                    log.debug("parsing string property for source rewriting for property: {}", prop);
                     return sourceRewriter.replace(node, val.getString());
                 }
 
@@ -186,22 +190,21 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 // TODO what to return
                 break;
             default:
-                log.error("Illegal type for Value");
+                log.error("Unable to parse type: {}", PropertyType.nameFromValue(val.getType()));
                 return "";
             }
         } catch (ValueFormatException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("ValueFormatException while trying to parse type '{}' : {}", PropertyType.nameFromValue(val.getType()), e.getMessage());
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("RepositoryException: {}", e.getMessage());
+            log.debug("RepositoryException:", e);
         }
         return "";
     }
 
     public Map getResourceUrl() {
         if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
+            log.warn("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
@@ -222,7 +225,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                             String[] origPaths = hippoNode.getPath().split("/");
                             String postfix = "";
                             while (hippoNode.getCanonicalNode() == null) {
-                                // TODO this might go wrong for same name sibblings
+                                // TODO this might go wrong for same name siblings
                                 hippoNode = (HippoNode) hippoNode.getParent();
                                 levelsUp++;
                                 if (postfix.length() > 0) {
@@ -240,13 +243,12 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                             return sourceRewriter.getUrlMapping().rewriteLocation(canonical);
                         }
                     } else {
-                        log.error(resourceName + "not of type hippo:resource. Returning null");
+                        log.warn(resourceName + "not of type hippo:resource. Returning null");
                         return null;
                     }
                 } catch (RepositoryException e) {
-                    log
-                            .error("RepositoryException while looking for resource " + resourceName + "  :"
-                                    + e.getMessage());
+                    log.error("RepositoryException while looking for resource '{}': {}", resourceName, e.getMessage());
+                    log.debug("RepositoryException:", e);
                 }
                 return null;
             }
@@ -255,7 +257,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
     public Map getHasResourceUrl() {
         if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
+            log.warn("jcrNode is null. Return empty map");
             return Collections.EMPTY_MAP;
         }
         return new ELPseudoMap() {
@@ -266,7 +268,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 try {
                     return jcrNode.hasNode(resourceName);
                 } catch (RepositoryException e) {
-                    log.error("RepositoryException " + e.getMessage());
+                    log.error("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
                     return false;
                 }
 
@@ -286,9 +289,10 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
               return null;
             }
          } catch (PathNotFoundException e) {
-              e.printStackTrace();
+             log.warn("PathNotFoundException: {}", e.getMessage());
          } catch (RepositoryException e) {
-              e.printStackTrace();
+             log.error("RepositoryException: {}", e.getMessage());
+             log.debug("RepositoryException:", e);
         }
         return null;
     }
