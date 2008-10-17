@@ -84,30 +84,30 @@
       <item name="Quickstart Steps" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
 
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
-        <item name="Authors" collapse="true" href="/delve_into/user/authors/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/authors/tour/index.html"> </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/authors/howto/index.html"> </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/authors/dictionary/index.html"> </item>
+        <item name="Contributors" collapse="true" href="/delve_into/user/contributors/index.html">
+          <item name="Tour" collapse="true" href="/delve_into/user/contributors/tour/index.html"> </item>
+          <item name="Howto" collapse="true" href="/delve_into/user/contributors/howto/index.html"> </item>
+          <item name="Dictionary" collapse="true" href="/delve_into/user/contributors/dictionary/index.html"> </item>
         </item>
         <item name="Editors" collapse="true" href="/delve_into/user/editors/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html"> </item>
           <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> </item>
           <item name="Dictionary" collapse="true" href="/delve_into/user/editors/dictionary/index.html"> </item>
         </item>
-        <item name="Structurizers" collapse="true" href="/delve_into/user/structurizers/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/structurizers/tour/index.html"/>
-          <item name="Howto" collapse="true" href="/delve_into/user/structurizers/howto/index.html">
-            <item name="Document Types" href="/delve_into/user/structurizers/howto/document_types/index.html" collapse="true">
+        <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
+          <item name="Tour" collapse="true" href="/delve_into/user/information_architects/tour/index.html"/>
+          <item name="Howto" collapse="true" href="/delve_into/user/information_architects/howto/index.html">
+            <item name="Document Types" href="/delve_into/user/information_architects/howto/document_types/index.html" collapse="true">
               <!--
                 TODO These have been moved over from the old 'Extension' guide
                 -->
-              <item name="Editor" href="/delve_into/user/structurizers/howto/document_types/editor.html"/>
-              <item name="Tutorial" href="/delve_into/user/structurizers/howto/document_types/tutorial.html"/>
-              <item name="Examples" href="/delve_into/user/structurizers/howto/document_types/examples.html"/>
-              <item name="Field Types" href="/delve_into/user/structurizers/howto/document_types/fieldtypes.html"/>
+              <item name="Editor" href="/delve_into/user/information_architects/howto/document_types/editor.html"/>
+              <item name="Tutorial" href="/delve_into/user/information_architects/howto/document_types/tutorial.html"/>
+              <item name="Examples" href="/delve_into/user/information_architects/howto/document_types/examples.html"/>
+              <item name="Field Types" href="/delve_into/user/information_architects/howto/document_types/fieldtypes.html"/>
             </item>
           </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/structurizers/dictionary/index.html"> </item>
+          <item name="Dictionary" collapse="true" href="/delve_into/user/information_architects/dictionary/index.html"> </item>
         </item>
 
         <!--
