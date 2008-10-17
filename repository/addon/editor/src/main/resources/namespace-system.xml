@@ -496,6 +496,7 @@
             <sv:value>insertorderedlist</sv:value>
             <sv:value>insertunorderedlist</sv:value>
             <sv:value>insertimage</sv:value>
+            <sv:value>inserttable</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>hippo-lite</sv:value>
