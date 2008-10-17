@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -31,6 +32,7 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,9 +129,18 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
     public void onFlush(JcrNodeModel nodeModel) {
         JcrNodeModel myModel = (JcrNodeModel) getModel();
-        if (myModel == null || myModel.getItemModel().hasAncestor(nodeModel.getItemModel())
-                || myModel.equals(nodeModel.getParentModel())) {
-            modelChanged();
+        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        try {
+            if (session.itemExists(myModel.getItemModel().getPath())) {
+                modelChanged();
+            } else {
+                do {
+                    myModel = myModel.getParentModel();
+                } while (!session.itemExists(myModel.getItemModel().getPath()));
+                setModel(myModel);
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
         }
     }
 
