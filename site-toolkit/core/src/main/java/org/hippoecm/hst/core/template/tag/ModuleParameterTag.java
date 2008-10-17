@@ -18,20 +18,22 @@ package org.hippoecm.hst.core.template.tag;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.servlet.jsp.tagext.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ModuleParameterTag  extends BodyTagSupport {
 	private static final long serialVersionUID = 1L;
-	Logger log = LoggerFactory.getLogger(ModuleParameterTag.class);
+	private static final Logger log = LoggerFactory.getLogger(ModuleParameterTag.class);
 	
 	private String name;
 	private String value;
 
 
-	public int doEndTag() throws JspException {		
+	@Override
+    public int doEndTag() throws JspException {		
 		
 		Tag t = findAncestorWithClass(this, ModuleRenderTag.class);
     	if (t == null) {

@@ -22,10 +22,10 @@ import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
 
 public class ModuleRenderBean implements Serializable{
-    private PageContainerNode pageContainerNode;
-    private PageContainerModuleNode pageContainerModuleNode;
-    private Module module;
-    private String name;
+    private transient final PageContainerNode pageContainerNode;
+    private transient final PageContainerModuleNode pageContainerModuleNode;
+    private final Module module;
+    private final String name;
     
     public ModuleRenderBean(String name, PageContainerNode pageContainerNode, PageContainerModuleNode pageContainerModuleNode, Module module) {
     	this.pageContainerNode = pageContainerNode;

@@ -25,15 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheManager {
     
     private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
-    public static final Map<String,Cache> caches = new HashMap<String, Cache>();
-    public static boolean newCacheIsEnabled = true;
+    private static final Map<String,Cache> caches = new HashMap<String, Cache>();
+    private static boolean newCacheIsEnabled = true;
     
     public static Cache getCache(PageContext ctx) {
        return getCache(ctx, null);
@@ -50,6 +49,13 @@ public class CacheManager {
 
     public static Map<String,Cache> getCaches(){
         return caches;
+    }
+
+    public static boolean isNewCacheIsEnabled() {
+        return newCacheIsEnabled;
+    }
+    public static void setNewCacheIsEnabled(boolean newCacheIsEnabled) {
+        CacheManager.newCacheIsEnabled = newCacheIsEnabled;
     }
     
     public static Cache getCache(HttpServletRequest request, String clazz) {
@@ -108,5 +114,6 @@ public class CacheManager {
         return null;
     }
 
+    
    
 }

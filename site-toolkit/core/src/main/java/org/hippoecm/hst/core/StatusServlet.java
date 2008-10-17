@@ -42,6 +42,7 @@ public class StatusServlet extends HttpServlet {
       
     }
 
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setStatus(HttpServletResponse.SC_OK);
         res.setContentType("text/html");
@@ -90,10 +91,10 @@ public class StatusServlet extends HttpServlet {
         boolean enableAll = Boolean.parseBoolean(req.getParameter("enableall"));
         
         if(disableAll) {
-            CacheManager.newCacheIsEnabled = false;
+            CacheManager.setNewCacheIsEnabled(false);
         }
         if(enableAll) {
-            CacheManager.newCacheIsEnabled = true;
+            CacheManager.setNewCacheIsEnabled(true);
         }
         
         for(Iterator<Entry<String, Cache>> it = CacheManager.getCaches().entrySet().iterator(); it.hasNext(); ){

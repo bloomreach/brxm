@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 public class SearchResult {
-    private List<SearchHit> hits;
+    private final List<SearchHit> hits;
     private List<Page> pages;
     private int size;
     private int offset;
@@ -34,7 +34,7 @@ public class SearchResult {
     private String query;
     private String nodeType;
 
-	public SearchResult(List<SearchHit> hits) {
+    public SearchResult(List<SearchHit> hits) {
         this.hits = hits;
     }
 
@@ -49,6 +49,7 @@ public class SearchResult {
     public long getPagesize() {
         return pagesize;
     }
+
     // limit == pagesize
     public long getLimit() {
         return limit;
@@ -67,15 +68,14 @@ public class SearchResult {
         this.size = size;
     }
 
-    
     public void setDidyoumean(String didyoumean) {
-       this.didyoumean = didyoumean;
+        this.didyoumean = didyoumean;
     }
-    
-    public String getDidyoumean(){
+
+    public String getDidyoumean() {
         return didyoumean;
     }
-    
+
     public List<SearchHit> getHits() {
         return hits;
     }
@@ -83,126 +83,124 @@ public class SearchResult {
     public void setQuery(String querytext) {
         this.query = querytext;
     }
-    
+
     public String getQuery() {
-       return this.query;
+        return this.query;
     }
 
     public void setCurrentPageNumber(int currentPageNumber) {
-       this.currentPageNumber = currentPageNumber;
+        this.currentPageNumber = currentPageNumber;
     }
 
-    public int getCurrentPageNumber(){
+    public int getCurrentPageNumber() {
         return currentPageNumber;
     }
 
-   
     public List<Page> getPages() {
         return pages;
     }
-    
+
     public Page getNextpage() {
-        if(pages.size() > currentPageNumber) {
+        if (pages.size() > currentPageNumber) {
             return pages.get(currentPageNumber);
-        } 
-        return new Page(false);
-    }
-    
-    public Page getPrevpage() {
-        if(currentPageNumber > 1) {
-            return pages.get(currentPageNumber-2);
         }
         return new Page(false);
     }
 
-    public Page getFirstpage(){
-        if(pages.size() > 0 && currentPageNumber > 1) {
+    public Page getPrevpage() {
+        if (currentPageNumber > 1) {
+            return pages.get(currentPageNumber - 2);
+        }
+        return new Page(false);
+    }
+
+    public Page getFirstpage() {
+        if (pages.size() > 0 && currentPageNumber > 1) {
             return pages.get(0);
         }
         return new Page(false);
     }
 
-    public Page getLastpage(){
-        if(pages.size() > 0 && currentPageNumber < pages.size()) {
+    public Page getLastpage() {
+        if (pages.size() > 0 && currentPageNumber < pages.size()) {
             return pages.get(pages.size() - 1);
         }
         return new Page(false);
     }
-    
+
     public void setPages(List<Page> pages) {
         this.pages = pages;
-    }    
+    }
 
     public String getNodeType() {
-		return nodeType;
-	}
+        return nodeType;
+    }
 
-	public void setNodeType(String nodeType) {
-		this.nodeType = nodeType;
-	}
-    
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
+
     public void computePagesAndLinks(Map parameterMap) {
         pages = new ArrayList<Page>();
         StringBuffer queryString = null;
-       
+
         Set params = parameterMap.entrySet();
         Iterator paramIt = params.iterator();
-        while(paramIt.hasNext()) {
-            Entry e = (Entry)paramIt.next();
-            String name = (String)e.getKey();
-            if(SearchParameters.PAGE.equals(name)) {
+        while (paramIt.hasNext()) {
+            Entry e = (Entry) paramIt.next();
+            String name = (String) e.getKey();
+            if (SearchParameters.PAGE.equals(name)) {
                 continue;
             }
-            String[] values = (String[])e.getValue();
-            for(String val : values) {
-                if(queryString == null) {
-                    queryString = new StringBuffer("?"+name+"="+val);
+            String[] values = (String[]) e.getValue();
+            for (String val : values) {
+                if (queryString == null) {
+                    queryString = new StringBuffer("?" + name + "=" + val);
                 } else {
-                    queryString.append("&"+name+"="+val);  
+                    queryString.append("&" + name + "=" + val);
                 }
             }
         }
-        if(pagesize > 0 && size > 0 ) {
-            int nrOfPages = size/pagesize;
-            if(pagesize*nrOfPages < size) {
+        if (pagesize > 0 && size > 0) {
+            int nrOfPages = size / pagesize;
+            if (pagesize * nrOfPages < size) {
                 nrOfPages++;
             }
             String link;
-            if(queryString==null || "".equals(queryString)){
+            if (queryString == null || queryString.length() == 0) {
                 link = "?page=";
             } else {
-                link = queryString.toString()+"&page=";
+                link = queryString.toString() + "&page=";
             }
-            if(nrOfPages > 1) {
-                for(int i = 1 ; i <= nrOfPages ; i++) {
-                    pages.add(new Page(i,link+i , currentPageNumber));
+            if (nrOfPages > 1) {
+                for (int i = 1; i <= nrOfPages; i++) {
+                    pages.add(new Page(i, link + i, currentPageNumber));
                 }
             }
         }
     }
 
-    
     public class Page {
         private int number;
         private String link;
         private boolean current;
-        private boolean exists;
+        private final boolean exists;
 
         public Page(int number, String link, int crPageNumber) {
-            this.number =number;
-            this.current = crPageNumber==number;
+            this.number = number;
+            this.current = crPageNumber == number;
             this.link = link;
             this.exists = true;
-        } 
-        
+        }
+
         public Page(boolean exists) {
             this.exists = exists;
-        } 
-        
+        }
+
         public boolean isCurrent() {
             return current;
         }
-        
+
         public boolean isExists() {
             return exists;
         }
@@ -225,7 +223,7 @@ public class SearchResult {
 
         public void setLink(String link) {
             this.link = link;
-        } 
+        }
     }
 
 }

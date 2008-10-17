@@ -23,9 +23,9 @@ public class CachedResponseImpl implements CachedResponse, Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private SourceValidity[] sourceValidities;
+    private final SourceValidity[] sourceValidities;
     
-    private Object response;
+    private final Object response;
     
     public CachedResponseImpl(SourceValidity sourceValidity, Object response){
         this.sourceValidities = new SourceValidity[1];
@@ -33,11 +33,11 @@ public class CachedResponseImpl implements CachedResponse, Serializable{
         this.response = response;
     }
     public CachedResponseImpl(SourceValidity[] sourceValidities, Object response){
-        this.sourceValidities = sourceValidities;
+        this.sourceValidities = sourceValidities.clone();
         this.response = response;
     }
     public SourceValidity[] getValidityObjects() {
-        return this.sourceValidities;
+        return this.sourceValidities.clone();
     }
 
     public Object getResponse() {

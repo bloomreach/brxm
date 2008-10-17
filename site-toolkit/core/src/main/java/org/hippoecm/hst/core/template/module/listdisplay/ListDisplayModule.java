@@ -27,7 +27,6 @@ import javax.servlet.jsp.PageContext;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
@@ -45,7 +44,8 @@ public class ListDisplayModule extends ModuleBase {
 	private static final Logger log = LoggerFactory.getLogger(ListDisplayModule.class);
 	
 
-	public void render(PageContext pageContext) {
+	@Override
+    public void render(PageContext pageContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	    List<ELNode> wrappedNodes = new ArrayList<ELNode>();
@@ -72,7 +72,7 @@ public class ListDisplayModule extends ModuleBase {
 			      while (subSubNodes.hasNext()) {
 			    	  Node subSubNode = subSubNodes.nextNode();
 	                  // always check for null in a node iterator
-			    	  if(subSubNodes == null) {
+			    	  if(subSubNode == null) {
 			    		  continue;
 			    	  }
 			    	  log.debug("ADD NODE: " + subSubNode.getName());

@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -41,8 +40,6 @@ import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 
 public class SearchModule extends ModuleBase implements Search {
 
@@ -121,8 +118,7 @@ public class SearchModule extends ModuleBase implements Search {
         if (request.getParameter(QUERY) != null && !"".equals(request.getParameter(QUERY))) {
             String queryParam = request.getParameter(QUERY);
             if (!"".equals(queryParam)) {
-                queryParam.replaceAll("'", "''");
-                setQueryText(queryParam);
+                setQueryText(queryParam.replaceAll("'", "''"));
             }
         } else if (params && moduleParameters.containsKey(QUERY)) {
             String queryParam = moduleParameters.get(QUERY);
@@ -193,7 +189,7 @@ public class SearchModule extends ModuleBase implements Search {
         // didyoumean 
         if (params && moduleParameters.containsKey(DIDYOUMEAN)) {
             String didyoumeanParam = moduleParameters.get(DIDYOUMEAN);
-            setDidYouMeanNeeded(new Boolean(didyoumeanParam));
+            setDidYouMeanNeeded(Boolean.valueOf(didyoumeanParam));
         }
         // didyoumean treshhold
         if (params && moduleParameters.containsKey(DIDYOUMEAN_MINIMUM)) {

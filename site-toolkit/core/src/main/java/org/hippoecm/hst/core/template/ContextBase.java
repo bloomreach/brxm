@@ -100,6 +100,9 @@ public class ContextBase {
 	}
 	
 	public static String stripFirstSlash(String s) {
+	    if (s == null || "".equals(s)) {
+	        return s;
+	    }
 		return s.startsWith("/") ? s.substring(1) : s;
 	}
 	

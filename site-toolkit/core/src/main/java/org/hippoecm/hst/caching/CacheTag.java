@@ -30,16 +30,15 @@ public class CacheTag extends BodyTagSupport {
     private String keyExpr;  // tag attribute
     private CacheKey key; // parsed tag attribute
 
-    private Cache cache;   // cache
+    private transient Cache cache;   // cache
     private CachedResponse cachedResponse;
     private static final int TTL = 60; // time to live seconds 
     
+    @Override
     public int doStartTag() throws JspException {
         key = new CacheKey(nameExpr, CacheTag.class);
         this.cache = CacheManager.getCache(pageContext);
-        synchronized (cache) {
-            this.cachedResponse = this.cache.get(this.key);
-        }
+        this.cachedResponse = this.cache.get(this.key);
         if (this.cachedResponse != null) {
             return SKIP_BODY;
         } else {
@@ -47,6 +46,7 @@ public class CacheTag extends BodyTagSupport {
         }
     }
 
+    @Override
     public int doEndTag() throws JspException {
         try {
             String body = null;

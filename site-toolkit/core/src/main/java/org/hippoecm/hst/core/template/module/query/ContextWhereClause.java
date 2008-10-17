@@ -30,8 +30,8 @@ public class ContextWhereClause {
     
     public static final Logger log = LoggerFactory.getLogger(ContextWhereClause.class);
     
-    private Node contextNode;
-    private String target;
+    private final Node contextNode;
+    private final String target;
     
     public ContextWhereClause(Node contextNode, String target) {
         this.contextNode = contextNode;
@@ -42,7 +42,7 @@ public class ContextWhereClause {
         HippoNode contentBaseNode = null;
         String contextBasePath = null;
         String contentBaseUuid = null;
-        String contextClauses = "";
+        StringBuffer contextClauses = new StringBuffer();
         long start = System.currentTimeMillis();
         try {
             contextBasePath = contextNode.getPath();
@@ -88,13 +88,13 @@ public class ContextWhereClause {
                                 continue;
                             } else {
                                 if(contextClauses.length() > 0) {
-                                    contextClauses += " and ";
+                                    contextClauses.append(" and ");
                                 }
                                 if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
                                     // special case
-                                    contextClauses += "(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))";
+                                    contextClauses.append("(@hippostd:state='unpublished' OR (@hippostd:state='published' AND @hippostd:stateSummary!='changed'))");
                                 } else {
-                                    contextClauses += "@" + facet + "='" + value + "'";
+                                    contextClauses.append("@").append(facet).append("='").append(value).append("'");
                                 }
                             }
                         }
@@ -112,11 +112,13 @@ public class ContextWhereClause {
         }
         
         if(contextClauses.length() > 0) {
-            contextClauses += " and " + "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "' and not(@jcr:primaryType='nt:frozenNode')" ;
+            contextClauses.append(" AND ");
+            contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         } else {
-            contextClauses =  "@" + HippoNodeType.HIPPO_PATHS + "='" + contentBaseUuid + "' and not(@jcr:primaryType='nt:frozenNode')"; 
+            contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         }
+        contextClauses.append(" AND NOT(@jcr:primaryType='nt:frozenNode')");
         Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
-        return contextClauses;
+        return contextClauses.toString();
     }
 }
