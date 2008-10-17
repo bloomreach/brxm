@@ -126,7 +126,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 String prop = (String) propertyName;
                 try {
                     if (!jcrNode.hasProperty(prop)) {
-                        log.warn("Property '{}' not found. Return empty string", prop);
+                        log.debug("Property '{}' not found. Return empty string", prop);
                         return "";
                     }
                     if (jcrNode.getProperty(prop).getDefinition().isMultiple()) {
