@@ -1,16 +1,14 @@
 package org.hippoecm.frontend.plugins.tagging;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.tagging.providers.AllTagsProvider;
 import org.hippoecm.frontend.plugins.tagging.providers.ITagsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TagSuggestor implements IJcrNodeModelListener {
+public class TagSuggestor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -18,20 +16,22 @@ public class TagSuggestor implements IJcrNodeModelListener {
     static final Logger log = LoggerFactory.getLogger(TagSuggestor.class);
 
     private ArrayList<ITagsProvider> providers;
+    private TagCollection tags;
     
     public TagSuggestor() {
         providers = new ArrayList<ITagsProvider>();
         providers.add(new AllTagsProvider());
+        tags = new TagCollection();
     }
     
-    public List getTags(JcrNodeModel nodeModel){
+    public TagCollection getTags(JcrNodeModel nodeModel){
         
-        return null;
+        for (ITagsProvider provider : providers){
+            TagCollection tags = provider.getTags(nodeModel);
+            this.tags.addAll(tags);
+        }
+        return tags;
     }
-
-    public void onFlush(JcrNodeModel nodeModel) {
-        // TODO Auto-generated method stub
-
-    }
+    
 
 }

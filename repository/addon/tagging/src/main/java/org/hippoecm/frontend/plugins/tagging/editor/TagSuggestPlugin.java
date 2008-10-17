@@ -1,6 +1,5 @@
 package org.hippoecm.frontend.plugins.tagging.editor;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.jcr.PathNotFoundException;
@@ -13,12 +12,14 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.tagging.Tag;
+import org.hippoecm.frontend.plugins.tagging.TagCollection;
+import org.hippoecm.frontend.plugins.tagging.TagSuggestor;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -62,16 +63,11 @@ public class TagSuggestPlugin extends RenderPlugin {
 
             nodeModel = (JcrNodeModel) model;
             this.jcrService = jcrService;
-
-            /**
-             * Construct the backend and pass it the node model
-             */
-
         }
 
         @Override
         protected void populateItem(Item item) {
-            final String keyword = (String) item.getModelObject();
+            final Tag keyword = (Tag) item.getModelObject();
             Fragment fragment = new Fragment("keyword", "tag-fragment", this);
             AjaxFallbackLink link = new AjaxFallbackLink("link") {
                 private static final long serialVersionUID = 1L;
@@ -81,13 +77,13 @@ public class TagSuggestPlugin extends RenderPlugin {
                     try {
                         TagsModel tagsModel = new TagsModel(new JcrPropertyModel(nodeModel.getNode().getProperty(
                                 TagsPlugin.FIELD_NAME)));
-                        tagsModel.addTag(keyword);
+                        tagsModel.addTag(keyword.getName());
                         jcrService.flush(nodeModel);
                         log.debug("Send flush");
                     } catch (PathNotFoundException e) {
                         log.info(TagsPlugin.FIELD_NAME + " does not exist for this node. Attempting to create it.");
                         // the property hippostd:tags does not exist
-                        String[] tags = { keyword };
+                        String[] tags = { keyword.getName() };
                         try {
                             nodeModel.getNode().setProperty(TagsPlugin.FIELD_NAME, tags);
                         } catch (RepositoryException re) {
@@ -99,18 +95,16 @@ public class TagSuggestPlugin extends RenderPlugin {
                 }
 
             };
-            link.add(new Label("link-text", keyword));
+            link.add(new Label("link-text", keyword.getName() + "(" + keyword.getScore() + ")"));
             fragment.add(link);
             item.add(fragment);
         }
 
         @Override
-        protected Iterator<Model> getItemModels() {
-            ArrayList<Model> items = new ArrayList<Model>();
-            items.add(new Model("wine"));
-            items.add(new Model("beer"));
-            items.add(new Model("hippos"));
-            return items.iterator();
+        protected Iterator<IModel> getItemModels() {
+            TagSuggestor tagSuggestor = new TagSuggestor();
+            TagCollection col = tagSuggestor.getTags((JcrNodeModel) getModel());
+            return col.iterator();
         }
 
     }
