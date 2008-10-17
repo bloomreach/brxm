@@ -104,7 +104,6 @@ padding: 2px;
 .hippo-login-panel select{padding: none;}
 .hippo-login-panel input[type="submit"]{padding: 6px; padding-left: 15px; padding-right: 15px; margin-top: 5px;}
 
-
 /* Copyright */
 /* ================================================ */
 .hippo-copyright{color: #666666; padding: 15px; text-align: center; margin-top: 15px;}
@@ -477,7 +476,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-editor-field select,
 .hippo-editor-field input,
 .hippo-editor-field-input{
-font-size: 11px; background: transparent; border: none; padding: 4px; color: #333333; margin: 2px; font-family: tahoma, arial,sans-serif,helvetica;}
+font-size: 11px; background: transparent; border: none; color: #333333; margin: 2px; font-family: tahoma, arial,sans-serif,helvetica;}
 .hippo-editor-field input, .hippo-editor-field-input{width: 100%}
 .hippo-editor-field select, .hippo-editor-field-textarea textarea{width:100%}
 .hippo-editor-field input[type="checkbox"]{width: auto;}
@@ -487,13 +486,17 @@ font-size: 11px; background: transparent; border: none; padding: 4px; color: #33
 .hippo-editor-linkpicker-link a{display: block; padding: 4px;}
 .hippo-editor-linkpicker-link a:hover{background-color: #f2f2f2}
 
+.hippo-gallery-field-picker{width: 100%}
+.hippo-editor .hippo-editor-threepane .hippo-gallery-field-picker tr td{vertical-align: middle}
+
 /* date widget */
 .hippo-editor-field .hippo-editor-field-datepicker input{width: 80px}
 .hippo-editor-field .hippo-editor-field-datepicker select{width: 70px}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
+.hippo-editor-field-html *{z-index: 1}
 .hippo-editor-field-html textarea{width:100%}
-.hippo-editor-field-html iframe{border: none}
+.hippo-editor-field-html iframe{border: none;}
 .hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
 /* hide the xinha status bar we don't need it */
@@ -551,7 +554,7 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor .hippo-editor-threepane tr td{vertical-align: top}
 
 /* meta data */
-.hippo-editor .hippo-editor-metadata{width: 300px; background: #f2f2f2; padding: 4px; padding-top: 0px;}
+.hippo-editor .hippo-editor-metadata{background: #f2f2f2; padding: 4px; padding-top: 0px;}
 
 /* Management Perspective */
 /* ================================================ */
