@@ -30,6 +30,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
     private ImageItem selectedItem;
     private ImageItemDAO imageItemDAO;
+    private String alt;
 
     public ImagePickerContentPanel(XinhaModalWindow modal, final EnumMap<XinhaImage, String> values,
             final ImageItemDAO imageItemDAO) {
@@ -131,6 +133,8 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
 
             }
         });
+
+        form.add(new TextFieldWidget("alt", new PropertyModel(this, "alt")));
     }
 
     @Override
@@ -148,6 +152,7 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     protected void onOk() {
         if (imageItemDAO.saveOrUpdate(selectedItem)) {
             values.put(XinhaImage.URL, selectedItem.getUrl());
+            values.put(XinhaImage.ALT, alt);
         }
     }
 }
