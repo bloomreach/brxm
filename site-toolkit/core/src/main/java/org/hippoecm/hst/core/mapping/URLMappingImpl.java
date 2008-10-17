@@ -39,7 +39,6 @@ import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -49,18 +48,18 @@ public class URLMappingImpl implements URLMapping {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
 
-    private RewriteLRUCache rewriteLRUCache;
-    private List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
-    private Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
-    private String contextPrefix;
-    private String contextPath;
+    private final RewriteLRUCache rewriteLRUCache;
+    private final List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
+    private final Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
+    private final String contextPrefix;
+    private final String contextPath;
     
     // a list containing all canonical paths which are used in the url mapping. These paths are used to create named events
     // on which the cache is invalidated
-    private List<String> canonicalPathConfiguration;
+    private final List<String> canonicalPathConfiguration;
     
     private Node siteMapRootNode;
-    private int uriLevels;
+    private final int uriLevels;
 
     public URLMappingImpl(Session session, String contextPath, String contextPrefix, String confPath, int uriLevels) {
         this.contextPrefix = contextPrefix;
@@ -333,26 +332,27 @@ public class URLMappingImpl implements URLMapping {
                     Node sitemapNode = siteMapRootNode.getNode(path);
                     if (sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
                         String newLink = sitemapNode.getProperty("hst:prefixlinkrewrite").getString();
-                        log.debug("rewriting '" + path + "' --> '" + newLink);
+                        log.debug("rewriting '{}' --> '{}'", path, newLink);
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
                         rewrite = contextPrefix + newLink;
                     } else {
-                        log
-                                .warn("cannot rewrite path '"
-                                        + path
-                                        + "' because the sitemap node does not have the property 'hst:prefixlinkrewrite'. Node : "
-                                        + sitemapNode.getPath());
+                        // this happens a lot, for now set this loglevel to debug
+                        log.debug(
+                                        "cannot rewrite path '{}' because the sitemap node does not have the property 'hst:prefixlinkrewrite'. Node : {}",
+                                        path, sitemapNode.getPath());
                     }
                 } else {
-                    log.warn("'" + path + "' does not exist in sitemap node '" + siteMapRootNode.getPath()
-                            + "'. Prefixing path with context, but no rewrite ");
+                    log.warn("'{}' does not exist in sitemap node '{}'. Prefixing path with context, but no rewrite.",
+                            path, siteMapRootNode.getPath());
                 }
 
             } catch (RepositoryException e) {
-                log.warn("Unable to rewrite link for path = '" + path
-                        + "'.  Prefixing path with context, but no rewrite. RepositoryException " + e.getMessage());
+                log.warn(
+                                "Unable to rewrite link for path = '{}'.  Prefixing path with context, but no rewrite. RepositoryException: {}",
+                                path, e.getMessage());
+                log.debug("RepositoryException:", e);
             }
         }
         Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
@@ -366,7 +366,7 @@ public class URLMappingImpl implements URLMapping {
 
     private class RewriteLRUCache {
 
-        private LRUMap cache;
+        private final LRUMap cache;
         private int miss;
         private int hit;
 
