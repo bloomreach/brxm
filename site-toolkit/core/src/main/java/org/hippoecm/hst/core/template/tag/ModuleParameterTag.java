@@ -18,29 +18,27 @@ package org.hippoecm.hst.core.template.tag;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.tagext.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ModuleParameterTag  extends BodyTagSupport {
 	private static final long serialVersionUID = 1L;
-	private static final Logger log = LoggerFactory.getLogger(ModuleParameterTag.class);
+	Logger log = LoggerFactory.getLogger(ModuleParameterTag.class);
 	
 	private String name;
 	private String value;
 
 
-	@Override
-    public int doEndTag() throws JspException {		
+	public int doEndTag() throws JspException {		
 		
-		Tag t = findAncestorWithClass(this, ModuleRenderTag.class);
+		Tag t = findAncestorWithClass(this, ModuleTagBase.class);
     	if (t == null) {
     	    throw new JspTagException("ParameterTag needs to be inside Module tag");
     	}
     	
-    	ModuleRenderTag moduleTag = (ModuleRenderTag) t;
+    	ModuleTagBase moduleTag = (ModuleTagBase) t;
     	log.debug("Adding parameter to ModuleRenderTag '" + getName() + "=" + getValue() + "'.");
         moduleTag.addParameter(name, value);  	
 		return EVAL_PAGE;
