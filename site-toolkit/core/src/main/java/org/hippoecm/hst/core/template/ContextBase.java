@@ -79,18 +79,24 @@ public class ContextBase {
 	
 	public Node getRelativeNode(String path){
 	    String strPath = "";
+	    String relativePath = stripFirstSlash(path);
+	    
+	    if (relativePath == null) {
+	        log.debug("Relative path is null, return null");
+	        return null;
+	    }
+	    if (relativePath.length() == 0) {
+            log.debug("Relative path is empty, return null");
+            return null;
+	    }
 		try {
 		    strPath = contextRootNode.getPath();
-		    if (log.isDebugEnabled()) {
-		        log.debug("Get RelativeNode with rootNode " + strPath + " path=" + path);
-		    }
-            return contextRootNode.getNode(stripFirstSlash(path));
+		    log.debug("Get RelativeNode with rootNode '{}' path={}", strPath, relativePath);
+            return contextRootNode.getNode(relativePath);
         } catch (PathNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Node " + stripFirstSlash(path) + " cannot be found in the repository below '"+strPath+"'. Returning null");
-            }
+            log.debug("Node '{}' cannot be found in the repository below '{}'. Returning null", relativePath, strPath);
         } catch (RepositoryException e) {
-            log.error("Unable to find node " + stripFirstSlash(path) + " in the repository below '"+strPath+"': " + e.getMessage(), e);
+            log.error("Unable to find node " + relativePath + " in the repository below '"+strPath+"': " + e.getMessage(), e);
         }
         return null;
 	}
