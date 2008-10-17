@@ -423,7 +423,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-tree *{white-space: nowrap;}
 .hippo-tree .wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 .hippo-tree .wicket-tree .row a {color: #333333}
-.hippo-tree .wicket-tree div.a_{width: 1000px; display:block; margin-left: 0px; padding-left: 0px;}
+.hippo-tree .wicket-tree div.a_{width: 100%; display:block; margin-left: 0px; padding-left: 0px;}
 .hippo-tree .wicket-tree .row {width:auto;}
 .hippo-tree .wicket-tree .row-selected a {}
 .hippo-tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
@@ -446,6 +446,8 @@ background-image:url(images/box-blue2.png);}
 .hippo-tree .wicket-tree span.junction{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
 .hippo-tree .wicket-tree span.junction-last{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
 .hippo-tree .wicket-tree span.indent-line {background: url("images/tree-icons.png") no-repeat scroll -36px center}
+
+.hippo-tree .icon-16{padding: 0px; width: 16px; height: 16px; display: block; float: left; margin-right: 3px;}
 
 /* tree sections */
 .hippo-tree-section{}
