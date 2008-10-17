@@ -152,7 +152,9 @@ public class ImagePickerContentPanel extends XinhaContentPanel<XinhaImage> {
     protected void onOk() {
         if (imageItemDAO.saveOrUpdate(selectedItem)) {
             values.put(XinhaImage.URL, selectedItem.getUrl());
-            values.put(XinhaImage.ALT, alt);
+            if (alt != null) {
+                values.put(XinhaImage.ALT, alt);
+            }
         }
     }
 }
