@@ -92,7 +92,7 @@ public class ContextWhereClause {
                                 }
                                 if ("hippostd:state".equals(facet) && "unpublished".equals(value)) {
                                     // special case
-                                    contextClauses.append("(@hippostd:state='unpublished' OR (@hippostd:state='published' AND @hippostd:stateSummary!='changed'))");
+                                    contextClauses.append("(@hippostd:state='unpublished' or (@hippostd:state='published' and @hippostd:stateSummary!='changed'))");
                                 } else {
                                     contextClauses.append("@").append(facet).append("='").append(value).append("'");
                                 }
@@ -112,12 +112,12 @@ public class ContextWhereClause {
         }
         
         if(contextClauses.length() > 0) {
-            contextClauses.append(" AND ");
+            contextClauses.append(" and ");
             contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         } else {
             contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         }
-        contextClauses.append(" AND NOT(@jcr:primaryType='nt:frozenNode')");
+        contextClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
         Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
         return contextClauses.toString();
     }
