@@ -52,6 +52,7 @@
         <item name="Start a project" href="/tutorials/start-project.html"/>
         <item name="Hello World" href="/tutorials/hello-world.html"/>
         <item name="Facebook" href="/tutorials/facebook.html"/>
+        <item name="Search" href="/tutorials/search.html"/>
       </item>
       <item name="Reference" href="/reference/index.html" collapse="true">
         <item name="Concepts" href="/reference/concepts.html"/>
