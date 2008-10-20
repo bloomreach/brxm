@@ -161,15 +161,24 @@
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
         <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
-         <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System">
-         <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java">
-         <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container">
-         <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database">
+         <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System"/>
+         <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java"/>
+         <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container"/>
+         <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database"/>
 	</item>
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
-         <item name="in Servlet Container" href="/delve_into/sysadmin/in_servlet_container.html"/>
-         <item name="in Application server" href="/delve_into/sysadmin/in_application_server.html"/>
-         <item name="of Plugins" href="/delve_into/sysadmin/plugins.html"/>
+         <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
+           <item name="Tomcat" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat"/>
+           <item name="Jetty" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Jetty"/>
+	 </item>
+         <item name="in Application Server" collapse="true" href="/delve_into/sysadmin/installation/in_application_server.html">
+           <item name="Download EAR" href="/delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package"/>
+           <item name="GlassFish" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Glassfish"/>
+           <item name="JBoss" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_JBoss"/>
+           <item name="Websphere" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Webspere_Application_Server"/>
+           <item name="Weblogic" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Weblogic_Server"/>
+	 </item>
+         <item name="of Plugins" href="/delve_into/sysadmin/installation/plugins.html"/>
 	</item>
         <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">

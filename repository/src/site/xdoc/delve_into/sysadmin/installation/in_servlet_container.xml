@@ -19,24 +19,27 @@
 -->
 <document>
     <properties>
-        <title>WAR deployments</title>
+        <title>in Servlet Container</title>
     </properties>
     <body>
-        <section name="Deploying the Hippo ECM WAR">
+        <section name="Deploying in Servlet Container">
+          <span class='shortdesc'>Get Hippo CMS up and running in a Java servlet container.</span>
 
-            <subsection name="Obtain the packaged product">
+            <subsection name="Obtain the WAR package">
               <p>
-                Hippo ECM is still under development, and therefore there are no released packages available at
-                this time.  You can either build the packages yourself using a
-                <a href="../building/maven.html">Maven build</a>.  Or you can download a
-                current snapshot version from:
+                To deploy Hippo ECM in a servlet container, download the
+                WAR package.
+                <span class='expire_event'>release</span>Hippo ECM is still under development, 
+                but you can already get a snapshot version:
+                <span class='rewrite'>Why is this the quickstart? It seems that the normal package should be downloadable here, or both.</span>
               </p>
 <source>
-http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war
+  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war'>Quickstart WAR</a>
 </source>
             </subsection>
 
-            <subsection name="Deploying in Tomcat 6.0">
+
+            <subsection name="Deploying in Tomcat">
                 <ol>
                     <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
                     <li>Unpack the zip</li>
@@ -46,6 +49,10 @@ http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01
                     <li>Open your browser and surf to http://localhost:8080/cms/</li>
                 </ol>
             </subsection>
+
+            <subsection name="Deploying in Jetty">
+             <span class='add'>This section.</span>
+	    </subsection>
             
         </section>
     </body>
