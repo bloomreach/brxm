@@ -23,6 +23,9 @@
     </properties>
     <body>
       <section name="Configuration">
+       <span class='shortdesc'>What does a sysadmin have to configure in Hippo CMS?</span>
+
+        <span class='review'>Whole folder, and rewrite if necessary.</span>
 
         <p>
           Hippo ECM configuration can be broken down into two parts: the base configuration
