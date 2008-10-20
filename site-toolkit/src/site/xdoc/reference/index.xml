@@ -38,30 +38,9 @@
             - Learn how to configure the Hippo Site Toolkit 2
           </li>
           <li>
-            <a href="filters.html">Filters</a>
+            <a href="components/index.html">Components</a>
             - TODO
           </li>
-          <li>
-            <a href="jsp-taglib.html">JSP Tag Library</a>
-            - Learn which default tags are available in the Hippo Site Toolkit 2
-          </li>
-          <li>
-            <a href="el-index.html">Expression Language</a>
-            - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2
-          </li>
-          <li>
-            <a href="url-mapping.html">URL Mapping</a>
-            - TODO
-          </li>
-          <li>
-            <a href="modules.html">Modules</a>
-            - TODO
-          </li>
-          <li>
-            <a href="binaries.html">Binaries</a>
-            - TODO
-          </li>
-
         </ul>
 
       </section>
