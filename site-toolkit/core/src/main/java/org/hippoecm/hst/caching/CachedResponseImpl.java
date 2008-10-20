@@ -32,10 +32,7 @@ public class CachedResponseImpl implements CachedResponse, Serializable{
         sourceValidities[0] = sourceValidity;
         this.response = response;
     }
-    public CachedResponseImpl(SourceValidity[] sourceValidities, Object response){
-        this.sourceValidities = sourceValidities.clone();
-        this.response = response;
-    }
+    
     public SourceValidity[] getValidityObjects() {
         return this.sourceValidities.clone();
     }
