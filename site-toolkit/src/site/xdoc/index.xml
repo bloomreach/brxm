@@ -19,7 +19,7 @@
 -->
 <document>
     <properties>
-        <title>Hippo Site Toolkit 2?</title>
+        <title>Hippo Site Toolkit 2</title>
     </properties>
     <body>
         <section name="What is Hippo Site Toolkit 2?">
@@ -31,6 +31,11 @@
                 a straightforward user interface, that integrates with Hippo CMS. Create a JSP based view 
                 layer using the provided tag library and expression language. 
             </p>
+            <ul>
+                <li>
+                    <a href="how_does_hst2_work.html"><b>Learn more</b></a>
+                </li>
+            </ul>
             
             <subsection name="Get started">
                 <ul>

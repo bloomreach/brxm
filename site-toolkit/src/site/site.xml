@@ -42,9 +42,10 @@
 
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
+      <item name="How does HST2 work?" href="/how_does_hst2_work.html"/>
     </menu>
 
-    <menu name="Documentation">
+    <menu name="Get Started">
 
       <item name="Quick Start" href="/quickstart/index.html"/>
       <item name="Tutorials" href="/tutorials/index.html" collapse="true">
@@ -59,12 +60,14 @@
           <item name="web.xml" href="/reference/configuration/webxml.html"/>
           <item name="Repository" href="/reference/configuration/repository.html"/>
         </item>
-        <item name="Filters" href="/reference/filters.html"/>
-        <item name="JSP Taglib" href="/reference/jsp-taglib.html"/>
-        <item name="Expression Language" href="/reference/el-index.html"/>
-        <item name="URL Mapping" href="/reference/url-mapping.html"/>
-        <item name="Modules" href="/reference/modules.html"/>
-        <item name="Binaries" href="/reference/binaries.html"/>
+        <item name="Components" href="/reference/components/index.html" collapse="true">
+          <item name="Filters" href="/reference/components/filters.html"/>
+          <item name="JSP Taglib" href="/reference/components/jsp-taglib.html"/>
+          <item name="Expression Language" href="/reference/components/el-index.html"/>
+          <item name="URL Mapping" href="/reference/components/url-mapping.html"/>
+          <item name="Modules" href="/reference/components/modules.html"/>
+          <item name="Binaries" href="/reference/components/binaries.html"/>
+        </item>
       </item>
 
     </menu>
