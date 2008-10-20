@@ -19,36 +19,16 @@
 -->
 <document>
     <properties>
-        <title>Running Hippo ECM</title>
+        <title>Sysadmin Guide</title>
     </properties>
     <body>
-      <section name="Running Hippo ECM">
+      <section name="System Administration Guide">
+       <span class='shortdesc'>What does a sysadmin needs to know and do for Hippo CMS?</span>
         <p>
-          Hippo ECM can be downloaded and run without downloading the source code and building. These pages 
+          These pages 
           describe how to get Hippo ECM up and running and how to configure your running application.
         </p>
-        <ul>
-          <li>
-            <a href="requirements.html">Requirements</a>
-            - What you need to run Hippo ECM
-          </li>
-          <li>
-            <a href="deploying-the-war.html">Deploying the Hippo ECM WAR</a>
-            - Run Hippo ECM in Tomcat 6.0
-          </li>
-          <li>
-            <a href="deploying-the-ear.html">Deploying the Hippo ECM EAR</a>
-            - Run Hippo ECM in Sun Glassfish V2
-          </li>
-          <li>
-            <a href="installing-plugins.html">Installing plugins from the Hippo Forge</a>
-            - How to install plugins that are available on the Hippo Forge
-          </li>
-          <li>
-            <a href="configuration/index.html">Configuration</a>
-            - What you can configure, and how
-          </li>
-        </ul>
+
       </section>
   </body>
 </document>
