@@ -1,0 +1,193 @@
+/*
+   webcheck.css - style informtion for webcheck results
+
+   Copyright (C) 2005, 2006 Arthur de Jong
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the
+      distribution.
+   3. The name of the author may not be used to endorse or promote
+      products derived from this software without specific prior
+      written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+   GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+   IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* general page definitions */
+
+body {
+  background: white;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10px;
+  font-size: 10pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: black;
+}
+
+h1 {
+  font-size: 120%;
+  margin-left: 10%;
+  font-weight: bold;
+  text-align: center;
+  font-family: sans-serif;
+  color: #cc1010;
+}
+
+h1 a {
+  color: #cc1010;
+}
+
+h2 {
+  display: block;
+  font-size: 110%;
+  font-weight: bold;
+  font-family: sans-serif;
+  background: #cc3333;
+  color: white;
+  padding: 4px;
+  border: 1px solid #e59999;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+}
+
+/* naviagtion part definitions */
+
+ul.navbar {
+  float: right;
+  display: block;
+  font-size: 95%;
+  text-align: left;
+  background: #cc3333;
+  color: white;
+  padding: 2px;
+  border: 1px solid #e59999;
+  margin-top: 3px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+ul.navbar li {
+  display: inline;
+}
+
+ul.navbar a {
+  background: none;
+  color: white;
+  display: block;
+  text-decoration: none;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+ul.navbar a:active {
+  background: #ffeeee;
+  color: #cc1010;
+}
+
+ul.navbar a.selected {
+  background: #ffcccc;
+  color: #cc1010;
+}
+
+ul.navbar a:hover {
+  background: #ffeeee;
+  color: #cc1010;
+}
+
+/* definitions for stuff in main content */
+
+.internal {
+  background: #fff2f2;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.external {
+  font-style: italic;
+  background: #f2f5ff;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.problems {
+  color: red;
+  font-weight: bold;
+}
+
+.parents {
+  font-size: 80%;
+  padding-bottom: 0.5em;
+}
+
+ul {
+  margin-left: 0;
+  padding-left: 1.5em;
+}
+
+/* definitions for footer */
+
+p.footer {
+  margin-top: 30px;
+  font-style: italic;
+  line-height: 90%;
+  color: gray;
+}
+
+p.footer a {
+  text-decoration: none;
+  color: gray;
+}
+
+/* css styles for fancytooltips, see http://victr.lm85.com/projects/fancytooltips/
+   for informtion about fancytooltips */
+
+div.fancytooltip {
+  background-color: #ffcccc;
+  border: 1px solid white;
+  color: black;
+  height: auto;
+  left: 0px;
+  padding: 4px;
+  position: absolute;
+  top: 0px;
+  width: 25em;
+  width: auto;
+  z-index: 20;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  opacity: .9;
+}
+
+div.fancytooltip p {
+  border-bottom: 0px;
+  font-size: 12px;
+  margin: 0px;
+  padding: 0px 3px;
+  opacity: 1;
+}
+
+div.fancytooltip p.destination {
+  display: none;
+}
