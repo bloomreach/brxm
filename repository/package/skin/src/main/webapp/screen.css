@@ -10,7 +10,7 @@ a {text-decoration: none}
 address, caption, cite, code, dfn, th, var
 { font-style : normal; font-weight : normal; }
 /* Default tables don't have borders */
-table { border-collapse : collapse; border-spacing : 0; }
+table {border-collapse :     collapse; border-spacing : 0; }
 /* Removes border from fieldset and img */
 fieldset,img { border : 0; }
 /* Left-aligns text in caption and th */
@@ -124,6 +124,8 @@ padding: 2px;
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li {height: 40px;}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.selected {background: url("images/maintabselected.png") no-repeat center center}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span{display: block; width: 100%; height: 100%; background-repeat: no-repeat; background-position: center center; text-indent: -9999px;}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a {display: block; height: 100%; width: 100%}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li span a span{display: none}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 span{background-image: url(images/icons/home-24.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab1 span{background-image: url(images/icons/emblem-documents-24.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab2 span{background-image: url(images/icons/groups-24.png);}
@@ -282,12 +284,17 @@ padding-top: 24px;
 .hippo-perspective-dashboard .hippo-list-details tr.even td{background: #e5ebf0}
 .hippo-perspective-dashboard .hippo-list-details tr td a{color: black; display: block; background: url("images/icons/document-16.png") no-repeat center left; padding: 2px; padding-left: 22px; }
 .hippo-perspective-dashboard .hippo-list-details tr td a:hover{text-decoration: underline}
+/* Dashboard shortcuts */
+.hippo-perspective-dashboard-shorcuts{padding: 15px; padding-top: 5px;}
+.hippo-perspective-dashboard-shorcuts div div a{border-bottom: 1px solid #f2f2f2; display: block; padding-bottom: 10px; padding-top: 10px;}
 
 /* Shortcuts */
 /* ================================================ */
 .hippo-header-shortcuts {margin-left: 35px; padding: 6px}
 .hippo-header-shortcuts div div{float: left; margin-right: 8px;}
 .hippo-header-shortcuts div div a{color: #333333}
+.hippo-header-shortcuts div div a.document-16{background: none}
+.hippo-header-shortcuts div div a.website-add-16{background: none}
 .hippo-header-shortcuts div div a.image-add{background: none}
 .hippo-header-shortcuts div div a.icon-16{padding-left: 0px;}
 
@@ -303,7 +310,7 @@ padding-top: 24px;
 .hippo-toolbar .hippo-toolbar-section li span span{display: inline; padding: 0px;}
 
 .hippo-toolbar .hippo-toolbar-section select{float: right;  background: #32629b; color: white; margin: 2px; border: 1px solid white;}
-.hippo-toolbar .hippo-toolbar-section select option{color: #666666; background: white; color: #666666; }
+.hippo-toolbar .hippo-toolbar-section select option{background: white; color: #666666; }
 
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-locked{height: 16px; width: 16px; margin-right: 0px;}
 .hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption{margin-right: 2px;}
@@ -496,10 +503,9 @@ font-size: 11px; background: transparent; border: none; color: #333333; margin: 
 .hippo-editor-field .hippo-editor-field-datepicker select{width: 70px}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
-.hippo-editor-field-html *{z-index: 1}
 .hippo-editor-field-html textarea{width:100%}
 .hippo-editor-field-html iframe{border: none;}
-.hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff}
+.hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff; border-collapse: separate}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
 /* hide the xinha status bar we don't need it */
 .hippo-editor-field-html .htmlarea .statusBar{display: none}
@@ -540,7 +546,7 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 /* subfields */
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: #EDF5FF; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field-subfield {position: relative;}
+.hippo-editor .hippo-editor-field-subfield {position: relative}
 .hippo-editor .hippo-editor-field-subfield-controls{position: absolute; right: 4px; top: 4px; z-index: 10000}
 .hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background-color: #EDF5FF; border: 1px solid #B2B2B2; margin-bottom: 4px;}
@@ -556,7 +562,7 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor .hippo-editor-threepane tr td{vertical-align: top}
 
 /* meta data */
-.hippo-editor .hippo-editor-metadata{background: #f2f2f2; padding: 4px; padding-top: 0px;}
+.hippo-editor .hippo-editor-metadata{width: 300px; background: #f2f2f2; padding: 4px; padding-top: 0px;}
 
 /* Management Perspective */
 /* ================================================ */
@@ -622,6 +628,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 
 .image-add-48{background-image:url("images/icons/image-add-48.png")}
 .image-add{background-image:url("images/icons/image-add-16.png");}
+
+.website-add-128{background-image:url("images/icons/website-add-128.png")}
+.website-add-48{background-image:url("images/icons/website-add-48.png")}
+.website-add-24{background-image:url("images/icons/website-add-24.png");}
+.website-add-16{background-image:url("images/icons/website-add-16.png");}
 
 .document-lock-16{background-image:url("images/icons/document-lock-16.png")}
 
