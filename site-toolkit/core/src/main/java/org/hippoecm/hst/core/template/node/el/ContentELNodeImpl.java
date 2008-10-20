@@ -98,13 +98,13 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             	String name = (String) nodeName;
             	 try {
                      if (!jcrNode.hasNode(name)) {
-                         log.warn("Node '{}' not found. Return empty string", name);
+                         log.debug("Node '{}' not found. Return empty string", name);
                          return "";
                      } else{
                     	 return new ContentELNodeImpl(jcrNode.getNode(name),sourceRewriter);
                      }
                  } catch (PathNotFoundException e) {
-                     log.warn("PathNotFoundException: {}", e.getMessage());
+                     log.debug("PathNotFoundException: {}", e.getMessage());
                  } catch (RepositoryException e) {
                      log.error("RepositoryException: {}", e.getMessage());
                      log.debug("RepositoryException:", e);
@@ -289,7 +289,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
               return null;
             }
          } catch (PathNotFoundException e) {
-             log.warn("PathNotFoundException: {}", e.getMessage());
+             log.debug("PathNotFoundException: {}", e.getMessage());
          } catch (RepositoryException e) {
              log.error("RepositoryException: {}", e.getMessage());
              log.debug("RepositoryException:", e);
