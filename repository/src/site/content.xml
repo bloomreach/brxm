@@ -352,8 +352,6 @@
   <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/working_with_authorizations.xml">Working with authorizations
    <section>Working with authorizations</section>
   </document>
-  <document ext="" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/editors/*">
-  </document>
   <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/index.xml">Change to the document title
    <section>Change to the document title</section>
    <shortdesc>Change to document description.</shortdesc>
