@@ -27,7 +27,9 @@ ________________________________________________________________________________
 
   <body>
     <section name="Change to the document title">
-      <span class="shortdesc">Change to document description.</span>
+      <span class="shortdesc">Change to document short description.</span>
+
+       <span class='rewrite'>this whole document.</span>
 
         <p>Introductory text.
            Introductory text.

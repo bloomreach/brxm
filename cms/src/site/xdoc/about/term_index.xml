@@ -27,7 +27,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (267 terms)">
+    <section name="Term index (302 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -113,9 +113,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Application_Server">Application Server</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Application_Server">Application Server</a>
           </td>
-          <td>Deploying the Hippo ECM EAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -161,7 +161,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/searchindex.html#Best_practice">Best practice</a>
+            <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#Best_practice">Best practice</a>
           </td>
           <td>SearchIndex configuration</td>
         </tr>
@@ -215,19 +215,55 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/user/index.html#Change_to_document_description.">Change to document description.</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/information_architects/howto/index.html#Change_to_document_description.">Change to document description.</a>
           </td>
           <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/user/information_architects/index.html#Change_to_document_description.">Change to document description.</a>
+            <a href="../delve_into/user/cms_admins/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#Change_to_the_document_title">Change to the document title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#Change_to_the_document_title">Change to the document title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#Change_to_the_document_title">Change to the document title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -275,13 +311,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/index.html#Configuration">Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/index.html#Configuration">Configuration</a>
           </td>
           <td>Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/index.html#Configuration_nodes">Configuration nodes</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/index.html#Configuration_nodes">Configuration nodes</a>
           </td>
           <td>Configuration nodes</td>
         </tr>
@@ -305,7 +341,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/console.html#Console">Console</a>
+            <a href="../delve_into/sysadmin/configuration/console.html#Console">Console</a>
           </td>
           <td>Console</td>
         </tr>
@@ -401,7 +437,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
@@ -449,7 +485,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
@@ -467,27 +503,51 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Deploying_Hippo_ECM_EAR_in_application_server">Deploying Hippo ECM EAR in application server</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Application_Server">Deploying in Application Server</a>
           </td>
-          <td>Deploying the Hippo ECM EAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-war.html#Deploying_in_Tomcat_6.0">Deploying in Tomcat 6.0</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Glassfish">Deploying in Glassfish</a>
           </td>
-          <td>Deploying the Hippo ECM WAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Deploying_the_Hippo_ECM_EAR">Deploying the Hippo ECM EAR</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_JBoss">Deploying in JBoss</a>
           </td>
-          <td>Deploying the Hippo ECM EAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-war.html#Deploying_the_Hippo_ECM_WAR">Deploying the Hippo ECM WAR</a>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Jetty">Deploying in Jetty</a>
           </td>
-          <td>Deploying the Hippo ECM WAR</td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Servlet_Container">Deploying in Servlet Container</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Weblogic_Server">Deploying in Weblogic Server</a>
+          </td>
+          <td>Deploying in Application Server</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Websphere_Application_Server">Deploying in Websphere Application Server</a>
+          </td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -539,13 +599,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#Domains_Configuration">Domains Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#Domains_Configuration">Domains Configuration</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Download_the_Plugin">Download the Plugin</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Download_the_Plugin">Download the Plugin</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
@@ -560,6 +620,12 @@
             <a href="../delve_into/user/contributors/tour/navigating_the_cms.html#Dynamic_perspectives">Dynamic perspectives</a>
           </td>
           <td>Navigating the CMS</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#EAR">EAR</a>
+          </td>
+          <td>Installation</td>
         </tr>
         <tr>
           <td>
@@ -611,13 +677,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Extending_the_EAR">Extending the EAR</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_EAR">Extending the EAR</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Extending_the_WAR">Extending the WAR</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_WAR">Extending the WAR</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
@@ -635,7 +701,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#FileSystem_element">FileSystem element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#FileSystem_element">FileSystem element</a>
           </td>
           <td>Repository configuration</td>
         </tr>
@@ -644,6 +710,24 @@
             <a href="../delve_into/development/project-structure.html#Finding_your_way">Finding your way</a>
           </td>
           <td>Project Structure</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
@@ -660,6 +744,42 @@
         <tr>
           <td>
             <a href="../delve_into/user/information_architects/index.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -731,6 +851,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Get_Hippo_CMS_up_and_running_in_a_Java_application_server.">Get Hippo CMS up and running in a Java application server.</a>
+          </td>
+          <td>Deploying in Application Server</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Get_Hippo_CMS_up_and_running_in_a_Java_servlet_container.">Get Hippo CMS up and running in a Java servlet container.</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/jcr.html#Get_access_to_your_content.">Get access to your content.</a>
           </td>
           <td>JCR Basics</td>
@@ -761,7 +893,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/groups.html#Groups_Configuration">Groups Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#Groups_Configuration">Groups Configuration</a>
           </td>
           <td>Groups Configuration</td>
         </tr>
@@ -797,12 +929,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Hippo_ECM_Application_Server_settings">Hippo ECM Application Server settings</a>
-          </td>
-          <td>Deploying the Hippo ECM EAR</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/contributors/tour/index.html#Hippo_ECM_tour">Hippo ECM tour</a>
           </td>
           <td>Hippo ECM tour</td>
@@ -824,6 +950,12 @@
             <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
           </td>
           <td>Frontend skin customization</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#How_to_install_Hippo_CMS">How to install Hippo CMS</a>
+          </td>
+          <td>Installation</td>
         </tr>
         <tr>
           <td>
@@ -881,15 +1013,21 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Installing_plugins_from_the_Hippo_forge">Installing plugins from the Hippo forge</a>
+            <a href="../delve_into/sysadmin/installation/index.html#Installation">Installation</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Installing_plugins_from_the_Hippo_forge">Installing plugins from the Hippo forge</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Integration_Glassfish_and_NetBeans">Integration Glassfish and NetBeans</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Integration_Glassfish_and_NetBeans">Integration Glassfish and NetBeans</a>
           </td>
-          <td>Deploying the Hippo ECM EAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -929,15 +1067,27 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/requirements.html#Java">Java</a>
+            <a href="../delve_into/sysadmin/requirements.html#Java">Java</a>
           </td>
           <td>Requirements</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
+            <a href="../delve_into/sysadmin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
           </td>
           <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#Java_application_servers">Java application servers</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
+          </td>
+          <td>Installation</td>
         </tr>
         <tr>
           <td>
@@ -989,7 +1139,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/searchindex.html#Minimal_configuration">Minimal configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#Minimal_configuration">Minimal configuration</a>
           </td>
           <td>SearchIndex configuration</td>
         </tr>
@@ -1019,43 +1169,43 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#Nodes">Nodes</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#Nodes">Nodes</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/groups.html#Nodes">Nodes</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#Nodes">Nodes</a>
           </td>
           <td>Groups Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/roles.html#Nodes">Nodes</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#Nodes">Nodes</a>
           </td>
           <td>Roles Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/users.html#Nodes">Nodes</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/users.html#Nodes">Nodes</a>
           </td>
           <td>Users Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-ear.html#Obtain_the_packaged_product">Obtain the packaged product</a>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package">Obtain the EAR package</a>
           </td>
-          <td>Deploying the Hippo ECM EAR</td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/deploying-the-war.html#Obtain_the_packaged_product">Obtain the packaged product</a>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Obtain_the_WAR_package">Obtain the WAR package</a>
           </td>
-          <td>Deploying the Hippo ECM WAR</td>
+          <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/requirements.html#Operating_System">Operating System</a>
+            <a href="../delve_into/sysadmin/requirements.html#Operating_System">Operating System</a>
           </td>
           <td>Requirements</td>
         </tr>
@@ -1145,7 +1295,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/requirements.html#Relational_Database">Relational Database</a>
+            <a href="../delve_into/sysadmin/requirements.html#Relational_Database">Relational Database</a>
           </td>
           <td>Requirements</td>
         </tr>
@@ -1169,13 +1319,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/authentication.html#Repository_based_authentication">Repository based authentication</a>
+            <a href="../delve_into/sysadmin/configuration/repository/authentication.html#Repository_based_authentication">Repository based authentication</a>
           </td>
           <td>Repository based authentication</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#Repository_configuration">Repository configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#Repository_configuration">Repository configuration</a>
           </td>
           <td>Repository configuration</td>
         </tr>
@@ -1187,13 +1337,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/requirements.html#Requirements">Requirements</a>
+            <a href="../delve_into/sysadmin/requirements.html#Requirements">Requirements</a>
           </td>
           <td>Requirements</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/roles.html#Roles_Configuration">Roles Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#Roles_Configuration">Roles Configuration</a>
           </td>
           <td>Roles Configuration</td>
         </tr>
@@ -1223,27 +1373,39 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/index.html#Running_Hippo_ECM">Running Hippo ECM</a>
-          </td>
-          <td>Running Hippo ECM</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Running_the_application">Running the application</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/searchindex.html#SearchIndex_configuration">SearchIndex configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#SearchIndex_configuration">SearchIndex configuration</a>
           </td>
           <td>SearchIndex configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#SearchIndex_element">SearchIndex element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#SearchIndex_element">SearchIndex element</a>
           </td>
           <td>Repository configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
@@ -1265,25 +1427,25 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#Security_element">Security element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#Security_element">Security element</a>
           </td>
           <td>Repository configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/installing-plugins.html#Sending_feedback">Sending feedback</a>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Sending_feedback">Sending feedback</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/searchindex.html#ServicingIndexingConfigurationImpl">ServicingIndexingConfigurationImpl</a>
+            <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#ServicingIndexingConfigurationImpl">ServicingIndexingConfigurationImpl</a>
           </td>
           <td>SearchIndex configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/searchindex.html#ServicingSearchIndex">ServicingSearchIndex</a>
+            <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#ServicingSearchIndex">ServicingSearchIndex</a>
           </td>
           <td>SearchIndex configuration</td>
         </tr>
@@ -1307,27 +1469,33 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#Structure">Structure</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#Structure">Structure</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/groups.html#Structure">Structure</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#Structure">Structure</a>
           </td>
           <td>Groups Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/roles.html#Structure">Structure</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#Structure">Structure</a>
           </td>
           <td>Roles Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/users.html#Structure">Structure</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/users.html#Structure">Structure</a>
           </td>
           <td>Users Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/index.html#System_Administration_Guide">System Administration Guide</a>
+          </td>
+          <td>System Administration Guide</td>
         </tr>
         <tr>
           <td>
@@ -1409,7 +1577,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/users.html#Users_Configuration">Users Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/users.html#Users_Configuration">Users Configuration</a>
           </td>
           <td>Users Configuration</td>
         </tr>
@@ -1433,15 +1601,39 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#Versioning_element">Versioning element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#Versioning_element">Versioning element</a>
           </td>
           <td>Repository configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#WAR">WAR</a>
+          </td>
+          <td>Installation</td>
         </tr>
         <tr>
           <td>
             <a href="../delve_into/implementation/index.html#Website_Development">Website Development</a>
           </td>
           <td>Website Development</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#What_do_you_need_to_run_Hippo_CMS?">What do you need to run Hippo CMS?</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/index.html#What_does_a_sysadmin_have_to_configure_in_Hippo_CMS?">What does a sysadmin have to configure in Hippo CMS?</a>
+          </td>
+          <td>Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/index.html#What_does_a_sysadmin_needs_to_know_and_do_for_Hippo_CMS?">What does a sysadmin needs to know and do for Hippo CMS?</a>
+          </td>
+          <td>System Administration Guide</td>
         </tr>
         <tr>
           <td>
@@ -1481,7 +1673,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/workflow.html#Workflow_configuration">Workflow configuration</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/workflow.html#Workflow_configuration">Workflow configuration</a>
           </td>
           <td>Workflow configuration</td>
         </tr>
@@ -1511,25 +1703,25 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/workspace.html#Workspace_Configuration">Workspace Configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_Configuration">Workspace Configuration</a>
           </td>
           <td>Workspace configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
           </td>
           <td>Workspace configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#Workspace_element">Workspace element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#Workspace_element">Workspace element</a>
           </td>
           <td>Repository configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/repository/index.html#Workspaces_element">Workspaces element</a>
+            <a href="../delve_into/sysadmin/configuration/repository/index.html#Workspaces_element">Workspaces element</a>
           </td>
           <td>Repository configuration</td>
         </tr>
@@ -1553,25 +1745,25 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#hippo:authrole">hippo:authrole</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:authrole">hippo:authrole</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#hippo:domain">hippo:domain</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domain">hippo:domain</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#hippo:domainrule">hippo:domainrule</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domainrule">hippo:domainrule</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/domains.html#hippo:facetrule">hippo:facetrule</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:facetrule">hippo:facetrule</a>
           </td>
           <td>Domains Configuration</td>
         </tr>
@@ -1583,7 +1775,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
           </td>
           <td>Groups Configuration</td>
         </tr>
@@ -1601,15 +1793,33 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/roles.html#hippo:role">hippo:role</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#hippo:role">hippo:role</a>
           </td>
           <td>Roles Configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/admin/configuration/nodes/users.html#hippo:user">hippo:user</a>
+            <a href="../delve_into/sysadmin/configuration/nodes/users.html#hippo:user">hippo:user</a>
           </td>
           <td>Users Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
