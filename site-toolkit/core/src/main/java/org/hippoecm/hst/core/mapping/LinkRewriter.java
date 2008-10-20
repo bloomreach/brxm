@@ -68,7 +68,7 @@ public class LinkRewriter {
                 log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newLocation + "'");
                 return newLocation;
             } else {
-                log.warn("node path does not start with the physicalEntryPath which shouldn't be possible");
+                log.warn("node path ('" +path+ "')  does not start with the physicalEntryPath ('"+physicalEntryPath+"') which shouldn't be possible");
             }
         }
         return contextPrefix + prefixLinkRewrite + path;
