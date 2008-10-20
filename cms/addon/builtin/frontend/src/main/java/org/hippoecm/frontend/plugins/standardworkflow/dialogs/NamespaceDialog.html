@@ -15,9 +15,23 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <ul style="list-style: none;">
-      <li><b>Prefix:</b><span wicket:id="prefix"></span></li>
-      <li><b>URL:</b><span wicket:id="url"></span></li>
-    </ul>
+    <table class="hippo-window-form">
+      <tr>
+        <td>
+          <label>Prefix:</label>
+        </td>
+        <td>
+          <span wicket:id="prefix"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>URL:</label>
+        </td>
+        <td>
+          <span wicket:id="url"/>
+        </td>
+      </tr>
+    </table>
   </wicket:extend>
 </html>
