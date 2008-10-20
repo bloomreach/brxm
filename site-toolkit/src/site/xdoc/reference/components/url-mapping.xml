@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>ECM Website Development</title>
+    </properties>
+    <body>
+      <section name="URL mapping">
+
+        <subsection name="What is it?">
+          <p>
+            In regular jsp site development, the browser goes to a jsp by means of the URL and
+            the page retrieves the repository content and presents it. 
+            The HST2's URL mapping functionality reverses this process: the URL configured in the HST2, describes the location of the repository content and
+            determines it's view. </p>
+          <p>For example, a <i>content URL</i> showing a news item would look like
+            <code>/myapp/news/new-version-released</code>, whereas a <i>page URL</i> with parameters would look like
+            <code>/myapp/news/newsItem.jsp?item=1</code>.</p>
+          <p>Having content URL instead of page URL has the benefits of being <i>readable</i> and
+              <i>bookmarkable</i>.</p>
+        </subsection>
+
+      </section>
+
+    </body>
+</document>
