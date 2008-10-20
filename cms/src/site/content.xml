@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<document_list>
+  <!--
+     Do not edit! This html file is automatically generated from an XML file
+     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
+   -->
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/about/architecture.xml">Architecture
+   <section>Architecture</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/about/features.xml">Features
+   <section>Features</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/about/term_index.xml">
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/about/use_cases.xml">Use cases
+   <section>Use cases</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/console.xml">Console
+   <section>Console</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/index.xml">Configuration
+   <section>Configuration</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/domains.xml">Domains Configuration
+   <section>Domains Configuration</section>
+   <section>Structure</section>
+   <section>Nodes</section>
+   <subsection>hippo:domain</subsection>
+   <subsection>hippo:domainrule</subsection>
+   <subsection>hippo:facetrule</subsection>
+   <subsection>hippo:authrole</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/groups.xml">Groups Configuration
+   <section>Groups Configuration</section>
+   <section>Structure</section>
+   <section>Nodes</section>
+   <subsection>hippo:group</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/index.xml">Configuration nodes
+   <section>Configuration nodes</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/roles.xml">Roles Configuration
+   <section>Roles Configuration</section>
+   <section>Structure</section>
+   <section>Nodes</section>
+   <subsection>hippo:role</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/users.xml">Users Configuration
+   <section>Users Configuration</section>
+   <section>Structure</section>
+   <section>Nodes</section>
+   <subsection>hippo:user</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/workflow.xml">Workflow configuration
+   <section>Workflow configuration</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/authentication.xml">Repository based authentication
+   <section>Repository based authentication</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/index.xml">Repository configuration
+   <section>Repository configuration</section>
+   <subsection>FileSystem element</subsection>
+   <subsection>Security element</subsection>
+   <subsection>Workspaces element</subsection>
+   <subsection>Workspace element</subsection>
+   <subsection>SearchIndex element</subsection>
+   <subsection>Versioning element</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/searchindex.xml">SearchIndex configuration
+   <section>SearchIndex configuration</section>
+   <subsection>Minimal configuration</subsection>
+   <subsection>Best practice</subsection>
+   <subsection>ServicingSearchIndex</subsection>
+   <subsection>ServicingIndexingConfigurationImpl</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/workspace.xml">Workspace configuration
+   <section>Workspace configuration</section>
+   <subsection>Workspace Configuration</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/deploying-the-ear.xml">Deploying the Hippo ECM EAR
+   <section>Deploying the Hippo ECM EAR</section>
+   <subsection>Obtain the packaged product</subsection>
+   <subsection>Application Server</subsection>
+   <subsection>Hippo ECM Application Server settings</subsection>
+   <subsection>Deploying Hippo ECM EAR in application server</subsection>
+   <subsection>Integration Glassfish and NetBeans</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/deploying-the-war.xml">Deploying the Hippo ECM WAR
+   <section>Deploying the Hippo ECM WAR</section>
+   <subsection>Obtain the packaged product</subsection>
+   <subsection>Deploying in Tomcat 6.0</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/index.xml">Running Hippo ECM
+   <section>Running Hippo ECM</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/installing-plugins.xml">Installing plugins from the Hippo forge
+   <section>Installing plugins from the Hippo forge</section>
+   <subsection>Download the Plugin</subsection>
+   <subsection>Extending the EAR</subsection>
+   <subsection>Extending the WAR</subsection>
+   <subsection>Deploy the Bundle (planned)</subsection>
+   <subsection>Customizing the CMS configuration</subsection>
+   <subsection>Sending feedback</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/requirements.xml">Requirements
+   <section>Requirements</section>
+   <subsection>Operating System</subsection>
+   <subsection>Java</subsection>
+   <subsection>Java Servlet Container</subsection>
+   <subsection>Relational Database</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/bin_startup_help.xml">Bin Startup Help
+   <section>Bin Startup Help</section>
+   <subsection>Error messages</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/architecture/index.xml">Architecture
+   <section>Architecture</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/eclipse.xml">Introduction
+   <section>Introduction</section>
+   <section>Prepare</section>
+   <section>Create Eclipse projects</section>
+   <section>Run</section>
+   <section>Code formatting</section>
+   <section>Keeping up</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/index.xml">Building Hippo ECM
+   <section>Building Hippo ECM</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/maven.xml">Building with Maven
+   <section>Building with Maven</section>
+   <subsection>Install Maven</subsection>
+   <subsection>Get the Hippo ECM source</subsection>
+   <subsection>Build</subsection>
+   <subsection>Run</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/netbeans.xml">Building with Netbeans
+   <section>Building with Netbeans</section>
+   <section>Prepare</section>
+   <section>Configure Netbeans</section>
+   <subsection>Install the Subversion Plugin</subsection>
+   <subsection>Install the Mevenide2 Plugin</subsection>
+   <section>Run / Debug</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/concepts/index.xml">Concepts
+   <section>Concepts</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/index.xml">Development Guide
+   <section>Development Guide</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/project-structure.xml">Project Structure
+   <section>Project Structure</section>
+   <section>Why so many projects?</section>
+   <section>Addon</section>
+   <subsection>Dependencies between addons</subsection>
+   <subsection>Finding your way</subsection>
+   <section>Repository</section>
+   <section>Frontend</section>
+   <section>Package</section>
+   <section>Archetypes</section>
+   <section>Tools</section>
+   <section>Api</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml">Frontend skin customization
+   <section>Frontend skin customization</section>
+   <subsection>Create your own skin</subsection>
+   <subsection>What to customize</subsection>
+   <subsection>Overview of a skin project</subsection>
+   <subsection>How to apply a skin</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/editing_template_plugin.xml">Create an Editing Template Plugin
+   <section>Create an Editing Template Plugin</section>
+   <subsection>TODO</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/gui_plugin.xml">Hello World
+   <section>Hello World</section>
+   <section>Creating the Hello World plugin</section>
+   <subsection>Maven structure</subsection>
+   <subsection>pom.xml</subsection>
+   <subsection>HelloWorldPlugin.java</subsection>
+   <subsection>HelloWorldPlugin.html</subsection>
+   <subsection>Building the plugin JAR</subsection>
+   <section>Testing the Hello World plugin</section>
+   <subsection>Adding a dependency on our plugin</subsection>
+   <subsection>Running the application</subsection>
+   <subsection>Configuring to application to use the plugin</subsection>
+   <section>Giving our plugin a place on the dashboard</section>
+   <subsection>Adding you plugin to the repository</subsection>
+   <section>Making the Hello World plugin context sensitive</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/index.xml">Howto
+   <section>Howto</section>
+   <shortdesc>Learn how to make your own add-ons.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/packaging.xml">Creating your own war package
+   <section>Creating your own war package</section>
+   <section>Your own pom file</section>
+   <subsection>Adding the war dependency</subsection>
+   <subsection>Modifying the build section</subsection>
+   <subsection>Troubleshooting</subsection>
+   <section>Adding the jetty plugin for fast testing</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/workflow.xml">Developing workflows
+   <section>Developing workflows</section>
+   <subsection>Building your own workflow</subsection>
+   <subsection>Creating a workflow class</subsection>
+   <subsection>Writing the method that performs the workflow step</subsection>
+   <subsection>Mapping the data in the class to data in the repository</subsection>
+   <subsection>Deploying the workflow</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/index.xml">Hippo CMS Add-ons
+   <section>Hippo CMS Add-ons</section>
+   <shortdesc>Extend Hippo CMS with your own add-ons.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/introduction.xml">Introduction to add-on development
+   <section>Introduction to add-on development</section>
+   <shortdesc>An introduction to Hippo CMS add-on development.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.xml">Frontend Plugin Architecture
+   <section>Frontend Plugin Architecture</section>
+   <subsection>Customization by configuration</subsection>
+   <subsection>Applications</subsection>
+   <section>Advanced - Subject to Change</section>
+   <subsection>Plugin Configuration</subsection>
+   <subsection>Plugin Context</subsection>
+   <subsection>Dynamic Services</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.xml">Frontend Plugin Communication
+   <section>Frontend Plugin Communication</section>
+   <subsection>Sharing Models</subsection>
+   <subsection>Dialogs / Page Serialization</subsection>
+   <section>Advanced - Subject to Change</section>
+   <subsection>Other Communication Patterns</subsection>
+   <subsection>Available Services</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/index.xml">Frontend Plugins
+   <section>Frontend Plugins</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/index.xml">Add-on Reference
+   <section>Add-on Reference</section>
+   <shortdesc>Technical documentation on add-on development.</shortdesc>
+   <subsection>Repository plugins vs. frontend plugins</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/repository/repository_plugins.xml">Repository Plugins
+   <section>Repository Plugins</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/index.xml">Website Development
+   <section>Website Development</section>
+   <shortdesc>Publish your Hippo CMS managed content on the web.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/data_migration.xml">Data Migration
+   <section>Data Migration</section>
+   <shortdesc>Working with external data: hint, tips, best practices.</shortdesc>
+   <subsection>Exporting Content</subsection>
+   <subsection>Importing Content</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/data-migration.xml">Data Migration
+   <section>Data Migration</section>
+   <shortdesc>Working with external data: hint, tips, best practices.</shortdesc>
+   <subsection>Exporting Content</subsection>
+   <subsection>Importing Content</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/examples.xml">JCR Examples
+   <section>JCR Examples</section>
+   <shortdesc>Examples of accessing Hippo CMS functionality directly through the JCR API</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/index.xml">JCR Interface
+   <section>JCR Interface</section>
+   <shortdesc>Direct access to your content through the JCR API.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/jcr-dropbox-example.xml">Demo on interfacing with Hippo ECM Repository
+   <section>Demo on interfacing with Hippo ECM Repository</section>
+   <subsection>Intro</subsection>
+   <section>The Demo</section>
+   <subsection>What's the demo all about</subsection>
+   <subsection>Give me the code!</subsection>
+   <subsection>How to run</subsection>
+   <subsection>Applying Your Own Hippo Facets</subsection>
+   <subsection>Try out yourself</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/jcr.xml">JCR Basics
+   <section>JCR Basics</section>
+   <shortdesc>Get access to your content.</shortdesc>
+   <subsection>Connecting with Hippo Repository</subsection>
+   <subsection>Working with JCR</subsection>
+   <subsection>Dependencies</subsection>
+   <subsection>Complete Example Class</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/toolkits/index.xml">Toolkits
+   <section>Toolkits</section>
+   <subsection>Hippo Site Toolkit</subsection>
+   <subsection>Hippo Portal</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/overview.xml">Delve into Hippo CMS
+   <section>Delve into Hippo CMS</section>
+   <shortdesc>Get to know all the details of Hippo CMS.</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/quickstart_in_existing_container.xml">Your own Quickstart
+   <section>Your own Quickstart</section>
+   <shortdesc>Quickstart in your own servlet container.</shortdesc>
+   <subsection>Rubbish</subsection>
+   <subsection>Deploy, run and access</subsection>
+   <subsection>Deploy the binary distribution</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/quickstart.xml">Quickstart Steps
+   <section>Quickstart Steps</section>
+   <shortdesc>Quickly install and use standard Hippo CMS with example content.</shortdesc>
+   <subsection>Install standard Hippo CMS with example content</subsection>
+   <subsection>Using standard Hippo CMS with example content</subsection>
+   <subsection>Alternatives</subsection>
+   <subsection>Next</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/creating_a_document_type_and_template.xml">Creating a document type and template
+   <section>Creating a document type and template</section>
+   <subsection>Create a Namespace</subsection>
+   <subsection>Create a new Type</subsection>
+   <subsection>Edit Model</subsection>
+   <subsection>Update Content</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/dashboard.xml">The dashboard
+   <section>The dashboard</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/editing_a_document.xml">Editing a document
+   <section>Editing a document</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/index.xml">Hippo ECM tour
+   <section>Hippo ECM tour</section>
+   <subsection>Hippo CMS7</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/logging_in.xml">Logging in
+   <section>Logging in</section>
+   <subsection>Log in</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/managing_users_and_groups.xml">Managing users and groups
+   <section>Managing users and groups</section>
+   <subsection>Creating a new user</subsection>
+   <subsection>Creating a new group</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/navigating_the_cms.xml">Navigating the CMS
+   <section>Navigating the CMS</section>
+   <subsection>Static perspectives</subsection>
+   <subsection>Dynamic perspectives</subsection>
+   <section>Navigating the repository</section>
+   <subsection>Actions</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/versioning.xml">Versioning
+   <section>Versioning</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/workflow.xml">Workflow
+   <section>Workflow</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/working_with_authorizations.xml">Working with authorizations
+   <section>Working with authorizations</section>
+  </document>
+  <document ext="" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/editors/*">
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/index.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/editor.xml">The Document Type Editor
+   <section>The Document Type Editor</section>
+   <subsection>Using the editor</subsection>
+   <subsection>Applying your changes</subsection>
+   <subsection>Advanced</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/examples.xml">Examples of document types
+   <section>Examples of document types</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/fieldtypes.xml">Field Types Reference
+   <section>Field Types Reference</section>
+   <subsection>String</subsection>
+   <subsection>Html</subsection>
+   <subsection>Text</subsection>
+   <subsection>Date</subsection>
+   <subsection>Boolean</subsection>
+   <subsection>hippo:resource</subsection>
+   <subsection>hippo:query</subsection>
+   <subsection>hippo:facetselect</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/index.xml">Document Types
+   <section>Document Types</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/tutorial.xml">Document Type Tutorial
+   <section>Document Type Tutorial</section>
+   <subsection>Creating your first document type</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/index.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/index.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/index.xml">What is Hippo CMS?
+   <section>What is Hippo CMS?</section>
+   <shortdesc>What part of the Hippo ECM is it, what are its tasks?</shortdesc>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/releasing.xml">Performing a release of the Hippo-ECM suite
+   <section>Performing a release of the Hippo-ECM suite</section>
+   <subsection>Preparing a release</subsection>
+   <subsection>Releasing in subversion</subsection>
+   <subsection>Deploying the targets</subsection>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/support/community_support.xml">Community Support
+   <section>Community Support</section>
+  </document>
+  <document ext="xml" fullname="/home/rita/werk/cms/trunk/src/site/xdoc/support/contributing.xml">Contributing
+   <section>Contributing</section>
+   <shortdesc>Contributing to Hippo CMS.</shortdesc>
+  </document>
+</document_list>

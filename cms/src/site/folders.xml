@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
+ <folder path='/home/rita/werk/cms/trunk/src/site/xdoc'>.
+  <folder>about
+   <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/about/architecture.xml'
+>architecture</file>
+   <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/about/features.xml'
+>features</file>
+   <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/about/term_index.xml'
+>term_index</file>
+   <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/about/use_cases.xml'
+>use_cases</file>
+  </folder>
+  <folder>delve_into
+   <folder>admin
+    <folder>configuration
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/console.xml'
+>console</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/index.xml'
+>index</file>
+     <folder>nodes
+      <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/domains.xml'
+>domains</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/groups.xml'
+>groups</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/index.xml'
+>index</file>
+      <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/roles.xml'
+>roles</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/users.xml'
+>users</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/nodes/workflow.xml'
+>workflow</file>
+     </folder>
+     <folder>repository
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/authentication.xml'
+>authentication</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/index.xml'
+>index</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/searchindex.xml'
+>searchindex</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/configuration/repository/workspace.xml'
+>workspace</file>
+     </folder>
+    </folder>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/deploying-the-ear.xml'
+>deploying-the-ear</file>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/deploying-the-war.xml'
+>deploying-the-war</file>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/index.xml'
+>index</file>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/installing-plugins.xml'
+>installing-plugins</file>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/admin/requirements.xml'
+>requirements</file>
+   </folder>
+   <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/bin_startup_help.xml'
+>bin_startup_help</file>
+   <folder>development
+    <folder>architecture
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/architecture/index.xml'
+>index</file>
+    </folder>
+    <folder>building
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/eclipse.xml'
+>eclipse</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/index.xml'
+>index</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/maven.xml'
+>maven</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/building/netbeans.xml'
+>netbeans</file>
+    </folder>
+    <folder>concepts
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/concepts/index.xml'
+>index</file>
+    </folder>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/index.xml'
+>index</file>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/development/project-structure.xml'
+>project-structure</file>
+   </folder>
+   <folder>implementation
+    <folder>add-ons
+     <folder>howto
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml'
+>customize_skin</file>
+      <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/editing_template_plugin.xml'
+>editing_template_plugin</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/gui_plugin.xml'
+>gui_plugin</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/index.xml'
+>index</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/packaging.xml'
+>packaging</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/howto/workflow.xml'
+>workflow</file>
+     </folder>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/index.xml'
+>index</file>
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/introduction.xml'
+>introduction</file>
+     <folder>reference
+      <folder>frontend
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.xml'
+>frontend-plugin-architecture</file>
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.xml'
+>frontend-plugin-communication</file>
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/frontend/index.xml'
+>index</file>
+      </folder>
+      <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/index.xml'
+>index</file>
+      <folder>repository
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/add-ons/reference/repository/repository_plugins.xml'
+>repository_plugins</file>
+      </folder>
+     </folder>
+    </folder>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/index.xml'
+>index</file>
+    <folder>jcr
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/data_migration.xml'
+>data_migration</file>
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/data-migration.xml'
+>data-migration</file>
+     <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/examples.xml'
+>examples</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/index.xml'
+>index</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/jcr-dropbox-example.xml'
+>jcr-dropbox-example</file>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/jcr/jcr.xml'
+>jcr</file>
+    </folder>
+    <folder>toolkits
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/implementation/toolkits/index.xml'
+>index</file>
+    </folder>
+   </folder>
+   <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/overview.xml'
+>overview</file>
+   <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/quickstart_in_existing_container.xml'
+>quickstart_in_existing_container</file>
+   <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/quickstart.xml'
+>quickstart</file>
+   <folder>user
+    <folder>contributors
+     <folder>tour
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/creating_a_document_type_and_template.xml'
+>creating_a_document_type_and_template</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/dashboard.xml'
+>dashboard</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/editing_a_document.xml'
+>editing_a_document</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/index.xml'
+>index</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/logging_in.xml'
+>logging_in</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/managing_users_and_groups.xml'
+>managing_users_and_groups</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/navigating_the_cms.xml'
+>navigating_the_cms</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/versioning.xml'
+>versioning</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/workflow.xml'
+>workflow</file>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/contributors/tour/working_with_authorizations.xml'
+>working_with_authorizations</file>
+     </folder>
+    </folder>
+    <folder>editors
+     <file ext='' note='empty' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/editors/*'
+>*</file>
+    </folder>
+    <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/index.xml'
+>index</file>
+    <folder>information_architects
+     <folder>howto
+      <folder>document_types
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/editor.xml'
+>editor</file>
+       <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/examples.xml'
+>examples</file>
+       <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/fieldtypes.xml'
+>fieldtypes</file>
+       <file ext='xml' mimetype='text/xml' note='todo' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/index.xml'
+>index</file>
+       <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/document_types/tutorial.xml'
+>tutorial</file>
+      </folder>
+      <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/howto/index.xml'
+>index</file>
+     </folder>
+     <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/delve_into/user/information_architects/index.xml'
+>index</file>
+    </folder>
+   </folder>
+  </folder>
+  <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/index.xml'
+>index</file>
+  <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/releasing.xml'
+>releasing</file>
+  <folder>support
+   <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/support/community_support.xml'
+>community_support</file>
+   <file ext='xml' mimetype='text/xml' fullname='/home/rita/werk/cms/trunk/src/site/xdoc/support/contributing.xml'
+>contributing</file>
+  </folder>
+ </folder>
