@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Installation</title>
+    </properties>
+    <body>
+      <section name="Installation">
+       <span class='shortdesc'>How to install Hippo CMS</span>
+
+        <span class='review'>Check if all statements true.</span>
+
+        <p>
+          To run Hippo CMS, a 
+          <span class='hidden_index' id='servlet_container'/><span class='index' id='java_servlet_container'>Java servlet container</span> 
+          is sufficient. 
+          <span class='hidden_index' id='application_server'/><span class='index' id='java_application_server'>Java application servers</span> 
+          include the functionality of Java servlect containers,
+          and have the advantage that they allow for adding new features, without the need
+          for a reinstall (because they accept EAR packages).
+        </p>
+        <p>
+          Hippo supplies a Java <span class='index' id='WAR'>WAR</span> package to deploy in a Java servlet container and
+          a more sophisticated <span class='index' id='EAR'>EAR</span> package to deploy in a Java application server. 
+	</p>
+        <p>Java servlet containers are for example: 
+           <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>, 
+           <a href='http://tomcat.apache.org/'>Apache Tomcat</a>.
+           Java application servers are for example: 
+           <a href='https://glassfish.dev.java.net/public/users.html'>Sun Glassfish</a>, 
+           <a href='http://www.jboss.org/'>JBoss</a>,
+           <a href='http://www-01.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server (WAS)</a>,
+           <a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a>.
+        </p>
+      </section>
+  </body>
+</document>

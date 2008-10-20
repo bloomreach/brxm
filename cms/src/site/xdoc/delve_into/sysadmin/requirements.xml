@@ -242,7 +242,7 @@
        <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> 6.1
        can be obtained from Hippo: it is included in the
        quickstart-bin package: 
-       <a href='/delve_into/quickstart.html'>Quickstart</a>, or
+       <a href='../delve_into/quickstart.html'>Quickstart</a>, or
         from codehaus
        <a href='http://docs.codehaus.org/display/JETTY/Downloading+Jetty'>Jetty 6.1 download</a>.          
        <a href="http://tomcat.apache.org/download-60.cgi">Tomcat 6.0 from Apache</a>.
