@@ -94,6 +94,11 @@
           <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> </item>
           <item name="Dictionary" collapse="true" href="/delve_into/user/editors/dictionary/index.html"> </item>
         </item>
+        <item name="CMS Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
+          <item name="Tour" collapse="true" href="/delve_into/user/cms_admins/tour/index.html"> </item>
+          <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> </item>
+          <item name="Dictionary" collapse="true" href="/delve_into/user/cms_admins/dictionary/index.html"> </item>
+        </item>
         <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/information_architects/tour/index.html"/>
           <item name="Howto" collapse="true" href="/delve_into/user/information_architects/howto/index.html">
@@ -154,25 +159,25 @@
         -->
       </item>
 
-      <item name="Admin Guide" href="delve_into/admin/index.html" collapse="true">
-        <item name="Requirements" href="/delve_into/admin/requirements.html"/>
-        <item name="Deploying the WAR" href="/delve_into/admin/deploying-the-war.html"/>
-        <item name="Deploying the EAR" href="/delve_into/admin/deploying-the-ear.html"/>
-        <item name="Installing Plugins" href="/delve_into/admin/installing-plugins.html"/>
-        <item name="Configuration" href="/delve_into/admin/configuration/index.html" collapse="true">
-          <item name="Repository" href="/delve_into/admin/configuration/repository/index.html" collapse="true">
-            <item name="Workspace" href="/delve_into/admin/configuration/repository/workspace.html"/>
-            <item name="Search Index" href="/delve_into/admin/configuration/repository/searchindex.html"/>
-            <item name="Authentication" href="/delve_into/admin/configuration/repository/authentication.html"/>
+      <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
+        <item name="Requirements" href="/delve_into/sysadmin/requirements.html"/>
+        <item name="Deploying the WAR" href="/delve_into/sysadmin/deploying-the-war.html"/>
+        <item name="Deploying the EAR" href="/delve_into/sysadmin/deploying-the-ear.html"/>
+        <item name="Installing Plugins" href="/delve_into/sysadmin/installing-plugins.html"/>
+        <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
+          <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
+            <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>
+            <item name="Search Index" href="/delve_into/sysadmin/configuration/repository/searchindex.html"/>
+            <item name="Authentication" href="/delve_into/sysadmin/configuration/repository/authentication.html"/>
           </item>
-          <item name="Configuration Nodes" href="/delve_into/admin/configuration/nodes/index.html" collapse="true">
-            <item name="Users" href="/delve_into/admin/configuration/nodes/users.html"/>
-            <item name="Groups" href="/delve_into/admin/configuration/nodes/groups.html"/>
-            <item name="Roles" href="/delve_into/admin/configuration/nodes/roles.html"/>
-            <item name="Domains" href="/delve_into/admin/configuration/nodes/domains.html"/>
-            <item name="Workflow" href="/delve_into/admin/configuration/nodes/workflow.html"/>
+          <item name="Configuration Nodes" href="/delve_into/sysadmin/configuration/nodes/index.html" collapse="true">
+            <item name="Users" href="/delve_into/sysadmin/configuration/nodes/users.html"/>
+            <item name="Groups" href="/delve_into/sysadmin/configuration/nodes/groups.html"/>
+            <item name="Roles" href="/delve_into/sysadmin/configuration/nodes/roles.html"/>
+            <item name="Domains" href="/delve_into/sysadmin/configuration/nodes/domains.html"/>
+            <item name="Workflow" href="/delve_into/sysadmin/configuration/nodes/workflow.html"/>
           </item>
-          <item name="Console" href="/delve_into/admin/configuration/console.html"/>
+          <item name="Console" href="/delve_into/sysadmin/configuration/console.html"/>
         </item>
       </item>
 
