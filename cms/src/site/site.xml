@@ -160,10 +160,17 @@
       </item>
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
-        <item name="Requirements" href="/delve_into/sysadmin/requirements.html"/>
-        <item name="Deploying the WAR" href="/delve_into/sysadmin/deploying-the-war.html"/>
-        <item name="Deploying the EAR" href="/delve_into/sysadmin/deploying-the-ear.html"/>
-        <item name="Installing Plugins" href="/delve_into/sysadmin/installing-plugins.html"/>
+        <item name="Requirements" collapse="true" href="/delve_into/sysadmin/requirements.html">
+         <item name="OS" collapse="true" href="/delve_into/sysadmin/requirements.html#Operating_System">
+         <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java">
+         <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container">
+         <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database">
+	</item>
+        <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
+         <item name="in Servlet Container" href="/delve_into/sysadmin/in_servlet_container.html"/>
+         <item name="in Application server" href="/delve_into/sysadmin/in_application_server.html"/>
+         <item name="of Plugins" href="/delve_into/sysadmin/plugins.html"/>
+	</item>
         <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
             <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>

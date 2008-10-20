@@ -23,6 +23,11 @@
   </properties>
   <body>
     <section name="Requirements">
+     <span class='shortdesc'>What do you need to run Hippo CMS?</span>
+
+     <span class='add'>A table to show an overview of the requirements and support stacks. For support stacks see <a href='http://www.alfresco.com/services/support/stacks/2.2/'/></span>
+     <span class='review'>Check agains http://www.hippocms.org/display/CMS/01.2+Hardware+Requirements</span>
+
       <subsection name="Operating System">
       
       <blockquote>  
