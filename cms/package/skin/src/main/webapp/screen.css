@@ -523,6 +523,7 @@ div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
 /* field template editing */
 .hippo-editor .hippo-editor-template-field{width: 100%;}
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls {width: 49px; float: right;}
+.hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls .delete-16{width: 49px; float: right;}
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li {display: inline; }
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li a {float: left; display:block; background-position: center center; width: 16px; height: 16px;}
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li a:hover {background-color: #edf5ff; }
