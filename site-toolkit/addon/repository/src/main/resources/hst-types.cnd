@@ -31,7 +31,7 @@
 - hst:module (string)
 - * (string)
 
-[hst:sitemaplayout]> hippo:document
+[hst:sitemaplayout]> hippo:document orderable
 - hst:layoutAttribute (string)
 + * (hst:sitemapmodule) = hst:sitemapmodule
 
