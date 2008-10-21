@@ -68,4 +68,7 @@
 + hst:layouts (hst:layouts) = hst:layouts 
 
 
+[hst:reaction] mixin
+- hst:reactionto (String) mandatory
+
 
