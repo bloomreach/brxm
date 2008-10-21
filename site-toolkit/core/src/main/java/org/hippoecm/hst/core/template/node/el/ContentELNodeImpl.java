@@ -258,20 +258,27 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     
     // TODO: Is this necessary? Maybe we should use a facetselect instead?
     public ELNode getFacetlink(){
-      	try {
-      		if(jcrNode != null && jcrNode.hasProperty("hippo:docbase")){
-			  Node facetedNode = jcrNode.getSession().getNodeByUUID(jcrNode.getProperty("hippo:docbase").getValue().getString());
-			  Node childFacetNode = facetedNode.getNode(facetedNode.getName());
-			  return new ContentELNodeImpl(childFacetNode,sourceRewriter);
-			}
-            else{
-              return null;
-            }
-         } catch (PathNotFoundException e) {
-             log.debug("PathNotFoundException: {}", e.getMessage());
-         } catch (RepositoryException e) {
-             log.error("RepositoryException: {}", e.getMessage());
-             log.debug("RepositoryException:", e);
+       try {
+       	 if(jcrNode != null && jcrNode.hasProperty("hippo:docbase")){
+       	  Node facetedNode = jcrNode.getSession().getNodeByUUID(jcrNode.getProperty("hippo:docbase").getValue().getString());
+       	  String facetedNodeName = facetedNode.getName();
+       	  log.debug("facetedNodeName: " + facetedNodeName);
+       	  	if(facetedNodeName!=null && !facetedNodeName.equals("") && facetedNode.hasNode(facetedNodeName)){           			  
+       	  		Node childFacetNode = facetedNode.getNode(facetedNode.getName());
+       	  		return new ContentELNodeImpl(childFacetNode,sourceRewriter);
+       	  	}
+       	  	else {
+       	  		return null;
+       	  	}
+          }
+          else{
+             return null;
+          }           			  
+        } catch (PathNotFoundException e) {
+          log.debug("PathNotFoundException: {}", e.getMessage());
+        } catch (RepositoryException e) {
+          log.error("RepositoryException: {}", e.getMessage());
+          log.debug("RepositoryException:", e);
         }
         return null;
     }
