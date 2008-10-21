@@ -30,10 +30,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Vector;
+import java.util.Random;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -254,4 +257,106 @@ public class FolderWorkflowTest extends TestCase {
     }
 
     */
+
+    private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int iters)
+        throws RepositoryException, WorkflowException, RemoteException {
+        Vector<String> paths = new Vector<String>();
+        Vector<String> worklog = new Vector<String>();
+        do {
+            int parentIndex = (paths.size() > 0 ? random.nextInt(paths.size()) : -1);
+            String parentPath;
+            Node parent;
+            if(parentIndex >= 0) {
+                parentPath = paths.get(parentIndex);
+                parent = node.getNode(parentPath.substring(2));
+            } else {
+                parentPath = ".";
+                parent = node;
+            }
+            session.refresh(false);
+            FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", parent);
+            FolderWorkflow folderWorkflow = workflow;
+            assertNotNull(workflow);
+            Map<String,Set<String>> types = workflow.list();
+            assertNotNull(types);
+            assertTrue(types.containsKey("New Folder"));
+            assertTrue(types.get("New Folder").contains("Folder"));
+            String childPath = workflow.add("New Folder", "Folder", "f");
+            assertNotNull(childPath);
+            Node child = session.getRootNode().getNode(childPath.substring(1));
+            assertTrue(child.isNodeType("hippostd:folder"));
+            assertTrue(child.isNodeType("hippo:document"));
+            assertTrue(child.isNodeType("hippo:harddocument"));
+            childPath = parentPath + "/f";
+            //assertEquals("/test/f"+childPath.substring(1), child.getPath());
+            if(!paths.contains(childPath)) {
+                paths.add(childPath);
+            }
+            worklog.add(childPath);
+        } while(paths.size() < iters);
+    }
+
+    @Test
+    public void testExtensive() throws RepositoryException, WorkflowException, RemoteException {
+        createDirectories(session, manager, node, new Random(72099L), 100);
+    }
+
+    private Exception concurrentError = null;
+
+    private class ConcurrentRunner extends Thread {
+        long seed;
+        int niters;
+        ConcurrentRunner(long seed, int niters) {
+            this.seed = seed;
+            this.niters = niters;
+        }
+        public void run() {
+            try {
+                Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+                Node test = session.getRootNode().getNode(node.getPath().substring(1));
+                createDirectories(session, manager, node, new Random(seed), niters);
+            } catch(RepositoryException ex) {
+                concurrentError = ex;
+            } catch(WorkflowException ex) {
+                concurrentError = ex;
+            } catch(RemoteException ex) {
+                concurrentError = ex;
+            }
+        }
+    }
+
+    @Test
+    public void testConcurrent() throws Exception {
+        final int niters = 50;
+        Thread thread1 = new ConcurrentRunner(2095487L, niters);
+        Thread thread2 = new ConcurrentRunner(70178491L, niters);
+        thread1.start();
+        thread2.start();
+        thread2.join();
+        thread1.join();
+        if(concurrentError != null) {
+            throw concurrentError;
+        }
+    }
+
+    @Test
+    public void testMoreConcurrent() throws Exception {
+        final int nthreads = 32;
+        final int niters = 30;
+        long seed = 1209235890128L;
+        Thread[] threads = new Thread[nthreads];
+        for(int i=0; i<nthreads; i++) {
+            threads[i] = new ConcurrentRunner(seed++, niters);
+        }
+        for(int i=0; i<nthreads; i++) {
+            threads[i].start();
+        }
+        for(int i=0; i<nthreads; i++) {
+            threads[i].join();
+        }
+        if(concurrentError != null) {
+            throw concurrentError;
+        }
+    }
 }
