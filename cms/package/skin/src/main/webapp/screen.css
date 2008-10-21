@@ -521,8 +521,8 @@ div.wicket-modal div.link-picker div.internal-link-label {margin-bottom: 10px;}
 div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
 
 /* field template editing */
-.hippo-editor .hippo-editor-template-field{width: 100%; position: relative}
-.hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls {width: 49px; position: absolute; right: 4px; top: 4px; height: 16px; z-index: 100000;}
+.hippo-editor .hippo-editor-template-field{width: 100%;}
+.hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls {width: 49px; float: right;}
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li {display: inline; }
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li a {float: left; display:block; background-position: center center; width: 16px; height: 16px;}
 .hippo-editor .hippo-editor-template-field .hippo-editor-template-field-controls li a:hover {background-color: #edf5ff; }
@@ -541,19 +541,15 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor-template-field-edit{padding: 15px;}
 
 /* subfields */
+.hippo-editor .hippo-editor-field-subfield{}
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: #EDF5FF; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field-subfield {position: static;}
-
-.hippo-editor .hippo-editor-field-subfield .yui-calcontainer{display: block; margin-bottom: 200px;}
-.hippo-editor .hippo-editor-field-subfield .hippo-editor-html-field *{position: relative;}
-
-.hippo-editor .hippo-editor-field-subfield-controls{position: absolute; right: 4px; top: 4px; z-index: 10000}
-.hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block}
+.hippo-editor .hippo-editor-field-subfield-controls{}
+.hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block; float: right; margin-top: 4px; margin-right: 4px;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background-color: #EDF5FF; border: 1px solid #B2B2B2; margin-bottom: 4px;}
 
 /* sub sub fields */
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: 100%; margin-bottom: 4px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: 100%; margin-bottom: 4px; position: relative}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: transparent; border: 1px solid #b2b2b2;}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16{}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
