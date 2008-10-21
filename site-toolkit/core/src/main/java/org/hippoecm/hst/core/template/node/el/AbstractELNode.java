@@ -80,6 +80,54 @@ public abstract class AbstractELNode implements ELNode {
 		return null;
     }
 
+    public Map getHasNode() {
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object nodeName) {
+                try {
+                    return jcrNode.hasNode((String) nodeName);
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException " + e.getMessage());
+                    return false;
+                }
+
+            }
+        };
+    }
+    
+    public Map getNode(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object nodeName) {
+            	String name = (String) nodeName;
+            	 try {
+                     if (!jcrNode.hasNode(name)) {
+                         log.debug("Node '{}' not found. Return empty string", name);
+                         return "";
+                     } else{
+                    	 return jcrNode.getNode(name);
+                     }
+                 } catch (PathNotFoundException e) {
+                     log.debug("PathNotFoundException: {}", e.getMessage());
+                 } catch (RepositoryException e) {
+                     log.error("RepositoryException: {}", e.getMessage());
+                     log.debug("RepositoryException:", e);
+                 }
+                 return null;
+            }
+        };
+    }
+    
+
+    
     public Map getHasProperty() {
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");

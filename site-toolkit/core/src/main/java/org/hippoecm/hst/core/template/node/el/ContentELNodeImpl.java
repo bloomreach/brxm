@@ -64,29 +64,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     public ELNode getParent(){
 		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
     }
-    
-    public Map hasNode(){
-        if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
-            return Collections.EMPTY_MAP;
-        }
-        return new ELPseudoMap() {
-
-            @Override
-            public Object get(Object node) {
-                String nodeName = (String) node;
-                try {
-                    return jcrNode.hasNode(nodeName);
-                } catch (RepositoryException e) {
-                    log.error("RepositoryException: {}", e.getMessage());
-                    log.debug("RepositoryException:", e);
-                    return false;
-                }
-
-            }
-        };
-    }
-    
+ 
+    @Override
     public Map getNode(){
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
