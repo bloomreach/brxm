@@ -50,7 +50,8 @@ public class ListDisplayModule extends ModuleBase {
 		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	    List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 
-	    try {	    	
+	    try {
+	    	
 	    	String contentLocation = null;
 	    	try {
 	    		contentLocation = getPropertyValueFromModuleNode(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);	    	
@@ -58,6 +59,17 @@ public class ListDisplayModule extends ModuleBase {
 				log.error("Cannot get property " + ModuleNode.CONTENTLOCATION_PROPERTY_NAME, e);
 			}
 
+	        if (moduleParameters != null) {
+	            if (moduleParameters.containsKey(ModuleNode.CONTENTLOCATION_PROPERTY_NAME)) {
+	                contentLocation = moduleParameters.get(ModuleNode.CONTENTLOCATION_PROPERTY_NAME);
+	            }      
+	        }
+	        
+	        if(contentLocation==null || contentLocation.equals("")){
+	            pageContext.setAttribute(getVar(),null);
+	            return;
+	        }
+			
 	    	ContextBase contentContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 	    	log.debug("ListDisplayModule > " + contentLocation + " base=" + contentContextBase);
 			Node n = contentContextBase.getRelativeNode(contentLocation); 
