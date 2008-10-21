@@ -22,7 +22,6 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.mapping.URLMapping;
 import org.slf4j.LoggerFactory;
 
 public class ContextBase {
@@ -33,8 +32,6 @@ public class ContextBase {
 	private final String contextName;
 	private Node contextRootNode;
 	private final Session jcrSession;
-	private URLMapping urlMapping;
-    
 	
 	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
 		this(contextName, repositoryPath, request, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));

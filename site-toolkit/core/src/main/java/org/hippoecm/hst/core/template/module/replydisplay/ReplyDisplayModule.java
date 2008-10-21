@@ -28,7 +28,6 @@ import javax.servlet.jsp.PageContext;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 
 public class ReplyDisplayModule extends ModuleBase {
 

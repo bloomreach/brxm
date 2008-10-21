@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 

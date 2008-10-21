@@ -15,14 +15,9 @@
  */
 package org.hippoecm.hst.core.template.node;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;

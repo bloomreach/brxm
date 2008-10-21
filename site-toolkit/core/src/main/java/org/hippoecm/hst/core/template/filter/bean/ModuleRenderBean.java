@@ -22,6 +22,8 @@ import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
 
 public class ModuleRenderBean implements Serializable{
+  
+    private static final long serialVersionUID = 1L;
     private transient final PageContainerNode pageContainerNode;
     private transient final PageContainerModuleNode pageContainerModuleNode;
     private final Module module;

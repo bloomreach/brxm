@@ -29,7 +29,6 @@ import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.form.el.WebFormBean;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

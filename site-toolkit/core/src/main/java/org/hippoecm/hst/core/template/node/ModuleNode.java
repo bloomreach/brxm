@@ -19,8 +19,6 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.TemplateException;

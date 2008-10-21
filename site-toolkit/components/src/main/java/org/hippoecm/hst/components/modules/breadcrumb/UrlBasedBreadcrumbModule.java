@@ -16,23 +16,12 @@
 package org.hippoecm.hst.components.modules.breadcrumb;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.ContextBaseFilter;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.TemplateException;
-import org.hippoecm.hst.core.template.node.ModuleNode;
-import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

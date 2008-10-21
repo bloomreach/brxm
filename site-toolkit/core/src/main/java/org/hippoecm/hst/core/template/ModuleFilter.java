@@ -18,18 +18,15 @@ package org.hippoecm.hst.core.template;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.template.module.Module;
@@ -73,7 +70,6 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 							Module module = getModule(moduleRenderAttributes.getClassName());
 							PageNode pageNode = getPageNode(request, moduleRenderAttributes.getPageName());
 
-							
 							PageContainerNode containerNode = pageNode.getPageContainerNode(moduleRenderAttributes.getContainerName()); 
 							if (log.isDebugEnabled() && containerNode != null) {
 						    	log.debug("containerNode=" + containerNode.getJcrNode().getPath());

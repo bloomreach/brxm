@@ -15,25 +15,11 @@
  */
 package org.hippoecm.hst.core.template.tag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ModuleRenderAttributes;
-import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
-import org.hippoecm.hst.core.template.module.Module;
-import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
-import org.hippoecm.hst.core.template.node.PageContainerNode;
-import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

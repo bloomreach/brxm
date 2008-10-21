@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.template.module;
 
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.template.TemplateException;

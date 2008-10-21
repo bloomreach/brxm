@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.template.node;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.core.template.ContextBase;
 

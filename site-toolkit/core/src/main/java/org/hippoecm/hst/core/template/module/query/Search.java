@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.template.module.query;
 
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.slf4j.Logger;

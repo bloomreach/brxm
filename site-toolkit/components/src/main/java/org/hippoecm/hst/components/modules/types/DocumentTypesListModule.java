@@ -16,7 +16,6 @@
 package org.hippoecm.hst.components.modules.types;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -27,8 +26,6 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;

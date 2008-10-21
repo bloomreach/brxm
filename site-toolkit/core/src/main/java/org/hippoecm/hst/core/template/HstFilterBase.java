@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.JcrSessionPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +124,6 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	public PageNode getPageNode(HttpServletRequest request, String pageNodeName) throws TemplateException, RepositoryException{
-		Session session =   (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
 		ContextBase hstConfigurationContextBase = getHstConfigurationContextBase(request, TEMPLATE_CONFIGURATION_LOCATION);
 			
 		Node siteMapNodes = hstConfigurationContextBase.getRelativeNode(SITEMAP_RELATIVE_LOCATION);

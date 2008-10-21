@@ -17,19 +17,20 @@ package org.hippoecm.hst.core.template.tag;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
-import org.hippoecm.hst.core.template.node.*;
+import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.template.node.NodeList;
+import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
+import org.hippoecm.hst.core.template.node.PageContainerNode;
+import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.*;
-import javax.servlet.*;
 
 public class LayoutAttributeTag extends TagSupport {
 	private static final Logger log = LoggerFactory.getLogger(LayoutAttributeTag.class);

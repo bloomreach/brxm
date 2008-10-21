@@ -16,7 +16,10 @@
 package org.hippoecm.hst.core.template;
 
 public class TemplateException extends Exception {
-     public TemplateException() {
+  
+    private static final long serialVersionUID = 1L;
+
+    public TemplateException() {
     	 super();
      }
      

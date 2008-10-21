@@ -19,9 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.module.Module;
-import org.hippoecm.hst.core.template.module.PagingModule;
 import org.hippoecm.hst.core.template.module.PaginatedDataBean;
+import org.hippoecm.hst.core.template.module.PagingModule;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
