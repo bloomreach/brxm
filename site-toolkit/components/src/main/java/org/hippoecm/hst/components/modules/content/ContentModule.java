@@ -59,7 +59,7 @@ public class ContentModule extends ModuleBase {
     		}
         }
         
-        if(path == null && uuid==null) {
+        if((path == null || path.equals("")) && (uuid==null || uuid.equals(""))) {
             pageContext.setAttribute(getVar(),null);
             return;
         }
@@ -79,15 +79,14 @@ public class ContentModule extends ModuleBase {
 					node = node.getNode(node.getName());
 				}				 
 			} catch (ItemNotFoundException e) {
-				log.error("Connect get Node by uuid ("+uuid+") : + "+ e.getCause());
+				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
 			} catch (RepositoryException e) {
-				log.error("Connect get Node by uuid ("+uuid+") : + "+ e.getCause());
+				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
 			}
-		}
-		if(path!=null || uuid!=null) {		
-			URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-			contentModuleNode = new ContentModuleNode(ctxBase, node, urlMapping);
-		}
+		}		
+	
+		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+		contentModuleNode = new ContentModuleNode(ctxBase, node, urlMapping);
 
 		pageContext.setAttribute(getVar(), contentModuleNode);
 	}
