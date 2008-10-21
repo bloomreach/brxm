@@ -46,7 +46,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
 		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-		String src = "";
+		String src = null;
         if(item!= null) {
             try {
             	if(item.getJcrNode().hasNode(relPath)){
@@ -54,27 +54,34 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
 				if(imageNode!=null){
 					  if(imageNode.hasProperty("hippo:docbase")){
 						  Node facetedNode = imageNode.getSession().getNodeByUUID(imageNode.getProperty("hippo:docbase").getValue().getString());
-						  Node childFacetNode = facetedNode.getNode(facetedNode.getName());
-						  Node gpn = null;
-						  if(type!=null){
-							  if(type.equals("picture"))
-								  gpn = childFacetNode.getNode("hippogallery:picture");
-							  else if(type.equals("thumbnail")){
-								  gpn = childFacetNode.getNode("hippogallery:thumbnail");
-							  }							  
+						  String nodeName = facetedNode.getName();
+						  if(nodeName!=null && !nodeName.equals("") && facetedNode.hasNode(nodeName)){
+							  Node childFacetNode = facetedNode.getNode(facetedNode.getName());
+							  Node gpn = null;
+							  if(childFacetNode!=null){
+								  if(type!=null){
+									  if(type.equals("picture"))
+										  gpn = childFacetNode.getNode("hippogallery:picture");
+									  else if(type.equals("thumbnail")){
+										  gpn = childFacetNode.getNode("hippogallery:thumbnail");
+									  }							  
+								  }
+								  else{
+									  gpn = childFacetNode.getNode("hippogallery:picture");
+								  }
+		                          src = urlMapping.rewriteLocation(gpn);
+							  }
 						  }
-						  else{
-							  gpn = childFacetNode.getNode("hippogallery:picture");
-						  }
-                          src = urlMapping.rewriteLocation(gpn);
                           pageContext.setAttribute(getVar(), src);
 					  }
 				}
             	}
 			} catch (PathNotFoundException e) {
-				e.printStackTrace();
+	             log.error("PathNotFoundException: {}", e.getMessage());
+	             log.debug("PathNotFoundException:", e);
 			} catch (RepositoryException e) {
-				e.printStackTrace();
+	             log.error("RepositoryException: {}", e.getMessage());
+	             log.debug("RepositoryException:", e);
 			}
         }		
 	}
