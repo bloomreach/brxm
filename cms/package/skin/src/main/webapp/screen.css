@@ -394,7 +394,6 @@ background-image:url(images/box-blue2.png);}
 .hippo-gallery-images .icon-48{text-align: center; padding: 4px;}
 .hippo-gallery-images .icon-48 span{display: block; background-repeat: no-repeat; background-position: center center; width: 48px; height: 48px;}
 
-
 /* Image gallery Popup */
 /* ================================================ */
 .hippo-window-picker{width: 100%;}
@@ -477,7 +476,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-editor-top .hippo-toolbar{padding-left: 4px}
 
 /* field styling */
-.hippo-editor-field{padding: 8px; margin-bottom: 4px; position: relative;}
+.hippo-editor-field{padding: 8px; margin-bottom: 4px; position: static;}
 .hippo-editor-field-title{font-size: 11px; font-weight: normal; color: #b2b2b2; margin-bottom: 8px;}
 
 /* Text Input elements */
@@ -503,8 +502,6 @@ font-size: 11px; background: transparent; border: none; color: #333333; margin: 
 .hippo-editor-field .hippo-editor-field-datepicker select{width: 70px}
 
 /* Xinha xml editor used in the hippo-editor-field-html plugin */
-.hippo-editor-field-html textarea{width:100%}
-.hippo-editor-field-html iframe{border: none;}
 .hippo-editor-field-html .htmlarea {background: #edf5ff; border: 5px solid #edf5ff; border-collapse: separate}
 .hippo-editor-field-html .htmlarea *{padding: 0px; margin: 0px; border: none;}
 /* hide the xinha status bar we don't need it */
@@ -546,7 +543,11 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 /* subfields */
 .hippo-editor .hippo-editor-field .add-16{display: block; padding: 10px; background-color: #EDF5FF; border: 1px solid white; background-position: right center; margin-top: 8px;}
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
-.hippo-editor .hippo-editor-field-subfield {position: relative}
+.hippo-editor .hippo-editor-field-subfield {position: static;}
+
+.hippo-editor .hippo-editor-field-subfield .yui-calcontainer{display: block; margin-bottom: 200px;}
+.hippo-editor .hippo-editor-field-subfield .hippo-editor-html-field *{position: relative;}
+
 .hippo-editor .hippo-editor-field-subfield-controls{position: absolute; right: 4px; top: 4px; z-index: 10000}
 .hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block}
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background-color: #EDF5FF; border: 1px solid #B2B2B2; margin-bottom: 4px;}
