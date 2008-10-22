@@ -59,7 +59,8 @@
         <item name="Start a project" href="/delve_into/howto/start_project.html"/>
         <item name="Hello World" href="/delve_into/howto/hello_world.html"/>
         <item name="Facebook" href="/delve_into/howto/facebook.html"/>
-        <item name="Search" href="/delve_into/howto/search.html"/>
+        <item name="Free Text Search" href="/delve_into/howto/free_text_search.html"/>
+        <item name="Advanced Search" href="/delve_into/howto/advanced_search.html"/>
       </item>
       <item name="Reference" href="/reference/index.html" collapse="true">
         <item name="Concepts" href="/reference/concepts.html"/>
