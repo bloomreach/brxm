@@ -54,10 +54,10 @@
 
     <menu name="Delve into HST2">
 
-      <item name="Quickstart" href="/quickstart.html"/>
+      <item name="Quickstart" href="/delve_into/quickstart.html"/>
       <item name="Howto" href="/delve_into/howto/index.html" collapse="true">
-        <item name="Start a project" href="/delve_into/howto/start-project.html"/>
-        <item name="Hello World" href="/delve_into/howto/hello-world.html"/>
+        <item name="Start a project" href="/delve_into/howto/start_project.html"/>
+        <item name="Hello World" href="/delve_into/howto/hello_world.html"/>
         <item name="Facebook" href="/delve_into/howto/facebook.html"/>
         <item name="Search" href="/delve_into/howto/search.html"/>
       </item>
@@ -70,9 +70,9 @@
         </item>
         <item name="Components" href="/reference/components/index.html" collapse="true">
           <item name="Filters" href="/reference/components/filters.html"/>
-          <item name="Tags" href="/reference/components/jsp-taglib.html"/>
-          <item name="Expression Language" href="/reference/components/el-index.html"/>
-          <item name="URL Mapping" href="/reference/components/url-mapping.html"/>
+          <item name="Tags" href="/reference/components/jsp_taglib.html"/>
+          <item name="Expression Language" href="/reference/components/el_index.html"/>
+          <item name="URL Mapping" href="/reference/components/url_mapping.html"/>
           <item name="Modules" href="/reference/components/modules.html"/>
           <item name="Binaries" href="/reference/components/binaries.html"/>
         </item>

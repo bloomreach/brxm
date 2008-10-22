@@ -19,10 +19,11 @@
 -->
 <document>
   <properties>
-    <title>Quick Start</title>
+    <title>Quickstart</title>
   </properties>
   <body>
-    <section name="Quick Start">
+    <section name="Quickstart">
+      <span class='shortdesc'>Check it out yourself and install the quickstart demo site.</span>
       <p> 
         The HST2 Getting Started packages contain all the core components, and have been
         pre-configured with a number of modules and settings, to give you a quick overview of the
@@ -37,6 +38,11 @@
         </p>
         <ul>
           <li>
+            <span class='rewrite'>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
+             I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
+             Or maybe there is some other consistent and clear naming scheme.
+            </span>
+
             <a
               href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war"
               >Hippo ECM getting started package WAR</a>
@@ -50,35 +56,96 @@
       </subsection>
       
       <subsection name="Deploying in Tomcat 6.0">
-        <ol>
-          <li>
-            Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache
+       <table>
+        <tr> 
+         <td>
+            Download 
+	 </td>
+         <td> 
+          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+	 </td>
+         <td>
+            Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache
             Tomcat</a> website.
-          </li>
-          <li>
-            Unpack the zip.
-          </li>
-          <li>
-            Download <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
+	 </td>
+	</tr>
+  <tr>
+   <td>Unzip</td>
+   <td>
+     <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
+   </td>
+   <td>unpack the zip</td>
+  </tr>  
+        <tr> 
+         <td>
+            Download 
+	 </td>
+         <td> 
+          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+	 </td>
+        <td> 
+         <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
             to <code>apache-tomcat-6.0.16/lib</code>.
-          </li>
-          <li>
+	</td>
+        </tr>
+          <tr>
+   <td>Copy</td>
+   <td>
+    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+   </td>
+   <td>          
             Copy the ECM Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
-          </li>
-          <li>
+   </td>
+	  </tr>
+          <tr>
+   <td>Copy</td>
+   <td>
+    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+   </td>
+   <td>          
             Copy the HST2 Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/site.war</code>.
-          </li>
-          <li>
+   </td>
+   </tr>
+          <tr>
+   <td>Startup</td>
+   <td>
+    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+   </td>
+   <td>          
             Start Tomcat with one of the startup scripts in <code>apache-tomcat-6.0.16/bin</code>.
-          </li>
-          <li>
+   </td>
+   </tr>
+  <tr>
+   <td>Web Browser</td>
+   <td>
+    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+   </td>
+  <td>
             Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> for the CMS.
-          </li>
-          <li>
+  </td>
+  </tr>
+  <tr>
+   <td>Web Browser</td>
+   <td>
+    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+   </td>
+  <td>
             Open your browser and surf to <a href="http://localhost:8080/site/preview/index">http://localhost:8080/site/preview/index</a>
             for the site.
-          </li>
-        </ol>
+  </td>
+  </tr>
+  <tr>
+   <td>Tryout</td>
+   <td>
+    <em><img src='../images/user_icon.png' alt='user icon'/></em>
+   </td>
+   <td>
+            <span class='add'>This is probably the moment where things can be tried out. Please mention that
+              explicitely. Are there interesting points to try? Please list them here.</span> 
+   </td>
+  </tr>
+       </table>
+
         <p> 
           <i>Note: The port number might be different if you configured you application or servlet container to run
           on a different port. If you deploy the application on a machine other than your local

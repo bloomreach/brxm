@@ -31,7 +31,8 @@
         
             <p>
                 Hippo Site Toolkit 2 is an open source toolkit for Java web developers,
-                to build websites based on <a href="http://docs.onehippo.org/hippo-ecm">Hippo CMS 7</a>.
+                to build websites based on 
+                <span class='expire_event'>sitename change</span><a href="http://docs.onehippo.org/hippo-ecm">Hippo CMS 7</a>.
                 Assemble your website by configuring templates, site map, navigation and URL space through 
                 a straightforward user interface, that integrates with Hippo CMS. Create a JSP based view 
                 layer using the provided tag library and expression language. 
