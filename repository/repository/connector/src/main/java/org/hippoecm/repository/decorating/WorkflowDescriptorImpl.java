@@ -15,18 +15,14 @@
  */
 package org.hippoecm.repository.decorating;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
 
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 abstract class WorkflowDescriptorImpl implements WorkflowDescriptor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    WorkflowDescriptorImpl() throws RepositoryException {
+    protected WorkflowDescriptorImpl() throws RepositoryException {
     }
 }

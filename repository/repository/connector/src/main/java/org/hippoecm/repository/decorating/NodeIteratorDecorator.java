@@ -37,11 +37,11 @@ public class NodeIteratorDecorator extends RangeIteratorDecorator implements Nod
      * @param session decorated session
      * @param iterator underlying node iterator
      */
-    public NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator) {
+    protected NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator) {
         super(factory, session, iterator);
     }
 
-    public NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator,
+    protected NodeIteratorDecorator(DecoratorFactory factory, Session session, NodeIterator iterator,
             NodeDecorator parent) {
         super(factory, session, iterator, parent);
     }

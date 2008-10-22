@@ -15,15 +15,9 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.jcr.version.VersionIterator;
 import javax.jcr.Node;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
@@ -35,7 +29,7 @@ public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.
 
     protected HippoSession remoteSession;
 
-    public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
+    protected VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
         super(factory, session, versionHistory);
         remoteSession = ((SessionDecorator)session).getRemoteSession();
     }

@@ -15,25 +15,13 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
-
-import org.hippoecm.repository.api.HippoQuery;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -41,7 +29,7 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    public QueryDecorator(DecoratorFactory factory, Session session, Query query) {
+    protected QueryDecorator(DecoratorFactory factory, Session session, Query query) {
         super(factory, session, query);
     }
 

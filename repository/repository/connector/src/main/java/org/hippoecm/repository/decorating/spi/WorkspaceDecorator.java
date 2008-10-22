@@ -15,37 +15,13 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
-import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
-import javax.jcr.ItemExistsException;
-import javax.jcr.NamespaceRegistry;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.observation.ObservationManager;
-import javax.jcr.query.QueryManager;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
-
-import org.xml.sax.ContentHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
@@ -68,7 +44,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     HippoWorkspace remoteWorkspace = null;
     HierarchyResolver remoteHierarchyResolver = null;;
 
-    public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
+    protected WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session, workspace);
         remoteSession = ((SessionDecorator)session).getRemoteSession();
         try {

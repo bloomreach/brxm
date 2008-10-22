@@ -15,13 +15,10 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
-import java.util.Calendar;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Node;
 import javax.jcr.version.Version;
-import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.api.HippoSession;
@@ -32,7 +29,7 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
 
     protected HippoSession remoteSession;
 
-    public VersionDecorator(DecoratorFactory factory, Session session, Version version) {
+    protected VersionDecorator(DecoratorFactory factory, Session session, Version version) {
         super(factory, session, version);
         remoteSession = ((SessionDecorator)session).getRemoteSession();
     }

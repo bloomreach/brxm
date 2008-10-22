@@ -54,7 +54,7 @@ class ServerIterator extends ServerObject implements RemoteIterator {
      * @param iterator      local iterator to be adapted
      * @param maxBufferSize maximum buffer size
      */
-    public ServerIterator(RangeIterator iterator, int maxBufferSize)
+    protected ServerIterator(RangeIterator iterator, int maxBufferSize)
             throws RemoteException {
         this.iterator = iterator;
         this.maxBufferSize = maxBufferSize;
@@ -67,7 +67,7 @@ class ServerIterator extends ServerObject implements RemoteIterator {
      * @param iterator      local iterator to be adapted
      * @param maxBufferSize maximum buffer size
      */
-    public ServerIterator(Iterator iterator, int maxBufferSize)
+    protected ServerIterator(Iterator iterator, int maxBufferSize)
             throws RemoteException {
         this(new IteratorAdapter(iterator), maxBufferSize);
     }

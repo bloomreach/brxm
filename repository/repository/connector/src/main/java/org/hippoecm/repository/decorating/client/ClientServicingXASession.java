@@ -47,7 +47,7 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
 
     private RemoteServicingXASession remote;
 
-    public ClientServicingXASession(Repository repository, RemoteServicingXASession remote, LocalServicingAdapterFactory factory) {
+    protected ClientServicingXASession(Repository repository, RemoteServicingXASession remote, LocalServicingAdapterFactory factory) {
         super(repository, remote, factory);
         this.remote = remote;
     }

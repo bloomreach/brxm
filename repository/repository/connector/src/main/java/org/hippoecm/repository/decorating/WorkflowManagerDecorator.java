@@ -29,7 +29,7 @@ public abstract class WorkflowManagerDecorator implements WorkflowManager {
 
     Session session;
 
-    public WorkflowManagerDecorator(Session session) {
+    protected WorkflowManagerDecorator(Session session) {
         this.session = session;
     }
 

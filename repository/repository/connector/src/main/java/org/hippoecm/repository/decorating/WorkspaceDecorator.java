@@ -25,10 +25,8 @@ import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
@@ -40,9 +38,6 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
 import org.xml.sax.ContentHandler;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -66,7 +61,7 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
      * @param session
      * @param workspace
      */
-    public WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
+    protected WorkspaceDecorator(DecoratorFactory factory, Session session, Workspace workspace) {
         super(factory, session);
         this.workspace = workspace;
     }

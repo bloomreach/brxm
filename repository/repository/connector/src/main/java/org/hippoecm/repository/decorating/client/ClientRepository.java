@@ -30,7 +30,7 @@ public class ClientRepository extends org.apache.jackrabbit.rmi.client.ClientRep
 
     private RemoteRepository remote;
 
-    public ClientRepository(RemoteRepository repository, LocalServicingAdapterFactory factory) {
+    protected ClientRepository(RemoteRepository repository, LocalServicingAdapterFactory factory) {
         super(repository, factory);
         this.remote = repository;
     }

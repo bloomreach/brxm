@@ -40,7 +40,7 @@ public class ClientServicingWorkspace extends ClientWorkspace implements HippoWo
     private Session session;
     private RemoteServicingWorkspace remote;
 
-    public ClientServicingWorkspace(Session session, RemoteServicingWorkspace remote,
+    protected ClientServicingWorkspace(Session session, RemoteServicingWorkspace remote,
             LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.session = session;

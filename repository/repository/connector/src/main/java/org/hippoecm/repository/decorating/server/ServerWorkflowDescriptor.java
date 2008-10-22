@@ -32,7 +32,7 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
     WorkflowManager manager;
     WorkflowDescriptor descriptor;
 
-    public ServerWorkflowDescriptor(WorkflowDescriptor descriptor, WorkflowManager manager) throws RemoteException {
+    protected ServerWorkflowDescriptor(WorkflowDescriptor descriptor, WorkflowManager manager) throws RemoteException {
         super();
         this.descriptor = descriptor;
         this.manager = manager;

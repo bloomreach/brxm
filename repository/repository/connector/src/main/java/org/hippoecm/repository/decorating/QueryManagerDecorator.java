@@ -30,7 +30,7 @@ public class QueryManagerDecorator extends AbstractDecorator implements QueryMan
 
     protected final QueryManager manager;
 
-    public QueryManagerDecorator(DecoratorFactory factory, Session session, QueryManager manager) {
+    protected QueryManagerDecorator(DecoratorFactory factory, Session session, QueryManager manager) {
         super(factory, session);
         this.manager = manager;
     }

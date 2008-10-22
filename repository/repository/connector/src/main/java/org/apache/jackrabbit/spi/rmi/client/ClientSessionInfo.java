@@ -37,7 +37,7 @@ class ClientSessionInfo implements SessionInfo {
      *
      * @param remoteSessionInfo the remote session info.
      */
-    public ClientSessionInfo(RemoteSessionInfo remoteSessionInfo) {
+    ClientSessionInfo(RemoteSessionInfo remoteSessionInfo) {
         this.remoteSessionInfo = remoteSessionInfo;
     }
 

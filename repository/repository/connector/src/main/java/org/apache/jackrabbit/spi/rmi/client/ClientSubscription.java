@@ -26,7 +26,7 @@ class ClientSubscription implements Subscription {
 
     private final RemoteSubscription subscription;
 
-    public ClientSubscription(RemoteSubscription subscription) {
+    ClientSubscription(RemoteSubscription subscription) {
         this.subscription = subscription;
     }
 

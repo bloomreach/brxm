@@ -42,7 +42,7 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
     private RemoteQuery remote;
     private Session session;
 
-    public ClientQuery(Session session, RemoteQuery remote, LocalServicingAdapterFactory factory) {
+    protected ClientQuery(Session session, RemoteQuery remote, LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.session = session;
         this.remote = remote;

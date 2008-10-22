@@ -37,7 +37,7 @@ public class PropertyDecorator extends ItemDecorator implements Property {
 
     protected final Property property;
 
-    public PropertyDecorator(DecoratorFactory factory, Session session, Property property) {
+    protected PropertyDecorator(DecoratorFactory factory, Session session, Property property) {
         super(factory, session, property);
         this.property = property;
     }

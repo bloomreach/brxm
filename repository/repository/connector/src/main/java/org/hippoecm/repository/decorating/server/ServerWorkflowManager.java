@@ -34,7 +34,7 @@ public class ServerWorkflowManager extends ServerObject implements RemoteWorkflo
 
     private WorkflowManager workflowManager;
 
-    public ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
+    protected ServerWorkflowManager(WorkflowManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(factory);
         this.workflowManager = manager;
     }

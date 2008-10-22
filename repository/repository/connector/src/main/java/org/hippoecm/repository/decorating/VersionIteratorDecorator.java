@@ -32,7 +32,7 @@ public class VersionIteratorDecorator extends RangeIteratorDecorator implements 
      * @param session decorated session
      * @param iterator underlying version iterator
      */
-    public VersionIteratorDecorator(DecoratorFactory factory, Session session, VersionIterator iterator) {
+    protected VersionIteratorDecorator(DecoratorFactory factory, Session session, VersionIterator iterator) {
         super(factory, session, iterator);
     }
 

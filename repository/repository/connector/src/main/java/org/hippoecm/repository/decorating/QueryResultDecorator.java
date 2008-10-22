@@ -29,7 +29,7 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
 
     protected final QueryResult result;
 
-    public QueryResultDecorator(DecoratorFactory factory, Session session, QueryResult result) {
+    protected QueryResultDecorator(DecoratorFactory factory, Session session, QueryResult result) {
         super(factory, session);
         this.result = result;
     }

@@ -28,7 +28,7 @@ public class RemoteRuntimeException extends RuntimeException {
      *
      * @param ex the remote exception
      */
-    public RemoteRuntimeException(RemoteException ex) {
+    protected RemoteRuntimeException(RemoteException ex) {
         super(ex);
     }
 }

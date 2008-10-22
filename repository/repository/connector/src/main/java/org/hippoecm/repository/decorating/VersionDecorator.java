@@ -30,7 +30,7 @@ public abstract class VersionDecorator extends NodeDecorator implements Version 
 
     protected final Version version;
 
-    public VersionDecorator(DecoratorFactory factory, Session session, Version version) {
+    protected VersionDecorator(DecoratorFactory factory, Session session, Version version) {
         super(factory, session, version);
         this.version = version;
     }
