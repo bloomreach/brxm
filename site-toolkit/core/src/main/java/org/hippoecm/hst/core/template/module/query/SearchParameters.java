@@ -33,6 +33,8 @@ public interface SearchParameters {
     public static final String DIDYOUMEAN_MINIMUM = "didyoumeanminimum";
 
     public static final String DIDYOUMEAN = "didyoumean";
+    
+    public static final String KEEPPARAMETERS = "keepparameters";
 
     public static final String TARGET = "target";
     

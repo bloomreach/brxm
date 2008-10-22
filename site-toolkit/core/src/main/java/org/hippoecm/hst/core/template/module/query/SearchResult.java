@@ -140,24 +140,26 @@ public class SearchResult {
         this.nodeType = nodeType;
     }
 
-    public void computePagesAndLinks(Map parameterMap) {
+    public void computePagesAndLinks(Map parameterMap, boolean keepParameters) {
         pages = new ArrayList<Page>();
         StringBuffer queryString = null;
-
-        Set params = parameterMap.entrySet();
-        Iterator paramIt = params.iterator();
-        while (paramIt.hasNext()) {
-            Entry e = (Entry) paramIt.next();
-            String name = (String) e.getKey();
-            if (SearchParameters.PAGE.equals(name)) {
-                continue;
-            }
-            String[] values = (String[]) e.getValue();
-            for (String val : values) {
-                if (queryString == null) {
-                    queryString = new StringBuffer("?" + name + "=" + val);
-                } else {
-                    queryString.append("&" + name + "=" + val);
+        
+        if(keepParameters) {
+            Set params = parameterMap.entrySet();
+            Iterator paramIt = params.iterator();
+            while (paramIt.hasNext()) {
+                Entry e = (Entry) paramIt.next();
+                String name = (String) e.getKey();
+                if (SearchParameters.PAGE.equals(name)) {
+                    continue;
+                }
+                String[] values = (String[]) e.getValue();
+                for (String val : values) {
+                    if (queryString == null) {
+                        queryString = new StringBuffer("?" + name + "=" + val);
+                    } else {
+                        queryString.append("&" + name + "=" + val);
+                    }
                 }
             }
         }

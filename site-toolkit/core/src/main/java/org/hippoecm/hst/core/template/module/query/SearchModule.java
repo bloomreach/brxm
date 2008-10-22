@@ -51,6 +51,7 @@ public class SearchModule extends ModuleBase implements Search {
     private boolean excerptNeeded = DEFAULT_EXCERPTNEEDED;
     private boolean similarNeeded = DEFAULT_SIMILARNEEDED;
 
+    private boolean keepParameters = DEFAULT_KEEPPARAMETERS;
     private String queryText;
     private String statement;
     private String target;
@@ -186,6 +187,12 @@ public class SearchModule extends ModuleBase implements Search {
             }
         }
 
+        // keepparameters 
+        if (params && moduleParameters.containsKey(KEEPPARAMETERS)) {
+            String keeparams = moduleParameters.get(KEEPPARAMETERS);
+            setKeepParameters(Boolean.valueOf(keeparams));
+        }
+        
         // didyoumean 
         if (params && moduleParameters.containsKey(DIDYOUMEAN)) {
             String didyoumeanParam = moduleParameters.get(DIDYOUMEAN);
@@ -347,7 +354,7 @@ public class SearchModule extends ModuleBase implements Search {
             searchResult.setQuery(querytext);
             searchResult.setNodeType(nodetype);
             
-            searchResult.computePagesAndLinks(request.getParameterMap());
+            searchResult.computePagesAndLinks(request.getParameterMap(), isKeepParameters());
             
             if(rows.getSize()!=0) {
                 try {
@@ -460,6 +467,10 @@ public class SearchModule extends ModuleBase implements Search {
         return similarNeeded;
     }
 
+    public boolean isKeepParameters() {
+        return keepParameters;
+    }
+
     public void setDidYouMeanNeeded(boolean didYouMeanNeeded) {
         this.didYouMeanNeeded = didYouMeanNeeded;
     }
@@ -470,6 +481,10 @@ public class SearchModule extends ModuleBase implements Search {
 
     public void setExcerptNeeded(boolean excerptNeeded) {
         this.excerptNeeded = excerptNeeded;
+    }
+
+    public void setKeepParameters(boolean keepParameters) {
+        this.keepParameters = keepParameters;
     }
 
     public void setLanguage(String language) {

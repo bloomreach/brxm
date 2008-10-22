@@ -34,8 +34,9 @@ public interface Search extends SearchParameters{
     public static final boolean DEFAULT_DIDYOUMEANNEEDED = false;
     public static final boolean DEFAULT_EXCERPTNEEDED = false;
     public static final boolean DEFAULT_SIMILARNEEDED = false;
+    public static final boolean DEFAULT_KEEPPARAMETERS = true;
     
-
+  
     public void prepareSearch(PageContext pageContext);
     
     public void prepareStatement(PageContext pageContext);
@@ -156,6 +157,16 @@ public interface Search extends SearchParameters{
     public boolean isDidYouMeanNeeded();
     
     public void setDidYouMeanNeeded(boolean didYouMeanNeeded);
+    
+    /**
+     * When keepparameters returns false, the query & post parameters are skipped
+     * from the paging and only the page numbers are kept.
+     * 
+     * @return boolean value whether a didyoumean must be searched for
+     */
+    public boolean isKeepParameters();
+    
+    public void setKeepParameters(boolean keepparameters);
     
     /**
      * When needSimilar returns true, you can add a similar link to each search hit that will 
