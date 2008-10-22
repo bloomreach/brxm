@@ -66,7 +66,7 @@
 <blockquote>
  <table summary='First column= step number, second column= action icon, third column= action description'>
   <tr>
-   <td>Startup</td>
+   <td><a name='startup'/>Startup</td>
    <td>
     <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
    </td>
