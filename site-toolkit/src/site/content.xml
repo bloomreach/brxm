@@ -22,6 +22,8 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
+  <document ext="xml" fullname="xdoc/about/term_index.xml">
+  </document>
   <document ext="xml" fullname="xdoc/about/use_cases.xml">Change to the document title
    <section>Change to the document title</section>
    <shortdesc>Change to document short description.</shortdesc>

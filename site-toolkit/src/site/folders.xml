@@ -6,6 +6,8 @@
 >architecture</file>
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/features.xml'
 >features</file>
+   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/about/term_index.xml'
+>term_index</file>
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/use_cases.xml'
 >use_cases</file>
   </folder>
