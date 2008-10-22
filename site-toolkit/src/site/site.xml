@@ -62,20 +62,20 @@
         <item name="Free Text Search" href="/delve_into/howto/free_text_search.html"/>
         <item name="Advanced Search" href="/delve_into/howto/advanced_search.html"/>
       </item>
-      <item name="Reference" href="/reference/index.html" collapse="true">
-        <item name="Concepts" href="/reference/concepts.html"/>
-        <item name="Configuration" href="/reference/configuration/configuration.html" collapse="true">
-          <item name="hst.properties" href="/reference/configuration/hstproperties.html"/>
-          <item name="web.xml" href="/reference/configuration/webxml.html"/>
-          <item name="Repository" href="/reference/configuration/repository.html"/>
+      <item name="Reference" href="/delve_into/reference/index.html" collapse="true">
+        <item name="Concepts" href="/delve_into/reference/concepts.html"/>
+        <item name="Configuration" href="/delve_into/reference/configuration/configuration.html" collapse="true">
+          <item name="hst.properties" href="/delve_into/reference/configuration/hstproperties.html"/>
+          <item name="web.xml" href="/delve_into/reference/configuration/webxml.html"/>
+          <item name="Repository" href="/delve_into/reference/configuration/repository.html"/>
         </item>
-        <item name="Components" href="/reference/components/index.html" collapse="true">
-          <item name="Filters" href="/reference/components/filters.html"/>
-          <item name="Tags" href="/reference/components/jsp_taglib.html"/>
-          <item name="Expression Language" href="/reference/components/el_index.html"/>
-          <item name="URL Mapping" href="/reference/components/url_mapping.html"/>
-          <item name="Modules" href="/reference/components/modules.html"/>
-          <item name="Binaries" href="/reference/components/binaries.html"/>
+        <item name="Components" href="/delve_into/reference/components/index.html" collapse="true">
+          <item name="Filters" href="/delve_into/reference/components/filters.html"/>
+          <item name="Tags" href="/delve_into/reference/components/jsp_taglib.html"/>
+          <item name="Expression Language" href="/delve_into/reference/components/el_index.html"/>
+          <item name="URL Mapping" href="/delve_into/reference/components/url_mapping.html"/>
+          <item name="Modules" href="/delve_into/reference/components/modules.html"/>
+          <item name="Binaries" href="/delve_into/reference/components/binaries.html"/>
         </item>
       </item>
 

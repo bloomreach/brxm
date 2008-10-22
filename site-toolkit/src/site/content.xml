@@ -4,133 +4,43 @@
      Do not edit! This html file is automatically generated from an XML file
      by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
    -->
-  <document ext="xml" fullname="xdoc/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
-   <section>How does Hippo Site Toolkit 2 work?</section>
+  <document ext="xml" fullname="xdoc/about/architecture.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document short description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="xdoc/index.xml">What is Hippo Site Toolkit 2?
-   <section>What is Hippo Site Toolkit 2?</section>
-   <subsection>Get started</subsection>
+  <document ext="xml" fullname="xdoc/about/features.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document short description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="xdoc/quickstart/index.xml">Quick Start
-   <section>Quick Start</section>
-   <subsection>Download</subsection>
-   <subsection>Deploying in Tomcat 6.0</subsection>
+  <document ext="xml" fullname="xdoc/about/use_cases.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document short description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="xdoc/reference/components/binaries.xml">Serving binaries with the BinariesServlet
-   <section>Serving binaries with the BinariesServlet</section>
-   <subsection>How does it work?</subsection>
-   <subsection>Usage</subsection>
+  <document ext="xml" fullname="xdoc/delve_into/howto/advanced_search.xml">Advanced Search
+   <section>Advanced Search</section>
+   <shortdesc>How to search using metadata?</shortdesc>
+   <subsection>Subsection title</subsection>
+   <section>Next</section>
   </document>
-  <document ext="xml" fullname="xdoc/reference/components/el-index.xml">HST2 Expression Language
-   <section>HST2 Expression Language</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/el-queries.xml">Using dynamic queries in the expression language
-   <section>Using dynamic queries in the expression language</section>
-   <subsection>-</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/filters.xml">HST2 Filters
-   <section>HST2 Filters</section>
-   <subsection>ModuleFilter</subsection>
-   <subsection>URLMappingTemplateContextFilter</subsection>
-   <subsection>URIFragmentContextBaseFilter</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/index.xml">Components
-   <section>Components</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/jsp-taglib.xml">The JSP tag library
-   <section>The JSP tag library</section>
-   <subsection>Importing the taglib</subsection>
-   <subsection>Tags</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/modules.xml">Modules
-   <section>Modules</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/container-tag.xml">The &lt;hst-tmpl:container&gt; tag
-   <section>The &lt;hst-tmpl:container&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/content-tag.xml">The &lt;hst:content&gt; tag
-   <section>The &lt;hst:content&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/context-tag.xml">The &lt;hst:context&gt; tag
-   <section>The &lt;hst:context&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/documents-tag.xml">The &lt;hst:documents&gt; tag and derived tags
-   <section>The &lt;hst:documents&gt; tag and derived tags</section>
-   <h4>File based configuration</h4>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/encodeurl-tag.xml">The &lt;hst:encodeURL&gt; tag
-   <section>The &lt;hst:encodeURL&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/include-tag.xml">The &lt;hst:include&gt; tag
-   <section>The &lt;hst:include&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/link-tag.xml">The &lt;hst-tmpl:link&gt; tag
-   <section>The &lt;hst-tmpl:link&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/menu-tag.xml">The &lt;hst:menu&gt; tag
-   <section>The &lt;hst:menu&gt; tag</section>
-   <h4>File based configuration</h4>
-   <h4>Repository based configuration</h4>
-   <h4>Repository based labelling</h4>
-   <h4>Default HTML output</h4>
-   <h4>Custom HTML output</h4>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/moduleParameter-tag.xml">The &lt;hst-tmpl:moduleParameter&gt; tag
-   <section>The &lt;hst-tmpl:moduleParameter&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/module-tag.xml">The &lt;hst-tmpl:module&gt; tag
-   <section>The &lt;hst-tmpl:module&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/node-tag.xml">The &lt;hst-tmpl:node&gt; tag
-   <section>The &lt;hst-tmpl:node&gt; tag</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/tag/sitemap-tag.xml">The &lt;hst:siteMap&gt; tag
-   <section>The &lt;hst:siteMap&gt; tag</section>
-   <h4>File based configuration</h4>
-   <h4>Repository based configuration</h4>
-   <h4>Repository based labelling</h4>
-   <h4>Default HTML output</h4>
-   <h4>Custom HTML output</h4>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/components/url-mapping.xml">URL mapping
-   <section>URL mapping</section>
-   <subsection>What is it?</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/concepts/index.xml">Concepts
-   <section>Concepts</section>
-   <subsection>Sitemap</subsection>
-   <subsection>Modules</subsection>
-   <subsection>Layouts</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/concepts.xml">Concepts
-   <section>Concepts</section>
-   <subsection>Sitemap</subsection>
-   <subsection>Modules</subsection>
-   <subsection>Layouts</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/configuration/configuration.xml">HST Configuration
-   <section>HST Configuration</section>
-   <subsection>General configuration file(s)</subsection>
-   <subsection>Configuration of the servlet for binaries</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/configuration/hstproperties.xml">HST Configuration in hst.properties
-   <section>HST Configuration in hst.properties</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/configuration/repository.xml">Configuration in Repository
-   <section>Configuration in Repository</section>
-   <subsection>hst:sitemap</subsection>
-   <subsection>hst:layouts</subsection>
-   <subsection>hst:modules</subsection>
-   <subsection>hst:navigation</subsection>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/configuration/webxml.xml">HST Configuration in web.xml
-   <section>HST Configuration in web.xml</section>
-  </document>
-  <document ext="xml" fullname="xdoc/reference/index.xml">Reference
-   <section>Reference</section>
-  </document>
-  <document ext="xml" fullname="xdoc/tutorials/facebook.xml">Create a Facebook
+  <document ext="xml" fullname="xdoc/delve_into/howto/facebook.xml">Create a Facebook
    <section>Create a Facebook</section>
+   <shortdesc>Learn how to create a new document type, and how to use it in your website,
+              by adding a simple facebook to the sample website.</shortdesc>
    <subsection>Create a document type</subsection>
    <subsection>Add people</subsection>
    <subsection>Create a people module</subsection>
@@ -139,28 +49,156 @@
    <subsection>Configure the sitemap</subsection>
    <subsection>Browse your facebook!</subsection>
   </document>
-  <document ext="xml" fullname="xdoc/tutorials/hello-world.xml">Hello World
+  <document ext="xml" fullname="xdoc/delve_into/howto/free_text_search.xml">Free text Search
+   <section>Free text Search</section>
+   <subsection>First subsection</subsection>
+   <section>Next</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/howto/hello_world.xml">Hello World
    <section>Hello World</section>
+   <shortdesc>Adding a simple page to your website saying hello to the world.</shortdesc>
    <subsection>Add the document</subsection>
    <subsection>View the document on the website</subsection>
    <subsection>Under the hood</subsection>
    <section>Next Step</section>
   </document>
-  <document ext="xml" fullname="xdoc/tutorials/index.xml">Tutorials
-   <section>Tutorials</section>
+  <document ext="xml" fullname="xdoc/delve_into/howto/index.xml">Howto
+   <section>Howto</section>
+   <shortdesc>Learn how to build a website using Hippo Site Toolkit.</shortdesc>
   </document>
-  <document ext="xml" fullname="xdoc/tutorials/search.xml">Search
-   <section>Search</section>
-   <subsection>Simple search</subsection>
-   <subsection>Advanced search</subsection>
-   <section>Next Step</section>
-  </document>
-  <document ext="xml" fullname="xdoc/tutorials/start-project.xml">Start a project
+  <document ext="xml" fullname="xdoc/delve_into/howto/start_project.xml">Start a project
    <section>Start a project</section>
+   <shortdesc>Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype</shortdesc>
    <subsection>Obtaining the Hippo Site Toolkit 2</subsection>
    <subsection>Creating your project</subsection>
    <subsection>Deploying your project in Tomcat</subsection>
    <subsection>Running your project with Jetty</subsection>
    <section>Next Step</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/quickstart.xml">Quickstart
+   <section>Quickstart</section>
+   <shortdesc>Check it out yourself and install the quickstart demo site.</shortdesc>
+   <subsection>Download</subsection>
+   <subsection>Deploying in Tomcat 6.0</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/binaries.xml">Serving binaries with the BinariesServlet
+   <section>Serving binaries with the BinariesServlet</section>
+   <subsection>How does it work?</subsection>
+   <subsection>Usage</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/el-index.xml">HST2 Expression Language
+   <section>HST2 Expression Language</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/el-queries.xml">Using dynamic queries in the expression language
+   <section>Using dynamic queries in the expression language</section>
+   <subsection>-</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/filters.xml">HST2 Filters
+   <section>HST2 Filters</section>
+   <subsection>ModuleFilter</subsection>
+   <subsection>URLMappingTemplateContextFilter</subsection>
+   <subsection>URIFragmentContextBaseFilter</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/index.xml">Components
+   <section>Components</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/jsp-taglib.xml">The JSP tag library
+   <section>The JSP tag library</section>
+   <subsection>Importing the taglib</subsection>
+   <subsection>Tags</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/modules.xml">Modules
+   <section>Modules</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/container-tag.xml">The &lt;hst-tmpl:container&gt; tag
+   <section>The &lt;hst-tmpl:container&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/content-tag.xml">The &lt;hst:content&gt; tag
+   <section>The &lt;hst:content&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/context-tag.xml">The &lt;hst:context&gt; tag
+   <section>The &lt;hst:context&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/documents-tag.xml">The &lt;hst:documents&gt; tag and derived tags
+   <section>The &lt;hst:documents&gt; tag and derived tags</section>
+   <h4>File based configuration</h4>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/encodeurl-tag.xml">The &lt;hst:encodeURL&gt; tag
+   <section>The &lt;hst:encodeURL&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/include-tag.xml">The &lt;hst:include&gt; tag
+   <section>The &lt;hst:include&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/link-tag.xml">The &lt;hst-tmpl:link&gt; tag
+   <section>The &lt;hst-tmpl:link&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/menu-tag.xml">The &lt;hst:menu&gt; tag
+   <section>The &lt;hst:menu&gt; tag</section>
+   <h4>File based configuration</h4>
+   <h4>Repository based configuration</h4>
+   <h4>Repository based labelling</h4>
+   <h4>Default HTML output</h4>
+   <h4>Custom HTML output</h4>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/moduleParameter-tag.xml">The &lt;hst-tmpl:moduleParameter&gt; tag
+   <section>The &lt;hst-tmpl:moduleParameter&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/module-tag.xml">The &lt;hst-tmpl:module&gt; tag
+   <section>The &lt;hst-tmpl:module&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/node-tag.xml">The &lt;hst-tmpl:node&gt; tag
+   <section>The &lt;hst-tmpl:node&gt; tag</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/tag/sitemap-tag.xml">The &lt;hst:siteMap&gt; tag
+   <section>The &lt;hst:siteMap&gt; tag</section>
+   <h4>File based configuration</h4>
+   <h4>Repository based configuration</h4>
+   <h4>Repository based labelling</h4>
+   <h4>Default HTML output</h4>
+   <h4>Custom HTML output</h4>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/components/url-mapping.xml">URL mapping
+   <section>URL mapping</section>
+   <subsection>What is it?</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/concepts/index.xml">Concepts
+   <section>Concepts</section>
+   <subsection>Sitemap</subsection>
+   <subsection>Modules</subsection>
+   <subsection>Layouts</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/concepts.xml">Concepts
+   <section>Concepts</section>
+   <subsection>Sitemap</subsection>
+   <subsection>Modules</subsection>
+   <subsection>Layouts</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/configuration/configuration.xml">HST Configuration
+   <section>HST Configuration</section>
+   <subsection>General configuration file(s)</subsection>
+   <subsection>Configuration of the servlet for binaries</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/configuration/hstproperties.xml">HST Configuration in hst.properties
+   <section>HST Configuration in hst.properties</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/configuration/repository.xml">Configuration in Repository
+   <section>Configuration in Repository</section>
+   <subsection>hst:sitemap</subsection>
+   <subsection>hst:layouts</subsection>
+   <subsection>hst:modules</subsection>
+   <subsection>hst:navigation</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/configuration/webxml.xml">HST Configuration in web.xml
+   <section>HST Configuration in web.xml</section>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/reference/index.xml">Reference
+   <section>Reference</section>
+  </document>
+  <document ext="xml" fullname="xdoc/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
+   <section>How does Hippo Site Toolkit 2 work?</section>
+  </document>
+  <document ext="xml" fullname="xdoc/index.xml">What is Hippo Site Toolkit 2?
+   <section>What is Hippo Site Toolkit 2?</section>
+   <subsection>Get started</subsection>
   </document>
 </document_list>

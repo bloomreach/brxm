@@ -1,88 +1,118 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
  <folder path='/home/rita/werk/hst/src/site'>xdoc
+  <folder>about
+   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/architecture.xml'
+>architecture</file>
+   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/features.xml'
+>features</file>
+   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/use_cases.xml'
+>use_cases</file>
+  </folder>
+  <folder>delve_into
+   <folder>howto
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/advanced_search.xml'
+>advanced_search</file>
+    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/advanced_search.xml~'
+>advanced_search</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/facebook.xml'
+>facebook</file>
+    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/facebook.xml~'
+>facebook</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/free_text_search.xml'
+>free_text_search</file>
+    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/free_text_search.xml~'
+>free_text_search</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/hello_world.xml'
+>hello_world</file>
+    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/hello-world.xml~'
+>hello-world</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/index.xml'
+>index</file>
+    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/index.xml~'
+>index</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/start_project.xml'
+>start_project</file>
+    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/start_project.xml~'
+>start_project</file>
+    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/start-project.xml~'
+>start-project</file>
+   </folder>
+   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/quickstart.xml'
+>quickstart</file>
+   <folder>reference
+    <folder>components
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/binaries.xml'
+>binaries</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/el-index.xml'
+>el-index</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/el-queries.xml'
+>el-queries</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/filters.xml'
+>filters</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/reference/components/index.xml'
+>index</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/jsp-taglib.xml'
+>jsp-taglib</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/reference/components/modules.xml'
+>modules</file>
+     <folder>tag
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/container-tag.xml'
+>container-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/content-tag.xml'
+>content-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/context-tag.xml'
+>context-tag</file>
+      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/delve_into/reference/components/tag/documents-tag.xml'
+>documents-tag</file>
+      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/delve_into/reference/components/tag/encodeurl-tag.xml'
+>encodeurl-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/include-tag.xml'
+>include-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/link-tag.xml'
+>link-tag</file>
+      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/delve_into/reference/components/tag/menu-tag.xml'
+>menu-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/moduleParameter-tag.xml'
+>moduleParameter-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/module-tag.xml'
+>module-tag</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/tag/node-tag.xml'
+>node-tag</file>
+      <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/delve_into/reference/components/tag/sitemap-tag.xml'
+>sitemap-tag</file>
+     </folder>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/components/url-mapping.xml'
+>url-mapping</file>
+    </folder>
+    <folder>concepts
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/concepts/index.xml'
+>index</file>
+    </folder>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/concepts.xml'
+>concepts</file>
+    <folder>configuration
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/configuration/configuration.xml'
+>configuration</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/configuration/hstproperties.xml'
+>hstproperties</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/reference/configuration/repository.xml'
+>repository</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/configuration/webxml.xml'
+>webxml</file>
+    </folder>
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/reference/index.xml'
+>index</file>
+   </folder>
+  </folder>
   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/how_does_hst2_work.xml'
 >how_does_hst2_work</file>
+  <file ext='xml#' mimetype='text/xml' fullname='xdoc/#index.xml#'
+>#index</file>
   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/index.xml'
 >index</file>
-  <folder>quickstart
-   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/quickstart/index.xml'
+  <file ext='xml~' mimetype='text/xml' fullname='xdoc/index.xml~'
 >index</file>
-  </folder>
-  <folder>reference
-   <folder>components
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/binaries.xml'
->binaries</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/el-index.xml'
->el-index</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/el-queries.xml'
->el-queries</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/filters.xml'
->filters</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/reference/components/index.xml'
->index</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/jsp-taglib.xml'
->jsp-taglib</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/reference/components/modules.xml'
->modules</file>
-    <folder>tag
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/container-tag.xml'
->container-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/content-tag.xml'
->content-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/context-tag.xml'
->context-tag</file>
-     <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/reference/components/tag/documents-tag.xml'
->documents-tag</file>
-     <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/reference/components/tag/encodeurl-tag.xml'
->encodeurl-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/include-tag.xml'
->include-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/link-tag.xml'
->link-tag</file>
-     <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/reference/components/tag/menu-tag.xml'
->menu-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/moduleParameter-tag.xml'
->moduleParameter-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/module-tag.xml'
->module-tag</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/tag/node-tag.xml'
->node-tag</file>
-     <file ext='xml' mimetype='text/plain; charset=us-ascii' valid='yes' fullname='xdoc/reference/components/tag/sitemap-tag.xml'
->sitemap-tag</file>
-    </folder>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/components/url-mapping.xml'
->url-mapping</file>
-   </folder>
-   <folder>concepts
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/concepts/index.xml'
->index</file>
-   </folder>
-   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/concepts.xml'
->concepts</file>
-   <folder>configuration
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/configuration/configuration.xml'
->configuration</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/configuration/hstproperties.xml'
->hstproperties</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/reference/configuration/repository.xml'
->repository</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/reference/configuration/webxml.xml'
->webxml</file>
-   </folder>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/reference/index.xml'
->index</file>
-  </folder>
-  <folder>tutorials
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/tutorials/facebook.xml'
->facebook</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/tutorials/hello-world.xml'
->hello-world</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/tutorials/index.xml'
->index</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/tutorials/search.xml'
->search</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/tutorials/start-project.xml'
->start-project</file>
-  </folder>
+  <file ext='xml~' mimetype='text/xml' fullname='xdoc/quickstart.xml~'
+>quickstart</file>
  </folder>
