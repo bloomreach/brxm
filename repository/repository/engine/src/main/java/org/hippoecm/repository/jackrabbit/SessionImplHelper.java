@@ -153,10 +153,8 @@ abstract class SessionImplHelper {
                     privileges.add(strings[i]);
                 }
             }
-            
             if (privileges.size() > 0) {                
-                if (!((HippoAccessManager) accessMgr).hasPrivileges(absPath, privileges.toArray(new String[privileges
-                        .size()])))
+                if (!((HippoAccessManager) accessMgr).hasPrivileges(absPath, privileges.toArray(new String[privileges.size()])))
                     throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
             }
         }
