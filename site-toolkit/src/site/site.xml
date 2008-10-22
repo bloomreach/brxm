@@ -42,17 +42,24 @@
 
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
+      <item name="Use Cases" href="about/use_cases.html"/>
+      <item name="Features" href="about/features.html"/>
+      <item name="Architecture" href="about/architecture.html"/>
+      <item name="Term Index" href="about/term_index.html"/>
+  <!--
       <item name="How does HST2 work?" href="/how_does_hst2_work.html"/>
+  -->
+
     </menu>
 
-    <menu name="Get Started">
+    <menu name="Delve into HST2">
 
-      <item name="Quick Start" href="/quickstart/index.html"/>
-      <item name="Tutorials" href="/tutorials/index.html" collapse="true">
-        <item name="Start a project" href="/tutorials/start-project.html"/>
-        <item name="Hello World" href="/tutorials/hello-world.html"/>
-        <item name="Facebook" href="/tutorials/facebook.html"/>
-        <item name="Search" href="/tutorials/search.html"/>
+      <item name="Quickstart" href="/delve_into/quickstart.html"/>
+      <item name="Howto" href="/delve_into/howto/index.html" collapse="true">
+        <item name="Start a project" href="/delve_into/howto/start-project.html"/>
+        <item name="Hello World" href="/delve_into/howto/hello-world.html"/>
+        <item name="Facebook" href="/delve_into/howto/facebook.html"/>
+        <item name="Search" href="/delve_into/howto/search.html"/>
       </item>
       <item name="Reference" href="/reference/index.html" collapse="true">
         <item name="Concepts" href="/reference/concepts.html"/>
