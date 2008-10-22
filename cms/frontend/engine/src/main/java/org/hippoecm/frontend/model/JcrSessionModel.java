@@ -18,8 +18,10 @@ package org.hippoecm.frontend.model;
 import java.rmi.RemoteException;
 
 import javax.jcr.LoginException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +120,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
         if (workflowManager == null) {
             try {
                 HippoWorkspace workspace = (HippoWorkspace) getSession().getWorkspace();
-                workflowManager = new WorkflowManagerDecorator(workspace.getWorkflowManager(), getClassLoader());
+                workflowManager = workspace.getWorkflowManager();
             } catch (RepositoryException ex) {
                 ex.printStackTrace();
                 workflowManager = null;
@@ -146,7 +148,10 @@ public class JcrSessionModel extends LoadableDetachableModel {
                             ((EventLoggerWorkflow)workflow).logEvent(result.getUserID(), "Repository", "login");
                         }
                     }
-                } catch(RemoteException ex) {
+                } catch (RepositoryException ex) {
+                    log.error(ex.getClass().getName()+": "+ex.getMessage());
+                } catch (RemoteException ex) {
+                    log.error(ex.getClass().getName()+": "+ex.getMessage());
                 }
             }
         } catch (LoginException e) {

@@ -84,18 +84,9 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         documentManager = null;
         workflowManager = null;
         rootSession = null;
-
-        Repository repository = RepositoryDecorator.unwrap(session.getRepository());
-        try {
-            if(repository instanceof RepositoryImpl) {
-                rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(),
-                        SessionDecorator.unwrap(session.impersonate(new SimpleCredentials("workflowuser", new char[] { })))); // FIXME: hardcoded workflowuser
-            }
-        } catch(RepositoryException ex) {
-            logger.warn("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
-        }
     }
 
+    @Override
     public DocumentManager getDocumentManager() throws RepositoryException {
         if (documentManager == null) {
             documentManager = new DocumentManagerImpl(session);
@@ -103,13 +94,29 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         return documentManager;
     }
 
+    @Override
     public WorkflowManager getWorkflowManager() throws RepositoryException {
+
+        if(rootSession == null) {
+            Repository repository = RepositoryDecorator.unwrap(session.getRepository());
+            try {
+                if(repository instanceof RepositoryImpl) {
+                    rootSession = (SessionDecorator) factory.getSessionDecorator(session.getRepository(), SessionDecorator.unwrap(session.impersonate(new SimpleCredentials("workflowuser", new char[] { })))); // FIXME: hardcoded workflowuser
+                }
+            } catch(RepositoryException ex) {
+                logger.error("No root session available "+ex.getClass().getName()+": "+ex.getMessage());
+                throw new RepositoryException("no root session available", ex);
+            }
+        }
+
         if (workflowManager == null) {
             workflowManager = new WorkflowManagerImpl(session, rootSession);
         }
+
         return workflowManager;
     }
 
+    @Override
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
         return new HierarchyResolverImpl();
     }
