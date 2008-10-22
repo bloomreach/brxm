@@ -23,6 +23,7 @@
     </properties>
     <body>
         <section name="Hello World">
+           <span class='shortdesc'>Adding a simple page to your website saying hello to the world.</span>
 
             <p>
                 Before starting this tutorial, follow the

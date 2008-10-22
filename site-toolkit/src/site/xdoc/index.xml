@@ -23,6 +23,11 @@
     </properties>
     <body>
         <section name="What is Hippo Site Toolkit 2?">
+
+          Ultimately you will want to publish your content to a website, intranet or extranet. Hippo ECM
+          comes with a set of tools and components to allow rapid development of websites, the Hippo Site
+          Toolkit 2. 
+
         
             <p>
                 Hippo Site Toolkit 2 is an open source toolkit for Java web developers,

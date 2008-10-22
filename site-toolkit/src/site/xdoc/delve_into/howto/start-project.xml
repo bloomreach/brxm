@@ -23,6 +23,7 @@
   </properties>
   <body>
     <section name="Start a project">
+      <span class='shortdesc'>Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype</span>
       
       <p>
         The Hippo Site Toolkit 2 is a toolkit for developing JSP based websites using

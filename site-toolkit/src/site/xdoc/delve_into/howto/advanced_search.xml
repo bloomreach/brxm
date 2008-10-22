@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -19,20 +19,30 @@
 -->
 <document>
     <properties>
-        <title>Howto</title>
+        <title>Advanced Search</title>
     </properties>
     <body>
-      <section name="Howto">
-        <span class='shortdesc'>Learn how to build a website using Hippo Site Toolkit.</span>
+        <section name="Advanced Search">
+          <span class='shortdesc'>How to search using metadata?</span>
+          <span class='hidden_index'>Search, advanced</span>
+          <span class='hidden_index'>Search, on metadata</span>
 
-        <p>
-          This section is collection of small tasks that you may wish to do while 
-          building your own website.
+            <p>
+                TODO
+            </p>
+            
+            <subsection name="Subsection title">
+                <p>
+                    TODO
+                </p>
+            </subsection>
+            
+        </section>
+        <section name="Next">
+            <p>
+               <span class='add'>Try to present several possible next tasks to do.</span>
+            </p>
+        </section>
 
-          If you do not know where to start, start with        
-            <a href="start-project.html">Start a project</a>.
-	</p>
-                   
-      </section>
     </body>
 </document>

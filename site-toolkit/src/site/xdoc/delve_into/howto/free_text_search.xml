@@ -19,31 +19,26 @@
 -->
 <document>
     <properties>
-        <title>Search</title>
+        <title>Free text Search</title>
     </properties>
     <body>
-        <section name="Search">
+        <section name="Free text Search">
+          <span class='hidden_index'>Search, free text</span>
 
             <p>
                 TODO
             </p>
             
-            <subsection name="Simple search">
+            <subsection name="First subsection">
                 <p>
                     TODO
                 </p>
             </subsection>
             
-            <subsection name="Advanced search">
-                <p>
-                    TODO
-                </p>
-            </subsection>
-
         </section>
-        <section name="Next Step">
+        <section name="Next">
             <p>
-                TODO
+               <span class='add'>Try to present several possible next tasks to do.</span>
             </p>
         </section>
 

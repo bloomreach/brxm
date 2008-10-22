@@ -54,7 +54,7 @@
 
     <menu name="Delve into HST2">
 
-      <item name="Quickstart" href="/delve_into/quickstart.html"/>
+      <item name="Quickstart" href="/quickstart.html"/>
       <item name="Howto" href="/delve_into/howto/index.html" collapse="true">
         <item name="Start a project" href="/delve_into/howto/start-project.html"/>
         <item name="Hello World" href="/delve_into/howto/hello-world.html"/>

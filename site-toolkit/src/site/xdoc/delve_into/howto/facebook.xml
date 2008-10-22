@@ -23,6 +23,8 @@
     </properties>
     <body>
         <section name="Create a Facebook">
+           <span class='shortdesc'>Learn how to create a new document type, and how to use it in your website,
+              by adding a simple facebook to the sample website.</span>
 
             <p>
                 Before starting this tutorial, follow the
