@@ -40,7 +40,7 @@ linkproblem = "301: Moved Permanently"
 [http://planet.hippocms.org/]
 isfetched = True
 ispage = True
-mtime = Wed Oct 22 16:01:51 2008 CEST
+mtime = Wed Oct 22 17:01:48 2008 CEST
 size = 8613
 mimetype = "text/html"
 encoding = "utf-8"

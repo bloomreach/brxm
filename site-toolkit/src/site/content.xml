@@ -22,6 +22,9 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
+  <document ext="xml" fullname="xdoc/about/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
+   <section>How does Hippo Site Toolkit 2 work?</section>
+  </document>
   <document ext="xml" fullname="xdoc/about/term_index.xml">
   </document>
   <document ext="xml" fullname="xdoc/about/use_cases.xml">Change to the document title
@@ -195,9 +198,6 @@
   </document>
   <document ext="xml" fullname="xdoc/delve_into/reference/index.xml">Reference
    <section>Reference</section>
-  </document>
-  <document ext="xml" fullname="xdoc/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
-   <section>How does Hippo Site Toolkit 2 work?</section>
   </document>
   <document ext="xml" fullname="xdoc/index.xml">What is Hippo Site Toolkit 2?
    <section>What is Hippo Site Toolkit 2?</section>
