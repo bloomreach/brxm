@@ -48,6 +48,10 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
         this.remote = remote;
     }
 
+    public Session getSession() {
+        return session;
+    }
+
     public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException {
         try {
