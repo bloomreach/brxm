@@ -80,6 +80,10 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
         }
     }
 
+    public Session getSession() {
+        return session;
+    }
+
     /**
      * @inheritDoc
      */

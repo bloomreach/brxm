@@ -45,6 +45,10 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
         super(factory, session, query);
     }
 
+    public Session getSession() {
+        return session;
+    }
+
     public String[] getArguments() {
         // FIXME
         return null;
