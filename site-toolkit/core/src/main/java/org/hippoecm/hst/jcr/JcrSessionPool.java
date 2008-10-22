@@ -47,7 +47,6 @@ public class JcrSessionPool {
 
     }
 
-    
     public ReadOnlyPooledSession getSession(HttpSession httpSession) {
         if(Stats.log.isDebugEnabled()) {
             logPoolStats();
@@ -113,6 +112,19 @@ public class JcrSessionPool {
         return session;
     }
 
+    public Session getWriteableSession(){
+        Session jcrSession = null;
+        try {
+            HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
+            jcrSession = repository.login(simpleCredentials);
+        } catch (LoginException e) {
+            throw new JCRConnectionException("Cannot login with credentials");
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            throw new JCRConnectionException("Failed to initialize repository");
+        }
+        return jcrSession;
+    }
 
     public void release(HttpSession httpSession) {
         synchronized (this) {
