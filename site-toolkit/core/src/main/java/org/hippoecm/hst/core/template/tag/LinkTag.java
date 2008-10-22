@@ -23,6 +23,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
@@ -45,26 +46,29 @@ public class LinkTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         PageContext pageContext = (PageContext) getJspContext();
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        
         URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+        String href = null;
         if(urlMapping == null) {
-            log.error("urlMapping not set as attribute on request. Cannot rewrite a link. Return");
-            return;
+            log.debug("urlMapping not set as attribute on request. Cannot rewrite a link. Try to make it relative only for staticattr");
+            if(staticattr != null ) {
+                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
+            }
+        } else {
+            if(item!= null) {
+                href = urlMapping.rewriteLocation(item.getJcrNode());
+            } else if(location != null ) {
+                href = urlMapping.rewriteLocation(location);
+            } else if(staticattr != null ) {
+                href = urlMapping.getLocation(staticattr);
+            }
         }
-        String href = "";
-        if(item!= null) {
-            href = urlMapping.rewriteLocation(item.getJcrNode());
-        } else if(location != null ) {
-            href = urlMapping.rewriteLocation(location);
-        } else if(staticattr != null ) {
-            href = urlMapping.getLocation(staticattr);
+        if(href != null) {
+            Link link = new Link();
+            link.setHref(href);
+            link.setSrc(href);
+            link.setLocation(href);
+            pageContext.setAttribute(getVar(), link);
         }
-        
-        Link link = new Link();
-        link.setHref(href);
-        link.setSrc(href);
-        link.setLocation(href);
-        pageContext.setAttribute(getVar(), link);
     }
 
     public ELNode getItem(){

@@ -31,17 +31,10 @@ public class RelativeURLMappingImpl implements URLMapping{
     
     private String currentRequestUri;
     private URLMapping delegatee;
-    private boolean currentUriEndsWithSlash = false;
+    
     
     public RelativeURLMappingImpl(String currentRequestUri, URLMapping mapping){
         this.delegatee = mapping;
-        while(currentRequestUri.startsWith("/")) {
-            currentRequestUri = currentRequestUri.substring(1);
-        }
-        while(currentRequestUri.endsWith("/")) {
-            this.currentUriEndsWithSlash = true;
-            currentRequestUri =  currentRequestUri.substring(0,currentRequestUri.length()-1);
-        }
         this.currentRequestUri = currentRequestUri;
     }
     
@@ -55,21 +48,29 @@ public class RelativeURLMappingImpl implements URLMapping{
 
     public String rewriteLocation(Node node) {
         String absoluteLocation = delegatee.rewriteLocation(node);
-        return computeRelativeUrl(absoluteLocation);
+        return computeRelativeUrl(absoluteLocation, currentRequestUri);
     }
 
 
     public String rewriteLocation(String path) {
         String absoluteLocation = delegatee.rewriteLocation(path);
-        return computeRelativeUrl(absoluteLocation);
+        return computeRelativeUrl(absoluteLocation, currentRequestUri);
     }
     
     public String getLocation(String path) {
         path = delegatee.getLocation(path);
-        return computeRelativeUrl(path);
+        return computeRelativeUrl(path, currentRequestUri);
     }
   
-    private String computeRelativeUrl(String absoluteLocation) {
+    public static String computeRelativeUrl(String absoluteLocation, String currentRequestUri) {
+        boolean currentUriEndsWithSlash = false;
+        while(currentRequestUri.startsWith("/")) {
+            currentRequestUri = currentRequestUri.substring(1);
+        }
+        while(currentRequestUri.endsWith("/")) {
+            currentUriEndsWithSlash = true;
+            currentRequestUri =  currentRequestUri.substring(0,currentRequestUri.length()-1);
+        }
         while(absoluteLocation.startsWith("/")) {
             absoluteLocation = absoluteLocation.substring(1);
         }
