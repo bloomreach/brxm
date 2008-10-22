@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -125,6 +126,29 @@ public class BinariesServlet extends HttpServlet {
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);
 
+            // TODO add a coonfigurable factor + default minimum for expires. Ideally, this value is
+            // stored in the repository
+            if(node.hasProperty("jcr:lastModified")) {
+                long lastModified = 0;
+                try {
+                    lastModified = node.getProperty("jcr:lastModified").getDate().getTimeInMillis();
+                } catch (ValueFormatException e) {
+                    log.warn("jcr:lastModified not of type Date");
+                }
+                
+                long expires = 0;
+                if(lastModified > 0) {
+                    expires = (System.currentTimeMillis() - lastModified);
+                }
+                res.setDateHeader("Expires", expires + System.currentTimeMillis());
+                res.setDateHeader("Last-Modified", lastModified); 
+                res.setHeader("Cache-Control", "max-age="+(expires/1000));
+            } else {
+                res.setDateHeader("Expires", 0);
+                res.setHeader("Cache-Control", "max-age=0");
+            }
+            
+            
             OutputStream ostream = res.getOutputStream();
             byte[] buffer = new byte[1024];
             int len;
