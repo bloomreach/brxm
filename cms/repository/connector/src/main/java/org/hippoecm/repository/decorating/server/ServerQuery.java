@@ -40,7 +40,7 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
 
     private HippoQuery query;
 
-    public ServerQuery(HippoQuery query, RemoteServicingAdapterFactory factory) throws RemoteException {
+    protected ServerQuery(HippoQuery query, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(query, factory);
         this.query = query;
     }

@@ -47,7 +47,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     private RemoteServicingSession remote;
 
-    public ClientServicingSession(Repository repository, RemoteServicingSession remote, LocalServicingAdapterFactory factory) {
+    protected ClientServicingSession(Repository repository, RemoteServicingSession remote, LocalServicingAdapterFactory factory) {
         super(repository, remote, factory);
         this.remote = remote;
     }

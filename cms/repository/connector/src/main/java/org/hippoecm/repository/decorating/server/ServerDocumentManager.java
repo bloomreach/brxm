@@ -30,7 +30,7 @@ public class ServerDocumentManager extends ServerObject implements RemoteDocumen
 
     private DocumentManager documentManager;
 
-    public ServerDocumentManager(DocumentManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
+    protected ServerDocumentManager(DocumentManager manager, RemoteServicingAdapterFactory factory) throws RemoteException {
         super(factory);
         this.documentManager = manager;
     }

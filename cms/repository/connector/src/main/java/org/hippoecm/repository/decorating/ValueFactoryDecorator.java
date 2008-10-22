@@ -33,7 +33,7 @@ public class ValueFactoryDecorator extends AbstractDecorator implements ValueFac
 
     protected final ValueFactory valueFactory;
 
-    public ValueFactoryDecorator(DecoratorFactory factory, Session session, ValueFactory valueFactory) {
+    protected ValueFactoryDecorator(DecoratorFactory factory, Session session, ValueFactory valueFactory) {
         super(factory, session);
         this.valueFactory = valueFactory;
     }

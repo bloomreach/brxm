@@ -29,7 +29,7 @@ public class ItemVisitorDecorator extends AbstractDecorator implements ItemVisit
 
     protected final ItemVisitor visitor;
 
-    public ItemVisitorDecorator(DecoratorFactory factory, Session session, ItemVisitor visitor) {
+    protected ItemVisitorDecorator(DecoratorFactory factory, Session session, ItemVisitor visitor) {
         super(factory, session);
         this.visitor = visitor;
     }

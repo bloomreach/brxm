@@ -36,7 +36,7 @@ public class ClientHierarchyResolver extends ClientObject implements HierarchyRe
     private RemoteHierarchyResolver remote;
     private Session session;
 
-    public ClientHierarchyResolver(Session session, RemoteHierarchyResolver remote, LocalServicingAdapterFactory factory) {
+    protected ClientHierarchyResolver(Session session, RemoteHierarchyResolver remote, LocalServicingAdapterFactory factory) {
         super(factory);
         this.remote = remote;
         this.session = session;

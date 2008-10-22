@@ -48,7 +48,7 @@ class ServerQueryInfo extends ServerObject implements RemoteQueryInfo {
      */
     private final IdFactory idFactory;
 
-    public ServerQueryInfo(QueryInfo queryInfo,
+    ServerQueryInfo(QueryInfo queryInfo,
                            int iteratorBufferSize,
                            IdFactory idFactory)
             throws RemoteException {

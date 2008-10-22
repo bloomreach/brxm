@@ -48,13 +48,13 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
      * @param session decorated session
      * @param iterator underlying iterator
      */
-    public RangeIteratorDecorator(DecoratorFactory factory, Session session, RangeIterator iterator) {
+    protected RangeIteratorDecorator(DecoratorFactory factory, Session session, RangeIterator iterator) {
         super(factory, session);
         this.iterator = iterator;
         this.parent = null;
     }
 
-    public RangeIteratorDecorator(DecoratorFactory factory, Session session, RangeIterator iterator,
+    protected RangeIteratorDecorator(DecoratorFactory factory, Session session, RangeIterator iterator,
             NodeDecorator parent) {
         super(factory, session);
         this.iterator = iterator;

@@ -59,7 +59,7 @@ class ClientIterator implements RangeIterator {
      *
      * @param remote remote iterator
      */
-    public ClientIterator(RemoteIterator remote) {
+    ClientIterator(RemoteIterator remote) {
         this.remote = remote;
         this.size = -2;
         this.positionOfBuffer = 0;

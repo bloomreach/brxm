@@ -37,7 +37,7 @@ class ServerSessionInfo extends ServerObject implements RemoteSessionInfo {
      *
      * @param sessionInfo the SPI session info.
      */
-    public ServerSessionInfo(SessionInfo sessionInfo) throws RemoteException {
+    ServerSessionInfo(SessionInfo sessionInfo) throws RemoteException {
         this.sessionInfo = sessionInfo;
     }
 

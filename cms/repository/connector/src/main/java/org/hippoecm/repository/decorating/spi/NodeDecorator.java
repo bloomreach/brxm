@@ -15,42 +15,11 @@
  */
 package org.hippoecm.repository.decorating.spi;
 
-import java.io.InputStream;
-import java.util.Calendar;
-
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.Item;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.MergeException;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.Lock;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.RowIterator;
-import javax.jcr.version.Version;
-import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -68,6 +37,7 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     public Node getCanonicalNode() throws RepositoryException {
         return getCanonicalNode(session, remoteSession, this);
     }
+
     public String getDisplayName() throws RepositoryException {
         return getDisplayName(session, remoteSession, this);
     }

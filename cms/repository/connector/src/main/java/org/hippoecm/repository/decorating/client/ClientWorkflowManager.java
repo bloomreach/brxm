@@ -36,7 +36,7 @@ public class ClientWorkflowManager extends ClientObject implements WorkflowManag
     private Session session;
     private RemoteWorkflowManager remote;
 
-    public ClientWorkflowManager(Session session, RemoteWorkflowManager remote, LocalServicingAdapterFactory factory) {
+    protected ClientWorkflowManager(Session session, RemoteWorkflowManager remote, LocalServicingAdapterFactory factory) {
         super(factory);
         this.session = session;
         this.remote = remote;

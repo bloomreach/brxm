@@ -61,7 +61,7 @@ class ServerSubscription extends ServerObject implements RemoteSubscription {
      */
     private final IdFactory idFactory;
 
-    public ServerSubscription(RepositoryService service,
+    ServerSubscription(RepositoryService service,
                               SessionInfo sessionInfo,
                               Subscription subscription,
                               IdFactory idFactory) throws RemoteException {

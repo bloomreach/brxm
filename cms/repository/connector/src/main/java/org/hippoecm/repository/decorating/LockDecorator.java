@@ -30,7 +30,7 @@ public class LockDecorator extends AbstractDecorator implements Lock {
 
     protected final Lock lock;
 
-    public LockDecorator(DecoratorFactory factory, Session session, Lock lock) {
+    protected LockDecorator(DecoratorFactory factory, Session session, Lock lock) {
         super(factory, session);
         this.lock = lock;
     }

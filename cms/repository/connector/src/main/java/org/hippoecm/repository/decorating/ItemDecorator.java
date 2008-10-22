@@ -40,7 +40,7 @@ public class ItemDecorator extends AbstractDecorator implements Item {
      */
     protected final Item item;
 
-    public ItemDecorator(DecoratorFactory factory, Session session, Item item) {
+    protected ItemDecorator(DecoratorFactory factory, Session session, Item item) {
         super(factory, session);
         this.item = item;
     }

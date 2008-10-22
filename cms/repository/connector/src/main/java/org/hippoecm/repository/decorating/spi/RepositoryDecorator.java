@@ -35,7 +35,7 @@ public class RepositoryDecorator implements Repository {
 
     private Repository repository;
 
-    public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
+    protected RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         this.factory = factory;
         this.repository = repository;
     }

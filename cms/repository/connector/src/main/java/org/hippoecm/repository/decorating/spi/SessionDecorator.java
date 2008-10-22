@@ -18,58 +18,27 @@ package org.hippoecm.repository.decorating.spi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.rmi.RemoteException;
-import java.security.AccessControlException;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.Credentials;
-import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFactory;
-import javax.jcr.ValueFormatException;
-import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
-import javax.transaction.xa.XAResource;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.jackrabbit.api.XASession;
-import org.apache.jackrabbit.spi.Path;
 
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
@@ -80,12 +49,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     HippoSession remoteSession;
 
-    SessionDecorator(DecoratorFactory factory, Repository repository, Session session, HippoSession remoteSession) {
+    protected SessionDecorator(DecoratorFactory factory, Repository repository, Session session, HippoSession remoteSession) {
         super(factory, repository, session);
         this.remoteSession = remoteSession;
     }
 
-    SessionDecorator(DecoratorFactory factory, Repository repository, XASession session, HippoSession remoteSession) throws RepositoryException {
+    protected SessionDecorator(DecoratorFactory factory, Repository repository, XASession session, HippoSession remoteSession) throws RepositoryException {
         super(factory, repository, session);
         this.remoteSession = remoteSession;
     }

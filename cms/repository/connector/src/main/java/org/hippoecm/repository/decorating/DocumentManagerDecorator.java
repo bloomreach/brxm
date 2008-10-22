@@ -15,36 +15,12 @@
  */
 package org.hippoecm.repository.decorating;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jdo.JDOHelper;
-import javax.jdo.JDODataStoreException;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Transaction;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.jpox.PersistenceManagerFactoryImpl;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.HippoQuery;
 
 public abstract class DocumentManagerDecorator implements DocumentManager {
     @SuppressWarnings("unused")

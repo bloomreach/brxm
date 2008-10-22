@@ -45,7 +45,7 @@ public abstract class AbstractDecorator {
      * @param factory decorator factory
      * @param session decorated session
      */
-    public AbstractDecorator(DecoratorFactory factory, Session session) {
+    protected AbstractDecorator(DecoratorFactory factory, Session session) {
         this.factory = factory;
         this.session = session;
     }

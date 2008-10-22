@@ -37,7 +37,7 @@ public class ServerHierarchyResolver extends ServerObject implements RemoteHiera
     protected Session session;
     protected HierarchyResolver resolver;
 
-    public ServerHierarchyResolver(HierarchyResolver resolver, ServerAdapterFactory factory, Session session)
+    protected ServerHierarchyResolver(HierarchyResolver resolver, ServerAdapterFactory factory, Session session)
         throws RemoteException {
         super(factory);
         this.session = session;

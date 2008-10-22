@@ -33,7 +33,7 @@ public abstract class VersionHistoryDecorator extends NodeDecorator implements V
 
     protected final VersionHistory versionHistory;
 
-    public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
+    protected VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {
         super(factory, session, versionHistory);
         this.versionHistory = versionHistory;
     }

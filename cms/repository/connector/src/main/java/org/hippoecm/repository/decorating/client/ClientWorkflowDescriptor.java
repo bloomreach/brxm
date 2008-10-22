@@ -30,7 +30,7 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
 
     RemoteWorkflowDescriptor remote;
 
-    public ClientWorkflowDescriptor(RemoteWorkflowDescriptor remote) throws RemoteException {
+    protected ClientWorkflowDescriptor(RemoteWorkflowDescriptor remote) throws RemoteException {
         super();
         this.remote = remote;
     }

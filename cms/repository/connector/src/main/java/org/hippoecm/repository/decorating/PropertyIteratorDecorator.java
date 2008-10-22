@@ -32,7 +32,7 @@ public class PropertyIteratorDecorator extends RangeIteratorDecorator implements
      * @param session decorated session
      * @param iterator underlying property iterator
      */
-    public PropertyIteratorDecorator(DecoratorFactory factory, Session session, PropertyIterator iterator) {
+    protected PropertyIteratorDecorator(DecoratorFactory factory, Session session, PropertyIterator iterator) {
         super(factory, session, iterator);
     }
 

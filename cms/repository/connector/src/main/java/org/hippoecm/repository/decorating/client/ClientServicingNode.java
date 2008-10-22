@@ -38,7 +38,7 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
 
     private RemoteServicingNode remote;
 
-    public ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
+    protected ClientServicingNode(Session session, RemoteServicingNode remote, LocalServicingAdapterFactory factory) {
         super(session, remote, factory);
         this.remote = remote;
     }

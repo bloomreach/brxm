@@ -25,7 +25,7 @@ import java.rmi.RemoteException;
  */
 public class RemoteRepositoryException extends RepositoryException {
 
-    public RemoteRepositoryException(RemoteException e) {
+    protected RemoteRepositoryException(RemoteException e) {
         super(e);
     }
 }
