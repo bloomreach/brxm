@@ -349,11 +349,13 @@ public class SearchModule extends ModuleBase implements Search {
             
             searchResult.computePagesAndLinks(request.getParameterMap());
             
-            try {
-                rows.skip(offset);
-            } catch (NoSuchElementException e) {
-                log.debug("offset is larger then the number of results");
-                return;
+            if(rows.getSize()!=0) {
+                try {
+                    rows.skip(offset);
+                } catch (NoSuchElementException e) {
+                    log.debug("offset is larger then the number of results");
+                    return;
+                }
             }
             int counter = 0;
             while (rows.hasNext()) {
