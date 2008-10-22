@@ -35,6 +35,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.caching.observation.EventListenerImpl;
 import org.hippoecm.hst.core.HSTConfiguration;
@@ -125,9 +126,11 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
 
             String uriPrefix = getLevelPrefix(requestURI, uriLevels);
             if (uriPrefix == null) {
-                throw new ServletException("The number of slashes in the url in lower then the configure levels '("
+                log.warn("The number of slashes in the url in lower then the configure levels '("
                         + uriLevels + ")' in your web.xml \n"
                         + "Either, the url is wrong, or you should change the levels in value in your web.xml");
+                ((HttpServletResponse)response).sendError(404);
+                return;
             }
 
             if (isBinaryRequest(requestURI, uriPrefix)) {
