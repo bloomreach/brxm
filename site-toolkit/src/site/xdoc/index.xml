@@ -24,43 +24,34 @@
     <body>
         <section name="What is Hippo Site Toolkit 2?">
 
-          Ultimately you will want to publish your content to a website, intranet or extranet. Hippo ECM
-          comes with a set of tools and components to allow rapid development of websites, the Hippo Site
-          Toolkit 2. 
-
-        
-            <p>
-                Hippo Site Toolkit 2 is an open source toolkit for Java web developers,
-                to build websites based on 
-                <span class='expire_event'>sitename change</span><a href="http://docs.onehippo.org/hippo-ecm">Hippo CMS 7</a>.
-                Assemble your website by configuring templates, site map, navigation and URL space through 
-                a straightforward user interface, that integrates with Hippo CMS. Create a JSP based view 
-                layer using the provided tag library and expression language. 
+            <p> 
+                Hippo ECM comes with a set of tools and components to allow rapid development of websites, the Hippo Site Toolkit 2. 
             </p>
-            <ul>
-                <li>
-                    <a href="how_does_hst2_work.html"><b>Learn more</b></a>
-                </li>
-            </ul>
+
+            <p> 
+                Hippo Site Toolkit 2 is an open source toolkit for Java web developers, to build websites based on <span
+                    class="expire_event">sitename change</span><a href="http://docs.onehippo.org/hippo-ecm">Hippo CMS 7</a>. Assemble your
+                website by configuring templates, site map, navigation and URL space through a straightforward user interface, that
+                integrates with Hippo CMS. Create a JSP based view layer using the provided tag library and expression language. 
+            </p>
             
-            <subsection name="Get started">
-                <ul>
-                    <li>
-                        <a href="quickstart/index.html">Quickstart</a>
-                        - Check it out yourself and install the quickstart demo site.
-                    </li>
-                    <li>
-                        <a href="tutorials/index.html">Tutorials</a>
-                        - Learn how to build a website using Hippo Site Toolkit step by step.
-                    </li>
-                    <li>
-                        <a href="reference/index.html">Reference</a>
-                        - Technical documentation of the Hippo Site Toolkit components.
-                    </li>
-                </ul>
+            <subsection name="Learn more">
+                <p>
+                    For a general overview of Hippo Site Toolkit, see which <a href="about/features.html">features</a> it offers,
+                    and read about some <a href="about/use_cases.html">use cases</a>. Or get a bird's eye view of the
+                    toolkit's <a href="about/architecture.html">architecture</a>.
+                </p>
             </subsection>
             
-        
+            <subsection name="Delve into Hippo Site Toolkit">
+                <p>
+                    Learn <a href="delve_into/how_does_hst2_work.html">how Hippo Site Toolkit works</a> and get
+                    your hands dirty by delving into Hippo Site Toolkit.
+                </p>
+            </subsection>
+
+
+
         </section>
     </body>
 </document>

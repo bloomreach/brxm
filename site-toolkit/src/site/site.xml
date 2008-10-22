@@ -42,7 +42,6 @@
 
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
-      <item name="How does HST2 work?" href="about/how_does_hst2_work.html"/>
       <item name="Use Cases" href="about/use_cases.html"/>
       <item name="Features" href="about/features.html"/>
       <item name="Architecture" href="about/architecture.html"/>
@@ -51,7 +50,7 @@
     </menu>
 
     <menu name="Delve into HST2">
-
+      <item name="How does HST2 work?" href="/delve_into/how_does_hst2_work.html"/>
       <item name="Quickstart" href="/delve_into/quickstart.html"/>
       <item name="Howto" href="/delve_into/howto/index.html" collapse="true">
         <item name="Start a project" href="/delve_into/howto/start_project.html"/>

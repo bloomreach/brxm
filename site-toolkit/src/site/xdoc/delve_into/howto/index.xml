@@ -26,12 +26,21 @@
         <span class='shortdesc'>Learn how to build a website using Hippo Site Toolkit.</span>
 
         <p>
-          This section is collection of small tasks that you may wish to do while 
-          building your own website.
-
+          This Howto guide uses a hands-on approach to let you learn how to build
+          a website using Hippo Site Toolkit step by step. It describes a number
+          of small tasks that you will need to perform while building your website.
+          You can either follow them all in chronological order, or go directly to the
+          task you want to learn about.
+        </p>
+        <p>
           If you do not know where to start, start with        
             <a href="start_project.html">Start a project</a>.
-	</p>
+        </p>
+        
+        <p>
+          If you are looking for detailed information on a specific component
+          of Hippo Site Toolkit, check out the <a href="../reference/index.html">reference guide</a>.
+        </p>
                    
       </section>
     </body>

@@ -24,8 +24,18 @@
     <body>
       <section name="Reference">
 
-        <p>
+        <span class='shortdesc'>
           The concepts and technical details of the Hippo Site Toolkit.
+        </span>
+        
+        <p>
+          This reference guide describes every aspect of Hippo Site Toolkit in detail.
+          Here you can find information on a specific concept, configuration parameter,
+          or component. Use it as a reference while developing your website.
+        </p>
+        <p>
+          For a hands-on approach, go to the <a href="../howto/index.html">Howto</a> section
+          to learn how to build a website using Hippo Site Toolkit step by step.
         </p>
         
         <ul>
@@ -39,7 +49,7 @@
           </li>
           <li>
             <a href="components/index.html">Components</a>
-            - TODO
+            - Learn what components are available and what they do
           </li>
         </ul>
 
