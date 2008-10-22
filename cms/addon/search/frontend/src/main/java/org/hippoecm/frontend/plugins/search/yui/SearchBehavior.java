@@ -186,7 +186,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
             final String queryType = "xpath";
             QueryResult result = null;
 
-            System.out.println("Query is " + queryString);
+            log.info("Executing search query: " + queryString);
 
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
