@@ -23,11 +23,19 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (118 terms)">
+    <section name="Term index (154 terms)">
       <table>
         <tr>
           <th>Term</th>
           <th>Section Title</th>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/index.html#&#10;__________The_concepts_and_technical_details_of_the_Hippo_Site_Toolkit.&#10;________">
+          The concepts and technical details of the Hippo Site Toolkit.
+        </a>
+          </td>
+          <td>Reference</td>
         </tr>
         <tr>
           <td>
@@ -64,6 +72,24 @@
             <a href="../delve_into/howto/facebook.html#Browse_your_facebook!">Browse your facebook!</a>
           </td>
           <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#CLI_icon">CLI icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#CLI_icon">CLI icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#CLI_icon">CLI icon</a>
+          </td>
+          <td>Quickstart</td>
         </tr>
         <tr>
           <td>
@@ -205,6 +231,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/how_does_hst2_work.html#Delve_into_Hippo_Site_Toolkit">Delve into Hippo Site Toolkit</a>
+          </td>
+          <td>How does Hippo Site Toolkit 2 work?</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#Delve_into_Hippo_Site_Toolkit">Delve into Hippo Site Toolkit</a>
+          </td>
+          <td>What is Hippo Site Toolkit 2?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/quickstart.html#Deploying_in_Tomcat_6.0">Deploying in Tomcat 6.0</a>
           </td>
           <td>Quickstart</td>
@@ -313,12 +351,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../index.html#Get_started">Get started</a>
-          </td>
-          <td>What is Hippo Site Toolkit 2?</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/reference/configuration/configuration.html#HST_Configuration">HST Configuration</a>
           </td>
           <td>HST Configuration</td>
@@ -349,13 +381,43 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/reference/configuration/repository.html#HST2_configuration_nodes">HST2 configuration nodes</a>
+          </td>
+          <td>Configuration in Repository</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/configuration/repository.html#HST2_layouts_configuration">HST2 layouts configuration</a>
+          </td>
+          <td>Configuration in Repository</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/configuration/repository.html#HST2_modules_configuration">HST2 modules configuration</a>
+          </td>
+          <td>Configuration in Repository</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/configuration/repository.html#HST2_sitemap_configuration">HST2 sitemap configuration</a>
+          </td>
+          <td>Configuration in Repository</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/configuration/repository.html#HST2_sitemap_configuration">HST2 sitemap configuration</a>
+          </td>
+          <td>Configuration in Repository</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/howto/hello_world.html#Hello_World">Hello World</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../about/how_does_hst2_work.html#How_does_Hippo_Site_Toolkit_2_work?">How does Hippo Site Toolkit 2 work?</a>
+            <a href="../delve_into/how_does_hst2_work.html#How_does_Hippo_Site_Toolkit_2_work?">How does Hippo Site Toolkit 2 work?</a>
           </td>
           <td>How does Hippo Site Toolkit 2 work?</td>
         </tr>
@@ -407,6 +469,12 @@
               by adding a simple facebook to the sample website.</a>
           </td>
           <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#Learn_more">Learn more</a>
+          </td>
+          <td>What is Hippo Site Toolkit 2?</td>
         </tr>
         <tr>
           <td>
@@ -698,6 +766,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/quickstart.html#download_icon">download icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#download_icon">download icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/reference/configuration/repository.html#hst:layouts">hst:layouts</a>
           </td>
           <td>Configuration in Repository</td>
@@ -737,6 +817,144 @@
             <a href="../about/use_cases.html#index_word">index word</a>
           </td>
           <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/how_does_hst2_work.html#quickstart">quickstart</a>
+          </td>
+          <td>How does Hippo Site Toolkit 2 work?</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/how_does_hst2_work.html#run">run</a>
+          </td>
+          <td>How does Hippo Site Toolkit 2 work?</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/facebook.html#screenshot">screenshot</a>
+          </td>
+          <td>Create a Facebook</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/hello_world.html#screenshot">screenshot</a>
+          </td>
+          <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/hello_world.html#screenshot">screenshot</a>
+          </td>
+          <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/hello_world.html#screenshot">screenshot</a>
+          </td>
+          <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/start_project.html#screenshot">screenshot</a>
+          </td>
+          <td>Start a project</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/start_project.html#screenshot">screenshot</a>
+          </td>
+          <td>Start a project</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#unzip_icon">unzip icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/how_does_hst2_work.html#use">use</a>
+          </td>
+          <td>How does Hippo Site Toolkit 2 work?</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#user_icon">user icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#web_icon">web icon</a>
+          </td>
+          <td>Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#web_icon">web icon</a>
+          </td>
+          <td>Quickstart</td>
         </tr>
       </table>
     </section>

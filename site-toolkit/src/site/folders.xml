@@ -6,41 +6,27 @@
 >architecture</file>
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/features.xml'
 >features</file>
-   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/about/how_does_hst2_work.xml'
->how_does_hst2_work</file>
    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/about/term_index.xml'
 >term_index</file>
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/use_cases.xml'
 >use_cases</file>
   </folder>
   <folder>delve_into
+   <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/how_does_hst2_work.xml'
+>how_does_hst2_work</file>
    <folder>howto
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/advanced_search.xml'
 >advanced_search</file>
-    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/advanced_search.xml~'
->advanced_search</file>
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/facebook.xml'
->facebook</file>
-    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/facebook.xml~'
 >facebook</file>
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/howto/free_text_search.xml'
 >free_text_search</file>
-    <file ext='xml~' mimetype='text/xml' note='todo' fullname='xdoc/delve_into/howto/free_text_search.xml~'
->free_text_search</file>
     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/hello_world.xml'
 >hello_world</file>
-    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/hello-world.xml~'
->hello-world</file>
     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/index.xml'
->index</file>
-    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/index.xml~'
 >index</file>
     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/howto/start_project.xml'
 >start_project</file>
-    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/start_project.xml~'
->start_project</file>
-    <file ext='xml~' mimetype='text/xml' fullname='xdoc/delve_into/howto/start-project.xml~'
->start-project</file>
    </folder>
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/quickstart.xml'
 >quickstart</file>
@@ -105,16 +91,10 @@
      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/configuration/webxml.xml'
 >webxml</file>
     </folder>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/reference/index.xml'
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/reference/index.xml'
 >index</file>
    </folder>
   </folder>
-  <file ext='xml#' mimetype='text/xml' fullname='xdoc/#index.xml#'
->#index</file>
   <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/index.xml'
 >index</file>
-  <file ext='xml~' mimetype='text/xml' fullname='xdoc/index.xml~'
->index</file>
-  <file ext='xml~' mimetype='text/xml' fullname='xdoc/quickstart.xml~'
->quickstart</file>
  </folder>

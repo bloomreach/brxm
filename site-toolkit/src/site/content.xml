@@ -22,9 +22,6 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="xdoc/about/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
-   <section>How does Hippo Site Toolkit 2 work?</section>
-  </document>
   <document ext="xml" fullname="xdoc/about/term_index.xml">
   </document>
   <document ext="xml" fullname="xdoc/about/use_cases.xml">Change to the document title
@@ -35,6 +32,13 @@
    <h4>First subsubsection title</h4>
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
+  </document>
+  <document ext="xml" fullname="xdoc/delve_into/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
+   <section>How does Hippo Site Toolkit 2 work?</section>
+   <subsection>Delve into Hippo Site Toolkit</subsection>
+   <img>quickstart</img>
+   <img>use</img>
+   <img>run</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/howto/advanced_search.xml">Advanced Search
    <section>Advanced Search</section>
@@ -47,12 +51,23 @@
    <shortdesc>Learn how to create a new document type, and how to use it in your website,
               by adding a simple facebook to the sample website.</shortdesc>
    <subsection>Create a document type</subsection>
+   <img>screenshot</img>
+   <img>screenshot</img>
+   <img>screenshot</img>
    <subsection>Add people</subsection>
+   <img>screenshot</img>
+   <img>screenshot</img>
    <subsection>Create a people module</subsection>
+   <img>screenshot</img>
    <subsection>Configure the sitemap</subsection>
+   <img>screenshot</img>
+   <img>screenshot</img>
    <subsection>Create a person module</subsection>
+   <img>screenshot</img>
    <subsection>Configure the sitemap</subsection>
+   <img>screenshot</img>
    <subsection>Browse your facebook!</subsection>
+   <img>screenshot</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/howto/free_text_search.xml">Free text Search
    <section>Free text Search</section>
@@ -63,7 +78,10 @@
    <section>Hello World</section>
    <shortdesc>Adding a simple page to your website saying hello to the world.</shortdesc>
    <subsection>Add the document</subsection>
+   <img>screenshot</img>
+   <img>screenshot</img>
    <subsection>View the document on the website</subsection>
+   <img>screenshot</img>
    <subsection>Under the hood</subsection>
    <section>Next Step</section>
   </document>
@@ -78,6 +96,8 @@
    <subsection>Creating your project</subsection>
    <subsection>Deploying your project in Tomcat</subsection>
    <subsection>Running your project with Jetty</subsection>
+   <img>screenshot</img>
+   <img>screenshot</img>
    <section>Next Step</section>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/quickstart.xml">Quickstart
@@ -85,6 +105,15 @@
    <shortdesc>Check it out yourself and install the quickstart demo site.</shortdesc>
    <subsection>Download</subsection>
    <subsection>Deploying in Tomcat 6.0</subsection>
+   <img>download icon</img>
+   <img>unzip icon</img>
+   <img>download icon</img>
+   <img>CLI icon</img>
+   <img>CLI icon</img>
+   <img>CLI icon</img>
+   <img>web icon</img>
+   <img>web icon</img>
+   <img>user icon</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/reference/components/binaries.xml">Serving binaries with the BinariesServlet
    <section>Serving binaries with the BinariesServlet</section>
@@ -188,9 +217,14 @@
   </document>
   <document ext="xml" fullname="xdoc/delve_into/reference/configuration/repository.xml">Configuration in Repository
    <section>Configuration in Repository</section>
+   <img>HST2 configuration nodes</img>
    <subsection>hst:sitemap</subsection>
+   <img>HST2 sitemap configuration</img>
+   <img>HST2 sitemap configuration</img>
    <subsection>hst:layouts</subsection>
+   <img>HST2 layouts configuration</img>
    <subsection>hst:modules</subsection>
+   <img>HST2 modules configuration</img>
    <subsection>hst:navigation</subsection>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/reference/configuration/webxml.xml">HST Configuration in web.xml
@@ -198,9 +232,13 @@
   </document>
   <document ext="xml" fullname="xdoc/delve_into/reference/index.xml">Reference
    <section>Reference</section>
+   <shortdesc>
+          The concepts and technical details of the Hippo Site Toolkit.
+        </shortdesc>
   </document>
   <document ext="xml" fullname="xdoc/index.xml">What is Hippo Site Toolkit 2?
    <section>What is Hippo Site Toolkit 2?</section>
-   <subsection>Get started</subsection>
+   <subsection>Learn more</subsection>
+   <subsection>Delve into Hippo Site Toolkit</subsection>
   </document>
 </document_list>
