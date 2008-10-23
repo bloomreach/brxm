@@ -129,7 +129,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 log.warn("The number of slashes in the url in lower then the configure levels '("
                         + uriLevels + ")' in your web.xml \n"
                         + "Either, the url is wrong, or you should change the levels in value in your web.xml");
-                ((HttpServletResponse)response).sendError(404);
+                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
