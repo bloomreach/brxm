@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.ValueFormatException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -74,8 +75,6 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 	public void doFilter(ServletRequest req, ServletResponse response,
 			FilterChain filterChain) throws IOException, ServletException {
 		
-		//Map<String, PageNode> urlMappingPageNodes;
-		
 		HttpServletRequest request = (HttpServletRequest) req;
 		
 		if (ignoreRequest(request)) {
@@ -83,33 +82,42 @@ public class URLMappingTemplateContextFilter extends HstFilterBase implements Fi
 			filterChain.doFilter(request, response);
 		} else {
 			log.debug("process " + request.getRequestURI());
-			
-			
 			try {
-				long start = System.currentTimeMillis();
-                
 				URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
                 if(urlMapping == null) {
-                    throw new JspException("URLMapping is null");
+                    log.warn("URLMapping is null, cannot get a matching page node");
+                    filterChain.doFilter(req, response);
                 } 
                 PageNode matchPageNode = urlMapping.getMatchingPageNode(request, getHstConfigurationContextBase(request, repositoryTemplateContextLocation));
-				Timer.log.debug((System.currentTimeMillis() - start) + " ms for finding matching page node.");
 	           	if (matchPageNode != null) {
-	            	log.info("matchPageNode.getURLMappingValue()=" + matchPageNode.getURLMappingValue());
 	            	String urlPrefix = getUrlPrefix(request);
 	            	RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
 	            	//set attributes
 	            	request.setAttribute(PAGENODE_REQUEST_ATTRIBUTE, matchPageNode);
 	    			dispatcher.forward(request, response);
 	            } else {
-	            	log.error("no matching template found for url '" + request.getRequestURI() + "'");
+	            	log.warn("no matching template found for url '" + request.getRequestURI() + "'");
 	            	//what to do? no matching pattern found... lets continue the filter chain...
 	            	filterChain.doFilter(req, response);
 	            }
-			} catch (Exception e) {		
-				e.printStackTrace();
-				filterChain.doFilter(req, response);
-			}
+			} catch (TemplateException e) {
+			    log.warn("TemplateException: " + e.getMessage());
+                log.debug("TemplateException: " , e);
+                filterChain.doFilter(req, response);
+            } catch (PathNotFoundException e) {
+                log.warn("PathNotFoundException: " + e.getMessage());
+                log.debug("PathNotFoundException: " , e);
+                filterChain.doFilter(req, response);
+            } catch (ValueFormatException e) {
+                log.warn("ValueFormatException: " + e.getMessage());
+                log.debug("ValueFormatException: " , e);
+                filterChain.doFilter(req, response);
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException: " + e.getMessage());
+                log.debug("RepositoryException: " , e);
+                filterChain.doFilter(req, response);
+            }
+			
 		}
 	}
 
