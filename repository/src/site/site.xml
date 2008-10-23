@@ -208,12 +208,15 @@
             <item name="Custom Workflow" href="/delve_into/implementation/add-ons/howto/workflow.html"/>
             <item name="GUI Plugin" href="/delve_into/implementation/add-ons/howto/gui_plugin.html"/>
           </item>
-          <item name="Reference" href="/delve_into/implementation/add-ons/reference/index.html" collapse="true">
+          <item name="Reference Guide" href="/delve_into/implementation/add-ons/reference/index.html" collapse="true">
             <item name="Repository Plugins" href="/delve_into/implementation/add-ons/reference/repository/repository_plugins.html"> </item>
             <item name="Frontend Plugins" href="/delve_into/implementation/add-ons/reference/frontend/index.html" collapse="true">
               <item name="Architecture" href="/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html"/>
               <item name="Communication" href="/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html"/>
             </item>
+          </item>
+          <item name="List of Concepts" href="/delve_into/implementation/add-ons/concepts/index.html" collapse="true">
+            <item name="Repository Plugins" href="/delve_into/implementation/add-ons/concepts/repository_plugins.html"> </item>
           </item>
         </item>
         <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
