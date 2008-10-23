@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet type="text/xsl" href="../stylesheets/folder.xsl"?>
- <folder path='/home/rita/werk/cms/trunk/src/site'>xdoc
+ <folder path='/home/rita/werk/cms/src/site'>xdoc
   <folder>about
    <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/about/architecture.xml'
 >architecture</file>
