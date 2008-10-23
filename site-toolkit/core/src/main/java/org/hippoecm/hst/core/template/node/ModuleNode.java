@@ -67,15 +67,15 @@ public class ModuleNode extends TemplateNode {
                 return null;
             }
         } catch (PathNotFoundException e) {
-            log.error("PathNotFoundException for pageContainerModuleNode " + containerModuleNodePath + " : " + e.getMessage());
+            log.warn("PathNotFoundException for pageContainerModuleNode " + containerModuleNodePath + " : " + e.getMessage());
         } catch (RepositoryException e) {
-            log.error("RepositoryException: ", e);
+            log.warn("RepositoryException: ", e);
         }
         //try to get property from the moduleNode
         try {
 			return super.getPropertyValue(propertyName);
 		} catch (TemplateException e) {
-			log.error("Cannot get property " + propertyName + " from superClass");
+			log.warn("Cannot get property '" + propertyName + "' from superClass");
 			return null;
 		}
     }
