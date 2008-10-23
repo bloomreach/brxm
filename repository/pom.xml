@@ -23,14 +23,14 @@
   <description>Hippo ECM suite</description>
   <packaging>pom</packaging>
 
-  <url>http://wiki.hippo.nl/display/HIPPOECM</url>
+  <url>http://docs.onehippo.org</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
 
   <organization>
     <name>Hippo</name>
-    <url>http://www.hippo.nl/</url>
+    <url>http://www.onehippo.com/</url>
   </organization>
 
   <modules>
@@ -118,7 +118,7 @@
     <developer>
       <name>Arje Cahn</name>
       <id>acahn</id>
-      <email/>
+      <email>a.cahn@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Project Lead</role>
@@ -128,7 +128,7 @@
     <developer>
       <name>Ate Douma</name>
       <id>adouma</id>
-      <email/>
+      <email>a.douma@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -138,7 +138,7 @@
     <developer>
       <name>Ard Schrijvers</name>
       <id>aschrijvers</id>
-      <email/>
+      <email>a.schrijvers@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -148,7 +148,7 @@
     <developer>
       <name>(Berry) A.W. van Halderen</name>
       <id>bvanhalderen</id>
-      <email>b.vanhalderen@hippo.nl</email>
+      <email>b.vanhalderen@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -158,7 +158,7 @@
     <developer>
       <name>Wander Grevink</name>
       <id>wgrevink</id>
-      <email>w&lt;dOT&gt;grevink&lt;aT&gt;hippo&lt;d0t&gt;nl</email>
+      <email>w.grevink@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -168,7 +168,7 @@
     <developer>
       <name>Bart van der Schans</name>
       <id>bvdschans</id>
-      <email>schans@hippo.nl</email>
+      <email>schans@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -178,7 +178,7 @@
     <developer>
       <name>Niels van Kampenhout</name>
       <id>nvankampenhout</id>
-      <email/>
+      <email>n.vankampenhout@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Doctator</role>
@@ -188,7 +188,7 @@
     <developer>
       <name>Frank van Lankvelt</name>
       <id>fvlankvelt</id>
-      <email/>
+      <email>f.vlankvelt@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
@@ -198,7 +198,7 @@
     <developer>
       <name>Auke van Scheltinga</name>
       <id>avanscheltinga</id>
-      <email/>
+      <email>a.vanscheltinga@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Designer</role>
@@ -208,7 +208,7 @@
     <developer>
       <name>Arthur Bogaart</name>
       <id>abogaart</id>
-      <email/>
+      <email>a.bogaart@onehippo.com</email>
       <organization>Hippo</organization>
       <roles>
         <role>Java Developer</role>
