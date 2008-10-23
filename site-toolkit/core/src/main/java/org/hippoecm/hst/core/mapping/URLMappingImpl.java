@@ -166,9 +166,9 @@ public class URLMappingImpl implements URLMapping {
             }
             Timer.log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
         } catch (PathNotFoundException e) {
-            log.error("PathNotFoundException " + e.getMessage());
+            log.warn("URLMapping cannot be build: PathNotFoundException " + e.getMessage());
         } catch (RepositoryException e) {
-            log.error("RepositoryException " + e.getMessage());
+            log.warn("URLMapping cannot be build:  RepositoryException " + e.getMessage());
         }
 
     }
