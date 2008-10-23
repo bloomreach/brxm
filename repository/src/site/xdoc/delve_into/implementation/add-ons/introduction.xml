@@ -29,9 +29,59 @@ ________________________________________________________________________________
     <section name="Introduction to add-on development">
       <span class="shortdesc">An introduction to Hippo CMS add-on development.</span>
 
+      <p>
+        As you are developing the website, you'll need to be able to extend the 
+        the Hippo CMS.  Perhaps you have created your own 
+        <a href="../../user/information_architects/howto">Document Type</a>, a
+        <a href="">[FIXME] site map</a> or some documents with test data.
+        It is possible to capture this work in an addon, thereby making
+        it possible to use version control, use an automated build process, share
+        your work with the <a href="http://forge.hippo-ecm.org/">community</a>,
+        etcetera.
+      </p>
+
+      <subsection name="Dashboard plugin">
         <p>
-           TODO: what is possible, what not
+          When your project calls for a custom way of representing the content in the
+          repository, you have the option of creating your own plugin to achieve this.
+          As an example, you can get the dashboard to show a list of the last 5 images
+          using the <a href="http://lastimages.forge.hippo-ecm.org/">Last images plugin</a>.
         </p>
+        <p>
+          Dashboard plugins are mostly standalone, maybe using some of the services
+          as they are made available by the CMS.  See the
+          <a href="howto/gui_plugin.html">GUI Plugin</a> page for more information on
+          how to create such a plugin.
+        </p>
+      </subsection>
+
+      <subsection name="Custom Perspective">
+        <p>
+          Maybe the dashboard is too restrictive or you want to reuse some existing
+          plugins.  In this case, you have the option of creating your own perspective,
+          combining multiple plugins into a coherent view.
+        </p>
+      </subsection>
+
+      <subsection name="Templates">
+        <p>
+          In a more advanced project, document types get complex and their
+          templates need to be customized.  In this case, the CMS itself is not (yet!)
+          able to help you out but it is certainly possible to
+          <a href="howto/editing_template.html">rearrange the layout</a>
+          any way you like.
+        </p>
+
+        <p>
+          Sometimes, changing layouts is not sufficient and you need the full power of
+          an AJAX interface.  Perhaps the template has to update dynamically or
+          there are complex constraints on the type.  In this case, it is possible to
+          <a href="howto/editing_template_plugin.html">create your own template plugin</a>.
+          You can then use the developer-friendly 
+          <a href="http://wicket.apache.org/">Wicket</a> component framework to create
+          the most advanced user interfaces.
+        </p>
+      </subsection>
 
     </section>
   </body>
