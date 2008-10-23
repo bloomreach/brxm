@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+      <title>Create an Editing Template Addon</title>
+    </properties>
+    <body>
+      <section name="Create an Editing Template Addon">
+        <span class="shortdesc">You'll learn how to create an addon for a namespace.</span>
+
+        <p>
+          We'll create a simple template and export all the necessary parts to form
+          a reusable addon with a custom namespace and document types.
+        </p>
+
+        <p>
+          Create the namespace "fancy" and a type "document".
+          (see <a href="../../../user/information_architects/document_types/">Document Types</a> for instructions)
+        </p>
+
+        <img src="../../../../images/addons/fancy_document.png" alt="Fancy Document" />
+
+        <subsection name="Create a new project">
+          <p>
+            Create a maven project with the following structure:
+          </p>
+<source><![CDATA[
+./pom.xml
+./src/main/resources/hippoecm-extension.xml
+./src/main/resources/fancy.cnd
+./src/main/resources/fancy-namespace.xml
+]]></source>
+          <dl>
+            <dt>pom.xml</dt>
+            <dd>
+              For now, the project needs no dependencies as it's just making available
+              a set of resources.  Those will be used by the repository as it boots up.
+            </dd>
+            <dt>hippoecm-extension.xml</dt>
+            <dd>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+         xmlns:jcr="http://www.jcp.org/jcr/1.0"
+         xmlns:rep="internal"
+         xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
+         xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
+         xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+         xmlns:fn="http://www.w3.org/2005/xpath-functions"
+         sv:name="hippo:initialize">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializefolder</sv:value>
+  </sv:property>
+
+  <sv:node sv:name="fancy">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10050</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:namespace" sv:type="String">
+      <sv:value>http://example.org/nt/1.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
+      <sv:value>fancy.cnd</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="fancy-namespace">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>10051</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>fancy-namespace.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces</sv:value>
+    </sv:property>
+  </sv:node>
+]]></source>
+            </dd>
+            <dt>fancy.cnd</dt>
+            <dd>
+              Run "Update all Content" if you haven't done so already.
+              From the CMS console, use "CND Export" to download the
+              fancy.cnd file.  This will give you the types as currently
+              used by the repository.
+            </dd>
+          </dl>
+          <img src="../../../../images/addons/export_cnd.png" alt="Export CND" />
+          <dl>
+            <dt>fancy-namespace.xml</dt>
+            <dd>Select the node <code>/hippo:namespaces/fancy</code> and save
+              its contents.</dd>
+          </dl>
+        </subsection>
+
+        <subsection name="Build and deploy">
+          <p>
+            Build the project using maven and <a href="packaging.html">deploy it</a>.
+          </p>
+        </subsection>
+
+      </section>
+
+    </body>
+</document>

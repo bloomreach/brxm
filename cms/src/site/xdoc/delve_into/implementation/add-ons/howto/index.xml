@@ -40,6 +40,12 @@
             <a href="packaging.html">Package Hippo CMS with your own add-on</a>
           </li>
           <li>
+            <a href="editing_template.html">Create an editing template addon</a>
+          </li>
+          <li>
+            <a href="customize_editing_template.html">Customize an editing template</a>
+          </li>
+          <li>
             <a href="editing_template_plugin.html">Create an editing template plugin</a>
           </li>
           <li>
