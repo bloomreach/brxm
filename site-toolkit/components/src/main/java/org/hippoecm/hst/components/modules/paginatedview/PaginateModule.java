@@ -28,10 +28,8 @@ import javax.servlet.jsp.PageContext;
 import org.hippoecm.hst.components.modules.paginatedview.bean.PaginatedListBean;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.ContextBaseFilter;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +42,7 @@ public class PaginateModule extends ModuleBase {
 	private static final Logger log = LoggerFactory.getLogger(PaginateModule.class);
 	
 	//properties from the cms
+	public static final String URLBASE_INIT_PARAMETER = "urlBase";
 	public static final String PAGESIZE_CMS_PROPERTY = "pagesize";
 	public static final String PAGE_PARAMETER_CMS_PROPERTY = "pageParameter";
 	public static final String ELEMENTS_CMS_PROPERTY = "elements";
@@ -140,7 +139,7 @@ public class PaginateModule extends ModuleBase {
 	}
 	
 	protected String getURL(HttpServletRequest request) throws TemplateException {
-		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.URLBASE_INIT_PARAMETER);
+		String urlPrefix = (String) request.getAttribute(URLBASE_INIT_PARAMETER);
 		String url = getPropertyValueFromModuleNode("url");
 		return urlPrefix + url;
 	}

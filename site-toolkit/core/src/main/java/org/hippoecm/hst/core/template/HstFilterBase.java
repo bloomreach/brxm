@@ -46,7 +46,7 @@ public abstract class HstFilterBase implements Filter {
 	public static final String TEMPLATE_CONTEXTBASE_NAME = "templateContextBase";
 	public static final String SITEMAP_RELATIVE_LOCATION = "hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
-
+	public static final String ATTRIBUTENAME_INIT_PARAMETER = "attributeName";
 	
 	//request attributes
 	public static final String PAGENODE_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE;
@@ -117,7 +117,7 @@ public abstract class HstFilterBase implements Filter {
 	
 	
 	protected String getUrlPrefix(HttpServletRequest request) {
-		String urlPrefix = (String) request.getAttribute(ContextBaseFilter.ATTRIBUTENAME_INIT_PARAMETER);
+		String urlPrefix = (String) request.getAttribute(ATTRIBUTENAME_INIT_PARAMETER);
     	urlPrefix = (urlPrefix == null) ? "" : urlPrefix;
     	return urlPrefix;
 	}
