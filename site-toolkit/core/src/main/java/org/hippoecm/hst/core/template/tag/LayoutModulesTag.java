@@ -25,7 +25,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
@@ -35,18 +34,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LayoutModulesTag  extends BodyTagSupport {
-	private static final Logger log = LoggerFactory.getLogger(LayoutModulesTag.class);
+	
+    private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(LayoutModulesTag.class);
 	
     private String name;
-    private boolean defaultOutput = false;
     
 	@Override
 	public int doStartTag() throws JspException {  
 		
-		//PageContext pageContext = (PageContext) getJspContext(); 
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	    	
         PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
-        NodeList<PageContainerNode> containerList = pageNode.getContainers();
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
         if(pcNode == null ) {
@@ -71,18 +70,14 @@ public class LayoutModulesTag  extends BodyTagSupport {
         		PageContainerModuleNode pcm = pcmList.get(index);			
         		log.debug("pageContainerModule" + pcm);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);	
-				long start = System.currentTimeMillis();
 				pageContext.include(pcm.getTemplatePage());
-				Timer.log.debug((System.currentTimeMillis() - start) + " ms for including container '"+getName()+"' --> '" + pcm.getTemplatePage()+"'");
 				amountRenderedModules++;
 			} catch (RepositoryException e) {
-				log.error("RepositoryException:", e);
-				//throw new JspException(e);
+				log.warn("RepositoryException:", e);
 			} catch (IOException e) {
-                log.error("IOException:", e);
-                //throw new JspException(e);
+                log.warn("IOException:", e);
 			} catch (ServletException e) {
-				//throw new JspException(e);
+			    log.warn("ServletException: " , e);
 			}
         }
         
