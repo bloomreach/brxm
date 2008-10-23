@@ -67,6 +67,15 @@
    <section>Tools</section>
    <section>Api</section>
   </document>
+  <document ext="xml" fullname="xdoc/delve_into/implementation/add-ons/concepts/repository_plugins.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document short description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
+  </document>
   <document ext="xml" fullname="xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml">Frontend skin customization
    <section>Frontend skin customization</section>
    <subsection>Create your own skin</subsection>
@@ -123,6 +132,9 @@
   <document ext="xml" fullname="xdoc/delve_into/implementation/add-ons/introduction.xml">Introduction to add-on development
    <section>Introduction to add-on development</section>
    <shortdesc>An introduction to Hippo CMS add-on development.</shortdesc>
+   <subsection>Dashboard plugin</subsection>
+   <subsection>Custom Perspective</subsection>
+   <subsection>Templates</subsection>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.xml">Frontend Plugin Architecture
    <section>Frontend Plugin Architecture</section>

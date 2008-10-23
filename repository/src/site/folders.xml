@@ -40,6 +40,10 @@
    </folder>
    <folder>implementation
     <folder>add-ons
+     <folder>concepts
+      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/concepts/repository_plugins.xml'
+>repository_plugins</file>
+     </folder>
      <folder>howto
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml'
 >customize_skin</file>
@@ -56,7 +60,7 @@
      </folder>
      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/index.xml'
 >index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/introduction.xml'
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/introduction.xml'
 >introduction</file>
      <folder>reference
       <folder>frontend
