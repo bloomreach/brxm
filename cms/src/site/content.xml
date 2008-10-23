@@ -90,6 +90,8 @@
    <subsection>Adding a dependency on our plugin</subsection>
    <subsection>Running the application</subsection>
    <subsection>Configuring to application to use the plugin</subsection>
+   <img>Plugin configuration screenshot</img>
+   <img>Hello World screenshot</img>
    <section>Giving our plugin a place on the dashboard</section>
    <subsection>Adding you plugin to the repository</subsection>
    <section>Making the Hello World plugin context sensitive</section>
@@ -177,11 +179,14 @@
   <document ext="xml" fullname="xdoc/delve_into/implementation/jcr/jcr-dropbox-example.xml">Demo on interfacing with Hippo ECM Repository
    <section>Demo on interfacing with Hippo ECM Repository</section>
    <subsection>Intro</subsection>
+   <img/>
    <section>The Demo</section>
    <subsection>What's the demo all about</subsection>
    <subsection>Give me the code!</subsection>
    <subsection>How to run</subsection>
+   <img/>
    <subsection>Applying Your Own Hippo Facets</subsection>
+   <img/>
    <subsection>Try out yourself</subsection>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/implementation/jcr/jcr.xml">JCR Basics
@@ -200,24 +205,40 @@
   <document ext="xml" fullname="xdoc/delve_into/overview.xml">Delve into Hippo CMS
    <section>Delve into Hippo CMS</section>
    <shortdesc>Get to know all the details of Hippo CMS.</shortdesc>
+   <img>quickstart</img>
+   <img>use</img>
+   <img>run</img>
+   <img>implement</img>
+   <img>build</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/quickstart_in_existing_container.xml">Your own Quickstart
    <section>Your own Quickstart</section>
    <shortdesc>Quickstart in your own servlet container.</shortdesc>
    <subsection>Rubbish</subsection>
    <subsection>Deploy, run and access</subsection>
+   <img/>
+   <img/>
    <subsection>Deploy the binary distribution</subsection>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/quickstart.xml">Quickstart Steps
    <section>Quickstart Steps</section>
    <shortdesc>Quickly install and use standard Hippo CMS with example content.</shortdesc>
    <subsection>Install standard Hippo CMS with example content</subsection>
+   <img>download icon</img>
+   <img>unzip icon</img>
    <subsection>Using standard Hippo CMS with example content</subsection>
+   <img>CLI icon</img>
+   <img>web icon</img>
+   <img>user icon</img>
+   <img>quit icon</img>
    <subsection>Alternatives</subsection>
    <subsection>Next</subsection>
+   <img>user icon</img>
+   <img>admin icon</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/sysadmin/configuration/console.xml">Console
    <section>Console</section>
+   <img>the console</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/sysadmin/configuration/index.xml">Configuration
    <section>Configuration</section>
@@ -289,6 +310,8 @@
    <subsection>Obtain the EAR package</subsection>
    <subsection>Application Server</subsection>
    <subsection>Deploying in Glassfish</subsection>
+   <img/>
+   <img/>
    <h4>Integration Glassfish and NetBeans</h4>
    <subsection>Deploying in JBoss</subsection>
    <subsection>Deploying in Websphere Application Server</subsection>
@@ -316,15 +339,29 @@
    <subsection>Extending the WAR</subsection>
    <subsection>Deploy the Bundle (planned)</subsection>
    <subsection>Customizing the CMS configuration</subsection>
+   <img>/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin</img>
    <subsection>Sending feedback</subsection>
+   <img>cms plus feedback</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/sysadmin/requirements.xml">Requirements
    <section>Requirements</section>
    <shortdesc>What do you need to run Hippo CMS?</shortdesc>
    <subsection>Operating System</subsection>
+   <img>overall icon</img>
+   <img>Tested icon</img>
+   <img>support icon</img>
    <subsection>Java</subsection>
+   <img>overall icon</img>
+   <img>Tested icon</img>
+   <img>Acquire icon</img>
    <subsection>Java Servlet Container</subsection>
+   <img>overall icon</img>
+   <img>Tested icon</img>
+   <img>Acquire icon</img>
+   <img>Warn icon</img>
    <subsection>Relational Database</subsection>
+   <img>overall icon</img>
+   <img>Tested icon</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/cms_admins/index.xml">Change to the document title
    <section>Change to the document title</section>
@@ -347,15 +384,22 @@
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/creating_a_document_type_and_template.xml">Creating a document type and template
    <section>Creating a document type and template</section>
    <subsection>Create a Namespace</subsection>
+   <img>create namespace</img>
    <subsection>Create a new Type</subsection>
+   <img>create type</img>
    <subsection>Edit Model</subsection>
+   <img>edit model</img>
    <subsection>Update Content</subsection>
+   <img>edit model</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/dashboard.xml">The dashboard
    <section>The dashboard</section>
+   <img>Navigating the CMS: the dashboard</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/editing_a_document.xml">Editing a document
    <section>Editing a document</section>
+   <img>Select a document to see the 'edit' action.</img>
+   <img>Editing a document</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/index.xml">Hippo ECM tour
    <section>Hippo ECM tour</section>
@@ -364,18 +408,29 @@
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/logging_in.xml">Logging in
    <section>Logging in</section>
    <subsection>Log in</subsection>
+   <img>Logging in</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/managing_users_and_groups.xml">Managing users and groups
    <section>Managing users and groups</section>
    <subsection>Creating a new user</subsection>
+   <img>newuser</img>
+   <img>newuser</img>
+   <img>newuser</img>
    <subsection>Creating a new group</subsection>
+   <img>newgroup</img>
+   <img>newgroup</img>
+   <img>newgroup</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/navigating_the_cms.xml">Navigating the CMS
    <section>Navigating the CMS</section>
    <subsection>Static perspectives</subsection>
+   <img>Dashboard tab selected</img>
+   <img>Browse tab selected</img>
    <subsection>Dynamic perspectives</subsection>
+   <img>Document 'yourArticle' selected</img>
    <section>Navigating the repository</section>
    <subsection>Actions</subsection>
+   <img>Browse</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/contributors/tour/versioning.xml">Versioning
    <section>Versioning</section>
@@ -406,8 +461,14 @@
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/information_architects/howto/document_types/editor.xml">The Document Type Editor
    <section>The Document Type Editor</section>
+   <img>Screenshot of the document type editor</img>
    <subsection>Using the editor</subsection>
+   <img>Screenshot detail of new field type selector</img>
+   <img>Screenshot detail of field preview</img>
+   <img>Screenshot detail of field properties editor</img>
+   <img>Screenshot detail of save options</img>
    <subsection>Applying your changes</subsection>
+   <img>Screenshot detail of update content action</img>
    <subsection>Advanced</subsection>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/information_architects/howto/document_types/examples.xml">Examples of document types
@@ -416,11 +477,18 @@
   <document ext="xml" fullname="xdoc/delve_into/user/information_architects/howto/document_types/fieldtypes.xml">Field Types Reference
    <section>Field Types Reference</section>
    <subsection>String</subsection>
+   <img>screenshot detail of string widget</img>
    <subsection>Html</subsection>
+   <img>screenshot detail of html widget</img>
    <subsection>Text</subsection>
+   <img>screenshot detail of text widget</img>
    <subsection>Date</subsection>
+   <img>screenshot detail of date widget</img>
+   <img>screenshot detail of date widget with popup calendar</img>
    <subsection>Boolean</subsection>
+   <img>screenshot detail of boolean widget</img>
    <subsection>hippo:resource</subsection>
+   <img>screenshot detail of hippo:resource widget</img>
    <subsection>hippo:query</subsection>
    <subsection>hippo:facetselect</subsection>
   </document>
@@ -430,6 +498,8 @@
   <document ext="xml" fullname="xdoc/delve_into/user/information_architects/howto/document_types/tutorial.xml">Document Type Tutorial
    <section>Document Type Tutorial</section>
    <subsection>Creating your first document type</subsection>
+   <img>screenshot detail of 'create new type' action</img>
+   <img>screenshot detail of 'create new type' dialog</img>
   </document>
   <document ext="xml" fullname="xdoc/delve_into/user/information_architects/howto/index.xml">Change to the document title
    <section>Change to the document title</section>
@@ -452,6 +522,11 @@
   <document ext="xml" fullname="xdoc/index.xml">What is Hippo CMS?
    <section>What is Hippo CMS?</section>
    <shortdesc>What part of the Hippo ECM is it, what are its tasks?</shortdesc>
+   <img>web icon</img>
+   <img>multiuser icon</img>
+   <img>search icon</img>
+   <img>version icon</img>
+   <img>structure icon</img>
   </document>
   <document ext="xml" fullname="xdoc/releasing.xml">Performing a release of the Hippo-ECM suite
    <section>Performing a release of the Hippo-ECM suite</section>
