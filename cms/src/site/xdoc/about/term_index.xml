@@ -23,53 +23,11 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (377 terms)">
+    <section name="Term index (380 terms)">
       <table>
         <tr>
           <th>Term</th>
           <th>Section Title</th>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#"/>
-          </td>
-          <td>Demo on interfacing with Hippo ECM Repository</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#"/>
-          </td>
-          <td>Demo on interfacing with Hippo ECM Repository</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#"/>
-          </td>
-          <td>Demo on interfacing with Hippo ECM Repository</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart_in_existing_container.html#"/>
-          </td>
-          <td>Your own Quickstart</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart_in_existing_container.html#"/>
-          </td>
-          <td>Your own Quickstart</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/in_application_server.html#"/>
-          </td>
-          <td>Deploying in Application Server</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/in_application_server.html#"/>
-          </td>
-          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -133,6 +91,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/quickstart.html#admin_icon">admin icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Advanced">Advanced</a>
           </td>
           <td>The Document Type Editor</td>
@@ -181,15 +145,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#Applying_Your_Own_Hippo_Facets">Applying Your Own Hippo Facets</a>
-          </td>
-          <td>Demo on interfacing with Hippo ECM Repository</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Applying_your_changes">Applying your changes</a>
           </td>
           <td>The Document Type Editor</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#Applying_Your_Own_Hippo_Facets">Applying Your Own Hippo Facets</a>
+          </td>
+          <td>Demo on interfacing with Hippo ECM Repository</td>
         </tr>
         <tr>
           <td>
@@ -253,6 +217,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/overview.html#build">build</a>
+          </td>
+          <td>Delve into Hippo CMS</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/development/building/index.html#Building_Hippo_ECM">Building Hippo ECM</a>
           </td>
           <td>Building Hippo ECM</td>
@@ -283,13 +253,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/quickstart.html#CLI_icon">CLI icon</a>
+            <a href="../delve_into/user/information_architects/howto/index.html#Change_to_document_description.">Change to document description.</a>
           </td>
-          <td>Quickstart Steps</td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/user/information_architects/howto/index.html#Change_to_document_description.">Change to document description.</a>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Change_to_document_short_description.">Change to document short description.</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -320,6 +290,12 @@
         <tr>
           <td>
             <a href="../delve_into/user/information_architects/index.html#Change_to_document_short_description.">Change to document short description.</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Change_to_the_document_title">Change to the document title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -358,6 +334,18 @@
             <a href="../delve_into/user/information_architects/index.html#Change_to_the_document_title">Change to the document title</a>
           </td>
           <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#CLI_icon">CLI icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/plugins.html#cms_plus_feedback">cms plus feedback</a>
+          </td>
+          <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
@@ -433,12 +421,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/development/building/eclipse.html#Create_Eclipse_projects">Create Eclipse projects</a>
-          </td>
-          <td>Introduction</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Create_a_Namespace">Create a Namespace</a>
           </td>
           <td>Creating a document type and template</td>
@@ -454,6 +436,24 @@
             <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Create_an_Editing_Template_Plugin">Create an Editing Template Plugin</a>
           </td>
           <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/development/building/eclipse.html#Create_Eclipse_projects">Create Eclipse projects</a>
+          </td>
+          <td>Introduction</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_namespace">create namespace</a>
+          </td>
+          <td>Creating a document type and template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_type">create type</a>
+          </td>
+          <td>Creating a document type and template</td>
         </tr>
         <tr>
           <td>
@@ -505,6 +505,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#Custom_Perspective">Custom Perspective</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Customization_by_configuration">Customization by configuration</a>
           </td>
           <td>Frontend Plugin Architecture</td>
@@ -514,6 +520,12 @@
             <a href="../delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#Dashboard_plugin">Dashboard plugin</a>
+          </td>
+          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -565,15 +577,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>
-          </td>
-          <td>Installing plugins from the Hippo forge</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/quickstart_in_existing_container.html#Deploy_the_binary_distribution">Deploy the binary distribution</a>
           </td>
           <td>Your own Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/plugins.html#Deploy_the_Bundle_(planned)">Deploy the Bundle (planned)</a>
+          </td>
+          <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
@@ -691,21 +703,27 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/quickstart.html#download_icon">download icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/installation/plugins.html#Download_the_Plugin">Download the Plugin</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
-          </td>
-          <td>Frontend Plugin Architecture</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/contributors/tour/navigating_the_cms.html#Dynamic_perspectives">Dynamic perspectives</a>
           </td>
           <td>Navigating the CMS</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
+          </td>
+          <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
@@ -716,6 +734,18 @@
         <tr>
           <td>
             <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Edit_Model">Edit Model</a>
+          </td>
+          <td>Creating a document type and template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
+          </td>
+          <td>Creating a document type and template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
           </td>
           <td>Creating a document type and template</td>
         </tr>
@@ -805,6 +835,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/cms_admins/index.html#First_subsection_title">First subsection title</a>
           </td>
           <td>Change to the document title</td>
@@ -836,6 +872,18 @@
         <tr>
           <td>
             <a href="../delve_into/user/information_architects/index.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -943,6 +991,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/jcr/jcr.html#Get_access_to_your_content.">Get access to your content.</a>
+          </td>
+          <td>JCR Basics</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/installation/in_application_server.html#Get_Hippo_CMS_up_and_running_in_a_Java_application_server.">Get Hippo CMS up and running in a Java application server.</a>
           </td>
           <td>Deploying in Application Server</td>
@@ -952,12 +1006,6 @@
             <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Get_Hippo_CMS_up_and_running_in_a_Java_servlet_container.">Get Hippo CMS up and running in a Java servlet container.</a>
           </td>
           <td>Deploying in Servlet Container</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/jcr/jcr.html#Get_access_to_your_content.">Get access to your content.</a>
-          </td>
-          <td>JCR Basics</td>
         </tr>
         <tr>
           <td>
@@ -1045,6 +1093,66 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:authrole">hippo:authrole</a>
+          </td>
+          <td>Domains Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domain">hippo:domain</a>
+          </td>
+          <td>Domains Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domainrule">hippo:domainrule</a>
+          </td>
+          <td>Domains Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:facetrule">hippo:facetrule</a>
+          </td>
+          <td>Domains Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
+          </td>
+          <td>Groups Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:query">hippo:query</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#hippo:role">hippo:role</a>
+          </td>
+          <td>Roles Configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/nodes/users.html#hippo:user">hippo:user</a>
+          </td>
+          <td>Users Configuration</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
           </td>
           <td>Frontend skin customization</td>
@@ -1075,6 +1183,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/overview.html#implement">implement</a>
+          </td>
+          <td>Delve into Hippo CMS</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/data_migration.html#Importing_Content">Importing Content</a>
           </td>
           <td>Data Migration</td>
@@ -1084,6 +1198,48 @@
             <a href="../delve_into/implementation/jcr/data-migration.html#Importing_Content">Importing Content</a>
           </td>
           <td>Data Migration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/cms_admins/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/editors/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/index.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
@@ -1147,6 +1303,30 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/requirements.html#Java">Java</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#Java_application_servers">Java application servers</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/jcr.html#JCR_Basics">JCR Basics</a>
           </td>
           <td>JCR Basics</td>
@@ -1162,30 +1342,6 @@
             <a href="../delve_into/implementation/jcr/index.html#JCR_Interface">JCR Interface</a>
           </td>
           <td>JCR Interface</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#Java">Java</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/index.html#Java_application_servers">Java application servers</a>
-          </td>
-          <td>Installation</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/index.html#Java_servlet_container">Java servlet container</a>
-          </td>
-          <td>Installation</td>
         </tr>
         <tr>
           <td>
@@ -1255,6 +1411,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#multiuser_icon">multiuser icon</a>
+          </td>
+          <td>What is Hippo CMS?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/contributors/tour/navigating_the_cms.html#Navigating_the_CMS">Navigating the CMS</a>
           </td>
           <td>Navigating the CMS</td>
@@ -1270,6 +1432,42 @@
             <a href="../delve_into/user/contributors/tour/navigating_the_cms.html#Navigating_the_repository">Navigating the repository</a>
           </td>
           <td>Navigating the CMS</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
+          </td>
+          <td>Managing users and groups</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
+          </td>
+          <td>Managing users and groups</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
+          </td>
+          <td>Managing users and groups</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
+          </td>
+          <td>Managing users and groups</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
+          </td>
+          <td>Managing users and groups</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
+          </td>
+          <td>Managing users and groups</td>
         </tr>
         <tr>
           <td>
@@ -1327,6 +1525,30 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#Overview_of_a_skin_project">Overview of a skin project</a>
           </td>
           <td>Frontend skin customization</td>
@@ -1351,13 +1573,19 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Plugin_configuration_screenshot">Plugin configuration screenshot</a>
+          </td>
+          <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Plugin_Context">Plugin Context</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Plugin_configuration_screenshot">Plugin configuration screenshot</a>
+            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#pom.xml">pom.xml</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -1399,15 +1627,27 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/quickstart.html#Quickstart_Steps">Quickstart Steps</a>
+            <a href="../delve_into/overview.html#quickstart">quickstart</a>
           </td>
-          <td>Quickstart Steps</td>
+          <td>Delve into Hippo CMS</td>
         </tr>
         <tr>
           <td>
             <a href="../delve_into/quickstart_in_existing_container.html#Quickstart_in_your_own_servlet_container.">Quickstart in your own servlet container.</a>
           </td>
           <td>Your own Quickstart</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#Quickstart_Steps">Quickstart Steps</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#quit_icon">quit icon</a>
+          </td>
+          <td>Quickstart Steps</td>
         </tr>
         <tr>
           <td>
@@ -1429,12 +1669,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/repository/repository_plugins.html#Repository_Plugins">Repository Plugins</a>
-          </td>
-          <td>Repository Plugins</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/sysadmin/configuration/repository/authentication.html#Repository_based_authentication">Repository based authentication</a>
           </td>
           <td>Repository based authentication</td>
@@ -1444,6 +1678,12 @@
             <a href="../delve_into/sysadmin/configuration/repository/index.html#Repository_configuration">Repository configuration</a>
           </td>
           <td>Repository configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/reference/repository/repository_plugins.html#Repository_Plugins">Repository Plugins</a>
+          </td>
+          <td>Repository Plugins</td>
         </tr>
         <tr>
           <td>
@@ -1483,6 +1723,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/overview.html#run">run</a>
+          </td>
+          <td>Delve into Hippo CMS</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/development/building/netbeans.html#Run_/_Debug">Run / Debug</a>
           </td>
           <td>Building with Netbeans</td>
@@ -1492,6 +1738,36 @@
             <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Running_the_application">Running the application</a>
           </td>
           <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
+          </td>
+          <td>Document Type Tutorial</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
+          </td>
+          <td>Document Type Tutorial</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
+          </td>
+          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -1507,6 +1783,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_new_field_type_selector">Screenshot detail of new field type selector</a>
           </td>
           <td>The Document Type Editor</td>
@@ -1516,6 +1804,18 @@
             <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_save_options">Screenshot detail of save options</a>
           </td>
           <td>The Document Type Editor</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
+          </td>
+          <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
+          </td>
+          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -1531,6 +1831,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#search_icon">search icon</a>
+          </td>
+          <td>What is Hippo CMS?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/configuration/repository/searchindex.html#SearchIndex_configuration">SearchIndex configuration</a>
           </td>
           <td>SearchIndex configuration</td>
@@ -1540,6 +1846,12 @@
             <a href="../delve_into/sysadmin/configuration/repository/index.html#SearchIndex_element">SearchIndex element</a>
           </td>
           <td>Repository configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
@@ -1651,21 +1963,33 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#structure_icon">structure icon</a>
+          </td>
+          <td>What is Hippo CMS?</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#support_icon">support icon</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/index.html#System_Administration_Guide">System Administration Guide</a>
           </td>
           <td>System Administration Guide</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#TODO">TODO</a>
-          </td>
-          <td>Create an Editing Template Plugin</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/implementation/add-ons/reference/index.html#Technical_documentation_on_add-on_development.">Technical documentation on add-on development.</a>
           </td>
           <td>Add-on Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#Templates">Templates</a>
+          </td>
+          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -1705,6 +2029,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/configuration/console.html#the_console">the console</a>
+          </td>
+          <td>Console</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/user/contributors/tour/dashboard.html#The_dashboard">The dashboard</a>
+          </td>
+          <td>The dashboard</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#The_Demo">The Demo</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -1717,9 +2053,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/user/contributors/tour/dashboard.html#The_dashboard">The dashboard</a>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#TODO">TODO</a>
           </td>
-          <td>The dashboard</td>
+          <td>Create an Editing Template Plugin</td>
         </tr>
         <tr>
           <td>
@@ -1747,15 +2083,39 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/quickstart.html#unzip_icon">unzip icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Update_Content">Update Content</a>
           </td>
           <td>Creating a document type and template</td>
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/overview.html#use">use</a>
+          </td>
+          <td>Delve into Hippo CMS</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../about/use_cases.html#Use_cases">Use cases</a>
           </td>
           <td>Use cases</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#user_icon">user icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#user_icon">user icon</a>
+          </td>
+          <td>Quickstart Steps</td>
         </tr>
         <tr>
           <td>
@@ -1774,6 +2134,12 @@
             <a href="../delve_into/user/information_architects/howto/document_types/editor.html#Using_the_editor">Using the editor</a>
           </td>
           <td>The Document Type Editor</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#version_icon">version icon</a>
+          </td>
+          <td>What is Hippo CMS?</td>
         </tr>
         <tr>
           <td>
@@ -1798,6 +2164,18 @@
             <a href="../delve_into/sysadmin/requirements.html#Warn_icon">Warn icon</a>
           </td>
           <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/quickstart.html#web_icon">web icon</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#web_icon">web icon</a>
+          </td>
+          <td>What is Hippo CMS?</td>
         </tr>
         <tr>
           <td>
@@ -1867,12 +2245,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/jcr/jcr.html#Working_with_JCR">Working with JCR</a>
-          </td>
-          <td>JCR Basics</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/user/contributors/tour/working_with_authorizations.html#Working_with_authorizations">Working with authorizations</a>
           </td>
           <td>Working with authorizations</td>
@@ -1891,13 +2263,19 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_Configuration">Workspace Configuration</a>
+            <a href="../delve_into/implementation/jcr/jcr.html#Working_with_JCR">Working with JCR</a>
+          </td>
+          <td>JCR Basics</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
           </td>
           <td>Workspace configuration</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
+            <a href="../delve_into/sysadmin/configuration/repository/workspace.html#Workspace_Configuration">Workspace Configuration</a>
           </td>
           <td>Workspace configuration</td>
         </tr>
@@ -1921,375 +2299,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/quickstart_in_existing_container.html#Your_own_Quickstart">Your own Quickstart</a>
-          </td>
-          <td>Your own Quickstart</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/implementation/add-ons/howto/packaging.html#Your_own_pom_file">Your own pom file</a>
           </td>
           <td>Creating your own war package</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/quickstart.html#admin_icon">admin icon</a>
+            <a href="../delve_into/quickstart_in_existing_container.html#Your_own_Quickstart">Your own Quickstart</a>
           </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/overview.html#build">build</a>
-          </td>
-          <td>Delve into Hippo CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/plugins.html#cms_plus_feedback">cms plus feedback</a>
-          </td>
-          <td>Installing plugins from the Hippo forge</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_namespace">create namespace</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_type">create type</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#download_icon">download icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:authrole">hippo:authrole</a>
-          </td>
-          <td>Domains Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domain">hippo:domain</a>
-          </td>
-          <td>Domains Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:domainrule">hippo:domainrule</a>
-          </td>
-          <td>Domains Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/domains.html#hippo:facetrule">hippo:facetrule</a>
-          </td>
-          <td>Domains Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
-          </td>
-          <td>Groups Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:query">hippo:query</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/roles.html#hippo:role">hippo:role</a>
-          </td>
-          <td>Roles Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/nodes/users.html#hippo:user">hippo:user</a>
-          </td>
-          <td>Users Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/overview.html#implement">implement</a>
-          </td>
-          <td>Delve into Hippo CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/cms_admins/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/editors/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/index.html#index_word">index word</a>
-          </td>
-          <td>Change to the document title</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../index.html#multiuser_icon">multiuser icon</a>
-          </td>
-          <td>What is Hippo CMS?</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#overall_icon">overall icon</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#pom.xml">pom.xml</a>
-          </td>
-          <td>Hello World</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/overview.html#quickstart">quickstart</a>
-          </td>
-          <td>Delve into Hippo CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#quit_icon">quit icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/overview.html#run">run</a>
-          </td>
-          <td>Delve into Hippo CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../index.html#search_icon">search icon</a>
-          </td>
-          <td>What is Hippo CMS?</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../index.html#structure_icon">structure icon</a>
-          </td>
-          <td>What is Hippo CMS?</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/requirements.html#support_icon">support icon</a>
-          </td>
-          <td>Requirements</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/configuration/console.html#the_console">the console</a>
-          </td>
-          <td>Console</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#unzip_icon">unzip icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/overview.html#use">use</a>
-          </td>
-          <td>Delve into Hippo CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#user_icon">user icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#user_icon">user icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../index.html#version_icon">version icon</a>
-          </td>
-          <td>What is Hippo CMS?</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/quickstart.html#web_icon">web icon</a>
-          </td>
-          <td>Quickstart Steps</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../index.html#web_icon">web icon</a>
-          </td>
-          <td>What is Hippo CMS?</td>
+          <td>Your own Quickstart</td>
         </tr>
       </table>
     </section>
