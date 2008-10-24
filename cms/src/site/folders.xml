@@ -45,10 +45,14 @@
 >repository_plugins</file>
      </folder>
      <folder>howto
+      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/howto/customize_editing_template.xml'
+>customize_editing_template</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml'
 >customize_skin</file>
       <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/howto/editing_template_plugin.xml'
 >editing_template_plugin</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/editing_template.xml'
+>editing_template</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/gui_plugin.xml'
 >gui_plugin</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/index.xml'
