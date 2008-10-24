@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (380 terms)">
+    <section name="Term index (397 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -220,6 +220,12 @@
             <a href="../delve_into/overview.html#build">build</a>
           </td>
           <td>Delve into Hippo CMS</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#Build_and_deploy">Build and deploy</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
         </tr>
         <tr>
           <td>
@@ -427,9 +433,27 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#Create_a_new_project">Create a new project</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Create_a_new_Type">Create a new Type</a>
           </td>
           <td>Creating a document type and template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Create_a_template">Create a template</a>
+          </td>
+          <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#Create_an_Editing_Template_Addon">Create an Editing Template Addon</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
         </tr>
         <tr>
           <td>
@@ -517,6 +541,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Customize_an_Editing_Template">Customize an Editing Template</a>
+          </td>
+          <td>Customize an Editing Template</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
@@ -550,6 +580,12 @@
             <a href="../delve_into/user/information_architects/howto/document_types/fieldtypes.html#Date">Date</a>
           </td>
           <td>Field Types Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Define_the_layout">Define the layout</a>
+          </td>
+          <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
@@ -781,6 +817,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#Export_CND">Export CND</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/data_migration.html#Exporting_Content">Exporting Content</a>
           </td>
           <td>Data Migration</td>
@@ -808,6 +850,12 @@
             <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_WAR">Extending the WAR</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#Fancy_Document">Fancy Document</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
         </tr>
         <tr>
           <td>
@@ -1285,6 +1333,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Interact_with_the_template_engine">Interact with the template engine</a>
+          </td>
+          <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#Intro">Intro</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -1372,6 +1426,12 @@
             <a href="../delve_into/user/contributors/tour/logging_in.html#Logging_in">Logging in</a>
           </td>
           <td>Logging in</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Make_it_available_in_the_Document_Type_Editor">Make it available in the Document Type Editor</a>
+          </td>
+          <td>Create an Editing Template Plugin</td>
         </tr>
         <tr>
           <td>
@@ -1921,6 +1981,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Share_and_enjoy">Share and enjoy</a>
+          </td>
+          <td>Customize an Editing Template</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Sharing_Models">Sharing Models</a>
           </td>
           <td>Frontend Plugin Communication</td>
@@ -1984,6 +2050,12 @@
             <a href="../delve_into/implementation/add-ons/reference/index.html#Technical_documentation_on_add-on_development.">Technical documentation on add-on development.</a>
           </td>
           <td>Add-on Reference</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Template_repository_structure">Template repository structure</a>
+          </td>
+          <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
@@ -2053,6 +2125,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#The_model">The model</a>
+          </td>
+          <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#TODO">TODO</a>
           </td>
           <td>Create an Editing Template Plugin</td>
@@ -2092,6 +2170,18 @@
             <a href="../delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Update_Content">Update Content</a>
           </td>
           <td>Creating a document type and template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Update_project">Update project</a>
+          </td>
+          <td>Customize an Editing Template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Update_template">Update template</a>
+          </td>
+          <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
@@ -2296,6 +2386,18 @@
             <a href="../delve_into/implementation/add-ons/howto/workflow.html#Writing_the_method_that_performs_the_workflow_step">Writing the method that performs the workflow step</a>
           </td>
           <td>Developing workflows</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#You'll_learn_how_to_create_a_template_with_a_custom_layout.">You'll learn how to create a template with a custom layout.</a>
+          </td>
+          <td>Customize an Editing Template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/howto/editing_template.html#You'll_learn_how_to_create_an_addon_for_a_namespace.">You'll learn how to create an addon for a namespace.</a>
+          </td>
+          <td>Create an Editing Template Addon</td>
         </tr>
         <tr>
           <td>
