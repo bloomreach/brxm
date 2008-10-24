@@ -23,18 +23,15 @@
     </properties>
     <body>
         <section name="Deploying in Application Server">
-          <span class='shortdesc'>Get Hippo CMS up and running in a Java application server.</span>
+          <span class='shortdesc'>Get Hippo CMS up and running in a Java <span class='index' id='application_server'>application server</span>.</span>
 
             <subsection name="Obtain the EAR package">
               <p>
                 To deploy Hippo ECM in an application server, download the
-                EAR package.
-                <span class='expire_event'>release</span>Hippo ECM is still under development, 
-                but you can already get a snapshot version:
-                <span class='rewrite'>Why is this the quickstart? It seems that the normal package should be downloadable here, or both.</span>
+                EAR package:
               </p>
 <source>
-  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.13536/hippo-ecm-quickstart-ear-2.01.00.13536.ear'>Quickstart EAR</a>
+  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-ear/2.01.00.14160/hippo-ecm-quickstart-ear-2.01.00.14160.ear'>Quickstart EAR</a>
 </source>
 <p>
 The EAR package takes advantage of the extra possibilities of application servers (as compared to servlet containers).
@@ -45,7 +42,7 @@ The EAR package takes advantage of the extra possibilities of application server
                 <p>
                  Your application server is expected to be configured correctly and up and running.
                  Consult the instructions of the supplier of your application server. 
-		</p>
+                </p>
                 <p>
                   The procedure to deploy an EAR package in an application server is similar but 
                   slightly different for different application servers.
@@ -55,9 +52,9 @@ The EAR package takes advantage of the extra possibilities of application server
                 </p>
             </subsection>
 
-	    <subsection name="Deploying in Glassfish">
+            <subsection name="Deploying in Glassfish">
                 <p>                   
-                  Go to the administration console of your <a href="https://glassfish.dev.java.net/">GlassFish</a>
+                  Go to the administration console of your <a href="https://glassfish.dev.java.net/"><span class='index' id='glassfish'>GlassFish</span></a>
                   installation, once glassfish is running,
                   by accessing the following URL in your browser on the machine that runs the GlassFish
                   instance:
@@ -109,25 +106,24 @@ http://localhost:8080/
                   <code>Servers -> GlassFish V2 -> Applications -> Enterprise Applications</code>.
                 </p>
 
-              </subsection>
+            </subsection>
 
-	    <subsection name="Deploying in JBoss">
+            <subsection name="Deploying in JBoss">
+              <p>
+                To deploy the Hippo Repository in <span class='index' id='jboss'>JBoss</span> the port number of the repository-address context parameter has to be adjusted.
+              </p>
+<source>
+    &lt;context-param&gt;
+        &lt;param-name&gt;repository-address&lt;/param-name&gt;
+        &lt;param-value&gt;rmi://localhost:1099/hipporepository&lt;/param-value&gt;
+        &lt;description&gt;The address of the repository&lt;/description&gt;
+    &lt;/context-param&gt;
+</source>
+              <p>
+                JBoss by default already starts a service on port 1099. Change the port number to a free port number.
+              </p>
+            </subsection>
 
-             <span class='add'>This section, if desired. Note that some customer had problems with JBoss and found a workaround. That should be described here. I do not know where the information about that can be found.</span>
-
-	    </subsection>
-
-	    <subsection name="Deploying in Websphere Application Server">
-
-             <span class='add'>This section, if desired.</span>
-
-	    </subsection>
-
-	    <subsection name="Deploying in Weblogic Server">
-
-             <span class='add'>This section, if desired.</span>
-
-	    </subsection>
 
         </section>
     </body>
