@@ -106,6 +106,13 @@ http://localhost:8080/
                   <code>Servers -> GlassFish V2 -> Applications -> Enterprise Applications</code>.
                 </p>
 
+              <h4>Glassfish and Ubuntu</h4>
+                <span class='expires'>
+                The <a href='http://packages.ubuntu.com/hardy/glassfishv2'>Ubuntu package Glassfish V2</a> 
+                works, but only if dpkg-reconfigure is never used on the package, as the package 
+                contains a 
+                 <a href='https://bugs.launchpad.net/ubuntu/+source/glassfishv2/+bug/257362'>severe bug with respect to this command</a>. 
+                 </span>
             </subsection>
 
             <subsection name="Deploying in JBoss">
