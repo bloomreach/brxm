@@ -96,7 +96,7 @@
               We'll be changing this part of the tree.
             </dd>
           </dl>
-          <img src="../../../../images/addons/template_structure.png" alt="Template repository structure" />
+          <img src="../../../images/addons/template_structure.png" alt="Template repository structure" />
           <p>
             The template itself describes a plugin-cluster, a set of plugins
             that work together.  The top node ("a0d592bd-368c-46da-803" in the

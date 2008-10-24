@@ -221,11 +221,14 @@
       <item name="CMS Customization" href="/delve_into/addons/index.html" collapse="true">
         <item name="Introduction" href="/delve_into/addons/introduction.html" />
         <item name="Howto" href="/delve_into/addons/howto/index.html" collapse="true">
+          <item name="GUI Plugin" href="/delve_into/addons/howto/gui_plugin.html"/>
+          <item name="Package Plugin" href="/delve_into/addons/howto/packaging.html"/>
+          <item name="Extend Dashboard" href="/delve_into/addons/howto/extend_dashboard.html"/>
+          <item name="Share Model" href="/delve_into/addons/howto/hello_model.html"/>
           <item name="Customize Editing Template" href="/delve_into/addons/howto/customize_editing_template.html"/>
           <item name="Editing Template Plugin" href="/delve_into/addons/howto/editing_template_plugin.html"/>
           <item name="Customize Skin" href="/delve_into/addons/howto/customize_skin.html"/>
           <item name="Custom Workflow" href="/delve_into/addons/howto/workflow.html"/>
-          <item name="GUI Plugin" href="/delve_into/addons/howto/gui_plugin.html"/>
         </item>
         <item name="Reference Guide" href="/delve_into/addons/reference/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/addons/reference/repository/repository_plugins.html"> </item>
