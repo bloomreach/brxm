@@ -37,13 +37,13 @@ public abstract class PagingModuleBase extends ModuleBase implements PagingModul
         try {           
             try {
                 propertyValue = pageContainerModule.getPropertyValue(PagingModule.PAGESIZE_CMS_PROPERTY);
-            } catch (Exception e) {
-                log.error("Cannot get value", e);
+            } catch (TemplateException e) {
+                log.warn("TemplateException: Cannot get value", e);
                 return DEFAULT_PAGESIZE;
             }
             return Integer.valueOf(propertyValue);          
         } catch (NumberFormatException e) {
-            log.error("Cannot parse attribute " + PagingModule.PAGESIZE_CMS_PROPERTY + " with value " + propertyValue);
+            log.warn("Cannot parse attribute " + PagingModule.PAGESIZE_CMS_PROPERTY + " with value " + propertyValue);
         } 
         return DEFAULT_PAGESIZE;
     }
