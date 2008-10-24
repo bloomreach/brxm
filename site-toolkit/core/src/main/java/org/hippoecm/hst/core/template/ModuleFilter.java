@@ -100,12 +100,6 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 			}
 		}
 	}
-	
-	public static ModuleNode getModuleNode(HttpServletRequest request, String moduleName) throws RepositoryException {
-		PageNode currentPageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
-		ModuleNode moduleNode = currentPageNode.getModuleNodeByName(moduleName);
-		return moduleNode;
-	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
 		super.init(filterConfig);
