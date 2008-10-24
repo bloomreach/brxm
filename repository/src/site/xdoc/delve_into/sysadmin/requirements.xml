@@ -25,10 +25,6 @@
     <section name="Requirements">
      <span class='shortdesc'>What do you need to run Hippo CMS?</span>
 
-     <span class='add'>A table to show an overview of the requirements and support stacks. For support stacks see <a href='http://www.alfresco.com/services/support/stacks/2.2/'/></span>
-     <span class='review'>Check agains http://www.hippocms.org/display/CMS/01.2+Hardware+Requirements</span>
-     <span class='review'>Check if all statements true.</span>
-
       <subsection name="Operating System">
       
       <blockquote>  
@@ -39,11 +35,11 @@
      <em><img src='../images/overall.png' alt='overall icon'/></em> 
    </td>
           <td>
-              The Hippo ECM software runs on all modern operating systems
+              Hippo CMS runs on all modern operating systems
               that run <a href='http://www.sun.com/'>Sun</a>'s 
               <span class='expires'>Java 6 (or 5)</span> 
-              correctly and put no severe limitations on allowed filenames and system calls.
-	  </td>
+              correctly.
+    </td>
          </tr>
 
 
@@ -54,17 +50,15 @@
    <td>
      <em><img src='../images/tested.png' alt='Tested icon'/></em> 
    </td>
-          <td>Hippo continuously tests the ECM on 
-              <span class='expires'>
+          <td>Hippo continuously tests Hippo CMS on 
   <a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft Windows XP</a>
    and Linux: 
   <a href='http://www.ubuntu.com/'>Ubuntu</a>, 
   <a href='http://www.slackware.com/'>Slackware</a> and 
   <a href='http://www.debian.org'>Debian</a>.
-  </span> 
-              The Hippo ECM is also tested on other systems.  
+              Hippo CMS is also tested on other systems.  
           </td>
-	 </tr>
+     </tr>
 
 
          <tr>
@@ -74,7 +68,7 @@
      <em><img src='../images/support.png' alt='support icon'/></em> 
    </td>
 
-          <td>Hippo <span class='expires'>will support the new ECM</span> on all 
+          <td>Hippo will support running Hippo CMS on all 
               modern <a href='http://www.microsoft.com'>Microsoft</a> Windows 
               and 
               <a href='http://www.linux.org/'>Linux</a> 
@@ -93,21 +87,9 @@
               Support for other
               systems is also possible.
           </td>
-	 </tr>
-	</table>
+    </tr>
+    </table>
       </blockquote>
-          <!--
-          <ul>
-          <li>Windows XP/2000, Windows Server 2003</li>
-          <li>Linux: RedHat (RHEL), SUSE (SLES), Ubuntu, Debian, Slackware and other distributions</li>
-          <li><p>FreeBSD and other BSD variants</p></li>
-          <li><p>Solaris 9/10 and OpenSolaris</p></li>
-          <li><p>IBM AIX</p></li>
-          <p>
-           It should be possible to run the software on any POSIX compliant Operating System.
-           <m:statement>Hippo ECM will not run on any POSIX compliant Operating System.<m:statement>
-          </p>
-          -->
       </subsection>
 
       <subsection name="Java">
@@ -121,11 +103,10 @@
    </td>
    <td>
           <a href='http://java.com/en/download/help/'>Sun's Java Virtual Machine</a>, JVM 6 (or 5). 
-          In most modern systems it is pre-installed in some form.
-          The JVM is also called the Java runtime environment (JRE) or just Java. <!-- http://java.com/en/download/help/ --> 
-          A Java development kit (JDK) contains a JVM.
+          The JVM is also called the Java Runtime Environment (JRE) or just Java.
+          The Java Development Kit (JDK) contains the JVM.
    </td>
-	 </tr>
+    </tr>
          <tr>
           <td>
            Tested
@@ -133,19 +114,11 @@
    <td>
      <em><img src='../images/tested.png' alt='Tested icon'/></em> 
    </td>
-          <td>Hippo continuously tests the ECM with 
-              <a href='http://java.com/en/download/index.jsp'>Java JVM 6 as 
-              supplied by Sun Microsystems</a>. Occasionally it is tested 
-              with <span class=''>Linux Ubuntu package sun-java6-jre</span>.
+          <td>Hippo continuously tests Hippo CMS with 
+              <a href='http://java.com/en/download/index.jsp'>Java JVM 5 and 6 as 
+              supplied by Sun Microsystems</a>. 
           </td>
-   <!--
-        <ul>
-          <li><p>Sun JVM</p></li>
-          <li><p>IBM JVM</p></li>
-          <li><p>BEA JRockit</p></li>
-        </ul>
-    -->
-	 </tr>
+    </tr>
       <tr>
        <td>
          Acquire
@@ -167,17 +140,9 @@
           and in other ways. Only packages 
           that ask you to agree to Sun's licence terms contain Java from
           <a href='http://www.sun.com/'>Sun Microsystems</a> and will run the Hippo ECM.
-      <p> 
-          In pure <a href='http://www.gnu.org/copyleft/gpl.html'>GPL</a> 
-          distributions like <a href='http://www.debian.org'>Debian Linux</a>,
-          such packages are forbidden in section `main' and can therefor
-          never be pre-installed. They can however be found in section `non-free' and
-          installed additionally (e.g. <a href='http://packages.debian.org/lenny/sun-java6-jdk'>JDK 6</a>). 
-          Most Linux distributions have less strict rules.         
-      </p>
    </td>
       </tr>
-	</table>
+    </table>
       </blockquote>
 
       </subsection>
@@ -192,12 +157,10 @@
    <td>
      <em><img src='../images/overall.png' alt='overall icon'/></em> 
    </td>
-   <td>Hippo ECM works in any Java Servlet container, conforming to version
+   <td>Hippo CMS works in any Java Servlet container or Java application server, conforming to version
        <span class='confirm'>2.4</span> of the 
        <a href='http://java.sun.com/products/servlet/reference/api/index.html'>Sun Servlet container 
-       specification</a>. <!-- alt: http://java.sun.com/products/servlet/download.html#specs -->
-       Java application servers include the functionality of Java Servlet containers, so
-       can also be used.
+       specification</a>. 
    </td>
    </tr>
  
@@ -209,23 +172,15 @@
      <em><img src='../images/tested.png' alt='Tested icon'/></em> 
    </td>
           <td>
-              <span class='expires'>Hippo continuously tests the ECM with 
+              <span class='expires'>Hippo continuously tests Hippo CMS with 
                <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> 6.1
-               and also often with 
+               ,
                <a href='http://tomcat.apache.org/'>Tomcat</a> 6. 
-               Occasionally it is tested 
-               with                
+               and 
                <a href='https://glassfish.dev.java.net/public/users.html'>Sun GlassFish</a> V2.
-               All these tested servlet and application
-               containers are origional, no packages supplied by websites of Linux distributions.
               </span>
-       <span class='expires'>
-        The <a href='http://packages.ubuntu.com/hardy/glassfishv2'>Linux Ubuntu package of Glassfish V2</a>
-        was reported in Sept 2008 to run
-        Hippo ECM, but a bug has to be avoided (see Warnings).
-       </span>
           </td>
-	 </tr>
+     </tr>
 
       <tr>
        <td>
@@ -251,41 +206,8 @@
    </td>
       </tr>
 
-      <tr>
-       <td>
-         Warnings
-       </td>
-   <td>
-     <em><img src='../images/warnings.png' alt='Warn icon'/></em> 
-   </td>
-   <td>    
-      <span class='expires'>
-        The application server JBoss was reported in Sept 2008 not to run Hippo ECM.
-      </span>
-      <span class='expires'>
-        The Debian package of the servlet container Tomcat 5.5 was reported in Aug 2008 not to run
-        Hippo ECM.
-      </span>
-      <span class='expires'>
-        The <a href='http://packages.ubuntu.com/hardy/glassfishv2'>Ubuntu package Glassfish V2</a> 
-        works, but only if
-        dpkg-reconfigure is never used on the package, as the package 
-        contains a 
-        <a href='https://bugs.launchpad.net/ubuntu/+source/glassfishv2/+bug/257362'>severe bug with respect to this command</a>. 
-      </span>
-   </td>
-      </tr>
-
-	</table>
+</table>
       </blockquote>
-
-        <!--
-          <li><p>IBM WebSphere Application Server 6</p></li>
-          <li><p>BEA WebLogic Server 10</p></li>
-          <li><p>JBoss Application Server 4</p></li>
-          <li><p>Sun ONE Application Server and Sun Glassfish V2</p></li>
-        -->
-
       </subsection>
 
 
@@ -300,16 +222,16 @@
    </td>
       
    <td>
-          Hippo ECM uses a relational database for it's datastorage. By default 
+          Hippo CMS uses a relational database for it's datastorage. By default 
           <a href='http://db.apache.org/derby/'>Apache Derby</a>
           is embedded and configured and runs "out of the box". 
-          Hippo ECM can easily be configured to use an other relational database. 
+          Hippo CMS can easily be configured to use an other relational database. 
           Possibilities are e.g.:
         <ul>
-          <li>MySQL 4.1, 5.0 and 5.1</li>
-          <li>PosgreSQL 8</li>
-          <li>Oracle 9 and 10</li>
-          <li>MS SQLServer</li>
+          <li>MySQL 5.0 and 5.1</li>
+          <li>PosgreSQL 8.0 or newer</li>
+          <li>Oracle 9.2, 10 and 11</li>
+          <li>MS SQLServer 2000 or newer</li>
         </ul>         
    </td>
    </tr>
@@ -321,13 +243,14 @@
    <td>
      <em><img src='../images/tested.png' alt='Tested icon'/></em> 
    </td>
-          <td>Hippo ECM is contineously tested with the 
-              <a href='http://db.apache.org/derby/'>Apache Derby</a> 
-              relational database.
+          <td>Hippo ECM is contineously tested with 
+              <a href="http://db.apache.org/derby/">Apache Derby</a> 
+              and 
+              <a href="http://www.mysql.com">MySQL</a>.
           </td>
-	 </tr>
+    </tr>
 
-	</table>
+    </table>
       </blockquote>
 
       </subsection>
