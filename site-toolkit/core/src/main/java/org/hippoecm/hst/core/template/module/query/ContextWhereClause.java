@@ -107,7 +107,7 @@ public class ContextWhereClause {
             }
 
         } catch (RepositoryException e) {
-            log.error("Cannot prepare statement: RepositoryException " + e.getMessage());
+            log.warn("Cannot prepare statement: RepositoryException " + e.getMessage());
             return null;
         }
         

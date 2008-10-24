@@ -92,7 +92,7 @@ public class SearchModule extends ModuleBase implements Search {
             }
         }
         if (target == null) {
-            log.error("Target is not allowed to be null: skipping search");
+            log.warn("Target is not allowed to be null: skipping search");
             validStatement = false;
             return;
         }
@@ -380,7 +380,7 @@ public class SearchModule extends ModuleBase implements Search {
                     }
                     hits.add(searchHit);
                 } catch (ItemNotFoundException e) {
-                    log.error("Unable to get search hit. Item might be removed. Continue with next " + e.getMessage());
+                    log.warn("Unable to get search hit. Item might be removed. Continue with next " + e.getMessage());
                 }
 
             }
@@ -396,7 +396,7 @@ public class SearchModule extends ModuleBase implements Search {
                         searchResult.setDidyoumean(v.getString());
                     }
                 } catch (RepositoryException e) {
-                    log.error("error trying to find 'didyoumean' term");
+                    log.warn("error trying to find 'didyoumean' term");
                 }
 
             }
@@ -409,9 +409,9 @@ public class SearchModule extends ModuleBase implements Search {
             
             
         } catch (InvalidQueryException e) {
-            log.error("InvalidQueryException " + e.getMessage() + " for : " + statement);
+            log.warn("InvalidQueryException " + e.getMessage() + " for : " + statement);
         } catch (RepositoryException e) {
-            log.error("RepositoryException while executing search " + e.getMessage());
+            log.warn("RepositoryException while executing search " + e.getMessage());
         }
 
         super.render(pageContext);
@@ -422,7 +422,7 @@ public class SearchModule extends ModuleBase implements Search {
             Integer.parseInt(stringInt);
             return true;
         } catch (NumberFormatException e) {
-            log.error("parameter '" + name + "=" + stringInt + "' cannot be parsed as integer and will be skipped.");
+            log.warn("parameter '" + name + "=" + stringInt + "' cannot be parsed as integer and will be skipped.");
         }
         return false;
     }
