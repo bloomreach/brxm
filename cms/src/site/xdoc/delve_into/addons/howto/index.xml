@@ -27,19 +27,32 @@
         <span class="shortdesc">Learn how to make your own add-ons.</span>
 
         <p>
-          You have read the <a href="../introduction.html">introduction to
-          add-on development</a>, so you have an idea of what is possible. Now
-          you want to know how to do it!  You are in the right place.  The
-          howto guides in this section teach you how you can create all kinds
-          of different add-ons. Time to get your hands dirty!
+          You have read the <a href="../introduction.html">introduction to add-on development</a>,
+          so you have an idea of what is possible. Now you want to know how to do it!
+          You are in the right place.
+          The howto guides in this section teach you how you can create
+          all kinds of different add-ons. Time to get your hands dirty!
         </p>
+
 
         <ul>
           <li>
-            <a href="editing_template.html">Create an editing template addon</a>
+            <a href="packaging.html">Package Hippo CMS with your own add-on</a>
           </li>
           <li>
-            <a href="packaging.html">Package Hippo CMS with your own add-on</a>
+            <a href="customize_editing_template.html">Customize an editing template</a>
+          </li>
+          <li>
+            <a href="editing_template_plugin.html">Create an editing template plugin</a>
+          </li>
+          <li>
+            <a href="customize_skin.html">Customize the Hippo CMS skin</a>
+          </li>
+          <li>
+            <a href="workflow.html">Create a custom workflow</a>
+          </li>
+          <li>
+            <a href="gui_plugin.html">Create a GUI plugin</a>
           </li>
         </ul>
 

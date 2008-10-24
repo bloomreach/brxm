@@ -165,21 +165,21 @@
          <item name="Java" collapse="true" href="/delve_into/sysadmin/requirements.html#Java"/>
          <item name="Servlet Container" collapse="true" href="/delve_into/sysadmin/requirements.html#Java_Servlet_Container"/>
          <item name="Relational Database" collapse="true" href="/delve_into/sysadmin/requirements.html#Relational_Database"/>
-	</item>
+        </item>
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
          <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
            <item name="Tomcat" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat"/>
            <item name="Jetty" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Jetty"/>
-	 </item>
+         </item>
          <item name="in Application Server" collapse="true" href="/delve_into/sysadmin/installation/in_application_server.html">
            <item name="Download EAR" href="/delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package"/>
            <item name="GlassFish" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Glassfish"/>
            <item name="JBoss" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_JBoss"/>
            <item name="Websphere" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Webspere_Application_Server"/>
            <item name="Weblogic" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Weblogic_Server"/>
-	 </item>
+         </item>
          <item name="of Plugins" href="/delve_into/sysadmin/installation/plugins.html"/>
-	</item>
+        </item>
         <item name="Configuration" href="/delve_into/sysadmin/configuration/index.html" collapse="true">
           <item name="Repository" href="/delve_into/sysadmin/configuration/repository/index.html" collapse="true">
             <item name="Workspace" href="/delve_into/sysadmin/configuration/repository/workspace.html"/>
@@ -202,21 +202,8 @@
         <item name="Web Add-ons" href="/delve_into/implementation/add-ons/index.html" collapse="true">
           <item name="Introduction" href="/delve_into/implementation/add-ons/introduction.html" />
           <item name="Howto" href="/delve_into/implementation/add-ons/howto/index.html" collapse="true">
+            <item name="Editing Template" href="/delve_into/implementation/add-ons/howto/editing_template.html"/>
             <item name="Packaging" href="/delve_into/implementation/add-ons/howto/packaging.html"/>
-            <item name="Editing Template Plugin" href="/delve_into/implementation/add-ons/howto/editing_template_plugin.html"/>
-            <item name="Customize Skin" href="/delve_into/implementation/add-ons/howto/customize_skin.html"/>
-            <item name="Custom Workflow" href="/delve_into/implementation/add-ons/howto/workflow.html"/>
-            <item name="GUI Plugin" href="/delve_into/implementation/add-ons/howto/gui_plugin.html"/>
-          </item>
-          <item name="Reference Guide" href="/delve_into/implementation/add-ons/reference/index.html" collapse="true">
-            <item name="Repository Plugins" href="/delve_into/implementation/add-ons/reference/repository/repository_plugins.html"> </item>
-            <item name="Frontend Plugins" href="/delve_into/implementation/add-ons/reference/frontend/index.html" collapse="true">
-              <item name="Architecture" href="/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html"/>
-              <item name="Communication" href="/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html"/>
-            </item>
-          </item>
-          <item name="List of Concepts" href="/delve_into/implementation/add-ons/concepts/index.html" collapse="true">
-            <item name="Repository Plugins" href="/delve_into/implementation/add-ons/concepts/repository_plugins.html"> </item>
           </item>
         </item>
         <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
@@ -224,15 +211,33 @@
           <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
           <item name="Data Migration" href="/delve_into/implementation/jcr/data_migration.html"/>
         </item>
-        <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
 
-      <item name="Add-ons" href="/delve_into/addons/index.html" collapse="true">
-       <item name="JCR" href="/delve_into/addons/jcr/index.html" collapse="true">       
-        <item name="Reference Guide" href="/delve_into/addons/jcr/reference/index.html" collapse="true">
-         <item name="Derived Data" href="/delve_into/addons/jcr/derived_data.html"/>
+      <item name="CMS Customization" href="/delve_into/addons/index.html" collapse="true">
+        <item name="Introduction" href="/delve_into/addons/introduction.html" />
+        <item name="Howto" href="/delve_into/addons/howto/index.html" collapse="true">
+          <item name="Customize Editing Template" href="/delve_into/addons/howto/customize_editing_template.html"/>
+          <item name="Editing Template Plugin" href="/delve_into/addons/howto/editing_template_plugin.html"/>
+          <item name="Customize Skin" href="/delve_into/addons/howto/customize_skin.html"/>
+          <item name="Custom Workflow" href="/delve_into/addons/howto/workflow.html"/>
+          <item name="GUI Plugin" href="/delve_into/addons/howto/gui_plugin.html"/>
         </item>
-       </item>
+        <item name="Reference Guide" href="/delve_into/addons/reference/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve_into/addons/reference/repository/repository_plugins.html"> </item>
+          <item name="Frontend Plugins" href="/delve_into/addons/reference/frontend/index.html" collapse="true">
+            <item name="Architecture" href="/delve_into/addons/reference/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication" href="/delve_into/addons/reference/frontend/frontend-plugin-communication.html"/>
+          </item>
+        </item>
+        <item name="JCR" href="/delve_into/addons/jcr/index.html" collapse="true">
+          <item name="Reference Guide" href="/delve_into/addons/jcr/reference/index.html" collapse="true">
+            <item name="Derived Data" href="/delve_into/addons/jcr/derived_data.html"/>
+          </item>
+        </item>
+        <item name="List of Concepts" href="/delve_into/addons/concepts/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve_into/addons/concepts/repository_plugins.html"> </item>
+        </item>
+        <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
 
       <item name="Hacking the core" href="/delve_into/development/index.html" collapse="true">
