@@ -77,7 +77,6 @@
                 <sv:property sv:name="hst:nodetype" sv:type="String">
                     <sv:value>hippo:resource</sv:value>
                     <sv:value>hippo:document</sv:value>
-                    <sv:value>hippo:document</sv:value>
                 </sv:property>
             </sv:node>
         </sv:node>
