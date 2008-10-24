@@ -430,7 +430,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-tree .wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 .hippo-tree .wicket-tree .row a {color: #333333}
 .hippo-tree .wicket-tree div.a_{width: 100%; display:block; margin-left: 0px; padding-left: 0px;}
-.hippo-tree .wicket-tree .row {width:auto;}
+.hippo-tree .wicket-tree .row {width:1000px}
 .hippo-tree .wicket-tree .row-selected a {}
 .hippo-tree .wicket-tree .row a:hover{color: #4b82c6; text-decoration: underline}
 .hippo-tree .wicket-tree .row-selected { overflow:hidden;}
