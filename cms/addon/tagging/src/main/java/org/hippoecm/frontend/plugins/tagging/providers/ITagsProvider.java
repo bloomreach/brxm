@@ -16,10 +16,11 @@
 package org.hippoecm.frontend.plugins.tagging.providers;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugins.tagging.TagCollection;
 
-public interface ITagsProvider {
+public interface ITagsProvider extends IPlugin{
     final static String SVN_ID = "$Id$";
-    
+
     public TagCollection getTags(JcrNodeModel nodeModel);
 }

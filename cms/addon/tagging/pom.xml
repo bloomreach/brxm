@@ -91,7 +91,6 @@
           <include>**/*.properties</include>
         </includes>
       </resource>
-<!--
       <resource>
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
@@ -100,7 +99,6 @@
           <include>**/*.xml</include>
         </includes>
       </resource>
--->
     </resources>
     <plugins>
       <plugin>

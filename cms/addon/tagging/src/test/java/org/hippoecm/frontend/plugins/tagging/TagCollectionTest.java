@@ -40,7 +40,7 @@ public class TagCollectionTest {
         assertEquals(2, col.size());
         Tag test1 = col.getTag(tag1);
         assertEquals("test1", test1.getName());
-        assertEquals(2, test1.getScore());
+        assertEquals(2.0, test1.getScore());
         
         Tag tag3 = new Tag("test3");
         col.add(tag3);
@@ -49,30 +49,63 @@ public class TagCollectionTest {
         
         assertEquals(3, col.size());
         Tag test2 = col.get(tag22.getName());
-        assertEquals(6, test2.getScore());
+        assertEquals(6.0, test2.getScore());
+    }
+    
+    @Test
+    public void normalize(){
+        // create 1 collection with tags and normalize
+        TagCollection col = new TagCollection();
+        col.add(new Tag("tag1", 0.0));
+        col.add(new Tag("tag2", 100.0));
+        col.normalizeScores();
+        assertEquals(0.0, col.get("tag1").getScore());
+        assertEquals(100.0, col.get("tag2").getScore());
+        // create an other collection with another multiplier and add it (does implicit normalize on col2)
+        TagCollection col2 = new TagCollection();
+        col2.add(new Tag("tag3", 25.0));
+        col2.add(new Tag("tag4", 50.0));
+        col2.setMultiplier(2);
+        col.addAll(col2);
+        assertEquals(200.0, col.get("tag4").getScore());
+        assertEquals(100.0, col.get("tag3").getScore());
+        // now normalize main collection (again)
+        col.normalizeScores();
+        assertEquals(100.0, col.get("tag4").getScore());
+        assertEquals(50.0, col.get("tag3").getScore());
+        assertEquals(50.0, col.get("tag2").getScore());
     }
     
     @Test
     public void addAll(){
         TagCollection col1 = new TagCollection();
-        col1.add(new Tag("tag1"));
-        col1.add(new Tag("tag2"));
-        col1.add(new Tag("tag3"));
+        col1.add(new Tag("tag1")); // score 1
+        col1.add(new Tag("tag2")); // score 1
+        col1.add(new Tag("tag3")); // score 1
         
         TagCollection col2 = new TagCollection();
+        // will double the scores of this collection (after normalization)
         col2.setMultiplier(2);
-        col2.add(new Tag("test1"));
-        col2.add(new Tag("test2", 2));
-        col2.add(new Tag("tag1"));
-        col2.add(new Tag("tag2", 2));
+        col2.add(new Tag("test1")); // score 1, after norm. 50.0
+        col2.add(new Tag("test2", 2)); // score 2, after norm. 100.0
+        col2.add(new Tag("tag1")); // score 1, after norm. 50.0
+        col2.add(new Tag("tag2", 2)); // score 1, after norm. 100.0
         
-        col1.addAll(col2);
+        col1.addAll(col2); // normalizes, multiplies and adds
         
         assertEquals(5, col1.size());
-        Tag tag1 = col1.getTag(new Tag("tag1"));
+        Tag tag1 = col1.get("tag1");
         assertEquals("tag1", tag1.getName());
-        assertEquals(3, tag1.getScore());
-        assertEquals(5, col1.getTag(new Tag("tag2")).getScore());
-        assertEquals(4, col1.getTag(new Tag("test2")).getScore());
+        assertEquals(101.0, tag1.getScore());
+        assertEquals(201.0, col1.get("tag2").getScore());
+        assertEquals(200.0, col1.get("test2").getScore());
+    }
+    
+    @Test
+    public void ToString(){
+        TagCollection col = new TagCollection();
+        col.add(new Tag("tag1"));
+        col.add(new Tag("tag2"));
+        assertEquals("tag1, tag2, ", col.toString());
     }
 }

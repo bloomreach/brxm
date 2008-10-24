@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.tagging;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,7 +25,7 @@ import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TagCollection extends TreeMap<String, Tag> implements Iterable<IModel>{
+public class TagCollection extends TreeMap<String, Tag> implements Iterable<IModel>, Serializable{
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -54,6 +55,7 @@ public class TagCollection extends TreeMap<String, Tag> implements Iterable<IMod
 
     public void addAll(TagCollection col) {
         TagCollection collection = (TagCollection) col.clone();
+        collection.normalizeScores();
         while (collection.size() > 0){
             String name = collection.firstKey();
             Tag tag = collection.get(name);
@@ -68,6 +70,8 @@ public class TagCollection extends TreeMap<String, Tag> implements Iterable<IMod
     }
 
     public Iterator<IModel> iterator() {
+        //return this.values().iterator();
+        // werkt niet Tag vs IModel probleem
         TreeSet<IModel> set = new TreeSet<IModel>();
         for (Iterator<Map.Entry<String, Tag>> i = this.entrySet().iterator(); i.hasNext(); ){
             set.add(i.next().getValue());
@@ -75,5 +79,45 @@ public class TagCollection extends TreeMap<String, Tag> implements Iterable<IMod
         return set.iterator();
     }
     
+    public String toString(){
+        StringBuffer buffer = new StringBuffer();
+        for (Iterator<Tag> i = this.values().iterator(); i.hasNext();){
+            Tag t = i.next();
+            buffer.append(t.getName());
+            buffer.append(", ");
+        }
+        return buffer.toString();
+    }
     
+    /**
+     * Iterate over tags and normalize to a score between 0 and 100
+     * @todo should this manipulate the current collection or return a new one???
+     */
+    public void normalizeScores(){
+        double highest = -100.0;
+        double lowest = -100.0;
+        // detect highest and lowest score (needed to calculate the factor for normalization)
+        for (Iterator<Tag> i = this.values().iterator(); i.hasNext();){
+            Tag tag = i.next();
+            // set to values of first tag
+            if (highest == -100.0){
+                highest = tag.getScore();
+            }
+            if (lowest == -100.0){
+                lowest = tag.getScore();
+            }
+            // check if this tag exceeds the values
+            if (tag.getScore() > highest){
+                highest = tag.getScore();
+            }
+            if (tag.getScore() < lowest){
+                lowest = tag.getScore();
+            }
+        }
+        double factor = (highest)/100;
+        for (Iterator<Tag> i = this.values().iterator(); i.hasNext();){
+            Tag tag = i.next();
+            tag.setScore((tag.getScore()) / factor);
+        }
+    }
 }
