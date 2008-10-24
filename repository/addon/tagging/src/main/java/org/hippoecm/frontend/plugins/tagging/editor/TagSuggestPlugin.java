@@ -28,6 +28,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -50,10 +51,12 @@ public class TagSuggestPlugin extends RenderPlugin {
 
     private JcrNodeModel nodeModel;
     private IJcrService jcrService;
+    private IPluginContext context;
 
     public TagSuggestPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
+        this.context = context; 
         nodeModel = (JcrNodeModel) getModel();
         jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
 
@@ -65,13 +68,16 @@ public class TagSuggestPlugin extends RenderPlugin {
         } else {
             add(new Fragment("tag-view", "empty", this));
         }
+        log.debug("construct");
     }
 
-    private class TagSuggestView extends RefreshingView {
+    private class TagSuggestView extends RefreshingView implements IJcrNodeModelListener {
         private static final long serialVersionUID = 1L;
 
         final JcrNodeModel nodeModel;
         final IJcrService jcrService;
+        TagSuggestor tagSuggestor;
+        TagCollection tagCollection;
 
         public TagSuggestView(String id, IModel model, final IJcrService jcrService) {
             super(id, model);
@@ -117,9 +123,23 @@ public class TagSuggestPlugin extends RenderPlugin {
 
         @Override
         protected Iterator<IModel> getItemModels() {
-            TagSuggestor tagSuggestor = new TagSuggestor();
-            TagCollection col = tagSuggestor.getTags((JcrNodeModel) getModel());
-            return col.iterator();
+            if (tagSuggestor == null || tagCollection == null) {
+                tagSuggestor = new TagSuggestor(context);
+                tagCollection = tagSuggestor.getTags((JcrNodeModel) getModel());
+            }
+            return tagCollection.iterator();
+        }
+
+        /**
+         * @todo Needs testing
+         */
+        public void onFlush(JcrNodeModel nodeModel) {
+            // only refresh if our own document changed
+            if (nodeModel == this.nodeModel) {
+                tagCollection = tagSuggestor.getTags(nodeModel);
+                redraw();
+            }
+
         }
 
     }

@@ -27,7 +27,7 @@ public class Tag implements Comparable<Tag>, IModel {
     static final Logger log = LoggerFactory.getLogger(Tag.class);
 
     private String name;
-    private int score = 1;
+    private double score = 1.0;
 
     public Tag() {
     }
@@ -36,7 +36,7 @@ public class Tag implements Comparable<Tag>, IModel {
         this.name = name;
     }
 
-    public Tag(String name, int score) {
+    public Tag(String name, double score) {
         this.name = name;
         this.score = score;
     }
@@ -49,32 +49,41 @@ public class Tag implements Comparable<Tag>, IModel {
         this.name = name;
     }
 
-    public int getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(double score) {
         this.score = score;
     }
 
-    public void addScore(int score) {
+    public void addScore(double score) {
         this.score += score;
     }
 
+    /**
+     * Vergelijkt twee tags op basis van naam en score
+     * 
+     * <ul>
+     * <li>Twee tags zijn alleen gelijk als de naam gelijk is (ongeacht de score)</li>
+     * <li>Tags worden eerst vergeleken op score, vervolgens pas op naam</li>
+     * </ul>
+     * 
+     */
     public int compareTo(Tag otherTag) {
         if (otherTag.getName().equals(name)) {
             return 0;
         } else if (otherTag.getScore() > score) {
-            return -1;
-        } else if (otherTag.getScore() < score) {
             return 1;
+        } else if (otherTag.getScore() < score) {
+            return -1;
         } else {
-            // tags are equal in score, compare strings
+            // tags are equal in score, compare strings (strings will never be equal)
             int c = otherTag.getName().compareTo(name);
             // normalize result to 1, 0 or -1
-            if (c > 0){
+            if (c < 0){
                 return 1;
-            }else if (c < 0){
+            }else if (c > 0){
                 return -1;
             } else{
                 return 0;
@@ -83,11 +92,17 @@ public class Tag implements Comparable<Tag>, IModel {
         }
 
     }
-
+    
+    /**
+     * IModel (hack), nodig om gemakkelijk de tag collection naar de frontend te kunnen geven.
+     */
     public Object getObject() {
         return this;
     }
-
+    
+    /**
+     * IModel (hack)
+     */
     public void setObject(Object object) {
         Tag tag = (Tag) object;
         name = tag.getName();
