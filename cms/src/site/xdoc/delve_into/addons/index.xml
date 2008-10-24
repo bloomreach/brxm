@@ -21,7 +21,9 @@
   <properties>
     <title>Add-ons</title>
   </properties>
+
   <body>
+
     <section name="Hippo CMS Add-ons">
       
       <span class="shortdesc">Extend Hippo CMS with your own add-ons.</span>

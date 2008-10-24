@@ -86,8 +86,13 @@
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
         <item name="Contributors" collapse="true" href="/delve_into/user/contributors/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/contributors/tour/index.html"> </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/contributors/howto/index.html"> </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/contributors/dictionary/index.html"> </item>
+          <item name="Howto" collapse="true" href="/delve_into/user/contributors/howto/index.html"> 
+           <item name="Browse history" href="/delve_into/user/contributors/howto/browsing_history_of_a_document.html" collapse="false"/>
+           <item name="Restore version" href="/delve_into/user/contributors/howto/restore_previous_version.html" collapse="false"/>
+          </item>
+          <item name="Dictionary" collapse="true" href="/delve_into/user/contributors/dictionary/index.html"> 
+           <item name="Versioning" href="/delve_into/user/contributors/dictionary/versioning.html" collapse="false"/>
+          </item>
         </item>
         <item name="Editors" collapse="true" href="/delve_into/user/editors/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html"> </item>
@@ -228,6 +233,7 @@
             <item name="Architecture" href="/delve_into/addons/reference/frontend/frontend-plugin-architecture.html"/>
             <item name="Communication" href="/delve_into/addons/reference/frontend/frontend-plugin-communication.html"/>
           </item>
+          <item name="Versioning" href="/delve_into/addons/reference/versioning.html"> </item>
         </item>
         <item name="JCR" href="/delve_into/addons/jcr/index.html" collapse="true">
           <item name="Reference Guide" href="/delve_into/addons/jcr/reference/index.html" collapse="true">
@@ -236,6 +242,7 @@
         </item>
         <item name="List of Concepts" href="/delve_into/addons/concepts/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/addons/concepts/repository_plugins.html"> </item>
+          <item name="Versioning" href="/delve_into/addons/concepts/versioning.html"> </item>
         </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>

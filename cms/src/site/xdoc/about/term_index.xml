@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (397 terms)">
+    <section name="Term index (418 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -55,13 +55,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/index.html#Add-on_Reference">Add-on Reference</a>
+            <a href="../delve_into/addons/reference/index.html#Add-on_Reference">Add-on Reference</a>
           </td>
           <td>Add-on Reference</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Adding_a_dependency_on_our_plugin">Adding a dependency on our plugin</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Adding_a_dependency_on_our_plugin">Adding a dependency on our plugin</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -79,7 +79,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Adding_you_plugin_to_the_repository">Adding you plugin to the repository</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Adding_you_plugin_to_the_repository">Adding you plugin to the repository</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -103,13 +103,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
@@ -118,6 +118,12 @@
             <a href="../delve_into/quickstart.html#Alternatives">Alternatives</a>
           </td>
           <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/introduction.html#An_introduction_to_Hippo_CMS_add-on_development.">An introduction to Hippo CMS add-on development.</a>
+          </td>
+          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -133,13 +139,19 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#application_server">application server</a>
+          </td>
+          <td>Deploying in Application Server</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/installation/in_application_server.html#Application_Server">Application Server</a>
           </td>
           <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Applications">Applications</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Applications">Applications</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
@@ -175,7 +187,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Available_Services">Available Services</a>
+            <a href="../delve_into/addons/reference/repository/repository_plugins.html#Architecture_of_Hippo_CMS_and_Hippo_Repository">Architecture of Hippo CMS and Hippo Repository</a>
+          </td>
+          <td>Repository Plugins</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Available_Services">Available Services</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
@@ -235,7 +253,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Building_the_plugin_JAR">Building the plugin JAR</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Building_the_plugin_JAR">Building the plugin JAR</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -253,7 +271,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Building_your_own_workflow">Building your own workflow</a>
+            <a href="../delve_into/addons/howto/workflow.html#Building_your_own_workflow">Building your own workflow</a>
           </td>
           <td>Developing workflows</td>
         </tr>
@@ -265,7 +283,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Change_to_document_short_description.">Change to document short description.</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#Change_to_document_short_description.">Change to document short description.</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -301,7 +319,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Change_to_the_document_title">Change to the document title</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#Change_to_the_document_title">Change to the document title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -361,6 +379,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/addons/introduction.html#Combined_addon">Combined addon</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../support/community_support.html#Community_Support">Community Support</a>
           </td>
           <td>Community Support</td>
@@ -397,7 +421,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Configuring_to_application_to_use_the_plugin">Configuring to application to use the plugin</a>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Configuring_the_repository_to_compute_derived_properties_for_this_data">Configuring the repository to compute derived properties for this data</a>
+          </td>
+          <td>Derived Data</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Configuring_to_application_to_use_the_plugin">Configuring to application to use the plugin</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -412,6 +442,12 @@
             <a href="../delve_into/sysadmin/configuration/console.html#Console">Console</a>
           </td>
           <td>Console</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#Content_addon">Content addon</a>
+          </td>
+          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -445,7 +481,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Create_a_template">Create a template</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#Create_a_template">Create a template</a>
           </td>
           <td>Create an Editing Template Plugin</td>
         </tr>
@@ -457,7 +493,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Create_an_Editing_Template_Plugin">Create an Editing Template Plugin</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#Create_an_Editing_Template_Plugin">Create an Editing Template Plugin</a>
           </td>
           <td>Create an Editing Template Plugin</td>
         </tr>
@@ -481,7 +517,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#Create_your_own_skin">Create your own skin</a>
+            <a href="../delve_into/addons/howto/customize_skin.html#Create_your_own_skin">Create your own skin</a>
           </td>
           <td>Frontend skin customization</td>
         </tr>
@@ -505,13 +541,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Creating_a_workflow_class">Creating a workflow class</a>
+            <a href="../delve_into/addons/howto/workflow.html#Creating_a_workflow_class">Creating a workflow class</a>
           </td>
           <td>Developing workflows</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Creating_the_Hello_World_plugin">Creating the Hello World plugin</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Creating_the_Hello_World_plugin">Creating the Hello World plugin</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -529,19 +565,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/introduction.html#Custom_Perspective">Custom Perspective</a>
-          </td>
-          <td>Introduction to add-on development</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Customization_by_configuration">Customization by configuration</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Customization_by_configuration">Customization by configuration</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Customize_an_Editing_Template">Customize an Editing Template</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Customize_an_Editing_Template">Customize an Editing Template</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
@@ -550,12 +580,6 @@
             <a href="../delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/implementation/add-ons/introduction.html#Dashboard_plugin">Dashboard plugin</a>
-          </td>
-          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -583,9 +607,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Define_the_layout">Define the layout</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Define_the_layout">Define the layout</a>
           </td>
           <td>Customize an Editing Template</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Defining_the_data_for_which_to_compute_properties">Defining the data for which to compute properties</a>
+          </td>
+          <td>Derived Data</td>
         </tr>
         <tr>
           <td>
@@ -649,33 +679,21 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Jetty">Deploying in Jetty</a>
-          </td>
-          <td>Deploying in Servlet Container</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Servlet_Container">Deploying in Servlet Container</a>
           </td>
           <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat_5.5">Deploying in Tomcat 5.5</a>
           </td>
           <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Weblogic_Server">Deploying in Weblogic Server</a>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat_6.0">Deploying in Tomcat 6.0</a>
           </td>
-          <td>Deploying in Application Server</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Websphere_Application_Server">Deploying in Websphere Application Server</a>
-          </td>
-          <td>Deploying in Application Server</td>
+          <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
@@ -685,13 +703,25 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Deploying_the_workflow">Deploying the workflow</a>
+            <a href="../delve_into/addons/howto/workflow.html#Deploying_the_workflow">Deploying the workflow</a>
           </td>
           <td>Developing workflows</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Developing_workflows">Developing workflows</a>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Derived_Data">Derived Data</a>
+          </td>
+          <td>Derived Data</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Description_of_the_problem">Description of the problem</a>
+          </td>
+          <td>Derived Data</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/howto/workflow.html#Developing_workflows">Developing workflows</a>
           </td>
           <td>Developing workflows</td>
         </tr>
@@ -703,7 +733,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Dialogs_/_Page_Serialization">Dialogs / Page Serialization</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Dialogs_/_Page_Serialization">Dialogs / Page Serialization</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
@@ -757,7 +787,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
@@ -799,6 +829,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#Editing_Template_addon">Editing Template addon</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/bin_startup_help.html#Error_messages">Error messages</a>
           </td>
           <td>Bin Startup Help</td>
@@ -835,7 +871,14 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/index.html#Extend_Hippo_CMS_with_your_own_add-ons.">Extend Hippo CMS with your own add-ons.</a>
+            <a href="../delve_into/addons/index.html#Extend_Hippo_CMS_with_your_own_add-ons.">Extend Hippo CMS with your own add-ons.</a>
+          </td>
+          <td>Hippo CMS Add-ons</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/index.html#Extend_Hippo_CMS_with_your_own_content_(type)&#10;________addons.">Extend Hippo CMS with your own content (type)
+        addons.</a>
           </td>
           <td>Hippo CMS Add-ons</td>
         </tr>
@@ -850,6 +893,12 @@
             <a href="../delve_into/sysadmin/installation/plugins.html#Extending_the_WAR">Extending the WAR</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Facility_offered">Facility offered</a>
+          </td>
+          <td>Derived Data</td>
         </tr>
         <tr>
           <td>
@@ -883,7 +932,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsection_title">First subsection title</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#First_subsection_title">First subsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -925,13 +974,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -1015,25 +1064,31 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Frontend_Plugin_Architecture">Frontend Plugin Architecture</a>
+            <a href="../delve_into/addons/introduction.html#Frontend_addon">Frontend addon</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Frontend_Plugin_Architecture">Frontend Plugin Architecture</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Frontend_Plugin_Communication">Frontend Plugin Communication</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Frontend_Plugin_Communication">Frontend Plugin Communication</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/index.html#Frontend_Plugins">Frontend Plugins</a>
+            <a href="../delve_into/addons/reference/frontend/index.html#Frontend_Plugins">Frontend Plugins</a>
           </td>
           <td>Frontend Plugins</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#Frontend_skin_customization">Frontend skin customization</a>
+            <a href="../delve_into/addons/howto/customize_skin.html#Frontend_skin_customization">Frontend skin customization</a>
           </td>
           <td>Frontend skin customization</td>
         </tr>
@@ -1075,9 +1130,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Giving_our_plugin_a_place_on_the_dashboard">Giving our plugin a place on the dashboard</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Giving_our_plugin_a_place_on_the_dashboard">Giving our plugin a place on the dashboard</a>
           </td>
           <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#GlassFish">GlassFish</a>
+          </td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -1087,27 +1148,33 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Hello_World">Hello World</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Hello_World">Hello World</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Hello_World_screenshot">Hello World screenshot</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Hello_World_screenshot">Hello World screenshot</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#HelloWorldPlugin.html">HelloWorldPlugin.html</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#HelloWorldPlugin.html">HelloWorldPlugin.html</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#HelloWorldPlugin.java">HelloWorldPlugin.java</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#HelloWorldPlugin.java">HelloWorldPlugin.java</a>
           </td>
           <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/index.html#Hippo_CMS_Add-ons">Hippo CMS Add-ons</a>
+          </td>
+          <td>Hippo CMS Add-ons</td>
         </tr>
         <tr>
           <td>
@@ -1201,9 +1268,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
+            <a href="../delve_into/addons/howto/customize_skin.html#How_to_apply_a_skin">How to apply a skin</a>
           </td>
           <td>Frontend skin customization</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#How_to_define">How to define</a>
+          </td>
+          <td>Derived Data</td>
         </tr>
         <tr>
           <td>
@@ -1216,6 +1289,12 @@
             <a href="../delve_into/implementation/jcr/jcr-dropbox-example.html#How_to_run">How to run</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/howto/index.html#Howto">Howto</a>
+          </td>
+          <td>Howto</td>
         </tr>
         <tr>
           <td>
@@ -1249,7 +1328,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#index_word">index word</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#index_word">index word</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -1333,7 +1412,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Interact_with_the_template_engine">Interact with the template engine</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#Interact_with_the_template_engine">Interact with the template engine</a>
           </td>
           <td>Create an Editing Template Plugin</td>
         </tr>
@@ -1351,6 +1430,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/addons/introduction.html#Introduction_to_add-on_development">Introduction to add-on development</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/introduction.html#Introduction_to_add-on_development">Introduction to add-on development</a>
           </td>
           <td>Introduction to add-on development</td>
@@ -1363,7 +1448,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/index.html#Java_application_servers">Java application servers</a>
+            <a href="../delve_into/sysadmin/installation/index.html#Java_application_server">Java application server</a>
           </td>
           <td>Installation</td>
         </tr>
@@ -1378,6 +1463,12 @@
             <a href="../delve_into/sysadmin/requirements.html#Java_Servlet_Container">Java Servlet Container</a>
           </td>
           <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_application_server.html#JBoss">JBoss</a>
+          </td>
+          <td>Deploying in Application Server</td>
         </tr>
         <tr>
           <td>
@@ -1405,6 +1496,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/addons/howto/index.html#Learn_how_to_make_your_own_add-ons.">Learn how to make your own add-ons.</a>
+          </td>
+          <td>Howto</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/implementation/add-ons/howto/index.html#Learn_how_to_make_your_own_add-ons.">Learn how to make your own add-ons.</a>
           </td>
           <td>Howto</td>
@@ -1429,13 +1526,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#Make_it_available_in_the_Document_Type_Editor">Make it available in the Document Type Editor</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#Make_it_available_in_the_Document_Type_Editor">Make it available in the Document Type Editor</a>
           </td>
           <td>Create an Editing Template Plugin</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Making_the_Hello_World_plugin_context_sensitive">Making the Hello World plugin context sensitive</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Making_the_Hello_World_plugin_context_sensitive">Making the Hello World plugin context sensitive</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -1447,13 +1544,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Mapping_the_data_in_the_class_to_data_in_the_repository">Mapping the data in the class to data in the repository</a>
+            <a href="../delve_into/addons/howto/workflow.html#Mapping_the_data_in_the_class_to_data_in_the_repository">Mapping the data in the class to data in the repository</a>
           </td>
           <td>Developing workflows</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Maven_structure">Maven structure</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Maven_structure">Maven structure</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -1468,6 +1565,12 @@
             <a href="../delve_into/implementation/add-ons/howto/packaging.html#Modifying_the_build_section">Modifying the build section</a>
           </td>
           <td>Creating your own war package</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/implementation/add-ons/introduction.html#More">More</a>
+          </td>
+          <td>Introduction to add-on development</td>
         </tr>
         <tr>
           <td>
@@ -1579,7 +1682,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Other_Communication_Patterns">Other Communication Patterns</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Other_Communication_Patterns">Other Communication Patterns</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
@@ -1609,7 +1712,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#Overview_of_a_skin_project">Overview of a skin project</a>
+            <a href="../delve_into/addons/howto/customize_skin.html#Overview_of_a_skin_project">Overview of a skin project</a>
           </td>
           <td>Frontend skin customization</td>
         </tr>
@@ -1627,25 +1730,25 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Plugin_Configuration">Plugin Configuration</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Plugin_Configuration">Plugin Configuration</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Plugin_configuration_screenshot">Plugin configuration screenshot</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Plugin_configuration_screenshot">Plugin configuration screenshot</a>
           </td>
           <td>Hello World</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.html#Plugin_Context">Plugin Context</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-architecture.html#Plugin_Context">Plugin Context</a>
           </td>
           <td>Frontend Plugin Architecture</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#pom.xml">pom.xml</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#pom.xml">pom.xml</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -1729,6 +1832,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/addons/introduction.html#Repository_addon">Repository addon</a>
+          </td>
+          <td>Introduction to add-on development</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/configuration/repository/authentication.html#Repository_based_authentication">Repository based authentication</a>
           </td>
           <td>Repository based authentication</td>
@@ -1741,13 +1850,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/repository/repository_plugins.html#Repository_Plugins">Repository Plugins</a>
+            <a href="../delve_into/addons/reference/repository/repository_plugins.html#Repository_Plugins">Repository Plugins</a>
           </td>
           <td>Repository Plugins</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/index.html#Repository_plugins_vs._frontend_plugins">Repository plugins vs. frontend plugins</a>
+            <a href="../delve_into/addons/reference/index.html#Repository_plugins_vs._frontend_plugins">Repository plugins vs. frontend plugins</a>
           </td>
           <td>Add-on Reference</td>
         </tr>
@@ -1795,7 +1904,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Running_the_application">Running the application</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Running_the_application">Running the application</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -1909,7 +2018,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/concepts/repository_plugins.html#Second_subsection_title">Second subsection title</a>
+            <a href="../delve_into/addons/concepts/repository_plugins.html#Second_subsection_title">Second subsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -1981,13 +2090,19 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Share_and_enjoy">Share and enjoy</a>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#servlet_container">servlet container</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Share_and_enjoy">Share and enjoy</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.html#Sharing_Models">Sharing Models</a>
+            <a href="../delve_into/addons/reference/frontend/frontend-plugin-communication.html#Sharing_Models">Sharing Models</a>
           </td>
           <td>Frontend Plugin Communication</td>
         </tr>
@@ -2035,6 +2150,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/addons/jcr/reference/derived_data.html#Supplying_the_method_that_computes_the_derived_property">Supplying the method that computes the derived property</a>
+          </td>
+          <td>Derived Data</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/requirements.html#support_icon">support icon</a>
           </td>
           <td>Requirements</td>
@@ -2047,24 +2168,18 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/reference/index.html#Technical_documentation_on_add-on_development.">Technical documentation on add-on development.</a>
+            <a href="../delve_into/addons/reference/index.html#Technical_documentation_on_add-on_development.">Technical documentation on add-on development.</a>
           </td>
           <td>Add-on Reference</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Template_repository_structure">Template repository structure</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Template_repository_structure">Template repository structure</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/introduction.html#Templates">Templates</a>
-          </td>
-          <td>Introduction to add-on development</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/sysadmin/requirements.html#Tested_icon">Tested icon</a>
           </td>
           <td>Requirements</td>
@@ -2089,7 +2204,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/gui_plugin.html#Testing_the_Hello_World_plugin">Testing the Hello World plugin</a>
+            <a href="../delve_into/addons/howto/gui_plugin.html#Testing_the_Hello_World_plugin">Testing the Hello World plugin</a>
           </td>
           <td>Hello World</td>
         </tr>
@@ -2125,15 +2240,27 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#The_model">The model</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#The_model">The model</a>
           </td>
           <td>Create an Editing Template Plugin</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/editing_template_plugin.html#TODO">TODO</a>
+            <a href="../delve_into/addons/howto/editing_template_plugin.html#TODO">TODO</a>
           </td>
           <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Tomcat_5.5">Tomcat 5.5</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Tomcat_6.0">Tomcat 6.0</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
@@ -2173,13 +2300,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Update_project">Update project</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Update_project">Update project</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#Update_template">Update template</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#Update_template">Update template</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
@@ -2305,7 +2432,7 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_skin.html#What_to_customize">What to customize</a>
+            <a href="../delve_into/addons/howto/customize_skin.html#What_to_customize">What to customize</a>
           </td>
           <td>Frontend skin customization</td>
         </tr>
@@ -2383,13 +2510,13 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/workflow.html#Writing_the_method_that_performs_the_workflow_step">Writing the method that performs the workflow step</a>
+            <a href="../delve_into/addons/howto/workflow.html#Writing_the_method_that_performs_the_workflow_step">Writing the method that performs the workflow step</a>
           </td>
           <td>Developing workflows</td>
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/implementation/add-ons/howto/customize_editing_template.html#You'll_learn_how_to_create_a_template_with_a_custom_layout.">You'll learn how to create a template with a custom layout.</a>
+            <a href="../delve_into/addons/howto/customize_editing_template.html#You'll_learn_how_to_create_a_template_with_a_custom_layout.">You'll learn how to create a template with a custom layout.</a>
           </td>
           <td>Customize an Editing Template</td>
         </tr>
