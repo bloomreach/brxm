@@ -36,12 +36,7 @@ public class PageNode extends TemplateNode{
 	   super(contextBase, jcrNode);	
 	   containerNodes = new NodeList<PageContainerNode>(contextBase, getJcrNode(), PageContainerNode.class);
    }
-   
-   public PageNode(ContextBase contextBase, String relativePath) throws RepositoryException {
-	   super(contextBase, relativePath);	
-	   containerNodes = new NodeList<PageContainerNode>(contextBase, getJcrNode(), PageContainerNode.class);
-   }
-   
+
    public LayoutNode getLayoutNode() throws RepositoryException {	   
 	    return new LayoutNode(contextBase, getTemplateNodeFromPropertyValue(LAYOUTPAGE_PROPERTY_NAME));
    }
