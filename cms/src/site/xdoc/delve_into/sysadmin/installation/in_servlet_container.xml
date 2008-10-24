@@ -27,7 +27,7 @@
 
             <subsection name="Obtain the WAR package">
               <p>
-                To deploy Hippo ECM in a servlet container, download the WAR package.
+                To deploy Hippo CMS in a servlet container, download the WAR package.
                 <span class='expire_event'>release</span>Hippo ECM is still under development, 
                 but you can already get a snapshot version:
               </p>

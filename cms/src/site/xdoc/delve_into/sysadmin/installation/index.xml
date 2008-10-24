@@ -24,31 +24,31 @@
     <body>
       <section name="Installation">
        <span class='shortdesc'>How to install Hippo CMS</span>
-
-        <span class='review'>Check if all statements true.</span>
-
         <p>
           To run Hippo CMS, a 
-          <span class='hidden_index' id='servlet_container'/><span class='index' id='java_servlet_container'>Java servlet container</span> 
-          is sufficient. 
-          <span class='hidden_index' id='application_server'/><span class='index' id='java_application_server'>Java application servers</span> 
-          include the functionality of Java servlect containers,
-          and have the advantage that they allow for adding new features, without the need
-          for a reinstall (because they accept EAR packages).
+          <a href="in_servlet_container.html"><span class='index' id='servlet_container'>Java servlet container</span></a> 
+          or a 
+          <a href="in_application_server.html"><span class='index' id='application_server'>Java application server</span></a> 
+          is needed.
         </p>
         <p>
-          Hippo supplies a Java <span class='index' id='WAR'>WAR</span> package to deploy in a Java servlet container and
-          a more sophisticated <span class='index' id='EAR'>EAR</span> package to deploy in a Java application server. 
-	</p>
-        <p>Java servlet containers are for example: 
-           <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>, 
-           <a href='http://tomcat.apache.org/'>Apache Tomcat</a>.
-           Java application servers are for example: 
-           <a href='https://glassfish.dev.java.net/public/users.html'>Sun Glassfish</a>, 
-           <a href='http://www.jboss.org/'>JBoss</a>,
-           <a href='http://www-01.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server (WAS)</a>,
-           <a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a>.
+          Hippo supplies a Java <span class='index' id='WAR'>WAR</span> package to deploy in Java servlet containers and
+          a <span class='index' id='EAR'>EAR</span> package to deploy in Java application servers. 
         </p>
+        <p>Compatible Java servlet containers:</p>
+          <ul>
+            <li><a href='http://tomcat.apache.org/'>Apache Tomcat</a></li>
+            <li><a href='http://jetty.mortbay.com/jetty/'>Jetty</a></li> 
+          </ul>
+        <p>Compatible Java application servers:</p>
+          <ul>
+            <li><a href='https://glassfish.dev.java.net/'>Sun Glassfish</a></li>
+            <li><a href='http://www.jboss.org/'>JBoss</a></li>
+            <!--
+            <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
+            <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>
+            -->
+          </ul>
       </section>
   </body>
 </document>
