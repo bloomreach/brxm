@@ -80,7 +80,7 @@
                 <a href="../../building/maven.html">build it using  Maven 2</a>.
                 </p>
 <source>
-svn co https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
+svn co http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm
 cd hippo-ecm/
 mvn clean install
 </source>
