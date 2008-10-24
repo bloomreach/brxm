@@ -23,37 +23,47 @@
     </properties>
     <body>
         <section name="Deploying in Servlet Container">
-          <span class='shortdesc'>Get Hippo CMS up and running in a Java servlet container.</span>
+          <span class='shortdesc'>Get Hippo CMS up and running in a Java <span class='index' id='servlet_container'>servlet container</span>.</span>
 
             <subsection name="Obtain the WAR package">
               <p>
-                To deploy Hippo ECM in a servlet container, download the
-                WAR package.
+                To deploy Hippo ECM in a servlet container, download the WAR package.
                 <span class='expire_event'>release</span>Hippo ECM is still under development, 
                 but you can already get a snapshot version:
-                <span class='rewrite'>Why is this the quickstart? It seems that the normal package should be downloadable here, or both.</span>
               </p>
 <source>
-  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.13536/hippo-ecm-quickstart-war-2.01.00.13536.war'>Quickstart WAR</a>
+  <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war'>Quickstart WAR</a>
 </source>
             </subsection>
 
-
-            <subsection name="Deploying in Tomcat">
+            <subsection name="Deploying in Tomcat 6.0">
                 <ol>
-                    <li>Download Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website</li>
-                    <li>Unpack the zip</li>
+                    <li>Download <span class='index' id='tomcat_6.0'>Tomcat 6.0</span> from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website.</li>
+                    <li>Unpack the zip.</li>
                     <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
-                    <li>Copy the WAR from the link above to apache-tomcat-6.0.16\webapps\cms.war</li>
-                    <li>Start Tomcat with one of the startup scripts in apache-tomcat-6.0.16\bin</li>
-                    <li>Open your browser and surf to http://localhost:8080/cms/</li>
+                    <li>Copy the WAR from the link above to the webapps/ folder as cms.war</li>
+                    <li>Start Tomcat.</li>
+                    <li>Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>..</li>
                 </ol>
             </subsection>
 
-            <subsection name="Deploying in Jetty">
-             <span class='add'>This section.</span>
-	    </subsection>
-            
+            <subsection name="Deploying in Tomcat 5.5">
+                <ol>
+                    <li>Download <span class='index' id='tomcat_5.5'>Tomcat 5.5</span> from the <a href="http://tomcat.apache.org/download-55.cgi">Apache Tomcat</a> website</li>
+                    <li>Unpack the zip</li>
+                    <li>Download the <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> to pache-tomcat-6.0.16\lib</li>
+                    <li>Copy the WAR from the link above to the webapps/ folder as cms.war</li>
+                    <li>Start Tomcat.</li>
+                    <li>Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>.</li>
+                </ol>
+                <p>
+                    Some users reported the following error on startup "Configuration file syntax error.: Premature end of file." This can be resolved by adding the following two jars to the Tomcat endorsed lib folder in common:
+                </p>
+                    <ol>
+                        <li><a href="http://repo1.maven.org/maven/xalan/jars/xalan-2.7.1.jar">xalan</a></li>
+                        <li><a href="http://repo1.maven.org/maven/xalan/jars/serializer-2.7.1.jar">xalan serializer</a></li>
+                    </ol>
+            </subsection>
         </section>
     </body>
 </document>
