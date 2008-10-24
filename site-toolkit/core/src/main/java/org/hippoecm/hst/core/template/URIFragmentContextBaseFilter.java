@@ -111,7 +111,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
             ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        
+        HttpServletResponse httpResponse = ((HttpServletResponse)response);
         synchronized(this) {
             if(!isListenerRegistered) {
                 registerEventListener(filterConfig);
@@ -129,7 +129,7 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 log.warn("The number of slashes in the url in lower then the configure levels '("
                         + uriLevels + ")' in your web.xml \n"
                         + "Either, the url is wrong, or you should change the levels in value in your web.xml");
-                ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
+                httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
@@ -154,9 +154,11 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 try {
                     contentContextBase = new ContextBase(uriPrefix, contentBase + uriPrefix, request);
                 } catch (PathNotFoundException e) {
-                    throw new ServletException(e);
+                    log.warn("PathNotFoundException " , e);
+                    httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
                 } catch (RepositoryException e) {
-                    throw new ServletException(e);
+                    log.warn("RepositoryException " , e);
+                    httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
 
                 //hst configuration contextbase

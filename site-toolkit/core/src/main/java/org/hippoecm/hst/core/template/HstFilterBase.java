@@ -47,10 +47,7 @@ public abstract class HstFilterBase implements Filter {
 	public static final String SITEMAP_RELATIVE_LOCATION = "hst:sitemap";
 	public static final String HSTCONFIGURATION_LOCATION_PARAMETER = "hstConfigurationUrl";
 	public static final String ATTRIBUTENAME_INIT_PARAMETER = "attributeName";
-	
-	//request attributes
-	public static final String PAGENODE_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE;
-	public static final String CONTENT_CONTEXT_REQUEST_ATTRIBUTE = HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE;
+
 	//public static final String CURRENT_PAGE_MODULE_ATTRIBUTE = "currentPageModule";
 	
 	//filter init-parameter

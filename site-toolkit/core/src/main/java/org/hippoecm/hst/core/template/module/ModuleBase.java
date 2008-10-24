@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -65,7 +66,7 @@ public abstract class ModuleBase implements Module {
 	}
 	
 	public ContextBase getContentContextBase(HttpServletRequest request) {
-	    return (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);     
+	    return (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);     
 	}
 
 }

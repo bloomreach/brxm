@@ -26,6 +26,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
@@ -43,7 +44,7 @@ public class DocumentTypesListModule extends ModuleBase{
 	
 	public void render(PageContext pageContext) throws TemplateException{
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
         Session jcrSession = ctxBase.getSession();
 
         boolean params = false;

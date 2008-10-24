@@ -61,7 +61,7 @@ public class ReplyModule extends ModuleBase {
 		log.debug("ACTION: " + action);
 		WebFormBean formBean = new WebFormBean();
 		
-		PageNode node = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+		PageNode node = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
 		
 		formBean.setAction(urlPrefix + action); // + "/"); node.getRelativeContentPath());
 		request.setAttribute("webform", formBean);
@@ -108,7 +108,7 @@ public class ReplyModule extends ModuleBase {
 
 
 	public void render(PageContext pageContext) throws TemplateException {
-		PageNode node = (PageNode) pageContext.getRequest().getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+		PageNode node = (PageNode) pageContext.getRequest().getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
 		WebFormBean formBean = new WebFormBean();
 		String urlPrefix = (String) pageContext.getRequest().getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 		urlPrefix = (urlPrefix == null) ?  "" : urlPrefix;

@@ -23,6 +23,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.NodeList;
@@ -42,7 +43,7 @@ public class LayoutAttributeTag extends TagSupport {
     @Override
 	public int doStartTag() throws JspException {
     	HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    
-        PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+        PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
         NodeList<PageContainerNode> containerList = pageNode.getContainers();
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         

@@ -29,6 +29,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
@@ -101,7 +102,7 @@ public class ModuleFilter extends HstFilterBase implements Filter {
 	}
 	
 	public static ModuleNode getModuleNode(HttpServletRequest request, String moduleName) throws RepositoryException {
-		PageNode currentPageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+		PageNode currentPageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
 		ModuleNode moduleNode = currentPageNode.getModuleNodeByName(moduleName);
 		return moduleNode;
 	}

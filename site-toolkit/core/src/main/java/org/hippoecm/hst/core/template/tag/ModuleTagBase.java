@@ -53,7 +53,7 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     
     protected void doExecute(HttpServletRequest request, PageContainerModuleNode pcm) {           
         PageContainerNode pcNode = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);
-        PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);            
+        PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);            
         ModuleRenderAttributes attributes = new ModuleRenderAttributes(pageNode.getName(), pcNode.getName(), pcm.getName(), getClassName());
         addModuleMapAttribute(request, attributes);
     }

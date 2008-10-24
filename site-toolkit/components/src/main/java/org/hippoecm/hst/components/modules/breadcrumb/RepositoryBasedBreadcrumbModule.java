@@ -55,7 +55,7 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
             pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());
             return;
         }
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 
         List<NavigationItem> wrappedNodes = new ArrayList<NavigationItem>();
         try {

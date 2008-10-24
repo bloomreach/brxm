@@ -48,7 +48,7 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	
 	public void render(PageContext pageContext) throws TemplateException{
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
         URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
         List<ELNode> wrappedNodes = new ArrayList<ELNode>();
         

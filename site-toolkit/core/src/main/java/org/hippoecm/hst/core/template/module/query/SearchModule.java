@@ -236,7 +236,7 @@ public class SearchModule extends ModuleBase implements Search {
             return;
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
         Node contextNode = ctxBase.getContextRootNode();
         
         /*
@@ -321,7 +321,7 @@ public class SearchModule extends ModuleBase implements Search {
 
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 
         String statement = getStatement();
         String querytext = getQueryText();

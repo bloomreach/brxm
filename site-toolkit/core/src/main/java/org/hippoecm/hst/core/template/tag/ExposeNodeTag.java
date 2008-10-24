@@ -77,9 +77,9 @@ public void doTag() throws JspException, IOException {
 }
 
 private ContentELNodeImpl getContentNode(HttpServletRequest request) throws RepositoryException {
-	 PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+	 PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
 	 
-	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 	 URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	 if (pageNode != null && contentContextBase != null) {
 		 Node currentJcrNode = contentContextBase.getRelativeNode(pageNode.getRelativeContentPath());		

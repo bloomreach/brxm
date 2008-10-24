@@ -64,7 +64,7 @@ public class ContentModule extends ModuleBase {
             return;
         }
 		
-		ContextBase ctxBase = (ContextBase) request.getAttribute(HstFilterBase.CONTENT_CONTEXT_REQUEST_ATTRIBUTE);
+		ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 
 		ContentModuleNode contentModuleNode = null;
 		Node node=null;

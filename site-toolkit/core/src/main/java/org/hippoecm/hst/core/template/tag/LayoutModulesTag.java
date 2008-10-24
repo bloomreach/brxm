@@ -45,7 +45,7 @@ public class LayoutModulesTag  extends BodyTagSupport {
 	public int doStartTag() throws JspException {  
 		
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	    	
-        PageNode pageNode = (PageNode) request.getAttribute(URLMappingTemplateContextFilter.PAGENODE_REQUEST_ATTRIBUTE);
+        PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
         if(pcNode == null ) {
