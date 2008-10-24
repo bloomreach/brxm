@@ -12,6 +12,54 @@
 >use_cases</file>
   </folder>
   <folder>delve_into
+   <folder>addons
+    <folder>concepts
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/addons/concepts/repository_plugins.xml'
+>repository_plugins</file>
+    </folder>
+    <folder>howto
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/addons/howto/customize_editing_template.xml'
+>customize_editing_template</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/howto/customize_skin.xml'
+>customize_skin</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/addons/howto/editing_template_plugin.xml'
+>editing_template_plugin</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/howto/gui_plugin.xml'
+>gui_plugin</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/howto/index.xml'
+>index</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/howto/workflow.xml'
+>workflow</file>
+    </folder>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/index.xml'
+>index</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/introduction.xml'
+>introduction</file>
+    <folder>jcr
+     <folder>reference
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/jcr/reference/derived_data.xml'
+>derived_data</file>
+     </folder>
+    </folder>
+    <folder>reference
+     <folder>frontend
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/reference/frontend/frontend-plugin-architecture.xml'
+>frontend-plugin-architecture</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/reference/frontend/frontend-plugin-communication.xml'
+>frontend-plugin-communication</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/reference/frontend/index.xml'
+>index</file>
+     </folder>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/addons/reference/index.xml'
+>index</file>
+     <folder>repository
+      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/addons/reference/repository/repository_plugins.xml'
+>repository_plugins</file>
+     </folder>
+    </folder>
+    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/addons/schemas.xml'
+>schemas</file>
+   </folder>
    <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/bin_startup_help.xml'
 >bin_startup_help</file>
    <folder>development
@@ -40,48 +88,18 @@
    </folder>
    <folder>implementation
     <folder>add-ons
-     <folder>concepts
-      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/concepts/repository_plugins.xml'
->repository_plugins</file>
-     </folder>
      <folder>howto
-      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/howto/customize_editing_template.xml'
->customize_editing_template</file>
-      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/customize_skin.xml'
->customize_skin</file>
-      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/howto/editing_template_plugin.xml'
->editing_template_plugin</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/editing_template.xml'
 >editing_template</file>
-      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/gui_plugin.xml'
->gui_plugin</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/index.xml'
 >index</file>
       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/packaging.xml'
 >packaging</file>
-      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/howto/workflow.xml'
->workflow</file>
      </folder>
      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/index.xml'
 >index</file>
      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/introduction.xml'
 >introduction</file>
-     <folder>reference
-      <folder>frontend
-       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.xml'
->frontend-plugin-architecture</file>
-       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.xml'
->frontend-plugin-communication</file>
-       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/reference/frontend/index.xml'
->index</file>
-      </folder>
-      <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/implementation/add-ons/reference/index.xml'
->index</file>
-      <folder>repository
-       <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/add-ons/reference/repository/repository_plugins.xml'
->repository_plugins</file>
-      </folder>
-     </folder>
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/implementation/index.xml'
 >index</file>
@@ -144,11 +162,11 @@
     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/sysadmin/index.xml'
 >index</file>
     <folder>installation
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/sysadmin/installation/in_application_server.xml'
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/sysadmin/installation/in_application_server.xml'
 >in_application_server</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/sysadmin/installation/index.xml'
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/sysadmin/installation/index.xml'
 >index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo' fullname='xdoc/delve_into/sysadmin/installation/in_servlet_container.xml'
+     <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/sysadmin/installation/in_servlet_container.xml'
 >in_servlet_container</file>
      <file ext='xml' mimetype='text/xml' valid='yes' fullname='xdoc/delve_into/sysadmin/installation/plugins.xml'
 >plugins</file>

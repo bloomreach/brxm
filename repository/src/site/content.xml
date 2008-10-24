@@ -15,6 +15,120 @@
   <document ext="xml" fullname="../about/use_cases.xml">Use cases
    <section>Use cases</section>
   </document>
+  <document ext="xml" fullname="../delve_into/addons/concepts/repository_plugins.xml">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Change to document short description.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/customize_editing_template.xml">Customize an Editing Template
+   <section>Customize an Editing Template</section>
+   <shortdesc>You'll learn how to create a template with a custom layout.</shortdesc>
+   <subsection>Define the layout</subsection>
+   <subsection>Update project</subsection>
+   <subsection>Update template</subsection>
+   <img>Template repository structure</img>
+   <subsection>Share and enjoy</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/customize_skin.xml">Frontend skin customization
+   <section>Frontend skin customization</section>
+   <subsection>Create your own skin</subsection>
+   <subsection>What to customize</subsection>
+   <subsection>Overview of a skin project</subsection>
+   <subsection>How to apply a skin</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/editing_template_plugin.xml">Create an Editing Template Plugin
+   <section>Create an Editing Template Plugin</section>
+   <subsection>TODO</subsection>
+   <section>The model</section>
+   <section>Interact with the template engine</section>
+   <section>Create a template</section>
+   <section>Make it available in the Document Type Editor</section>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/gui_plugin.xml">Hello World
+   <section>Hello World</section>
+   <section>Creating the Hello World plugin</section>
+   <subsection>Maven structure</subsection>
+   <subsection>pom.xml</subsection>
+   <subsection>HelloWorldPlugin.java</subsection>
+   <subsection>HelloWorldPlugin.html</subsection>
+   <subsection>Building the plugin JAR</subsection>
+   <section>Testing the Hello World plugin</section>
+   <subsection>Adding a dependency on our plugin</subsection>
+   <subsection>Running the application</subsection>
+   <subsection>Configuring to application to use the plugin</subsection>
+   <img>Plugin configuration screenshot</img>
+   <img>Hello World screenshot</img>
+   <section>Giving our plugin a place on the dashboard</section>
+   <subsection>Adding you plugin to the repository</subsection>
+   <section>Making the Hello World plugin context sensitive</section>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/index.xml">Howto
+   <section>Howto</section>
+   <shortdesc>Learn how to make your own add-ons.</shortdesc>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/howto/workflow.xml">Developing workflows
+   <section>Developing workflows</section>
+   <subsection>Building your own workflow</subsection>
+   <subsection>Creating a workflow class</subsection>
+   <subsection>Writing the method that performs the workflow step</subsection>
+   <subsection>Mapping the data in the class to data in the repository</subsection>
+   <subsection>Deploying the workflow</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/index.xml">Hippo CMS Add-ons
+   <section>Hippo CMS Add-ons</section>
+   <shortdesc>Extend Hippo CMS with your own add-ons.</shortdesc>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/introduction.xml">Introduction to add-on development
+   <section>Introduction to add-on development</section>
+   <shortdesc>An introduction to Hippo CMS add-on development.</shortdesc>
+   <subsection>Repository addon</subsection>
+   <subsection>Frontend addon</subsection>
+   <subsection>Combined addon</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/jcr/reference/derived_data.xml">Derived Data
+   <section>Derived Data</section>
+   <subsection>Description of the problem</subsection>
+   <subsection>Facility offered</subsection>
+   <subsection>How to define</subsection>
+   <h4>Defining the data for which to compute properties</h4>
+   <h4>Configuring the repository to compute derived properties for this data</h4>
+   <h4>Supplying the method that computes the derived property</h4>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/reference/frontend/frontend-plugin-architecture.xml">Frontend Plugin Architecture
+   <section>Frontend Plugin Architecture</section>
+   <subsection>Customization by configuration</subsection>
+   <subsection>Applications</subsection>
+   <section>Advanced - Subject to Change</section>
+   <subsection>Plugin Configuration</subsection>
+   <subsection>Plugin Context</subsection>
+   <subsection>Dynamic Services</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/reference/frontend/frontend-plugin-communication.xml">Frontend Plugin Communication
+   <section>Frontend Plugin Communication</section>
+   <subsection>Sharing Models</subsection>
+   <subsection>Dialogs / Page Serialization</subsection>
+   <section>Advanced - Subject to Change</section>
+   <subsection>Other Communication Patterns</subsection>
+   <subsection>Available Services</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/reference/frontend/index.xml">Frontend Plugins
+   <section>Frontend Plugins</section>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/reference/index.xml">Add-on Reference
+   <section>Add-on Reference</section>
+   <shortdesc>Technical documentation on add-on development.</shortdesc>
+   <subsection>Repository plugins vs. frontend plugins</subsection>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/reference/repository/repository_plugins.xml">Repository Plugins
+   <section>Repository Plugins</section>
+   <shortdesc>Architecture of Hippo CMS and Hippo Repository</shortdesc>
+  </document>
+  <document ext="xml" fullname="../delve_into/addons/schemas.xml">
+  </document>
   <document ext="xml" fullname="../delve_into/bin_startup_help.xml">Bin Startup Help
    <section>Bin Startup Help</section>
    <subsection>Error messages</subsection>
@@ -67,39 +181,6 @@
    <section>Tools</section>
    <section>Api</section>
   </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/concepts/repository_plugins.xml">Change to the document title
-   <section>Change to the document title</section>
-   <shortdesc>Change to document short description.</shortdesc>
-   <subsection>First subsection title</subsection>
-   <index>index word</index>
-   <h4>First subsubsection title</h4>
-   <h4>First subsubsection title</h4>
-   <subsection>Second subsection title</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/customize_editing_template.xml">Customize an Editing Template
-   <section>Customize an Editing Template</section>
-   <shortdesc>You'll learn how to create a template with a custom layout.</shortdesc>
-   <subsection>Define the layout</subsection>
-   <subsection>Update project</subsection>
-   <subsection>Update template</subsection>
-   <img>Template repository structure</img>
-   <subsection>Share and enjoy</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/customize_skin.xml">Frontend skin customization
-   <section>Frontend skin customization</section>
-   <subsection>Create your own skin</subsection>
-   <subsection>What to customize</subsection>
-   <subsection>Overview of a skin project</subsection>
-   <subsection>How to apply a skin</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/editing_template_plugin.xml">Create an Editing Template Plugin
-   <section>Create an Editing Template Plugin</section>
-   <subsection>TODO</subsection>
-   <section>The model</section>
-   <section>Interact with the template engine</section>
-   <section>Create a template</section>
-   <section>Make it available in the Document Type Editor</section>
-  </document>
   <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/editing_template.xml">Create an Editing Template Addon
    <section>Create an Editing Template Addon</section>
    <shortdesc>You'll learn how to create an addon for a namespace.</shortdesc>
@@ -107,24 +188,6 @@
    <subsection>Create a new project</subsection>
    <img>Export CND</img>
    <subsection>Build and deploy</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/gui_plugin.xml">Hello World
-   <section>Hello World</section>
-   <section>Creating the Hello World plugin</section>
-   <subsection>Maven structure</subsection>
-   <subsection>pom.xml</subsection>
-   <subsection>HelloWorldPlugin.java</subsection>
-   <subsection>HelloWorldPlugin.html</subsection>
-   <subsection>Building the plugin JAR</subsection>
-   <section>Testing the Hello World plugin</section>
-   <subsection>Adding a dependency on our plugin</subsection>
-   <subsection>Running the application</subsection>
-   <subsection>Configuring to application to use the plugin</subsection>
-   <img>Plugin configuration screenshot</img>
-   <img>Hello World screenshot</img>
-   <section>Giving our plugin a place on the dashboard</section>
-   <subsection>Adding you plugin to the repository</subsection>
-   <section>Making the Hello World plugin context sensitive</section>
   </document>
   <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/index.xml">Howto
    <section>Howto</section>
@@ -138,52 +201,17 @@
    <subsection>Troubleshooting</subsection>
    <section>Adding the jetty plugin for fast testing</section>
   </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/howto/workflow.xml">Developing workflows
-   <section>Developing workflows</section>
-   <subsection>Building your own workflow</subsection>
-   <subsection>Creating a workflow class</subsection>
-   <subsection>Writing the method that performs the workflow step</subsection>
-   <subsection>Mapping the data in the class to data in the repository</subsection>
-   <subsection>Deploying the workflow</subsection>
-  </document>
   <document ext="xml" fullname="../delve_into/implementation/add-ons/index.xml">Hippo CMS Add-ons
    <section>Hippo CMS Add-ons</section>
-   <shortdesc>Extend Hippo CMS with your own add-ons.</shortdesc>
+   <shortdesc>Extend Hippo CMS with your own content (type)
+        addons.</shortdesc>
   </document>
   <document ext="xml" fullname="../delve_into/implementation/add-ons/introduction.xml">Introduction to add-on development
    <section>Introduction to add-on development</section>
    <shortdesc>An introduction to Hippo CMS add-on development.</shortdesc>
-   <subsection>Dashboard plugin</subsection>
-   <subsection>Custom Perspective</subsection>
-   <subsection>Templates</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-architecture.xml">Frontend Plugin Architecture
-   <section>Frontend Plugin Architecture</section>
-   <subsection>Customization by configuration</subsection>
-   <subsection>Applications</subsection>
-   <section>Advanced - Subject to Change</section>
-   <subsection>Plugin Configuration</subsection>
-   <subsection>Plugin Context</subsection>
-   <subsection>Dynamic Services</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/reference/frontend/frontend-plugin-communication.xml">Frontend Plugin Communication
-   <section>Frontend Plugin Communication</section>
-   <subsection>Sharing Models</subsection>
-   <subsection>Dialogs / Page Serialization</subsection>
-   <section>Advanced - Subject to Change</section>
-   <subsection>Other Communication Patterns</subsection>
-   <subsection>Available Services</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/reference/frontend/index.xml">Frontend Plugins
-   <section>Frontend Plugins</section>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/reference/index.xml">Add-on Reference
-   <section>Add-on Reference</section>
-   <shortdesc>Technical documentation on add-on development.</shortdesc>
-   <subsection>Repository plugins vs. frontend plugins</subsection>
-  </document>
-  <document ext="xml" fullname="../delve_into/implementation/add-ons/reference/repository/repository_plugins.xml">Repository Plugins
-   <section>Repository Plugins</section>
+   <subsection>Content addon</subsection>
+   <subsection>Editing Template addon</subsection>
+   <subsection>More</subsection>
   </document>
   <document ext="xml" fullname="../delve_into/implementation/index.xml">Website Development
    <section>Website Development</section>
@@ -340,30 +368,34 @@
   <document ext="xml" fullname="../delve_into/sysadmin/installation/in_application_server.xml">Deploying in Application Server
    <section>Deploying in Application Server</section>
    <shortdesc>Get Hippo CMS up and running in a Java application server.</shortdesc>
+   <index>application server</index>
    <subsection>Obtain the EAR package</subsection>
    <subsection>Application Server</subsection>
    <subsection>Deploying in Glassfish</subsection>
+   <index>GlassFish</index>
    <img/>
    <img/>
    <h4>Integration Glassfish and NetBeans</h4>
    <subsection>Deploying in JBoss</subsection>
-   <subsection>Deploying in Websphere Application Server</subsection>
-   <subsection>Deploying in Weblogic Server</subsection>
+   <index>JBoss</index>
   </document>
   <document ext="xml" fullname="../delve_into/sysadmin/installation/index.xml">Installation
    <section>Installation</section>
    <shortdesc>How to install Hippo CMS</shortdesc>
    <index>Java servlet container</index>
-   <index>Java application servers</index>
+   <index>Java application server</index>
    <index>WAR</index>
    <index>EAR</index>
   </document>
   <document ext="xml" fullname="../delve_into/sysadmin/installation/in_servlet_container.xml">Deploying in Servlet Container
    <section>Deploying in Servlet Container</section>
    <shortdesc>Get Hippo CMS up and running in a Java servlet container.</shortdesc>
+   <index>servlet container</index>
    <subsection>Obtain the WAR package</subsection>
-   <subsection>Deploying in Tomcat</subsection>
-   <subsection>Deploying in Jetty</subsection>
+   <subsection>Deploying in Tomcat 6.0</subsection>
+   <index>Tomcat 6.0</index>
+   <subsection>Deploying in Tomcat 5.5</subsection>
+   <index>Tomcat 5.5</index>
   </document>
   <document ext="xml" fullname="../delve_into/sysadmin/installation/plugins.xml">Installing plugins from the Hippo forge
    <section>Installing plugins from the Hippo forge</section>
