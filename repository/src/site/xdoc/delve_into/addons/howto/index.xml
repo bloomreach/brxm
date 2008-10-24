@@ -34,27 +34,51 @@
           all kinds of different add-ons. Time to get your hands dirty!
         </p>
 
+        <subsection name="Hello Plugin World!">
+          <p>
+            A walk through all the steps that are required for plugin development and
+            deployment as a part of the CMS.
+          </p>
+          <ul>
+            <li>
+              <a href="gui_plugin.html">Create a GUI plugin</a>
+            </li>
+            <li>
+              <a href="packaging.html">Package a plugin with the CMS for testing</a>
+            </li>
+            <li>
+              <a href="extend_dashboard.html">Embed the plugin on the dashboard</a>
+            </li>
+            <li>
+              <a href="hello_model.html">Share a model with other plugins</a>
+            </li>
+          </ul>
+        </subsection>
 
-        <ul>
-          <li>
-            <a href="packaging.html">Package Hippo CMS with your own add-on</a>
-          </li>
-          <li>
-            <a href="customize_editing_template.html">Customize an editing template</a>
-          </li>
-          <li>
-            <a href="editing_template_plugin.html">Create an editing template plugin</a>
-          </li>
-          <li>
-            <a href="customize_skin.html">Customize the Hippo CMS skin</a>
-          </li>
-          <li>
-            <a href="workflow.html">Create a custom workflow</a>
-          </li>
-          <li>
-            <a href="gui_plugin.html">Create a GUI plugin</a>
-          </li>
-        </ul>
+        <subsection name="Templates">
+          <p>
+            How to customize templates, by using a layout or writing your own plugin.
+          </p>
+          <ul>
+            <li>
+              <a href="customize_editing_template.html">Customize an editing template</a>
+            </li>
+            <li>
+              <a href="editing_template_plugin.html">Create an editing template plugin</a>
+            </li>
+          </ul>
+        </subsection>
+
+        <subsection name="Other">
+          <ul>
+            <li>
+              <a href="customize_skin.html">Customize the Hippo CMS skin</a>
+            </li>
+            <li>
+              <a href="workflow.html">Create a custom workflow</a>
+            </li>
+          </ul>
+        </subsection>
 
       </section>
     </body>
