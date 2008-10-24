@@ -22,30 +22,33 @@
       <title>Custom packaging</title>
   </properties>
   <body>
-  	<section name="Creating your own war package">
-  		<p>
-	  		In the <a href="plugins/frontend/hello-world.html">Hello World</a> example we created a plugin and included
-  		    it directly in the quickstart war project.
-	  		While this works just fine, it requires you to make changes to an external project, and if there are a lot
-	  		of changes to be made it can get messy.
-	  		It would be better if we can just leave quickstart war untouched and build our own war using quickstart war
-	  		as a blue print.
-	  	</p>
-  	</section>
-  	<section name="Your own pom file">
-  		<p>
-  			All there is to creating your own war file is some modifications to the pom file (of your own project).
-  		</p>
-  		<p>
-  			<b>Note:</b> It is assumed that you have a project with a pom file similar to the one created in the 
-  		    <a href="plugins/frontend/hello-world.html">Hello World</a> tutorial.
-  			If you don't have that you are better off following that tutorial first. 
-  		</p>
-  		<subsection name="Adding the war dependency">
-  			<p>
-  				First we need to add a dependency to the quickstart war to our pom file.
-  			</p>
-  			<source>
+    <section name="Creating your own war package">
+      <p>
+        In the <a href="plugins/frontend/hello-world.html">Hello World</a>
+        example we created a plugin and included it directly in the quickstart
+        war project.  While this works just fine, it requires you to make
+        changes to an external project, and if there are a lot of changes to be
+        made it can get messy.  It would be better if we can just leave
+        quickstart war untouched and build our own war using quickstart war
+        as a blue print.
+      </p>
+    </section>
+    <section name="Your own pom file">
+      <p>
+        All there is to creating your own war file is some modifications to the
+        pom file (of your own project).
+      </p>
+      <p>
+        <b>Note:</b> It is assumed that you have a project with a pom file
+        similar to the one created in the
+        <a href="plugins/frontend/hello-world.html">Hello World</a> tutorial.
+        If you don't have that you are better off following that tutorial first. 
+      </p>
+      <subsection name="Adding the war dependency">
+        <p>
+          First we need to add a dependency to the quickstart war to our pom file.
+        </p>
+        <source>
 &lt;dependency&gt;
     &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
     &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
@@ -54,47 +57,47 @@
     &lt;scope&gt;runtime&lt;/scope&gt;
 &lt;/dependency&gt;
 </source>
-  		</subsection>
-  		<subsection name="Modifying the build section">
-  			<p>
-  				Add the following to the plugins section. It tells maven to use the quickstart war as an overlay.
-  			</p>
-  			<source>
+      </subsection>
+      <subsection name="Modifying the build section">
+        <p>
+          Add the following to the plugins section. It tells maven to use the quickstart war as an overlay.
+        </p>
+        <source>
 &lt;plugin&gt;
-	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-	&lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
-	&lt;version&gt;2.1-alpha-1&lt;/version&gt;
-	&lt;configuration&gt;
-		&lt;overlays&gt;
-		&lt;overlay&gt;
-	        &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-	        &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+  &lt;version&gt;2.1-alpha-1&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;overlays&gt;
+    &lt;overlay&gt;
+          &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
+          &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
         &lt;/overlay&gt;
     &lt;/overlays&gt;
   &lt;/configuration&gt;
 &lt;/plugin&gt;
 </source>
-			<p>
-				Well thats actually it. Running <b>mvn install</b> will create a custom war of your own plugin project and store it in the maven repository.
-			</p>
-  		</subsection>
-  		<subsection name="Troubleshooting">
-  			<p>
-  				It can happen that maven is unable to find the quickstart war. In that case it will print instructions on how to add the the file to your repository.
-  				You will probably have to do this if you only downloaded the war instead of building it yourself with maven.
-  			</p>
-  		</subsection>
-  	</section>
-  	<section name="Adding the jetty plugin for fast testing">
-  		<p>
-  			While developing your plugin you will probably what to test your work a lot. So lets take a moment to make that easy.
-  			You can add the jetty plugin to your pom file which will make it very easy to get your plugin running fast.
-  		</p>
-  		<p>
-  			Add the following plugin section to your plugins section in your pom file.
-  			You will now be able to test drive your war with <b>mvn jetty:run-war</b>.
-  		</p>
-  		<source>
+      <p>
+        Well thats actually it. Running <b>mvn install</b> will create a custom war of your own plugin project and store it in the maven repository.
+      </p>
+      </subsection>
+      <subsection name="Troubleshooting">
+        <p>
+          It can happen that maven is unable to find the quickstart war. In that case it will print instructions on how to add the the file to your repository.
+          You will probably have to do this if you only downloaded the war instead of building it yourself with maven.
+        </p>
+      </subsection>
+    </section>
+    <section name="Adding the jetty plugin for fast testing">
+      <p>
+        While developing your plugin you will probably what to test your work a lot. So lets take a moment to make that easy.
+        You can add the jetty plugin to your pom file which will make it very easy to get your plugin running fast.
+      </p>
+      <p>
+        Add the following plugin section to your plugins section in your pom file.
+        You will now be able to test drive your war with <b>mvn jetty:run-war</b>.
+      </p>
+      <source>
 &lt;plugin&gt;
   &lt;groupId&gt;org.mortbay.jetty&lt;/groupId&gt;
   &lt;artifactId&gt;maven-jetty-plugin&lt;/artifactId&gt;
@@ -136,7 +139,7 @@
     &lt;/dependency&gt;
   &lt;/dependencies&gt;
 &lt;/plugin&gt;
-  		</source>
-  	</section>
+      </source>
+    </section>
   </body>
 </document>
