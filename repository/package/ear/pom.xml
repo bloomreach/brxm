@@ -78,7 +78,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
     </dependency>
-    
+
     <!-- Hippo ECM authorization configuration -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -232,7 +232,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    
+
   </dependencies>
 
   <build>
@@ -251,6 +251,7 @@
           <archive>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
           <modules>

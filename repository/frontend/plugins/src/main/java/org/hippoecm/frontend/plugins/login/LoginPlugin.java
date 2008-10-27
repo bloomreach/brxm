@@ -15,12 +15,22 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import javax.jcr.Repository;
+
+import javax.servlet.ServletContext;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -28,9 +38,13 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.value.ValueMap;
+
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -49,6 +63,44 @@ public class LoginPlugin extends RenderPlugin {
 
         add(new SignInForm("signInForm"));
         add(new Pinger("pinger"));
+
+        Label versionLabel, buildLabel, repositoryLabel;
+        add(versionLabel = new Label("version"));
+        add(buildLabel = new Label("build"));
+        add(repositoryLabel = new Label("repository"));
+        ServletContext servletContext = ((WebApplication)getApplication()).getServletContext();
+        try {
+            InputStream istream = servletContext.getResourceAsStream("/META-INF/MANIFEST.MF");
+            if (istream == null) {
+                File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
+                if(manifestFile.exists()) {
+                    istream = new FileInputStream(manifestFile);
+                }
+            }
+            if (istream == null) {
+                istream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+            }
+            if (istream != null) {
+                Manifest manifest = new Manifest(istream);
+                Attributes atts = manifest.getMainAttributes();
+                if (atts.getValue("Implementation-Version") != null) {
+                    versionLabel.setModel(new Model(atts.getValue("Implementation-Version")));
+                }
+                if (atts.getValue("Implementation-Build") != null) {
+                    buildLabel.setModel(new Model(atts.getValue("Implementation-Build")));
+                }
+            }
+        } catch(IOException ex) {
+            // delibate ignore
+        }
+        Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
+        if(repository != null) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
+            sb.append(" ");
+            sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
+            repositoryLabel.setModel(new Model(new String(sb)));
+        }
     }
 
     @Override
