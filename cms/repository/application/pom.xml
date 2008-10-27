@@ -93,6 +93,7 @@
           <archive>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
         </configuration>

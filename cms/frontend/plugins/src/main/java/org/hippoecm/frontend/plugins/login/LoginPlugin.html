@@ -14,42 +14,46 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:head>
-  <title>Hippo CMS 7</title>
-</wicket:head>
-<body>
-<wicket:panel>
-      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
-    <form class="hippo-login" wicket:id="signInForm" name="signInForm">
-      <div class="hippo-login-panel">
-        <h2 class="hippo-global-hideme"><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
-        <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
-        <table>
-            <tr>
-              <td width="50%"><label><wicket:message key="username-label" />&nbsp;</label></td>
-              <td><input wicket:id="username" type="text" value="foo@goo.moo" /></td>
-            </tr>
-            <tr>
-              <td><label><wicket:message key="password-label" />&nbsp;</label></td>
-              <td><input wicket:id="password" type="password" value="password" /></td>
-            </tr>
-            <tr>
-              <td><label><wicket:message key="locale-label" />&nbsp;</label></td>
-              <td><select name="locale" wicket:id="locale"></select></td>
-            </tr>
-            <tr>
-              <td>&nbsp;</td>
-              <td class="hippo-global-alignright">
-                <input type="submit" name="submit" wicket:id="submit" value="label" />
-              </td>
-            </tr>
-          </table>
-        <div class="hippo-copyright">
-          &copy; 1999-2008 Hippo B.V. 
-        </div>
-      </div>
-      </form>
-  
-</wicket:panel>
-</body>
+    <wicket:head>
+        <title>Hippo CMS 7</title>
+    </wicket:head>
+    <body>
+        <wicket:panel>
+            <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
+            <div class="hippo-login-panel">
+                <form class="hippo-login" wicket:id="signInForm" name="signInForm">
+                    <h2 class="hippo-global-hideme"><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></h2>
+                    <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
+                    <table>
+                        <tr>
+                            <td width="50%"><label><wicket:message key="username-label" />&nbsp;</label></td>
+                            <td><input wicket:id="username" type="text" value="foo@goo.moo" /></td>
+                        </tr>
+                        <tr>
+                            <td><label><wicket:message key="password-label" />&nbsp;</label></td>
+                            <td><input wicket:id="password" type="password" value="password" /></td>
+                        </tr>
+                        <tr>
+                            <td><label><wicket:message key="locale-label" />&nbsp;</label></td>
+                            <td><select name="locale" wicket:id="locale"></select></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td class="hippo-global-alignright">
+                                <input type="submit" name="submit" wicket:id="submit" value="label" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                <div class="hippo-copyright">
+                    <wicket:message key="cms-version-intro-label"/><span wicket:id="version">unknown</span>
+                    <wicket:message key="cms-version-mitro-label"/><span wicket:id="build">unknown</span>
+                    <wicket:message key="cms-version-outro-label"/>       
+                    <wicket:message key="repository-version-intro-label"/><span wicket:id="repository">unknown</span>
+                    <wicket:message key="repository-version-outro-label"/>
+                    &copy; 1999-2008 Hippo B.V.
+                </div>
+            </div>            
+        </wicket:panel>
+    </body>
 </html>

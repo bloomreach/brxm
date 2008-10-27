@@ -64,7 +64,6 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>war</type>
     </dependency>
-    
 
     <!-- End applications -->
     <dependency>
@@ -95,7 +94,7 @@
       <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
-    
+
     <!-- Ldap support -->
     <dependency>
       <groupId>org.hippoecm</groupId>
@@ -266,6 +265,7 @@
           <archive>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
+              <Implementation-Version>${project.version}</Implementation-Version>
             </manifestEntries>
           </archive>
           <overlays>
