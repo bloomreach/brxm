@@ -23,8 +23,8 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Hippo ECM editor addon</name>
-  <description>Hippo ECM editor addon</description>
+  <name>Hippo ECM tagging addon</name>
+  <description>Hippo ECM tagging addon</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-addon-tagging</artifactId>
   <packaging>jar</packaging>
