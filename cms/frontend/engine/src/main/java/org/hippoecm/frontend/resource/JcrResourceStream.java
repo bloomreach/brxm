@@ -80,7 +80,13 @@ public class JcrResourceStream extends JcrNodeModel implements IResourceStream {
     }
 
     public long length() {
-        return -1;
+        long length = -1;
+        try {
+            length = getNode().getProperty("jcr:data").getLength();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage());
+        }
+        return length;
     }
 
     public void setLocale(Locale locale) {

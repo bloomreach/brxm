@@ -45,7 +45,7 @@ public class MenuPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+
     private Sorter sorter;
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
@@ -107,7 +107,6 @@ public class MenuPlugin extends RenderPlugin {
         };
         add(new DialogLink("content-import-dialog", new Model("Import Node"), dialogFactory, dialogService));
 
-        
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -143,7 +142,6 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
-        
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
@@ -163,7 +161,6 @@ public class MenuPlugin extends RenderPlugin {
         };
         add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
 
-        
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -172,7 +169,7 @@ public class MenuPlugin extends RenderPlugin {
             }
         };
         add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
-        
+
         sorter = new Sorter("sorter-panel");
         add(sorter);
 
@@ -183,15 +180,15 @@ public class MenuPlugin extends RenderPlugin {
                 return new WorkflowDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        add(new DialogLink("workflow-dialog", new Model("Workflow"), dialogFactory, dialogService));
+        add(new DialogLink("workflow-dialog", new Model("View Workflow"), dialogFactory, dialogService));
 
     }
-    
+
     @Override
     public void onModelChanged() {
         sorter.setModel(getModel());
     }
-    
+
     @Override
     public void redraw() {
         super.redraw();

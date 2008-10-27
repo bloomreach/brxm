@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.editor;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -51,7 +52,7 @@ public class PropertiesEditor extends DataView {
             item.add(deleteLink("delete", model));
             item.add(new Label("name", model.getProperty().getName()));
             item.add(new PropertyValueEditor("values", model));
-            if (model.getProperty().getDefinition().isMultiple()) {
+            if (model.getProperty().getDefinition().isMultiple() && !model.getProperty().getDefinition().isProtected()) {
                 item.add(addLink("add", model));
             } else {
                 item.add(new Label("add", ""));
@@ -71,6 +72,7 @@ public class PropertiesEditor extends DataView {
         } else {
             result = new AjaxLink(id, model) {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     try {
@@ -90,17 +92,32 @@ public class PropertiesEditor extends DataView {
     private AjaxLink addLink(String id, final JcrPropertyModel model) {
         return new AjaxLink(id, model) {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
+                Property prop = model.getProperty();
+                String[] newValues;
                 try {
-                    Property prop = model.getProperty();
                     Value[] oldValues = prop.getValues();
-                    String[] newValues = new String[oldValues.length+1];
+                    newValues = new String[oldValues.length + 1];
                     for (int i = 0; i < oldValues.length; i++) {
                         newValues[i] = oldValues[i].getString();
                     }
-                    newValues[oldValues.length] = "...";
+                } catch (RepositoryException e) {
+                    log.error(e.getMessage());
+                    return;
+                }
+
+                try {
+                    newValues[newValues.length - 1] = "...";
                     prop.setValue(newValues);
+                } catch (ValueFormatException e) {
+                    newValues[newValues.length - 1] = "cafebabe-cafe-babe-cafe-babecafebabe";
+                    try {
+                        prop.setValue(newValues);
+                    } catch (RepositoryException e1) {
+                        log.error(e1.getMessage());
+                    }
                 } catch (RepositoryException e) {
                     log.error(e.getMessage());
                 }

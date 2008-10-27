@@ -26,9 +26,12 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Check;
 import org.apache.wicket.markup.html.form.CheckGroup;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListItemModel;
 import org.apache.wicket.markup.html.list.ListView;
@@ -37,20 +40,18 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeTypesEditor extends CheckGroup {
+class NodeTypesEditor extends CheckGroup {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
     private JcrNodeModel nodeModel;
 
-    public NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
+    NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
         super(id, nodeTypes);
         this.nodeModel = nodeModel;
-
+        
         add(new ListView("type", getAllNodeTypes()) {
             private static final long serialVersionUID = 1L;
 
