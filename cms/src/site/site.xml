@@ -202,61 +202,61 @@
         </item>
       </item>
 
-      <item name="Website Development" href="/delve_into/implementation/index.html" collapse="true">
-        <item name="Toolkits" href="/delve_into/implementation/toolkits/index.html"/>
-        <item name="Web Add-ons" href="/delve_into/implementation/add-ons/index.html" collapse="true">
-          <item name="Introduction" href="/delve_into/implementation/add-ons/introduction.html" />
-          <item name="Howto" href="/delve_into/implementation/add-ons/howto/index.html" collapse="true">
-            <item name="Editing Template" href="/delve_into/implementation/add-ons/howto/editing_template.html"/>
-            <item name="Packaging" href="/delve_into/implementation/add-ons/howto/packaging.html"/>
+      <item name="Website Development" href="/delve_into/web/index.html" collapse="true">
+        <item name="Toolkits" href="/delve_into/web/toolkits/index.html"/>
+        <item name="Web Add-ons" href="/delve_into/web/add-ons/index.html" collapse="true">
+          <item name="Introduction" href="/delve_into/web/add-ons/introduction.html" />
+          <item name="Howto" href="/delve_into/web/add-ons/howto/index.html" collapse="true">
+            <item name="Editing Template" href="/delve_into/web/add-ons/howto/editing_template.html"/>
+            <item name="Packaging" href="/delve_into/web/add-ons/howto/packaging.html"/>
           </item>
         </item>
       </item>
 
-      <item name="CMS Customization" href="/delve_into/addons/index.html" collapse="true">
-        <item name="Introduction" href="/delve_into/addons/introduction.html" />
-        <item name="Howto" href="/delve_into/addons/howto/index.html" collapse="true">
-          <item name="GUI Plugin" href="/delve_into/addons/howto/gui_plugin.html"/>
-          <item name="Package Plugin" href="/delve_into/addons/howto/packaging.html"/>
-          <item name="Extend Dashboard" href="/delve_into/addons/howto/extend_dashboard.html"/>
-          <item name="Share Model" href="/delve_into/addons/howto/hello_model.html"/>
-          <item name="Customize Editing Template" href="/delve_into/addons/howto/customize_editing_template.html"/>
-          <item name="Editing Template Plugin" href="/delve_into/addons/howto/editing_template_plugin.html"/>
-          <item name="Customize Skin" href="/delve_into/addons/howto/customize_skin.html"/>
-          <item name="Custom Workflow" href="/delve_into/addons/howto/workflow.html"/>
-          <item name="Customize Versioning" href="/delve_into/addons/howto/customize_versioning.html"/>
+      <item name="CMS Customization" href="/delve_into/custom/index.html" collapse="true">
+        <item name="Introduction" href="/delve_into/custom/introduction.html" />
+        <item name="Howto" href="/delve_into/custom/howto/index.html" collapse="true">
+          <item name="GUI Plugin" href="/delve_into/custom/howto/gui_plugin.html"/>
+          <item name="Package Plugin" href="/delve_into/custom/howto/packaging.html"/>
+          <item name="Extend Dashboard" href="/delve_into/custom/howto/extend_dashboard.html"/>
+          <item name="Share Model" href="/delve_into/custom/howto/hello_model.html"/>
+          <item name="Customize Editing Template" href="/delve_into/custom/howto/customize_editing_template.html"/>
+          <item name="Editing Template Plugin" href="/delve_into/custom/howto/editing_template_plugin.html"/>
+          <item name="Customize Skin" href="/delve_into/custom/howto/customize_skin.html"/>
+          <item name="Custom Workflow" href="/delve_into/custom/howto/workflow.html"/>
+          <item name="Customize Versioning" href="/delve_into/custom/howto/customize_versioning.html"/>
         </item>
-        <item name="Reference Guide" href="/delve_into/addons/reference/index.html" collapse="true">
-          <item name="Repository Plugins" href="/delve_into/addons/reference/repository/repository_plugins.html"> </item>
-          <item name="Frontend Plugins" href="/delve_into/addons/reference/frontend/index.html" collapse="true">
-            <item name="Architecture" href="/delve_into/addons/reference/frontend/frontend-plugin-architecture.html"/>
-            <item name="Communication" href="/delve_into/addons/reference/frontend/frontend-plugin-communication.html"/>
+        <item name="Reference Guide" href="/delve_into/custom/reference/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve_into/custom/reference/repository/repository_plugins.html"> </item>
+          <item name="Frontend Plugins" href="/delve_into/custom/reference/frontend/index.html" collapse="true">
+            <item name="Architecture" href="/delve_into/custom/reference/frontend/frontend-plugin-architecture.html"/>
+            <item name="Communication" href="/delve_into/custom/reference/frontend/frontend-plugin-communication.html"/>
           </item>
         </item>
-        <item name="JCR interface" href="/delve_into/addons/jcr/index.html" collapse="true">
-          <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
-          <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
-          <item name="Data Migration" href="/delve_into/implementation/jcr/data_migration.html"/>
-          <item name="Reference Guide" href="/delve_into/addons/jcr/reference/index.html" collapse="true">
-            <item name="Derived Data" href="/delve_into/addons/jcr/derived_data.html"/>
+        <item name="JCR interface" href="/delve_into/custom/jcr/index.html" collapse="true">
+          <item name="Basics" href="/delve_into/custom/jcr/jcr.html"/>
+          <item name="Examples" href="/delve_into/custom/jcr/examples.html"/>
+          <item name="Data Migration" href="/delve_into/custom/jcr/data_migration.html"/>
+          <item name="Reference Guide" href="/delve_into/custom/jcr/reference/index.html" collapse="true">
+            <item name="Derived Data" href="/delve_into/custom/jcr/derived_data.html"/>
           </item>
         </item>
-        <item name="List of Concepts" href="/delve_into/addons/concepts/index.html" collapse="true">
-          <item name="Repository Plugins" href="/delve_into/addons/concepts/repository_plugins.html"> </item>
-          <item name="Versioning" href="/delve_into/addons/concepts/versioning.html"> </item>
+        <item name="List of Concepts" href="/delve_into/custom/concepts/index.html" collapse="true">
+          <item name="Repository Plugins" href="/delve_into/custom/concepts/repository_plugins.html"> </item>
+          <item name="Versioning" href="/delve_into/custom/concepts/versioning.html"> </item>
         </item>
         <!--<item name="Dropbox Example" href="/delve_into/implementation/advanced/jcr-dropbox-example.html"/>-->
       </item>
 
-      <item name="Hacking the core" href="/delve_into/development/index.html" collapse="true">
-        <item name="Project Structure" href="/delve_into/development/project-structure.html"/>
-        <item name="Building from source" href="/delve_into/development/building/index.html">
-          <item name="Building with Maven" href="/delve_into/development/building/maven.html"/>
-          <item name="Building with Eclipse" href="/delve_into/development/building/eclipse.html"/>
-          <item name="Building with Netbeans" href="/delve_into/development/building/netbeans.html"/>
+      <item name="Hacking the core" href="/delve_into/core/index.html" collapse="true">
+        <item name="Project Structure" href="/delve_into/core/project-structure.html"/>
+        <item name="Building from source" href="/delve_into/core/building/index.html">
+          <item name="Building with Maven" href="/delve_into/core/building/maven.html"/>
+          <item name="Building with Eclipse" href="/delve_into/core/building/eclipse.html"/>
+          <item name="Building with Netbeans" href="/delve_into/core/building/netbeans.html"/>
         </item>
-        <item name="Concepts" href="/delve_into/development/concepts/index.html"/>
-        <item name="Architecture" href="/delve_into/development/architecture/index.html"/>
+        <item name="Concepts" href="/delve_into/core/concepts/index.html"/>
+        <item name="Architecture" href="/delve_into/core/architecture/index.html"/>
       </item>
 
     </menu>
