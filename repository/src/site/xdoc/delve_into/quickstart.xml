@@ -123,7 +123,7 @@
  <subsection name='Alternatives' title='What can you do instead of the above?'>
 
    If you already have an Java application container and want to deploy Hippo CMS
-   in it, go <a href='quickstart_in_existing_container'>here</a>.
+   in it, go <a href='quickstart_in_existing_container.html'>here</a>.
  </subsection>
 
  <subsection name='Next' title='What can you do after you did the above?'>
