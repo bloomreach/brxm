@@ -56,6 +56,7 @@
       </subsection>
       
       <subsection name="Deploying in Tomcat 6.0">
+      <blockquote>
        <table>
         <tr> 
          <td>
@@ -145,6 +146,7 @@
    </td>
   </tr>
        </table>
+      </blockquote>
 
         <p> 
           <i>Note: The port number might be different if you configured you application or servlet container to run
