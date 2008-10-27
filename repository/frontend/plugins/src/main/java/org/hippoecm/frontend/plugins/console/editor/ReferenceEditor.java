@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -36,25 +37,26 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNode;
 
-class Reference extends Panel {
+class ReferenceEditor extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id:  $";
     private static final long serialVersionUID = 1L;
-    
+
     private static Pattern pattern = Pattern.compile("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$");
-    
-    public Reference(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel){
+
+    ReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
         String asString = "";
         try {
             boolean isProtected = propertyModel.getProperty().getDefinition().isProtected();
             Session session = ((UserSession) getSession()).getJcrSession();
-            asString  = valueModel.getValue().getString();
+            asString = valueModel.getValue().getString();
             Node targetNode = session.getNodeByUUID(asString);
             if (targetNode instanceof HippoNode) {
                 final JcrNodeModel targetModel = new JcrNodeModel(targetNode);
                 AjaxLink link = new AjaxLink("reference-link") {
                     private static final long serialVersionUID = 1L;
+
                     @Override
                     public void onClick(AjaxRequestTarget requestTarget) {
                         EditorPlugin plugin = (EditorPlugin) findParent(EditorPlugin.class);
@@ -62,14 +64,14 @@ class Reference extends Panel {
                     }
                 };
                 add(link);
-                link.add(new Label("reference-link-text", new Model (targetNode.getPath())));
+                link.add(new Label("reference-link-text", new Model(targetNode.getPath())));
 
                 if (isProtected) {
                     add(new Label("reference-edit", asString));
                 } else {
                     TextFieldWidget editor = new TextFieldWidget("reference-edit", new Model(asString));
                     editor.setSize("40");
-                    add(editor);            
+                    add(editor);
                 }
             } else {
                 add(new Label("reference-edit", asString));
@@ -78,7 +80,7 @@ class Reference extends Panel {
         } catch (ItemNotFoundException e) {
             TextFieldWidget editor = new TextFieldWidget("reference-edit", new Model(asString));
             editor.setSize("40");
-            add(editor);          
+            add(editor);
 
             DisabledLink link = new DisabledLink("reference-link", new Model("(Broken reference)"));
             link.add(new AttributeAppender("style", new Model("color:red"), " "));
@@ -90,11 +92,34 @@ class Reference extends Panel {
         }
     }
 
-    static boolean isUid(JcrPropertyValueModel valueModel) throws RepositoryException {
-        String asString = valueModel.getValue().getString();
-        return pattern.matcher(asString).matches();
+    static boolean isReference(JcrPropertyValueModel valueModel) {
+        try {
+            String asString = valueModel.getValue().getString();
+            return pattern.matcher(asString).matches();
+        } catch (RepositoryException e) {
+            NodeEditor.log.error(e.getMessage());
+            return false;
+        }
     }
-    
+
+    static boolean isReference(JcrPropertyModel propertyModel) {
+        try {
+            String asString = "";
+            Property property = propertyModel.getProperty();
+            if (property.getDefinition().isMultiple()) {
+                if (property.getValues().length > 0) {
+                    asString = property.getValues()[0].getString();
+                }
+            } else {
+                asString = property.getString();
+            }
+            return pattern.matcher(asString).matches();
+        } catch (RepositoryException e) {
+            NodeEditor.log.error(e.getMessage());
+            return false;
+        }
+    }
+
     private class DisabledLink extends AjaxLink {
         private static final long serialVersionUID = 1L;
 
@@ -103,12 +128,11 @@ class Reference extends Panel {
             setEnabled(false);
             add(new Label("reference-link-text", linktext));
         }
-        
+
         @Override
         public void onClick(AjaxRequestTarget target) {
-        }                    
+        }
 
     }
-
 
 }

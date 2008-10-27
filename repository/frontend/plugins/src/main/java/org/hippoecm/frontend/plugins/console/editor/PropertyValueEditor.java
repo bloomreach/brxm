@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
+import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -28,13 +29,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyValueEditor extends DataView {
+class PropertyValueEditor extends DataView {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -43,7 +45,7 @@ public class PropertyValueEditor extends DataView {
     protected JcrPropertyModel propertyModel;
     private int textAreaMaxColumns = 100;
 
-    public PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
+    PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
         this.propertyModel = dataProvider;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
@@ -53,19 +55,24 @@ public class PropertyValueEditor extends DataView {
     protected void populateItem(Item item) {
         try {
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
-            String asString = valueModel.getValue().getString();
 
             if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
-                long size = propertyModel.getProperty().getLength();
-                item.add(new Label("value", "binary data (" + size + " bytes)"));
+                Node node = propertyModel.getProperty().getParent();
+                if (node.isNodeType("hippo:resource") || node.isNodeType("nt:resource")) {
+                    item.add(new ResourceEditor("value", new JcrNodeModel(node)));
+                } else {
+                    long size = propertyModel.getProperty().getLength();
+                    item.add(new Label("value", "binary data (" + size + " bytes)"));
+                }
 
-            } else if (Reference.isUid(valueModel)) {
-                item.add(new Reference("value", propertyModel, valueModel));
+            } else if (ReferenceEditor.isReference(valueModel)) {
+                item.add(new ReferenceEditor("value", propertyModel, valueModel));
 
             } else if (propertyModel.getProperty().getDefinition().isProtected()) {
                 item.add(new Label("value", valueModel));
 
             } else {
+                String asString = valueModel.getValue().getString();
                 if (asString.contains("\n")) {
                     TextAreaWidget editor = new TextAreaWidget("value", valueModel);
                     String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
@@ -101,7 +108,8 @@ public class PropertyValueEditor extends DataView {
             }
 
             //Remove value link
-            if (propertyModel.getProperty().getDefinition().isMultiple()) {
+            if (propertyModel.getProperty().getDefinition().isMultiple()
+                    && !propertyModel.getProperty().getDefinition().isProtected()) {
                 item.add(new AjaxLink("remove", valueModel) {
                     private static final long serialVersionUID = 1L;
 
@@ -130,5 +138,5 @@ public class PropertyValueEditor extends DataView {
             item.add(new Label("remove", ""));
         }
     }
-    
+
 }
