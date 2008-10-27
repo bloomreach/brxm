@@ -73,14 +73,13 @@ margin: 2px;
 
 /* Login */
 /* ================================================ */
-.hippo-login {text-align: center; width: 100%; background: none; margin-top: 100px;}
+.hippo-login {text-align: center; width: 100%; background: none; padding-top: 145px; padding-bottom: 10px}
 .hippo-login-panel {
 background:transparent url(images/loginback.png) no-repeat scroll left top;
-margin:0px auto;
+margin:100px auto;
 position:relative;
 text-align:left;
 padding:30px;
-padding-top: 145px;
 width: 460px;
 padding-bottom:95px;
 }
