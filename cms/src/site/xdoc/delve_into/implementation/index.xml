@@ -26,37 +26,54 @@
         <span class="shortdesc">Publish your Hippo CMS managed content on the web.</span>
         
         <p>
-          Publishing content on the web is the most common use case for Hippo CMS.
+          Publishing dynamic content on the web is the most common use case for Hippo CMS.
           To integrate Hippo CMS in your new or existing web site, intranet or
-          extranet, you can use the tools provided by Hippo that utilize the
-          standard JCR interface, and the extendable architecture of Hippo CMS.
+          extranet, you can use the high level tools provided by Hippo.          
         </p>
-        
-        <p>
-          This section directs you to the right tools for your situation, and
-          explains how to customize Hippo CMS by creating your own add-ons.
-          In addition, it tells you how to get direct access to the repository
-          content through the JCR interface.
-        </p>
-        
-        <ul>
-          <li>
+                
+        <blockquote>
+         <table>
+          <tr>
+           <td>
             <a href="toolkits/index.html">Toolkits</a>
-            - Using one of the available toolkits is the recommended way to implement
-            Hippo CMS. The toolkits help you create websites and portals using the
+	   </td>
+           <td>
+            Using one of the available toolkits is the recommended way to 
+            develop websites for publishing 
+            Hippo CMS managed content. 
+            The toolkits help you create websites and portals using the
             technology of your choice.
-          </li>
-          <li>
+           </td>
+	  </tr>
+          <tr>
+           <td>
             <a href="add-ons/index.html">Add-ons</a>
-            - Extend Hippo CMS with your own add-ons.
-          </li>
-          <li>
-            <a href="jcr/index.html">JCR Interface</a>
-            - Access your content through the standard JCR interface. This will give
-            you direct access and offers almost unlimited possibilities.
-          </li>
-        </ul>
+	   </td>
+           <td>
+            Extend Hippo CMS with simple add-ons to add functionality to
+            use with your website.
+           </td>
+	  </tr>
+	 </table>
+	</blockquote>
 
-      </section>
-    </body>
+   <subsection name='Alternative'>
+
+    <p>
+     If you need even more extra functionality to use with your website, 
+     the toolkits and/or the Hippo CMS can be extended by plugin 
+     developers. The extra functionality then becomes available for
+     the webdevelopmers in a transparent way. 
+    </p>
+    <p>Information for plugin developers can be found at        
+
+     <a href="http://docs.onehippo.org/hst2/addons/index.html">HST Customization</a>
+     and 
+     <a href="../addons/index.html">CMS Customization</a>, in particular
+     the use of the standard 
+     <a href="../addons/jrc/index.html">JCR Interface</a>.
+    </p>
+   </subsection>
+  </section>
+ </body>
 </document>
