@@ -20,9 +20,7 @@ public interface SearchParameters {
 
     public static final String LIMIT = "limit";
     
-    public static final String PAGE = "page";
-
-    public static final String OFFSET_PARAM = "offset";
+    public static final String OFFSET = "offset";
 
     public static final String EXCERPT = "excerpt";
     
@@ -33,8 +31,10 @@ public interface SearchParameters {
     public static final String DIDYOUMEAN_MINIMUM = "didyoumeanminimum";
 
     public static final String DIDYOUMEAN = "didyoumean";
-    
+
     public static final String KEEPPARAMETERS = "keepparameters";
+    
+    public static final String PAGENAME = "pagename";
 
     public static final String TARGET = "target";
     

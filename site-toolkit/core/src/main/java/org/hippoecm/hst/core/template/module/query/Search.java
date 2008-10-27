@@ -30,11 +30,13 @@ public interface Search extends SearchParameters{
     public  static final String DEFAULT_LANGUAGE = Query.XPATH;
     public static final int DEFAULT_THRESHOLD = 10;
     public static final int DEFAULT_LIMIT = 10;
+    public static final int DEFAULT_OFFSET = 0;
     public static final int DEFAULT_DEPTH = Integer.MAX_VALUE;
     public static final boolean DEFAULT_DIDYOUMEANNEEDED = false;
     public static final boolean DEFAULT_EXCERPTNEEDED = false;
     public static final boolean DEFAULT_SIMILARNEEDED = false;
     public static final boolean DEFAULT_KEEPPARAMETERS = true;
+    public static final String DEFAULT_PAGENAME = "page";
     
   
     public void prepareSearch(PageContext pageContext);
@@ -114,6 +116,10 @@ public interface Search extends SearchParameters{
     public int getLimit();
     
     public void setLimit(int limit);
+    
+    public int getOffset();
+    
+    public void setOffset(int offset);
 
     public void setCurrentPageNumber(int currentPageNumber);
     

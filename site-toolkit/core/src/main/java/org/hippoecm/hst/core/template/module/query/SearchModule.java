@@ -46,12 +46,14 @@ public class SearchModule extends ModuleBase implements Search {
     private String language = DEFAULT_LANGUAGE;
     private int didYouMeanThreshold = DEFAULT_THRESHOLD;
     private int limit = DEFAULT_LIMIT;
+    private int offset = DEFAULT_OFFSET;
     private int depth = DEFAULT_DEPTH;
     private boolean didYouMeanNeeded = DEFAULT_DIDYOUMEANNEEDED;
     private boolean excerptNeeded = DEFAULT_EXCERPTNEEDED;
     private boolean similarNeeded = DEFAULT_SIMILARNEEDED;
 
     private boolean keepParameters = DEFAULT_KEEPPARAMETERS;
+    private String pageName = DEFAULT_PAGENAME;
     private String queryText;
     private String statement;
     private String target;
@@ -158,7 +160,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
 
-        // limit 
+     // limit 
         if (request.getParameter(LIMIT) != null && !"".equals(request.getParameter(LIMIT))) {
             String limitParam = request.getParameter(LIMIT);
             if (!"".equals(limitParam) && isNumber(LIMIT, limitParam)) {
@@ -170,11 +172,31 @@ public class SearchModule extends ModuleBase implements Search {
                 setLimit(Integer.parseInt(limitParam));
             }
         }
+        
+     // offset 
+        if (request.getParameter(OFFSET) != null && !"".equals(request.getParameter(OFFSET))) {
+            String offsetParam = request.getParameter(OFFSET);
+            if (!"".equals(offsetParam) && isNumber(OFFSET, offsetParam)) {
+                setOffset(Integer.parseInt(offsetParam));
+            }
+        } else if (params && moduleParameters.containsKey(OFFSET)) {
+            String offsetParam = moduleParameters.get(OFFSET);
+            if (!"".equals(offsetParam) && isNumber(OFFSET, offsetParam)) {
+                setOffset(Integer.parseInt(offsetParam));
+            }
+        }
 
+        
+        // pagename 
+        if (params && moduleParameters.containsKey(PAGENAME)) {
+            String l_pageName = moduleParameters.get(PAGENAME);
+            setPageName(l_pageName);
+        }
+        
         // current page 
-        if (request.getParameter(PAGE) != null && !"".equals(request.getParameter(PAGE))) {
-            String currentPageParam = request.getParameter(PAGE);
-            if (!"".equals(currentPageParam) && isNumber(PAGE, currentPageParam)) {
+        if (request.getParameter(getPageName()) != null && !"".equals(request.getParameter(getPageName()))) {
+            String currentPageParam = request.getParameter(getPageName());
+            if (!"".equals(currentPageParam) && isNumber(getPageName(), currentPageParam)) {
                 setCurrentPageNumber(Integer.parseInt(currentPageParam));
             }
         }
@@ -348,22 +370,35 @@ public class SearchModule extends ModuleBase implements Search {
 
             searchResult.setSize((int)rows.getSize());
             searchResult.setCurrentPageNumber(currentPageNumber);
-            int offset = (currentPageNumber-1)*limit;
-            searchResult.setOffset(offset);
+            int pagingOffset = offset + (currentPageNumber-1)*limit;
+            searchResult.setOffset(pagingOffset);
             searchResult.setPagesize(limit);
             searchResult.setQuery(querytext);
             searchResult.setNodeType(nodetype);
-            
+            searchResult.setPageName(getPageName());
             searchResult.computePagesAndLinks(request.getParameterMap(), isKeepParameters());
+            
+            if(log.isDebugEnabled()) {
+                logSearch(searchResult);
+            }
+            
+            /*
+             * Fix for jackrabbit bug: when skip == rows.size then hasNext returns true, but nextRow() returns NoSuchElementException
+             */  
+            if(pagingOffset == rows.getSize()) {
+                log.debug("offset is larger then or equal to the number of results");
+                return;
+            }
             
             if(rows.getSize()!=0) {
                 try {
-                    rows.skip(offset);
+                    rows.skip(pagingOffset);
                 } catch (NoSuchElementException e) {
                     log.debug("offset is larger then the number of results");
                     return;
                 }
             }
+            
             int counter = 0;
             while (rows.hasNext()) {
                 counter++;
@@ -374,7 +409,7 @@ public class SearchModule extends ModuleBase implements Search {
                 try {
                     Node node = (Node) jcrSession.getItem(row.getValue("jcr:path").getString());
                     double score = row.getValue("jcr:score").getDouble();
-                    SearchHit searchHit = new SearchHit(node, urlMapping, (counter + offset), score);
+                    SearchHit searchHit = new SearchHit(node, urlMapping, (counter + pagingOffset), score);
                     if (isExcerptNeeded()) {
                         searchHit.setExcerpt(row.getValue("rep:excerpt(.)").getString());
                     }
@@ -417,6 +452,14 @@ public class SearchModule extends ModuleBase implements Search {
         super.render(pageContext);
     }
 
+    private void logSearch(SearchResult searchResult) {
+        log.debug("----- SEARCHRESULT ----");
+        log.debug("hits: " +searchResult.getSize());
+        log.debug("limit: " +searchResult.getLimit());
+        log.debug("offset: " +searchResult.getOffset());
+        log.debug("---END SEARCHRESULT ---");
+    }
+
     private boolean isNumber(String name, String stringInt) {
         try {
             Integer.parseInt(stringInt);
@@ -446,6 +489,10 @@ public class SearchModule extends ModuleBase implements Search {
     public int getLimit() {
         return limit;
     }
+    
+    public int getOffset() {
+        return offset;
+    }
 
     public String getQueryText() {
         return queryText;
@@ -470,6 +517,10 @@ public class SearchModule extends ModuleBase implements Search {
     public boolean isKeepParameters() {
         return keepParameters;
     }
+    
+    public String getPageName() {
+        return pageName;
+    }
 
     public void setDidYouMeanNeeded(boolean didYouMeanNeeded) {
         this.didYouMeanNeeded = didYouMeanNeeded;
@@ -486,6 +537,10 @@ public class SearchModule extends ModuleBase implements Search {
     public void setKeepParameters(boolean keepParameters) {
         this.keepParameters = keepParameters;
     }
+    
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
+    }
 
     public void setLanguage(String language) {
         this.language = language;
@@ -493,6 +548,10 @@ public class SearchModule extends ModuleBase implements Search {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+    
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public void setDepth(int depth) {

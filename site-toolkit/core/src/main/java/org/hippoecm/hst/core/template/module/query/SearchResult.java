@@ -33,6 +33,15 @@ public class SearchResult {
     private String didyoumean;
     private String query;
     private String nodeType;
+    private String pageName = Search.DEFAULT_PAGENAME;
+
+    public String getPageName() {
+        return pageName;
+    }
+
+    public void setPageName(String pageName) {
+        this.pageName = pageName;
+    }
 
     public SearchResult(List<SearchHit> hits) {
         this.hits = hits;
@@ -150,7 +159,10 @@ public class SearchResult {
             while (paramIt.hasNext()) {
                 Entry e = (Entry) paramIt.next();
                 String name = (String) e.getKey();
-                if (SearchParameters.PAGE.equals(name)) {
+                if(name==null) {
+                    continue;
+                }
+                if (name.equals(this.getPageName())) {
                     continue;
                 }
                 String[] values = (String[]) e.getValue();
@@ -170,9 +182,9 @@ public class SearchResult {
             }
             String link;
             if (queryString == null || queryString.length() == 0) {
-                link = "?page=";
+                link = "?"+getPageName()+"=";
             } else {
-                link = queryString.toString() + "&page=";
+                link = queryString.toString() + "&"+getPageName()+"=";
             }
             if (nrOfPages > 1) {
                 for (int i = 1; i <= nrOfPages; i++) {
