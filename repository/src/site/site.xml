@@ -211,11 +211,6 @@
             <item name="Packaging" href="/delve_into/implementation/add-ons/howto/packaging.html"/>
           </item>
         </item>
-        <item name="JCR Interface" href="/delve_into/implementation/jcr/index.html" collapse="true">
-          <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
-          <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
-          <item name="Data Migration" href="/delve_into/implementation/jcr/data_migration.html"/>
-        </item>
       </item>
 
       <item name="CMS Customization" href="/delve_into/addons/index.html" collapse="true">
@@ -229,6 +224,7 @@
           <item name="Editing Template Plugin" href="/delve_into/addons/howto/editing_template_plugin.html"/>
           <item name="Customize Skin" href="/delve_into/addons/howto/customize_skin.html"/>
           <item name="Custom Workflow" href="/delve_into/addons/howto/workflow.html"/>
+          <item name="Customize Versioning" href="/delve_into/addons/howto/customize_versioning.html"/>
         </item>
         <item name="Reference Guide" href="/delve_into/addons/reference/index.html" collapse="true">
           <item name="Repository Plugins" href="/delve_into/addons/reference/repository/repository_plugins.html"> </item>
@@ -236,9 +232,11 @@
             <item name="Architecture" href="/delve_into/addons/reference/frontend/frontend-plugin-architecture.html"/>
             <item name="Communication" href="/delve_into/addons/reference/frontend/frontend-plugin-communication.html"/>
           </item>
-          <item name="Versioning" href="/delve_into/addons/reference/versioning.html"> </item>
         </item>
-        <item name="JCR" href="/delve_into/addons/jcr/index.html" collapse="true">
+        <item name="JCR interface" href="/delve_into/addons/jcr/index.html" collapse="true">
+          <item name="Basics" href="/delve_into/implementation/jcr/jcr.html"/>
+          <item name="Examples" href="/delve_into/implementation/jcr/examples.html"/>
+          <item name="Data Migration" href="/delve_into/implementation/jcr/data_migration.html"/>
           <item name="Reference Guide" href="/delve_into/addons/jcr/reference/index.html" collapse="true">
             <item name="Derived Data" href="/delve_into/addons/jcr/derived_data.html"/>
           </item>
