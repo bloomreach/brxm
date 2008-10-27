@@ -48,7 +48,13 @@ public class ModuleRenderTag extends ModuleTagBase {
 		}
 		
 		if (doRender) {
+		   try {
 		   doRender(request, pcm);
+		   } catch (JspException e) {
+               log.warn("error rendering module: " + e.getMessage());
+               log.debug("error rendering module: " + e);
+		       throw(e);
+		   }
 		}
 		return EVAL_PAGE;
 	}
