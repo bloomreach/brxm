@@ -111,7 +111,7 @@ public abstract class AbstractELNode implements ELNode {
             	 try {
                      if (!jcrNode.hasNode(name)) {
                          log.debug("Node '{}' not found. Return empty string", name);
-                         return "";
+                         return null;
                      } else{
                     	 return jcrNode.getNode(name);
                      }

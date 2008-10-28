@@ -106,7 +106,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                 try {
                     if (!jcrNode.hasProperty(prop)) {
                         log.debug("Property '{}' not found. Return empty string", prop);
-                        return "";
+                        return null;
                     }
                     if (jcrNode.getProperty(prop).getDefinition().isMultiple()) {
                         log.warn("The property is a multivalued property. Use .... if you want the collection."
@@ -127,7 +127,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                     log.error("RepositoryException: {}", e.getMessage());
                     log.debug("RepositoryException:", e);
                 }
-                return "";
+                return null;
             }
         };
     }
