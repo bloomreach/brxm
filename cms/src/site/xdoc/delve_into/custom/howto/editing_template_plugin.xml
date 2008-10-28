@@ -26,9 +26,9 @@
         <span class="shortdesc">Create a template plugin that edits a custom type</span>
 
         <p>
-          Using the <a href="../../../user/information_architects/howto/document_types/editor.html">Document Type Editor</a>, you can create
+          Using the <a href="../../user/information_architects/howto/document_types/index.html">Document Type Editor</a>, you can create
           straightforward document types.  The most commonly used field types are
-          available <a href="../../../user/information_architects/howto/document_types/fieldtypes.html">out of the box</a>. In most cases, these
+          available <a href="../../user/information_architects/howto/document_types/fieldtypes.html">out of the box</a>. In most cases, these
           will satisfy your requirements.  However, if you cannot achieve
           what you want using the graphical editor, there is always the option of
           defining your own custom field types at JCR level.
@@ -155,7 +155,11 @@ public class DeveloperPickerPlugin extends RenderPlugin {
           </ul>
         </subsection>
 
-        <img src="../../../images/addons/template_plugin.png" alt="My Favorite Developer Template Plugin" />
+        <p>
+          <a href="../../../images/addons/template_plugin.png">
+            <img src="../../../images/addons/template_plugin_thumbnail.png" alt="My Favorite Developer Template Plugin" />
+          </a>
+        </p>
 
         <subsection name="Further reading">
           <p>

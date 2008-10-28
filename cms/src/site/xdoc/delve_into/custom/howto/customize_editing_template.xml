@@ -26,7 +26,7 @@
         <span class="shortdesc">You'll learn how to create a template with a custom layout.</span>
 
         <p>
-          Using the <a href="../../../user/information_architects/howto/document_types/editor.html">Document Type Editor</a>, you can create
+          Using the <a href="../../user/information_architects/howto/document_types/editor.html">Document Type Editor</a>, you can create
           straightforward document types.  You can add and remove fields, specify their
           properties and rearrange their order in a list.  When moving fields up and
           down a list doesn't really cut it for you, you need to define your own layout.
@@ -35,7 +35,7 @@
         <subsection name="Define the layout">
           <p>
             First, create a namespace and a type.  For this tutorial, we'll assume
-            that you have <a href="editing_template.html">created the namespace "fancy"</a>.
+            that you have <a href="../../web/add-ons/howto/editing_template.html">created the namespace "fancy"</a>.
           </p>
           <p>
             Then, create a new html file in the maven project,
@@ -96,7 +96,13 @@
               We'll be changing this part of the tree.
             </dd>
           </dl>
-          <img src="../../../images/addons/template_structure.png" alt="Template repository structure" />
+          
+          <p>
+            <a href="../../../images/addons/template_structure.png">
+              <img src="../../../images/addons/template_structure_thumbnail.png" alt="Template repository structure" />
+            </a>
+          </p>
+          
           <p>
             The template itself describes a plugin-cluster, a set of plugins
             that work together.  The top node ("a0d592bd-368c-46da-803" in the
@@ -134,8 +140,8 @@
         <subsection name="Share and enjoy">
           <p>
             You can now export the template (see the <a
-            href="editing_template.html">Create an editing template addon</a>
-            tutorial).  Build the project with maven and you're all set!
+            href="../../web/add-ons/howto/editing_template.html">Create an editing template addon</a>
+            tutorial).  Build the project with Maven and you're all set!
           </p>
           <p>
             TODO: include screenshot
