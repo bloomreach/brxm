@@ -22,9 +22,12 @@
       <title>Custom packaging</title>
   </properties>
   <body>
-    <section name="Creating your own war package">
+    <section name="Creating your own WAR package">
+      
+      <span class="shortdesc">Package Hippo CMS with your own add-on.</span>
+      
       <p>
-        In the <a href="plugins/frontend/hello-world.html">Hello World</a>
+        In the <a href="../../../custom/howto/gui_plugin.html">Hello World</a>
         example we created a plugin and included it directly in the quickstart
         war project.  While this works just fine, it requires you to make
         changes to an external project, and if there are a lot of changes to be
@@ -41,7 +44,7 @@
       <p>
         <b>Note:</b> It is assumed that you have a project with a pom file
         similar to the one created in the
-        <a href="plugins/frontend/hello-world.html">Hello World</a> tutorial.
+        <a href="../../../custom/howto/gui_plugin.html">Hello World</a> tutorial.
         If you don't have that you are better off following that tutorial first. 
       </p>
       <subsection name="Adding the war dependency">

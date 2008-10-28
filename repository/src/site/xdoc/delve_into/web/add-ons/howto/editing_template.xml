@@ -19,27 +19,31 @@
 -->
 <document>
     <properties>
-      <title>Create an Editing Template Addon</title>
+      <title>Create an Editing Template Add-on</title>
     </properties>
     <body>
-      <section name="Create an Editing Template Addon">
-        <span class="shortdesc">You'll learn how to create an addon for a namespace.</span>
+      <section name="Create an Editing Template Add-on">
+        <span class="shortdesc">Learn how to create an add-on for a namespace.</span>
 
         <p>
           We'll create a simple template and export all the necessary parts to form
-          a reusable addon with a custom namespace and document types.
+          a reusable add-on with a custom namespace and document types.
         </p>
 
         <p>
           Create the namespace "fancy" and a type "document".
-          (see <a href="../../../user/information_architects/document_types/">Document Types</a> for instructions)
+          (see <a href="../../../user/information_architects/howto/document_types/index.html">Document Types</a> for instructions)
         </p>
 
-        <img src="../../../../images/addons/fancy_document.png" alt="Fancy Document" />
-
+        <p>
+          <a href="../../../../images/addons/fancy_document.png">
+            <img src="../../../../images/addons/fancy_document_thumbnail.png" alt="Fancy Document" />
+          </a>
+        </p>
+        
         <subsection name="Create a new project">
           <p>
-            Create a maven project with the following structure:
+            Create a Maven project with the following structure:
           </p>
 <source><![CDATA[
 ./pom.xml
@@ -105,12 +109,19 @@
             <dt>fancy.cnd</dt>
             <dd>
               Run "Update all Content" if you haven't done so already.
-              From the CMS console, use "CND Export" to download the
+              From the <a href="../../../sysadmin/configuration/console.html">CMS console</a>,
+              use "CND Export" to download the
               fancy.cnd file.  This will give you the types as currently
               used by the repository.
             </dd>
           </dl>
-          <img src="../../../../images/addons/export_cnd.png" alt="Export CND" />
+          
+          <p>
+            <a href="../../../../images/addons/export_cnd.png">
+              <img src="../../../../images/addons/export_cnd_thumbnail.png" alt="Export CND" />
+            </a>
+          </p>
+          
           <dl>
             <dt>fancy-namespace.xml</dt>
             <dd>Select the node <code>/hippo:namespaces/fancy</code> and save

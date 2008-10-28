@@ -57,10 +57,10 @@
 	 </table>
 	</blockquote>
 
-   <subsection name='Alternative'>
+   <subsection name='Need more functionality?'>
 
     <p>
-     If you need even more extra functionality to use with your website, 
+     If you need even more advanced functionality to use with your website, 
      the toolkits and/or the Hippo CMS can be extended by plugin 
      developers. The extra functionality then becomes available for
      the webdevelopmers in a transparent way. 
@@ -69,9 +69,9 @@
 
      <a href="http://docs.onehippo.org/hst2/addons/index.html">HST Customization</a>
      and 
-     <a href="../addons/index.html">CMS Customization</a>, in particular
+     <a href="../custom/index.html">CMS Customization</a>, in particular
      the use of the standard 
-     <a href="../addons/jrc/index.html">JCR Interface</a>.
+     <a href="../custom/jcr/index.html">JCR Interface</a>.
     </p>
    </subsection>
   </section>

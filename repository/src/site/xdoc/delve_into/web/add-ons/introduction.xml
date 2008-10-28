@@ -26,15 +26,15 @@ ________________________________________________________________________________
   </properties>
 
   <body>
-    <section name="Introduction to add-on development">
-      <span class="shortdesc">An introduction to Hippo CMS add-on development.</span>
+    <section name="Introduction to content add-on development">
+      <span class="shortdesc">An introduction to content add-on development.</span>
 
       <p>
-        As you are developing the website, you'll need to be able to extend the 
-        the Hippo CMS.  Perhaps you have created your own 
+        As you are developing the website, you'll need to be able to extend
+        Hippo CMS.  Perhaps you have created your own 
         <a href="../../user/information_architects/howtoi/document_types/index.html">Document Type</a>, a
         <a href="">[FIXME] site map</a> or some documents with test data.
-        It is possible to capture this work in an addon, thereby making
+        It is possible to capture this work in an add-on, thereby making
         it possible to use version control, use an automated build process, share
         your work with the <a href="http://forge.hippo-ecm.org/">community</a>,
         etcetera.
@@ -44,21 +44,23 @@ ________________________________________________________________________________
         The repository can be extended in numerous ways.  Its content can be
         read from (multiple) XML files, new namespaces can be defined and
         additional workflows can be installed.  We'll discuss the different
-        types of addon that are typically used during website development.
+        types of add-on that are typically used during website development.
       </p>
 
-      <subsection name="Content addon">
+      <subsection name="Content add-on">
         <p>
-          The simplest of addons, this type contains only a handful of files that
-          are read in by the repository.  These files can contain JCR trees, in
-          the format that is exported by the CMS console "export Node" action.
+          The simplest of add-ons, this type contains only a handful of files that
+          are imported by the repository at startup. These files can contain JCR trees, in
+          the format that is exported by the 
+          <a href="../../sysadmin/configuration/console.html">CMS console</a>'s
+          "Export Node" action.
         </p>
       </subsection>
 
-      <subsection name="Editing Template addon">
+      <subsection name="Editing Template add-on">
         <p>
-          Any repository addon can also contain a namespace definition with
-          node types.  These addons contain the types as created with the
+          Any repository add-on can also contain a namespace definition with
+          node types.  These add-ons contain the types as created with the
           <a href="../../user/information_architects/howto/document_types/index.html">Document
           Type Editor</a>.  See the <a href="howto/editing_template.html">tutorial
           on how to create a template addon</a> for more information.
@@ -69,11 +71,10 @@ ________________________________________________________________________________
         <p>
           In a more advanced project, document types get complex and their
           templates may need to be customized.  You can find more information about
-          <a href="../../addons/howto/customize_editing_template.html">how to create
+          <a href="../../custom/howto/customize_editing_template.html">how to create
           a custom layout</a> or maybe even
-          <a href="../../addons/howto/editing_template_plugin.html">how to create
-          your own editing plugin</a> in the <a href="../../addons/index.html">Addon
-          development</a> section.
+          <a href="../../custom/howto/editing_template_plugin.html">how to create
+          your own editing plugin</a> in the <a href="../../custom/index.html">CMS Customization</a> section.
         </p>
       </subsection>
 
