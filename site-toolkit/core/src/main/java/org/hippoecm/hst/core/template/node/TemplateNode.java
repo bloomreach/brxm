@@ -58,8 +58,8 @@ public class TemplateNode extends AbstractELNode {
             log.warn("Expected property '" +propertyName+"' to be of type String");
             throw new TemplateException(e);
         } catch (PathNotFoundException e) {
-             log.warn("PathNotFoundException:  property '"+ propertyName +"'");
-        	 throw new TemplateException(e);
+             log.debug("PathNotFoundException:  property '"+ propertyName +"'");
+        	 return null;
         } catch (RepositoryException e) {
              log.warn("RepositoryException:  property '"+ propertyName +"'");
         	 throw new TemplateException(e);
