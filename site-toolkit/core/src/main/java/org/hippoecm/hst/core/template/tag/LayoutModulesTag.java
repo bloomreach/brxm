@@ -66,18 +66,21 @@ public class LayoutModulesTag  extends BodyTagSupport {
     
         int amountRenderedModules = 0;
         for (int index=0; index < pcmList.size(); index++) {
-        	try {
+        	String templatePage = "";
+            try {
         		PageContainerModuleNode pcm = pcmList.get(index);			
         		log.debug("pageContainerModule" + pcm);
-				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);	
-				pageContext.include(pcm.getTemplatePage());
+				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);
+				templatePage = pcm.getTemplatePage();
+				pageContext.include(templatePage);
 				amountRenderedModules++;
 			} catch (RepositoryException e) {
 				log.warn("RepositoryException:", e);
 			} catch (IOException e) {
                 log.warn("IOException:", e);
 			} catch (ServletException e) {
-			    log.warn("ServletException: " , e);
+			    log.warn("ServletException: " + e.getMessage() + " for template page: " + templatePage);
+			    log.debug("ServletException: " , e);
 			}
         }
         
