@@ -32,7 +32,7 @@
         
         <subsection name="Hippo Site Toolkit">
           <p>
-            <a href="http://docs.onehippo.org/site-toolkit">docs.onehippo.org/site-toolkit</a>
+            <a href="http://docs.onehippo.org/hst2">docs.onehippo.org/hst2</a>
           </p>
           <p>
             The Hippo Site Toolkit is a set of components that enable rapid development
@@ -45,7 +45,8 @@
         
         <subsection name="Hippo Portal">
           <p>
-            <a href="http://docs.onehippo.org/portal">docs.onehippo.org/portal</a>
+            <!--<a href="http://docs.onehippo.org/portal">docs.onehippo.org/portal</a>-->
+            docs.onehippo.org/portal (not available yet)
           </p>
           <p>
             Hippo Portal integrates Hippo CMS with <a href="http://portals.apache.org/jetspeed-2/">Jetspeed 2</a>,

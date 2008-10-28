@@ -24,24 +24,36 @@
   <body>
     <section name="Hippo CMS Add-ons">
       
-      <span class="shortdesc">Extend Hippo CMS with your own content (type)
-        addons.</span>
+      <span class="shortdesc">Extend Hippo CMS with your own content (type) add-ons.</span>
 
       <p>
-        The Hippo repository has been designed to be extended with custom content
-        and content types.  Addons provide the ability to extract this
-        information from an existing CMS, thereby offering the ability to put
-        it under version control, share it with the community, etcetera.
+        Hippo CMS has been designed to be extended with custom content
+        and content types.  Add-ons provide the ability to extract this
+        information from an existing CMS, thereby offering the ability to
+        it reuse it, put it under version control, share it with the community, etcetera.
       </p>
-
-      <ul>
-        <li>
-          <a href="introduction.html">Introduction to content add-on development</a>
-        </li>
-        <li>
-          <a href="howto/index.html">Howto</a>
-        </li>
-      </ul>
+      
+      <blockquote>
+        <table>
+          <tr>
+            <td>
+              <a href="introduction.html">Introduction</a>
+            </td>
+            <td>
+              Introduction to content add-on development.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="howto/index.html">Howto</a>
+            </td>
+            <td>
+              Learn how to make your own content add-ons.
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      
 
 
     </section>

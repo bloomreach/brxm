@@ -24,25 +24,37 @@
     <body>
       <section name="Howto">
         
-        <span class="shortdesc">Learn how to make your own add-ons.</span>
+        <span class="shortdesc">Learn how to make your own content add-ons.</span>
 
         <p>
           You have read the <a href="../introduction.html">introduction to
-          add-on development</a>, so you have an idea of what is possible. Now
+          content add-on development</a>, so you have an idea of what is possible. Now
           you want to know how to do it!  You are in the right place.  The
-          howto guides in this section teach you how you can create all kinds
-          of different add-ons. Time to get your hands dirty!
+          howto guides in this section teach you how you can create a content add-ons,
+          and how to package it. Time to get your hands dirty!
         </p>
 
-        <ul>
-          <li>
-            <a href="editing_template.html">Create an editing template addon</a>
-          </li>
-          <li>
-            <a href="packaging.html">Package Hippo CMS with your own add-on</a>
-          </li>
-        </ul>
-
+        <blockquote>
+          <table>
+            <tr>
+              <td>
+                <a href="editing_template.html">Editing template add-on</a>
+              </td>
+              <td>
+                Learn how to create an editing template add-on.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="packaging.html">Packaging</a>
+              </td>
+              <td>
+                Package Hippo CMS with your own add-on.
+              </td>
+            </tr>
+          </table>
+        </blockquote>
+      
       </section>
     </body>
 </document>
