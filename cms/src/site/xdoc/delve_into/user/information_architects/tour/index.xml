@@ -19,14 +19,16 @@
 -->
 <document>
   <properties>
-      <title>Hippo CMS User tour</title>
+      <title>Hippo CMS Tour for Information Architects</title>
   </properties>
   <body>
-    <section name="Hippo CMS User tour">
+    <section name="Hippo CMS Tour for Information Architects">
 
       <a href="../howto/login.html">Login to Hippo CMS</a>.
       
 
+
+ 
       <subsection name="Login">
         <ul>
           <li>
