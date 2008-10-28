@@ -1,0 +1,66 @@
+/*
+ * Menu: Convert Jar dependencies to Project dependencies
+ * Script-Path: /hippo-ecm/tools/eclipse/monkey/convertDependencies.gm
+ * Kudos: Wander Grevink(onehippo.com)
+ * License: Apache 2.0
+ * Job: WorkspaceJob
+ * Exec-Mode: Foreground
+ * DOM: http://groovy-monkey.sourceforge.net/update/plugins/net.sf.groovyMonkey.dom
+ */
+import org.eclipse.jdt.internal.core.SetClasspathOperation;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.internal.core.ClasspathEntry;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.core.internal.resources.Workspace;
+
+out.clear();
+println "$metadata.menuName started\n";
+
+def projectList = workspace.root.projects;
+def projectMap = new HashMap();
+projectList.each() {
+    projectMap.put(it.name, it);
+}
+
+projectList.each() {
+    if (it.isOpen() && it.isNatureEnabled('org.eclipse.jdt.core.javanature')) {
+        def projectName = it.getName();
+        def javaProject = it.getNature('org.eclipse.jdt.core.javanature');
+        def projectClasspath = javaProject.rawClasspath;
+        projectClasspath.each() {
+            if (it.getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
+               def entry = it.getPath(); 
+               def name = entry.segments[entry.segmentCount()-3];
+               if (projectMap.get(name) != null) {
+                   def classpath = new LinkedHashSet(Arrays.asList(javaProject.rawClasspath));
+                   def toBeRemoved = it; 
+                   def toBeAdded = new ClasspathEntry(
+			         IPackageFragmentRoot.K_SOURCE,      // indicates this classpath entry contains source files.
+			         IClasspathEntry.CPE_PROJECT,        // indicates a required project.
+			         projectMap.get(name).getFullPath(), // target project
+			         ClasspathEntry.INCLUDE_ALL,         // inclusion patterns
+			         ClasspathEntry.EXCLUDE_NONE,        // exclusion patterns
+			         null,                               // source attachment
+			         null,                               // source attachment root
+			         null,                               // specific output folder
+			         false,                              // isExported
+			         null,                               // accessRules
+			         true,                               // combineAccessRules
+			         (IClasspathAttribute[])[]           // extraAttributes
+			       );        
+                   println "   Convert dependency for project $projectName:";
+                   println "   $toBeRemoved.path -> $toBeAdded.path";
+                   println "";
+                   classpath.remove(toBeRemoved);
+                   classpath.add(toBeAdded);
+                   def newClasspath = (IClasspathEntry[])classpath.toArray();
+                   def op = new SetClasspathOperation(javaProject, newClasspath, javaProject.getOutputLocation(), true);
+                   op.runOperation(monitor);
+               }
+            }
+        };
+    }
+}
+
+println "\n$metadata.menuName finished";
