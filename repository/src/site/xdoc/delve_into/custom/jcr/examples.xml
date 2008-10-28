@@ -26,7 +26,7 @@
         <span class="shortdesc">Examples of accessing Hippo CMS functionality directly through the JCR API</span>
 
 <p>
-The Hippo repository is accessed through the interface JCR as standardized in
+Hippo Repository is accessed through the interface JCR as standardized in
 JSR-170.  It is out of scope to describe the full JCR interface at this time.
 We refer to the actual
 <a href="http://jcp.org/en/jsr/detail?id=170">standard</a> which provides also
@@ -36,15 +36,15 @@ can be consulted.
 </p>
 
 <p>
-Within an application you open a connection to the Hippo repository where you
+Within an application you open a connection to Hippo repository where you
 obtain a session.  A session is a non-thread safe context in which transient
 changes are kept until they are explicitly shared (saved and committed) with
 other sessions to the same Hippo repository.
 </p>
 
 <p>
-To obtain a session you need to obtain a reference to the Hippo repository
-itself, which is not part of the standardized API.  To get to the Hippo
+To obtain a session you need to obtain a reference to Hippo Repository
+itself, which is not part of the standardized API.  To get to the
 repository and get a session the following sequence can be used:
 </p>
 
@@ -56,8 +56,8 @@ session = repository.login("username", "password");
 </source>
 
 <p>
-Note however that a CMS already has a open session to the Hippo repository, as
-well as a HST based site, and plugins to the Hippo repository are also passed
+Note however that a CMS already has an open session to the repository, as
+well as a HST based site, and plugins to the repository are also passed
 an active session.  If you are creating an application outside of these scopes
 then the above example is available.  Otherwise you should consider using the
 already open session.  From within the CMS, you can obtain this JCR session
@@ -80,7 +80,7 @@ properties and sub-nodes allowed for it.  These types are denoted in a CND
 
 <p>
 A document is an interpretation of a subtree of nodes as a practical unit.
-Being stored in the Hippo repository, a document can be retrieved using the
+Being stored in the repository, a document can be retrieved using the
 path in the tree to the document.
 The source code below retrieves a document and prints some information that
 could be present in it.  Since documents are usually stored below a handle
@@ -138,7 +138,7 @@ as a lightweight solution.
 <subsection name="Example 2: Obtaining the workflow on a document">
 
 <p>
-As an extension on the JCR interface, the Hippo repository allows the usage of
+As an extension on the JCR interface, Hippo Repository allows the usage of
 workflow on documents.  The workflow is available through the WorkflowManager.
 Which workflows are available is configurable and pluggable so there is no
 fixed Java interface available.  Instead a generic workflow interface is
@@ -161,7 +161,7 @@ if(wf instanceof DefaultWorkflow) {
 <subsection name="Example 3: Obtaining older version of document">
 
 <p>
-Workflows are used also to extend the functionality of the Hippo repository in
+Workflows are used also to extend the functionality of Hippo Repository in
 certain ways, one of them is to have a configurable versioning system.  The
 versioning available as workflow is an extension on JCR versioning which
 contains more application domain knowledge to include the status of the
@@ -210,8 +210,8 @@ for(NodeIterator i=r.getNodes(); i.hasNext(); ) {
 
 <p>
 It is good practice not to build these queries each time at runtime.  Instead,
-queries should be stored into the Hippo repository itself.  JCR allows to
-store queries as specialized nodes in the Hippo repository such that they can
+queries should be stored into the repository itself.  JCR allows to
+store queries as specialized nodes in the repository such that they can
 be retrieved as Query objects.  These are equivalent to stored queries in SQL,
 but the JCR specification JSR-170 does not allow them to be parameterized.
 The Hippo extension (also planned for JSR-283) alleviate this shortcoming.
@@ -219,8 +219,8 @@ The Hippo extension (also planned for JSR-283) alleviate this shortcoming.
 
 <p>
 If you want to retrieve news articles no older than a certain date, but store
-this query in the Hippo repository you could have created and stored this
-query in the Hippo repository using:
+this query in the repository you could have created and stored this
+query in the repository using:
 </p>
 
 <source>

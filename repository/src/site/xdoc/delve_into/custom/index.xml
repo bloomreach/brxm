@@ -35,7 +35,7 @@
         implemented as an add-on, consisting of a number of plugins.        
       </p>
 
-      <ul>
+      <!--<ul>
         <li>
           <a href="introduction.html">Introduction to add-on development</a>
         </li>
@@ -45,7 +45,53 @@
         <li>
           <a href="reference/index.html">Reference</a>
         </li>
-      </ul>
+      </ul>-->
+      <blockquote>
+        <table>
+          <tr>
+            <td>
+              <a href="introduction.html">Introduction</a>
+            </td>
+            <td>
+              Introduction to content add-on development.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="howto/index.html">Howto</a>
+            </td>
+            <td>
+              Learn how to make your own add-ons.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="reference/index.html">Reference</a>
+            </td>
+            <td>
+              Technical documentation on add-on development.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="jcr/index.html">JCR Interface</a>
+            </td>
+            <td>
+              Get direct access to your content through the standard JCR interface provided
+              by Hippo Repository.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="concepts/index.html">Concepts</a>
+            </td>
+            <td>
+              List of customization concepts.
+            </td>
+          </tr>
+        </table>
+      </blockquote>
+      
 
 
     </section>
