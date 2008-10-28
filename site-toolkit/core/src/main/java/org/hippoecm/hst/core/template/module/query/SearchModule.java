@@ -359,7 +359,7 @@ public class SearchModule extends ModuleBase implements Search {
             QueryManager queryMngr = jcrSession.getWorkspace().getQueryManager();
 
             Query q = queryMngr.createQuery(statement, language);
-
+            log.debug("Search query = " + q.getStatement());
             long start = System.currentTimeMillis();
             QueryResult queryResult = q.execute();
             //  important debug info in case of performance bottlenecks:

@@ -35,6 +35,10 @@ public class SearchResult {
     private String nodeType;
     private String pageName = Search.DEFAULT_PAGENAME;
 
+    public SearchResult(List<SearchHit> hits) {
+        this.hits = hits;
+    }
+
     public String getPageName() {
         return pageName;
     }
@@ -42,11 +46,7 @@ public class SearchResult {
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
-
-    public SearchResult(List<SearchHit> hits) {
-        this.hits = hits;
-    }
-
+    
     public long getOffset() {
         return offset;
     }
@@ -110,28 +110,28 @@ public class SearchResult {
     }
 
     public Page getNextpage() {
-        if (pages.size() > currentPageNumber) {
+        if (pages!=null && pages.size() > currentPageNumber) {
             return pages.get(currentPageNumber);
         }
         return new Page(false);
     }
 
     public Page getPrevpage() {
-        if (currentPageNumber > 1) {
+        if (pages!=null && currentPageNumber > 1 && pages.size() > 0) {
             return pages.get(currentPageNumber - 2);
         }
         return new Page(false);
     }
 
     public Page getFirstpage() {
-        if (pages.size() > 0 && currentPageNumber > 1) {
+        if (pages!=null && pages.size() > 0 && currentPageNumber > 1) {
             return pages.get(0);
         }
         return new Page(false);
     }
 
     public Page getLastpage() {
-        if (pages.size() > 0 && currentPageNumber < pages.size()) {
+        if (pages!=null && pages.size() > 0 && currentPageNumber < pages.size()) {
             return pages.get(pages.size() - 1);
         }
         return new Page(false);
