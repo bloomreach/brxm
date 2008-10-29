@@ -23,6 +23,7 @@
  </properties>
  <body>
   <section name="Hippo CMS Admin Tour">
+    <span class='shortdesc'>To get introduced in the role of CMS administrator, take the following tour.</span> 
 
    <blockquote>
     <table>
@@ -45,7 +46,7 @@
        <span class='login_64'/> 
       </td>
       <td> 
-         <a href="../howto/login.html">Login to Hippo CMS</a> in the standard CMS admin account.
+         <a href="./howto/login.html">Login to Hippo CMS</a> in the standard CMS admin account.
       </td>
      </tr>
 
@@ -55,7 +56,7 @@
        <span class='admin_64'/> 
       </td>
       <td> 
-         <a href="../howto/change_password.html">Change the password</a> of the
+         <a href="./howto/change_password.html">Change the password</a> of the
          admin account.
          <p>
           Instead, you could create another account for yourself and deactivate the standard admin account, but
@@ -70,7 +71,7 @@
        <span class='delete_64'/> 
       </td>
       <td>
-         <a href="../howto/deactivate_account.html">deactivate the other standard accounts</a> to
+         <a href="./howto/deactivate_account.html">deactivate the other standard accounts</a> to
          use personal accounts instead.
          <p>
           Instead, you could just change their passwords, and use them as guest accounts,
@@ -86,7 +87,7 @@
        <span class='multiuser_64'/> 
       </td>
       <td>
-         <a href="../howto/add_group.html">Add a group</a>. 
+         <a href="./howto/add_group.html">Add a group</a>. 
       </td>
      </tr>
     
@@ -96,45 +97,13 @@
        <span class='user_64'/> 
       </td>
       <td>
-         <a href="../howto/add_user.html">Add user accounts</a>.
+         <a href="./howto/add_user.html">Add user accounts</a>.
       </td>
      </tr>
  
     </table>
    </blockquote>
        
-
-      <subsection name="Login">
-        <ul>
-          <li>
-            <a href="logging_in.html">Logging in</a>
-          </li>
-          <li>
-            <a href="dashboard.html">The dashboard</a>
-          </li>
-          <li>
-            <a href="navigating_the_cms.html">Navigating the CMS</a>
-          </li>
-          <li>
-            <a href="editing_a_document.html">Editing a document</a>
-          </li>
-          <li>
-            <a href="creating_a_document_type_and_template.html">Creating a document type and template</a>
-          </li>
-          <li>
-            <a href="managing_users_and_groups.html">Managing users and groups</a>
-          </li>
-          <li>
-            <a href="workflow.html">Workflow</a>
-          </li>
-          <li>
-            <a href="versioning.html">Versioning</a>
-          </li>
-          <li>
-            <a href="working_with_authorizations.html">Working with authorizations</a>
-          </li>
-        </ul>
-      </subsection>
     </section>
   </body>
 </document>
