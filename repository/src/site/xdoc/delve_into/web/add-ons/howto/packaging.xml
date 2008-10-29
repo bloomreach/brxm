@@ -27,43 +27,51 @@
       <span class="shortdesc">Package Hippo CMS with your own add-on.</span>
       
       <p>
-        In the <a href="../../../custom/howto/gui_plugin.html">Hello World</a>
-        example we created a plugin and included it directly in the quickstart
-        war project.  While this works just fine, it requires you to make
-        changes to an external project, and if there are a lot of changes to be
-        made it can get messy.  It would be better if we can just leave
-        quickstart war untouched and build our own war using quickstart war
-        as a blue print.
+        In <a href="editing_template.html">Creating an Editing Template Add-on </a>
+        we created an add-on containing a custom document type.
+        We installed the add-on as a JAR in the local Maven repository.
+        It would be nice if we could include our add-on with a custom
+        packaged Hippo CMS WAR.
       </p>
     </section>
-    <section name="Your own pom file">
+    <section name="Your own POM file">
       <p>
-        All there is to creating your own war file is some modifications to the
-        pom file (of your own project).
+        All there is to creating your own WAR file is some modifications to the
+        POM file (of your add-on project).
       </p>
       <p>
-        <b>Note:</b> It is assumed that you have a project with a pom file
-        similar to the one created in the
-        <a href="../../../custom/howto/gui_plugin.html">Hello World</a> tutorial.
-        If you don't have that you are better off following that tutorial first. 
+        <b>Note:</b> It is assumed that you have a project with a POM file
+        similar to the one created in
+        <a href="editing_template.html">Creating an Editing Template Add-on </a>.
+        Follow that guide first if you don't have such a project and POM file. 
       </p>
-      <subsection name="Adding the war dependency">
+      
+      <subsection name="Make your project a WAR project">
         <p>
-          First we need to add a dependency to the quickstart war to our pom file.
+          In <a href="editing_template.html">Creating an Editing Template Add-on </a>
+          you created a JAR project. Change the packaging in pom.xml from "jar" to
+          "war":
+        </p>
+        <source><![CDATA[<packaging>war</packaging>]]></source>        
+      </subsection>
+      
+      <subsection name="Add the WAR dependency">
+        <p>
+          Add a dependency to the Hippo CMS Quickstart WAR to our POM file.
         </p>
         <source>
 &lt;dependency&gt;
     &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-    &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
-    &lt;version&gt;2.01.00.13536&lt;/version&gt;
+    &lt;artifactId&gt;hippo-ecm-quickstart-war&lt;/artifactId&gt;
+    &lt;version&gt;2.01.00.14266&lt;/version&gt;
     &lt;type&gt;war&lt;/type&gt;
     &lt;scope&gt;runtime&lt;/scope&gt;
 &lt;/dependency&gt;
 </source>
       </subsection>
-      <subsection name="Modifying the build section">
+      <subsection name="Configure the WAR overlay">
         <p>
-          Add the following to the plugins section. It tells maven to use the quickstart war as an overlay.
+          Add the following to the plugins section of pom.xml. It tells Maven to use the Quickstart WAR as an overlay.
         </p>
         <source>
 &lt;plugin&gt;
@@ -74,27 +82,44 @@
     &lt;overlays&gt;
     &lt;overlay&gt;
           &lt;groupId&gt;org.hippoecm&lt;/groupId&gt;
-          &lt;artifactId&gt;hippo-ecm-quickstart&lt;/artifactId&gt;
+          &lt;artifactId&gt;hippo-ecm-quickstart-war&lt;/artifactId&gt;
         &lt;/overlay&gt;
     &lt;/overlays&gt;
   &lt;/configuration&gt;
 &lt;/plugin&gt;
 </source>
       <p>
-        Well thats actually it. Running <b>mvn install</b> will create a custom war of your own plugin project and store it in the maven repository.
+        That's it. Running <b>mvn install</b> will create a custom WAR of your own plugin project and store it in the Maven repository.
       </p>
       </subsection>
       <subsection name="Troubleshooting">
         <p>
-          It can happen that maven is unable to find the quickstart war. In that case it will print instructions on how to add the the file to your repository.
-          You will probably have to do this if you only downloaded the war instead of building it yourself with maven.
+          If Maven is unable to find the Quickstart WAR, add the Hippo Maven 2 repository
+          to pom.xml:
         </p>
+<source><![CDATA[
+<repositories>
+  <repository>
+    <id>hippoecm</id>
+    <name>Hippo ECM maven 2 repository.</name>
+    <url>http://repository.hippocms.org/maven2/</url>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+    <releases>
+      <updatePolicy>never</updatePolicy>
+    </releases>
+    <layout>default</layout>
+  </repository>
+</repositories>
+]]></source>
       </subsection>
     </section>
-    <section name="Adding the jetty plugin for fast testing">
+    <section name="Add the Jetty plugin for fast testing">
       <p>
-        While developing your plugin you will probably what to test your work a lot. So lets take a moment to make that easy.
-        You can add the jetty plugin to your pom file which will make it very easy to get your plugin running fast.
+        While developing your plugin you will probably what to test your work a lot. So lets take a moment to make 
+        that easy. You can add the Jetty plugin to your POM file which will make it very easy to get your plugin 
+        up and running fast.
       </p>
       <p>
         Add the following plugin section to your plugins section in your pom file.
@@ -144,5 +169,116 @@
 &lt;/plugin&gt;
       </source>
     </section>
+    
+    <section name="Full pom.xml">
+      <p>
+        If you followed all the steps in this guide, your POM file should look
+        similar to this:
+      </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>Editing Template Add-on</name>
+  <description>Editing Template Add-on</description>
+  <groupId>org.example</groupId>
+  <artifactId>editing-template-addon</artifactId>
+  <version>1.01.00</version>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-quickstart-war</artifactId>
+      <version>2.01.00.14266</version>
+      <type>war</type>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-1</version>
+        <configuration>
+          <overlays>
+            <overlay>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-quickstart-war</artifactId>
+            </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.10</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+            <port>8080</port>
+            </connector>
+          </connectors>
+          <contextPath>/cms</contextPath>
+        </configuration>
+        <dependencies>
+          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+  <repositories>
+    <repository>
+      <id>hippoecm</id>
+      <name>Hippo ECM maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+
+</project>
+]]></source>      
+    </section>
+    
   </body>
 </document>
