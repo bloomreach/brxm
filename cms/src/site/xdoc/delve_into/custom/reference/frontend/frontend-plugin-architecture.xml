@@ -25,6 +25,7 @@
   </head>
   <body>
     <section name="Frontend Plugin Architecture">
+      <span class="shortdesc">Explanation of the frontend plugin architecture.</span>
 
       <p>
         Hippo ECM provides a plugin architecture to facilitate a customizable
