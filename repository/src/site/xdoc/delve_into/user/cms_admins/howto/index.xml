@@ -41,6 +41,12 @@ ________________________________________________________________________________
 <table>
   <tr>
     <td>
+      <a href="./add_group.html">Add Group</a>
+    </td>
+    <td>How to add a group to Hippo CMS to group users in.</td>
+  </tr>
+  <tr>
+    <td>
       <a href="./add_user.html">Add User</a>
     </td>
     <td>How to add a user account to Hippo CMS to allow someone access.</td>
@@ -50,6 +56,12 @@ ________________________________________________________________________________
       <a href="./assign_user_to_group.html">Assign user to group</a>
     </td>
     <td>How to make a particular user belong to a particular group.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./change_group_properties.html">Change group properties</a>
+    </td>
+    <td>How to change to properties of a Hippo CMS group of users.</td>
   </tr>
   <tr>
     <td>
@@ -71,6 +83,12 @@ ________________________________________________________________________________
   </tr>
   <tr>
     <td>
+      <a href="./goto_group_properties.html">Goto Group Properties</a>
+    </td>
+    <td>How to get to the properties of a group</td>
+  </tr>
+  <tr>
+    <td>
       <a href="./goto_user_management_tab.html">Goto User Management Tab</a>
     </td>
     <td>How to get to the user management tab, to add users and groups or change their properties.</td>
@@ -83,9 +101,9 @@ ________________________________________________________________________________
   </tr>
   <tr>
     <td>
-      <a href="./index.html">Change to the document title</a>
+      <a href="./index.html">CMS admin Howto</a>
     </td>
-    <td>Change to document short description.</td>
+    <td>A collection of howto's for small tasks a CMS admin may want to do.</td>
   </tr>
   <tr>
     <td>
@@ -95,18 +113,9 @@ ________________________________________________________________________________
   </tr>
   <tr>
     <td>
-      <a href="./save_setting.html">Save settings</a>
+      <a href="./save_settings.html">Save settings</a>
     </td>
     <td>How to save settings, like the properties of a user of a group.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./schemas.html"/>
-    </td>
-    <td>
-      <span class="missing">Short description for            
-           ./schemas.html</span>
-    </td>
   </tr>
   <tr>
     <td>
@@ -114,7 +123,14 @@ ________________________________________________________________________________
     </td>
     <td>How to start a CMS session in your browser</td>
   </tr>
+  <tr>
+    <td>
+      <a href="./type_in_editing_region.html">Type in editing region</a>
+    </td>
+    <td>How to type in an editing regin, creating markuped text.</td>
+  </tr>
 </table>
+
 
  <subsection name='Alternative'>
      <p>

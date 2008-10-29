@@ -71,7 +71,7 @@
        <span class='delete_64'/> 
       </td>
       <td>
-         <a href="./howto/deactivate_account.html">deactivate the other standard accounts</a> to
+         <a href="./howto/deactivate_account.html">Deactivate the other standard accounts</a> to
          use personal accounts instead.
          <p>
           Instead, you could just change their passwords, and use them as guest accounts,
@@ -90,6 +90,16 @@
          <a href="./howto/add_group.html">Add a group</a>. 
       </td>
      </tr>
+
+     <tr>
+      <td>Change Group Properties</td>
+      <td>
+       <span class='multiuser_64'/> 
+      </td>
+      <td>
+         <a href="./howto/change_group_properties.html">Change group properties</a>. 
+      </td>
+     </tr>
     
      <tr>
       <td>Add Users</td>
@@ -98,6 +108,16 @@
       </td>
       <td>
          <a href="./howto/add_user.html">Add user accounts</a>.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Change User propertes</td>
+      <td>
+       <span class='user_64'/> 
+      </td>
+      <td>
+         <a href="./howto/change_user_properties.html">Change user properties</a>.
       </td>
      </tr>
  

@@ -22,37 +22,28 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Save settings</title>
+    <title>Goto Group Properties</title>
   </properties>
 
   <body>
-    <section name="Save settings">
-      <span class="shortdesc">How to save settings, like the properties of a user of a group.</span>
+    <section name="Goto Group Properties">
+      <span class="shortdesc">How to get to the properties of a group</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/save_settings.png" alt='save settings screenshot'/>      
+     <img src="../../../../images/group_properties.png" alt='group properties screenshot'/>      
    </span>
 
-  <p>
-   In the properties list on the right of the <a href='./goto_user_management_tab.html'>user management tab</a>
-   click on the save button (at the bottom of the list of properties).
-  </p>
-
    <p>
-    If you change your mind before you clicked the save button, click the cancel button. 
-    <span class='warn_64'>
-     If you logout without clicking the cancel button, the new properties will also be saved. 
-     This is generally a good thing, but know what you are doing when changing for example the
-     admin password.
-    </span>
+    In the list of existing groups 
+    (in the <a href='./goto_user_management_tab.html'>user management tab</a>, at the left, below the 'new group' button),
+    click on the group of whom you want to see and/or change the properties. The properties will
+    appear at the right.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-    <li><a href='./change_password.html'>change a password</a>.</li>
-    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
+    <li><a href='./change_group_properties.html'>change group properties</a>.</li>
+    <li><a href='./assign_user_to_group.html'>assign user to group</a>.</li>
    </ul>       
   </subsection>
 

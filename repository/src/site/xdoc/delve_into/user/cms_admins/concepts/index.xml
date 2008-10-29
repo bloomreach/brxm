@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
-  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd"
+>
+
+
 <!--
   Copyright 2008 Hippo
 
@@ -16,40 +19,33 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+
+[
+  <!ENTITY folderview SYSTEM "folderview.xml">
+]
+
+ <escapeXml>&folderview;</escapeXml>
     
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>CMS Admin Guide</title>
+    <title>CMS admin Concept</title>
   </properties>
 
   <body>
-    <section name="CMS Admin Guide">
-      <span class="shortdesc">Guide for Hippo CMS users to perform the role of CMS admin</span>
+    <section name="CMS admin Concepts">
+      <span class="shortdesc">A collection of concepts a CMS admin may want to know.</span>
 
-<table>
-  <tr>
-    <td>
-      <a href="./tour.html">Hippo CMS Admin Tour</a>
-    </td>
-    <td>To get introduced in the role of CMS administrator, take the following tour.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./howto/index.html">CMS admin Howto</a>
-    </td>
-    <td>A collection of howto's for small tasks a CMS admin may want to do.</td>
-  </tr>
-  <tr>
-    <td>
-      <a href="./concepts/index.html">CMS admin Concepts</a>
-    </td>
-    <td>A collection of concepts a CMS admin may want to know.</td>
-  </tr>
-</table>
-     
+  <span class='add'>Concepts</span>
+
+ <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+ </subsection>
+
     </section>
   </body>
 </document>
