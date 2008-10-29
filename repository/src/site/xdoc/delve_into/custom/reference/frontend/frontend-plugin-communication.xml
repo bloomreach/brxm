@@ -23,6 +23,9 @@
   </properties>
   <body>
     <section name="Frontend Plugin Communication">
+      
+      <span class="shortdesc">Learn how frontend plugins communicate with each other.</span>
+      
       <p>
         Each frontend plugin in itself is an independent component.  All
         frontend plugins together however form a complete application.  Within
