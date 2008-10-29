@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">An introduction to content add-on development.</span>
 
       <p>
-        As you are developing the website, you'll need to be able to extend
+        As you are developing your website, you'll need to be able to extend
         Hippo CMS.  Perhaps you have created your own 
         <a href="../../user/information_architects/howtoi/document_types/index.html">Document Type</a>, a
         <a href="">[FIXME] site map</a> or some documents with test data.
@@ -63,7 +63,7 @@ ________________________________________________________________________________
           node types.  These add-ons contain the types as created with the
           <a href="../../user/information_architects/howto/document_types/index.html">Document
           Type Editor</a>.  See the <a href="howto/editing_template.html">tutorial
-          on how to create a template addon</a> for more information.
+          on how to create a template add-on</a> for more information.
         </p>
       </subsection>
 
