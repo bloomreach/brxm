@@ -31,8 +31,9 @@
         </p>
 
         <p>
-          Create the namespace "fancy" and a type "document".
-          (see <a href="../../../user/information_architects/howto/document_types/index.html">Document Types</a> for instructions)
+          Create the namespace "fancy" (use "http://fancy" as the namespace's URL) and a type "document"
+          (see <a href="../../../user/information_architects/howto/document_types/index.html">Document Types</a> 
+          for instructions).
         </p>
 
         <p>
@@ -54,8 +55,27 @@
           <dl>
             <dt>pom.xml</dt>
             <dd>
-              For now, the project needs no dependencies as it's just making available
-              a set of resources.  Those will be used by the repository as it boots up.
+              <p>
+                For now, the project needs no dependencies as it's just making available
+                a set of resources.  Those will be used by the repository as it boots up.
+              </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>Editing Template Add-on</name>
+  <description>Editing Template Add-on</description>
+  <groupId>org.example</groupId>
+  <artifactId>editing-template-addon</artifactId>
+  <version>1.01.00</version>
+  <packaging>jar</packaging>
+
+</project>
+]]></source>
             </dd>
             <dt>hippoecm-extension.xml</dt>
             <dd>
@@ -83,7 +103,7 @@
       <sv:value>10050</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://example.org/nt/1.0</sv:value>
+      <sv:value>http://fancy/0.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>fancy.cnd</sv:value>
@@ -104,6 +124,7 @@
       <sv:value>/hippo:namespaces</sv:value>
     </sv:property>
   </sv:node>
+</sv:node>  
 ]]></source>
             </dd>
             <dt>fancy.cnd</dt>
@@ -124,15 +145,35 @@
           
           <dl>
             <dt>fancy-namespace.xml</dt>
-            <dd>Select the node <code>/hippo:namespaces/fancy</code> and save
-              its contents.</dd>
+            <dd>
+              <p>
+                In the <a href="../../../sysadmin/configuration/console.html">CMS console</a>,
+                select the node <code>/hippo:namespaces/fancy</code>, and use the
+                "Export Node" option to save its contents.
+              </p>
+              <p>
+                <i>Note: due to a bug in the current milestone, you need to remove any
+                occurence of <code>&lt;sv:property sv:name="hippo:related___pathreference"&gt;</code>
+                in the exported XML for the import to work properly).</i>
+              </p>
+            </dd>
           </dl>
         </subsection>
 
         <subsection name="Build and deploy">
           <p>
-            Build the project using maven and <a href="packaging.html">deploy it</a>.
+            Build the project using Maven to have the add-on installed as a JAR in your
+            local Maven repository:
           </p>
+          <source>mvn install</source>
+        </subsection>
+        
+        <subsection name="Next">
+          <ul>
+            <li>
+              <a href="packaging.html">Package Hippo CMS with your add-on</a>
+            </li>
+          </ul>
         </subsection>
 
       </section>
