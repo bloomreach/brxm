@@ -28,9 +28,9 @@
     <table>
   
      <tr>
-      <td>Web</td>
+      <td>Browser</td>
       <td>
-       <em><img src='../../../../images/web_icon.png' alt='web icon'/></em> 
+       <span class='web_64'/> 
       </td>
       <td>
         Open the Hippo CMS site 
@@ -42,7 +42,7 @@
      <tr>
       <td>Login</td>
       <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
+       <span class='login_64'/> 
       </td>
       <td> 
          <a href="../howto/login.html">Login to Hippo CMS</a> in the standard CMS admin account.
@@ -50,57 +50,56 @@
      </tr>
 
      <tr>
-      <td>Login</td>
+      <td>Password</td>
       <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
+       <span class='admin_64'/> 
       </td>
       <td> 
-         You could create another account and deactivate the standard admin account, but
-         as you can not delete the standard admin account, you can as well use it, but
-         <a href="../howto/change_password.html">change the password</a>.
+         <a href="../howto/change_password.html">Change the password</a> of the
+         admin account.
+         <p>
+          Instead, you could create another account for yourself and deactivate the standard admin account, but
+         you can not delete the standard admin account, so you might as well use it.
+	 </p>
       </td>
      </tr>
-   
-     <tr>
-      <td>??</td>
+ 
+    <tr>
+      <td>Deactivate</td>
       <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
+       <span class='delete_64'/> 
       </td>
       <td>
-         <a href="../howto/add_user.html">Add a user account</a> for yourself.
+         <a href="../howto/deactivate_account.html">deactivate the other standard accounts</a> to
+         use personal accounts instead.
+         <p>
+          Instead, you could just change their passwords, and use them as guest accounts,
+          if all your guests are trustworthty. 
+	 </p>
+  
+      </td>
+     </tr>
+  
+     <tr>
+      <td>Add Group</td>
+      <td>
+       <span class='multiuser_64'/> 
+      </td>
+      <td>
+         <a href="../howto/add_group.html">Add a group</a>. 
       </td>
      </tr>
     
      <tr>
-      <td>Login</td>
+      <td>Add Users</td>
       <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
+       <span class='user_64'/> 
       </td>
-      <td> 
-         <a href="../howto/login.html">Login to Hippo CMS</a> in your own account.
+      <td>
+         <a href="../howto/add_user.html">Add user accounts</a>.
       </td>
      </tr>
-
-     <tr>
-      <td>Remove</td>
-      <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
-      </td>
-      <td> 
-         <a href="../howto/login.html">Login to Hippo CMS</a> remove the standard accounts.
-      </td>
-     </tr>
-
-     <tr>
-      <td>??</td>
-      <td>
-       <em><img src='../../../../images/login_icon.png' alt='login icon'/></em> 
-      </td>
-      <td>
-         <a href="../howto/add_user.html">Add user accounts</a>  
-      </td>
-     </tr>
-
+ 
     </table>
    </blockquote>
        

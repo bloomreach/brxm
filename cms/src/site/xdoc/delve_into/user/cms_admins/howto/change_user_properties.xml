@@ -22,28 +22,44 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change password</title>
+    <title>Change user properies</title>
   </properties>
 
   <body>
-    <section name="Change password">
-      <span class="shortdesc">How to change the password of a Hippo CMS user.</span>
+    <section name="Change user properties">
+      <span class="shortdesc">How to change to properties of a Hippo CMS user account.</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/change_password.png" alt='Change password screenshot'/>      
+     <img src="../../../../images/goto_user_properties.png" alt='Change user properties screenshot'/>      
    </span>
 
    <p>
     In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    click below the password title, type the new password and
-    <a href='./save_settings.html'>save the settings</a>.
+    you can:
+   </p>
+   <ol>
+    <li>    
+     <a href='./deactivate_account.html'>deactivate his account</a>.
+    </li>
+    <li>
+     <a href='./change_password.html'>Change his password</a>.
+    </li>
+    <li>
+     <a href='./assign_user_to_group.html'>Assign him to one or more groups</a>.
+    </li>
+    <li>or change another property, by clicking below the property title,
+        just like 
+        <a href='./change_password.html'>changing his password</a>, except that
+        the value will be visible.
+    </li>
+   </ol>
+  
+   <p>
+    Then <a href='./save_settings.html'>save the settings</a>.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./deactivate_account.html'>Deactivate account</a>.</li>
-    <li><a href='./assign_user_to_group.html'>Assign user to group</a>.</li>
-    <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
     <li><a href='./add_group.html'>Add a group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
    </ul>       
