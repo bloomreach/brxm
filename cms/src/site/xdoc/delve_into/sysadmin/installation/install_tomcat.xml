@@ -24,7 +24,7 @@
     <body>
      <section name="Install Tomcat">
       <span class='shortdesc'>Learn how to install Apache Tomcat</span>
-      <span class='hidden_index' id='Tomcat, install'>
+      <span class='hidden_index' id='Tomcat, install'/>
 
       <blockquote>
        <table>
@@ -33,7 +33,7 @@
             Download 
 	 </td>
          <td> 
-          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+          <span class='download_64'/> 
 	 </td>
          <td>Download <span class='index' id='tomcat_6.0'>Tomcat 6.0</span> 
            from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website,
@@ -43,7 +43,7 @@
   <tr>
    <td>Unzip</td>
    <td>
-     <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
+     <span class='unzip_64'/> 
    </td>
    <td>Unpack the zip. In the rest of this todo list, 
        the acquired tomcat folder will be called $TOMCATDIR. 
@@ -53,7 +53,7 @@
   <tr>
    <td>Startup</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='cli_64'/>
    </td>
    <td>          
        Start Tomcat with one of the startup scripts in <code>$TOMCATDIR/bin</code>,
@@ -64,7 +64,7 @@
   <tr>
    <td>Web Browser</td>
    <td>
-    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+    <span class='web_64'/> 
    </td>
   <td>
      Users can now open the local Tomcat site <a href="http://localhost:8080/cms/">http://localhost:8080</a> in 
@@ -75,7 +75,7 @@
   <tr>
    <td>Quit</td>
    <td>
-    <em><img src='../images/quit_icon.png' alt='quit icon'/></em>
+    <span class='quit_64'/>
    </td>
    <td>
      Quit Tomcat with one of the shutdown scripts in <code>$TOMCATDIR/bin</code>.
