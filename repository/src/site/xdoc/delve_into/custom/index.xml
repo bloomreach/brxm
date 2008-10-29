@@ -35,17 +35,6 @@
         implemented as an add-on, consisting of a number of plugins.        
       </p>
 
-      <!--<ul>
-        <li>
-          <a href="introduction.html">Introduction to add-on development</a>
-        </li>
-        <li>
-          <a href="howto/index.html">Howto</a>
-        </li>
-        <li>
-          <a href="reference/index.html">Reference</a>
-        </li>
-      </ul>-->
       <blockquote>
         <table>
           <tr>
@@ -53,7 +42,7 @@
               <a href="introduction.html">Introduction</a>
             </td>
             <td>
-              Introduction to content add-on development.
+              Introduction to Hippo CMS add-on development.
             </td>
           </tr>
           <tr>
