@@ -30,13 +30,14 @@ ________________________________________________________________________________
       <span class="shortdesc">Technical documentation on add-on development.</span>
 
       <p>
-        TODO
+        Add-ons are collections of plugins. Plugins come in various shapes and sizes.
+        This section gives in-depth background information.
       </p>
 
       <subsection name="Repository plugins vs. frontend plugins">
 
         <p>
-          Plugins come in various shapes and sizes.  One class of plugins, even though
+          One class of plugins, even though
           configured and stored in the repository only affects the front-end
           application.  It can define additional GUI elements, different look and feel,
           new functionality, etcetera.  However these components are not supposted to
@@ -67,15 +68,26 @@ ________________________________________________________________________________
           The classes of plugins are explained in the following subsections:
         </p>
         
-        <ul>
-          <li>
-            <a href="repository/repository_plugins.html">Repository and interface plugins</a>
-          </li>
-          <li>
-            <a href="frontend/index.html">Frontend plugins</a>
-          </li>
-        </ul>
-          
+        <blockquote>
+          <table>
+            <tr>
+              <td>
+                <a href="repository/repository_plugins.html">Repository and interface plugins</a>
+              </td>
+              <td>
+                Business logic and their interfaces.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="frontend/index.html">Frontend plugins</a>
+              </td>
+              <td>
+                Pure GUI plugins.
+              </td>
+            </tr>
+          </table>
+        </blockquote>          
         </subsection>
 
     </section>
