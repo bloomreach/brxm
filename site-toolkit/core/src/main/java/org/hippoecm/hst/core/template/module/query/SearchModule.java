@@ -304,9 +304,13 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         String where = "";
-        if(contextWhereClauses!=null) {
+        if(contextWhereClauses==null) {
+           log.warn("not a valid search because the target is not valid");
+           validStatement = false;
+           return;
+        } else{
             where +=contextWhereClauses;
-        }
+        } 
         if(statementWhere!=null) {
             if(where.length() > 0) {
                 where += " and ";
