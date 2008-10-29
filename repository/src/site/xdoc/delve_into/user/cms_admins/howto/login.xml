@@ -35,10 +35,10 @@ ________________________________________________________________________________
      The first time, use: username=admin, password=admin.
     </p>
      
-   <span class='screenshot'>
+   <div class='screenshot'>
      <img src="../../../../images/Hippo_login_Janine.png" alt='Hippo login screenshot'/>
-      The Hippo CMS login dialog.
-   </span>
+     <p>The Hippo CMS login dialog.</p>
+   </div>
 
   <subsection name='Next'>
    <ul>
