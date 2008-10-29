@@ -23,20 +23,42 @@
     </properties>
     <body>
       <section name="Frontend Plugins">
+        
+        <span class="shortdesc">Plugins to customize or extend the user interface.</span>
 
         <p>
-          Hippo ECM offers a fully customizable GUI by means of a frontend plugin architecture.
+          Hippo CMS offers a fully customizable GUI by means of a frontend plugin architecture.
+          Based on <a href="http://wicket.apache.org">Apache Wicket</a>, a component based
+          web development framework, this plugin architecture allows for customizations
+          ranging from tweaking a particular widget or dialog, to rewriting the entire
+          user interface.
+        </p>
+        <p>
+          This section gives background information on how the plugin architecture is
+          implemented.
         </p>
 
-        <ul>
-          <li>
-            <a href="frontend-plugin-architecture.html">Frontend Plugin Architecture</a>
-          </li>
-          <li>
-            <a href="frontend-plugin-communication.html">Frontend Plugin Communication</a>
-          </li>
-        </ul>
-
+        <blockquote>
+          <table>
+            <tr>
+              <td>
+                <a href="frontend-plugin-architecture.html">Architecture</a>
+              </td>
+              <td>
+                Explanation of the frontend plugin architecture.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <a href="frontend-plugin-communication.html">Plugin Communication</a>
+              </td>
+              <td>
+                Learn how frontend plugins communicate with each other.
+              </td>
+            </tr>
+          </table>
+        </blockquote>
+      
       </section>
     </body>
 </document>
