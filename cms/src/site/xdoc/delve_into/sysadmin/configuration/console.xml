@@ -36,7 +36,13 @@
           The console can normally be found under
           <a href="http://localhost:8080/console">http://localhost:8080/console</a>.
         </p>
-        <img src="../../../images/console.png" alt="the console" />
+        
+        <p>
+          <a href="../../../images/console.png">
+            <img src="../../../images/console_thumbnail.png" alt="Screenshot of the console" />
+          </a>
+        </p>
+        
 
         <p>
           The application is based on the concept of "the selected node".  This is
