@@ -22,30 +22,37 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change password</title>
+    <title>Save settings</title>
   </properties>
 
   <body>
-    <section name="Change password">
-      <span class="shortdesc">How to change the password of a Hippo CMS user.</span>
+    <section name="Save settings">
+      <span class="shortdesc">How to save settings, like the properties of a user of a group.</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/change_password.png" alt='Change password screenshot'/>      
+     <img src="../../../../images/save_settings.png" alt='save settings screenshot'/>      
    </span>
 
+  <p>
+   In the properties list on the right of the <a href='./goto_user_management_tab.html'>user management tab</a>
+   click on the save button (at the bottom of the list of properties).
+  </p>
+
    <p>
-    In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    click below the password title, type the new password and
-    <a href='./save_settings.html'>save the settings</a>.
+    If you change your mind before you clicked the save button, click the cancel button. 
+    <span class='warn_64'>
+     If you logout without clicking the cancel button, the new properties will be saved, 
+     This is generally a good thing, but know what you are doing when changing for example the
+     admin password.
+    </span>
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./deactivate_account.html'>Deactivate account</a>.</li>
-    <li><a href='./assign_user_to_group.html'>Assign user to group</a>.</li>
-    <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
     <li><a href='./add_group.html'>Add a group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./change_password.html'>change a password</a>.</li>
+    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
    </ul>       
   </subsection>
 

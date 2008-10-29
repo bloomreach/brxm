@@ -22,30 +22,29 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change password</title>
+    <title>Goto User Management Tab</title>
   </properties>
 
   <body>
-    <section name="Change password">
-      <span class="shortdesc">How to change the password of a Hippo CMS user.</span>
+    <section name="Goto User Management Tab">
+      <span class="shortdesc">How to get to the user management tab, to add users and groups or change their properties.</span>
+
+    <p>
+     Go to the user management tab by clicking on the 
+     user management icon <span class='usermanagement_16'/>,
+     at the left of the screen. 
+    </p>
 
    <span class='screenshot'>
-     <img src="../../../../images/change_password.png" alt='Change password screenshot'/>      
+     <img src="../../../../images/user_management_tab.png" alt='user management tab screenshot'/>      
    </span>
-
-   <p>
-    In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    click below the password title, type the new password and
-    <a href='./save_settings.html'>save the settings</a>.
-   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./deactivate_account.html'>Deactivate account</a>.</li>
-    <li><a href='./assign_user_to_group.html'>Assign user to group</a>.</li>
-    <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
     <li><a href='./add_group.html'>Add a group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./change_password.html'>change a password</a>.</li>
+    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
    </ul>       
   </subsection>
 

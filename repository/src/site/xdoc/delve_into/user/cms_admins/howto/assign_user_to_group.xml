@@ -22,29 +22,35 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change password</title>
+    <title>Assign user to group</title>
   </properties>
 
   <body>
-    <section name="Change password">
-      <span class="shortdesc">How to change the password of a Hippo CMS user.</span>
+    <section name="Assign user to group">
+      <span class="shortdesc">How to make a particular user belong to a particular group.</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/change_password.png" alt='Change password screenshot'/>      
+     <img src="../../../../images/goto_user_properties.png" alt='Assign user to group screenshot'/>      
    </span>
 
    <p>
-    In the list of <a href='./goto_user_properties.html'>properties of the user</a>,
-    click below the password title, type the new password and
-    <a href='./save_settings.html'>save the settings</a>.
+    Open the list of <a href='./goto_user_properties.html'>properties of the user</a>,
+    and on the left, select with the mouse a group from the list of existing groups
+    (below the 'new group' button), and drag and drop it to the groups property of the user (low in the list, go below the groups title).
+    Unsurprisingly, the user can be assigned to more than one group that way.    
+    Then <a href='./save_settings.html'>save the settings</a>.
    </p>
+
+  <subsection name='Alternative'>
+   <ul>
+    <li><a href='./add_group.html'>Add a group</a>.</li>
+   </ul>       
+  </subsection>
+
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./deactivate_account.html'>Deactivate account</a>.</li>
-    <li><a href='./assign_user_to_group.html'>Assign user to group</a>.</li>
     <li><a href='./change_user_properties.html'>Change user properties</a>.</li>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
    </ul>       
   </subsection>
