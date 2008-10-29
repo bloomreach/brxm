@@ -86,14 +86,14 @@
            <item name="Browse history" href="/delve_into/user/contributors/howto/browsing_history_of_a_document.html" collapse="false"/>
            <item name="Restore version" href="/delve_into/user/contributors/howto/restore_previous_version.html" collapse="false"/>
           </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/contributors/dictionary/index.html"> 
-           <item name="Versioning" href="/delve_into/user/contributors/dictionary/versioning.html" collapse="false"/>
+          <item name="Concepts" collapse="true" href="/delve_into/user/contributors/concepts/index.html"> 
+           <item name="Versioning" href="/delve_into/user/contributors/concepts/versioning.html" collapse="false"/>
           </item>
         </item>
         <item name="Editors" collapse="true" href="/delve_into/user/editors/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html"> </item>
           <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/editors/dictionary/index.html"> </item>
+          <item name="Concepts" collapse="true" href="/delve_into/user/editors/concepts/index.html"> </item>
         </item>
         <item name="CMS Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
           <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
@@ -110,7 +110,7 @@
 <item name="Save settings" href="/delve_into/user/cms_admins/howto/save_setting.html"/>
 <item name="Start CMS" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
           </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/cms_admins/dictionary/index.html"> </item>
+          <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"> </item>
         </item>
         <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
           <item name="Tour" collapse="true" href="/delve_into/user/information_architects/tour/index.html"/>
@@ -125,7 +125,7 @@
               <item name="Field Types" href="/delve_into/user/information_architects/howto/document_types/fieldtypes.html"/>
             </item>
           </item>
-          <item name="Dictionary" collapse="true" href="/delve_into/user/information_architects/dictionary/index.html"> </item>
+          <item name="Concepts" collapse="true" href="/delve_into/user/information_architects/concepts/index.html"> </item>
         </item>
 
         <!--
