@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd"
+>
+
+
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+[
+  <!ENTITY folderview SYSTEM "folderview.xml">
+]
+
+ <escapeXml>&folderview;</escapeXml>
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>CMS admin Howto</title>
+  </properties>
+
+  <body>
+    <section name="CMS admin Howto">
+      <span class="shortdesc">A collection of howto's for small tasks a CMS admin may want to do.</span>
+
+<table>
+  <tr>
+    <td>
+      <a href="./add_user.html">Add User</a>
+    </td>
+    <td>How to add a user account to Hippo CMS to allow someone access.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./assign_user_to_group.html">Assign user to group</a>
+    </td>
+    <td>How to make a particular user belong to a particular group.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./change_password.html">Change password</a>
+    </td>
+    <td>How to change the password of a Hippo CMS user.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./change_user_properties.html">Change user properties</a>
+    </td>
+    <td>How to change to properties of a Hippo CMS user account.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./deactivate_account.html">Deactivate account</a>
+    </td>
+    <td>How to deactivate a Hippo CMS user account.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_user_management_tab.html">Goto User Management Tab</a>
+    </td>
+    <td>How to get to the user management tab, to add users and groups or change their properties.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_user_properties.html">Goto User Properties</a>
+    </td>
+    <td>How to get to the properties of a user</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./index.html">Change to the document title</a>
+    </td>
+    <td>Change to document short description.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./login.html">Login as Admin</a>
+    </td>
+    <td>How to login to Hippo CMS as administrator.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./save_setting.html">Save settings</a>
+    </td>
+    <td>How to save settings, like the properties of a user of a group.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./schemas.html"/>
+    </td>
+    <td>
+      <span class="missing">Short description for            
+           ./schemas.html</span>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./start_CMS.html">Start CMS</a>
+    </td>
+    <td>How to start a CMS session in your browser</td>
+  </tr>
+</table>
+
+ <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+ </subsection>
+
+    </section>
+  </body>
+</document>
