@@ -36,10 +36,10 @@ ________________________________________________________________________________
    <p>
     Click on the new user button
     (in the <a href='./goto_user_management_tab.html'>user management tab</a>, at the left, above the list of existing users), 
-    and type the username to add and press enter.
+    type the username to add and press enter.
    </p>
    <p>
-    On the right, the list of unvalued properties of the new user appears
+    On the right, the list of unvalued properties of the new user will appear
     to <a href='./add_user_properties.html'>allow supplying values</a>.
    </p>
 

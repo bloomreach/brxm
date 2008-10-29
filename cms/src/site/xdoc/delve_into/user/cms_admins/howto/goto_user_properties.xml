@@ -29,16 +29,16 @@ ________________________________________________________________________________
     <section name="Goto User Properties">
       <span class="shortdesc">How to get to the properties of a user</span>
 
+   <span class='screenshot'>
+     <img src="../../../../images/user_properties.png" alt='user properties screenshot'/>      
+   </span>
+
    <p>
     In the list of existing users 
     (in the <a href='./goto_user_management_tab.html'>user management tab</a>, at the left, below the 'new user' button), 
     click on the user of whom you want to see and/or change the properties. The properties will
     appear at the right.
    </p>
-
-   <span class='screenshot'>
-     <img src="../../../../images/user_properties.png" alt='user properties screenshot'/>      
-   </span>
 
   <subsection name='Next'>
    <ul>

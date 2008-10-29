@@ -30,7 +30,7 @@ ________________________________________________________________________________
       <span class="shortdesc">How to change to properties of a Hippo CMS user account.</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/goto_user_properties.png" alt='Change user properties screenshot'/>      
+     <img src="../../../../images/user_properties.png" alt='Change user properties screenshot'/>      
    </span>
 
    <p>
@@ -39,13 +39,13 @@ ________________________________________________________________________________
    </p>
    <ol>
     <li>    
-     <a href='./deactivate_account.html'>deactivate his account</a>.
+     <a href='./deactivate_account.html'>deactivate his account</a>,
     </li>
     <li>
-     <a href='./change_password.html'>Change his password</a>.
+     <a href='./change_password.html'>change his password</a>,
     </li>
     <li>
-     <a href='./assign_user_to_group.html'>Assign him to one or more groups</a>.
+     <a href='./assign_user_to_group.html'>assign him to one or more groups</a>,
     </li>
     <li>or change another property, by clicking below the property title,
         just like 

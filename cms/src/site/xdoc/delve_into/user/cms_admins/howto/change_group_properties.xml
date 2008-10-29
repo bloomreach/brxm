@@ -22,37 +22,36 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Save settings</title>
+    <title>Change group properies</title>
   </properties>
 
   <body>
-    <section name="Save settings">
-      <span class="shortdesc">How to save settings, like the properties of a user of a group.</span>
+    <section name="Change group properties">
+      <span class="shortdesc">How to change to properties of a Hippo CMS group of users.</span>
 
    <span class='screenshot'>
-     <img src="../../../../images/save_settings.png" alt='save settings screenshot'/>      
+     <img src="../../../../images/group_properties.png" alt='Group properties screenshot'/>      
    </span>
 
-  <p>
-   In the properties list on the right of the <a href='./goto_user_management_tab.html'>user management tab</a>
-   click on the save button (at the bottom of the list of properties).
-  </p>
-
    <p>
-    If you change your mind before you clicked the save button, click the cancel button. 
-    <span class='warn_64'>
-     If you logout without clicking the cancel button, the new properties will also be saved. 
-     This is generally a good thing, but know what you are doing when changing for example the
-     admin password.
-    </span>
+    To add or change the description of a group, <a href='./type_in_editing_region.html'>type in the editing region</a>.  
+    Then <a href='./save_settings.html'>save the settings</a>.
    </p>
+   <p>
+    <a href='./assign_user_to_group.html'>Which users belong to the group</a> are properties of each of those users
+    and are set for the users, not for the group.    
+   </p>
+
+  <subsection name='Alternative'>
+   <ul>
+    <li><a href='./add_group.html'>Add a group</a>.</li>
+   </ul>
+  </subsection>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./add_group.html'>Add a group</a>.</li>
+    <li><a href='./assign_user_to_group.html'>Assign users to the group</a>.</li>
     <li><a href='./add_user.html'>Add a user</a>.</li>
-    <li><a href='./change_password.html'>change a password</a>.</li>
-    <li><a href='./deactivate_account.html'>deactivate an account</a>.</li>
    </ul>       
   </subsection>
 
