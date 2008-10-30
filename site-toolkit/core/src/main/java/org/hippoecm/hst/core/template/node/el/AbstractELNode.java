@@ -67,6 +67,14 @@ public abstract class AbstractELNode implements ELNode {
 		return null;
     }
     
+    public String getNodetype(){
+        try {
+            return this.jcrNode.getPrimaryNodeType().getName();
+        } catch (RepositoryException e) {
+            log.error("RepositoryException " + e.getMessage());
+        }
+        return null;
+    }
     public String getUuid(){
     	try {
       	  if(jcrNode.hasProperty(HippoNodeType.HIPPO_UUID)){

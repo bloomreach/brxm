@@ -28,5 +28,6 @@ public interface ELNode {
     public ELNode getParent();
     public String getDecodedName();
     public String getName();
+    public String getNodetype();
     public String getUuid(); 
 }
