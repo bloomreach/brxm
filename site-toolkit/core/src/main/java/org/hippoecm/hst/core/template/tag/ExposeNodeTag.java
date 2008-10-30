@@ -92,6 +92,9 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 		 }
 	     log.debug("Fetching relative node '" + relPath + "' from context base " + contentContextBase.getContextRootNode().getPath() );
 	     Node currentJcrNode = contentContextBase.getRelativeNode(relPath);		
+	     if(currentJcrNode == null) {
+	         log.warn("jcr node not found at '" +  contentContextBase.getContextRootNode().getPath() +"/"+relPath +"'");
+	     }
 		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, urlMapping);
 	 }
 	 return null;
