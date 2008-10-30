@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,6 +23,14 @@
   </properties>
   <body>
     <section name="Hippo CMS Tour for Information Architects">
+     <span class='shortdesc'>To get introduced in the role of CMS information architect, 
+      take the following tour.</span> 
+      
+ <p>To get introduced in the role of CMS information architect, you will look over the shoulder of
+    Alice, who is working as an CMS information architect for the imaginary organization Saraswatia,
+    an organization of people very interested in music, art and knowledge. We did not imagine an
+    answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
+</p>
 
    <blockquote>
     <table>
@@ -46,12 +54,13 @@
       </td>
       <td> 
          <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
-          CMS administrator.
+          CMS administrator. Alice logs in with her name. Her password is only known to her, so you do
+          not get to see it.
       </td>
      </tr>
 
      <tr>
-      <td>Structure</td>
+      <td>Goto</td>
       <td>
        <span class='structure_64'/> 
       </td>
@@ -60,7 +69,145 @@
       </td>
      </tr>
 
+     <tr>
+      <td>Namespace</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/create_namespace.html">Create a namespace</a>. Saraswatia decides to
+         publish an online newspaper about music, art and knowledge. The name will be Sar, which
+         is just an abbreviation of `Saraswatia Articles'. Alice creates a namespace to gather
+         all the different kind of content of Sar in.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Document types</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/create_documenttype.html">Create documenttypes</a>. 
+         Alice decides that the online newspaper should at least contain 
+         documents for announcing an upcoming happening and documents for
+         describing the authors hobby. So for the time being, creates two documenttypes,
+         which she calls `upcoming' and `myhobby'. 
+      </td>
+     </tr>
   
+     <tr>
+      <td>Add date</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/add_date_to_documenttype.html">Add date to documenttype</a>. 
+         Alice starts to define the 'upcoming' documenttype.
+         According to Alice, for upcoming happenings, the date of the happening should
+         always be known, if an article is the be published about it.
+         So she starts with a date field, which she makes mandatory.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Add string</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/add_string_to_documenttype.html">Add string to documenttype</a>. 
+         Of course, the articles about upcoming happings should always have a title.
+         Titles should be short and to the point.
+         So Alice adds string field, which she makes mandatory and having 
+         a size of 60 characters.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Add boolean</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/add_boolean_to_documenttype.html">Add boolean to documenttype</a>. 
+         Alice thinks that every author of an article about an upcoming happening should
+         answer the question if the happening is indoors. 
+         This allows people who only want to go to indoor happenings, to define a 
+         query so that they are only notified of indoor happenings and are not bothered
+         with happenings they are not interested in.
+         So Alice adds a mandatory boolean field called 'Indors?'.
+         <p>Alice also wants authors to answer the question if the happening is a
+            recurring happening, a happening that has occured before.
+            Some people only want to go to happenings that have been a succes before, while
+            others may only want to go to happenings that are the first of their kind.
+            So Alice adds a mandatory boolean field called 'Recurring?'.
+         </p>
+      </td>
+     </tr>
+
+     <tr>
+      <td>Add number</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/add_string_to_documenttype.html">Add number to documenttype</a>. 
+         Alice wants readers to always know what the entrance price is for a happening.
+         An entrance price is a number and the list of possible fieldtypes has no number in it.
+         But any number is of course also a string, i.e. a sequence of characters, so
+         she uses the string fieldtype for it. So Alice adds a mandatory string field
+         called 'Entrance price in Euro'.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Add markuped text</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/add_markuped_text_to_documenttype.html">Add markuped text to documenttype</a>. 
+         Well, an article about an upcoming happening should allow for a description of the happening.
+         However, that should be optional, as the title may in some cases enough. So Alice adds a 
+         optional markuped text field, called 'Description'.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Change field</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/change_field_in_documenttype.html">Change field in documenttype</a>. 
+         Alice decides that the title of an 'upcoming' article, may be more than 60 characters.
+         She decides that the maximum number of characters should be 68. So she changes 
+         the size value for the title field.          
+      </td>
+     </tr>
+
+     <tr>
+      <td>Remove field</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/remove_field_from_documenttype.html">Remove field from documenttype</a>. 
+         Alice adds another field, does not like it, and removes it again.          
+      </td>
+     </tr>
+
+     <tr>
+      <td>Save documenttype</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/save_documenttype.html">Save documenttype</a>. 
+         Alice saves here new documenttype called 'upcoming'.          
+      </td>
+     </tr>
  
     </table>
    </blockquote>

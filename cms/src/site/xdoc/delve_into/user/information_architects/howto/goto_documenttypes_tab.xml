@@ -30,11 +30,13 @@ ________________________________________________________________________________
       <span class="shortdesc">How to get to the documenttypes tab, to add and change documenttypes.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/documenttypes_tab.png" alt='Goto documenttypes tab screenshot'/> 
+     <img src="../../../../images/inars/documenttypes_tab.png" alt='Goto documenttypes tab screenshot'/> 
      <p>
       Opened <a href='../concepts/documenttype.html'>documenttypes</a> folder shown. 
       It is a subfolder of the configuration folder. 
       The subfolders of the documenttypes folder are <a href='../concepts/namespace.html'>namespaces</a>.
+      There is one namespace in this example, called 'defaultcontent'. 
+      It is the namespace for default content.
      </p>
    </div>
 
@@ -42,14 +44,14 @@ ________________________________________________________________________________
     In the list of content folders
     (in the <a href='./goto_content_browse_tab.html'>content browse tab</a>, at middle-left), 
     click on the configuration folder and find the documenttypes subfolder. If not already open,
-    click on that and its subfolders, which are <a href='../concepts/namespace.html'>namespaces</a>, 
-    appear in a list at middle-right. 
+    click on that to see its subfolders, which are <a href='../concepts/namespace.html'>namespaces</a>. 
+    The list of namespaces appears below the documenttypes folder and in a list at middle-right. 
    </p>
 
   <subsection name='Next'>
    <ul>
     <li><a href='./create_namespace.html'>Create namespace</a>.</li>
-    <li><a href='./create_documenttype.html'>Create documenttype</a>.</li>
+    <li><a href='./goto_namespace.html'>Goto a namespace</a>.</li>
    </ul>       
   </subsection>
 

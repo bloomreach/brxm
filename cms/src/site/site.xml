@@ -117,7 +117,7 @@
           <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"> </item>
         </item>
         <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/information_architects/tour/index.html"/>
+          <item name="Tour" href="/delve_into/user/information_architects/tour.html"/>
           <item name="Howto" collapse="true" href="/delve_into/user/information_architects/howto/index.html">
             <item name="Document Types" href="/delve_into/user/information_architects/howto/document_types/index.html" collapse="true">
               <!--
