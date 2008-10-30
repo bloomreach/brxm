@@ -19,14 +19,15 @@
 -->
 <document>
   <properties>
-      <title>Example: Hello World plugin</title>
+      <title>Test your GUI plugin</title>
   </properties>
   <body>
       <section name="Testing the Hello World plugin">
+        <span class="shortdesc">Include your own GUI plugin in Hippo CMS</span>
         <p>
-          To test our HelloWorldPlugin we need to add our hello world jar to the classpath
+          To test our <a href="gui_plugin.html">HelloWorldPlugin</a> we need to add our hello world jar to the classpath
           of our WAR application. Make sure you
-          have a <a href="../building/maven.html">complete SVN checkout of Hippo ECM</a>.
+          have a <a href="../../core/building/maven.html">complete SVN checkout of Hippo ECM</a>.
           You will find the WAR application under <b>quickstart/war</b> in the Hippo ECM project tree:
         </p>
 
@@ -75,7 +76,7 @@ hippo-ecm
           Now run the application using the following Maven command:
         </p>
 <source>
-cd hippo-ecm/package/war
+cd hippo-ecm/quickstart/war
 mvn jetty:run-war
 </source>
         <p>
@@ -90,21 +91,35 @@ mvn jetty:run-war
         <p>
           All it takes to see our plugin in all its glory is to replace one of
           the standard plugins in the plugin configuration with our own, using
-          the Console interface. To do this, navigate to the
-          <b>/hippo:configuration/hippo:frontend/cms/cms-static/listPlugin</b> node.  The
-          properties of the listPlugin node are displayed on the right side of
+          the <a href="../../sysadmin/configuration/console.html">Console application</a>.
+          To do this, navigate to the
+          <b>/hippo:configuration/hippo:frontend/cms/cms-static/shortcutsPlugin</b> node.  The
+          properties of the shortcutsPlugin node are displayed on the right side of
           the page.  Change the class name in the <code>plugin.class</code>
           property of this node to
           <code>org.example.helloworld.HelloWorldPlugin</code>.
+          Save your changes.
         </p>
-        <img src="../../../images/configure-hello-world-plugin.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
+        
         <p>
-          Now login to <a href="http://localhost:8080/">http://localhost:8080/</a>,
+          <a href="../../../images/configure-hello-world-plugin.png">
+            <img src="../../../images/configure-hello-world-plugin_thumbnail.png" alt="Plugin configuration screenshot" style="border:1px solid grey;"/>
+          </a>
+        </p>
+        
+        <p>
+          Now login to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>,
           and admire your work!  The Hello World plugin should be visible in
-          the center of the Browse tab (since you replaced the ListPlugin with
+          the Dashboard (since you replaced the ShortcutsPlugin with
           your HelloWorld plugin).
         </p>
-        <img src="../../../images/hello-world-plugin.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
+        
+        <p>
+          <a href="../../../images/hello-world-plugin.png">
+            <img src="../../../images/hello-world-plugin_thumbnail.png" alt="Hello World screenshot"  style="border:1px solid grey;"/>
+          </a>
+        </p>
+        
         <br/>
       </subsection>
 

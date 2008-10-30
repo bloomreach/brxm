@@ -19,11 +19,11 @@
 -->
 <document>
   <properties>
-      <title>Example: Hello World plugin</title>
+      <title>Create a GUI Plugin</title>
   </properties>
   <body>
       <section name="Hello World">
-        <span class="shortdesc">Create a plugin that displays "Hello World!"</span>
+        <span class="shortdesc">Create a GUI plugin that displays "Hello World!"</span>
 
         <p>Most programmers seem to be interested in telling the world "Hello World!"
           Luckily, this is also possible with a plugin for Hippo ECM frontend
