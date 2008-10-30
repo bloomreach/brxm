@@ -45,8 +45,9 @@ import org.slf4j.LoggerFactory;
 public class ExposeNodeTag extends  SimpleTagSupport {
 	private static final Logger log = LoggerFactory.getLogger(ExposeNodeTag.class);
 	
-   
-   private String var;
+
+	   private String var;
+	   private String location;
 
 @Override
 public void doTag() throws JspException, IOException {
@@ -82,7 +83,15 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
 	 URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	 if (pageNode != null && contentContextBase != null) {
-		 Node currentJcrNode = contentContextBase.getRelativeNode(pageNode.getRelativeContentPath());		
+		 String relPath = null;
+	     if(location != null) {
+	         log.debug("using location '"+location+"' from the hst node tag instead of from sitemap item");
+	         relPath = location;
+		 } else {
+		     relPath = pageNode.getRelativeContentPath();
+		 }
+	     log.debug("Fetching relative node '" + relPath + "' from context base " + contentContextBase.getContextRootNode().getPath() );
+	     Node currentJcrNode = contentContextBase.getRelativeNode(relPath);		
 		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, urlMapping);
 	 }
 	 return null;
@@ -91,12 +100,32 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 /* getters & setters */
 
 public String getVar() {
-	return var;
+    return var;
 }
 
 public void setVar(String var) {
-	this.var = var;
+    this.var = var;
 }
+
+public String getLocation() {
+    return location;
+}
+
+public void setLocation(String location) {
+    if(location!=null) {
+        if(location.startsWith("/")) {
+            location = location.substring(1);
+        }
+        if(location.endsWith("/")) {
+            location = location.substring(location.length()-1);
+        }
+        if(!"".equals(location)) {
+            this.location = location;
+        }
+    }
+}
+
+
    
    
    
