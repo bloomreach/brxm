@@ -333,4 +333,35 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         }
         return null;
     }
+    
+    @Override
+    public String getRelpath() {
+        if(sourceRewriter == null || sourceRewriter.getUrlMapping() == null) {
+            log.warn("cannot get relpath because no urlMapping");
+            return null;
+        }
+        URLMapping urlMapping = sourceRewriter.getUrlMapping();
+        String contextPrefixPath = urlMapping.getContextPrefix();
+        if(contextPrefixPath == null || "".equals(contextPrefixPath)) {
+            log.warn("no contextprefix path. Cannot get relpath");
+            return null;
+        }
+        try {
+            String path = jcrNode.getPath();
+            if(path.startsWith(contextPrefixPath)) {
+                String relPath = path.substring(contextPrefixPath.length());
+                if(relPath.startsWith("/")) {
+                    relPath = relPath.substring(1);
+                }
+                return relPath;
+            }
+            else {
+                log.warn("cannot get relpath because jcr path does not start with context prefix path");
+            }
+            return null;
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 }

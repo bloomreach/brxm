@@ -27,6 +27,7 @@ public interface URLMapping {
     
     public String rewriteLocation(Node node);
     public String getContextPath();
+    public String getContextPrefix();
     public String rewriteLocation(String path);
     public String getLocation(String path);
     public List<String> getCanonicalPathsConfiguration();

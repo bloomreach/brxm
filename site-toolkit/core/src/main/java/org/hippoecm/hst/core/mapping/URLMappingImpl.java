@@ -396,5 +396,9 @@ public class URLMappingImpl implements URLMapping {
     public String getContextPath() {
         return this.contextPath;
     }
+    
+    public String getContextPrefix() {
+        return this.contextPrefix;
+    }
 
 }

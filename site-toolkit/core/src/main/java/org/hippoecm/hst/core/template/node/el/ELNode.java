@@ -33,5 +33,7 @@ public interface ELNode {
     public String getName();
     public String getNodetype();
     public String getUuid(); 
+    public String getPath();
+    public String getRelpath();
     
 }

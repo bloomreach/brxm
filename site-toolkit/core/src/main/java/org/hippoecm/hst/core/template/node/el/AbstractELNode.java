@@ -276,8 +276,17 @@ public abstract class AbstractELNode implements ELNode {
             return jcrNode.getPath();
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
-            return "";
+            return null;
         }
     }
 
+    public String getRelpath() {
+        log.warn("relpath not supported for AbstractELNode");
+        try {
+            return jcrNode.getPath();
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 }

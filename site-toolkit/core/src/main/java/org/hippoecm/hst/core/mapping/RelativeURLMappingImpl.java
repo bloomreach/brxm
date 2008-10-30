@@ -126,4 +126,8 @@ public class RelativeURLMappingImpl implements URLMapping{
         return delegatee.getContextPath();
     }
 
+    public String getContextPrefix() {
+        return delegatee.getContextPrefix();
+    }
+
 }
