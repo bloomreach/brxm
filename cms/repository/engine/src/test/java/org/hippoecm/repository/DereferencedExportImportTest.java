@@ -87,6 +87,7 @@ public class DereferencedExportImportTest extends TestCase {
         testExport.addNode("doc2",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc3",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc4",  "hippo:ntunstructured").addMixin("mix:referenceable");
+        testExport.addNode("doc5",  "hippo:document").addMixin("hippo:harddocument");
         
         // references between doc1 and doc2
         Value uuidDoc1 = session.getValueFactory().createValue(testExport.getNode("doc1").getUUID(), PropertyType.REFERENCE);
@@ -106,6 +107,9 @@ public class DereferencedExportImportTest extends TestCase {
 
         // one external
         testExport.getNode("doc4").setProperty("ref-to-extern", uuidRef1);
+
+        // empty multi
+        testExport.getNode("doc5").setProperty("hippo:related", new Value[]{});
 
         // create import node
         testImport = testData.addNode(TEST_IMPORT_NODE,  "hippo:ntunstructured");
@@ -307,7 +311,7 @@ public class DereferencedExportImportTest extends TestCase {
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
-        assertEquals(8L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());        
+        assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());        
     }
     
     private void prettyPrint(byte[] bytes, OutputStream out) throws Exception {
