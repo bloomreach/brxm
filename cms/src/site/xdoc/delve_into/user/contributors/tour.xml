@@ -19,11 +19,22 @@
 -->
 <document>
  <properties>
-  <title>Hippo CMS Admin Tour</title>
+  <title>Hippo CMS Contributor Tour</title>
  </properties>
  <body>
-  <section name="Hippo CMS Admin Tour">
-    <span class='shortdesc'>To get introduced in the role of CMS administrator, take the following tour.</span> 
+  <section name="Hippo CMS Contributor Tour">
+    <span class='shortdesc'>To get introduced in the role of CMS Contributor, take the following tour.</span> 
+
+     <p>To get introduced in the role of CMS contributor, you will look over the shoulder of
+        Marc, who is a member of the imaginary organization Saraswatia,
+        an organization of people very interested in music, art and knowledge. We did not imagine an
+        answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
+    </p>
+    <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. The name will be Sar, which
+        is just an abbreviation of `Saraswatia Articles'. 
+    </p>
+    <p>Marc will add an article about an upcoming multicultural Bazar.
+    </p>
 
    <blockquote>
     <table>
@@ -46,7 +57,9 @@
        <span class='login-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/login.html">Login to Hippo CMS</a> in the standard CMS admin account.
+         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
+          CMS administrator. Marc logs in with his name. His password is only known to him, so you do
+          not get to see it.
       </td>
      </tr>
 
@@ -68,7 +81,7 @@
     <tr>
       <td>Deactivate</td>
       <td>
-       <span class='admin-48 icon-48'/> 
+       <span class='delete-48 icon-48'/> 
       </td>
       <td>
          <a href="./howto/deactivate_account.html">Deactivate the other standard accounts</a> to
@@ -128,6 +141,7 @@
       </td>
       <td> 
          <a href="./howto/logout.html">Logout</a>. 
+         Shane quits for today.          
       </td>
      </tr>
  

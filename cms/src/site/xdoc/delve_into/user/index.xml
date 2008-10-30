@@ -22,48 +22,45 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change to the browser title</title>
+    <title>User Guide</title>
   </properties>
 
   <body>
-    <section name="Change to the document title">
-      <span class="shortdesc">Change to document short description.</span>
+    <section name="User Guide">
+      <span class="shortdesc">How to work as a user of Hippo CMS.</span>
 
-       <span class='rewrite'>this whole document.</span>
+       <p>Hippo CMS is designed to allow people to perform their tasks using skills
+          actually related to that task. Therefor, the user guide is strictly
+          devided in four user roles. Users only require the skills that belong to 
+          the role they will perform.
+       </p>
 
-        <p>Introductory text.
-           Introductory text.
-        </p>
-
-
-        <subsection name="First subsection title">
-
-          <p>This is text with an <span class="index">index word</span>.
-          </p>
-
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
-          </p>
-      
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
-          </p>
-      
-        </subsection>
-
-
-        <subsection name="Second subsection title">
-     
-          <p>Text
-          </p>
-     
-          <source>
-            code line 1
-            code line 2
-          </source>
-        </subsection>
+<table>
+  <tr>
+    <td>
+      <a href="./contributors/index.html">Guide for Contributors</a>
+    </td>
+    <td>Guide for Hippo CMS users to perform the role of Information Architect.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./editors/index.html">Guide for Editors</a>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./information_architects/index.html">Guide for Information Architects</a>
+    </td>
+    <td>Guide for Hippo CMS users to perform the role of Information Architect.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./cms_admins/index.html">Guide for CMS admins</a>
+    </td>
+    <td>Guide for Hippo CMS users to perform the role of CMS administrator.</td>
+  </tr>
+</table>
 
     </section>
   </body>

@@ -22,23 +22,23 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Update content</title>
+    <title>Start CMS</title>
   </properties>
 
   <body>
-    <section name="Update content">
-      <span class="shortdesc">How to update content</span>
+    <section name="Start CMS">
+      <span class="shortdesc">How to start a CMS session in your browser</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/inars/update_content.png" alt='update content screenshot'/> 
-     <p>
-       In the selection menu at middle-right select 'update content'. A dialog window appears.
-     </p>
-   </div>
+   <p>
+        Open the Hippo CMS site 
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
+        your browser. 
+   </p>
+
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./logout.html'>Logout</a>.</li>
+    <li><a href='./login.html'>Login</a>.</li>
    </ul>       
   </subsection>
 

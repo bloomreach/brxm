@@ -22,23 +22,23 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Update content</title>
+    <title>Logout</title>
   </properties>
 
   <body>
-    <section name="Update content">
-      <span class="shortdesc">How to update content</span>
+    <section name="Logout">
+      <span class="shortdesc">How to logout</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/update_content.png" alt='update content screenshot'/> 
+     <img src="../../../../images/inars/logout.png" alt='logout screenshot'/> 
      <p>
-       In the selection menu at middle-right select 'update content'. A dialog window appears.
+       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
      </p>
    </div>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./logout.html'>Logout</a>.</li>
+    <li><a href='./login.html'>Login</a>.</li>
    </ul>       
   </subsection>
 

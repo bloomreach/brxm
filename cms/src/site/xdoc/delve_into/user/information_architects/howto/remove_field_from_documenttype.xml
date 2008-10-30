@@ -40,7 +40,7 @@ ________________________________________________________________________________
     Open the <a href='./goto_documenttype_tab.html'>documenttype</a> for editing. 
     Click on the remove button at the upper right of a field of the documenttype to remove it.    
    </p>
-   <div class='warn_64'>
+   <div class='alert-48 icon-text-48'>
      If you remove a field from a documenttype, while documents of that type
      already exists, all information in that field from all those documents will be lost!     
    </div>

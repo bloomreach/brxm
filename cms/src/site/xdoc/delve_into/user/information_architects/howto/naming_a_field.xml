@@ -47,14 +47,14 @@ ________________________________________________________________________________
     Before you change it, the path will be prefix:date, in the example sar:date.
     Replace 'date' by a name that is unique within this documenttype.
    </p>
-   <span class='warn_64'>
+   <div class='alert-48 icon-text-48'>
     If not all fieldnames in a documenttype are unique within that documenttype, 
     the following errormessage will occur when trying to save the
     changes to the documenttype:
     <samp>
      <span class='index' id='ambigues_fieldnames'>Path sar:title is used in multiple fields</span> 
     </samp>
-   </span>
+   </div>
 
   <subsection name='Next'>
    <ul>
