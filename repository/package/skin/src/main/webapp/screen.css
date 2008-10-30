@@ -577,6 +577,19 @@ background: url("images/icons/message-dropitem-128.png") no-repeat center 70px;
 margin-top: 10px;
 } 
 
+.hippo-management-users-actions{display: inline;}
+
+.drop-user-48{border: 1px solid #f2f2f2}
+.drop-group-48{border: 1px solid #f2f2f2}
+.drop-domain-48{border: 1px solid #f2f2f2}
+.hippo-root .hippo-list-simple-container input[type="text"],
+.hippo-root .hippo-list-simple-container input[type="button"]{padding: 3px; margin: 6px; }
+.hippo-list-simple-container{margin-bottom: 10px;}
+.hippo-list-simple{overflow: auto; height: 84px; border-bottom: 2px solid #f2f2f2; }
+.hippo-list-simple ul li a{display: block;}
+.hippo-perspective-management .hippo-list-details-instructions{color: #666666}
+.hippo-perspective-management .hippo-list-details tr td.hippo-list-details-instructions:hover{cursor: default}
+
 /* Global Icon Management */
 /* ================================================ */
 .hippo-list-small{background-position: center left; background-repeat: no-repeat; padding: 3px; margin-bottom: 1px;}
@@ -619,6 +632,12 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 
 .arrow-paging-previous-16{background-image:url("images/icons/arrow-paging-previous-16.png")}
 .arrow-paging-next-16{background-image:url("images/icons/arrow-paging-next-16.png")}
+
+.user-16{background-image:url("images/icons/user-16.png")}
+.user-32{background-image:url("images/icons/user-32.png")}
+.user-48{background-image:url("images/icons/user-48.png")}
+.user-128{background-image:url("images/icons/user-128.png")}
+
 
 .document-new-48{background-image:url("images/icons/document-48.png")}
 .user-48{background-image:url("images/icons/groups-48.png")}
