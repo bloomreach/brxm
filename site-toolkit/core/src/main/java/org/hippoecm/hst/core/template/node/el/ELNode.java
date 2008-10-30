@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -25,9 +26,12 @@ public interface ELNode {
     public Map getHasProperty();
     public Map getNode();
     public Map getNodes();
+    //TODO replace below:  temporary because should be possible with getNodes(), see HSTTWO-175
+    public List<ELNode> getChildnodes();
     public ELNode getParent();
     public String getDecodedName();
     public String getName();
     public String getNodetype();
     public String getUuid(); 
+    
 }

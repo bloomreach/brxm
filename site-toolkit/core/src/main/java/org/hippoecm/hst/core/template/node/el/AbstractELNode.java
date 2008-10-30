@@ -110,6 +110,24 @@ public abstract class AbstractELNode implements ELNode {
         };
     }
     
+   //TODO replace below:  temporary because should be possible with getNodes(), see HSTTWO-175
+    public List<ELNode> getChildnodes(){
+        try {
+            List<ELNode> wrappedNodes = new ArrayList<ELNode>();
+            for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
+                Node n = it.nextNode();
+                if(n!=null) {
+                    wrappedNodes.add(new AbstractELNode(n){});
+                }
+            }
+            return wrappedNodes;
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: {}", e.getMessage());
+            log.debug("RepositoryException:", e);
+        }
+        return null;
+    }
+    
     public Map getNode(){
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");

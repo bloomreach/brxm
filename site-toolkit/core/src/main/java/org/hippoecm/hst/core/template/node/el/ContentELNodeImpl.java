@@ -97,6 +97,25 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         };
     }
     
+    //TODO replace below:  temporary because should be possible with getNodes(), see HSTTWO-175
+    
+    public List<ELNode> getChildnodes(){
+        try {
+            List<ELNode> wrappedNodes = new ArrayList<ELNode>();
+            for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
+                Node n = it.nextNode();
+                if(n!=null) {
+                    wrappedNodes.add(new ContentELNodeImpl(n, sourceRewriter));
+                }
+            }
+            return wrappedNodes;
+        } catch (RepositoryException e) {
+            log.error("RepositoryException: {}", e.getMessage());
+            log.debug("RepositoryException:", e);
+        }
+        return null;
+    }
+    
     @Override
     public Map getNodes(){
         if (jcrNode == null) {
