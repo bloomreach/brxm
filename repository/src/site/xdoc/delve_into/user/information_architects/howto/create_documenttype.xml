@@ -22,31 +22,35 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login</title>
+    <title>Create Documenttype</title>
   </properties>
 
   <body>
-    <section name="Login">
-      <span class="shortdesc">How to login to Hippo CMS.</span>
-     
+    <section name="Create Documentttype">
+      <span class="shortdesc">How to create a documenttype, to define the structure 
+         of a class of similar documents.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/inars/hippo_login_alice.png" alt='Hippo login screenshot'/>
-      <p>Alice logs in to Hippo CMS. She has typed her password, but only bullets are shown,
-       to prevent someone looking over her shoulder from reading it. She chose the Hippo CMS to
-       be in English. Now she is about to press the button marked `sign in'.
-      </p>
+     <img src="../../../../images/inars/create_documenttype.png" alt='Create documenttype screenshot'/> 
+     <p>
+      Creation of <a href='../concepts/documenttype.html'>documenttype</a> with name `upcoming',
+      in namespace 'sar'. The namespace 'sar' already contains the documenttype 'myhobby'.      
+     </p>
    </div>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. This must been given to you by your CMS administrator and
-     he must have known that you are supposed to work in Hippo CMS as information architect, because he
-     has to set the appropiate rights for you.
-    </p>
+   <p>
+    <a href='./goto_namespace.html'>Select the namespace</a> to create a documenttype in,
+    then click on the selection menu at the top of the middle-right lane and select `create new type'
+    by clicking on it. A dialog window appears.
+   </p>
+   <p>
+    Type a informative name for the documenttype. 
+   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Goto documenttypes tab</a>.</li>
+    <li><a href='./goto_documenttype_tab.html'>Select documenttype</a>.</li>
+    <li><a href='./create_documenttype.html'>Create another documenttype</a>.</li>
    </ul>       
   </subsection>
 

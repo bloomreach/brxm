@@ -22,29 +22,18 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto Content Browse Tab</title>
+    <title>Boolean</title>
   </properties>
 
   <body>
-    <section name="Goto Content Browse Tab">
-      <span class="shortdesc">How to get to content browsw tab.</span>
+    <section name="Boolean">
+      <span class="shortdesc">What is a boolean</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/user/content_browse_tab.png" alt='content browse screenshot'/>      
-   </div>
-
-    <p>
-     Go to the content browse tab by clicking on the 
-     content browse icon (an image of a folder) <span class='content_browse_16'/>,
-     at the left of the screen. 
-    </p>
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Goto documenttypes tab</a>.</li>
-   </ul>       
-  </subsection>
-
-   </section>
+    <p>A boolean is a yes or no question. A boolean has a name,
+     identifying the question, and a value, which is the answer to the
+     question and which can only be yes or no (or true or false, which
+     comes down to the same thing).
+   </p>
+    </section>
   </body>
-</document>        
+</document>

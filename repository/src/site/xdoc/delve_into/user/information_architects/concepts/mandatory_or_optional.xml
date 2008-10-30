@@ -22,29 +22,17 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto Content Browse Tab</title>
+    <title>Mandatory or optional field</title>
   </properties>
 
   <body>
-    <section name="Goto Content Browse Tab">
-      <span class="shortdesc">How to get to content browsw tab.</span>
+    <section name="Mandatory or optional field">
+      <span class="shortdesc">Wat is a mandatory or optional field in a documenttype?</span>
 
-   <div class='screenshot'>
-     <img src="../../../../images/user/content_browse_tab.png" alt='content browse screenshot'/>      
-   </div>
-
-    <p>
-     Go to the content browse tab by clicking on the 
-     content browse icon (an image of a folder) <span class='content_browse_16'/>,
-     at the left of the screen. 
-    </p>
-
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Goto documenttypes tab</a>.</li>
-   </ul>       
-  </subsection>
-
-   </section>
+      <p>A field that is mandatory in a documenttype must have a value in any document 
+         of that documenttype. A field that is optional may have a value, but may be left
+         empty.
+      </p>
+    </section>
   </body>
-</document>        
+</document>
