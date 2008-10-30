@@ -16,7 +16,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <h2 style="display: none"><span wicket:id="listLabel">[ List label ]</span></h2>
-    <table class="hippo-list-details" cellspacing="0" wicket:id="table">[table]</table>
+    <div class="hippo-editor-field">
+    <h3 class="hippo-editor-field-title"><span wicket:id="listLabel">[ List label ]</span></h3>
+    <table class="hippo-list-details drop-group-48" wicket:id="table">[table]</table>
+      <table class="hippo-list-details">
+        <tr><td class="hippo-list-details-instructions">
+          [To add a group, drop in in the box above]
+        </td></tr>
+      </table>
+    </div>
   </wicket:panel>
 </html>
