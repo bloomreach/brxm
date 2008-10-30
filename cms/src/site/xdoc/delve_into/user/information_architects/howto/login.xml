@@ -22,14 +22,13 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Contributor</title>
+    <title>Login</title>
   </properties>
 
   <body>
-    <section name="Login as Contributor">
-      <span class="shortdesc">How to login to Hippo CMS as contributor 
-                              of documents, images and/or files.</span>
-
+    <section name="Login">
+      <span class="shortdesc">How to login to Hippo CMS.</span>
+     
    <div class='screenshot'>
      <img src="../../../../images/user/Hippo_login_Janine.png" alt='Hippo login screenshot'/>
       <p>Janine logs in to Hippo CMS. She has typed her password, but only bullets are shown,
@@ -38,28 +37,19 @@ ________________________________________________________________________________
       </p>
    </div>
 
-        <p>Each time one starts working with Hippo CMS one has to login
-           to it, identifying oneselve. This ensures that no unauthorized
-           persons can get access to Hippo CMS.          
-        </p>
-
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     These must been
-     given to you by your Hippo CMS administrator. That you will
-     use Hippo CMS as a contributor must have been defined by your
-     Hippo CMS administrator.
+     After <a href='./start_CMS.html'>starting Hippo CMS</a>, you will be presented with a login dialog. 
+     Type your Hippo CMS username and password. This must been given to you by your CMS administrator and
+     he must have known that you are supposed to work in Hippo CMS as information architect, because he
+     has to set the appropiate rights for you.
     </p>
-    <p>
-     If usernames are not yet defined for your Hippo CMS, then
-     you may use the default username and password: username=author, password=author.
-     Note that in this case, your Hippo CMS is not yet protected by the login procedure,
-     as anyone can read this.
-    </p>    
 
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./goto_documenttype_tab.html'>Goto documenttypes tab</a>.</li>
+   </ul>       
+  </subsection>
 
-
-    </section>
+   </section>
   </body>
 </document>        

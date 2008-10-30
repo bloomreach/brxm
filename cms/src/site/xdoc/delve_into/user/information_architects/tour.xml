@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2007 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+  <properties>
+      <title>Hippo CMS Tour for Information Architects</title>
+  </properties>
+  <body>
+    <section name="Hippo CMS Tour for Information Architects">
+
+   <blockquote>
+    <table>
+  
+     <tr>
+      <td>Browser</td>
+      <td>
+       <span class='web_64'/> 
+      </td>
+      <td>
+        Open the Hippo CMS site 
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
+        your browser. 
+      </td>
+     </tr>
+   
+     <tr>
+      <td>Login</td>
+      <td>
+       <span class='login_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
+          CMS administrator.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Structure</td>
+      <td>
+       <span class='structure_64'/> 
+      </td>
+      <td> 
+         <a href="./howto/goto_documenttypes_tab.html">Goto the documenttypes tab</a>.
+      </td>
+     </tr>
+
+  
+ 
+    </table>
+   </blockquote>
+      
+
+
+    </section>
+  </body>
+</document>
