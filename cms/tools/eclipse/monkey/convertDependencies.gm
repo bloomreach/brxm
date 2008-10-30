@@ -1,5 +1,5 @@
 /*
- * Menu: Convert Jar dependencies to Project dependencies
+ * Menu: Connect projects from different sources
  * Script-Path: /hippo-ecm/tools/eclipse/monkey/convertDependencies.gm
  * Kudos: Wander Grevink(onehippo.com)
  * License: Apache 2.0
@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.core.internal.resources.Workspace;
 
 out.clear();
-println "$metadata.menuName started\n";
 
 def projectList = workspace.root.projects;
 def projectMap = new HashMap();
@@ -23,9 +22,10 @@ projectList.each() {
     projectMap.put(it.name, it);
 }
 
+def connected = false;
 projectList.each() {
     if (it.isOpen() && it.isNatureEnabled('org.eclipse.jdt.core.javanature')) {
-        def projectName = it.getName();
+        def projectName = it.name;
         def javaProject = it.getNature('org.eclipse.jdt.core.javanature');
         def projectClasspath = javaProject.rawClasspath;
         projectClasspath.each() {
@@ -49,18 +49,31 @@ projectList.each() {
 			         true,                               // combineAccessRules
 			         (IClasspathAttribute[])[]           // extraAttributes
 			       );        
-                   println "   Convert dependency for project $projectName:";
-                   println "   $toBeRemoved.path -> $toBeAdded.path";
-                   println "";
+                   println "$projectName: $toBeRemoved.path -> $toBeAdded.path";
                    classpath.remove(toBeRemoved);
                    classpath.add(toBeAdded);
                    def newClasspath = (IClasspathEntry[])classpath.toArray();
                    def op = new SetClasspathOperation(javaProject, newClasspath, javaProject.getOutputLocation(), true);
                    op.runOperation(monitor);
+                   connected = true;
                }
             }
         };
     }
 }
 
-println "\n$metadata.menuName finished";
+if (connected) {
+    println "Converted binary M2_REPO dependencies to Java project dependencies";
+} else {
+    println "No projects found that can be connected";
+    println "";
+    println "Connecting projects can come in useful if you are working on multiple projects from different sources:";
+    println "* Hippo ECM and Wicket and/or Jackrabbit";
+    println "* A collection of plugins from hippoforge";
+    println "* Your set of plugins and Hippo ECM";
+    println "";
+    println "This script searches your workspace for binary dependencies that can it can convert to project dependencies.";
+    println "This works for Java projects generated using 'mvn eclipse:eclipse'. Note that only the depencency name (artifactId) is";
+    println "used for determining if it can be converted and not it's version, if a depencency's artifactId matches a java project";
+    println "name it will be converted.";
+}
