@@ -23,6 +23,9 @@ public interface ELNode {
     public Node getJcrNode();
     public Map getProperty();
     public Map getHasProperty();
+    public Map getNode();
+    public Map getNodes();
+    public ELNode getParent();
     public String getDecodedName();
     public String getName();
     public String getUuid(); 

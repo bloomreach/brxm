@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -64,7 +67,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     public ELNode getParent(){
 		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
     }
- 
+    
+    
     @Override
     public Map getNode(){
         if (jcrNode == null) {
@@ -78,7 +82,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             	 try {
                      if (!jcrNode.hasNode(name)) {
                          log.debug("Node '{}' not found. Return empty string", name);
-                         return "";
+                         return null;
                      } else{
                     	 return new ContentELNodeImpl(jcrNode.getNode(name),sourceRewriter);
                      }
@@ -91,6 +95,34 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                  return null;
             }
         };
+    }
+    
+    @Override
+    public Map getNodes(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object nodeName) {
+                String name = (String) nodeName;
+                 try {
+                     List<ELNode> wrappedNodes = new ArrayList<ELNode>();
+                     for(NodeIterator it = jcrNode.getNodes(name); it.hasNext();) {
+                         Node n = it.nextNode();
+                         if(n!=null) {
+                             wrappedNodes.add(new ContentELNodeImpl(n, sourceRewriter));
+                         }
+                     }
+                     return wrappedNodes;
+                 } catch (RepositoryException e) {
+                     log.error("RepositoryException: {}", e.getMessage());
+                     log.debug("RepositoryException:", e);
+                 }
+                 return null;
+            }
+        };  
     }
     
     @Override
