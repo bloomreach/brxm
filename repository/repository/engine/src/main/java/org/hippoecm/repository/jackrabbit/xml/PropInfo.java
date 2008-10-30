@@ -93,6 +93,7 @@ public class PropInfo {
             this.name =  NameFactoryImpl.getInstance().create(name.getNamespaceURI(), local);
             this.isPathReference = true;
             // paths are strings
+            //this.type = PropertyType.REFERENCE;
             this.type = PropertyType.STRING;
         } else {
             this.name = name;
@@ -123,12 +124,19 @@ public class PropInfo {
 
     private PropDef getApplicablePropertyDef(EffectiveNodeType ent)
             throws ConstraintViolationException {
+        
+        // The eventual target type has to be checked not the current in between type.
+        // This is relevant for dereferenced Reference's, because they are exported as String's.
+        int checkType = type;
+        if (isPathReference) {
+            checkType = PropertyType.REFERENCE;
+        }
         if (values.length == 1) {
             // could be single- or multi-valued (n == 1)
-            return ent.getApplicablePropertyDef(name, type);
+            return ent.getApplicablePropertyDef(name, checkType);
         } else {
             // can only be multi-valued (n == 0 || n > 1)
-            return ent.getApplicablePropertyDef(name, type, true);
+            return ent.getApplicablePropertyDef(name, checkType, true);
         }
     }
 
