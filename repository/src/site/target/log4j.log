@@ -34,3 +34,1094 @@ java.rmi.NoSuchObjectException: no such object in table
 	at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:413)
 30.10.2008 08:50:18 ERROR [org.hippoecm.frontend.model.JcrSessionModel.load():155] no such object in table
 30.10.2008 11:42:46 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] 92f5236b-462d-4cac-953b-9367f6f130be/{}caption: the item does not exist anymore
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 16:12:42 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 16:20:59 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:21:08 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:21:39 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:21:54 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:21:59 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:22:11 ERROR [org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>():165] Could not get UUID from node[/content]
+javax.jcr.PathNotFoundException: /content
+	at org.apache.jackrabbit.core.SessionImpl.getItem(SessionImpl.java:858)
+	at org.hippoecm.repository.decorating.SessionDecorator.getItem(SessionDecorator.java:175)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>(SearchBehavior.java:154)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior.<init>(SearchBehavior.java:62)
+	at org.hippoecm.frontend.plugins.search.SearchPlugin.<init>(SearchPlugin.java:25)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin(PluginFactory.java:69)
+	at org.hippoecm.frontend.plugin.impl.PluginManager.start(PluginManager.java:95)
+	at org.hippoecm.frontend.plugin.impl.PluginContext.start(PluginContext.java:110)
+	at org.hippoecm.frontend.Home.<init>(Home.java:102)
+	at org.hippoecm.frontend.plugins.login.LoginPlugin$SignInForm.onSubmit(LoginPlugin.java:99)
+	at org.apache.wicket.markup.html.form.Form.delegateSubmit(Form.java:1355)
+	at org.apache.wicket.markup.html.form.Form.onFormSubmitted(Form.java:810)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.wicket.RequestListenerInterface.invoke(RequestListenerInterface.java:183)
+	at org.apache.wicket.request.target.component.listener.ListenerInterfaceRequestTarget.processEvents(ListenerInterfaceRequestTarget.java:73)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:22:11 ERROR [org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin():85] java.lang.IllegalArgumentException: Could not get UUID from node[/content]
+30.10.2008 16:22:30 WARN  [org.hippoecm.frontend.model.JcrItemModel.load():123] failed to load /content
+30.10.2008 16:22:31 ERROR [org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>():165] Could not get UUID from node[/content]
+javax.jcr.PathNotFoundException: /content
+	at org.apache.jackrabbit.core.SessionImpl.getItem(SessionImpl.java:858)
+	at org.hippoecm.repository.decorating.SessionDecorator.getItem(SessionDecorator.java:175)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>(SearchBehavior.java:154)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior.<init>(SearchBehavior.java:62)
+	at org.hippoecm.frontend.plugins.search.SearchPlugin.<init>(SearchPlugin.java:25)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin(PluginFactory.java:69)
+	at org.hippoecm.frontend.plugin.impl.PluginManager.start(PluginManager.java:95)
+	at org.hippoecm.frontend.plugin.impl.PluginContext.start(PluginContext.java:110)
+	at org.hippoecm.frontend.Home.<init>(Home.java:102)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:149)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:58)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.newPage(BookmarkablePageRequestTarget.java:262)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.getPage(BookmarkablePageRequestTarget.java:283)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.processEvents(BookmarkablePageRequestTarget.java:210)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:22:31 ERROR [org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin():85] java.lang.IllegalArgumentException: Could not get UUID from node[/content]
+30.10.2008 16:22:34 WARN  [org.hippoecm.frontend.model.JcrItemModel.load():123] failed to load /content
+30.10.2008 16:22:36 ERROR [org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>():165] Could not get UUID from node[/content]
+javax.jcr.PathNotFoundException: /content
+	at org.apache.jackrabbit.core.SessionImpl.getItem(SessionImpl.java:858)
+	at org.hippoecm.repository.decorating.SessionDecorator.getItem(SessionDecorator.java:175)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>(SearchBehavior.java:154)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior.<init>(SearchBehavior.java:62)
+	at org.hippoecm.frontend.plugins.search.SearchPlugin.<init>(SearchPlugin.java:25)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin(PluginFactory.java:69)
+	at org.hippoecm.frontend.plugin.impl.PluginManager.start(PluginManager.java:95)
+	at org.hippoecm.frontend.plugin.impl.PluginContext.start(PluginContext.java:110)
+	at org.hippoecm.frontend.Home.<init>(Home.java:102)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:149)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:58)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.newPage(BookmarkablePageRequestTarget.java:262)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.getPage(BookmarkablePageRequestTarget.java:283)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.processEvents(BookmarkablePageRequestTarget.java:210)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:22:36 ERROR [org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin():85] java.lang.IllegalArgumentException: Could not get UUID from node[/content]
+30.10.2008 16:22:39 WARN  [org.hippoecm.frontend.model.JcrItemModel.load():123] failed to load /content/assets
+30.10.2008 16:22:40 ERROR [org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>():165] Could not get UUID from node[/content]
+javax.jcr.PathNotFoundException: /content
+	at org.apache.jackrabbit.core.SessionImpl.getItem(SessionImpl.java:858)
+	at org.hippoecm.repository.decorating.SessionDecorator.getItem(SessionDecorator.java:175)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>(SearchBehavior.java:154)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior.<init>(SearchBehavior.java:62)
+	at org.hippoecm.frontend.plugins.search.SearchPlugin.<init>(SearchPlugin.java:25)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin(PluginFactory.java:69)
+	at org.hippoecm.frontend.plugin.impl.PluginManager.start(PluginManager.java:95)
+	at org.hippoecm.frontend.plugin.impl.PluginContext.start(PluginContext.java:110)
+	at org.hippoecm.frontend.Home.<init>(Home.java:102)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:149)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:58)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.newPage(BookmarkablePageRequestTarget.java:262)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.getPage(BookmarkablePageRequestTarget.java:283)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.processEvents(BookmarkablePageRequestTarget.java:210)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:22:40 ERROR [org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin():85] java.lang.IllegalArgumentException: Could not get UUID from node[/content]
+30.10.2008 16:22:43 WARN  [org.hippoecm.frontend.model.JcrItemModel.load():123] failed to load /content/gallery
+30.10.2008 16:22:44 ERROR [org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>():165] Could not get UUID from node[/content]
+javax.jcr.PathNotFoundException: /content
+	at org.apache.jackrabbit.core.SessionImpl.getItem(SessionImpl.java:858)
+	at org.hippoecm.repository.decorating.SessionDecorator.getItem(SessionDecorator.java:175)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior$SearchBuilder.<init>(SearchBehavior.java:154)
+	at org.hippoecm.frontend.plugins.search.yui.SearchBehavior.<init>(SearchBehavior.java:62)
+	at org.hippoecm.frontend.plugins.search.SearchPlugin.<init>(SearchPlugin.java:25)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin(PluginFactory.java:69)
+	at org.hippoecm.frontend.plugin.impl.PluginManager.start(PluginManager.java:95)
+	at org.hippoecm.frontend.plugin.impl.PluginContext.start(PluginContext.java:110)
+	at org.hippoecm.frontend.Home.<init>(Home.java:102)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:149)
+	at org.apache.wicket.session.DefaultPageFactory.newPage(DefaultPageFactory.java:58)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.newPage(BookmarkablePageRequestTarget.java:262)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.getPage(BookmarkablePageRequestTarget.java:283)
+	at org.apache.wicket.request.target.component.BookmarkablePageRequestTarget.processEvents(BookmarkablePageRequestTarget.java:210)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:22:44 ERROR [org.hippoecm.frontend.plugin.impl.PluginFactory.createPlugin():85] java.lang.IllegalArgumentException: Could not get UUID from node[/content]
+30.10.2008 16:23:13 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:23:47 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:23:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field firstname in type hippo:user
+30.10.2008 16:23:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field lastname in type hippo:user
+30.10.2008 16:23:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field email in type hippo:user
+30.10.2008 16:23:48 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:23:49 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:24:02 WARN  [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.<init>():64] No document model service configured (model.document)
+30.10.2008 16:47:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:47:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:47:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:47:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:47:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:47:42 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:47:42 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:47:42 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:47:42 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:47:42 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:47:51 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 16:47:51 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 16:50:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:50:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:50:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:50:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:50:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:51:43 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:51:43 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:51:43 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:51:43 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:51:43 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:51:58 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 16:51:58 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 16:52:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:52:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:52:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:52:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:52:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:52:05 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 16:52:05 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 16:52:52 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 16:53:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:53:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:53:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:53:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:53:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:53:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:53:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:53:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:53:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:53:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:53:47 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 16:53:47 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 16:54:21 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:54:21 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:54:21 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:54:21 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:54:21 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:54:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:54:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:54:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:54:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:54:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 16:54:37 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 16:54:37 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 16:55:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 16:55:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 16:55:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 16:55:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 16:55:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:06:26 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:06:26 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:06:26 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:06:26 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:06:26 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:06:34 ERROR [org.hippoecm.frontend.plugins.cms.edit.PreviewPlugin.updateModel():157] No preview version found of document
+30.10.2008 17:06:34 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:06:34 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:07:10 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:07:10 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:07:10 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:07:10 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:07:10 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:07:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:07:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:07:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:07:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:07:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:07:35 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:07:35 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:08:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:08:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:08:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:08:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:08:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:08:46 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:08:46 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:08:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field body in type defaultcontent:article
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:10:42 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 17:11:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:03 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:04 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:04 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:04 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:04 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:04 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:16 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:11:16 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:11:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:11:29 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:11:29 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:11:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:11:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:11:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:11:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:11:41 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:12:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:12:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:12:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:12:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:12:19 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:12:50 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:12:50 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:12:50 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:12:50 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:12:50 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:12:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:12:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:12:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:12:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:12:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:13:01 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:13:01 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:13:20 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:13:20 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:13:20 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:13:20 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:13:20 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:13:24 ERROR [org.hippoecm.frontend.plugins.cms.edit.PreviewPlugin.updateModel():157] No preview version found of document
+30.10.2008 17:13:24 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:13:24 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:13:54 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:34 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:40 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:40 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:40 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:40 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:40 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:45 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:14:45 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:14:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:46 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:48 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:14:48 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:14:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:51 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:14:52 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:14:52 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:14:59 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field body in type defaultcontent:article
+30.10.2008 17:15:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field body in type defaultcontent:article
+30.10.2008 17:15:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field body in type defaultcontent:article
+30.10.2008 17:15:11 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field body in type defaultcontent:article
+30.10.2008 17:15:11 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:15:11 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:15:18 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:15:18 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:15:18 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:15:18 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:15:18 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:16:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:16:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:24 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:16:28 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:28 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:16:28 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:28 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:16:28 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:16:28 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:16:30 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:30 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:16:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:16:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:16:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:16:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:16:47 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:16:57 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:16:57 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:01 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:01 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:17:01 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:17:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:02 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:09 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:09 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:09 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:09 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:09 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:17:09 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:17:13 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:13 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:15 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:15 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:15 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ea9953b7-3a5f-46ca-a0de-70d6dcc274d8 in type sar:myhobby
+30.10.2008 17:17:15 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 03b15dba-26bf-4b72-90f7-073c47fd9a7c in type sar:myhobby
+30.10.2008 17:17:15 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:17:15 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+30.10.2008 17:17:17 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:17:17 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:17:17 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:17:17 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:17:17 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:17:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field e8d53716-52f9-4fb5-a5ab-103c9f05fa27 in type sar:upcoming
+30.10.2008 17:17:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field ee1dcbac-673a-4065-adae-2573a1d2e0a3 in type sar:upcoming
+30.10.2008 17:17:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 56465aad-0be5-4aa8-8696-2e56d1a64cd9 in type sar:upcoming
+30.10.2008 17:17:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field 5a2af7f3-5bd6-42c1-a800-027b52f26eb7 in type sar:upcoming
+30.10.2008 17:17:29 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():105] Unknown field f71d2446-002c-49eb-8497-aa3d13741d6c in type sar:upcoming
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:21:14 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 17:21:29 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] 92f5236b-462d-4cac-953b-9367f6f130be: the item does not exist anymore
+30.10.2008 17:22:02 WARN  [org.apache.jackrabbit.core.state.ItemStateReferenceCache.cache():117] overwriting cached entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+30.10.2008 17:22:02 WARN  [org.apache.jackrabbit.core.state.MLRUItemStateCache.cache():140] overwriting cached entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+30.10.2008 17:22:02 WARN  [org.apache.jackrabbit.core.state.ItemStateMap.put():82] overwriting map entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():241] Dropping property sar:boolean as there is no new definition.
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():241] Dropping property sar:entrance_price as there is no new definition.
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():241] Dropping property sar:boolean as there is no new definition.
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():241] Dropping property sar:entrance_price as there is no new definition.
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():230] Dropping property hippo:paths as there is no new definition.
+30.10.2008 17:22:02 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():230] Dropping property hippo:paths as there is no new definition.
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.core.SessionImpl.sanityCheck(SessionImpl.java:359)
+	at org.apache.jackrabbit.core.ItemImpl.sanityCheck(ItemImpl.java:154)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:1225)
+	at org.apache.jackrabbit.core.NodeImpl.isNodeType(NodeImpl.java:2608)
+	at org.hippoecm.repository.decorating.NodeDecorator.isNodeType(NodeDecorator.java:350)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+30.10.2008 17:22:46 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+30.10.2008 17:22:46 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.

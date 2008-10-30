@@ -45,11 +45,14 @@ ________________________________________________________________________________
     fields from a documenttype, save the documenttype by clicking on the
     'save and close' button at the top of the documenttype tab.
     The changes can be discarded by clicking on the 'Close without saving'
-    button.    
+    button. To make the documenttype available for authors,
+    also <a href='./update_content.html'>update all content</a>.
    </p>
 
   <subsection name='Next'>
    <ul>
+    <li><a href='./update_content.html'>Update all content</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li>
     <li><a href='./create_documenttype.html'>Create a documenttype</a>.</li>
     <li><a href='./goto_documenttype_tab.html'>Goto documenttype tab</a>.</li>
     <li><a href='./goto_namespace.html'>Goto namespace</a>.</li>

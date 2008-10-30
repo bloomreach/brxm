@@ -119,15 +119,37 @@
         <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
           <item name="Tour" href="/delve_into/user/information_architects/tour.html"/>
           <item name="Howto" collapse="true" href="/delve_into/user/information_architects/howto/index.html">
-            <item name="Document Types" href="/delve_into/user/information_architects/howto/document_types/index.html" collapse="true">
+<item name="Add boolean to Documentttype" href="/delve_into/user/information_architects/howto/add_boolean_to_documenttype.html"/>
+<item name="Add date to Documentttype" href="/delve_into/user/information_architects/howto/add_date_to_documenttype.html"/>
+<item name="Add markuped text field to Documentttype" href="/delve_into/user/information_architects/howto/add_markuped_text_to_documenttype.html"/>
+<item name="Add string to Documentttype" href="/delve_into/user/information_architects/howto/add_string_to_documenttype.html"/>
+<item name="Change field in documenttype" href="/delve_into/user/information_architects/howto/change_field_in_documenttype.html"/>
+<item name="Create Documentttype" href="/delve_into/user/information_architects/howto/create_documenttype.html"/>
+<item name="Create Namespace" href="/delve_into/user/information_architects/howto/create_namespace.html"/>
+<item name="Fieldcaption" href="/delve_into/user/information_architects/howto/fieldcaption.html"/>
+<item name="Fieldsize" href="/delve_into/user/information_architects/howto/fieldsize.html"/>
+<item name="Goto Content Browse Tab" href="/delve_into/user/information_architects/howto/goto_content_browse_tab.html"/>
+<item name="Goto Documenttypes Tab" href="/delve_into/user/information_architects/howto/goto_documenttypes_tab.html"/>
+<item name="Goto a Documententtype" href="/delve_into/user/information_architects/howto/goto_documenttype_tab.html"/>
+<item name="Goto a Namespace" href="/delve_into/user/information_architects/howto/goto_namespace.html"/>
+<item name="CMS Information Architect Howto" href="/delve_into/user/information_architects/howto/index.html"/>
+<item name="Login" href="/delve_into/user/information_architects/howto/login.html"/>
+<item name="Logout" href="/delve_into/user/information_architects/howto/logout.html"/>
+<item name="Mandatory or optional field" href="/delve_into/user/information_architects/howto/mandatory_or_optional.html"/>
+<item name="Naming a field" href="/delve_into/user/information_architects/howto/naming_a_field.html"/>
+<item name="Remove field from documenttype" href="/delve_into/user/information_architects/howto/remove_field_from_documenttype.html"/>
+<item name="Save Documentttype" href="/delve_into/user/information_architects/howto/save_documenttype.html"/>
+<item name="Start CMS" href="/delve_into/user/information_architects/howto/start_CMS.html"/>
+<item name="Update content" href="/delve_into/user/information_architects/howto/update_content.html"/>
               <!--
+            <item name="Document Types" href="/delve_into/user/information_architects/howto/document_types/index.html" collapse="true">
                 TODO These have been moved over from the old 'Extension' guide
-                -->
               <item name="Editor" href="/delve_into/user/information_architects/howto/document_types/editor.html"/>
               <item name="Tutorial" href="/delve_into/user/information_architects/howto/document_types/tutorial.html"/>
               <item name="Examples" href="/delve_into/user/information_architects/howto/document_types/examples.html"/>
               <item name="Field Types" href="/delve_into/user/information_architects/howto/document_types/fieldtypes.html"/>
             </item>
+                -->
           </item>
           <item name="Concepts" collapse="true" href="/delve_into/user/information_architects/concepts/index.html"> </item>
         </item>

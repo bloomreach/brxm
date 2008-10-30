@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Goto a Documententtype">
-      <span class="shortdesc">How to get to a screen to manipulate a particular documenttype?</span>
+      <span class="shortdesc">How to get to a screen to manipulate a particular documenttype.</span>
 
    <div class='screenshot'>
      <img src="../../../../images/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 

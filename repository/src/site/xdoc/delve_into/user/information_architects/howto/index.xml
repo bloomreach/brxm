@@ -21,48 +21,143 @@ ________________________________________________________________________________
 
 -->
 <document>
- <properties>
-  <title>Change to the browser title</title>
- </properties>
+  <properties>
+    <title>CMS Information Architect Howto</title>
+  </properties>
 
- <body>
-  <section name='Change to the document title'>
-   <span class='shortdesc'>Change to document description.</span>
+  <body>
+    <section name="CMS Information Architect Howto">
+      <span class="shortdesc">A collection of howto's for small tasks a information architect may want to do.</span>
 
-   <p>Introductory text.
-      Introductory text.
-   </p>
+<table>
+  <tr>
+    <td>
+      <a href="./add_boolean_to_documenttype.html">Add boolean to Documentttype</a>
+    </td>
+    <td>How to add a boolean to a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./add_date_to_documenttype.html">Add date to Documentttype</a>
+    </td>
+    <td>How to add a datefield to a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./add_markuped_text_to_documenttype.html">Add markuped text field to Documentttype</a>
+    </td>
+    <td>How to add a markuped text field to a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./add_string_to_documenttype.html">Add string to Documentttype</a>
+    </td>
+    <td>How to add a string field to a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./change_field_in_documenttype.html">Change field in documenttype</a>
+    </td>
+    <td>How to change a field in a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./create_documenttype.html">Create Documentttype</a>
+    </td>
+    <td>How to create a documenttype, to define the structure of a class of similar documents.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./create_namespace.html">Create Namespace</a>
+    </td>
+    <td>How to create a namespace to gather documenttypes in.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./fieldcaption.html">Fieldcaption</a>
+    </td>
+    <td>How to define a caption for a field in a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./fieldsize.html">Fieldsize</a>
+    </td>
+    <td>How to define the size for a field in a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_content_browse_tab.html">Goto Content Browse Tab</a>
+    </td>
+    <td>How to get to the content browse tab.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_documenttypes_tab.html">Goto Documenttypes Tab</a>
+    </td>
+    <td>How to get to the documenttypes tab, to add and change documenttypes.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_documenttype_tab.html">Goto a Documententtype</a>
+    </td>
+    <td>How to get to a screen to manipulate a particular documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./goto_namespace.html">Goto a Namespace</a>
+    </td>
+    <td>How to get to a namespace, to view the documenttypes in it.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./login.html">Login</a>
+    </td>
+    <td>How to login to Hippo CMS.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./logout.html">Logout</a>
+    </td>
+    <td>How to logout</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./mandatory_or_optional.html">Mandatory or optional field</a>
+    </td>
+    <td>How to define a field as mandatory or as optional.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./naming_a_field.html">Naming a field</a>
+    </td>
+    <td>How to name a field of a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./remove_field_from_documenttype.html">Remove field from documenttype</a>
+    </td>
+    <td>How to remove a field from a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./save_documenttype.html">Save Documentttype</a>
+    </td>
+    <td>How to save a documenttype.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./start_CMS.html">Start CMS</a>
+    </td>
+    <td>How to start a CMS session in your browser</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./update_content.html">Update content</a>
+    </td>
+    <td>How to update content</td>
+  </tr>
+</table>
 
-
-   <subsection name='First subsection title'>
-
-    <p>This is text with an <span class='index'>index word</span>.
-    </p>
-
-    <h4>First subsubsection title</h4> 
-    <p>Text
-       text
-    </p>
-
-    <h4>First subsubsection title</h4> 
-    <p>Text
-       text
-    </p>
-
-   </subsection>
-
-
-   <subsection name="Second subsection title">
-
-   <p>Text
-   </p>
-
-     <source>
-       code line 1
-       code line 2
-     </source>
-   </subsection>
-
-  </section>
- </body>
+    </section>
+  </body>
 </document>

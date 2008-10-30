@@ -38,7 +38,7 @@
      <tr>
       <td>Browser</td>
       <td>
-       <span class='web_64'/> 
+       <span class='web-48 icon-48'/> 
       </td>
       <td>
         Open the Hippo CMS site 
@@ -50,7 +50,7 @@
      <tr>
       <td>Login</td>
       <td>
-       <span class='login_64'/> 
+       <span class='login-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
@@ -62,7 +62,7 @@
      <tr>
       <td>Goto</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/goto_documenttypes_tab.html">Goto the documenttypes tab</a>.
@@ -72,7 +72,7 @@
      <tr>
       <td>Namespace</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/create_namespace.html">Create a namespace</a>. Saraswatia decides to
@@ -85,7 +85,7 @@
      <tr>
       <td>Document types</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/create_documenttype.html">Create documenttypes</a>. 
@@ -99,7 +99,7 @@
      <tr>
       <td>Add date</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/add_date_to_documenttype.html">Add date to documenttype</a>. 
@@ -113,7 +113,7 @@
      <tr>
       <td>Add string</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/add_string_to_documenttype.html">Add string to documenttype</a>. 
@@ -127,7 +127,7 @@
      <tr>
       <td>Add boolean</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/add_boolean_to_documenttype.html">Add boolean to documenttype</a>. 
@@ -149,7 +149,7 @@
      <tr>
       <td>Add number</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/add_string_to_documenttype.html">Add number to documenttype</a>. 
@@ -164,7 +164,7 @@
      <tr>
       <td>Add markuped text</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/add_markuped_text_to_documenttype.html">Add markuped text to documenttype</a>. 
@@ -177,7 +177,7 @@
      <tr>
       <td>Change field</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/change_field_in_documenttype.html">Change field in documenttype</a>. 
@@ -190,7 +190,7 @@
      <tr>
       <td>Remove field</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/remove_field_from_documenttype.html">Remove field from documenttype</a>. 
@@ -201,11 +201,22 @@
      <tr>
       <td>Save documenttype</td>
       <td>
-       <span class='structure_64'/> 
+       <span class='structure-48 icon-48'/> 
       </td>
       <td> 
          <a href="./howto/save_documenttype.html">Save documenttype</a>. 
          Alice saves here new documenttype called 'upcoming'.          
+      </td>
+     </tr>
+
+     <tr>
+      <td>Logout</td>
+      <td>
+       <span class='logout-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/logout.html">Logout</a>. 
+         Alice quits for today.          
       </td>
      </tr>
  

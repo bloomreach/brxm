@@ -31,10 +31,10 @@ ________________________________________________________________________________
                               of documents, images and/or files.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/hippo_login_marc.png" alt='Hippo login screenshot'/>
-      <p>Marc logs in to Hippo CMS. He has typed his password, but only bullets are shown,
-       to prevent someone looking over his shoulder to read it. He chose the Hippo CMS to
-       be in English. Now he is about to press the button marked `sign in'.
+     <img src="../../../../images/user/Hippo_login_Janine.png" alt='Hippo login screenshot'/>
+      <p>Janine logs in to Hippo CMS. She has typed her password, but only bullets are shown,
+       to prevent someone looking over her shoulder to read it. She chose the Hippo CMS to
+       be in English. Now she is about to press the button marked `sign in'.
       </p>
    </div>
 
@@ -46,7 +46,10 @@ ________________________________________________________________________________
     <p>
      After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
      Type your Hippo CMS username and password. 
-     These must been given to you by your Hippo CMS administrator. 
+     These must been
+     given to you by your Hippo CMS administrator. That you will
+     use Hippo CMS as a contributor must have been defined by your
+     Hippo CMS administrator.
     </p>
     <p>
      If usernames are not yet defined for your Hippo CMS, then
@@ -54,6 +57,9 @@ ________________________________________________________________________________
      Note that in this case, your Hippo CMS is not yet protected by the login procedure,
      as anyone can read this.
     </p>    
+
+
+
     </section>
   </body>
 </document>        
