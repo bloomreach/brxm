@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.hippoecm</groupId>
       <artifactId>hippo-ecm-frontend-engine</artifactId>
-      <version>2.01.00.13536</version>
+      <version>2.01.00.14266</version>
     </dependency>
   </dependencies>
 
@@ -115,6 +115,21 @@
     </plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <id>hippoecm</id>
+      <name>Hippo ECM maven 2 repository.</name>
+      <url>http://repository.hippocms.org/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+    
 </project>]]>
 </source>
         </subsection>
