@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.decorating;
 
-import java.util.WeakHashMap;
-
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
