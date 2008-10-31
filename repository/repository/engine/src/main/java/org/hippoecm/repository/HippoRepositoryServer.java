@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.ConnectException;
+import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
@@ -60,21 +61,21 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         try {
             name = new RepositoryRmiUrl(bindingAddress).getName();
             log.info("Unbinding '"+name+"' from registry.");
-            registry.unbind(name);
-        } catch (RemoteException e) {
-            log.error("Error during unbinding '" + name + "': " + e.getMessage());
-        } catch (NotBoundException e) {
-            log.error("Error during unbinding '" + name + "': " + e.getMessage());
-        } catch (MalformedURLException e) {
-            log.error("MalformedURLException while parsing '" + bindingAddress + "': " + e.getMessage());
+            registry.unbind(name); // Naming.unbind(name);
+        } catch (RemoteException ex) {
+            log.info("Error during unbinding '" + name + "': " + ex.getMessage());
+        } catch (NotBoundException ex) {
+            log.info("Error during unbinding '" + name + "': " + ex.getMessage());
+        } catch (MalformedURLException ex) {
+            log.info("MalformedURLException while parsing '" + bindingAddress + "': " + ex.getMessage());
         }
 
         // unexporting from registry
         try {
             log.info("Unexporting rmi repository: " + bindingAddress);
             UnicastRemoteObject.unexportObject(rmiRepository, true);
-        } catch (NoSuchObjectException e) {
-            log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+        } catch (NoSuchObjectException ex) {
+            log.info("Error during rmi shutdown for address: " + bindingAddress, ex);
         }
         
         // shutdown registry
@@ -82,8 +83,8 @@ public class HippoRepositoryServer extends LocalHippoRepository {
             try {
                 log.info("Closing rmiregistry: " + bindingAddress);
                 UnicastRemoteObject.unexportObject(registry, true);
-            } catch (NoSuchObjectException e) {
-                log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+            } catch (NoSuchObjectException ex) {
+                log.info("Error during rmi shutdown for address: " + bindingAddress, ex);
             }
         }
         super.close();
@@ -99,77 +100,30 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         } else {
             bindingAddress = name;
         }
-//        String host = null;
-//        int port = 0;
-//        if (name.startsWith("rmi://")) {
-//            if (name.indexOf('/', 6) >= 0) {
-//                if (name.indexOf(':', 6) >= 0 && name.indexOf(':', 6) < name.indexOf('/', 6)) {
-//                    port = Integer.parseInt(name.substring(name.indexOf(':', 6) + 1, name.indexOf('/', name.indexOf(
-//                            ':', 6) + 1)));
-//                    host = name.substring(6, name.indexOf(':', 6));
-//                } else {
-//                    host = name.substring(6, name.indexOf('/', 6));
-//                }
-//                name = name.substring(name.indexOf('/', 6) + 1);
-//            } else {
-//                name = name.substring(6);
-//            }
-//        }
-//        if (registry == null) {
-//            if (host != null) {
-//                if (port > 0)
-//                    registry = LocateRegistry.getRegistry(host, port);
-//                else
-//                    registry = LocateRegistry.getRegistry(host);
-//            } else {
-//                if (port > 0)
-//                    registry = LocateRegistry.getRegistry(port);
-//                else
-//                    registry = LocateRegistry.getRegistry();
-//            }
-//            if (log.isDebugEnabled()) {
-//                log.debug("Using rmiregistry on " + host + " port " + port);
-//            }
-//        }
-//        Runtime.getRuntime().addShutdownHook(new Thread() {
-//            @Override
-//            public void run() {
-//                close();
-//            }
-//        });
-//        Remote remote = new ServerServicingAdapterFactory().getRemoteRepository(repository);
-//        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-//
-//        try {
-//            registry.bind(name, remote);
-//        } catch (ConnectException ex) {
-//            registry = LocateRegistry.createRegistry(port > 0 ? port : 1099);
-//            registryIsEmbedded = true;
-//
-//            log.info("Started embedded rmiregistry " + (host != null ? "on " + host : "")
-//                    + (port > 0 ? " port " + port : ""));
-//            registry.bind(name, remote);
-//        }
-//        rmiRepository = remote;
-        
         
         // the the remote repository
         RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
         rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository);
-        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                close();
+            }
+        });
+        System.setProperty("java.rmi.server.useCodebaseOnly", "true");
         
         // Get or start registry and bind the remote repository
         try {
             registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             registry.rebind(url.getName(), rmiRepository); // connection exception happens here
-            log.info("Using exsisting rmi server on " + url.getHost() + ":" + url.getPort());
-        } catch (ConnectException e) {
+            log.info("Using existing RMI registry on " + url.getHost() + ":" + url.getPort());
+        } catch (ConnectException ex) {
             registry = LocateRegistry.createRegistry(url.getPort());
             registry.rebind(url.getName(), rmiRepository);
-            log.info("Started an RMI registry on port " + url.getPort());
+            log.info("Started RMI registry on port " + url.getPort());
             registryIsEmbedded = true;   
         }
+        log.info("RMI Server available on " + name);
         if (!background) {
             for (;;) {
                 try {
