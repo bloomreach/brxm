@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Fill date in Document</title>
+  </properties>
+
+  <body>
+    <section name="Fill date in Document">
+      <span class="shortdesc">How to fill a date field in a document.</span>
+
+   <div class='screenshot'>
+     <img src="../../../../images/contribs/fill_date_field.png" alt='Fill date screenshot'/> 
+     <p>
+       Filling in the 'Date of Happening' for the document 'multibazaar2008'. The 
+       time is typed in. AM or PM is chosen from the little pull down menu and
+       the date can be typed in, but can also be chosen from the calender, which appears
+       after clicking the little calendar button.
+     </p>
+   </div>
+
+   <p>
+    Open the <a href='./goto_document_tab.html'>document</a> for editing. 
+    Type the date, and time in a date field. The date can also be chosen
+    from a calendar and AM/PM is chosen from a little pull down menu.
+   </p>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
+    <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
+    <li><a href='./fill_markuped_text_in_document.html'>Write markuped text in a document</a>.</li>
+    </ul>       
+  </subsection>
+
+   </section>
+  </body>
+</document>        
