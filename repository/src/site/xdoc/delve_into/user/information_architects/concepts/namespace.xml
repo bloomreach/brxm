@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>namespace</title>
+  </properties>
+
+  <body>
+    <section name="namespace">
+      <span class="shortdesc">What is a namespace</span>
+
+    <p>In general, a namespace is a named group of names that are mutually unique.
+       The same name can not occur within that namespace, but it can occur outside of
+       the namespace. If it is known that names are in a particular namespace,
+       the name of the namespace does not have to be repeated all the time.
+       Otherwise, if the name of the namespace is added to the name within the namespace,
+       a generally unique name is obtained (well, within the namespace of that namespace).      
+   </p>
+   <p>Namespaces reflect how people normally talk: context dependent. E.g. if you talk to your spouse about
+      'the children', you do not mean the same children as when somebody else talks to his
+      or her spouse about 'the children'. The phrase 'the children' refers to different
+      children, depending on context. A namespace is such a context. Your family name is a 
+      namespace.
+   </p>
+   </section>
+  </body>
+</document>
