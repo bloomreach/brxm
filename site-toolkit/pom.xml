@@ -47,7 +47,7 @@
     <module>core</module>
     <module>addon</module>
     <module>components</module>
-    <module>archetype-start</module>
+    <module>archetype</module>
   </modules>
   
   <properties>
