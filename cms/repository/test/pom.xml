@@ -59,20 +59,6 @@
       <scope>test</scope>
       <version>[4.4,)</version>
     </dependency>
-    <!-- Only to be included for HREPTWO-1118
-    <dependency>
-      <groupId>com.onehippo</groupId>
-      <artifactId>onehippo-content</artifactId>
-      <scope>test</scope>
-      <version>1.01.00-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hippoecm.hst</groupId>
-      <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-      <scope>test</scope>
-      <version>2.01.00-SNAPSHOT</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.hippoecm</groupId>
