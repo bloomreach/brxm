@@ -22,6 +22,8 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -82,8 +84,8 @@ public class ResetDialog extends AbstractDialog {
         }
     }
 
-    public String getTitle() {
-        return "Refresh Session";
+    public IModel getTitle() {
+        return new Model("Refresh Session");
     }
 
 }

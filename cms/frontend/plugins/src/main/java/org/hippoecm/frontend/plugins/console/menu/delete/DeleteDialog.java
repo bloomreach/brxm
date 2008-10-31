@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.console.menu.delete;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -55,7 +57,7 @@ public class DeleteDialog extends AbstractDialog {
         plugin.flushNodeModel(parentModel.findRootModel());
     }
 
-    public String getTitle() {
+    public IModel getTitle() {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         String title;
@@ -64,7 +66,7 @@ public class DeleteDialog extends AbstractDialog {
         } catch (RepositoryException e) {
             title = e.getMessage();
         }
-        return title;
+        return new Model(title);
     }
 
 }

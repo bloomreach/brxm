@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -47,17 +47,17 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
     public TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn column = new ListColumn(new Model("Type"), "type");
+        ListColumn column = new ListColumn(new StringResourceModel("assetgallery-type", this, null), "type");
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new MimeTypeAttributeModifier());
         column.setComparator(new MimeTypeComparator());
         columns.add(column);
 
-        column = new ListColumn(new Model("Name"), "name");
+        column = new ListColumn(new StringResourceModel("assetgallery-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
         
-        column = new ListColumn(new Model("Size"), "size");
+        column = new ListColumn(new StringResourceModel("assetgallery-size", this, null), "size");
         column.setRenderer(new SizeRenderer());
         column.setComparator(new SizeComparator());
         columns.add(column);        

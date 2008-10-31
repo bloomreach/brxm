@@ -152,5 +152,21 @@
             <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
         </sv:property>
     </sv:node>
-
+  
+    <!-- CMS i18n -->
+    <sv:node sv:name="cms-i18n">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:initializeitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:sequence" sv:type="Double">
+            <sv:value>905</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentresource" sv:type="String">
+            <sv:value>cms-i18n.xml</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:contentroot" sv:type="String">
+            <sv:value>/hippo:configuration/hippo:frontend/cms</sv:value>
+        </sv:property>
+    </sv:node>
+  
 </sv:node>

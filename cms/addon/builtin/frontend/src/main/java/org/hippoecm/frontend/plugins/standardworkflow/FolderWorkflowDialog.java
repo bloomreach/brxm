@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -43,13 +44,16 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private String category;
+    private Set<String> prototypes;
     private String prototype;
     private String name;
 
     public FolderWorkflowDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow,
-            String category) {
-        super(folderWorkflowPlugin, dialogWindow, "Add " + category);
+            String category, Set<String> prototypes) {
+        super(folderWorkflowPlugin, dialogWindow, new StringResourceModel("add-category", (Component) null, null,
+                new Object[] { category }));
         this.category = category;
+        this.prototypes = prototypes;
 
         TextFieldWidget text;
         add(text = new TextFieldWidget("name", new PropertyModel(this, "name")) {
@@ -60,11 +64,10 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                 enableButtons();
             }
         });
-        
-        Label typelabel = new Label("typelabel","Document Type");
+
+        Label typelabel = new Label("typelabel", new StringResourceModel("document-type", this, null));
         add(typelabel);
 
-        Set<String> prototypes = folderWorkflowPlugin.templates.get(category).getPrototypes();
         if (prototypes.size() > 1) {
 
             final List<String> prototypesList = new LinkedList<String>(prototypes);
@@ -135,7 +138,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
         }
         if (workflow != null) {
             AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
-            if (!folderWorkflowPlugin.templates.get(category).getPrototypes().contains(prototype)) {
+            if (!prototypes.contains(prototype)) {
                 log.error("unknown folder type " + prototype);
                 throw new WorkflowException("Unknown folder type " + prototype);
             }

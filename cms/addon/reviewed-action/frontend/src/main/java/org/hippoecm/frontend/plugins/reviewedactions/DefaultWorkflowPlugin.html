@@ -15,13 +15,17 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <ul class="hippo-toolbar-section"> 
-    <li class="hippo-global-hideme" wicket:id="caption"></li>
+    <ul class="hippo-toolbar-section">
+      <li class="hippo-global-hideme" wicket:id="caption"/>
       <li>
-        <a class="edit-16" wicket:id="edit-dialog">Edit</a>
+        <a class="edit-16" wicket:id="edit-dialog">
+          <span wicket:id="edit-dialog-label"/>
+        </a>
       </li>
       <li>
-        <a class="delete-16" wicket:id="delete-dialog">Delete</a>
+        <a class="delete-16" wicket:id="delete-dialog">
+          <span wicket:id="delete-dialog-label"/>
+        </a>
       </li>
     </ul>
   </wicket:panel>

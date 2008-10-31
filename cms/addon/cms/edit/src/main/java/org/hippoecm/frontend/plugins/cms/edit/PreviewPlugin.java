@@ -22,10 +22,12 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
@@ -339,12 +341,12 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     private class TooManyEditorsWarningDialog extends AbstractDialog {
 
         TooManyEditorsWarningDialog(IPluginContext context, IDialogService dialogService) {
-            super(context, dialogService, "Warning: Only 4 editors can be open at the same time.  The document will be shown when you close one of the existing editors.");
+            super(context, dialogService, new StringResourceModel("too-many-editors", (Component) null, null));
             cancel.setVisible(false);
         }
 
-        public String getTitle() {
-            return "Warning";
+        public IModel getTitle() {
+            return new StringResourceModel("warning", this, null);
         }
     }
 }

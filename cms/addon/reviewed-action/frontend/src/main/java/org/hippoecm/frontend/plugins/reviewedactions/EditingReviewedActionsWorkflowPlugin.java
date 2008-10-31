@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -57,7 +58,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
             log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
 
-        addWorkflowAction("save", new WorkflowAction() {
+        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -67,7 +68,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
                 close();
             }
         });
-        addWorkflowAction("revert", new WorkflowAction() {
+        addWorkflowAction("revert", new StringResourceModel("revert", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
                        
             @Override

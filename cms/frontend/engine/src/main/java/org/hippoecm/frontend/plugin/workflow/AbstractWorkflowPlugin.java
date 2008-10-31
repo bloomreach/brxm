@@ -26,6 +26,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -89,13 +91,13 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         return super.getPluginConfig();
     }
 
-    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
             final Visibility visible, final WorkflowAction action) {
         addWorkflowDialog(dialogName, dialogLink, dialogTitle, visible, action);
     }
 
-    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
-            final String text, final Visibility visible, final WorkflowAction action) {
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
+            final IModel text, final Visibility visible, final WorkflowAction action) {
         DialogLink link = new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
@@ -116,7 +118,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, Visibility visible, final WorkflowAction action) {
+    protected void addWorkflowAction(final String linkName, IModel linkText, Visibility visible, final WorkflowAction action) {
         AjaxLink link = new AjaxLink(linkName) {
             private static final long serialVersionUID = 1L;
 
@@ -134,13 +136,14 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
             }
         };
         add(link);
+        link.add(new Label(linkName + "-label", linkText));
         actions.put(linkName, new Action(link, visible));
 
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, final WorkflowAction action) {
-        addWorkflowAction(linkName, new Visibility() {
+    protected void addWorkflowAction(final String linkName, IModel linkText, final WorkflowAction action) {
+        addWorkflowAction(linkName, linkText, new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -149,13 +152,13 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         }, action);
     }
 
-    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
             final WorkflowAction action) {
-        addWorkflowDialog(dialogName, dialogLink, dialogTitle, (String) null, action);
+        addWorkflowDialog(dialogName, dialogLink, dialogTitle, (IModel) null, action);
     }
 
-    protected void addWorkflowDialog(final String dialogName, final String dialogLink, final String dialogTitle,
-            final String text, final WorkflowAction action) {
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
+            final IModel text, final WorkflowAction action) {
         addWorkflowDialog(dialogName, dialogTitle, dialogTitle, text, new Visibility() {
             private static final long serialVersionUID = 1L;
 

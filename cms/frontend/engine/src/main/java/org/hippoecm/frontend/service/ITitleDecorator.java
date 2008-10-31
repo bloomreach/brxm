@@ -16,9 +16,10 @@
 package org.hippoecm.frontend.service;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 
 public interface ITitleDecorator extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    String getTitle();
+    IModel/*<String>*/ getTitle();
 }

@@ -18,6 +18,7 @@ package org.hippoecm.frontend.dialog;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -43,16 +44,16 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     static protected Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
-    private String title;
+    private IModel title;
     private WorkflowsModel model;
     private IServiceReference<AbstractWorkflowPlugin> pluginRef;
     private IServiceReference<IJcrService> jcrServiceRef;
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title) {
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title) {
         this(plugin, dialogWindow, title, null);
     }
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, String title, String text) {
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title, IModel text) {
         super(plugin.getPluginContext(), dialogWindow, text);
 
         IPluginContext context = plugin.getPluginContext();
@@ -76,7 +77,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         super.onDetach();
     }
     
-    public String getTitle() {
+    public IModel getTitle() {
         return title;
     }
 

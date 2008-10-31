@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.logout;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,8 +43,8 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
         add(messageLabel);
     }
 
-    public String getTitle() {
-        return "Logout";
+    public IModel getTitle() {
+        return new StringResourceModel("logout", this, null);
     }
 
     @Override

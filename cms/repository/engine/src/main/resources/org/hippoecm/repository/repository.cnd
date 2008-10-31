@@ -290,6 +290,15 @@
 [hippo:queryfolder] > hippo:basequeryfolder
 + * (nt:query, hippo:basequeryfolder)
 
+// localization
+[hippo:localization]
+- hippo:language (string) mandatory
+- hippo:message (string) mandatory
+- * (string)
+
+[hippo:localized] mixin
++ hippo:localization (hippo:localization) multiple
+
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory
 + hippo:documents (hippo:ocmqueryfolder) = hippo:ocmqueryfolder mandatory

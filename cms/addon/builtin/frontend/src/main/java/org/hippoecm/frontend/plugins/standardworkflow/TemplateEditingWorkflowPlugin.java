@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -59,7 +61,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
             log.warn("No validator id {} defined", IValidateService.VALIDATE_ID);
         }
 
-        addWorkflowAction("save", new WorkflowAction() {
+        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -80,7 +82,7 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
             }
 
         });
-        add(new AjaxLink("revert") {
+        AjaxLink link = new AjaxLink("revert") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -102,7 +104,9 @@ public class TemplateEditingWorkflowPlugin extends AbstractWorkflowPlugin implem
                 }
                 close();
             }
-        });
+        };
+        link.add(new Label("revert-label", new StringResourceModel("revert", this, null)));
+        add(link);
     }
 
     public boolean hasError() {

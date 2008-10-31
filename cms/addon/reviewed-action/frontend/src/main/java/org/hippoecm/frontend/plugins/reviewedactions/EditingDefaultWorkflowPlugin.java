@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -36,7 +37,7 @@ public class EditingDefaultWorkflowPlugin extends AbstractWorkflowPlugin {
     public EditingDefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        addWorkflowAction("save", new WorkflowAction() {
+        addWorkflowAction("save", new StringResourceModel("save", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override

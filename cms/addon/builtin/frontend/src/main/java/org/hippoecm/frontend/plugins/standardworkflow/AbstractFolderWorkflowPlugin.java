@@ -21,12 +21,10 @@ import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import javax.jcr.Node;
@@ -40,6 +38,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -74,19 +73,19 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
 
     protected static final String WORKFLOW_ACTION_LINK_ID = "workflow-action-dialog-link";
     protected static final String DIALOG_LINKS_COMPONENT_ID = "items";
-    
+
     List<FolderWorkflowActionComponent> staticTemplates;
-    Map<String, FolderWorkflowActionComponent> templates;
+    LinkedList<FolderWorkflowActionComponent> templates;
 
     private Label folderName;
 
     public AbstractFolderWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        templates = new LinkedHashMap<String, FolderWorkflowActionComponent>();
+        templates = new LinkedList<FolderWorkflowActionComponent>();
         add(folderName = new Label("foldername"));
         add(createDialogLinksComponent());
     }
-    
+
     /**
      * Create the component that acts as a launcher for the workflow-action-components.
      * @return  new component that list the workflow-action-components
@@ -102,14 +101,14 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
             }
         };
     }
-    
+
     /**
      * Create a new component that will trigger 
      * @param component
      * @return
      */
     protected Component createDialogActionComponent(FolderWorkflowActionComponent component) {
-        DialogLink link = new DialogLink(component.getId(), new Model(component.getLabel()), component.getAction());
+        DialogLink link = new DialogLink(component.getId(), component.getLabel(), component.getAction());
         if (component.getIcon() != null) {
             link.add(new AttributeAppender("class", new Model(component.getIcon()), " "));
         }
@@ -117,8 +116,9 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         return link;
     }
 
-    protected void addWorkflowAction(String label, String icon, Set<String> prototypes, DialogAction action) {
-        getStaticTemplates().add(new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, label, icon, prototypes, action));
+    protected void addWorkflowAction(IModel label, String icon, Set<String> prototypes, DialogAction action) {
+        getStaticTemplates().add(
+                new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, label, icon, prototypes, action));
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -209,28 +209,28 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
             ex.printStackTrace(System.err);
         }
     }
-    
+
     private void initializeTemplates(Map<String, Set<String>> list) {
         templates.clear();
         if (list != null && list.size() > 0) {
             for (Entry<String, Set<String>> entry : list.entrySet()) {
-                templates.put(entry.getKey(), createWorkflowActionComponent(entry.getKey(), entry.getValue()));
+                templates.add(createWorkflowActionComponent(entry.getKey(), entry.getValue()));
             }
         }
         if (staticTemplates != null && staticTemplates.size() > 0) {
             for (FolderWorkflowActionComponent c : staticTemplates) {
-                templates.put(c.getLabel(), c);
+                templates.add(c);
             }
         }
     }
-    
+
     private List<FolderWorkflowActionComponent> getStaticTemplates() {
         if (staticTemplates == null) {
             staticTemplates = new LinkedList<FolderWorkflowActionComponent>();
         }
         return staticTemplates;
     }
-    
+
     protected IDataProvider getTemplateProvider() {
         return new IDataProvider() {
             private static final long serialVersionUID = 1L;
@@ -240,31 +240,31 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
             }
 
             public int size() {
-                return templates != null ? templates.size() : 0;
+                return templates.size();
             }
 
             public Iterator<FolderWorkflowActionComponent> iterator(int skip, int count) {
-                return templates != null ? templates.values().iterator() : new TreeSet<FolderWorkflowActionComponent>()
-                        .iterator();
+                return templates.iterator();
             }
 
             public void detach() {
             }
         };
     }
-    
-    protected FolderWorkflowActionComponent createWorkflowActionComponent(final String category, final Set<String> prototypes) {
+
+    protected FolderWorkflowActionComponent createWorkflowActionComponent(final String category,
+            final Set<String> prototypes) {
         DialogAction action = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
                 if (category.contains("New Smart Folder")) // FIXME very bad check on name
-                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, category);
+                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, category, prototypes);
                 else
-                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, category);
+                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, category, prototypes);
             }
         }, getDialogService());
-        
+
         // FIXME: proper procedure to get an icon
         String icon = null;
         if (category.toLowerCase().contains("folder")) {
@@ -274,14 +274,17 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         } else {
             icon = "addextended_ico";
         }
-        return new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID, category, icon, prototypes, action);
+        return new FolderWorkflowActionComponent(WORKFLOW_ACTION_LINK_ID,
+                new StringResourceModel(category, this, null), icon, prototypes, action);
     }
 
-
     public class FolderWorkflowActionComponent extends WorkflowActionComponent {
+        private static final long serialVersionUID = 1L;
+
         private Set<String> prototypes;
 
-        public FolderWorkflowActionComponent(String id, String label, String icon, Set<String> prototypes, DialogAction action) {
+        public FolderWorkflowActionComponent(String id, IModel label, String icon, Set<String> prototypes,
+                DialogAction action) {
             super(id, label, icon, action);
             this.prototypes = prototypes != null ? prototypes : Collections.EMPTY_SET;
         }

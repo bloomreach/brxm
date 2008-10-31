@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -58,7 +59,7 @@ public class OrderableFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 action.setEnabled(false);
             }
     
-            addWorkflowAction("Reorder folder", "reorder_ico", null, action);
+            addWorkflowAction(new StringResourceModel("reorder-folder", this, null), "reorder_ico", null, action);
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }

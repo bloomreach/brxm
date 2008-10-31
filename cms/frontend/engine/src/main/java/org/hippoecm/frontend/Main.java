@@ -17,12 +17,17 @@ package org.hippoecm.frontend;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
@@ -36,7 +41,9 @@ import org.apache.wicket.authorization.IAuthorizationStrategy;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
+import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.UrlResourceStream;
 import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
@@ -99,7 +106,7 @@ public class Main extends WebApplication {
         IResourceSettings resourceSettings = getResourceSettings();
         final IResourceStreamLocator oldLocator = resourceSettings.getResourceStreamLocator();
         final String layout = "/WEB-INF/" + getConfigurationParameter("config", "default") + "/";
-        
+
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
             public IResourceStream locate(final Class clazz, final String path) {
@@ -128,6 +135,65 @@ public class Main extends WebApplication {
                 return oldLocator.locate(clazz, path);
             }
         });
+
+        // replace current loaders with own list, starting with component-specific 
+        List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings
+                .getStringResourceLoaders());
+        resourceSettings.addStringResourceLoader(new IStringResourceLoader() {
+
+            public String loadStringResource(Component component, String key) {
+                IStringResourceProvider provider;
+                if (component instanceof IStringResourceProvider) {
+                    provider = (IStringResourceProvider) component;
+                } else {
+                    provider = (IStringResourceProvider) component
+                        .findParent(IStringResourceProvider.class);
+                }
+                if (provider != null) {
+                    Map<String, String> keys = new MiniMap(5);
+                    keys.put("hippo:key", key);
+
+                    Locale locale = component.getLocale();
+                    keys.put("hippo:language", locale.getLanguage());
+
+                    String value = locale.getCountry();
+                    if (value != null) {
+                        keys.put("hippo:country", locale.getCountry());
+                    }
+
+                    value = locale.getVariant();
+                    if (value != null) {
+                        keys.put("hippo:variant", locale.getVariant());
+                    }
+
+                    value = component.getStyle();
+                    if (value != null) {
+                        keys.put("hippo:style", value);
+                    }
+
+                    String result = provider.getString(keys);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+                return null;
+            }
+
+            public String loadStringResource(Class clazz, String key, Locale locale, String style) {
+                return null;
+            }
+        });
+        for (IStringResourceLoader loader : loaders) {
+            resourceSettings.addStringResourceLoader(loader);
+        }
+
+        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+            // disable cache
+            resourceSettings.getLocalizer().setEnableCache(false);
+
+            // don't throw on missing resource
+            resourceSettings.setThrowExceptionOnMissingResource(false);
+        }
 
         mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
 
@@ -197,7 +263,8 @@ public class Main extends WebApplication {
     public HippoRepository getRepository() {
         if (repository == null) {
             String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
-            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, DEFAULT_REPOSITORY_DIRECTORY);
+            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM,
+                    DEFAULT_REPOSITORY_DIRECTORY);
             try {
                 if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
                     repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);

@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.console.menu.node;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -57,8 +59,8 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
         plugin.flushNodeModel(nodeModel);
     }
 
-    public String getTitle() {
-        return "Add a new Node";
+    public IModel getTitle() {
+        return new Model("Add a new Node");
     }
 
     public String getName() {

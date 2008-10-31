@@ -19,15 +19,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -45,24 +43,13 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        String title = "Edit type";
-        try {
-            String name = ((WorkflowsModel) getModel()).getNodeModel().getNode().getName();
-            name = name.substring(title.indexOf(':') + 1);
-            char[] chars = name.toLowerCase().toCharArray();
-            chars[0] = Character.toUpperCase(chars[0]);
-            title = String.copyValueOf(chars) + " type";
-        } catch(RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        add(new Label("title", title));
-        addWorkflowAction("editModel-action", new WorkflowAction() {
+        addWorkflowAction("editModel-action", new StringResourceModel("edit", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -71,16 +58,17 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
                 if (emWorkflow != null) {
                     String path = emWorkflow.edit();
                     try {
-                        Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
+                        Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(
+                                path.substring(1));
                         JcrItemModel itemModel = new JcrItemModel(node);
                         if (path != null) {
                             IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
                                     IEditService.class);
-                             if (viewService != null) {
-                                 viewService.edit(new JcrNodeModel(itemModel));
-                             } else {
-                                 log.warn("No view service found");
-                             }
+                            if (viewService != null) {
+                                viewService.edit(new JcrNodeModel(itemModel));
+                            } else {
+                                log.warn("No view service found");
+                            }
                         } else {
                             log.error("no model found to edit");
                         }
@@ -93,12 +81,13 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        add(new DialogLink("copyModelRequest-dialog", new Model("Copy"), new IDialogFactory() {
-            private static final long serialVersionUID = 1L;
+        add(new DialogLink("copyModelRequest-dialog", new StringResourceModel("copy", this, null),
+                new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                return new CopyModelDialog(EditmodelWorkflowPlugin.this, dialogService);
-            }
-        }, getDialogService()));
+                    public AbstractDialog createDialog(IDialogService dialogService) {
+                        return new CopyModelDialog(EditmodelWorkflowPlugin.this, dialogService);
+                    }
+                }, getDialogService()));
     }
 }

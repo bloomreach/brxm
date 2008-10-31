@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.console.menu.rename;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -83,8 +85,8 @@ public class RenameDialog extends AbstractDialog {
         }
     }
 
-    public String getTitle() {
-        return "Rename Node";
+    public IModel getTitle() {
+        return new Model("Rename Node");
     }
 
     public String getName() {

@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.wizard.IWizardModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -70,8 +71,8 @@ public class UploadDialog extends AbstractDialog {
         return jcrServiceRef.getService();
     }
 
-    public String getTitle() {
-        return (new StringResourceModel(pluginConfig.getString("gallery.text", ""), this, null)).getString();
+    public IModel getTitle() {
+        return new StringResourceModel(pluginConfig.getString("gallery.text", ""), this, null);
     }
 
     public int getThumbnailSize() {

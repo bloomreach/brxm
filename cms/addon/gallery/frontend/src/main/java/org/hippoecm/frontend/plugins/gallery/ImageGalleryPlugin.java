@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
@@ -39,12 +39,12 @@ public class ImageGalleryPlugin extends AbstractListingPlugin {
     public TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
 
-        ListColumn column = new ListColumn(new Model("Image"), null);
+        ListColumn column = new ListColumn(new StringResourceModel("gallery-image", this, null), null);
         column.setRenderer(new ThumbnailRenderer(getPluginContext(), getPluginConfig()));
         column.setAttributeModifier(new GalleryFolderAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn(new Model("Name"), "name");
+        column = new ListColumn(new StringResourceModel("gallery-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 

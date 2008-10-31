@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -45,21 +46,22 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
         onModelChanged();
 
-        addWorkflowAction("cancelRequest-dialog", new Visibility() {
-            private static final long serialVersionUID = 1L;
+        addWorkflowAction("cancelRequest-dialog", new StringResourceModel("cancel-request", this, null),
+                new Visibility() {
+                    private static final long serialVersionUID = 1L;
 
-            public boolean isVisible() {
-                return cancelable;
-            }
-        }, new WorkflowAction() {
-            private static final long serialVersionUID = 1L;
+                    public boolean isVisible() {
+                        return cancelable;
+                    }
+                }, new WorkflowAction() {
+                    private static final long serialVersionUID = 1L;
 
-            @Override
-            public void execute(Workflow wf) throws Exception {
-                BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
-                workflow.cancelRequest();
-            }
-        });
+                    @Override
+                    public void execute(Workflow wf) throws Exception {
+                        BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
+                        workflow.cancelRequest();
+                    }
+                });
     }
 
     @Override
@@ -69,15 +71,15 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
         try {
             Node node = model.getNodeModel().getNode();
             Node child = null;
-            if(node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT) && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 node = node.getParent();
             }
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = node.getNodes(HippoNodeType.NT_REQUEST); iter.hasNext(); ) {
+                for (NodeIterator iter = node.getNodes(HippoNodeType.NT_REQUEST); iter.hasNext();) {
                     child = iter.nextNode();
-                    if(child.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    if (child.isNodeType(HippoNodeType.NT_REQUEST)) {
                         node = child;
-                        if(child.hasProperty("type") && !child.getProperty("type").getString().equals("rejected")) {
+                        if (child.hasProperty("type") && !child.getProperty("type").getString().equals("rejected")) {
                             break;
                         }
                     } else {
@@ -85,11 +87,12 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                     }
                 }
             }
-            if(node == null || !node.isNodeType(HippoNodeType.NT_REQUEST)) {
+            if (node == null || !node.isNodeType(HippoNodeType.NT_REQUEST)) {
                 node = null;
                 cancelable = false;
             } else {
-                if(node.hasProperty("username") && node.getProperty("username").getString().equals(node.getSession().getUserID())) {
+                if (node.hasProperty("username")
+                        && node.getProperty("username").getString().equals(node.getSession().getUserID())) {
                     cancelable = true;
                 } else {
                     cancelable = false;
@@ -97,7 +100,7 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName()+": "+ex.getMessage());
+            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }

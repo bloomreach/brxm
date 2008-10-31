@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -30,7 +32,8 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        addWorkflowAction("acceptRequest-dialog", new WorkflowAction() {
+        
+        addWorkflowAction("acceptRequest-dialog", new StringResourceModel("accept-request", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -39,16 +42,16 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.acceptRequest();
             }
         });
-        addWorkflowDialog("rejectRequest-dialog", "Reject request", "Reject request",
-                          "Are you sure you want to reject this request?",
-                new WorkflowAction() {
-                    private static final long serialVersionUID = 1L;
+        IModel rejectModel = new StringResourceModel("reject-request", this, null);
+        addWorkflowDialog("rejectRequest-dialog", rejectModel, rejectModel,
+                new StringResourceModel("reject-message", this, null), new WorkflowAction() {
+            private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void execute(Workflow wf) throws Exception {
-                        FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
-                        workflow.rejectRequest(""); // FIXME
-                    }
+            @Override
+            public void execute(Workflow wf) throws Exception {
+                FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
+                workflow.rejectRequest(""); // FIXME
+            }
         });
     }
 }

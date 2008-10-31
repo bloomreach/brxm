@@ -16,24 +16,26 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class ExceptionDialog extends AbstractDialog {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
-    private  Exception exception;
+
+    private Exception exception;
 
     public ExceptionDialog(IPluginContext context, IDialogService dialogService, Exception exception) {
         super(context, dialogService);
         this.exception = exception;
         cancel.setVisible(false);
-        add(new Label("message", exception.getMessage()));
+        add(new Label("message", exception.getLocalizedMessage()));
     }
 
-    public String getTitle() {
-        return exception.getMessage();
+    public IModel getTitle() {
+        return new StringResourceModel(exception.getMessage(), this, null, null, exception.getLocalizedMessage());
     }
-    
+
 }

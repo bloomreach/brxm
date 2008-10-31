@@ -21,7 +21,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -45,19 +45,19 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
         this(context, dialogWindow, null);
     }
 
-    public AbstractDialog(IPluginContext context, IDialogService dialogWindow, String text) {
+    public AbstractDialog(IPluginContext context, IDialogService dialogWindow, IModel text) {
         this.windowRef = context.getReference(dialogWindow);
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
 
-        if(text != null) {
-            add(new Label("text", new Model(text)));
+        if (text != null) {
+            add(new Label("text", text));
         } else {
             add(new Label("text"));
         }
-        
+
         add(indicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
@@ -86,14 +86,14 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
                     e.printStackTrace();
                 }
             }
-            
+
             @Override
             protected IAjaxCallDecorator getAjaxCallDecorator() {
                 return new IAjaxCallDecorator() {
                     private static final long serialVersionUID = 1L;
 
                     public CharSequence decorateOnFailureScript(CharSequence script) {
-                        return getScript("none") + script; 
+                        return getScript("none") + script;
                     }
 
                     public CharSequence decorateOnSuccessScript(CharSequence script) {
@@ -103,10 +103,10 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
                     public CharSequence decorateScript(CharSequence script) {
                         return getScript("block") + script;
                     }
-                    
+
                     private String getScript(String state) {
                         String id = indicator.getMarkupId();
-                        return "document.getElementById('" + id + "').style.display = '" + state  + "';";
+                        return "document.getElementById('" + id + "').style.display = '" + state + "';";
                     }
                 };
             }

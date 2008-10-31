@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
@@ -47,17 +48,15 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
-                // FIXME: fixed (in code) dialog text
-                String text = "Are you sure you want to delete ";
+                StringResourceModel text;
                 try {
-                    text += "folder ";
-                    text += ((WorkflowsModel) FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode()
-                            .getName();
+                    Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode()
+                            .getName() };
+                    text = new StringResourceModel("delete-message-extended", null, null, params);
                 } catch (RepositoryException ex) {
-                    text += "this folder";
+                    text = new StringResourceModel("delete-message", (Component) null, null);
                 }
-                text += " and all of its contents permanently?";
-                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, "Delete folder", text) {
+                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, new StringResourceModel("delete-title", (Component) null, null), text) {
                     @Override
                     protected void execute() throws Exception {
                         // FIXME: this assumes that folders are always embedded in other folders
@@ -73,7 +72,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             }
         }, getDialogService());
 
-        addWorkflowAction("Delete Folder", "editmodel_ico", null, action);
+        addWorkflowAction(new StringResourceModel("delete-title", this, null), "editmodel_ico", null, action);
     }
 
     @Override
