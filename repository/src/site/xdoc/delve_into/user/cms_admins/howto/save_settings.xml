@@ -40,11 +40,11 @@ ________________________________________________________________________________
 
    <p>
     If you change your mind before you clicked the save button, click the cancel button. 
-    <span class='warn_64'>
+    <div class='alert-48 icon-text-48'>
      If you logout without clicking the cancel button, the new properties will also be saved. 
      This is generally a good thing, but know what you are doing when changing for example the
      admin password.
-    </span>
+    </div>
    </p>
 
   <subsection name='Next'>

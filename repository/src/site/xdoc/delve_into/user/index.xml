@@ -40,13 +40,14 @@ ________________________________________________________________________________
     <td>
       <a href="./contributors/index.html">Guide for Contributors</a>
     </td>
-    <td>Guide for Hippo CMS users to perform the role of Information Architect.</td>
+    <td>Guide for Hippo CMS users to perform the role of contributor.</td>
   </tr>
   <tr>
     <td>
       <a href="./editors/index.html">Guide for Editors</a>
     </td>
-    <td></td>
+    <td>Guide for Hippo CMS users to perform the role of editor.
+    </td>
   </tr>
   <tr>
     <td>
