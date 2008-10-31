@@ -63,74 +63,105 @@
       </td>
      </tr>
 
-     <tr>
-      <td>Password</td>
+    <tr>
+      <td>Folder</td>
       <td>
-       <span class='admin-48 icon-48'/> 
+       <span class='user-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/change_password.html">Change the password</a> of the
-         admin account.
-         <p>
-          Instead, you could create another account for yourself and deactivate the standard admin account, but
-         you can not delete the standard admin account, so you might as well use it.
-	 </p>
+         <a href="./howto/folder_tab.html">Goto to the folder</a> to add your document in.
+         Marc learned that all articles for Saraswatia's online newspaper are supposed to
+         go in the 'sar newspaper' document folder, so he selects that.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Create document</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/create_document.html">Create a document</a> to write in.
+         For the article about the upcoming multicultural bazaar, Marc creates a
+         document named 'multibazar2008'. He selects for it the documenttype 'upcoming',
+         because that is the type for upcoming happenings, like the bazaar.
+      </td>
+     </tr>
+
+     <tr>
+      <td>Open document</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/goto_document_tab.html">Open the document</a> to start writing.
+         Marc opens the document named 'multibazar2008'.
       </td>
      </tr>
  
+     <tr>
+      <td>fill date</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/fill_date_field_in_document.html">Fill a date field</a>.
+         Marc sees that he is supposed to fill in on what date the happening, which
+         in his case is the bazaar, will be. So he looks up the date and fills it in the document.
+      </td>
+     </tr>
+
+     <tr>
+      <td>fill string</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/fill_string_field_in_document.html">Fill a string field</a>.
+         Marc sees that he is supposed to type a title for the happening, which
+         in his case is the bazaar, and he types 'Multicultural Bazaar 2008' as the title.
+      </td>
+     </tr>
+
+     <tr>
+      <td>fill boolean</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/fill_boolean_field_in_document.html">Fill a boolean field</a>.
+         Marc sees that he is supposed to answer the question whether the happening is
+         indoors. 
+         The bazaar is not indoors, so he does not check that checkbox.
+         He also is supposed to answer the question whether the happening is
+         a recurring happening, i.e. a happening that has occurred before. This is the case,
+         so he checks that checkbox.
+      </td>
+     </tr>
+
+     <tr>
+      <td>fill markuped text</td>
+      <td>
+       <span class='user-48 icon-48'/> 
+      </td>
+      <td> 
+         <a href="./howto/fill_markuped_text_in_document.html">Fill markuped text</a>.
+         Marc sees that he can also write a description of the happening and he
+         writes an informative text about the upcoming multicultural bazaar.
+         He includes the place where the bazaar will be in this description,
+         because there is no separate field for it and people need to know.
+      </td>
+     </tr>
+
     <tr>
-      <td>Deactivate</td>
-      <td>
-       <span class='delete-48 icon-48'/> 
-      </td>
-      <td>
-         <a href="./howto/deactivate_account.html">Deactivate the other standard accounts</a> to
-         use personal accounts instead.
-         <p>
-          Instead, you could just change their passwords, and use them as guest accounts,
-          if all your guests are trustworthty. 
-	 </p>
-  
-      </td>
-     </tr>
-  
-     <tr>
-      <td>Add Group</td>
-      <td>
-       <span class='multiuser-48 icon-48'/> 
-      </td>
-      <td>
-         <a href="./howto/add_group.html">Add a group</a>. 
-      </td>
-     </tr>
-
-     <tr>
-      <td>Change Group Properties</td>
-      <td>
-       <span class='multiuser-48 icon-48'/> 
-      </td>
-      <td>
-         <a href="./howto/change_group_properties.html">Change group properties</a>. 
-      </td>
-     </tr>
-    
-     <tr>
-      <td>Add Users</td>
+      <td>request publication</td>
       <td>
        <span class='user-48 icon-48'/> 
       </td>
-      <td>
-         <a href="./howto/add_user.html">Add user accounts</a>.
-      </td>
-     </tr>
-
-     <tr>
-      <td>Change User propertes</td>
-      <td>
-       <span class='user-48 icon-48'/> 
-      </td>
-      <td>
-         <a href="./howto/change_user_properties.html">Change user properties</a>.
+      <td> 
+         <a href="./howto/fill_markuped_text_in_document.html">request publication</a>.
+         Marc now requests publication of his article. Janine is the editor and she
+         will receive this request and accept or reject it.
       </td>
      </tr>
 
@@ -141,7 +172,7 @@
       </td>
       <td> 
          <a href="./howto/logout.html">Logout</a>. 
-         Shane quits for today.          
+         Marc quits for today.          
       </td>
      </tr>
  

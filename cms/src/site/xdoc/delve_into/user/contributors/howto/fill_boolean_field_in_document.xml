@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Fill boolean in Document</title>
+  </properties>
+
+  <body>
+    <section name="Fill boolean field in Document">
+      <span class="shortdesc">How to answer a yes/no question in a document.</span>
+
+   <div class='screenshot'>
+     <img src="../../../../images/contribs/fill_boolean_field.png" alt='Fill boolean screenshot'/> 
+     <p>
+       Two boolean fields, 'Indoors?' and 'Recurring?'. 
+       They are in the document 'multibazaar2008', which is of documenttype 'upcoming', but this is not shown. 
+       They stand for yes/no questions. The first is if the upcoming happening is indoors. The multicultural bazaar 2008
+       which this article is about is not indoors, therefor
+       the checkbox is not checked. The second yes/no question is if the upcoming happening is a recurring happening,
+       i.e. if such a happening was been organized before. This is true, the same organizors organized multicultural 
+       bazaars in the same place with the same intensions before, so that checkbox is checked.
+     </p>
+   </div>
+
+   <p>
+    Open the <a href='./goto_document_tab.html'>document</a> for editing. 
+    Below the caption of a boolean field, check the checkbox to answer 'yes'. If you leave the checkbox unchecked, it means
+    'no'. Clicking the checkbox checks and unchecks the checkbox alternately.  
+   </p>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./fill_markuped_text_in_document.html'>Write markuped text in a document</a>.</li>
+    <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
+    <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
+    </ul>       
+  </subsection>
+
+   </section>
+  </body>
+</document>        
