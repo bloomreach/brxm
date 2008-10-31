@@ -32,7 +32,6 @@ import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.decorating.NodeDecorator;
 import org.junit.Test;
 
 public class CanonicalPathTest extends TestCase {
@@ -109,12 +108,15 @@ public class CanonicalPathTest extends TestCase {
     @Test public void testFacetSearchCanonicalNodeHasOtherIdTest() throws RepositoryException{
         Node facetSearchNode = commonFacetSearchSetup();
         Node mirroredHippoDoc = facetSearchNode.getNode("foo").getNode(HippoNodeType.HIPPO_RESULTSET).getNode("mynode");
-        ItemId mirroredId = ((NodeImpl)NodeDecorator.unwrap(mirroredHippoDoc)).getId();
+        ItemId mirroredId = unwrappedItemId(mirroredHippoDoc);
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
+        ItemId canonicalId = unwrappedItemId(canonical);
         assertFalse(canonicalId.equals(mirroredId));
     }
 
+    private ItemId unwrappedItemId(Node node) {
+        return ((NodeImpl)(org.hippoecm.repository.decorating.NodeDecorator.unwrap(org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(node)))).getId();
+    }
 
     /*
      * A virtual node in facetselet which is not a mirror of a hippo document returns null
@@ -150,9 +152,9 @@ public class CanonicalPathTest extends TestCase {
     @Test public void testFacetSelectCanonicalNodeHasOtherIdTest() throws RepositoryException{
         Node facetSelectNode = commonFacetSelectSetup();
         Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
-        ItemId mirroredId = ((NodeImpl)NodeDecorator.unwrap(mirroredHippoDoc)).getId();
+	ItemId mirroredId = unwrappedItemId(mirroredHippoDoc);
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
+	ItemId canonicalId = unwrappedItemId(canonical);
         assertFalse(canonicalId.equals(mirroredId));
     }
 
@@ -162,9 +164,9 @@ public class CanonicalPathTest extends TestCase {
     @Test public void testPhysicalCanonicalNodeHasSameIdTest() throws RepositoryException{
         commonFacetSelectSetup();
         Node physicalHippoDoc = session.getRootNode().getNode("test").getNode("content");
-        ItemId physicalId = ((NodeImpl)NodeDecorator.unwrap(physicalHippoDoc)).getId();
+        ItemId physicalId = unwrappedItemId(physicalHippoDoc);
         Node canonical = ((HippoNode)physicalHippoDoc).getCanonicalNode();
-        ItemId canonicalId = ((NodeImpl)NodeDecorator.unwrap(canonical)).getId();
+        ItemId canonicalId = unwrappedItemId(canonical);
         assertTrue(canonicalId.equals(physicalId));
     }
 }

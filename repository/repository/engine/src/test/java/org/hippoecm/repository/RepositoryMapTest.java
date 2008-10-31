@@ -65,14 +65,11 @@ public class RepositoryMapTest extends TestCase {
         session.save();
     }
 
-    @Test public void testMap() throws Exception {
-        Utilities.dump(System.err, session.getRootNode().getNode("hippo:configuration/hippo:documents"));
+    @Test
+    public void testMap() throws Exception {
         Map map = server.getRepositoryMap(session.getRootNode().getNode("hippo:configuration/hippo:documents"));
-        System.err.println("\n\n\n\n\n");
         map = (Map) map.get("embedded");
         assertNotNull(map);
-        System.err.println(((Map)map.get(root.getNode("articles/myarticle1/myarticle1").getUUID())).get("_path"));
         map = (Map) map.get(root.getNode("articles/myarticle1/myarticle1").getUUID());
-        System.err.println(map.get("_path"));
     }
 }

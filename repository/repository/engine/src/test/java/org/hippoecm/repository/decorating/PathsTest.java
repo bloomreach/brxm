@@ -62,16 +62,6 @@ public class PathsTest extends TestCase {
     }
 
     @Test
-    public void testPaths() throws RepositoryException {
-        Node root = session.getRootNode();
-        Node sub1 = root.addNode("test");
-        Node sub2 = sub1.addNode("sub");
-        assertTrue(root instanceof NodeDecorator);
-        assertTrue(sub1 instanceof NodeDecorator);
-        assertTrue(sub2 instanceof NodeDecorator);
-    }
-
-    @Test
     public void testPathProperty() throws Exception {
         build(session, new String[] {
                 "/test", "nt:unstructured",

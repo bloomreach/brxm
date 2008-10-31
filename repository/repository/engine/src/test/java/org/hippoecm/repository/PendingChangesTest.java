@@ -37,6 +37,7 @@ public class PendingChangesTest extends TestCase {
     private HippoSession session;
     private HippoNode root;
 
+    @Override
     public void setUp() throws Exception {
         server = HippoRepositoryFactory.getHippoRepository();
         session = (HippoSession) server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
@@ -48,6 +49,7 @@ public class PendingChangesTest extends TestCase {
         session.save();
     }
 
+    @Override
     public void tearDown() throws Exception {
         session.refresh(false);
         if(session.getRootNode().hasNode("test")) {

@@ -20,13 +20,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.jcr.AccessDeniedException;
-import javax.jcr.Credentials;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -37,10 +34,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
-import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -69,7 +63,7 @@ import org.hippoecm.repository.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.DecoratorFactory;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.jackrabbit.SessionImpl;
 import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
@@ -310,31 +304,41 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, prune)
-                                                  : ((SessionImpl)session).pendingChanges(node, nodeType, prune);
+        NodeIterator changesIter;
+        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, prune)
+                                                       : ((SessionImpl)session).pendingChanges(node, nodeType, prune);
+        return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, false)
-                                                  : ((SessionImpl)session).pendingChanges(node, nodeType, false);
+        NodeIterator changesIter;
+        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, false)
+                                                       : ((SessionImpl)session).pendingChanges(node, nodeType, false);
+        return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, prune)
-                                                  : ((SessionImpl)session).pendingChanges(null, nodeType, prune);
+        NodeIterator changesIter;
+        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, prune)
+                                                       : ((SessionImpl)session).pendingChanges(null, nodeType, prune);
+        return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, false)
-                                                  : ((SessionImpl)session).pendingChanges(null, nodeType, false);
+        NodeIterator changesIter;
+        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, false)
+                                                       : ((SessionImpl)session).pendingChanges(null, nodeType, false);
+        return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges() throws RepositoryException {
-        return session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, null, false)
-                                                  : ((SessionImpl)session).pendingChanges(null, null, false);
+        NodeIterator changesIter;
+        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, null, false)
+                                                       : ((SessionImpl)session).pendingChanges(null, null, false);
+        return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     private ContentHandler getExportContentHandler(OutputStream stream) throws RepositoryException {
