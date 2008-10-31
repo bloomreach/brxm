@@ -45,7 +45,7 @@
             Download 
 	 </td>
          <td> 
-          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+          <span class='download-48 icon-48'/>
 	 </td>
         <td> 
          <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> jar file
@@ -57,7 +57,7 @@
             Download 
 	 </td>
          <td> 
-          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+          <span class='download-48 icon-48'/>
 	 </td>
    <td>          
      Download the <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war'>Hippo CMS WAR</a>
@@ -67,7 +67,7 @@
   <tr>
    <td>Startup</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='commandline-48 icon-48'/>
    </td>
    <td>          
        Start Tomcat normally. Tomcat will automatically deploy the cms.war and create an
@@ -77,7 +77,7 @@
   <tr>
    <td>Web Browser</td>
    <td>
-    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+    <span class='web-48 icon-48'/>
    </td>
   <td>
      Users can now open the local CMS site 

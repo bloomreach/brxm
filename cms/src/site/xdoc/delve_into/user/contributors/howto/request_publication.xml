@@ -22,29 +22,33 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Request Publication of Document</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Request Publication of Document">
+      <span class="shortdesc">How to ask the editor to publish a document?</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/contribs/request_publication.png" alt='request publication screenshot'/> 
+     <p>
+      Requesting publication of the document 'multibazaar2008'. The editor will be notified
+      and accept or reject this request.
+     </p>
    </div>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
-
+   <p>
+    In a document tab <a href='./goto_document_tab.html'>document tab</a>, e.g. after
+    <a href='./save_document.html'>saving that document</a>, 
+    click the 'publish (request)' button at the top to request that the document be published.
+    The editor will be notified and accept or reject your request.
+   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./goto_document_tab.html'>Open another document</a>.</li>
+    <li><a href='./goto_folder.html'>Open another folder</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li>
    </ul>       
   </subsection>
 

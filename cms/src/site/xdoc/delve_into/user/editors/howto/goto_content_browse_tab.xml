@@ -22,29 +22,26 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Goto Content Browse Tab</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Goto Content Browse Tab">
+      <span class="shortdesc">How to get to the content browse tab.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/editors/content_browse_tab_Janine.png" alt='content browse screenshot'/>
    </div>
 
     <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
+     Go to the content browse tab by clicking on the 
+     content browse icon (an image of a folder) <span class='content_browse-16'/>,
+     at the left of the screen. 
     </p>
-
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./goto_folder.html'>Goto folder</a>.</li>
    </ul>       
   </subsection>
 

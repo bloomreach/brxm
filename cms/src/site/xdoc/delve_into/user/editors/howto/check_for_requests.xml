@@ -22,29 +22,30 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Check for requests</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Check for requests">
+      <span class="shortdesc">How to check for requests.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/editors/check_for_requests.png" alt='Check for requests screenshot'/> 
+     <p>
+      Checking for <a href='../concepts/request.html'>requests</a>. There is 
+      one request, from Marc, to publish the document 'multibazaar2008'.
+     </p>
    </div>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
-
+   <p>
+    Go to home tab, by clicking on the home button.
+    At the right in the home tab, there is a todo list, in which requests are shown.
+   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./handle_request.html'>Handle request</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li> 
    </ul>       
   </subsection>
 

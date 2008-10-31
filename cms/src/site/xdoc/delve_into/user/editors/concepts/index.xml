@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document PUBLIC
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
-  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd"
+>
+
+
 <!--
   Copyright 2008 Hippo
 
@@ -16,38 +19,33 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+
+[
+  <!ENTITY folderview SYSTEM "folderview.xml">
+]
+
+ <escapeXml>&folderview;</escapeXml>
     
 ____________________________________________________________________________________________
 
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>CMS Editor Concepts</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
-   <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
-   </div>
+    <section name="CMS Editor Concepts">
+      <span class="shortdesc">A collection of concepts a CMS editor may want to know.</span>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
+  <span class='add'>Concepts</span>
 
+ <subsection name='Alternative'>
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+ </subsection>
 
-  <subsection name='Next'>
-   <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
-   </ul>       
-  </subsection>
-
-   </section>
+    </section>
   </body>
-</document>        
+</document>

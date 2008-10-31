@@ -32,15 +32,16 @@ ________________________________________________________________________________
    <div class='screenshot'>
      <img src="../../../../images/contribs/fill_markuped_text.png" alt='Fill markuped text screenshot'/> 
      <p>
-       Wrote the description for the document 'multibazaar2008'. The description has the boldfaced 
-       titles: 'Food', 'Music', 'More' and 'Address'.
+       Wrote the description for the document 'multibazaar2008'. The description contains the boldfaced 
+       titles: 'Food', 'Music', 'More' and 'Address', which is an example of markup.
      </p>
    </div>
 
    <p>
     Open the <a href='./goto_document_tab.html'>document</a> for editing. 
-    Click in the multiline typingbox below a caption and some editing buttons to type the value for that caption, which
-    may consist of more than one line and markup. 
+    Click in the multiline typingbox below a caption to type the value for that caption.
+    The text you type may may consist of more than one line and also may contain markup,
+    which you may add using the markup buttons at the top of the typingbox. 
    </p>
 
   <subsection name='Next'>
@@ -48,7 +49,8 @@ ________________________________________________________________________________
     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
-     </ul>       
+    <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
+   </ul>       
   </subsection>
 
    </section>

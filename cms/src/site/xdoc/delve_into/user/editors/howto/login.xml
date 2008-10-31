@@ -22,16 +22,16 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Contributor</title>
+    <title>Login as Editor</title>
   </properties>
 
   <body>
-    <section name="Login as Contributor">
-      <span class="shortdesc">How to login to Hippo CMS as contributor 
-                              of documents, images and/or files.</span>
+    <section name="Login as Editor">
+      <span class="shortdesc">How to login to Hippo CMS as editor 
+                              to decide about publication of documents, images and/or files.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/user/Hippo_login_Janine.png" alt='Hippo login screenshot'/>
+     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
       <p>Janine logs in to Hippo CMS. She has typed her password, but only bullets are shown,
        to prevent someone looking over her shoulder to read it. She chose the Hippo CMS to
        be in English. Now she is about to press the button marked `sign in'.
@@ -48,17 +48,22 @@ ________________________________________________________________________________
      Type your Hippo CMS username and password. 
      These must been
      given to you by your Hippo CMS administrator. That you will
-     use Hippo CMS as a contributor must have been defined by your
+     use Hippo CMS as a editor must have been defined by your
      Hippo CMS administrator.
     </p>
     <p>
      If usernames are not yet defined for your Hippo CMS, then
-     you may use the default username and password: username=author, password=author.
+     you may use the default username and password: username=editor, password=editor.
      Note that in this case, your Hippo CMS is not yet protected by the login procedure,
      as anyone can read this.
     </p>    
 
-
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./check_for_requests.html'>Check for requests</a>.</li>
+    <li><a href='./create_folder.html'>Create a folder</a>.</li>
+   </ul>       
+  </subsection>
 
     </section>
   </body>

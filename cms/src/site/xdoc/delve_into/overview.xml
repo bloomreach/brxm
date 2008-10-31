@@ -53,17 +53,17 @@
         <table summary='table summary' title='table title' class='tabclassrita'> 
          <tr>
           <td>
-           <a href="quickstart.html"><em><img title='img title' longdesc='quickstart.html' class='leftflow' src="../images/frontpage/quickstart.png" alt="quickstart"/></em></a>
+           <a href="quickstart.html"><span class='quickstart-48 icon-48'/></a>
           </td>
           <td>
-           <a href="quickstart.html"><em>Quickstart Steps</em></a></td>
+           <a href="quickstart.html"><em>Quickstart</em></a></td>
           <td>
               Quickly install and use Hippo CMS.
           </td>
          </tr>
          <tr>
           <td>   
-           <a href="user/index.html"><em><img width='50' alt="use" src="../images/frontpage/use.png"/></em></a>
+           <a href="user/index.html"><span class='user-48 icon-48'/></a>
 	  </td>
           <td>
             <a href="user/index.html"><em>User Guide</em></a>
@@ -74,7 +74,7 @@
 	 </tr>
          <tr>
           <td>
-           <a href="admin/index.html"><em><img alt="run" src="../images/frontpage/run.png" /></em></a>  
+           <a href="admin/index.html"><span class='admin-48 icon-48'/></a>  
 	  </td>
           <td>
            <a href="admin/index.html"><em>Admin Guide</em></a>
@@ -94,13 +94,14 @@
 	 </tr>
          <tr>
           <td>         
-           <a href="implementation/index.html"><em><img alt="implement" src="../images/frontpage/implement.png" /></em>
+           <a href="implementation/index.html"><em><span class='web-48 icon-48'/></em>
 	   </a>
 	  </td>
           <td>
            <a href="implementation/index.html"><em>Website Development</em></a>
 	  </td>
           <td>
+             Hippo ECM is designed to make your own website development easy. 
 	  </td>
               <!--
                <p>
@@ -114,7 +115,7 @@
 	 </tr>
      <tr>
           <td>         
-           <a href="development/index.html"><em><img alt="build" src="../images/frontpage/build.png" /></em></a>
+           <a href="development/index.html"><span class='hippo-core-48 icon-48'/></a>
 	  </td>
           <td>
            <a href="development/index.html"><em>Hacking the core</em></a>
