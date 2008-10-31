@@ -80,14 +80,14 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-core</artifactId>
-      <version>${parent.version}</version>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-components</artifactId>
-      <version>${parent.version}</version>
+      <version>2.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

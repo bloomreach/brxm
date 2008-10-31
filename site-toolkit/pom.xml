@@ -30,6 +30,12 @@
     <url>http://issues.hippo.nl/browse/HSTTWO</url>
   </issueManagement>
 
+  
+  <properties>
+    <hippoecm.version>2.01.00.14266</hippoecm.version>
+    <hst.version>2.01.00-SNAPSHOT</hst.version>
+  </properties>
+  
   <scm>
     <connection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</developerConnection>
@@ -51,9 +57,6 @@
     <module>gettingstarted</module>
   </modules>
 
-  <properties>
-    <hippoecm.version>2.01.00.14266</hippoecm.version>
-  </properties>
 
   <developers>
     <developer>
@@ -179,7 +182,6 @@
     <url>http://www.onehippo.com</url>
   </organization>
 
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -187,6 +189,12 @@
         <artifactId>hippo-ecm-package-war</artifactId>
         <version>${hippoecm.version}</version>
         <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-repository-connector</artifactId>
+        <version>${hippoecm.version}</version>
+        <type>jar</type>
       </dependency>
     </dependencies>
   </dependencyManagement>
