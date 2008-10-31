@@ -22,6 +22,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -60,11 +61,11 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
 
-        column = new ListColumn(new Model("Name"), "name");
+        column = new ListColumn(new StringResourceModel("doclisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        column = new ListColumn(new Model("State"), "state");
+        column = new ListColumn(new StringResourceModel("doclisting-state", this, null), "state");
         column.setComparator(new StateComparator());
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new StateIconAttributeModifier());

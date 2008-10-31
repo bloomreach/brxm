@@ -31,6 +31,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
@@ -109,7 +110,7 @@ public class ContentExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    public String getTitle() {
+    public IModel getTitle() {
         JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
         String path;
         try {
@@ -117,7 +118,7 @@ public class ContentExportDialog extends AbstractDialog {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return "Export " + path;
+        return new Model("Export " + path);
     }
 
     // privates

@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -51,7 +52,7 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
         onModelChanged();
 
-        addWorkflowAction("edit-dialog", new WorkflowAction() {
+        addWorkflowAction("edit-dialog", new StringResourceModel("edit", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -67,7 +68,7 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("delete-dialog", new WorkflowAction() {
+        addWorkflowAction("delete-dialog", new StringResourceModel("delete", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 
             @Override

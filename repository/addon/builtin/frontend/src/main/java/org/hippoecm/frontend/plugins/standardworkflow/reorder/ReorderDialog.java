@@ -17,8 +17,10 @@ package org.hippoecm.frontend.plugins.standardworkflow.reorder;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -42,7 +44,7 @@ public class ReorderDialog extends AbstractWorkflowDialog {
 
     public ReorderDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow,
             IServiceReference<IJcrService> jcrService) {
-        super(plugin, dialogWindow, "Reorder");
+        super(plugin, dialogWindow, new StringResourceModel("reorder", (Component) null, null));
         jcrServiceRef = jcrService;
         
         JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();        

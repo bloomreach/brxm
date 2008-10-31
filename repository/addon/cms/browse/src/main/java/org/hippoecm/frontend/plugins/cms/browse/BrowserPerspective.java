@@ -27,6 +27,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
@@ -59,10 +60,12 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     private DocumentModelService documentService;
     private String viewerName;
     private IPluginControl viewer;
-    private String listingTitle = "documents";
+    private IModel listingTitle;
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        listingTitle = new StringResourceModel("documents", this, null);
 
         if (config.getString("model.document") != null) {
             documentService = new DocumentModelService(config);
@@ -99,7 +102,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                tag.put("class", listingTitle);
+                tag.put("class", (String) listingTitle.getObject());
             }
         });
     }
@@ -111,7 +114,8 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                 Node node = nodeModel.getNode();
                 // walk up until a folder or a handle has been found
                 // FIXME dependency on hippostd: types ought not be necessary
-                while (!node.isNodeType("hippostd:folder") && !node.isNodeType("hippostd:directory") && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                while (!node.isNodeType("hippostd:folder") && !node.isNodeType("hippostd:directory")
+                        && !node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     node = node.getParent();
                     nodeModel = new JcrNodeModel(node);
                 }
@@ -206,7 +210,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     if (title != null) {
                         listingTitle = title.getTitle();
                     } else {
-                        listingTitle = viewerName;
+                        listingTitle = new StringResourceModel(viewerName, this, null);
                     }
                     redraw();
                 }

@@ -19,12 +19,11 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -38,7 +37,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -65,7 +65,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         onModelChanged();
 
-        addWorkflowAction("edit-dialog", new Visibility() {
+        addWorkflowAction("edit-dialog", new StringResourceModel("edit-label", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -73,12 +73,14 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
+
             // Workaround for HREPTWO-1328
             @Override
             protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
+
             @Override
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -94,7 +96,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("publish-dialog", new Visibility() {
+        addWorkflowAction("publish-dialog", new StringResourceModel("publish-label", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -103,12 +105,14 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
+
             // Workaround for HREPTWO-1328
             @Override
             protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
+
             @Override
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -116,7 +120,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("dePublish-dialog", new Visibility() {
+        addWorkflowAction("dePublish-dialog", new StringResourceModel("depublish-label", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -124,12 +128,14 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
+
             // Workaround for HREPTWO-1328
             @Override
             protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
+
             @Override
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
@@ -137,20 +143,24 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowDialog("delete-dialog", "Delete", "Delete", "Are you sure you want to delete this document?",
-                          new WorkflowAction() {
+        IModel deleteLabel = new StringResourceModel("delete-label", this, null);
+        addWorkflowDialog("delete-dialog", deleteLabel, deleteLabel, new StringResourceModel("delete-message", this,
+                null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
+
             // Workaround for HREPTWO-1328
             @Override
             protected void prepareSession(JcrNodeModel handleModel) throws RepositoryException {
                 Node handleNode = handleModel.getNode();
                 handleNode.getSession().refresh(false);
             }
+
             @Override
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();
-            }});
+            }
+        });
     }
 
     @Override
@@ -164,11 +174,12 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
+                for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {
                     child = iter.nextNode();
-                    if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         node = child;
-                        if(child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
+                        if (child.hasProperty("hippostd:state")
+                                && child.getProperty("hippostd:state").getString().equals("draft")) {
                             break;
                         }
                     } else {
@@ -181,15 +192,16 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
             isLocked = false;
             locked.setVisible(isLocked);
-            if (child != null && child.hasProperty("hippostd:state") &&
-                child.getProperty("hippostd:state").getString().equals("draft") && child.hasProperty("hippostd:holder") &&
-                !child.getProperty("hippostd:holder").getString().equals(child.getSession().getUserID())) {
+            if (child != null && child.hasProperty("hippostd:state")
+                    && child.getProperty("hippostd:state").getString().equals("draft")
+                    && child.hasProperty("hippostd:holder")
+                    && !child.getProperty("hippostd:holder").getString().equals(child.getSession().getUserID())) {
                 isLocked = true;
                 locked.setVisible(isLocked);
             }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName()+": "+ex.getMessage());
+            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }

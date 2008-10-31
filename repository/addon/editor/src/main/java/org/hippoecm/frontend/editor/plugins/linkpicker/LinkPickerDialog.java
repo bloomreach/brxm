@@ -22,7 +22,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -72,8 +74,8 @@ public class LinkPickerDialog extends LookupDialog {
         ok.setEnabled(false);
     }
 
-    public String getTitle() {
-        return "Link picker";
+    public IModel getTitle() {
+        return new StringResourceModel("link-picker", this, null);
     }
 
     @Override

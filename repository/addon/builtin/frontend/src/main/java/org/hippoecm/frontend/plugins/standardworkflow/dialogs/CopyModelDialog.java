@@ -17,7 +17,9 @@ package org.hippoecm.frontend.plugins.standardworkflow.dialogs;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -44,7 +46,7 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
     private String name;
 
     public CopyModelDialog(EditmodelWorkflowPlugin plugin, IDialogService dialogWindow) {
-        super(plugin, dialogWindow, "Copy model");
+        super(plugin, dialogWindow, new StringResourceModel("copy-model", (Component) null, null));
 
         WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
         if (wflModel.getNodeModel().getNode() == null) {

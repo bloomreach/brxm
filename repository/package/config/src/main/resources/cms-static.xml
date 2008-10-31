@@ -24,7 +24,19 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
-
+  
+  <sv:node sv:name="localizer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.localization.JcrStringProviderPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="provider.id" sv:type="String">
+      <sv:value>service.localizer</sv:value>
+    </sv:property>
+  </sv:node>
+  
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -424,6 +436,9 @@
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.browser</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.localizer" sv:type="String">
+      <sv:value>service.localizer</sv:value>
+    </sv:property>
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>model.browse.folder</sv:value>
     </sv:property>
@@ -553,6 +568,9 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.localizer" sv:type="String">
+      <sv:value>service.localizer</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.content</sv:value>
       <sv:value>extension.images</sv:value>
@@ -560,10 +578,10 @@
       <sv:value>extension.configuration</sv:value>
     </sv:property>
     <sv:property sv:name="headers" sv:type="String">
-      <sv:value>Documents</sv:value>
-      <sv:value>Images</sv:value>
-      <sv:value>Files</sv:value>
-      <sv:value>Configuration</sv:value>
+      <sv:value>section-documents</sv:value>
+      <sv:value>section-images</sv:value>
+      <sv:value>section-files</sv:value>
+      <sv:value>section-configuration</sv:value>
     </sv:property>
     <sv:property sv:name="behaviours" sv:type="String">
       <sv:value>toggle</sv:value>
@@ -1523,8 +1541,11 @@
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.management</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.localizer" sv:type="String">
+      <sv:value>service.localizer</sv:value>
+    </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>Users</sv:value>
+      <sv:value>mgmt-perspective-title</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.listUsers</sv:value>

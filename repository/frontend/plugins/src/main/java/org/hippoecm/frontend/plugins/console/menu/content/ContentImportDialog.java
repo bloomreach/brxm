@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -88,8 +89,8 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         }
     }
 
-    public String getTitle() {
-        return "Import content from file";
+    public IModel getTitle() {
+        return new Model("Import content from file");
     }
 
 

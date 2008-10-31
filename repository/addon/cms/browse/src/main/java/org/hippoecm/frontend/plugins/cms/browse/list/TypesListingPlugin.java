@@ -22,6 +22,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin;
@@ -52,15 +53,15 @@ public class TypesListingPlugin extends AbstractListingPlugin {
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
         
-        column = new ListColumn(new Model("Name"), "name");
+        column = new ListColumn(new StringResourceModel("typeslisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
 
-        column = new ListColumn(new Model("Type"), null);
+        column = new ListColumn(new StringResourceModel("typeslisting-type", this, null), null);
         column.setRenderer(new IListCellRenderer() {
             private static final long serialVersionUID = 1L;
             public Component getRenderer(String id, IModel model) {
-                return new Label(id, "Document type");
+                return new Label(id, new StringResourceModel("typeslisting-item", TypesListingPlugin.this, null));
             }
         });
         columns.add(column);

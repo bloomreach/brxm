@@ -19,9 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,14 +28,16 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
-
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.service.render.ListRenderService;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.service.render.AbstractRenderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SectionTreePlugin extends ListRenderService implements IPlugin {
     @SuppressWarnings("unused")
@@ -74,7 +73,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 final String plugin = (String) item.getModel().getObject();
                 AjaxLink link;
                 if(toggleBehaviour) {
-                    link = new AjaxLink("link", new Model(plugin)) {
+                    link = new AjaxLink("link") {
+                        private static final long serialVersionUID = 1L;
+
                             @Override
                             public void onClick(AjaxRequestTarget target) {
                                 boolean hasFocus = false;
@@ -100,7 +101,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                             }
                         };
                 } else {
-                    link = new AjaxLink("link", new Model(plugin)) {
+                    link = new AjaxLink("link") {
+                        private static final long serialVersionUID = 1L;
+
                             @Override
                             public void onClick(AjaxRequestTarget target) {
                                 for(Map.Entry<String, AbstractRenderService.ExtensionPoint> entry : children.entrySet()) {
@@ -125,7 +128,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 String label = plugin;
                 if(extensions.indexOf(plugin) < headers.size())
                     label = headers.get(extensions.indexOf(plugin));
-                link.add(new Label("header", new Model(label)));
+                link.add(new Label("header", new StringResourceModel(label, SectionTreePlugin.this, null)));
 
                 boolean added = false;
                 if (children.containsKey(plugin)) {

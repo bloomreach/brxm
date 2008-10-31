@@ -35,6 +35,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -128,8 +129,8 @@ public class CndExportDialog extends AbstractDialog {
         cancel.setVisible(false);
     }
 
-    public String getTitle() {
-        return "Export CND of namespace";
+    public IModel getTitle() {
+        return new Model("Export CND of namespace");
     }
 
     private List<String> getNsPrefixes(Session session) throws RepositoryException {

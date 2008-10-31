@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.wicket.model.Model;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -46,7 +47,7 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         super(context, config);
         item = (String) config.get(EmbedWorkflowPlugin.ITEM_ID);
 
-        add(new DialogLink("delete-dialog", new Model("Delete"), new IDialogFactory() {
+        add(new DialogLink("delete-dialog", new StringResourceModel("delete", this, null), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
@@ -75,7 +76,7 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         private static final long serialVersionUID = 1L;
 
         public DeleteDialog(FolderEmbeddedWorkflowPlugin plugin, IDialogService dialogWindow) {
-            super(plugin, dialogWindow, "Delete item");
+            super(plugin, dialogWindow, new StringResourceModel("delete-label", (Component) null, null));
 
             WorkflowsModel wflModel = (WorkflowsModel) plugin.getModel();
             if (wflModel.getNodeModel().getNode() == null) {

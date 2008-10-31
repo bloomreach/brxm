@@ -21,6 +21,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -136,12 +139,10 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     protected void donothing() {
     }
 
-    public String getTitle() {
-        try {
-            return "Close " + model.getNode().getName();
-        } catch (RepositoryException e) {
-            return "Close";
-        }
+    public IModel getTitle() {
+        return new StringResourceModel("close-document", this, null, new Object[] {
+                new PropertyModel(model, "node.name")
+        }, "Close {0}");
     }
 
 }

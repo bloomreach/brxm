@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -64,7 +65,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         onModelChanged();
 
-        addWorkflowAction("edit-dialog", new Visibility() {
+        addWorkflowAction("edit-dialog", new StringResourceModel("edit", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -93,7 +94,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestPublication-dialog", new Visibility() {
+        addWorkflowAction("requestPublication-dialog", new StringResourceModel("request-publication", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -114,7 +115,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestDePublication-dialog", new Visibility() {
+        addWorkflowAction("requestDePublication-dialog", new StringResourceModel("request-depublication", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
@@ -135,7 +136,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         });
 
-        addWorkflowAction("requestDeletion-dialog", new Visibility() {
+        addWorkflowAction("requestDeletion-dialog", new StringResourceModel("request-delete", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {

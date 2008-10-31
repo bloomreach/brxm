@@ -27,6 +27,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -60,8 +61,8 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
         add(message);
     }
 
-    public String getTitle() {
-        return "Import node type definition file";
+    public IModel getTitle() {
+        return new Model("Import node type definition file");
     }
 
 

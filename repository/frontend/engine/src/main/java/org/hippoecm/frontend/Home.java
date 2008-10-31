@@ -16,14 +16,18 @@
 package org.hippoecm.frontend;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.dialog.DialogService;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.i18n.IModelProvider;
+import org.hippoecm.frontend.i18n.JcrSearchingProvider;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.JcrSessionModel;
@@ -39,7 +43,7 @@ import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 
-public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService {
+public class Home extends WebPage implements IServiceTracker<IRenderService>, IRenderService, IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -48,6 +52,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private PluginManager mgr;
     private IRenderService root;
     private IPluginConfigService pluginConfigService;
+    private IModelProvider<IModel> localizer;
 
     public Home() {
         add(new EmptyPanel("root"));
@@ -100,6 +105,8 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
         context.start(pluginCluster);
+
+        localizer = new JcrSearchingProvider();
     }
 
     public Component getComponent() {
@@ -161,6 +168,14 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     public void onDetach() {
         mgr.detach();
         super.onDetach();
+    }
+
+    public String getString(Map<String, String> keys) {
+        IModel model = localizer.getModel(keys);
+        if (model != null) {
+            return (String) model.getObject();
+        }
+        return null;
     }
 
 }

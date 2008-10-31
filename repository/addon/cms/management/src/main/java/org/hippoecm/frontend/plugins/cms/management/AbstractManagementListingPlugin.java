@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,7 +46,7 @@ public abstract class AbstractManagementListingPlugin extends AbstractListingPlu
     @Override
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
-        columns.add(new ListColumn(new Model("Name"), "name"));
+        columns.add(new ListColumn(new StringResourceModel("mgmt-listing-name", this, null), "name"));
         return new TableDefinition(columns, false);
     }
 

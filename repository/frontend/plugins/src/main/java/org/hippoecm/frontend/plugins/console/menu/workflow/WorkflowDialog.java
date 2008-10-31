@@ -24,8 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -84,7 +84,7 @@ public class WorkflowDialog extends AbstractDialog {
     public void cancel() {
     }
 
-    public String getTitle() {
+    public IModel getTitle() {
         JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
         String path;
         try {
@@ -92,6 +92,6 @@ public class WorkflowDialog extends AbstractDialog {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return "Workflow for " + path;
+        return new Model("Workflow for " + path);
     }
 }

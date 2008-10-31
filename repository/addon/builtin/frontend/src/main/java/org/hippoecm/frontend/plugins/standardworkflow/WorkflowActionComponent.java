@@ -15,21 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Set;
-
 import org.apache.wicket.IClusterable;
-
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.DialogAction;
 
 public class WorkflowActionComponent implements IClusterable {
     private static final long serialVersionUID = 1L;
         
     private String id;
-    private String label;
+    private IModel label;
     private String icon;
     private DialogAction action;
 
-    public WorkflowActionComponent(String id, String label, String icon, DialogAction action) {
+    public WorkflowActionComponent(String id, IModel label, String icon, DialogAction action) {
         this.id = id;
         this.label = label;
         this.icon = icon;
@@ -40,7 +38,7 @@ public class WorkflowActionComponent implements IClusterable {
         return id;
     }
         
-    public String getLabel() {
+    public IModel getLabel() {
         return label;
     }
 

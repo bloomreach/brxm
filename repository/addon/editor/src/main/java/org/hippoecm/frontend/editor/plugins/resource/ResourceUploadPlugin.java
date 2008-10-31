@@ -25,7 +25,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -71,7 +71,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
             super(name);
 
             add(fileUploadField = new FileUploadField("fileInput"));
-            add(new Button("submit", new Model("Upload")) {
+            add(new Button("submit", new StringResourceModel("upload", ResourceUploadPlugin.this, null)) {
                 private static final long serialVersionUID = 1L;
 
                 @Override

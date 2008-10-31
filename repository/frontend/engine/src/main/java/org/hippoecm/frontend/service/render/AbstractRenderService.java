@@ -33,8 +33,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.util.string.PrependingStringBuffer;
+import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.i18n.IModelProvider;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -46,7 +48,8 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRenderService extends Panel implements IModelListener, IRenderService {
+public abstract class AbstractRenderService extends Panel implements IModelListener, IRenderService,
+        IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -62,6 +65,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String FEEDBACK = "wicket.feedback";
     public static final String BEHAVIOR = "wicket.behavior";
+    public static final String LOCALIZER = "wicket.localizer";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -73,55 +77,42 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     private final IPluginConfig config;
     protected LinkedHashMap<String, ExtensionPoint> children;
     private IRenderService parent;
-    
-    public static final HeaderContributor forCss(final String location)
-    {
-        return new HeaderContributor(new IHeaderContributor()
-        {
+
+    public static final HeaderContributor forCss(final String location) {
+        return new HeaderContributor(new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
 
-            public void renderHead(IHeaderResponse response)
-            {
+            public void renderHead(IHeaderResponse response) {
                 response.renderCSSReference(returnFixedRelativePath(location));
             }
         });
     }
-    
-    public static final HeaderContributor forJavaScript(final String location)
-    {
-        return new HeaderContributor(new IHeaderContributor()
-        {
+
+    public static final HeaderContributor forJavaScript(final String location) {
+        return new HeaderContributor(new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
 
-            public void renderHead(IHeaderResponse response)
-            {
+            public void renderHead(IHeaderResponse response) {
                 response.renderJavascriptReference(returnFixedRelativePath(location));
             }
         });
     }
-    
+
     // Adds ../ links to make the location relative to the root of the webapp,
     // provided it's not a fully-qualified URL.
-    public static final String returnFixedRelativePath(String location)
-    {
+    public static final String returnFixedRelativePath(String location) {
         // WICKET-59 allow external URLs, WICKET-612 allow absolute URLs.
-        if (location.startsWith("http://") || location.startsWith("https://") ||
-            location.startsWith("/"))
-        {
+        if (location.startsWith("http://") || location.startsWith("https://") || location.startsWith("/")) {
             return location;
-        }
-        else
-        {
+        } else {
             return getFixedRelativePathPrefixToContextRoot() + location;
         }
     }
-    
-    public static final String getFixedRelativePathPrefixToContextRoot()
-    {
+
+    public static final String getFixedRelativePathPrefixToContextRoot() {
         WebRequest request = (WebRequest) RequestCycle.get().getRequest();
 
-        if (RequestContext.get().isPortletRequest())
-        {
+        if (RequestContext.get().isPortletRequest()) {
             return request.getHttpServletRequest().getContextPath() + "/";
         }
 
@@ -129,9 +120,8 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         String tmp = RequestCycle.get().getRequest().getRelativePathPrefixToWicketHandler();
         PrependingStringBuffer prepender = new PrependingStringBuffer(tmp);
 
-        String path = WicketURLDecoder.PATH_INSTANCE.decode(request.getPath());        
-        if (path == null || path.length() == 0)
-        {
+        String path = WicketURLDecoder.PATH_INSTANCE.decode(request.getPath());
+        if (path == null || path.length() == 0) {
             path = "";
         }
 
@@ -144,38 +134,31 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         // Note: do not call RequestUtils.decode() on getServletPath ... it is
         //       already url-decoded (JIRA WICKET-1624)
         String servletPath = request.getServletPath();
-        
 
         // We need to substitute the %3A (or the other way around) to be able to
         // get a good match, as parts of the path may have been escaped while
         // others arent
-        
+
         // Add check if path is empty
-        if (!"".equals(path) && servletPath.endsWith(path))
-        {
+        if (!"".equals(path) && servletPath.endsWith(path)) {
             int len = servletPath.length() - path.length() - 1;
-            if (len < 0)
-            {
+            if (len < 0) {
                 len = 0;
             }
             wicketPath = servletPath.substring(0, len);
         }
         // We're running as a servlet
-        else
-        {
+        else {
             wicketPath = servletPath;
         }
-
 
         int start = 0;
         // add skip for starting slash
         if (wicketPath.startsWith("/")) {
             start = 1;
         }
-        for (int i = start; i < wicketPath.length(); i++)
-        {
-            if (wicketPath.charAt(i) == '/')
-            {
+        for (int i = start; i < wicketPath.length(); i++) {
+            if (wicketPath.charAt(i) == '/') {
                 prepender.prepend("../");
             }
         }
@@ -231,13 +214,12 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
                 cssClasses = sb.toString();
             }
         }
-        
-        
+
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
             IDialogService dialogService = getDialogService();
             for (String skin : skins) {
-                HeaderContributor cssContributor = forCss(skin); 
+                HeaderContributor cssContributor = forCss(skin);
                 add(cssContributor);
                 if (dialogService != null && dialogService instanceof DialogWindow) {
                     ((DialogWindow) dialogService).addDialogBehavior(cssContributor);
@@ -405,6 +387,21 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     public IRenderService getParentService() {
         return parent;
     }
+
+    // implement IStringResourceProvider
+    @SuppressWarnings("unchecked")
+    public String getString(Map<String, String> criteria) {
+        IModelProvider<IModel> provider = (IModelProvider<IModel>) context.getService(config.getString(LOCALIZER), IModelProvider.class);
+        if (provider != null) {
+            IModel model = provider.getModel(criteria);
+            if (model != null) {
+                return (String) model.getObject();
+            }
+        }
+        return null;
+    }
+
+    // detach
 
     @Override
     protected void onDetach() {

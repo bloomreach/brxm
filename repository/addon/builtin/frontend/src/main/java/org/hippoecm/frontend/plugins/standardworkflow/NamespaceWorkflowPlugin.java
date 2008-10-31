@@ -15,19 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugins.standardworkflow.dialogs.NamespaceDialog;
-import org.hippoecm.frontend.service.IJcrService;
 
 public class NamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -38,21 +37,20 @@ public class NamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
     public NamespaceWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-        final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
-        DialogAction action;
-        WorkflowActionComponent choice;
+        List<WorkflowActionComponent> actions = new LinkedList<WorkflowActionComponent>();
 
-        Map<String, WorkflowActionComponent> actions = new TreeMap<String, WorkflowActionComponent>();
+        DialogAction action = new DialogAction(new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
 
-        action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new NamespaceDialog(NamespaceWorkflowPlugin.this, dialogService);
             }
         }, getDialogService());
-        choice = new WorkflowActionComponent("createNamespaceRequest-dialog", "Create namespace", (String)null, action);
-        actions.put(choice.getId(), choice);
+        WorkflowActionComponent choice = new WorkflowActionComponent("createNamespaceRequest-dialog",
+                new StringResourceModel("create-namespace", this, null), (String) null, action);
+        actions.add(choice);
 
         add(new WorkflowActionComponentDropDownChoice("actions", actions));
     }
+
 }

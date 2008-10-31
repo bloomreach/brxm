@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,8 @@ public class EditPerspective extends Perspective implements IEditService {
         JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         try {
             if (nodeModel != null && nodeModel.getNode() != null) {
-                setTitle(nodeModel.getNode().getName());
+                // FIXME: use translated node name when available
+                setTitle(ISO9075Helper.decodeLocalName(nodeModel.getNode().getName()));
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

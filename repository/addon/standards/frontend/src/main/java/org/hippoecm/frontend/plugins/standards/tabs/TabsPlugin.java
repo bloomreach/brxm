@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -34,7 +35,6 @@ import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,11 +186,12 @@ public class TabsPlugin extends RenderPlugin {
 
         // implement ITab interface
 
-        public Model getTitle() {
+        public IModel getTitle() {
             IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
             ITitleDecorator decorator = getPluginContext().getService(reference.getServiceId(), ITitleDecorator.class);
             if (decorator != null) {
-                String fulltitle = ISO9075Helper.decodeLocalName(decorator.getTitle());
+                IModel titleModel = decorator.getTitle();
+                String fulltitle = (String) titleModel.getObject();
                 int length = fulltitle.length();
                 String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
                 length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);

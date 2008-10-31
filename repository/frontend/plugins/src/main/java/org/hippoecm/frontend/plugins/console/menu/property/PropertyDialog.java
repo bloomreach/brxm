@@ -22,13 +22,13 @@ import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.Session;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -38,7 +38,6 @@ import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,8 +113,8 @@ public class PropertyDialog extends AbstractDialog {
         plugin.setModel(newNodeModel);
     }
 
-    public String getTitle() {
-        return "Add a new Property";
+    public IModel getTitle() {
+        return new Model("Add a new Property");
     }
 
 

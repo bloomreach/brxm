@@ -19,6 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -79,8 +81,8 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
         
     }
 
-    public String getTitle() {
-        return "Add namespace";
+    public IModel getTitle() {
+        return new Model("Add namespace");
     }
 
     public String getNamespaceName() {

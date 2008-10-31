@@ -15,9 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -43,26 +44,28 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
 
         IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
         final IServiceReference<IJcrService> jcrRef = context.getReference(jcrService);
+
+        List<WorkflowActionComponent> actions = new LinkedList<WorkflowActionComponent>();
         DialogAction action;
         WorkflowActionComponent choice;
-
-        Map<String, WorkflowActionComponent> actions = new TreeMap<String, WorkflowActionComponent>();
 
         action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new RemodelDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
-        choice = new WorkflowActionComponent("remodelRequest-dialog", "Update all content", (String)null, action);
-        actions.put(choice.getId(), choice);
+        choice = new WorkflowActionComponent("remodelRequest-dialog", new StringResourceModel("update-content", this,
+                null), (String) null, action);
+        actions.add(choice);
 
         action = new DialogAction(new IDialogFactory() {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new CreateTypeDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
-        choice = new WorkflowActionComponent("createTypeRequest-dialog", "Create new type", (String)null, action);
-        actions.put(choice.getId(), choice);
+        choice = new WorkflowActionComponent("createTypeRequest-dialog", new StringResourceModel("create-type", this,
+                null), (String) null, action);
+        actions.add(choice);
 
         add(new WorkflowActionComponentDropDownChoice("actions", actions));
     }
