@@ -65,8 +65,7 @@ ________________________________________________________________________________
     <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
     <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
     <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_number_to_documenttype.html'>Add a number field to a documenttype</a>.</li>
-    <li><a href='./add_markedup_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
    </ul>       
   </subsection>
 

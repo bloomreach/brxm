@@ -77,7 +77,7 @@
 
                 <p>
                 First checkout the source code from the svn repository and
-                <a href="../../building/maven.html">build it using  Maven 2</a>.
+                <a href="../../core/building/maven.html">build it using  Maven 2</a>.
                 </p>
 <source>
 svn co http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk hippo-ecm

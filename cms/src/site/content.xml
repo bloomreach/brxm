@@ -500,6 +500,12 @@
    <img>Hippo login screenshot</img>
    <subsection>Next</subsection>
   </document>
+  <document ext="xml" filename="logout" path="..///delve_into/user/cms_admins/howto">Logout
+   <section>Logout</section>
+   <shortdesc>How to logout</shortdesc>
+   <img>logout screenshot</img>
+   <subsection>Next</subsection>
+  </document>
   <document ext="xml" filename="save_settings" path="..///delve_into/user/cms_admins/howto">Save settings
    <section>Save settings</section>
    <shortdesc>How to save settings, like the properties of a user of a group.</shortdesc>
@@ -631,66 +637,6 @@
    <section>Contributors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of contributor.</shortdesc>
   </document>
-  <document ext="xml" filename="creating_a_document_type_and_template" path="..///delve_into/user/contributors/tour">Creating a document type and template
-   <section>Creating a document type and template</section>
-   <subsection>Create a Namespace</subsection>
-   <img>create namespace</img>
-   <subsection>Create a new Type</subsection>
-   <img>create type</img>
-   <subsection>Edit Model</subsection>
-   <img>edit model</img>
-   <subsection>Update Content</subsection>
-   <img>edit model</img>
-  </document>
-  <document ext="xml" filename="dashboard" path="..///delve_into/user/contributors/tour">The dashboard
-   <section>The dashboard</section>
-   <img>Navigating the CMS: the dashboard</img>
-  </document>
-  <document ext="xml" filename="editing_a_document" path="..///delve_into/user/contributors/tour">Editing a document
-   <section>Editing a document</section>
-   <img>Select a document to see the 'edit' action.</img>
-   <img>Editing a document</img>
-  </document>
-  <document ext="xml" filename="index" path="..///delve_into/user/contributors/tour">Hippo CMS User tour
-   <section>Hippo CMS User tour</section>
-   <subsection>Login</subsection>
-  </document>
-  <document ext="xml" filename="logging_in" path="..///delve_into/user/contributors/tour">Logging in
-   <section>Logging in</section>
-   <subsection>Log in</subsection>
-   <img>Logging in</img>
-  </document>
-  <document ext="xml" filename="managing_users_and_groups" path="..///delve_into/user/contributors/tour">Managing users and groups
-   <section>Managing users and groups</section>
-   <subsection>Creating a new user</subsection>
-   <img>newuser</img>
-   <img>newuser</img>
-   <img>newuser</img>
-   <subsection>Creating a new group</subsection>
-   <img>newgroup</img>
-   <img>newgroup</img>
-   <img>newgroup</img>
-  </document>
-  <document ext="xml" filename="navigating_the_cms" path="..///delve_into/user/contributors/tour">Navigating the CMS
-   <section>Navigating the CMS</section>
-   <subsection>Static perspectives</subsection>
-   <img>Dashboard tab selected</img>
-   <img>Browse tab selected</img>
-   <subsection>Dynamic perspectives</subsection>
-   <img>Document 'yourArticle' selected</img>
-   <section>Navigating the repository</section>
-   <subsection>Actions</subsection>
-   <img>Browse</img>
-  </document>
-  <document ext="xml" filename="versioning" path="..///delve_into/user/contributors/tour">Versioning
-   <section>Versioning</section>
-  </document>
-  <document ext="xml" filename="workflow" path="..///delve_into/user/contributors/tour">Workflow
-   <section>Workflow</section>
-  </document>
-  <document ext="xml" filename="working_with_authorizations" path="..///delve_into/user/contributors/tour">Working with authorizations
-   <section>Working with authorizations</section>
-  </document>
   <document ext="xml" filename="tour" path="..///delve_into/user/contributors">Hippo CMS Contributor Tour
    <section>Hippo CMS Contributor Tour</section>
    <shortdesc>To get introduced in the role of CMS Contributor, take the following tour.</shortdesc>
@@ -750,10 +696,6 @@
    <section>Editors Guide</section>
    <shortdesc>Guide for Hippo CMS users to perform the role of editor.</shortdesc>
   </document>
-  <document ext="xml" filename="index" path="..///delve_into/user/editors/tour">Hippo CMS User tour
-   <section>Hippo CMS User tour</section>
-   <subsection>Login</subsection>
-  </document>
   <document ext="xml" filename="tour" path="..///delve_into/user/editors">Hippo CMS Editor Tour
    <section>Hippo CMS Editor Tour</section>
    <shortdesc>To get introduced in the role of CMS Editor, take the following tour.</shortdesc>
@@ -766,6 +708,10 @@
    <section>Boolean</section>
    <shortdesc>What is a boolean</shortdesc>
   </document>
+  <document ext="xml" filename="documenttype" path="..///delve_into/user/information_architects/concepts">Documenttype
+   <section>Documenttype</section>
+   <shortdesc>What is a documenttype</shortdesc>
+  </document>
   <document ext="xml" filename="index" path="..///delve_into/user/information_architects/concepts">CMS Information Architects Concepts
    <section>CMS Information Architects Concepts</section>
    <shortdesc>A collection of concepts a CMS information architect may want to know.</shortdesc>
@@ -774,6 +720,14 @@
   <document ext="xml" filename="mandatory_or_optional" path="..///delve_into/user/information_architects/concepts">Mandatory or optional field
    <section>Mandatory or optional field</section>
    <shortdesc>Wat is a mandatory or optional field in a documenttype?</shortdesc>
+  </document>
+  <document ext="xml" filename="namespace" path="..///delve_into/user/information_architects/concepts">namespace
+   <section>namespace</section>
+   <shortdesc>What is a namespace</shortdesc>
+  </document>
+  <document ext="xml" filename="string" path="..///delve_into/user/information_architects/concepts">string
+   <section>string</section>
+   <shortdesc>What is a string</shortdesc>
   </document>
   <document ext="xml" filename="add_boolean_to_documenttype" path="..///delve_into/user/information_architects/howto">Add boolean to Documentttype
    <section>Add boolean to Documentttype</section>

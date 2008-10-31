@@ -94,11 +94,11 @@
 	 </tr>
          <tr>
           <td>         
-           <a href="implementation/index.html"><em><span class='web-48 icon-48'/></em>
+           <a href="web/index.html"><em><span class='web-48 icon-48'/></em>
 	   </a>
 	  </td>
           <td>
-           <a href="implementation/index.html"><em>Website Development</em></a>
+           <a href="web/index.html"><em>Website Development</em></a>
 	  </td>
           <td>
              Hippo ECM is designed to make your own website development easy. 
@@ -115,10 +115,10 @@
 	 </tr>
      <tr>
           <td>         
-           <a href="development/index.html"><span class='hippo-core-48 icon-48'/></a>
+           <a href="core/index.html"><span class='hippo-core-48 icon-48'/></a>
 	  </td>
           <td>
-           <a href="development/index.html"><em>Hacking the core</em></a>
+           <a href="core/index.html"><em>Hacking the core</em></a>
 	  </td>
           <td>
              For Hippo CMS core developers, who develop the CMS core engines and the CMS core plugins and

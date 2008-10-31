@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (665 terms)">
+    <section name="Term index (633 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -88,12 +88,6 @@
             <a href="..///delve_into/custom/howto/customize_versioning.html#About_the_user_perspective">About the user perspective</a>
           </td>
           <td>Customize versioning</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Actions">Actions</a>
-          </td>
-          <td>Navigating the CMS</td>
         </tr>
         <tr>
           <td>
@@ -388,18 +382,6 @@
             <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Boolean">Boolean</a>
           </td>
           <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Browse">Browse</a>
-          </td>
-          <td>Navigating the CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Browse_tab_selected">Browse tab selected</a>
-          </td>
-          <td>Navigating the CMS</td>
         </tr>
         <tr>
           <td>
@@ -751,21 +733,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Create_a_Namespace">Create a Namespace</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/web/add-ons/howto/editing_template.html#Create_a_new_project">Create a new project</a>
           </td>
           <td>Create an Editing Template Add-on</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Create_a_new_Type">Create a new Type</a>
-          </td>
-          <td>Creating a document type and template</td>
         </tr>
         <tr>
           <td>
@@ -835,12 +805,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_namespace">create namespace</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/user/information_architects/howto/create_namespace.html#Create_Namespace">Create Namespace</a>
           </td>
           <td>Create Namespace</td>
@@ -853,33 +817,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#create_type">create type</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/howto/customize_skin.html#Create_your_own_skin">Create your own skin</a>
           </td>
           <td>Frontend skin customization</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Creating_a_document_type_and_template">Creating a document type and template</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#Creating_a_new_group">Creating a new group</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#Creating_a_new_user">Creating a new user</a>
-          </td>
-          <td>Managing users and groups</td>
         </tr>
         <tr>
           <td>
@@ -946,12 +886,6 @@
             <a href="..///delve_into/sysadmin/installation/plugins.html#Customizing_the_CMS_configuration">Customizing the CMS configuration</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Dashboard_tab_selected">Dashboard tab selected</a>
-          </td>
-          <td>Navigating the CMS</td>
         </tr>
         <tr>
           <td>
@@ -1111,12 +1045,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Document_'yourArticle'_selected">Document 'yourArticle' selected</a>
-          </td>
-          <td>Navigating the CMS</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/user/contributors/howto/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
           </td>
           <td>Goto a Document</td>
@@ -1132,6 +1060,12 @@
             <a href="..///delve_into/user/information_architects/howto/document_types/index.html#Document_Types">Document Types</a>
           </td>
           <td>Document Types</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/information_architects/concepts/documenttype.html#Documenttype">Documenttype</a>
+          </td>
+          <td>Documenttype</td>
         </tr>
         <tr>
           <td>
@@ -1153,12 +1087,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Dynamic_perspectives">Dynamic perspectives</a>
-          </td>
-          <td>Navigating the CMS</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Dynamic_Services">Dynamic Services</a>
           </td>
           <td>Frontend Plugin Architecture</td>
@@ -1168,36 +1096,6 @@
             <a href="..///delve_into/sysadmin/installation/index.html#EAR">EAR</a>
           </td>
           <td>Installation</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Edit_Model">Edit Model</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#edit_model">edit model</a>
-          </td>
-          <td>Creating a document type and template</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/editing_a_document.html#Editing_a_document">Editing a document</a>
-          </td>
-          <td>Editing a document</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/editing_a_document.html#Editing_a_document">Editing a document</a>
-          </td>
-          <td>Editing a document</td>
         </tr>
         <tr>
           <td>
@@ -1808,18 +1706,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/index.html#Hippo_CMS_User_tour">Hippo CMS User tour</a>
-          </td>
-          <td>Hippo CMS User tour</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/editors/tour/index.html#Hippo_CMS_User_tour">Hippo CMS User tour</a>
-          </td>
-          <td>Hippo CMS User tour</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/user/cms_admins/howto/login.html#Hippo_login_screenshot">Hippo login screenshot</a>
           </td>
           <td>Login as Admin</td>
@@ -2183,6 +2069,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/cms_admins/howto/logout.html#How_to_logout">How to logout</a>
+          </td>
+          <td>Logout</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/logout.html#How_to_logout">How to logout</a>
           </td>
           <td>Logout</td>
@@ -2513,36 +2405,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/logging_in.html#Log_in">Log in</a>
-          </td>
-          <td>Logging in</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/logging_in.html#Logging_in">Logging in</a>
-          </td>
-          <td>Logging in</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/logging_in.html#Logging_in">Logging in</a>
-          </td>
-          <td>Logging in</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/index.html#Login">Login</a>
-          </td>
-          <td>Hippo CMS User tour</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/editors/tour/index.html#Login">Login</a>
-          </td>
-          <td>Hippo CMS User tour</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/user/information_architects/howto/login.html#Login">Login</a>
           </td>
           <td>Login</td>
@@ -2567,6 +2429,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/cms_admins/howto/logout.html#Logout">Logout</a>
+          </td>
+          <td>Logout</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/logout.html#Logout">Logout</a>
           </td>
           <td>Logout</td>
@@ -2580,6 +2448,12 @@
         <tr>
           <td>
             <a href="..///delve_into/user/information_architects/howto/logout.html#Logout">Logout</a>
+          </td>
+          <td>Logout</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/cms_admins/howto/logout.html#logout_screenshot">logout screenshot</a>
           </td>
           <td>Logout</td>
         </tr>
@@ -2618,12 +2492,6 @@
             <a href="..///delve_into/custom/howto/hello_model.html#Making_the_Hello_World_plugin_context_sensitive">Making the Hello World plugin context sensitive</a>
           </td>
           <td>Making the Hello World plugin context sensitive</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#Managing_users_and_groups">Managing users and groups</a>
-          </td>
-          <td>Managing users and groups</td>
         </tr>
         <tr>
           <td>
@@ -2681,6 +2549,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/information_architects/concepts/namespace.html#namespace">namespace</a>
+          </td>
+          <td>namespace</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/information_architects/howto/naming_a_field.html#Naming_a_field">Naming a field</a>
           </td>
           <td>Naming a field</td>
@@ -2693,63 +2567,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Navigating_the_CMS">Navigating the CMS</a>
-          </td>
-          <td>Navigating the CMS</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/dashboard.html#Navigating_the_CMS:_the_dashboard">Navigating the CMS: the dashboard</a>
-          </td>
-          <td>The dashboard</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Navigating_the_repository">Navigating the repository</a>
-          </td>
-          <td>Navigating the CMS</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/web/index.html#Need_more_functionality_">Need more functionality?</a>
           </td>
           <td>Website Development</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newgroup">newgroup</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/managing_users_and_groups.html#newuser">newuser</a>
-          </td>
-          <td>Managing users and groups</td>
         </tr>
         <tr>
           <td>
@@ -2822,6 +2642,12 @@
             <a href="..///delve_into/user/cms_admins/howto/login.html#Next">Next</a>
           </td>
           <td>Login as Admin</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/cms_admins/howto/logout.html#Next">Next</a>
+          </td>
+          <td>Logout</td>
         </tr>
         <tr>
           <td>
@@ -3539,12 +3365,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/editing_a_document.html#Select_a_document_to_see_the_'edit'_action_">Select a document to see the 'edit' action.</a>
-          </td>
-          <td>Editing a document</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/sysadmin/installation/plugins.html#Sending_feedback">Sending feedback</a>
           </td>
           <td>Installing plugins from the Hippo forge</td>
@@ -3605,9 +3425,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/navigating_the_cms.html#Static_perspectives">Static perspectives</a>
+            <a href="..///delve_into/user/information_architects/concepts/string.html#string">string</a>
           </td>
-          <td>Navigating the CMS</td>
+          <td>string</td>
         </tr>
         <tr>
           <td>
@@ -3683,12 +3503,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/dashboard.html#The_dashboard">The dashboard</a>
-          </td>
-          <td>The dashboard</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/jcr/jcr_dropbox_example.html#The_Demo">The Demo</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -3759,12 +3573,6 @@
             <a href="..///delve_into/user/cms_admins/howto/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
           </td>
           <td>Type in editing region</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/creating_a_document_type_and_template.html#Update_Content">Update Content</a>
-          </td>
-          <td>Creating a document type and template</td>
         </tr>
         <tr>
           <td>
@@ -3852,12 +3660,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/versioning.html#Versioning">Versioning</a>
-          </td>
-          <td>Versioning</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/user/contributors/howto/browsing_history_of_document.html#Versioning_display_screenshot">Versioning display screenshot</a>
           </td>
           <td>Browsing history of a document</td>
@@ -3918,6 +3720,24 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/information_architects/concepts/documenttype.html#What_is_a_documenttype">What is a documenttype</a>
+          </td>
+          <td>Documenttype</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/information_architects/concepts/namespace.html#What_is_a_namespace">What is a namespace</a>
+          </td>
+          <td>namespace</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/information_architects/concepts/string.html#What_is_a_string">What is a string</a>
+          </td>
+          <td>string</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
           </td>
           <td>What is Hippo CMS?</td>
@@ -3954,21 +3774,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/contributors/tour/workflow.html#Workflow">Workflow</a>
-          </td>
-          <td>Workflow</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/sysadmin/configuration/nodes/workflow.html#Workflow_configuration">Workflow configuration</a>
           </td>
           <td>Workflow configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/contributors/tour/working_with_authorizations.html#Working_with_authorizations">Working with authorizations</a>
-          </td>
-          <td>Working with authorizations</td>
         </tr>
         <tr>
           <td>
