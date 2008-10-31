@@ -15,11 +15,10 @@ archetype-start directory:
   
 Then run the following command to create your project:
 
-   mvn archetype:create 
-     -DgroupId=org.example 
-     -DartifactId=myproject 
-     -Dversion=1.01.00
-     -DarchetypeGroupId=org.onehippo.ecm.hst
-     -DarchetypeArtifactId=site-toolkit-archetype 
-     -DarchetypeVersion=2.01.00 
-
+mvn archetype:create \
+ -DgroupId=org.example \
+ -DartifactId=myproject \
+ -Dversion=1.01.00 \
+ -DarchetypeGroupId=org.onehippo.ecm.hst \
+ -DarchetypeArtifactId=site-toolkit-archetype \
+ -DarchetypeVersion=2.01.00 

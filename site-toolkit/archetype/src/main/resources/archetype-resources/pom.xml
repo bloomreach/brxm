@@ -44,25 +44,25 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${dollar}{hippoecm.version}</version>
+        <version>${hippoecm.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-components</artifactId>
-        <version>${dollar}{hst.version}</version>
+        <version>${hst.version}</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-core</artifactId>
-        <version>${dollar}{hst.version}</version>
+        <version>${hst.version}</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-addon-repository</artifactId>
-        <version>${dollar}{hst.version}</version>
+        <version>${hst.version}</version>
         <type>jar</type>
       </dependency>
     </dependencies>
