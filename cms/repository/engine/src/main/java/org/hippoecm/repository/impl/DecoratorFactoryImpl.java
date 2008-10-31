@@ -40,52 +40,27 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
 
     private final Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
 
-    protected WeakHashMap<Repository,RepositoryDecorator> repositoryDecorators;
-    protected WeakHashMap<Session,SessionDecorator> sessionDecorators;
-    protected WeakHashMap<Workspace,WorkspaceDecorator> workspaceDecorators;
-
     public DecoratorFactoryImpl() {
-        repositoryDecorators = new WeakHashMap<Repository,RepositoryDecorator>();
-        sessionDecorators = new WeakHashMap<Session,SessionDecorator>();
-        workspaceDecorators = new WeakHashMap<Workspace,WorkspaceDecorator>();
     }
 
     public Repository getRepositoryDecorator(Repository repository) {
-        if(!repositoryDecorators.containsKey(repository)) {
-            RepositoryDecorator wrapper = new RepositoryDecorator(this, repository);
-            repositoryDecorators.put(repository, wrapper);
-            return wrapper;
-        } else
-            return repositoryDecorators.get(repository);
+        return new RepositoryDecorator(this, repository);
     }
 
     public Session getSessionDecorator(Repository repository, Session session) {
-        if(!sessionDecorators.containsKey(session)) {
-            SessionDecorator wrapper;
-            if(session instanceof XASession) {
-                try {
-                    wrapper = new SessionDecorator(this, repository, (XASession)session);
-                    sessionDecorators.put(session, wrapper);
-                    return wrapper;
-                } catch(RepositoryException ex) {
-                    log.error("cannot compose transactional session, reverting to regular session");
-                    // fall through
-                }
+         if(session instanceof XASession) {
+            try {
+                return new SessionDecorator(this, repository, (XASession)session);
+            } catch(RepositoryException ex) {
+                log.error("cannot compose transactional session, reverting to regular session");
+                // fall through
             }
-            wrapper = new SessionDecorator(this, repository, session);
-            sessionDecorators.put(session, wrapper);
-            return wrapper;
-        } else
-            return sessionDecorators.get(session);
+        }
+        return new SessionDecorator(this, repository, session);
     }
 
     public Workspace getWorkspaceDecorator(Session session, Workspace workspace) {
-        if(!workspaceDecorators.containsKey(workspace)) {
-            WorkspaceDecorator wrapper = new WorkspaceDecorator(this, session, workspace);
-            workspaceDecorators.put(workspace, wrapper);
-            return wrapper;
-        } else
-            return workspaceDecorators.get(workspace);
+        return new WorkspaceDecorator(this, session, workspace);
     }
 
     public Node getBasicNodeDecorator(Session session, Node node) {

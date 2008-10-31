@@ -71,6 +71,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
@@ -249,6 +250,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
         hippoRepositoryFactory = new DecoratorFactoryImpl();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
+        repository = new CheckedDecoratorFactory().getRepositoryDecorator(repository);
 
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init

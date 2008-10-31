@@ -43,7 +43,6 @@ import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefWriter;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.decorating.SessionDecorator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +73,7 @@ public class ExportCndTest extends TestCase {
         NamespaceResolver nsRes = new SessionNamespaceResolver(session);
         Writer out = new StringWriter();
         try {
-            CompactNodeTypeDefWriter.write(nodeTypeDefs, nsRes, (SessionImpl) SessionDecorator.unwrap(session), out);
+            CompactNodeTypeDefWriter.write(nodeTypeDefs, nsRes, (SessionImpl)(org.hippoecm.repository.decorating.SessionDecorator.unwrap(org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session))), out);
         } catch (IOException e) {
             e.printStackTrace();
         }
