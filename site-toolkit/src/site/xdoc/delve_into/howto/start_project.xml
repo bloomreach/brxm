@@ -55,7 +55,7 @@ mvn archetype:create \
  -DarchetypeRepository=http://repository.hippocms.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
  -DarchetypeArtifactId=site-toolkit-archetype \
- -DarchetypeVersion=2.01.00
+ -DarchetypeVersion=2.01.01-SNAPSHOT
         </source>
         
         <p>

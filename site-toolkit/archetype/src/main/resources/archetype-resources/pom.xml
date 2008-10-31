@@ -36,7 +36,7 @@
 
   <properties>
     <hippoecm.version>2.01.00.14266</hippoecm.version>
-    <hst.version>2.01.00</hst.version>
+    <hst.version>2.01.01-SNAPSHOT</hst.version>
   </properties>
 
   <dependencyManagement>
