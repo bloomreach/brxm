@@ -1,11 +1,11 @@
 #set($hyphen = '-')
 #set($underscore = '_')
-<'${rootArtifactId.replace($hyphen,$underscore)}'='http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0'>
+<'${artifactId.replace($hyphen,$underscore)}'='http://www.hippoecm.org/hst2/${artifactId.replace($hyphen,$underscore)}/1.0'>
 <'hippostd'='http://www.hippoecm.org/hippostd/nt/1.0'>
 <'hippo'='http://www.hippoecm.org/nt/1.0'>
 
-[${rootArtifactId.replace($hyphen,$underscore)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
-- ${rootArtifactId.replace($hyphen,$underscore)}:body (string)
-- ${rootArtifactId.replace($hyphen,$underscore)}:summary (string)
-- ${rootArtifactId.replace($hyphen,$underscore)}:title (string)
-- ${rootArtifactId.replace($hyphen,$underscore)}:date (date)
+[${artifactId.replace($hyphen,$underscore)}:textpage] > hippostd:publishable, hippostd:publishableSummary, hippo:document
+- ${artifactId.replace($hyphen,$underscore)}:body (string)
+- ${artifactId.replace($hyphen,$underscore)}:summary (string)
+- ${artifactId.replace($hyphen,$underscore)}:title (string)
+- ${artifactId.replace($hyphen,$underscore)}:date (date)

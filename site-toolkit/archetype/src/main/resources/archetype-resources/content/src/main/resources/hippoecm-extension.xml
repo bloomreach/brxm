@@ -30,7 +30,7 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$underscore)}">
+  <sv:node sv:name="${artifactId.replace($hyphen,$underscore)}">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -38,14 +38,14 @@
       <sv:value>10000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/hst2/${artifactId.replace($hyphen,$underscore)}/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>gettingstarted-types.cnd</sv:value>
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$underscore)}-namespace">
+  <sv:node sv:name="${artifactId.replace($hyphen,$underscore)}-namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
