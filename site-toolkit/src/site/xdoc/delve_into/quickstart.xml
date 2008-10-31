@@ -63,7 +63,7 @@
             Download 
 	 </td>
          <td> 
-          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+          <span class='download-48 icon-48'/>
 	 </td>
          <td>
             Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache
@@ -73,7 +73,7 @@
   <tr>
    <td>Unzip</td>
    <td>
-     <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
+    <span class='unzip-48 icon-48'/>
    </td>
    <td>unpack the zip</td>
   </tr>  
@@ -82,7 +82,7 @@
             Download 
 	 </td>
          <td> 
-          <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+          <span class='download-48 icon-48'/>
 	 </td>
         <td> 
          <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
@@ -92,7 +92,7 @@
           <tr>
    <td>Copy</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='commandline-48 icon-48'/>
    </td>
    <td>          
             Copy the ECM Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
@@ -101,7 +101,7 @@
           <tr>
    <td>Copy</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='commandline-48 icon-48'/>
    </td>
    <td>          
             Copy the HST2 Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/site.war</code>.
@@ -110,7 +110,7 @@
           <tr>
    <td>Startup</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='commandline-48 icon-48'/>
    </td>
    <td>          
             Start Tomcat with one of the startup scripts in <code>apache-tomcat-6.0.16/bin</code>.
@@ -119,7 +119,7 @@
   <tr>
    <td>Web Browser</td>
    <td>
-    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+    <span class='web-48 icon-48'/>
    </td>
   <td>
             Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> for the CMS.
@@ -128,7 +128,7 @@
   <tr>
    <td>Web Browser</td>
    <td>
-    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+    <span class='web-48 icon-48'/>
    </td>
   <td>
             Open your browser and surf to <a href="http://localhost:8080/site/preview/index">http://localhost:8080/site/preview/index</a>
@@ -138,7 +138,7 @@
   <tr>
    <td>Tryout</td>
    <td>
-    <em><img src='../images/user_icon.png' alt='user icon'/></em>
+    <span class='user-48 icon-48'/>
    </td>
    <td>
             <span class='add'>This is probably the moment where things can be tried out. Please mention that
