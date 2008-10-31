@@ -35,9 +35,11 @@
     </links>
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
+     <!--
       <item name="Use Cases" href="about/use_cases.html"/>
       <item name="Features" href="about/features.html"/>
       <item name="Architecture" href="about/architecture.html"/>
+     -->
       <item name="Term Index" href="about/term_index.html"/>
    </menu>
     <menu name="Delve into HST2">
