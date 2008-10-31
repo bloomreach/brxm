@@ -565,10 +565,25 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 /* Management Perspective */
 /* ================================================ */
 .hippo-perspective-management{background:#32629b }
-.hippo-perspective-management .hippo-perspective-management-title{color: white; padding: 4px; background: #32629b}
+.hippo-perspective-management .hippo-perspective-management-title{color: white; padding: 13px; background: #32629b}
 .hippo-perspective-management-left{background: #ffffff}
 .hippo-perspective-management-center{background: white; border: 1px solid #32629b;} 
+.hippo-perspective-management-center .hippo-editor{border: none}
 
+.hippo-perspective-management-left ul {padding: 2px;}
+.hippo-perspective-management-left ul li a:hover {background-color: #EDF5FF}
+.hippo-perspective-management-left ul li a{display: block; padding: 4px; padding-left: 22px;background-repeat: no-repeat; background-position: left center}
+.hippo-perspective-management-left div.hippo-perspective-management-list-users ul li a{
+background-image:url("images/icons/user-16.png")} 
+.hippo-perspective-management-left div.hippo-perspective-management-list-groups ul li a{
+background-image:url("images/icons/groups-16.png")} 
+.hippo-perspective-management-left div.hippo-perspective-management-list-domains ul li a{
+background-image:url("images/icons/domain-16.png")} 
+.hippo-perspective-management-left div.hippo-perspective-management-list-roles ul li a{
+background-image:url("images/icons/permissions-16.png")}
+
+
+        
 .hippo-editor-users-groups{
 height: 188px;
 overflow:auto;
@@ -579,16 +594,20 @@ margin-top: 10px;
 
 .hippo-management-users-actions{display: inline;}
 
-.drop-user-48{border: 1px solid #f2f2f2}
-.drop-group-48{border: 1px solid #f2f2f2}
-.drop-domain-48{border: 1px solid #f2f2f2}
+.drop-user-48{border: 2px inset #f2f2f2;}
+.drop-group-48{border: 2px inset #f2f2f2}
+.drop-domain-48{border: 2px inset #f2f2f2}
 .hippo-root .hippo-list-simple-container input[type="text"],
 .hippo-root .hippo-list-simple-container input[type="button"]{padding: 3px; margin: 6px; }
 .hippo-list-simple-container{margin-bottom: 10px;}
-.hippo-list-simple{overflow: auto; height: 84px; border-bottom: 2px solid #f2f2f2; }
+.hippo-list-simple{overflow: auto; height: 84px; border: 2px inset #f2f2f2; }
 .hippo-list-simple ul li a{display: block;}
 .hippo-perspective-management .hippo-list-details-instructions{color: #666666}
 .hippo-perspective-management .hippo-list-details tr td.hippo-list-details-instructions:hover{cursor: default}
+.hippo-perspective-management .hippo-list-details-scrollme{height: 150px; overflow: auto}
+.hippo-perspective-management .templateactions div{display: inline}
+.hippo-perspective-management .templateactions{background: #32629b; height: 38px;}
+
 
 /* Global Icon Management */
 /* ================================================ */
