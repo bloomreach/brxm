@@ -31,93 +31,96 @@ import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Returns the rewritten URL of the selected Gallery Image. 
+ */
+
 public class GalleryImageLinkTag extends SimpleTagSupport {
-	private static final Logger log = LoggerFactory.getLogger(GalleryImageLinkTag.class);
-	
-	private String var;
-	private String relPath;
-	private String type;
+    private static final Logger log = LoggerFactory.getLogger(GalleryImageLinkTag.class);
 
-	private ELNode item;
-	
-	@Override
-	public void doTag() throws JspException, IOException {
-		PageContext pageContext = (PageContext) getJspContext(); 
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+    private String var;
+    private String relPath;
+    private String type;
 
-		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-		String src = null;
-        if(item!= null) {
+    private ELNode item;
+
+    @Override
+    public void doTag() throws JspException, IOException {
+        PageContext pageContext = (PageContext) getJspContext();
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+
+        URLMapping urlMapping = (URLMapping) request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+        String src = null;
+        if (item != null) {
             try {
-            	if(item.getJcrNode().hasNode(relPath)){
-				Node imageNode = item.getJcrNode().getNode(relPath);
-				if(imageNode!=null){
-					  if(imageNode.hasProperty("hippo:docbase")){
-						  Node facetedNode = imageNode.getSession().getNodeByUUID(imageNode.getProperty("hippo:docbase").getValue().getString());
-						  String nodeName = facetedNode.getName();
-						  if(nodeName!=null && !nodeName.equals("") && facetedNode.hasNode(nodeName)){
-							  Node childFacetNode = facetedNode.getNode(facetedNode.getName());
-							  Node gpn = null;
-							  if(childFacetNode!=null){
-								  if(type!=null){
-									  if(type.equals("picture"))
-										  gpn = childFacetNode.getNode("hippogallery:picture");
-									  else if(type.equals("thumbnail")){
-										  gpn = childFacetNode.getNode("hippogallery:thumbnail");
-									  }							  
-								  }
-								  else{
-									  gpn = childFacetNode.getNode("hippogallery:picture");
-								  }
-		                          src = urlMapping.rewriteLocation(gpn);
-							  }
-						  }
-                          pageContext.setAttribute(getVar(), src);
-					  }
-				}
-            	}
-			} catch (PathNotFoundException e) {
-	             log.error("PathNotFoundException: {}", e.getMessage());
-	             log.debug("PathNotFoundException:", e);
-			} catch (RepositoryException e) {
-	             log.error("RepositoryException: {}", e.getMessage());
-	             log.debug("RepositoryException:", e);
-			}
-        }		
-	}
+                if (item.getJcrNode().hasNode(relPath)) {
+                    Node imageNode = item.getJcrNode().getNode(relPath);
+                    if (imageNode != null) {
+                        if (imageNode.hasProperty("hippo:docbase")) {
+                            Node facetedNode = null;
+                            facetedNode = imageNode.getSession().getNodeByUUID(imageNode.getProperty("hippo:docbase").getValue().getString());
+                            String nodeName = facetedNode.getName();
+                            if (nodeName != null && !nodeName.equals("") && facetedNode.hasNode(nodeName)) {
+                                Node childFacetNode = facetedNode.getNode(facetedNode.getName());
+                                Node gpn = null;
+                                if (childFacetNode != null) {
+                                    if (type != null) {
+                                        if (type.equals("picture"))
+                                            gpn = childFacetNode.getNode("hippogallery:picture");
+                                        else if (type.equals("thumbnail")) {
+                                            gpn = childFacetNode.getNode("hippogallery:thumbnail");
+                                        }
+                                    } else {
+                                        gpn = childFacetNode.getNode("hippogallery:picture");
+                                    }
+                                    src = urlMapping.rewriteLocation(gpn);
+                                }
+                            }
+                            pageContext.setAttribute(getVar(), src);
+                        }
+                    }
+                }
+            } catch (PathNotFoundException e) {
+                log.error("PathNotFoundException: {}", e.getMessage());
+                log.debug("PathNotFoundException:", e);
+            } catch (RepositoryException e) {
+                log.error("RepositoryException: {}", e.getMessage());
+                log.debug("RepositoryException:", e);
+            }
+        }
+        pageContext.setAttribute(getVar(), src);
+    }
 
-    public ELNode getItem(){
+    public ELNode getItem() {
         return item;
     }
-    
 
-    public void setItem(ELNode item){
+    public void setItem(ELNode item) {
         this.item = item;
     }
-	
-	public String getVar() {
-		return var;
-	}
 
-	public void setVar(String var) {
-		this.var = var;
-	}
+    public String getVar() {
+        return var;
+    }
 
-	public String getRelPath() {
-		return relPath;
-	}
+    public void setVar(String var) {
+        this.var = var;
+    }
 
-	public void setRelPath(String relPath) {
-		this.relPath = relPath;
-	}
+    public String getRelPath() {
+        return relPath;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setRelPath(String relPath) {
+        this.relPath = relPath;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }
