@@ -17,8 +17,10 @@ package org.hippoecm.hst.core.template.node.el;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -109,24 +111,8 @@ public abstract class AbstractELNode implements ELNode {
             }
         };
     }
+
     
-   //TODO replace below:  temporary because should be possible with getNodes(), see HSTTWO-175
-    public List<ELNode> getChildnodes(){
-        try {
-            List<ELNode> wrappedNodes = new ArrayList<ELNode>();
-            for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
-                Node n = it.nextNode();
-                if(n!=null) {
-                    wrappedNodes.add(new AbstractELNode(n){});
-                }
-            }
-            return wrappedNodes;
-        } catch (RepositoryException e) {
-            log.error("RepositoryException: {}", e.getMessage());
-            log.debug("RepositoryException:", e);
-        }
-        return null;
-    }
     
     public Map getNode(){
         if (jcrNode == null) {
@@ -179,6 +165,23 @@ public abstract class AbstractELNode implements ELNode {
                      log.debug("RepositoryException:", e);
                  }
                  return null;
+            }
+            
+            @Override 
+            public Set<ELNode> entrySet() {
+                Set<ELNode> s = new HashSet<ELNode>();
+                try {
+                    for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
+                        Node n = it.nextNode();
+                        if(n!=null) {
+                            s.add(new AbstractELNode(n){});
+                        }
+                    }
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
+                }
+                return  s;
             }
         };
     }

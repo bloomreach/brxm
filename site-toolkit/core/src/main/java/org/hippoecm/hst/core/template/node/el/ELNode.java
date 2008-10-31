@@ -26,8 +26,6 @@ public interface ELNode {
     public Map getHasProperty();
     public Map getNode();
     public Map getNodes();
-    //TODO replace below:  temporary because should be possible with getNodes(), see HSTTWO-175
-    public List<ELNode> getChildnodes();
     public ELNode getParent();
     public String getDecodedName();
     public String getName();
