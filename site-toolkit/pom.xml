@@ -30,10 +30,8 @@
     <url>http://issues.hippo.nl/browse/HSTTWO</url>
   </issueManagement>
 
-  
   <properties>
     <hippoecm.version>2.01.00.14266</hippoecm.version>
-    <hst.version>2.01.00-SNAPSHOT</hst.version>
   </properties>
   
   <scm>
