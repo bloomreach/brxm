@@ -129,7 +129,7 @@
     <repository>
       <id>hippoecm</id>
       <name>Hippo ECM maven 2 repository.</name>
-      <url>http://repository.hippocms.org/maven2/</url>
+      <url>http://repository.hippocms.org/maven2</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -141,7 +141,7 @@
     <repository>
       <id>hippoecm.legacy</id>
       <name>Hippo ECM Maven 1 repository.</name>
-      <url>http://repository.hippocms.org/maven/</url>
+      <url>http://repository.hippocms.org/maven</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
