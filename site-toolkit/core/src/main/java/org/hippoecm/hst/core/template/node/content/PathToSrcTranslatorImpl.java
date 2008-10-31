@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -52,6 +55,12 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                 if (documentPath.startsWith(prefix)) {
                     return documentPath;
                 }
+            }
+            
+            try {
+                documentPath = URLDecoder.decode(documentPath,"utf-8");
+            } catch (UnsupportedEncodingException e1) {
+                log.warn("UnsupportedEncodingException for documentPath");
             }
 
             if (documentPath.startsWith("/") && session.itemExists(documentPath)) {

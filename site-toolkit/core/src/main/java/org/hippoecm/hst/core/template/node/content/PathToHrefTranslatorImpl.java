@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.template.node.content;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -45,10 +48,17 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                 return documentPath;
             }
         }
+        
         if(mapping == null ) {
             log.warn("UrlMapping is null, returning original path");
             return documentPath;
         } else {
+            try {
+                documentPath = URLDecoder.decode(documentPath,"utf-8");
+            } catch (UnsupportedEncodingException e1) {
+                log.warn("UnsupportedEncodingException for documentPath");
+            }
+            
             // translate the documentPath to a URL in combination with the Node and the mapping object
             if(documentPath.startsWith("/")) {
                 // absolute location, try to translate directly
@@ -69,11 +79,11 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                         log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL");
                     }
                 } catch (ItemNotFoundException e) {
-                    log.error("Node with uuid '" + uuid +"' not found. Unable to rewrite link");
+                    log.warn("Node with uuid '" + uuid +"' not found. Unable to rewrite link");
                 } catch (PathNotFoundException e) {
-                    log.error("Node '" + documentPath +"' not found. Unable to rewrite link");
+                    log.warn("Node '" + documentPath +"' not found. Unable to rewrite link");
                 } catch (RepositoryException e) {
-                    log.error("Unable to rewrite link. RepositoryException " + e.getMessage());
+                    log.warn("Unable to rewrite link. RepositoryException " + e.getMessage());
                 }
             }
         }
