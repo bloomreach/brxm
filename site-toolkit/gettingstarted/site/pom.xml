@@ -78,14 +78,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.ecm</groupId>
+      <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-core</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.ecm</groupId>
+      <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-components</artifactId>
       <version>${parent.version}</version>
       <type>jar</type>
