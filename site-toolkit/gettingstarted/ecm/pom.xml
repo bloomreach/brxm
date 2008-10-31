@@ -17,113 +17,110 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.hippoecm.hst</groupId>
-        <artifactId>gettingstarted</artifactId>
-        <version>2.01.00-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>
+  <parent>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>site-toolkit-gettingstarted</artifactId>
+    <version>2.01.00-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
 
-    <name>HST2 Getting Started ECM WAR package</name>
-    <description>org.hippoecm.hst.gettingstarted ECM WAR package</description>
-    <groupId>org.hippoecm.hst</groupId>
-    <artifactId>gettingstarted-ecm</artifactId>
-    <packaging>war</packaging>
+  <name>Hippo Site Toolkit Getting Started Package WAR</name>
+  <description>Hippo Site Toolkit Getting Started Package WAR</description>
+  <groupId>org.onehippo.ecm.hst</groupId>
+  <artifactId>site-toolkit-gettingstarted-package-war</artifactId>
+  <packaging>war</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.hippoecm</groupId>
-            <artifactId>hippo-ecm-package-war</artifactId>
-            <version>${org.hippoecm.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <!-- dependency below needs to move to hippoecm hst --> 
-        <dependency>
-            <groupId>org.hippoecm.hst</groupId>
-            <artifactId>hippo-ecm-hst-addon-repository</artifactId>
-            <version>1.01.00-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.hippoecm.hst</groupId>
-            <artifactId>gettingstarted-sample-content</artifactId>
-            <version>1.01.00-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-      
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.hippoecm</groupId>
+      <artifactId>hippo-ecm-package-war</artifactId>
+      <type>war</type>
+    </dependency>
 
-    
-    <build>
-        <defaultGoal>package</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1-alpha-1</version>
-                <configuration>
-                    <manifest>
-                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                    </manifest>
-                    <archive>
-                        <manifestEntries>
-                            <Implementation-Build>${buildNumber}</Implementation-Build>
-                        </manifestEntries>
-                    </archive>
-                    <overlays>
-                        <overlay>
-                            <groupId>org.hippoecm</groupId>
-                            <artifactId>hippo-ecm-package-war</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.10</version>
-                <configuration>
-                    <scanIntervalSeconds>5</scanIntervalSeconds>
-                    <connectors>
-                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                            <port>8080</port>
-                        </connector>
-                    </connectors>
-                    <contextPath>/</contextPath>
-                </configuration>
-                <dependencies>
-                    <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
-                    <dependency>
-                        <groupId>com.atomikos</groupId>
-                        <artifactId>transactions-api</artifactId>
-                        <version>3.1.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.atomikos</groupId>
-                        <artifactId>transactions-jta</artifactId>
-                        <version>3.1.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.atomikos</groupId>
-                        <artifactId>transactions</artifactId>
-                        <version>3.1.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.atomikos</groupId>
-                        <artifactId>atomikos-util</artifactId>
-                        <version>3.1.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit-addon-repository</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit-gettingstarted-sample-content</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1-alpha-1</version>
+        <configuration>
+          <manifest>
+            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+          </manifest>
+          <archive>
+            <manifestEntries>
+              <Implementation-Build>${buildNumber}</Implementation-Build>
+            </manifestEntries>
+          </archive>
+          <overlays>
+            <overlay>
+              <groupId>org.hippoecm</groupId>
+              <artifactId>hippo-ecm-package-war</artifactId>
+            </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.10</version>
+        <configuration>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+            </connector>
+          </connectors>
+          <contextPath>/</contextPath>
+        </configuration>
+        <dependencies>
+          <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>3.1.4</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

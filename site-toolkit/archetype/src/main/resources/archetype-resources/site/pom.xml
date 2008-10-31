@@ -13,26 +13,27 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
     <version>${version}</version>
     <relativePath>..</relativePath>
   </parent>
-  
-  <name>HST2 Project website</name>
-  <description>HST2 Project website</description>
+
+  <name>My Hippo Site Toolkit Project website</name>
+  <description>My Hippo Site Toolkit Project website</description>
   <artifactId>${rootArtifactId}-site</artifactId>
   <groupId>${groupId}</groupId>
   <version>${version}</version>
   <packaging>war</packaging>
 
   <dependencies>
-  <!-- Servlet -->
-   <dependency>
+    <!-- Servlet -->
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.4</version>
@@ -59,8 +60,8 @@
       <scope>compile</scope>
     </dependency>
 
-   <!-- Dependencies needed to be able to send mail -->
-   <dependency>
+    <!-- Dependencies needed to be able to send mail -->
+    <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4</version>
@@ -73,26 +74,24 @@
       <version>1.1</version>
       <type>jar</type>
       <scope>compile</scope>
-    </dependency>    
-  <dependency>
-    <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hippo-ecm-hst-core</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
-    <type>jar</type>
-  </dependency>
+    </dependency>
 
-  <dependency>
-    <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hippo-ecm-hst-components</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
-    <type>jar</type>
-  </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit-core</artifactId>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.ecm.hst</groupId>
+      <artifactId>site-toolkit-components</artifactId>
+      <type>jar</type>
+    </dependency>
 
-  <!-- Logging -->
-  <dependency>
+    <!-- Logging -->
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.3</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>
@@ -103,7 +102,7 @@
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.3</version>
+        <version>6.1.10</version>
         <configuration>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <connectors>

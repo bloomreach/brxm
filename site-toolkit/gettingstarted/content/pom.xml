@@ -21,16 +21,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hippoecm.hst</groupId>
-    <artifactId>gettingstarted</artifactId>
-    <version>1.01.00-SNAPSHOT</version>
+    <groupId>org.onehippo.ecm.hst</groupId>
+    <artifactId>site-toolkit-gettingstarted</artifactId>
+    <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <name>HST2 Getting Started Sample Content</name>
-  <description>HST2 Getting Started Sample Content</description>
-  <groupId>org.hippoecm.hst</groupId>
-  <artifactId>gettingstarted-sample-content</artifactId>
+  <name>Hippo Site Toolkit Getting Started Sample Content</name>
+  <description>Hippo Site Toolkit Getting Started Sample Content</description>
+  <groupId>org.onehippo.ecm.hst</groupId>
+  <artifactId>site-toolkit-gettingstarted-sample-content</artifactId>
   <packaging>jar</packaging>
 
   <build>
@@ -38,4 +38,3 @@
   </build>
 
 </project>
-

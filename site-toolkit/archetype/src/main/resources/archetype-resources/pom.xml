@@ -13,11 +13,12 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>HST2 Project base</name>
-  <description>HST2 Project base</description>
+  <name>My Hippo Site Toolkit Project</name>
+  <description>My Hippo Site Toolkit Project</description>
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
@@ -33,13 +34,49 @@
     <defaultGoal>package</defaultGoal>
   </build>
 
+  <properties>
+    <hippoecm.version>2.01.00.14266</hippoecm.version>
+    <hst.version>2.01.00</hst.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-package-war</artifactId>
+        <version>${dollar}{hippoecm.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst</groupId>
+        <artifactId>site-toolkit-components</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst</groupId>
+        <artifactId>site-toolkit-core</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.ecm.hst</groupId>
+        <artifactId>site-toolkit-addon-repository</artifactId>
+        <version>${dollar}{hst.version}</version>
+        <type>jar</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
   <repositories>
     <repository>
       <id>hippoecm</id>
       <name>Hippo ECM maven 2 repository.</name>
       <url>http://repository.hippocms.org/maven2/</url>
       <snapshots />
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <layout>default</layout>
     </repository>
     <repository>
@@ -47,7 +84,9 @@
       <name>Hippo ECM Maven 1 repository.</name>
       <url>http://repository.hippocms.org/maven/</url>
       <snapshots />
-      <releases><updatePolicy>never</updatePolicy></releases>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <layout>legacy</layout>
     </repository>
   </repositories>

@@ -17,23 +17,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Hippo Site Toolkit ECM edition</name>
-  <description>Hippo Site Toolkit ECM edition</description>
-  <groupId>org.hippoecm.hst</groupId>
-  <artifactId>hippo-ecm-hst</artifactId>
+  <name>Hippo Site Toolkit</name>
+  <description>Hippo Site Toolkit</description>
+  <groupId>org.onehippo.ecm.hst</groupId>
+  <artifactId>site-toolkit</artifactId>
   <version>2.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://docs.onehippo.org/hst2/</url>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
-  	<system>Jira</system>
-  	<url>http://issues.hippo.nl/browse/HSTTWO</url>
+    <system>Jira</system>
+    <url>http://issues.hippo.nl/browse/HSTTWO</url>
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/experimental/hst2/trunk</connection>
-    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/experimental/hst2/trunk</developerConnection>
-    <url>https://svn.hippocms.org/repos/hippo/experimental/hst2/trunk</url>
+    <connection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</connection>
+    <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</developerConnection>
+    <url>https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/trunk</url>
   </scm>
 
   <distributionManagement>
@@ -48,12 +48,13 @@
     <module>addon</module>
     <module>components</module>
     <module>archetype</module>
+    <module>gettingstarted</module>
   </modules>
-  
+
   <properties>
     <hippoecm.version>2.01.00.14266</hippoecm.version>
   </properties>
-  
+
   <developers>
     <developer>
       <name>Ard Schrijvers</name>
@@ -101,15 +102,15 @@
       <timezone>+1</timezone>
     </developer>
     <developer>
-    	<id>mmeijnhard</id>
-    	<name>Mike Meijnhard</name>
-    	<email>m.meijnhard@onehippo.com</email>
-    	<organization>Hippo</organization>
-    	<organizationUrl>http://www.onehippo.com</organizationUrl>
-    	<timezone>+1</timezone>
-    	<roles>
-    		<role>Java Developer</role>
-    	</roles>
+      <id>mmeijnhard</id>
+      <name>Mike Meijnhard</name>
+      <email>m.meijnhard@onehippo.com</email>
+      <organization>Hippo</organization>
+      <organizationUrl>http://www.onehippo.com</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
     </developer>
   </developers>
 
@@ -122,7 +123,7 @@
       <archive>http://lists.hippoforge.org/mailman/listinfo/hippo-hst-dev/</archive>
     </mailingList>
   </mailingLists>
-  
+
   <repositories>
     <repository>
       <id>hippoecm</id>
@@ -174,13 +175,24 @@
     </pluginRepository>
   </pluginRepositories>
   <organization>
-  	<name>Hippo</name>
-  	<url>http://www.onehippo.com</url>
+    <name>Hippo</name>
+    <url>http://www.onehippo.com</url>
   </organization>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.hippoecm</groupId>
+        <artifactId>hippo-ecm-package-war</artifactId>
+        <version>${hippoecm.version}</version>
+        <type>war</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <!-- finalName>${project.artifactId}-2.01.00.${buildNumber}-SNAPSHOT</finalName -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -210,32 +222,16 @@
         </configuration>
       </plugin>
       <plugin>
-        <inherited>true</inherited>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.0-beta-7</version>
         <configuration>
-          <tagBase>https://svn.hippocms.org/repos/hippo/experimental/hst2/tags</tagBase>
+          <tagBase>https://svn.hippocms.org/repos/hippo/ecm/site-toolkit/tags</tagBase>
         </configuration>
       </plugin>
     </plugins>
   </build>
+
 
   <reporting>
     <plugins>

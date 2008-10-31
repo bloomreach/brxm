@@ -1,4 +1,4 @@
-Hippo Site Toolkit 2 Maven Archetype
+Hippo Site Toolkit Maven Archetype
 ------------------------------------
 
 This archetype creates a Maven multi project containing three subprojects:
@@ -19,7 +19,7 @@ Then run the following command to create your project:
      -DgroupId=org.example 
      -DartifactId=myproject 
      -Dversion=1.01.00
-     -DarchetypeGroupId=org.hippoecm.hst 
-     -DarchetypeArtifactId=hippo-ecm-hst-archetype-start 
-     -DarchetypeVersion=1.01.00-SNAPSHOT 
+     -DarchetypeGroupId=org.onehippo.ecm.hst
+     -DarchetypeArtifactId=site-toolkit-archetype 
+     -DarchetypeVersion=2.01.00 
 

@@ -18,20 +18,20 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
-    <groupId>org.hippoecm.hst</groupId>
-    <artifactId>hippo-ecm-hst</artifactId>
+    <artifactId>site-toolkit</artifactId>
+    <groupId>org.onehippo.ecm.hst</groupId>
     <version>2.01.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  
-  <name>Hippo Site Toolkit ECM edition archetype</name>
-  <description>Hippo Site Toolkit ECM edition archetype</description>
-  <groupId>org.hippoecm.hst</groupId>
-  <artifactId>hippo-ecm-hst-archetype-start</artifactId>
+
+  <name>Hippo Site Toolkit Archetype</name>
+  <description>Hippo Site Toolkit Archetype</description>
+  <groupId>org.onehippo.ecm.hst</groupId>
+  <artifactId>site-toolkit-archetype</artifactId>
   <packaging>maven-archetype</packaging>
-  
+
   <build>
     <extensions>
       <extension>
@@ -48,4 +48,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
