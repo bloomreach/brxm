@@ -27,25 +27,19 @@
 
   <body>
     <links>
-      <item name="Hippo" href="http://www.hippo.nl/"/>
+      <item name="Hippo ECM" href="http://docs.onehippo.com"/>
+      <item name="Hippo CMS" href="http://docs.onehippo.org/cms7"/>
+      <item name="Hippo Site Toolkit" href="/index.html" />
+      <!-- <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/> -->
       <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
-      <item name="Hippo Portal" href="http://www.hippoportal.org/"/>
     </links>
-    <menu name="Applications">
-      <item name="Hippo ECM" href="http://docs.onehippo.org"/>
-      <item name="Hippo CMS" href="http://docs.onehippo.org/hippo-ecm"/>
-      <item name="Hippo Site Toolkit" href="/"/>
-    </menu>
-
     <menu name="About Hippo Site Toolkit 2">
       <item name="What is HST2?" href="/index.html"/>
       <item name="Use Cases" href="about/use_cases.html"/>
       <item name="Features" href="about/features.html"/>
       <item name="Architecture" href="about/architecture.html"/>
       <item name="Term Index" href="about/term_index.html"/>
-
-    </menu>
-
+   </menu>
     <menu name="Delve into HST2">
       <item name="How does HST2 work?" href="/delve_into/how_does_hst2_work.html"/>
       <item name="Quickstart" href="/delve_into/quickstart.html"/>
