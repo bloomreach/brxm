@@ -306,7 +306,7 @@ is made on a sample:document node type.
 <p>
 You should configure this in the
 <code>/hippo:configuration/hippo:workflows</code> as described in <a
-href="../../../admin/configuration/nodes/workflow.html">Workflow
+href="../../../sysadmin/configuration/nodes/workflow.html">Workflow
 configuration</a> of the repository configuration.
 </p>
 

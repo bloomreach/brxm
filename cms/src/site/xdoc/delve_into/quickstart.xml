@@ -146,7 +146,7 @@
      <em><img src='../images/admin_icon.png' alt='admin icon'/></em>
     </td>
     <td>An installed quickstart package may be adapted for
-     production, see the <a href="admin/index.html">CMS Admin Guide</a>.  
+     production, see the <a href="sysadmin/index.html">Sysadmin Guide</a>.  
     </td>
    </tr>
   </table>
