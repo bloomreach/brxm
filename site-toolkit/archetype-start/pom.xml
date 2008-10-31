@@ -26,8 +26,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>hippo-ecm-hst-archetype-start</name>
-  <description>Hippo Site Toolkit Archetype</description>
+  <name>Hippo Site Toolkit ECM edition archetype</name>
+  <description>Hippo Site Toolkit ECM edition archetype</description>
   <groupId>org.hippoecm.hst</groupId>
   <artifactId>hippo-ecm-hst-archetype-start</artifactId>
   <packaging>maven-archetype</packaging>

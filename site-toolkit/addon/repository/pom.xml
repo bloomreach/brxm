@@ -22,8 +22,8 @@
     <relativePath>..</relativePath>
   </parent>
   
-  <name>Hippo Site Toolkit ECM edition addon repository plugin</name>
-  <description>Hippo Site Toolkit ECM edition addon repository plugin</description>
+  <name>Hippo Site Toolkit ECM edition addon repository</name>
+  <description>Hippo Site Toolkit ECM edition addon repository</description>
   <groupId>org.hippoecm.hst</groupId>
   <artifactId>hippo-ecm-hst-addon-repository</artifactId>
   <packaging>jar</packaging>
