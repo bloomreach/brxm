@@ -38,7 +38,7 @@
   <tr>
    <td>Download</td>
    <td>
-     <em><img src='../images/download_icon.png' alt='download icon'/></em> 
+     <span class='download-48 icon-48'/> 
    </td>
    <td>
     Download the
@@ -49,7 +49,7 @@
   <tr>
    <td>Unzip</td>
    <td>
-     <em><img src='../images/unzip_icon.png' alt='unzip icon'/></em> 
+     <span class='unzip-48 icon-48'/> 
    </td>
    <td>
      Unzip the downloaded file (name starts with `<span class='expire_event'>release after M6.4 (13536)</span>hippo-ecm-quickstart-bin'). 
@@ -68,7 +68,7 @@
   <tr>
    <td><a name='startup'/>Startup</td>
    <td>
-    <em><img src='../images/cli_icon.png' alt='CLI icon'/></em>
+    <span class='commandline-48 icon-48'/> 
    </td>
    <td>
      Open a commandline interface and start the script hippo-ecm/startup.bat (on MS systems) 
@@ -85,7 +85,7 @@
   <tr>
    <td>Web Browser</td>
    <td>
-    <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+     <span class='web-48 icon-48'/> 
    </td>
   <td>
    Open <span class='hidden_index' id='localhost'/><span class='hidden_index' id='number_8080'/><span class='hidden_index'/><a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> 
@@ -97,7 +97,7 @@
   <tr>
    <td>Tryout</td>
    <td>
-    <em><img src='../images/user_icon.png' alt='user icon'/></em>
+     <span class='user-48 icon-48'/> 
    </td>
    <td>
      Try out the Hippo CMS.
@@ -107,7 +107,7 @@
   <tr>
    <td>Quit</td>
    <td>
-    <em><img src='../images/quit_icon.png' alt='quit icon'/></em>
+    <span class='logout-48 icon-48'/> 
    </td>
    <td>
      Quit the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.

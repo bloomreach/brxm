@@ -41,7 +41,7 @@ ________________________________________________________________________________
 
    <p>
     Open the <a href='./goto_document_tab.html'>document</a> for editing. 
-    Type the date, and time in a date field. The date can also be chosen
+    In a date field, type the date and time. The date can also be chosen
     from a calendar and AM/PM is chosen from a little pull down menu.
    </p>
 
@@ -50,6 +50,7 @@ ________________________________________________________________________________
     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
     <li><a href='./fill_markuped_text_in_document.html'>Write markuped text in a document</a>.</li>
+    <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
     </ul>       
   </subsection>
 

@@ -42,7 +42,7 @@
      Webbased
     </td>  
     <td>
-     <em><img src='../images/web_icon.png' alt='web icon'/></em> 
+     <span class='web-48 icon-48'/>
     </td>
     <td>
            Content is managed via your normal webbrowser, anywhere 
@@ -54,7 +54,7 @@
      Multi-user
     </td>  
     <td>
-     <em><img src='../images/multiuser_icon.png' alt='multiuser icon'/></em> 
+     <span class='multiuser-48 icon-48'/>
     </td>
     <td>
            Several users may work on the same document, picture, soundtrack 
@@ -67,7 +67,7 @@
     Facetted search
    </td>
     <td>
-     <em><img src='../images/search_icon.png' alt='search icon'/></em> 
+     <span class='search-48 icon-48'/>
     </td>   
     <td>
       Advanced methods to search and select content are available to find information to read or
@@ -79,7 +79,7 @@
      Versioned
     </td>
     <td>
-     <em><img src='../images/version_icon.png' alt='version icon'/></em> 
+     <span class='version-48 icon-48'/>
     </td>
     <td>
            Previous versions of content are stored automatically, so that they can be restored in case
@@ -91,7 +91,7 @@
      Structurizable     
     </td>
     <td>
-     <em><img src='../images/structure_icon.png' alt='structure icon'/></em> 
+     <span class='structure-48 icon-48'/>
     </td>
     <td>
           Companies that use Hippo CMS, design their own content structure. Hippo CMS ensures that all content  

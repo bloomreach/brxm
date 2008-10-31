@@ -33,7 +33,7 @@ ________________________________________________________________________________
    <div class='screenshot'>
      <img src="../../../../images/contribs/hippo_login_marc.png" alt='Hippo login screenshot'/>
       <p>Marc logs in to Hippo CMS. He has typed his password, but only bullets are shown,
-       to prevent someone looking over his shoulder to read it. He chose the Hippo CMS to
+       to prevent someone looking over his shoulder from reading it. He chose the Hippo CMS to
        be in English. Now he is about to press the button marked `sign in'.
       </p>
    </div>
@@ -54,6 +54,14 @@ ________________________________________________________________________________
      Note that in this case, your Hippo CMS is not yet protected by the login procedure,
      as anyone can read this.
     </p>    
+
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./goto_folder.html'>Goto the document folder to add your document in</a>.</li>
+   </ul>       
+  </subsection>
+
     </section>
   </body>
 </document>        

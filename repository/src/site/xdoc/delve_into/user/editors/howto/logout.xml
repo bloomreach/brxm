@@ -22,29 +22,23 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Logout</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Logout">
+      <span class="shortdesc">How to logout</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/editors/hippo_logout_Janine.png" alt='logout screenshot'/> 
+     <p>
+       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
+     </p>
    </div>
-
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
-
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./login.html'>Login</a>.</li>
    </ul>       
   </subsection>
 

@@ -146,3 +146,4 @@ javax.jcr.RepositoryException: this session has been closed
 30.10.2008 22:16:44 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
 30.10.2008 22:16:44 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
 30.10.2008 22:16:44 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+31.10.2008 08:37:36 WARN  [org.hippoecm.repository.RepositoryServlet.init():163] Started an RMI registry on port 1099

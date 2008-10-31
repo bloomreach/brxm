@@ -22,48 +22,34 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Change to the browser title</title>
+    <title>Contributors Guide</title>
   </properties>
 
   <body>
-    <section name="Change to the document title">
-      <span class="shortdesc">Change to document short description.</span>
+    <section name="Contributors Guide">
+      <span class="shortdesc">Guide for Hippo CMS users to perform the role of contributor.</span>
 
-       <span class='rewrite'>this whole document.</span>
+<table>
+  <tr>
+    <td>
+      <a href="./tour.html">Hippo CMS Contributor Tour</a>
+    </td>
+    <td>To get introduced in the role of CMS contributor, take the following tour.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./howto/index.html">Hippo CMS Contributor Howto</a>
+    </td>
+    <td>A collection of howto's for small tasks a CMS contributor may want to do.</td>
+  </tr>
+  <tr>
+    <td>
+      <a href="./concepts/index.html">CMS Contributor Concepts</a>
+    </td>
+    <td>A collection of concepts a CMS contributor may want to know.</td>
+  </tr>
+</table>
 
-        <p>Introductory text.
-           Introductory text.
-        </p>
-
-
-        <subsection name="First subsection title">
-
-          <p>This is text with an <span class="index">index word</span>.
-          </p>
-
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
-          </p>
-      
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
-          </p>
-      
-        </subsection>
-
-
-        <subsection name="Second subsection title">
-     
-          <p>Text
-          </p>
-     
-          <source>
-            code line 1
-            code line 2
-          </source>
-        </subsection>
 
     </section>
   </body>

@@ -22,29 +22,35 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Create Folder</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Create Folder">
+      <span class="shortdesc">How to create a folder for contributors to put content in.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/editors/create_folder.png" alt='Create folder screenshot'/> 
+     <p>
+      Creation of a <a href='../concepts/folder.html'>folder</a> with name `sar newspaper', 
+      which is a folder for documents. 
+     </p>
    </div>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
-
+   <p>
+    In the <a href='./goto_content_browse_tab.htlm'>content browse tab</a>,
+    in the tree view, click on 'Documents'. Then
+    click on the selection menu at the top of the middle-right lane and select 'create folder'
+    by clicking on it. A dialog window appears.
+   </p>
+   <p>
+    Type a descriptive name for folder. 
+   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li> 
+    <li><a href='./create_folder.html'>Create another folder</a>.</li>
    </ul>       
   </subsection>
 

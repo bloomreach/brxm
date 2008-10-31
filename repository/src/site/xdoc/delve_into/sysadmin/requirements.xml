@@ -32,7 +32,7 @@
          <tr>
           <td>Overall</td>
    <td>
-     <em><img src='../images/overall.png' alt='overall icon'/></em> 
+     <span class='admin-48 icon-48'/>
    </td>
           <td>
               Hippo CMS runs on all modern operating systems
@@ -48,15 +48,20 @@
            Tested
           </td>
    <td>
-     <em><img src='../images/tested.png' alt='Tested icon'/></em> 
+     <span class='tested-48 icon-48'/>
    </td>
           <td>Hippo continuously tests Hippo CMS on 
-  <a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft Windows XP</a>
-   and Linux: 
-  <a href='http://www.ubuntu.com/'>Ubuntu</a>, 
-  <a href='http://www.slackware.com/'>Slackware</a> and 
-  <a href='http://www.debian.org'>Debian</a>.
-              Hippo CMS is also tested on other systems.  
+  <ul>
+   <li><a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft Windows XP</a></li>
+   <li>and Linux: 
+    <ul>
+      <li><a href='http://www.ubuntu.com/'>Ubuntu</a>,</li> 
+      <li><a href='http://www.slackware.com/'>Slackware</a> and</li> 
+      <li><a href='http://www.debian.org'>Debian</a>.</li>
+    </ul>
+   </li>
+   <li>Hippo CMS is also tested on other systems.</li>
+  </ul>
           </td>
      </tr>
 
@@ -65,27 +70,40 @@
           <td>Support
           </td>
    <td>
-     <em><img src='../images/support.png' alt='support icon'/></em> 
+     <span class='support-48 icon-48'/>
    </td>
 
           <td>Hippo will support running Hippo CMS on all 
-              modern <a href='http://www.microsoft.com'>Microsoft</a> Windows 
+              modern 
+              <a href='http://www.microsoft.com'>Microsoft</a> Windows 
               and 
               <a href='http://www.linux.org/'>Linux</a> 
               systems:
-              <a href='http://www.microsoft.com'>Microsoft</a> Windows: 
-              <a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>XP</a>, 
-              <a href='http://www.microsoft.com/windows/windows-vista/default.aspx'>Vista</a>, 
-              <a href='http://technet.microsoft.com/en-us/windowsserver/2000/default.aspx'>2000</a>, 
-              <a href='http://www.microsoft.com/windowsserver2003/default.mspx'>Server 2003</a>, etc...
-              <a href='http://www.linux.org/'>Linux</a>: 
-              <a href='http://www.ubuntu.com/'>Ubuntu</a>, 
-              <a href='http://www.debian.org'>Debian</a>, 
-              <a href='http://www.slackware.com/'>Slackware</a>, 
-              <a href='http://www.redhat.com/'>Redhat</a>, 
-              <a href='http://www.novell.com/linux/'>Suse</a>, etc... 
-              Support for other
-              systems is also possible.
+
+            <ul>
+             <li><a href='http://www.microsoft.com/windows/windows-xp/default.aspx'>Microsoft XP</a>, 
+             </li>
+             <li><a href='http://www.microsoft.com/windows/windows-vista/default.aspx'>Microsoft Vista</a>, 
+             </li>
+             <li><a href='http://technet.microsoft.com/en-us/windowsserver/2000/default.aspx'>Microsoft 2000</a>, 
+             </li>
+             <li><a href='http://www.microsoft.com/windowsserver2003/default.mspx'>MicrosoftServer 2003</a>, 
+             </li>
+             <li><a href='http://www.linux.org/'>Linux</a>: 
+             </li>
+             <li><a href='http://www.ubuntu.com/'>Ubuntu</a>, 
+             </li>
+             <li><a href='http://www.debian.org'>Debian</a>, 
+             </li>
+             <li><a href='http://www.slackware.com/'>Slackware</a>, 
+             </li>
+             <li><a href='http://www.redhat.com/'>Redhat</a>, 
+             </li>
+             <li><a href='http://www.novell.com/linux/'>Suse</a>, etc... 
+             </li>
+             <li>Support for other systems is also possible.
+             </li>
+	    </ul>
           </td>
     </tr>
     </table>
@@ -99,7 +117,7 @@
          <tr>
           <td>Overall</td>
    <td>
-     <em><img src='../images/overall.png' alt='overall icon'/></em> 
+     <span class='admin-48 icon-48'/>
    </td>
    <td>
           <a href='http://java.com/en/download/help/'>Sun's Java Virtual Machine</a>, JVM 6 (or 5). 
@@ -112,7 +130,7 @@
            Tested
           </td>
    <td>
-     <em><img src='../images/tested.png' alt='Tested icon'/></em> 
+     <span class='tested-48 icon-48'/>
    </td>
           <td>Hippo continuously tests Hippo CMS with 
               <a href='http://java.com/en/download/index.jsp'>Java JVM 5 and 6 as 
@@ -124,7 +142,7 @@
          Acquire
        </td>
    <td>
-     <em><img src='../images/acquire.png' alt='Acquire icon'/></em> 
+     <span class='acquire-48 icon-48'/>
    </td>
    <td>      
           Sun's Java JVM 6 (or 5) 
@@ -155,7 +173,7 @@
          <tr>
           <td>Overall</td>
    <td>
-     <em><img src='../images/overall.png' alt='overall icon'/></em> 
+     <span class='admin-48 icon-48'/>
    </td>
    <td>Hippo CMS works in any Java Servlet container or Java application server, conforming to version
        <span class='confirm'>2.4</span> of the 
@@ -169,16 +187,21 @@
            Tested
           </td>
    <td>
-     <em><img src='../images/tested.png' alt='Tested icon'/></em> 
+     <span class='tested-48 icon-48'/>
    </td>
           <td>
-              <span class='expires'>Hippo continuously tests Hippo CMS with 
-               <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> 6.1
-               ,
-               <a href='http://tomcat.apache.org/'>Tomcat</a> 6. 
-               and 
+             <span class='expire_event'>release</span>Hippo continuously tests Hippo CMS with         
+             <ul> 
+              <li> 
+                <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> 6.1,
+	      </li>
+              <li>
+                <a href='http://tomcat.apache.org/'>Tomcat</a> 6. and 5.5                and 
+	      </li>
+              <li>
                <a href='https://glassfish.dev.java.net/public/users.html'>Sun GlassFish</a> V2.
-              </span>
+	      </li>
+	     </ul>
           </td>
      </tr>
 
@@ -187,7 +210,7 @@
          Acquire
        </td>
    <td>
-     <em><img src='../images/acquire.png' alt='Acquire icon'/></em> 
+     <span class='acquire-48 icon-48'/>
    </td>
    <td>    
        Java servlet containers and application servers can be aquired from 
@@ -218,7 +241,7 @@
          <tr>
           <td>Overall</td>
    <td>
-     <em><img src='../images/overall.png' alt='overall icon'/></em> 
+     <span class='admin-48 icon-48'/>
    </td>
       
    <td>
@@ -241,12 +264,17 @@
            Tested
           </td>
    <td>
-     <em><img src='../images/tested.png' alt='Tested icon'/></em> 
+     <span class='tested-48 icon-48'/>
    </td>
-          <td>Hippo ECM is contineously tested with 
-              <a href="http://db.apache.org/derby/">Apache Derby</a> 
-              and 
+          <td>Hippo ECM is contineously tested with
+           <ul>
+            <li> 
+              <a href="http://db.apache.org/derby/">Apache Derby</a>               and 
+	    </li>
+            <li>
               <a href="http://www.mysql.com">MySQL</a>.
+	    </li>
+	   </ul>
           </td>
     </tr>
 

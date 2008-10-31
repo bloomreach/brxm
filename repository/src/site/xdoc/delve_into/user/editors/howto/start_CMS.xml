@@ -22,29 +22,23 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Start CMS</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
-   <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
-   </div>
+    <section name="Start CMS">
+      <span class="shortdesc">How to start a CMS session in your browser</span>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
+   <p>
+        Open the Hippo CMS site 
+        <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> in 
+        your browser. 
+   </p>
 
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./login.html'>Login</a>.</li>
    </ul>       
   </subsection>
 

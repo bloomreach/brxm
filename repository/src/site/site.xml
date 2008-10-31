@@ -62,59 +62,67 @@
 
     <menu name="About Hippo CMS">
       <item name="What is Hippo CMS?" href="/index.html"/>
+
+ <!--
       <item name="Use Cases" href="/about/use_cases.html"/>
       <item name="Features" href="/about/features.html"/>
       <item name="Architecture" href="/about/architecture.html"/>
+ -->
       <item name="Term Index" href="/about/term_index.html"/>
     </menu>
 
     <menu name="Hippo CMS Support">
       <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
       <item name="Community support" href="/support/community_support.html"/>
-      <item name="Contributing" href="/support/contribute.html"/>
+      <item name="Contributing" href="/support/contributing.html"/>
     </menu>
 
     <menu name="Delve into Hippo CMS">
 
       <item name="Overview" href="/delve_into/overview.html" collapse="false" inherit="top"/>
-      <item name="Quickstart Steps" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
+      <item name="Quickstart" href="/delve_into/quickstart.html" collapse="false" inherit="top"/>
 
       <item name="User Guide" href="/delve_into/user/index.html" collapse="true">
         <item name="Contributors" collapse="true" href="/delve_into/user/contributors/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/contributors/tour/index.html"> </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/contributors/howto/index.html"> 
+          <item name="Tour" href="/delve_into/user/contributors/tour.html"/>
+          <item name="Howto" collapse="true" href="/delve_into/user/contributors/howto/index.html">
+<item name="Browsing history of a document" href="/delve_into/user/contributors/howto/browsing_history_of_document.html"/>
+<item name="Create Document" href="/delve_into/user/contributors/howto/create_document.html"/>
+<item name="Fill boolean field in Document" href="/delve_into/user/contributors/howto/fill_boolean_field_in_document.html"/>
+<item name="Fill date in Document" href="/delve_into/user/contributors/howto/fill_date_field_in_document.html"/>
+<item name="Fill markuped text in Document" href="/delve_into/user/contributors/howto/fill_markuped_text_in_document.html"/>
+<item name="Fill string in Document" href="/delve_into/user/contributors/howto/fill_string_field_in_document.html"/>
+<item name="Goto Content Browse Tab" href="/delve_into/user/contributors/howto/goto_content_browse_tab.html"/>
+<item name="Goto a Document" href="/delve_into/user/contributors/howto/goto_document_tab.html"/>
+<item name="Goto a Folder" href="/delve_into/user/contributors/howto/goto_folder.html"/>
+<item name="CMS Contributor Howto" href="/delve_into/user/contributors/howto/index.html"/>
+<item name="Login as Contributor" href="/delve_into/user/contributors/howto/login.html"/>
+<item name="Logout" href="/delve_into/user/contributors/howto/logout.html"/>
+<item name="Request Publication of Document" href="/delve_into/user/contributors/howto/request_publication.html"/>
+<item name="Restoring a previous version of a document" href="/delve_into/user/contributors/howto/restore_previous_version.html"/>
+<item name="Save Document" href="/delve_into/user/contributors/howto/save_document.html"/>
+<item name="Start CMS" href="/delve_into/user/contributors/howto/start_CMS.html"/>
+    <!-- 
            <item name="Browse history" href="/delve_into/user/contributors/howto/browsing_history_of_a_document.html" collapse="false"/>
            <item name="Restore version" href="/delve_into/user/contributors/howto/restore_previous_version.html" collapse="false"/>
+    -->
           </item>
           <item name="Concepts" collapse="true" href="/delve_into/user/contributors/concepts/index.html"> 
            <item name="Versioning" href="/delve_into/user/contributors/concepts/versioning.html" collapse="false"/>
           </item>
         </item>
         <item name="Editors" collapse="true" href="/delve_into/user/editors/index.html">
-          <item name="Tour" collapse="true" href="/delve_into/user/editors/tour/index.html"> </item>
-          <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> </item>
-          <item name="Concepts" collapse="true" href="/delve_into/user/editors/concepts/index.html"> </item>
-        </item>
-        <item name="CMS Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
-          <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
-          <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> 
-<item name="Add Group" href="/delve_into/user/cms_admins/howto/add_group.html"/>
-<item name="Add User" href="/delve_into/user/cms_admins/howto/add_user.html"/>
-<item name="Assign user to group" href="/delve_into/user/cms_admins/howto/assign_user_to_group.html"/>
-<item name="Change group properties" href="/delve_into/user/cms_admins/howto/change_group_properties.html"/>
-<item name="Change password" href="/delve_into/user/cms_admins/howto/change_password.html"/>
-<item name="Change user properties" href="/delve_into/user/cms_admins/howto/change_user_properties.html"/>
-<item name="Deactivate account" href="/delve_into/user/cms_admins/howto/deactivate_account.html"/>
-<item name="Goto Group Properties" href="/delve_into/user/cms_admins/howto/goto_group_properties.html"/>
-<item name="Goto User Management Tab" href="/delve_into/user/cms_admins/howto/goto_user_management_tab.html"/>
-<item name="Goto User Properties" href="/delve_into/user/cms_admins/howto/goto_user_properties.html"/>
-<item name="CMS admin Howto" href="/delve_into/user/cms_admins/howto/index.html"/>
-<item name="Login as Admin" href="/delve_into/user/cms_admins/howto/login.html"/>
-<item name="Save settings" href="/delve_into/user/cms_admins/howto/save_settings.html"/>
-<item name="Start CMS" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
-<item name="Type in editing region" href="/delve_into/user/cms_admins/howto/type_in_editing_region.html"/>
+          <item name="Tour" href="/delve_into/user/editors/tour.html"/> 
+          <item name="Howto" collapse="true" href="/delve_into/user/editors/howto/index.html"> 
+<item name="Check for requests" href="/delve_into/user/editors/howto/check_for_requests.html"/>
+<item name="Create Folder" href="/delve_into/user/editors/howto/create_folder.html"/>
+<item name="Goto Content Browse Tab" href="/delve_into/user/editors/howto/goto_content_browse_tab.html"/>
+<item name="Handle request" href="/delve_into/user/editors/howto/handle_request.html"/>
+<item name="Login as Editor" href="/delve_into/user/editors/howto/login.html"/>
+<item name="Logout" href="/delve_into/user/editors/howto/logout.html"/>
+<item name="Start CMS" href="/delve_into/user/editors/howto/start_CMS.html"/>
           </item>
-          <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"> </item>
+          <item name="Concepts" collapse="true" href="/delve_into/user/editors/concepts/index.html"> </item>
         </item>
         <item name="Information Architects" collapse="true" href="/delve_into/user/information_architects/index.html">
           <item name="Tour" href="/delve_into/user/information_architects/tour.html"/>
@@ -196,6 +204,29 @@
         <item name="Derived Data" href="/delve_into/user/derived-data.html" collapse="true"/>
         <item name="Roadmap" href="/delve_into/user/roadmap.html" collapse="true"/>
         -->
+
+        <item name="CMS Admins" collapse="true" href="/delve_into/user/cms_admins/index.html">
+          <item name="Tour" collapse="false" href="/delve_into/user/cms_admins/tour.html"/> 
+          <item name="Howto" collapse="true" href="/delve_into/user/cms_admins/howto/index.html"> 
+<item name="Add Group" href="/delve_into/user/cms_admins/howto/add_group.html"/>
+<item name="Add User" href="/delve_into/user/cms_admins/howto/add_user.html"/>
+<item name="Assign user to group" href="/delve_into/user/cms_admins/howto/assign_user_to_group.html"/>
+<item name="Change group properties" href="/delve_into/user/cms_admins/howto/change_group_properties.html"/>
+<item name="Change password" href="/delve_into/user/cms_admins/howto/change_password.html"/>
+<item name="Change user properties" href="/delve_into/user/cms_admins/howto/change_user_properties.html"/>
+<item name="Deactivate account" href="/delve_into/user/cms_admins/howto/deactivate_account.html"/>
+<item name="Goto Group Properties" href="/delve_into/user/cms_admins/howto/goto_group_properties.html"/>
+<item name="Goto User Management Tab" href="/delve_into/user/cms_admins/howto/goto_user_management_tab.html"/>
+<item name="Goto User Properties" href="/delve_into/user/cms_admins/howto/goto_user_properties.html"/>
+<item name="CMS admin Howto" href="/delve_into/user/cms_admins/howto/index.html"/>
+<item name="Login as Admin" href="/delve_into/user/cms_admins/howto/login.html"/>
+<item name="Save settings" href="/delve_into/user/cms_admins/howto/save_settings.html"/>
+<item name="Start CMS" href="/delve_into/user/cms_admins/howto/start_CMS.html"/>
+<item name="Type in editing region" href="/delve_into/user/cms_admins/howto/type_in_editing_region.html"/>
+          </item>
+          <item name="Concepts" collapse="true" href="/delve_into/user/cms_admins/concepts/index.html"> </item>
+        </item>
+
       </item>
 
       <item name="Sysadmin Guide" href="delve_into/sysadmin/index.html" collapse="true">
@@ -208,14 +239,18 @@
         <item name="Installation" href="/delve_into/sysadmin/installation/index.html" collapse="true">
          <item name="in Servlet Container" collapse="true" href="/delve_into/sysadmin/installation/in_servlet_container.html">
            <item name="Tomcat" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat"/>
+       <!--
            <item name="Jetty" href="/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Jetty"/>
+       -->
          </item>
          <item name="in Application Server" collapse="true" href="/delve_into/sysadmin/installation/in_application_server.html">
            <item name="Download EAR" href="/delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package"/>
            <item name="GlassFish" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Glassfish"/>
            <item name="JBoss" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_JBoss"/>
+       <!--
            <item name="Websphere" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Webspere_Application_Server"/>
            <item name="Weblogic" href="/delve_into/sysadmin/installation/in_application_server.html#Deploying_in_Weblogic_Server"/>
+      -->
          </item>
          <item name="of Plugins" href="/delve_into/sysadmin/installation/plugins.html"/>
         </item>

@@ -22,29 +22,33 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Login as Admin</title>
+    <title>Save Document</title>
   </properties>
 
   <body>
-    <section name="Login as Admin">
-      <span class="shortdesc">How to login to Hippo CMS as administrator.</span>
-     
+    <section name="Save Document">
+      <span class="shortdesc">How to save the changes you made to a document.</span>
+
    <div class='screenshot'>
-     <img src="../../../../images/editors/hippo_login_Janine.png" alt='Hippo login screenshot'/>
-     <p>The Hippo CMS login dialog.</p>
+     <img src="../../../../images/contribs/save_document.png" alt='save document screenshot'/> 
+     <p>
+      Saving the changes to document 'multibazaar2008', by pressing
+      'save and close'. The changes can be discarded by pressing 'close without saving'.
+     </p>
    </div>
 
-    <p>
-     After <a href='./start_CMS.html'>starting Hippo CMS</a> you will be presented with a login dialog. 
-     Type your Hippo CMS username and password. 
-     The first time, use: username=admin, password=admin.
-    </p>
-
+   <p>
+    After editing a document i.e. <a href='./fill_markuped_text_in_document.html'>writting markuped text</a>,
+    click the 'save and close' button at the top to save your last changes or click the
+    'close without saving' to discard your last changes.
+   </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_password.html'>Change your password</a>.</li>
-    <li><a href='./add_user.html'>Add a user</a>.</li>
+    <li><a href='./request_publication.html'>Request publication</a>.</li>
+    <li><a href='./goto_document_tab.html'>Open another document</a>.</li>
+    <li><a href='./goto_folder.html'>Open another folder</a>.</li>
+    <li><a href='./logout.html'>Logout</a>.</li>
    </ul>       
   </subsection>
 
