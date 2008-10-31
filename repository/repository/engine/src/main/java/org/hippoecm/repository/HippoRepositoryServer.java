@@ -61,7 +61,10 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         try {
             name = new RepositoryRmiUrl(bindingAddress).getName();
             log.info("Unbinding '"+name+"' from registry.");
-            registry.unbind(name); // Naming.unbind(name);
+            if(registry != null) {
+                // An alternate would be to use: Naming.unbind(name); which also handles Context based Naming
+                registry.unbind(name);
+            }
         } catch (RemoteException ex) {
             log.info("Error during unbinding '" + name + "': " + ex.getMessage());
         } catch (NotBoundException ex) {
@@ -85,6 +88,9 @@ public class HippoRepositoryServer extends LocalHippoRepository {
                 UnicastRemoteObject.unexportObject(registry, true);
             } catch (NoSuchObjectException ex) {
                 log.info("Error during rmi shutdown for address: " + bindingAddress, ex);
+            } finally {
+                registryIsEmbedded = false;
+                registry = null;
             }
         }
         super.close();
@@ -117,6 +123,11 @@ public class HippoRepositoryServer extends LocalHippoRepository {
             registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
             registry.rebind(url.getName(), rmiRepository); // connection exception happens here
             log.info("Using existing RMI registry on " + url.getHost() + ":" + url.getPort());
+        } catch (NoSuchObjectException ex) {
+            registry = LocateRegistry.createRegistry(url.getPort());
+            registry.rebind(url.getName(), rmiRepository);
+            log.info("Started RMI registry on port " + url.getPort());
+            registryIsEmbedded = true;   
         } catch (ConnectException ex) {
             registry = LocateRegistry.createRegistry(url.getPort());
             registry.rebind(url.getName(), rmiRepository);
