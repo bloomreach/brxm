@@ -186,6 +186,33 @@ public abstract class AbstractELNode implements ELNode {
         };
     }
     
+    public Map getNodesoftype(){
+        if (jcrNode == null) {
+            log.error("jcrNode is null. Return empty map");
+            return Collections.EMPTY_MAP;
+        }
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object nodeName) {
+                String nodetype = (String) nodeName;
+                 try {
+                     List<ELNode> wrappedNodes = new ArrayList<ELNode>();
+                     for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
+                         Node n = it.nextNode();
+                         if(n!=null && n.isNodeType(nodetype)) {
+                             wrappedNodes.add(new AbstractELNode(n){});
+                         }
+                     }
+                     return wrappedNodes;
+                 } catch (RepositoryException e) {
+                     log.error("RepositoryException: {}", e.getMessage());
+                     log.debug("RepositoryException:", e);
+                 }
+                 return null;
+            }
+        };
+    }
+    
 
     
     public Map getHasProperty() {

@@ -26,6 +26,7 @@ public interface ELNode {
     public Map getHasProperty();
     public Map getNode();
     public Map getNodes();
+    public Map getNodesoftype();
     public ELNode getParent();
     public String getDecodedName();
     public String getName();
