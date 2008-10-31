@@ -32,31 +32,8 @@
         <a href="http://maven.apache.org/">Maven 2</a> installed, and that you have
         some basic knowledge on how to use it.
       </p>
-      
-      <subsection name="Obtaining the Hippo Site Toolkit 2">
-
-        <p>
-          Until the Hippo Site Toolkit 2 is released, you need to build it from the sources,
-          which are available from the public Hippo SVN repository. Use the following command
-          to check out the sources:
-        </p>
-        
-        <source>svn checkout https://svn.hippocms.org/repos/hippo/experimental/hst2/trunk hst2</source>
-        
-        <p>
-          Once all the sources are checked out, run the following Maven command from the
-          <code>hst2</code> directory:
-        </p>
-        
-        <source>mvn install</source>
-        
-        <p>
-          This will build all the HST-2 packages, including the Maven project template (a.k.a. <i>archetype</i>)
-          we will use, and install them in your local Maven repository.
-        </p>
-
-      </subsection>
-      
+    
+ 
       <subsection name="Creating your project">
 
         <p>
@@ -71,14 +48,14 @@
         </p>
 
         <source>
-mvn archetype:generate \
-  -DgroupId=org.example \
-  -DartifactId=myproject \
-  -Dpackage=org.example \
-  -Dversion=1.01.00 \
-  -DarchetypeGroupId=org.hippoecm.hst \
-  -DarchetypeArtifactId=hippo-ecm-hst-archetype-start \
-  -DarchetypeVersion=1.01.00-SNAPSHOT
+mvn archetype:create \
+ -DgroupId=org.example \
+ -DartifactId=myproject \
+ -Dversion=1.01.00 \
+ -DarchetypeRepository=http://repository.hippocms.org/maven2 \
+ -DarchetypeGroupId=org.onehippo.ecm.hst \
+ -DarchetypeArtifactId=site-toolkit-archetype \
+ -DarchetypeVersion=2.01.00
         </source>
         
         <p>
