@@ -24,7 +24,7 @@
     <body>
         <section name="How does Hippo Site Toolkit 2 work?">
 
-            <p> TODO </p>
+          <span class='add'>More introduction</span>
 
             <subsection name="Delve into Hippo Site Toolkit">
 
@@ -33,10 +33,7 @@
                         <tr>
                             <td>
                                 <a href="quickstart.html">
-                                    <em>
-                                        <img title="img title" longdesc="quickstart.html" class="leftflow"
-                                            src="../images/quickstart.png" alt="quickstart"/>
-                                    </em>
+                                 <span class='quickstart-48 icon-48'/>
                                 </a>
                             </td>
                             <td>
@@ -49,9 +46,7 @@
                         <tr>
                             <td>
                                 <a href="howto/index.html">
-                                    <em>
-                                        <img width="50" alt="use" src="../images/howto.png"/>
-                                    </em>
+                                 <span class='howto-48 icon-48'/>
                                 </a>
                             </td>
                             <td>
@@ -64,9 +59,7 @@
                         <tr>
                             <td>
                                 <a href="reference/index.html">
-                                    <em>
-                                        <img alt="run" src="../images/reference.png"/>
-                                    </em>
+                                 <span class='reference-48 icon-48'/>
                                 </a>
                             </td>
                             <td>
