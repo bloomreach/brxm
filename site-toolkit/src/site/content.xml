@@ -4,7 +4,7 @@
      Do not edit! This html file is automatically generated from an XML file
      by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
    -->
-  <document ext="xml" fullname="../about/architecture.xml">Change to the document title
+  <document ext="xml" filename="architecture" path="..///about">Change to the document title
    <section>Change to the document title</section>
    <shortdesc>Change to document short description.</shortdesc>
    <subsection>First subsection title</subsection>
@@ -13,7 +13,7 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="../about/features.xml">Change to the document title
+  <document ext="xml" filename="features" path="..///about">Change to the document title
    <section>Change to the document title</section>
    <shortdesc>Change to document short description.</shortdesc>
    <subsection>First subsection title</subsection>
@@ -22,9 +22,9 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="../about/term_index.xml">
+  <document ext="xml" filename="term_index" path="..///about">
   </document>
-  <document ext="xml" fullname="../about/use_cases.xml">Change to the document title
+  <document ext="xml" filename="use_cases" path="..///about">Change to the document title
    <section>Change to the document title</section>
    <shortdesc>Change to document short description.</shortdesc>
    <subsection>First subsection title</subsection>
@@ -33,20 +33,17 @@
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/how_does_hst2_work.xml">How does Hippo Site Toolkit 2 work?
+  <document ext="xml" filename="how_does_hst2_work" path="..///delve_into">How does Hippo Site Toolkit 2 work?
    <section>How does Hippo Site Toolkit 2 work?</section>
    <subsection>Delve into Hippo Site Toolkit</subsection>
-   <img>quickstart</img>
-   <img>use</img>
-   <img>run</img>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/advanced_search.xml">Advanced Search
+  <document ext="xml" filename="advanced_search" path="..///delve_into/howto">Advanced Search
    <section>Advanced Search</section>
    <shortdesc>How to search using metadata?</shortdesc>
    <subsection>Subsection title</subsection>
    <section>Next</section>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/facebook.xml">Create a Facebook
+  <document ext="xml" filename="facebook" path="..///delve_into/howto">Create a Facebook
    <section>Create a Facebook</section>
    <shortdesc>Learn how to create a new document type, and how to use it in your website,
               by adding a simple facebook to the sample website.</shortdesc>
@@ -69,12 +66,12 @@
    <subsection>Browse your facebook!</subsection>
    <img>screenshot</img>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/free_text_search.xml">Free text Search
+  <document ext="xml" filename="free_text_search" path="..///delve_into/howto">Free text Search
    <section>Free text Search</section>
    <subsection>First subsection</subsection>
    <section>Next</section>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/hello_world.xml">Hello World
+  <document ext="xml" filename="hello_world" path="..///delve_into/howto">Hello World
    <section>Hello World</section>
    <shortdesc>Adding a simple page to your website saying hello to the world.</shortdesc>
    <subsection>Add the document</subsection>
@@ -85,11 +82,11 @@
    <subsection>Under the hood</subsection>
    <section>Next Step</section>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/index.xml">Howto
+  <document ext="xml" filename="index" path="..///delve_into/howto">Howto
    <section>Howto</section>
    <shortdesc>Learn how to build a website using Hippo Site Toolkit.</shortdesc>
   </document>
-  <document ext="xml" fullname="../delve_into/howto/start_project.xml">Start a project
+  <document ext="xml" filename="start_project" path="..///delve_into/howto">Start a project
    <section>Start a project</section>
    <shortdesc>Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype</shortdesc>
    <subsection>Obtaining the Hippo Site Toolkit 2</subsection>
@@ -100,73 +97,64 @@
    <img>screenshot</img>
    <section>Next Step</section>
   </document>
-  <document ext="xml" fullname="../delve_into/quickstart.xml">Quickstart
+  <document ext="xml" filename="quickstart" path="..///delve_into">Quickstart
    <section>Quickstart</section>
    <shortdesc>Check it out yourself and install the quickstart demo site.</shortdesc>
    <subsection>Download</subsection>
    <subsection>Deploying in Tomcat 6.0</subsection>
-   <img>download icon</img>
-   <img>unzip icon</img>
-   <img>download icon</img>
-   <img>CLI icon</img>
-   <img>CLI icon</img>
-   <img>CLI icon</img>
-   <img>web icon</img>
-   <img>web icon</img>
-   <img>user icon</img>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/binaries.xml">Serving binaries with the BinariesServlet
+  <document ext="xml" filename="binaries" path="..///delve_into/reference/components">Serving binaries with the BinariesServlet
    <section>Serving binaries with the BinariesServlet</section>
    <subsection>How does it work?</subsection>
    <subsection>Usage</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/el-index.xml">HST2 Expression Language
+  <document ext="xml" filename="el-index" path="..///delve_into/reference/components">HST2 Expression Language
    <section>HST2 Expression Language</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/el-queries.xml">Using dynamic queries in the expression language
+  <document ext="xml" filename="el-queries" path="..///delve_into/reference/components">Using dynamic queries in the expression language
    <section>Using dynamic queries in the expression language</section>
    <subsection>-</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/filters.xml">HST2 Filters
+  <document ext="xml" filename="filters" path="..///delve_into/reference/components">HST2 Filters
    <section>HST2 Filters</section>
    <subsection>ModuleFilter</subsection>
    <subsection>URLMappingTemplateContextFilter</subsection>
    <subsection>URIFragmentContextBaseFilter</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/index.xml">Components
+  <document ext="xml" filename="index" path="..///delve_into/reference/components">Components
    <section>Components</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/jsp-taglib.xml">The JSP tag library
+  <document ext="xml" filename="jsp-taglib" path="..///delve_into/reference/components">The JSP tag library
    <section>The JSP tag library</section>
    <subsection>Importing the taglib</subsection>
    <subsection>Tags</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/modules.xml">Modules
+  <document ext="xml" filename="modules" path="..///delve_into/reference/components">Modules
    <section>Modules</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/container-tag.xml">The &lt;hst-tmpl:container&gt; tag
+  <document ext="xml" filename="container-tag" path="..///delve_into/reference/components/tag">The &lt;hst-tmpl:container&gt; tag
    <section>The &lt;hst-tmpl:container&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/content-tag.xml">The &lt;hst:content&gt; tag
+  <document ext="xml" filename="content-tag" path="..///delve_into/reference/components/tag">The &lt;hst:content&gt; tag
    <section>The &lt;hst:content&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/context-tag.xml">The &lt;hst:context&gt; tag
+  <document ext="xml" filename="context-tag" path="..///delve_into/reference/components/tag">The &lt;hst:context&gt; tag
    <section>The &lt;hst:context&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/documents-tag.xml">The &lt;hst:documents&gt; tag and derived tags
+  <document ext="xml" filename="documents-tag" path="..///delve_into/reference/components/tag">The &lt;hst:documents&gt; tag and derived tags
    <section>The &lt;hst:documents&gt; tag and derived tags</section>
    <h4>File based configuration</h4>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/encodeurl-tag.xml">The &lt;hst:encodeURL&gt; tag
+  <document ext="xml" filename="encodeurl-tag" path="..///delve_into/reference/components/tag">The &lt;hst:encodeURL&gt; tag
    <section>The &lt;hst:encodeURL&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/include-tag.xml">The &lt;hst:include&gt; tag
+  <document ext="xml" filename="include-tag" path="..///delve_into/reference/components/tag">The &lt;hst:include&gt; tag
    <section>The &lt;hst:include&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/link-tag.xml">The &lt;hst-tmpl:link&gt; tag
+  <document ext="xml" filename="link-tag" path="..///delve_into/reference/components/tag">The &lt;hst-tmpl:link&gt; tag
    <section>The &lt;hst-tmpl:link&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/menu-tag.xml">The &lt;hst:menu&gt; tag
+  <document ext="xml" filename="menu-tag" path="..///delve_into/reference/components/tag">The &lt;hst:menu&gt; tag
    <section>The &lt;hst:menu&gt; tag</section>
    <h4>File based configuration</h4>
    <h4>Repository based configuration</h4>
@@ -174,16 +162,16 @@
    <h4>Default HTML output</h4>
    <h4>Custom HTML output</h4>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/moduleParameter-tag.xml">The &lt;hst-tmpl:moduleParameter&gt; tag
+  <document ext="xml" filename="moduleParameter-tag" path="..///delve_into/reference/components/tag">The &lt;hst-tmpl:moduleParameter&gt; tag
    <section>The &lt;hst-tmpl:moduleParameter&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/module-tag.xml">The &lt;hst-tmpl:module&gt; tag
+  <document ext="xml" filename="module-tag" path="..///delve_into/reference/components/tag">The &lt;hst-tmpl:module&gt; tag
    <section>The &lt;hst-tmpl:module&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/node-tag.xml">The &lt;hst-tmpl:node&gt; tag
+  <document ext="xml" filename="node-tag" path="..///delve_into/reference/components/tag">The &lt;hst-tmpl:node&gt; tag
    <section>The &lt;hst-tmpl:node&gt; tag</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/tag/sitemap-tag.xml">The &lt;hst:siteMap&gt; tag
+  <document ext="xml" filename="sitemap-tag" path="..///delve_into/reference/components/tag">The &lt;hst:siteMap&gt; tag
    <section>The &lt;hst:siteMap&gt; tag</section>
    <h4>File based configuration</h4>
    <h4>Repository based configuration</h4>
@@ -191,31 +179,31 @@
    <h4>Default HTML output</h4>
    <h4>Custom HTML output</h4>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/components/url-mapping.xml">URL mapping
+  <document ext="xml" filename="url-mapping" path="..///delve_into/reference/components">URL mapping
    <section>URL mapping</section>
    <subsection>What is it?</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/concepts/index.xml">Concepts
+  <document ext="xml" filename="index" path="..///delve_into/reference/concepts">Concepts
    <section>Concepts</section>
    <subsection>Sitemap</subsection>
    <subsection>Modules</subsection>
    <subsection>Layouts</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/concepts.xml">Concepts
+  <document ext="xml" filename="concepts" path="..///delve_into/reference">Concepts
    <section>Concepts</section>
    <subsection>Sitemap</subsection>
    <subsection>Modules</subsection>
    <subsection>Layouts</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/configuration/configuration.xml">HST Configuration
+  <document ext="xml" filename="configuration" path="..///delve_into/reference/configuration">HST Configuration
    <section>HST Configuration</section>
    <subsection>General configuration file(s)</subsection>
    <subsection>Configuration of the servlet for binaries</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/configuration/hstproperties.xml">HST Configuration in hst.properties
+  <document ext="xml" filename="hstproperties" path="..///delve_into/reference/configuration">HST Configuration in hst.properties
    <section>HST Configuration in hst.properties</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/configuration/repository.xml">Configuration in Repository
+  <document ext="xml" filename="repository" path="..///delve_into/reference/configuration">Configuration in Repository
    <section>Configuration in Repository</section>
    <img>HST2 configuration nodes</img>
    <subsection>hst:sitemap</subsection>
@@ -227,16 +215,16 @@
    <img>HST2 modules configuration</img>
    <subsection>hst:navigation</subsection>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/configuration/webxml.xml">HST Configuration in web.xml
+  <document ext="xml" filename="webxml" path="..///delve_into/reference/configuration">HST Configuration in web.xml
    <section>HST Configuration in web.xml</section>
   </document>
-  <document ext="xml" fullname="../delve_into/reference/index.xml">Reference
+  <document ext="xml" filename="index" path="..///delve_into/reference">Reference
    <section>Reference</section>
    <shortdesc>
           The concepts and technical details of the Hippo Site Toolkit.
         </shortdesc>
   </document>
-  <document ext="xml" fullname="../index.xml">What is Hippo Site Toolkit 2?
+  <document ext="xml" filename="index" path="..//">What is Hippo Site Toolkit 2?
    <section>What is Hippo Site Toolkit 2?</section>
    <subsection>Learn more</subsection>
    <subsection>Delve into Hippo Site Toolkit</subsection>
