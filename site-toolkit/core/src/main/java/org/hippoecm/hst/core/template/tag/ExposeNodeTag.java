@@ -62,18 +62,6 @@ public void doTag() throws JspException, IOException {
 	}
     if (node != null) {    	
         pageContext.setAttribute(getVar(), node);
-        try {
-            if(node.getJcrNode().isNodeType("mix:referenceable")) {
-                request.getSession().setAttribute("UUID", node.getJcrNode().getUUID());
-            } else {
-                log.debug("Node is not referenceable hence cannot get uuid. ");
-            }
-		} catch (UnsupportedRepositoryOperationException e) {			
-			log.warn("Method not supported by the repository: {}",e.getMessage());
-		} catch (RepositoryException e) {
-			log.error("Error while getting checking if node is referenceable: {}",e.getMessage());
-			log.debug("RepositoryException:", e);
-		}
     }
 }
 
