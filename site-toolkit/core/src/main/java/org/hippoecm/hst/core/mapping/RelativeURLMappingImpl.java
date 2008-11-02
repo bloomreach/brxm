@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.mapping;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.template.ContextBase;
@@ -52,8 +53,8 @@ public class RelativeURLMappingImpl implements URLMapping{
     }
 
 
-    public String rewriteLocation(String path) {
-        String absoluteLocation = delegatee.rewriteLocation(path);
+    public String rewriteLocation(String path, Session jcrSession) {
+        String absoluteLocation = delegatee.rewriteLocation(path, jcrSession);
         return computeRelativeUrl(absoluteLocation, currentRequestUri);
     }
     

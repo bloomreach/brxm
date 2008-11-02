@@ -49,7 +49,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
             }
         }
         
-        if(mapping == null ) {
+        if(mapping == null || node == null) {
             log.warn("UrlMapping is null, returning original path");
             return documentPath;
         } else {
@@ -60,10 +60,14 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
             }
             
             // translate the documentPath to a URL in combination with the Node and the mapping object
-            if(documentPath.startsWith("/")) {
+            if(documentPath.startsWith("/")) { 
                 // absolute location, try to translate directly
                 log.warn("absolute path location found in text field. Trying to rewrite the location directly");
-                return mapping.rewriteLocation(documentPath);
+                try {
+                    return mapping.rewriteLocation(documentPath, node.getSession());
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException ", e);
+                }
             } else {
                 // relative node, most likely a facetselect node:
                 String uuid =null;

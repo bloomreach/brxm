@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.mapping;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.template.ContextBase;
@@ -28,7 +29,7 @@ public interface URLMapping {
     public String rewriteLocation(Node node);
     public String getContextPath();
     public String getContextPrefix();
-    public String rewriteLocation(String path);
+    public String rewriteLocation(String path, Session jcrSession);
     public String getLocation(String path);
     public List<String> getCanonicalPathsConfiguration();
     public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase);

@@ -58,7 +58,7 @@ public class URLMappingImpl implements URLMapping {
     // on which the cache is invalidated
     private final List<String> canonicalPathConfiguration;
     
-    private Node siteMapRootNode;
+    private String siteMapRootNodePath;
     private final int uriLevels;
 
     public URLMappingImpl(Session session, String contextPath, String contextPrefix, String confPath, int uriLevels) {
@@ -80,7 +80,8 @@ public class URLMappingImpl implements URLMapping {
             // TODO when the configuration is a combination of multiple facetselects, we need to add all canonical path
             // configurations. currently, only the base path is added
             
-            siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
+            Node siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
+            siteMapRootNodePath = siteMapRootNode.getPath();
             try {
                 if (siteMapRootNode.hasProperty("hst:entrypointid")
                         && !"".equals(siteMapRootNode.getProperty("hst:entrypointid").getString())) {
@@ -311,12 +312,22 @@ public class URLMappingImpl implements URLMapping {
         }
         return path;
     }
-    public String rewriteLocation(String path) {
+    public String rewriteLocation(String path, Session jcrSession) {
         long start = System.currentTimeMillis();
         String origPath = path;
         String rewritten = this.rewriteLRUCache.get(origPath);
         if (rewritten != null) {
             return rewritten;
+        }
+        Node siteMapRootNode = null;
+        if(jcrSession!=null) {
+            try {
+                siteMapRootNode = (Node)jcrSession.getItem(siteMapRootNodePath);
+            } catch (PathNotFoundException e) {
+                log.warn("siteMapRootNodePath '" + siteMapRootNodePath +"' not found. Cannot rewrite link");
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException fetching '" + siteMapRootNodePath +"' not found. Cannot rewrite link");
+            }
         }
         String rewrite = null;
         if (siteMapRootNode != null && path != null && !"".equals(path)) {

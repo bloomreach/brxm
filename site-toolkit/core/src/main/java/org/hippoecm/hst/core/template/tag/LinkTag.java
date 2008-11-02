@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.template.tag;
 
 import java.io.IOException;
 
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -57,7 +58,7 @@ public class LinkTag extends SimpleTagSupport {
             if(item!= null) {
                 href = urlMapping.rewriteLocation(item.getJcrNode());
             } else if(location != null ) {
-                href = urlMapping.rewriteLocation(location);
+                href = urlMapping.rewriteLocation(location, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
             } else if(staticattr != null ) {
                 href = urlMapping.getLocation(staticattr);
             }
