@@ -610,10 +610,26 @@
    path='xdoc/delve_into/user/information_architects/howto'
   >create_namespace</file>
       <folder>document_types
-       <file ext='' note='empty'
-   fullname='xdoc/delve_into/user/information_architects/howto/document_types/*'
+       <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='xdoc/delve_into/user/information_architects/howto/document_types/editor.xml'
    path='xdoc/delve_into/user/information_architects/howto/document_types'
-  >*</file>
+  >editor</file>
+       <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='xdoc/delve_into/user/information_architects/howto/document_types/examples.xml'
+   path='xdoc/delve_into/user/information_architects/howto/document_types'
+  >examples</file>
+       <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='xdoc/delve_into/user/information_architects/howto/document_types/fieldtypes.xml'
+   path='xdoc/delve_into/user/information_architects/howto/document_types'
+  >fieldtypes</file>
+       <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='xdoc/delve_into/user/information_architects/howto/document_types/index.xml'
+   path='xdoc/delve_into/user/information_architects/howto/document_types'
+  >index</file>
+       <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='xdoc/delve_into/user/information_architects/howto/document_types/tutorial.xml'
+   path='xdoc/delve_into/user/information_architects/howto/document_types'
+  >tutorial</file>
       </folder>
       <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='xdoc/delve_into/user/information_architects/howto/fieldcaption.xml'
