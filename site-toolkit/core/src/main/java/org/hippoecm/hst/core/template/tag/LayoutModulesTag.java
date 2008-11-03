@@ -89,7 +89,7 @@ public class LayoutModulesTag  extends BodyTagSupport {
 				    continue;
 				}
 				if(templatePage == null) {
-				    log.warn("Unable to get correct template page for '" + templatePage + "'. Skipping template \n " +
+				    log.warn("Unable to get correct template page. Skipping template \n " +
                             "The page container module node for this template is: '" + pcm.getPath()+ "'");
 				    continue;
 				}
