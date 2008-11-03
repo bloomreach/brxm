@@ -51,16 +51,17 @@ public class LayoutModulesTag  extends BodyTagSupport {
         boolean debugView = false;
         String disableTemplate = "";
         if(request.getParameter("debugview")!=null && (request.getParameter("debugview").equals(getName()) || request.getParameter("debugview").equalsIgnoreCase("all"))){
-            log.debug("show templates for container: " + getName());
+           log.debug("show template names for container: " + getName());
            debugView = true;
         }
         
         if(request.getParameter("disabletemplate")!=null){
             disableTemplate = request.getParameter("disabletemplate");
+            log.debug("disabled template = " + disableTemplate);
         }
         
         if(pcNode == null ) {
-            log.error("PageContainerNode is null for layout module '" + name + "'. Fix the hst:configuration for this.");
+            log.warn("PageContainerNode is null for layout module '" + name + "'. Fix the hst:configuration for this.");
             return SKIP_BODY;
         }
         request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE, pcNode);
@@ -87,10 +88,13 @@ public class LayoutModulesTag  extends BodyTagSupport {
 				    if(index > 0) {
 				        pageContext.getOut().write("<br/>");  
 				    }
+				    log.debug("disabled '" + templatePage + "' because view " + getName() + " is disabled.");
 				    pageContext.getOut().write("disabled-"+index+" : " + templatePage);
 				} else if(disableTemplate!=null && disableTemplate.equals(templatePage)) {
+				    log.debug("disabled '" + templatePage);
 				    pageContext.getOut().write("disabled-"+index+" : " + templatePage);
                 } else {
+                    log.debug("including: " + templatePage);
                     pageContext.include(templatePage);
                 }
 				amountRenderedModules++;
