@@ -47,7 +47,7 @@ public class ContextBase {
 		if (relativePath.trim().length() == 0) {
 			this.contextRootNode = session.getRootNode();
 		} else {
-			this.contextRootNode = session.getRootNode().getNode(stripFirstSlash(repositoryPath));
+			this.contextRootNode = session.getRootNode().getNode(relativePath);
 		}
 	}
 

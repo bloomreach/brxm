@@ -154,10 +154,10 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                 try {
                     contentContextBase = new ContextBase(uriPrefix, contentBase + uriPrefix, request);
                 } catch (PathNotFoundException e) {
-                    log.warn("PathNotFoundException " , e);
+                    log.warn("cannot get contentContextBase : PathNotFoundException " + e.getMessage() + " for '" + contentBase + uriPrefix + "'");
                     httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
                 } catch (RepositoryException e) {
-                    log.warn("RepositoryException " , e);
+                    log.warn("cannot get contentContextBase : RepositoryException " + e.getMessage() + " for '" + contentBase + uriPrefix + "'");
                     httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
 
@@ -167,9 +167,13 @@ public class URIFragmentContextBaseFilter extends HstFilterBase implements Filte
                     hstConfigurationContextBase = new ContextBase(TEMPLATE_CONTEXTBASE_NAME, contentBase + uriPrefix
                             + RELATIVE_HST_CONFIGURATION_LOCATION, request);
                 } catch (PathNotFoundException e) {
-                    throw new ServletException(e);
+                    log.warn("cannot get hstConfigurationContextBase : PathNotFoundException " + e.getMessage() + " for '" + contentBase + uriPrefix + "'");
+                    httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 } catch (RepositoryException e) {
-                    throw new ServletException(e);
+                    log.warn("cannot get hstConfigurationContextBase : RepositoryException " + e.getMessage() + " for '" + contentBase + uriPrefix + "'");
+                    httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 }
                 HttpServletRequestWrapper prefixStrippedRequest = new URLBaseHttpRequestServletWrapper(request,
                         uriPrefix);
