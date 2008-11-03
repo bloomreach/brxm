@@ -23,7 +23,7 @@
   <description>Hippo ECM suite</description>
   <packaging>pom</packaging>
 
-  <url>http://docs.onehippo.org</url>
+  <url>http://docs.onehippo.org/cms7/</url>
   <prerequisites>
     <maven>2.0</maven>
   </prerequisites>
