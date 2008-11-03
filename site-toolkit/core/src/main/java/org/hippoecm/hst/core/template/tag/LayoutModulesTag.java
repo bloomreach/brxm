@@ -48,6 +48,17 @@ public class LayoutModulesTag  extends BodyTagSupport {
         PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
+        boolean debugView = false;
+        String disableTemplate = "";
+        if(request.getParameter("debugview")!=null && (request.getParameter("debugview").equals(getName()) || request.getParameter("debugview").equalsIgnoreCase("all"))){
+            log.debug("show templates for container: " + getName());
+           debugView = true;
+        }
+        
+        if(request.getParameter("disabletemplate")!=null){
+            disableTemplate = request.getParameter("disabletemplate");
+        }
+        
         if(pcNode == null ) {
             log.error("PageContainerNode is null for layout module '" + name + "'. Fix the hst:configuration for this.");
             return SKIP_BODY;
@@ -72,7 +83,16 @@ public class LayoutModulesTag  extends BodyTagSupport {
         		log.debug("pageContainerModule" + pcm);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);
 				templatePage = pcm.getTemplatePage();
-				pageContext.include(templatePage);
+				if(debugView) {
+				    if(index > 0) {
+				        pageContext.getOut().write("<br/>");  
+				    }
+				    pageContext.getOut().write("disabled-"+index+" : " + templatePage);
+				} else if(disableTemplate!=null && disableTemplate.equals(templatePage)) {
+				    pageContext.getOut().write("disabled-"+index+" : " + templatePage);
+                } else {
+                    pageContext.include(templatePage);
+                }
 				amountRenderedModules++;
 			} catch (RepositoryException e) {
 				log.warn("RepositoryException:", e);
