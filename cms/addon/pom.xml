@@ -50,7 +50,6 @@
     <module>defaultcontent</module>
     <module>versioning</module>
     <module>ldap</module>
-    <module>tagging</module>
   </modules>
 
   <build>
