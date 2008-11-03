@@ -25,23 +25,24 @@ public class LinkRewriter {
 
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
 
-    private String prefixLinkRewrite;
+    private String linkRewrite;
     private String nodeTypeName;
     private String path;
     private int depth;
     private boolean isExactMatch;
+    private boolean isPrefix;
     private String virtualEntryName;
     private String physicalEntryPath;
     private String contextPrefix;
    
 
-    public LinkRewriter(String prefixLinkRewrite, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, String contextPrefix) {
-        this.prefixLinkRewrite = prefixLinkRewrite;
+    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, String contextPrefix) {
+        this.linkRewrite = linkRewrite;
         this.nodeTypeName = nodeTypeName;
         this.virtualEntryName = virtualEntryName;
         this.physicalEntryPath = physicalEntryPath;
         this.contextPrefix = contextPrefix;
-
+        this.isPrefix = isPrefix;
         if (!path2.startsWith("/")) {
             log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");
             path2 = "/" + path2;
@@ -56,21 +57,21 @@ public class LinkRewriter {
     }
 
     public String getLocation(Node node) throws RepositoryException{
-        if(isExactMatch) {
-            return contextPrefix + prefixLinkRewrite;
+        if(isExactMatch || !isPrefix) {
+            return contextPrefix + linkRewrite;
         } 
         String path = node.getPath();
         if(virtualEntryName != null && physicalEntryPath != null) {
             if(path.startsWith(physicalEntryPath)) {
                 
-                String newLocation = contextPrefix+ prefixLinkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
+                String newLocation = contextPrefix+ linkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
                 log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newLocation + "'");
                 return newLocation;
             } else {
                 log.debug("node path ('" +path+ "')  does not start with the physicalEntryPath ('"+physicalEntryPath+"') so no rewriting.");
             }
         }
-        return contextPrefix + prefixLinkRewrite + path;
+        return contextPrefix + linkRewrite + path;
     }
     
     /**

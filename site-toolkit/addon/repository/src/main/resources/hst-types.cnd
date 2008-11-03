@@ -39,6 +39,10 @@
 - hst:urlmapping (string)
 - hst:pageLayout (string)
 - hst:prefixlinkrewrite (string)
+// hst:linkrewriteprefix  is preferred name, hst:prefixlinkrewrite is there for historical reason. They serve the 
+// exact same purpose 
+- hst:linkrewriteprefix (string)
+- hst:linkrewrite (string)
 - hst:nodetype (string) multiple
 - hst:nodepath (string) multiple
 + * (hst:sitemaplayout) = hst:sitemaplayout

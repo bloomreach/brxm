@@ -26,6 +26,10 @@ public interface ELNode {
     public Map getNode();
     public Map getNodes();
     public Map getNodesoftype();
+    /*
+     * use getDeref in EL like node.deref['hippo:docbase']. This returns a node that 
+     * is represented by the uuid in String value for the property
+     */
     public Map getDeref(); 
     public ELNode getParent();
     public String getDecodedName();

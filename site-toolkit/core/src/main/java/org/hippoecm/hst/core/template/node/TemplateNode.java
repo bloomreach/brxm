@@ -58,7 +58,7 @@ public class TemplateNode extends AbstractELNode {
 		        return null;
 		    }
 		    if(!jcrNode.hasProperty(propertyName)) {
-		        log.warn("TemplateNode '"+ jcrNode.getPath() + "' does not have property '" + propertyName +"'");
+		        log.debug("TemplateNode '"+ jcrNode.getPath() + "' does not have property '" + propertyName +"'");
 		        return null;
 		    }
 		    return jcrNode.getProperty(propertyName).getString();

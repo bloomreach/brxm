@@ -132,22 +132,38 @@ public class URLMappingImpl implements URLMapping {
                     log
                             .debug("hst:sitemapitem sitemap item missing 'hst:ulrmapping' property. Item not meant for mapping, but only for binaries");
                 }
-
-                if (subNode.hasProperty("hst:prefixlinkrewrite")) {
-                    String prefixLinkRewrite = subNode.getProperty("hst:prefixlinkrewrite").getString();
-                    if ("".equals(prefixLinkRewrite)) {
+                
+                String  linkRewrite = null;
+                boolean isPrefix = false;
+                if (subNode.hasProperty("hst:prefixlinkrewrite") || subNode.hasProperty("hst:linkrewriteprefix")) {
+                    isPrefix = true;
+                    if(subNode.hasProperty("hst:linkrewriteprefix")) {
+                         linkRewrite = subNode.getProperty("hst:linkrewriteprefix").getString();
+                    } else {
+                         linkRewrite = subNode.getProperty("hst:prefixlinkrewrite").getString();
+                    }
+                    if ("".equals( linkRewrite)) {
                         log.warn("Skipping empty hst:sitemapitem for linkrewriting"
                                 + " because of empty hst:prefixlinkrewrite");
                         continue;
                     }
-
+                }
+                if(subNode.hasProperty("hst:linkrewrite")) {
+                    if(isPrefix) {
+                        log.warn("Unambigous linkrewriting configuration because sitemap node contains both 'hst:linkrewriteprefix|hst:prefixlinkrewrite'" +
+                        		"and 'hst:linkrewrite'. Using 'hst:linkrewriteprefix|hst:prefixlinkrewrite' property. If links are incorrect rewritten, remove 'hst:prefixlinkrewrite' property");
+                    } else {
+                        linkRewrite = subNode.getProperty("hst:linkrewrite").getString();
+                    }
+                }
+                if( linkRewrite != null) {
                     if (subNode.hasProperty("hst:nodetype") && subNode.hasProperty("hst:nodepath")) {
                         if (subNode.getProperty("hst:nodetype").getValues().length == subNode.getProperty(
                                 "hst:nodepath").getValues().length) {
                             Value[] nodetypes = subNode.getProperty("hst:nodetype").getValues();
                             Value[] nodepaths = subNode.getProperty("hst:nodepath").getValues();
                             for (int i = 0; i < nodepaths.length; i++) {
-                                LinkRewriter linkRewriter = new LinkRewriter(prefixLinkRewrite, nodetypes[i]
+                                LinkRewriter linkRewriter = new LinkRewriter(linkRewrite, isPrefix , nodetypes[i]
                                         .getString(), nodepaths[i].getString(), virtualEntryName, physicalEntryPath,
                                         contextPrefix);
                                 linkRewriters.add(linkRewriter);
@@ -160,9 +176,14 @@ public class URLMappingImpl implements URLMapping {
                                             + " of multivalued property 'hst:nodetype' is not equal to the length of 'hst:nodepath'. This is mandatory for a proper working linkrewriting item");
                         }
                     } else {
-                        log.warn("For sitemapitem '" + subNode.getName() + "' skipping linkrewriting because "
-                                + "'hst:nodetype' property or 'hst:nodepath' property is missing");
+                        log.warn("For sitemapitem '" + subNode.getName() + "' skipping linkrewriting because one of the following properties is missing:" +
+                        		"\n hst:nodetype" +
+                        		"\n hst:nodepath");
+                        		
                     }
+                } else {
+                    log.debug("skipping sitemap iten '"+subNode.getName()+"' for linkrewriting because does not have property" +
+                    		"(hst:prefixlinkrewrite|hst:linkrewriteprefix) OR hst:linkrewrite");
                 }
             }
             Timer.log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
@@ -341,18 +362,34 @@ public class URLMappingImpl implements URLMapping {
             try {
                 if (siteMapRootNode.hasNode(path)) {
                     Node sitemapNode = siteMapRootNode.getNode(path);
-                    if (sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
-                        String newLink = sitemapNode.getProperty("hst:prefixlinkrewrite").getString();
+                    String newLink = null;
+                    if(sitemapNode.hasProperty("hst:prefixlinkrewrite") || sitemapNode.hasProperty("hst:linkrewriteprefix")) {
+                        if(sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
+                            newLink =   sitemapNode.getProperty("hst:prefixlinkrewrite").getString();
+                        } else {
+                            newLink =   sitemapNode.getProperty("hst:linkrewriteprefix").getString();
+                        }
+                        
+                    }
+                    if(sitemapNode.hasProperty("hst:linkrewrite")) {
+                        if(newLink != null) {
+                            log.warn("Unambigous linkrewriting configuration because sitemap node contains both 'hst:linkrewriteprefix|hst:prefixlinkrewrite'" +
+                            "and 'hst:linkrewrite'. Using 'hst:linkrewriteprefix|hst:prefixlinkrewrite' property. If links are incorrect rewritten, remove 'hst:prefixlinkrewrite' property");
+                        } else {
+                            newLink = sitemapNode.getProperty("hst:linkrewrite").getString();
+                        }
+                    }
+                    
+                    if(newLink == null) {
+                        // this happens a lot, for now set this loglevel to debug
+                        log.debug("cannot rewrite path '{}' because the sitemap node does not have the property 'hst:prefixlinkrewrite|hst:linkrewriteprefix' and not hst:linkrewrite'. Node : {}",
+                                        path, sitemapNode.getPath());
+                    } else {
                         log.debug("rewriting '{}' --> '{}'", path, newLink);
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
                         rewrite = contextPrefix + newLink;
-                    } else {
-                        // this happens a lot, for now set this loglevel to debug
-                        log.debug(
-                                        "cannot rewrite path '{}' because the sitemap node does not have the property 'hst:prefixlinkrewrite'. Node : {}",
-                                        path, sitemapNode.getPath());
                     }
                 } else {
                     log.warn("'{}' does not exist in sitemap node '{}'. Prefixing path with context, but no rewrite.",
