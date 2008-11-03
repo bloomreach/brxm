@@ -51,4 +51,15 @@
 	    	<sv:value>${tagging.service}</sv:value>
 	    </sv:property>
     </sv:node>
+    <sv:node sv:name="tagsTags">
+	    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+	        <sv:value>frontend:plugin</sv:value>
+	    </sv:property>
+	    <sv:property sv:name="plugin.class" sv:type="String">
+	        <sv:value>org.hippoecm.frontend.plugins.tagging.providers.CurrentTagsTagsProvider</sv:value>
+	    </sv:property>
+	    <sv:property sv:name="service" sv:type="String">
+	    	<sv:value>${tagging.service}</sv:value>
+	    </sv:property>
+    </sv:node>
 </sv:node>
