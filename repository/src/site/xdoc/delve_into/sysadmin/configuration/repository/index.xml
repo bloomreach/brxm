@@ -43,12 +43,12 @@
                 The repository configuration file consists of:
             </p>
             <ul>
-                <li><a href="#FileSystem element">FileSystem element</a></li>
-                <li><a href="#Security element">Security element</a></li>
-                <li><a href="#Workspaces root directory element">Workspaces root directory element</a></li>
-                <li><a href="#Workspace element">Workspace element</a></li>
-                <li><a href="#Versioning element">Versioning element</a></li>
-                <li><a href="#SearchIndex element">SearchIndex element</a></li>
+                <li><a href="#FileSystem_element">FileSystem element</a></li>
+                <li><a href="#Security_element">Security element</a></li>
+                <li><a href="#Workspaces_root_directory_element">Workspaces root directory element</a></li>
+                <li><a href="#Workspace_element">Workspace element</a></li>
+                <li><a href="#Versioning_element">Versioning element</a></li>
+                <li><a href="#SearchIndex_element">SearchIndex element</a></li>
             </ul>
             <p>
                 The configuration file has the following overall outline:

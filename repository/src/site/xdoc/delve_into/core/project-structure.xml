@@ -130,10 +130,10 @@ hippo-ecm                    Pom       hippo-ecm
       <p>
         The large number of projects is a direct consequence of the fact that Hippo ECM
         has been designed from the ground up for customizability and extendability as described in the
-        <a href="../extension/plugins/index.html">plugin</a> documentation. The repository and frontend
+        <a href="../custom/plugins/index.html">plugin</a> documentation. The repository and frontend
         engines that make up the core of Hippo ECM don't implement much functionality themselves. All 'userland'
         functionality is implemented by plugins that are loaded by the engines. See the chapter on
-        <a href="../run-hippo-ecm/repository-bootstrap.html">Bootstrapping the repository</a> for
+        <a href="../sysadmin/repository-bootstrap.html">Bootstrapping the repository</a> for
         further information about this subject.
       </p>
     </section>
@@ -153,7 +153,7 @@ hippo-ecm                    Pom       hippo-ecm
           implement reporting functionality for the CMS. Usage examples of this addon are the
           activity and todo views on the cms-dashboard</li>
 
-        <li><b>reviewed-action</b> is a <a href="../../about/architecture.html#Workflow API">
+        <li><b>reviewed-action</b> is a <a href="../../about/architecture.html#Workflow_API">
           workflow</a> addon, it implements all business and GUI logic around the document lifecycle:
           reviewing, (un)publishing etc. It is a bundling of three addons: a repository
           addon implementing the business logic, a frontend addon bundling some frontend plugins for user
@@ -205,7 +205,7 @@ hippo-ecm                    Pom       hippo-ecm
           These are the addons that bundle the high level plugins that make up a user application.
           For the CMS these are the addons under <b>addon-cms</b>. Frontend plugins can interact
           with each other via the plugin
-          <a href="../extension/plugins/frontend/frontend-plugin-communication.html">communication model</a>
+          <a href="../custom/plugins/frontend/frontend_plugin_communication.html">communication model</a>
           offered by the frontend engine.
         <br/><br/>
           

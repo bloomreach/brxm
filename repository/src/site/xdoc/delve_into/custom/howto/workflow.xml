@@ -27,7 +27,7 @@
 <p>
 The most common functionality to be added in the repository is the addition of
 project specific workflow.  The role of workflow and the access to workflow
-steps are described in <a href="../../../use-hippo-ecm/">Workflow
+steps are described in <a href="../../../delve_into/sysadmin/">Workflow
 functionality</a>.  A default set of workflow operations is defined in
 available plugins.  The extension of workflows is not merely based on
 modifications to these available plugins.  Instead, entirely new workflows
@@ -306,7 +306,7 @@ is made on a sample:document node type.
 <p>
 You should configure this in the
 <code>/hippo:configuration/hippo:workflows</code> as described in <a
-href="../../../sysadmin/configuration/nodes/workflow.html">Workflow
+href="../../../delve_into/sysadmin/configuration/nodes/workflow.html">Workflow
 configuration</a> of the repository configuration.
 </p>
 

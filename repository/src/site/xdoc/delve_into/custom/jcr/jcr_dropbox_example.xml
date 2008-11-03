@@ -24,7 +24,7 @@
     <body>
         <section name="Demo on interfacing with Hippo ECM Repository">
             <subsection name="Intro">
-                <img src="../../images/arch-dropbox.jpg" alt=""/>
+                <img src="../../../images/arch-dropbox.jpg" alt=""/>
                 <p>
                     A typical application that interfaces with Hippo Repository most likely
                     has an architecture like the one depicted above. The application consists
@@ -118,7 +118,7 @@ mvn exec:java
 
                 <p>
                 If everything went well the output should look something like this:<br/><br/>
-                <img src="../../images/dropbox-running.jpg" alt=""/>
+                <img src="../../../images/dropbox-running.jpg" alt=""/>
                 <br/><br/>
                 All content from your dropbox folder is now stored in Hippo Repository. You can explore
                 the contents through the provided user interface.
@@ -154,7 +154,7 @@ mvn exec:java
                 </li>
                 <li>
                     Then again select the previously constructed node and the result should look like something as depicted below. <br/>
-                    <img src="../../images/jcr-tree-facets.jpg" alt=""/>
+                    <img src="../../../images/jcr-tree-facets.jpg" alt=""/>
                 </li>
               </ul>
 

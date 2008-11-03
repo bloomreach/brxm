@@ -1125,3 +1125,176 @@ javax.jcr.RepositoryException: this session has been closed
 30.10.2008 17:22:02 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
 30.10.2008 17:22:46 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
 30.10.2008 17:22:46 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+03.11.2008 11:43:37 WARN  [org.hippoecm.repository.RepositoryServlet.init():163] Started an RMI registry on port 1099
+03.11.2008 11:46:36 ERROR [org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin.execute():208] 
+03.11.2008 11:46:38 ERROR [org.hippoecm.frontend.plugin.impl.PluginManager.unregisterTracker():232] unregistering a listener that wasn't registered.
+03.11.2008 11:46:38 WARN  [org.hippoecm.frontend.plugin.impl.PluginContext.unregisterService():151] unregistering service that wasn't registered.
+03.11.2008 11:50:41 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] f335dc38-0204-47a9-9050-e57adccd2411/{}caption: the item does not exist anymore
+03.11.2008 11:51:13 WARN  [org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin$FileUploadForm.onSubmit():112] Unrecognised file type
+03.11.2008 11:51:13 WARN  [org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin$FileUploadForm.onSubmit():112] Unrecognised file type
+03.11.2008 11:54:17 WARN  [org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin$FileUploadForm.onSubmit():112] Unrecognised file type
+03.11.2008 11:54:17 WARN  [org.hippoecm.frontend.editor.plugins.resource.ResourceUploadPlugin$FileUploadForm.onSubmit():112] Unrecognised file type
+03.11.2008 11:54:46 WARN  [org.apache.jackrabbit.core.state.ItemStateReferenceCache.cache():117] overwriting cached entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+03.11.2008 11:54:46 WARN  [org.apache.jackrabbit.core.state.MLRUItemStateCache.cache():140] overwriting cached entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+03.11.2008 11:54:46 WARN  [org.apache.jackrabbit.core.state.ItemStateMap.put():82] overwriting map entry baa88a59-8c2d-4638-9f26-5430c0ee331b
+03.11.2008 11:54:46 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():230] Dropping property hippo:paths as there is no new definition.
+03.11.2008 11:54:46 WARN  [org.hippoecm.repository.standardworkflow.Remodeling.copyProperty():230] Dropping property hippo:paths as there is no new definition.
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.rmi.server.ServerObject.getRepositoryException(ServerObject.java:136)
+	at org.apache.jackrabbit.rmi.server.ServerNode.isNodeType(ServerNode.java:199)
+	at sun.reflect.GeneratedMethodAccessor69.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:294)
+	at sun.rmi.transport.Transport$1.run(Transport.java:153)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.rmi.transport.Transport.serviceCall(Transport.java:149)
+	at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:466)
+	at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:707)
+	at java.lang.Thread.run(Thread.java:595)
+	at sun.rmi.transport.StreamRemoteCall.exceptionReceivedFromServer(StreamRemoteCall.java:247)
+	at sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:223)
+	at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:126)
+	at java.rmi.server.RemoteObjectInvocationHandler.invokeRemoteMethod(RemoteObjectInvocationHandler.java:179)
+	at java.rmi.server.RemoteObjectInvocationHandler.invoke(RemoteObjectInvocationHandler.java:132)
+	at $Proxy2.isNodeType(Unknown Source)
+	at org.apache.jackrabbit.rmi.client.ClientNode.isNodeType(ClientNode.java:364)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.execute(RemodelDialog.java:118)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:112)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] no prototype was not found
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel():128] could not setup workflow model
+javax.jcr.RepositoryException: this session has been closed
+	at org.apache.jackrabbit.rmi.server.ServerObject.getRepositoryException(ServerObject.java:136)
+	at org.apache.jackrabbit.rmi.server.ServerNode.isNodeType(ServerNode.java:199)
+	at sun.reflect.GeneratedMethodAccessor69.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at sun.rmi.server.UnicastServerRef.dispatch(UnicastServerRef.java:294)
+	at sun.rmi.transport.Transport$1.run(Transport.java:153)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.rmi.transport.Transport.serviceCall(Transport.java:149)
+	at sun.rmi.transport.tcp.TCPTransport.handleMessages(TCPTransport.java:466)
+	at sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(TCPTransport.java:707)
+	at java.lang.Thread.run(Thread.java:595)
+	at sun.rmi.transport.StreamRemoteCall.exceptionReceivedFromServer(StreamRemoteCall.java:247)
+	at sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:223)
+	at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:126)
+	at java.rmi.server.RemoteObjectInvocationHandler.invokeRemoteMethod(RemoteObjectInvocationHandler.java:179)
+	at java.rmi.server.RemoteObjectInvocationHandler.invoke(RemoteObjectInvocationHandler.java:132)
+	at $Proxy2.isNodeType(Unknown Source)
+	at org.apache.jackrabbit.rmi.client.ClientNode.isNodeType(ClientNode.java:364)
+	at org.hippoecm.frontend.model.WorkflowsModel.initialize(WorkflowsModel.java:85)
+	at org.hippoecm.frontend.model.WorkflowsModel.<init>(WorkflowsModel.java:160)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.updateModel(WorkflowPlugin.java:113)
+	at org.hippoecm.frontend.plugin.workflow.WorkflowPlugin.onFlush(WorkflowPlugin.java:200)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugins.standards.list.DocumentsProvider.<init>():67] this session has been closed
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugins.standards.list.AbstractListingPlugin.isOrderable():154] this session has been closed
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent():91] 
+java.lang.NullPointerException
+	at org.hippoecm.frontend.editor.builder.PreviewPlugin.onFlush(PreviewPlugin.java:246)
+	at org.hippoecm.frontend.Home$1.flush(Home.java:74)
+	at org.hippoecm.frontend.dialog.AbstractWorkflowDialog.ok(AbstractWorkflowDialog.java:118)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelDialog.remodel(RemodelDialog.java:72)
+	at org.hippoecm.frontend.plugins.standardworkflow.remodel.RemodelWizard$Step2$1.getLazyLoadComponent(RemodelWizard.java:88)
+	at org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel$1.respond(AjaxLazyLoadPanel.java:66)
+	at org.apache.wicket.ajax.AbstractDefaultAjaxBehavior.onRequest(AbstractDefaultAjaxBehavior.java:293)
+	at org.apache.wicket.request.target.component.listener.BehaviorRequestTarget.processEvents(BehaviorRequestTarget.java:100)
+	at org.apache.wicket.request.AbstractRequestCycleProcessor.processEvents(AbstractRequestCycleProcessor.java:91)
+	at org.apache.wicket.RequestCycle.processEventsAndRespond(RequestCycle.java:1171)
+	at org.apache.wicket.RequestCycle.step(RequestCycle.java:1248)
+	at org.apache.wicket.RequestCycle.steps(RequestCycle.java:1349)
+	at org.apache.wicket.RequestCycle.request(RequestCycle.java:493)
+	at org.apache.wicket.protocol.http.WicketFilter.doGet(WicketFilter.java:387)
+	at org.apache.wicket.protocol.http.WicketFilter.doFilter(WicketFilter.java:199)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:235)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:206)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:233)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:191)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:128)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:845)
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:583)
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:447)
+	at java.lang.Thread.run(Thread.java:595)
+03.11.2008 11:54:47 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] this session has been closed
+03.11.2008 14:28:31 ERROR [org.hippoecm.frontend.editor.plugins.HippoQueryTemplatePlugin.<init>():80] invalid query statement. Revert to default statement Unsupported language: XPath
+03.11.2008 14:28:31 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] 8aa0cf83-ac3b-4492-aa79-e45135e5221a/{}caption: the item does not exist anymore
+03.11.2008 14:29:39 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] d5737038-1a99-45d1-aa27-66e5ba2ca430/{}caption: the item does not exist anymore
+03.11.2008 14:42:14 ERROR [org.hippoecm.frontend.model.JcrItemModel.detach():139] ad65a2c4-19d6-4722-b54d-52387190f597: the item does not exist anymore
+03.11.2008 14:42:14 WARN  [org.hippoecm.frontend.model.JcrItemModel.load():123] failed to load /hippo:configuration/hippo:frontend/cms/cms-static/configurationBrowser/filters/hideGalleryNamespace
+03.11.2008 14:43:33 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:33 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:33 ERROR [org.hippoecm.frontend.editor.impl.TemplateEngine.getType():93] Unable to resolve type of null
+03.11.2008 14:43:33 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():108] Unable to obtain type descriptor for null
+03.11.2008 14:43:38 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:38 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:38 ERROR [org.hippoecm.frontend.editor.impl.TemplateEngine.getType():93] Unable to resolve type of null
+03.11.2008 14:43:38 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():108] Unable to obtain type descriptor for null
+03.11.2008 14:43:39 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:39 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:39 ERROR [org.hippoecm.frontend.editor.impl.TemplateEngine.getType():93] Unable to resolve type of null
+03.11.2008 14:43:39 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():108] Unable to obtain type descriptor for null
+03.11.2008 14:43:44 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:44 ERROR [org.hippoecm.frontend.editor.builder.JcrTypeHelper.getPrototype():206] hippo:prototype
+03.11.2008 14:43:44 ERROR [org.hippoecm.frontend.editor.impl.TemplateEngine.getType():93] Unable to resolve type of null
+03.11.2008 14:43:44 WARN  [org.hippoecm.frontend.editor.plugins.field.FieldPlugin.updateProvider():108] Unable to obtain type descriptor for null

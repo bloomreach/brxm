@@ -70,7 +70,7 @@ thus part of the workflow.
 
 
 <p>
-See <a href='../../contributors/howto/browsing_history_of_a_document.html'>User browsing the history of a document</a>.
+See <a href='../../user/contributors/howto/browsing_history_of_document.html'>User browsing the history of a document</a>.
 
 This happens for the reviewed-actions workflow.  Upon publication of a
 document a version of the then current published document is created.  However,

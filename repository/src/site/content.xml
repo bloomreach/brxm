@@ -354,7 +354,7 @@
   </document>
   <document ext="xml" filename="workspace" path="..///delve_into/sysadmin/configuration/repository">Workspace configuration
    <section>Workspace configuration</section>
-   <subsection>Workspace Configuration</subsection>
+   <subsection>Sample</subsection>
   </document>
   <document ext="xml" filename="index" path="..///delve_into/sysadmin">System Administration Guide
    <section>System Administration Guide</section>
@@ -533,6 +533,15 @@
    <section>Hippo CMS Admin Tour</section>
    <shortdesc>To get introduced in the role of CMS administrator, take the following tour.</shortdesc>
   </document>
+  <document ext="xml" filename="document" path="..///delve_into/user/contributors/concepts">Document
+   <section>Document</section>
+   <shortdesc>What is a document?</shortdesc>
+   <h4>Etymology</h4>
+  </document>
+  <document ext="xml" filename="folder" path="..///delve_into/user/contributors/concepts">Folder
+   <section>Folder</section>
+   <shortdesc>Wat is a Folder?</shortdesc>
+  </document>
   <document ext="xml" filename="index" path="..///delve_into/user/contributors/concepts">CMS Contributor Concepts
    <section>CMS Contributor Concepts</section>
    <shortdesc>A collection of concepts a CMS contributor may want to know.</shortdesc>
@@ -641,10 +650,18 @@
    <section>Hippo CMS Contributor Tour</section>
    <shortdesc>To get introduced in the role of CMS Contributor, take the following tour.</shortdesc>
   </document>
+  <document ext="xml" filename="folder" path="..///delve_into/user/editors/concepts">Folder
+   <section>Folder</section>
+   <shortdesc>Wat is a Folder?</shortdesc>
+  </document>
   <document ext="xml" filename="index" path="..///delve_into/user/editors/concepts">CMS Editor Concepts
    <section>CMS Editor Concepts</section>
    <shortdesc>A collection of concepts a CMS editor may want to know.</shortdesc>
    <subsection>Alternative</subsection>
+  </document>
+  <document ext="xml" filename="request" path="..///delve_into/user/editors/concepts">Request
+   <section>Request</section>
+   <shortdesc>What is a request?</shortdesc>
   </document>
   <document ext="xml" filename="check_for_requests" path="..///delve_into/user/editors/howto">Check for requests
    <section>Check for requests</section>
@@ -729,6 +746,10 @@
    <section>string</section>
    <shortdesc>What is a string</shortdesc>
   </document>
+  <document ext="xml" filename="URL" path="..///delve_into/user/information_architects/concepts">URL
+   <section>URL</section>
+   <shortdesc>URL</shortdesc>
+  </document>
   <document ext="xml" filename="add_boolean_to_documenttype" path="..///delve_into/user/information_architects/howto">Add boolean to Documentttype
    <section>Add boolean to Documentttype</section>
    <shortdesc>How to add a boolean to a documenttype.</shortdesc>
@@ -772,48 +793,6 @@
    <shortdesc>How to create a namespace to gather documenttypes in.</shortdesc>
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
-  </document>
-  <document ext="xml" filename="editor" path="..///delve_into/user/information_architects/howto/document_types">The Document Type Editor
-   <section>The Document Type Editor</section>
-   <img>Screenshot of the document type editor</img>
-   <subsection>Using the editor</subsection>
-   <img>Screenshot detail of new field type selector</img>
-   <img>Screenshot detail of field preview</img>
-   <img>Screenshot detail of field properties editor</img>
-   <img>Screenshot detail of save options</img>
-   <subsection>Applying your changes</subsection>
-   <img>Screenshot detail of update content action</img>
-   <subsection>Advanced</subsection>
-  </document>
-  <document ext="xml" filename="examples" path="..///delve_into/user/information_architects/howto/document_types">Examples of document types
-   <section>Examples of document types</section>
-  </document>
-  <document ext="xml" filename="fieldtypes" path="..///delve_into/user/information_architects/howto/document_types">Field Types Reference
-   <section>Field Types Reference</section>
-   <subsection>String</subsection>
-   <img>screenshot detail of string widget</img>
-   <subsection>Html</subsection>
-   <img>screenshot detail of html widget</img>
-   <subsection>Text</subsection>
-   <img>screenshot detail of text widget</img>
-   <subsection>Date</subsection>
-   <img>screenshot detail of date widget</img>
-   <img>screenshot detail of date widget with popup calendar</img>
-   <subsection>Boolean</subsection>
-   <img>screenshot detail of boolean widget</img>
-   <subsection>hippo:resource</subsection>
-   <img>screenshot detail of hippo:resource widget</img>
-   <subsection>hippo:query</subsection>
-   <subsection>hippo:facetselect</subsection>
-  </document>
-  <document ext="xml" filename="index" path="..///delve_into/user/information_architects/howto/document_types">Document Types
-   <section>Document Types</section>
-  </document>
-  <document ext="xml" filename="tutorial" path="..///delve_into/user/information_architects/howto/document_types">Document Type Tutorial
-   <section>Document Type Tutorial</section>
-   <subsection>Creating your first document type</subsection>
-   <img>screenshot detail of 'create new type' action</img>
-   <img>screenshot detail of 'create new type' dialog</img>
   </document>
   <document ext="xml" filename="fieldcaption" path="..///delve_into/user/information_architects/howto">Fieldcaption
    <section>Fieldcaption</section>

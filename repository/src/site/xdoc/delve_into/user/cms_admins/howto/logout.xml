@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,18 +16,32 @@
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+    
+____________________________________________________________________________________________
+
 -->
 <document>
-    <properties>
-        <title>Examples of document types</title>
-    </properties>
-    <body>
-      <section name="Examples of document types">
+  <properties>
+    <title>Logout</title>
+  </properties>
 
-        <p>
-          TODO
-        </p>
+  <body>
+    <section name="Logout">
+      <span class="shortdesc">How to logout</span>
 
-      </section>
-    </body>
-</document>
+   <div class='screenshot'>
+     <img src="../../../../images/inars/logout.png" alt='logout screenshot'/> 
+     <p>
+       Click the logout button to logout. The <a href='./login.html'>login</a> dialog will reapear.
+     </p>
+   </div>
+
+  <subsection name='Next'>
+   <ul>
+    <li><a href='./login.html'>Login</a>.</li>
+   </ul>       
+  </subsection>
+
+   </section>
+  </body>
+</document>        
