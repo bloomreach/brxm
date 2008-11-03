@@ -43,7 +43,7 @@
             <p>
                 <i>
                     Note: in this tutorial we use the
-                    <a href="../../run-hippo-ecm/configuration/console.html">console application</a>
+                    <a href="http://docs.onehippo.org/cms7/delve_into/sysadmin/configuration/console.html">console application</a>
                     to manually configure
                     the HST2. The final version of HST2 will provide a plugin for Hippo CMS 7
                     which enables easy configuration through a user friendly GUI.
