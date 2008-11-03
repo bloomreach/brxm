@@ -794,6 +794,48 @@
    <img>Create namespace screenshot</img>
    <subsection>Next</subsection>
   </document>
+  <document ext="xml" filename="editor" path="..///delve_into/user/information_architects/howto/document_types">The Document Type Editor
+   <section>The Document Type Editor</section>
+   <img>Screenshot of the document type editor</img>
+   <subsection>Using the editor</subsection>
+   <img>Screenshot detail of new field type selector</img>
+   <img>Screenshot detail of field preview</img>
+   <img>Screenshot detail of field properties editor</img>
+   <img>Screenshot detail of save options</img>
+   <subsection>Applying your changes</subsection>
+   <img>Screenshot detail of update content action</img>
+   <subsection>Advanced</subsection>
+  </document>
+  <document ext="xml" filename="examples" path="..///delve_into/user/information_architects/howto/document_types">Examples of document types
+   <section>Examples of document types</section>
+  </document>
+  <document ext="xml" filename="fieldtypes" path="..///delve_into/user/information_architects/howto/document_types">Field Types Reference
+   <section>Field Types Reference</section>
+   <subsection>String</subsection>
+   <img>screenshot detail of string widget</img>
+   <subsection>Html</subsection>
+   <img>screenshot detail of html widget</img>
+   <subsection>Text</subsection>
+   <img>screenshot detail of text widget</img>
+   <subsection>Date</subsection>
+   <img>screenshot detail of date widget</img>
+   <img>screenshot detail of date widget with popup calendar</img>
+   <subsection>Boolean</subsection>
+   <img>screenshot detail of boolean widget</img>
+   <subsection>hippo:resource</subsection>
+   <img>screenshot detail of hippo:resource widget</img>
+   <subsection>hippo:query</subsection>
+   <subsection>hippo:facetselect</subsection>
+  </document>
+  <document ext="xml" filename="index" path="..///delve_into/user/information_architects/howto/document_types">Document Types
+   <section>Document Types</section>
+  </document>
+  <document ext="xml" filename="tutorial" path="..///delve_into/user/information_architects/howto/document_types">Document Type Tutorial
+   <section>Document Type Tutorial</section>
+   <subsection>Creating your first document type</subsection>
+   <img>screenshot detail of 'create new type' action</img>
+   <img>screenshot detail of 'create new type' dialog</img>
+  </document>
   <document ext="xml" filename="fieldcaption" path="..///delve_into/user/information_architects/howto">Fieldcaption
    <section>Fieldcaption</section>
    <shortdesc>How to define a caption for a field in a documenttype.</shortdesc>
