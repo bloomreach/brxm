@@ -53,7 +53,15 @@ public class TemplateNode extends AbstractELNode {
 	
 	public String getPropertyValue(String propertyName) throws TemplateException {
 		try {
-            return jcrNode.getProperty(propertyName).getString();
+		    if(jcrNode == null) {
+		        log.warn("TemplateNode has jcrNode which is null, so cannot get property '" + propertyName +"'" );
+		        return null;
+		    }
+		    if(!jcrNode.hasProperty(propertyName)) {
+		        log.warn("TemplateNode '"+ jcrNode.getPath() + "' does not have property '" + propertyName +"'");
+		        return null;
+		    }
+		    return jcrNode.getProperty(propertyName).getString();
         } catch (ValueFormatException e) {
             log.warn("Expected property '" +propertyName+"' to be of type String");
             throw new TemplateException(e);

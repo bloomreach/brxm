@@ -45,10 +45,20 @@ public abstract class AbstractELNode implements ELNode {
 
     public AbstractELNode(Node node) {
         this.jcrNode = node;
+        if(node == null) {
+            log.warn("jcrnode is null");
+        }
     }
 
     public AbstractELNode(ContextBase contextBase, String relativePath) throws RepositoryException {
         this.jcrNode = contextBase.getRelativeNode(relativePath);
+        if(jcrNode == null) {
+            if(contextBase.getContextRootNode() != null) {
+                log.warn("cannot get jcrNode at '" + contextBase.getContextRootNode().getPath() + "/" +relativePath);
+            } else {
+                log.warn("cannot get jcrNode because context root node is null");
+            }
+        }
     }
 
     public Node getJcrNode() {

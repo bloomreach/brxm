@@ -25,7 +25,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
@@ -78,12 +77,23 @@ public class LayoutModulesTag  extends BodyTagSupport {
     
         int amountRenderedModules = 0;
         for (int index=0; index < pcmList.size(); index++) {
-        	String templatePage = "";
+        	String templatePage = null;
             try {
-        		PageContainerModuleNode pcm = pcmList.get(index);			
-        		log.debug("pageContainerModule" + pcm);
+        		PageContainerModuleNode pcm = pcmList.get(index);
 				request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE, pcm);
-				templatePage = pcm.getTemplatePage();
+				try {
+				    templatePage = pcm.getTemplatePage();
+				} catch (RepositoryException e) {
+				    log.warn("Error fetching template page '" + templatePage + "'. Skipping this template page \n " +
+				    		"The page container module node for this template is: '" + pcm.getPath()+ "'");
+				    continue;
+				}
+				if(templatePage == null) {
+				    log.warn("Unable to get correct template page for '" + templatePage + "'. Skipping template \n " +
+                            "The page container module node for this template is: '" + pcm.getPath()+ "'");
+				    continue;
+				}
+				
 				if(debugView) {
 				    if(index > 0) {
 				        pageContext.getOut().write("<br/>");  
@@ -98,8 +108,6 @@ public class LayoutModulesTag  extends BodyTagSupport {
                     pageContext.include(templatePage);
                 }
 				amountRenderedModules++;
-			} catch (RepositoryException e) {
-				log.warn("RepositoryException:", e);
 			} catch (IOException e) {
                 log.warn("IOException:", e);
 			} catch (ServletException e) {

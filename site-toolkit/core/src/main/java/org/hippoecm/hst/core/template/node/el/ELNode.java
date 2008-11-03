@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
