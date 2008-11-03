@@ -79,11 +79,11 @@ public class ContextBase {
 	    String relativePath = stripFirstSlash(path);
 	    
 	    if (relativePath == null) {
-	        log.warn("Relative path is null, return null");
+	        log.debug("Relative path is null, return null");
 	        return null;
 	    }
 	    if (relativePath.length() == 0) {
-            log.warn("Relative path is empty, return null");
+            log.debug("Relative path is empty, return null");
             return null;
 	    }
 		try {
