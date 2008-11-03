@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.tagging.editor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.jcr.PathNotFoundException;
@@ -127,7 +128,12 @@ public class TagSuggestPlugin extends RenderPlugin {
                 tagSuggestor = new TagSuggestor(context);
                 tagCollection = tagSuggestor.getTags((JcrNodeModel) getModel());
             }
-            return tagCollection.iterator();
+            ArrayList<IModel> list = new ArrayList<IModel>();
+            Iterator<IModel> iterator = tagCollection.iterator();
+            for (int i = 0; i < 20 && iterator.hasNext(); i++){
+                list.add(iterator.next());
+            }
+            return list.iterator();
         }
 
         /**
