@@ -89,7 +89,6 @@
   <document ext="xml" filename="start_project" path="..///delve_into/howto">Start a project
    <section>Start a project</section>
    <shortdesc>Setting up a new project with Hippo Site Toolkit 2 using a Maven archetype</shortdesc>
-   <subsection>Obtaining the Hippo Site Toolkit 2</subsection>
    <subsection>Creating your project</subsection>
    <subsection>Deploying your project in Tomcat</subsection>
    <subsection>Running your project with Jetty</subsection>

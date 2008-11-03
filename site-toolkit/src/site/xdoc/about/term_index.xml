@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (142 terms)">
+    <section name="Term index (141 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -545,12 +545,6 @@
         <tr>
           <td>
             <a href="..///delve_into/howto/start_project.html#Next_Step">Next Step</a>
-          </td>
-          <td>Start a project</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/howto/start_project.html#Obtaining_the_Hippo_Site_Toolkit_2">Obtaining the Hippo Site Toolkit 2</a>
           </td>
           <td>Start a project</td>
         </tr>
