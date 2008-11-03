@@ -64,7 +64,7 @@
                     will appear. Give the new document type the name 'person' and click 'OK'.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-create-type.png"><img alt="screenshot" src="../images/tutorials/facebook-create-type-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-create-type.png"><img alt="screenshot" src="../../images/tutorials/facebook-create-type-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Now click on the 'person' document type and click 'Edit'. This will
@@ -76,7 +76,7 @@
                     'mandatory' checkbox.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-type-editor.png"><img alt="screenshot" src="../images/tutorials/facebook-type-editor-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-type-editor.png"><img alt="screenshot" src="../../images/tutorials/facebook-type-editor-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Since this is to be a facebook, let's add the ability to include
@@ -85,7 +85,7 @@
                     in 'myproject:picture'.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-type-editor-2.png"><img alt="screenshot" src="../images/tutorials/facebook-type-editor-2-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-type-editor-2.png"><img alt="screenshot" src="../../images/tutorials/facebook-type-editor-2-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     For now a name and picture will do, so click 'Save and close'. To apply
@@ -107,14 +107,14 @@
                     person document a name, and select the 'person' type.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-new-person.png"><img alt="screenshot" src="../images/tutorials/facebook-new-person-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-new-person.png"><img alt="screenshot" src="../../images/tutorials/facebook-new-person-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Click 'OK'. The new document will be opened in the document editor.
                     Enter the person's name, and upload a picture.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-edit-person.png"><img alt="screenshot" src="../images/tutorials/facebook-edit-person-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-edit-person.png"><img alt="screenshot" src="../../images/tutorials/facebook-edit-person-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Go ahead and add some more people. Add your friends, your partner, your kids, your dog,
@@ -179,7 +179,7 @@
                     and the value '/content/facebook'.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-people-module.png"><img alt="screenshot" src="../images/tutorials/facebook-people-module-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-people-module.png"><img alt="screenshot" src="../../images/tutorials/facebook-people-module-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     To make sure that all changes are persisted, select the root node
@@ -236,7 +236,7 @@
                     </li>
                 </ul>
                 <p>
-                    <a href="../images/tutorials/facebook-people-sitemapitem.png"><img alt="screenshot" src="../images/tutorials/facebook-people-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-people-sitemapitem.png"><img alt="screenshot" src="../../images/tutorials/facebook-people-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     Add the following property to <code>/hst:configuration/hst:configuration/hst:sitemap/people/navigation</code>:
@@ -281,7 +281,7 @@
                     are going to fix that soon.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-site-people.png"><img alt="screenshot" src="../images/tutorials/facebook-site-people-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-site-people.png"><img alt="screenshot" src="../../images/tutorials/facebook-site-people-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
 
 
@@ -321,7 +321,7 @@
                     value '/jsp/modules/person.jsp'.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-person-module.png"><img alt="screenshot" src="../images/tutorials/facebook-person-module-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-person-module.png"><img alt="screenshot" src="../../images/tutorials/facebook-person-module-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     To make sure that all changes are persisted, select the root node
@@ -390,7 +390,7 @@
                 </ul>
                 
                 <p>
-                    <a href="../images/tutorials/facebook-person-sitemapitem.png"><img alt="screenshot" src="../images/tutorials/facebook-person-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-person-sitemapitem.png"><img alt="screenshot" src="../../images/tutorials/facebook-person-sitemapitem-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 
                 <p>
@@ -441,7 +441,7 @@
                     loaded.
                 </p>
                 <p>
-                    <a href="../images/tutorials/facebook-site-person.png"><img alt="screenshot" src="../images/tutorials/facebook-site-person-thumbnail.jpg" width="400" height="310" /></a>
+                    <a href="../../images/tutorials/facebook-site-person.png"><img alt="screenshot" src="../../images/tutorials/facebook-site-person-thumbnail.jpg" width="400" height="310" /></a>
                 </p>
                 <p>
                     There you go, you have made your own facebook! You now know how to
