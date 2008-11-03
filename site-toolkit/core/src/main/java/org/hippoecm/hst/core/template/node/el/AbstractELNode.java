@@ -87,6 +87,12 @@ public abstract class AbstractELNode implements ELNode {
         }
         return null;
     }
+    
+    /*
+     * Note that this method returns always the uuid of the canonical node
+     * (non-Javadoc)
+     * @see org.hippoecm.hst.core.template.node.el.ELNode#getUuid()
+     */
     public String getUuid(){
     	try {
       	  if(jcrNode.hasProperty(HippoNodeType.HIPPO_UUID)){
@@ -98,7 +104,7 @@ public abstract class AbstractELNode implements ELNode {
         	  return null;
           }			
 		} catch (RepositoryException e) {
-			log.error("RepositoryException " + e.getMessage());
+			log.warn("RepositoryException " + e.getMessage());
 		}
 		return null;
     }
@@ -223,7 +229,34 @@ public abstract class AbstractELNode implements ELNode {
         };
     }
     
+    public Map getDeref() {
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object property) {
+                String propertyName = (String) property;
+                try {
+                    if(jcrNode.hasProperty(propertyName) && jcrNode.getProperty(propertyName).getType()==PropertyType.STRING ) {
+                        String uuid = jcrNode.getProperty(propertyName).getString();
+                        try {
+                            Node deref = jcrNode.getSession().getNodeByUUID(uuid);
+                            return new AbstractELNode(deref){};
+                        } catch (ItemNotFoundException e) {
+                            log.warn("Node with uuid '"+uuid+"' cannot be found. Cannot deref property");
+                            return null;
+                        }  
+                    } else {
+                       log.warn("jcr node '" + jcrNode.getPath() + "' does not have property '"+propertyName+"'");
+                       return null;
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
+                    return null;
+                }
 
+            }
+        };
+    }
     
     public Map getHasProperty() {
         if (jcrNode == null) {

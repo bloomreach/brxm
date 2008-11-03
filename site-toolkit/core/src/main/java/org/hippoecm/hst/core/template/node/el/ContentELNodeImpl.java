@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -336,7 +337,37 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         };
     }
     
-    // TODO: Is this necessary? Maybe we should use a facetselect instead?
+    public Map getDeref() {
+        return new ELPseudoMap() {
+            @Override
+            public Object get(Object property) {
+                String propertyName = (String) property;
+                try {
+                    if(jcrNode.hasProperty(propertyName) && jcrNode.getProperty(propertyName).getType()==PropertyType.STRING ) {
+                        String uuid = jcrNode.getProperty(propertyName).getString();
+                        try {
+                            Node deref = jcrNode.getSession().getNodeByUUID(uuid);
+                            return new ContentELNodeImpl(deref, sourceRewriter);
+                        } catch (ItemNotFoundException e) {
+                            log.warn("Node with uuid '"+uuid+"' cannot be found. Cannot deref property");
+                            return null;
+                        }  
+                    } else {
+                       log.warn("jcr node '" + jcrNode.getPath() + "' does not have property '"+propertyName+"'");
+                       return null;
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("RepositoryException: {}", e.getMessage());
+                    log.debug("RepositoryException:", e);
+                    return null;
+                }
+
+            }
+        };
+    }
+    
+    // use getDeref instead as that is a general purpose method
+    @Deprecated 
     public ELNode getFacetlink(){
        try {
        	 if(jcrNode != null && jcrNode.hasProperty("hippo:docbase")){

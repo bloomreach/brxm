@@ -26,10 +26,14 @@ public interface ELNode {
     public Map getNode();
     public Map getNodes();
     public Map getNodesoftype();
+    public Map getDeref(); 
     public ELNode getParent();
     public String getDecodedName();
     public String getName();
     public String getNodetype();
+    /*
+     * Return the uuid of the canonical (!!) node or null when the node is not referenceable 
+     */
     public String getUuid(); 
     public String getPath();
     public String getRelpath();
