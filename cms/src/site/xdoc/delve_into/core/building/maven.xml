@@ -92,7 +92,7 @@
 
       <subsection name="Run">
         <p>
-          The preferred way of running Hippo ECM is by <a href="../../run-hippo-ecm/deploying-the-war.html">
+          The preferred way of running Hippo ECM is by <a href="../../sysadmin/installation/in_servlet_container.html">
           deploying the application wars in an application server</a>.
         </p>
         <p>

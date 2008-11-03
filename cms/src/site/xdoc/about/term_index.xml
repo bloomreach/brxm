@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (633 terms)">
+    <section name="Term index (612 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -205,12 +205,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Advanced">Advanced</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Advanced_-_Subject_to_Change">Advanced - Subject to Change</a>
           </td>
           <td>Frontend Plugin Architecture</td>
@@ -307,12 +301,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Applying_your_changes">Applying your changes</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/jcr/jcr_dropbox_example.html#Applying_Your_Own_Hippo_Facets">Applying Your Own Hippo Facets</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -376,12 +364,6 @@
             <a href="..///delve_into/user/information_architects/concepts/boolean.html#Boolean">Boolean</a>
           </td>
           <td>Boolean</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Boolean">Boolean</a>
-          </td>
-          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -835,12 +817,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/tutorial.html#Creating_your_first_document_type">Creating your first document type</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/web/add-ons/howto/packaging.html#Creating_your_own_WAR_package">Creating your own WAR package</a>
           </td>
           <td>Creating your own WAR package</td>
@@ -892,12 +868,6 @@
             <a href="..///delve_into/custom/jcr/data_migration.html#Data_Migration">Data Migration</a>
           </td>
           <td>Data Migration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Date">Date</a>
-          </td>
-          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -1045,21 +1015,15 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/contributors/concepts/document.html#Document">Document</a>
+          </td>
+          <td>Document</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
           </td>
           <td>Goto a Document</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/tutorial.html#Document_Type_Tutorial">Document Type Tutorial</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/index.html#Document_Types">Document Types</a>
-          </td>
-          <td>Document Types</td>
         </tr>
         <tr>
           <td>
@@ -1135,6 +1099,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/contributors/concepts/document.html#Etymology">Etymology</a>
+          </td>
+          <td>Document</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/custom/jcr/examples.html#Example_1:_Get_a_document">Example 1: Get a document</a>
           </td>
           <td>JCR Examples</td>
@@ -1162,12 +1132,6 @@
             <a href="..///delve_into/custom/jcr/examples.html#Examples_of_accessing_Hippo_CMS_functionality_directly_through_the_JCR_API">Examples of accessing Hippo CMS functionality directly through the JCR API</a>
           </td>
           <td>JCR Examples</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/examples.html#Examples_of_document_types">Examples of document types</a>
-          </td>
-          <td>Examples of document types</td>
         </tr>
         <tr>
           <td>
@@ -1234,12 +1198,6 @@
             <a href="..///about/features.html#Features">Features</a>
           </td>
           <td>Features</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Field_Types_Reference">Field Types Reference</a>
-          </td>
-          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -1378,6 +1336,18 @@
             <a href="..///delve_into/custom/jcr/reference/index.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/contributors/concepts/folder.html#Folder">Folder</a>
+          </td>
+          <td>Folder</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/editors/concepts/folder.html#Folder">Folder</a>
+          </td>
+          <td>Folder</td>
         </tr>
         <tr>
           <td>
@@ -1766,27 +1736,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:facetselect">hippo:facetselect</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/sysadmin/configuration/nodes/groups.html#hippo:group">hippo:group</a>
           </td>
           <td>Groups Configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:query">hippo:query</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#hippo:resource">hippo:resource</a>
-          </td>
-          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -2198,12 +2150,6 @@
             <a href="..///delve_into/web/add-ons/howto/index.html#Howto">Howto</a>
           </td>
           <td>Howto</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Html">Html</a>
-          </td>
-          <td>Field Types Reference</td>
         </tr>
         <tr>
           <td>
@@ -3137,6 +3083,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/editors/concepts/request.html#Request">Request</a>
+          </td>
+          <td>Request</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/request_publication.html#Request_Publication_of_Document">Request Publication of Document</a>
           </td>
           <td>Request Publication of Document</td>
@@ -3197,6 +3149,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/sysadmin/configuration/repository/workspace.html#Sample">Sample</a>
+          </td>
+          <td>Workspace configuration</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/save_document.html#Save_Document">Save Document</a>
           </td>
           <td>Save Document</td>
@@ -3233,99 +3191,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_action">screenshot detail of 'create new type' action</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/tutorial.html#screenshot_detail_of_'create_new_type'_dialog">screenshot detail of 'create new type' dialog</a>
-          </td>
-          <td>Document Type Tutorial</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_boolean_widget">screenshot detail of boolean widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget">screenshot detail of date widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_date_widget_with_popup_calendar">screenshot detail of date widget with popup calendar</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_field_preview">Screenshot detail of field preview</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_field_properties_editor">Screenshot detail of field properties editor</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_hippo:resource_widget">screenshot detail of hippo:resource widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_html_widget">screenshot detail of html widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_new_field_type_selector">Screenshot detail of new field type selector</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_save_options">Screenshot detail of save options</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_string_widget">screenshot detail of string widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#screenshot_detail_of_text_widget">screenshot detail of text widget</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_detail_of_update_content_action">Screenshot detail of update content action</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/sysadmin/configuration/console.html#Screenshot_of_the_console">Screenshot of the console</a>
           </td>
           <td>Console</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Screenshot_of_the_document_type_editor">Screenshot of the document type editor</a>
-          </td>
-          <td>The Document Type Editor</td>
         </tr>
         <tr>
           <td>
@@ -3431,12 +3299,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#String">String</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/sysadmin/configuration/nodes/domains.html#Structure">Structure</a>
           </td>
           <td>Domains Configuration</td>
@@ -3497,21 +3359,9 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/fieldtypes.html#Text">Text</a>
-          </td>
-          <td>Field Types Reference</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/jcr/jcr_dropbox_example.html#The_Demo">The Demo</a>
           </td>
           <td>Demo on interfacing with Hippo ECM Repository</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#The_Document_Type_Editor">The Document Type Editor</a>
-          </td>
-          <td>The Document Type Editor</td>
         </tr>
         <tr>
           <td>
@@ -3600,6 +3450,18 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/information_architects/concepts/URL.html#URL">URL</a>
+          </td>
+          <td>URL</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/information_architects/concepts/URL.html#URL">URL</a>
+          </td>
+          <td>URL</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///about/use_cases.html#Use_cases">Use cases</a>
           </td>
           <td>Use cases</td>
@@ -3642,12 +3504,6 @@
         </tr>
         <tr>
           <td>
-            <a href="..///delve_into/user/information_architects/howto/document_types/editor.html#Using_the_editor">Using the editor</a>
-          </td>
-          <td>The Document Type Editor</td>
-        </tr>
-        <tr>
-          <td>
             <a href="..///delve_into/custom/concepts/versioning.html#Versioning">Versioning</a>
           </td>
           <td>Versioning</td>
@@ -3681,6 +3537,18 @@
             <a href="..///delve_into/sysadmin/installation/index.html#WAR">WAR</a>
           </td>
           <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/contributors/concepts/folder.html#Wat_is_a_Folder_">Wat is a Folder?</a>
+          </td>
+          <td>Folder</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/editors/concepts/folder.html#Wat_is_a_Folder_">Wat is a Folder?</a>
+          </td>
+          <td>Folder</td>
         </tr>
         <tr>
           <td>
@@ -3720,6 +3588,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/user/contributors/concepts/document.html#What_is_a_document_">What is a document?</a>
+          </td>
+          <td>Document</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/information_architects/concepts/documenttype.html#What_is_a_documenttype">What is a documenttype</a>
           </td>
           <td>Documenttype</td>
@@ -3729,6 +3603,12 @@
             <a href="..///delve_into/user/information_architects/concepts/namespace.html#What_is_a_namespace">What is a namespace</a>
           </td>
           <td>namespace</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/user/editors/concepts/request.html#What_is_a_request_">What is a request?</a>
+          </td>
+          <td>Request</td>
         </tr>
         <tr>
           <td>
@@ -3793,12 +3673,6 @@
         <tr>
           <td>
             <a href="..///delve_into/sysadmin/configuration/repository/workspace.html#Workspace_configuration">Workspace configuration</a>
-          </td>
-          <td>Workspace configuration</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/sysadmin/configuration/repository/workspace.html#Workspace_Configuration">Workspace Configuration</a>
           </td>
           <td>Workspace configuration</td>
         </tr>
