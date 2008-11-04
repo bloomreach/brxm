@@ -30,7 +30,9 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.repository.Modules;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
 public class UpdaterEngine {
@@ -41,6 +43,16 @@ public class UpdaterEngine {
     UpdaterSession updaterSession;
     List<ModuleRegistration> modules;
 
+    private static class Converted extends UpdaterItemVisitor.Default {
+        @Override
+        public void visit(Node node) throws RepositoryException {
+            if (((UpdaterNode) node).hollow) {
+                return;
+            }
+            super.visit(node);
+        }
+    }
+    
     class ModuleRegistration implements UpdaterContext {
         String name;
         UpdaterModule module;
@@ -105,6 +117,13 @@ public class UpdaterEngine {
         updaterSession = new UpdaterSession(session);
     }
 
+    public void prepare() throws RepositoryException {
+        // select applicable modules
+        //Property version = session.getRootNode().getProperty(CONFIGURATION_PATH+"/"+HippoNodeType.INITIALIZE_PATH+"/"+HippoNodeType.HIPPO_VERSION);
+        // sort remaining modules
+    
+    }
+    
     public void update() throws RepositoryException {
         for(ModuleRegistration module : modules) {
             for(ItemVisitor visitor : module.visitors) {
@@ -122,7 +141,7 @@ public class UpdaterEngine {
         updaterSession.commit();
     }
        
-    private class Cleaner extends UpdaterItemVisitor.Converted {
+    private class Cleaner extends Converted {
         UpdaterContext context;
         public Cleaner(UpdaterContext context) {
             this.context = context;
