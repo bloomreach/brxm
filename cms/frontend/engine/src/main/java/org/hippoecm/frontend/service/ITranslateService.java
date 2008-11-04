@@ -13,15 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.i18n;
+package org.hippoecm.frontend.service;
 
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IModel;
 
-public interface IModelProvider<T extends IModel> extends IClusterable {
+public interface ITranslateService extends IClusterable {
+    final static String SVN_ID = "$Id$";
 
-    T getModel(Map<String, String> criteria);
+    String TRANSLATOR_ID = "translator.id";
+
+    String translate(Map<String, String> criteria);
 
 }

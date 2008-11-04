@@ -30,18 +30,16 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocalizationNodeWrapper implements Comparable<LocalizationNodeWrapper> {
+public class NodeWrapper implements ITranslation<IModel> {
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(LocalizationNodeWrapper.class);
+    final static Logger log = LoggerFactory.getLogger(NodeWrapper.class);
 
     private Node node;
-    private Map<String, String> keys;
     private Set<String> matches;
 
-    LocalizationNodeWrapper(Node node, Map<String, String> keys) {
+    NodeWrapper(Node node, Map<String, String> keys) {
         this.node = node;
-        this.keys = keys;
 
         matches = new HashSet<String>();
         try {
@@ -58,23 +56,20 @@ public class LocalizationNodeWrapper implements Comparable<LocalizationNodeWrapp
         }
     }
 
-    public IModel getModel() throws RepositoryException {
-        Property property = node.getProperty("hippo:message");
-        Value value = property.getValue();
-        return new JcrPropertyValueModel(-1, value, new JcrPropertyModel(property));
+    public IModel getModel() {
+        try {
+            Property property = node.getProperty("hippo:message");
+            Value value = property.getValue();
+            
+            return new JcrPropertyValueModel(-1, value, new JcrPropertyModel(property));
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
     }
 
-    public int compareTo(LocalizationNodeWrapper that) {
-        for (Map.Entry<String, String> entry : keys.entrySet()) {
-            boolean matchA = matches.contains(entry.getKey());
-            boolean matchB = that.matches.contains(entry.getKey());
-            if (matchA && !matchB) {
-                return -1;
-            } else if (!matchA && matchB) {
-                return 1;
-            }
-        }
-        return 0;
+    public Set<String> getMatchingCriteria() {
+        return matches;
     }
 
 }

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.frontend.i18n;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -27,31 +26,37 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrSearchingProvider implements IModelProvider<IModel> {
+public class NodeNameTranslatePlugin extends AbstractTranslateService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(JcrSearchingProvider.class);
+    final static Logger log = LoggerFactory.getLogger(NodeNameTranslatePlugin.class);
+
+    public NodeNameTranslatePlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+    }
 
     public IModel getModel(Map<String, String> criteria) {
         try {
             QueryManager qMgr = ((UserSession) Session.get()).getQueryManager();
             String strQuery = "//element(" + ISO9075Helper.encodeLocalName(criteria.get("hippo:key"))
-                    + ", hippo:localization)[@hippo:language='" + criteria.get("hippo:language") + "']";
-            System.out.println("Query: " + strQuery);
+                    + ", hippo:translated)/element(hippo:translation, hippo:translation)[@hippo:language='"
+                    + ISO9075Helper.encodeLocalName(criteria.get("hippo:language")) + "']";
             Query query = qMgr.createQuery(strQuery, Query.XPATH);
             NodeIterator nodes = query.execute().getNodes();
             if (nodes.getSize() > 0) {
-                List<LocalizationNodeWrapper> list = new ArrayList<LocalizationNodeWrapper>((int) nodes.getSize());
+                Set<NodeWrapper> list = new HashSet<NodeWrapper>((int) nodes.getSize());
                 while (nodes.hasNext()) {
-                    list.add(new LocalizationNodeWrapper(nodes.nextNode(), criteria));
+                    list.add(new NodeWrapper(nodes.nextNode(), criteria));
                 }
-                LocalizationNodeWrapper best = Collections.max(list);
-                return best.getModel();
+                return new TranslationSelectionStrategy<IModel>(criteria.keySet()).select(list).getModel();
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());

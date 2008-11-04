@@ -46,9 +46,9 @@ public class ReorderDialog extends AbstractWorkflowDialog {
             IServiceReference<IJcrService> jcrService) {
         super(plugin, dialogWindow, new StringResourceModel("reorder", (Component) null, null));
         jcrServiceRef = jcrService;
-        
-        JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();        
-        panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(plugin.getPluginConfig())); 
+
+        JcrNodeModel folderModel = ((WorkflowsModel) plugin.getModel()).getNodeModel();
+        panel = new ReorderPanel("reorder-panel", folderModel, new DocumentListFilter(plugin.getPluginConfig()));
         add(panel);
         String name;
         try {
@@ -57,14 +57,14 @@ public class ReorderDialog extends AbstractWorkflowDialog {
             log.error(e.getMessage(), e);
             name = "";
         }
-        add(new Label("message", "Reorder " + name));
+        add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
     }
 
     @Override
     protected void execute() throws Exception {
         FolderWorkflow workflow = (FolderWorkflow) getWorkflow();
         workflow.reorder(panel.getMapping());
-        
+
         IModel pluginModel = getPlugin().getModel();
         if (pluginModel instanceof JcrNodeModel) {
             jcrServiceRef.getService().flush((JcrNodeModel) pluginModel);

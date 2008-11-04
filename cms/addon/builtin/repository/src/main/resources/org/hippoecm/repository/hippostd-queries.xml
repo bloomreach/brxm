@@ -28,9 +28,12 @@
     <sv:value>hippo:queryfolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="New Document">
+  <sv:node sv:name="new-document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
       <sv:value>//element(*,hippo:namespacefolder)/element(*,mix:referenceable)/element(*,hippo:templatetype)/hippo:prototype/element(hippo:prototype,hippo:document)</sv:value>
@@ -41,17 +44,40 @@
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>adddocument_ico</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>New Document</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Nieuw Document</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
-  <sv:node sv:name="simple">
+  <sv:node sv:name="simple-query">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:implementation</sv:value>
+      <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/simple-query/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -105,17 +131,40 @@
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>adddocument_ico</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>simple</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>simpel</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
-  <sv:node sv:name="New Folder">
+  <sv:node sv:name="new-folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippostd:templatequery</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:implementation</sv:value>
+      <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:statement" sv:type="String">
-      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/New_x0020_Folder/hippostd:templates/node()</sv:value>
+      <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-folder/hippostd:templates/node()</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:language" sv:type="String">
       <sv:value>xpath</sv:value>
@@ -141,8 +190,8 @@
         <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-          <sv:value>New Folder</sv:value>
-          <sv:value>New Document</sv:value>
+          <sv:value>new-folder</sv:value>
+          <sv:value>new-document</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="Unordered folder">
@@ -155,14 +204,36 @@
         <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-          <sv:value>New Folder</sv:value>
-          <sv:value>New Document</sv:value>
+          <sv:value>new-folder</sv:value>
+          <sv:value>new-document</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
     <sv:property sv:name="hippostd:icon" sv:type="String">
       <sv:value>addfolder_ico</sv:value>
     </sv:property>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>en</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>New Folder</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>nl</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Nieuwe Map</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
 
 </sv:node>

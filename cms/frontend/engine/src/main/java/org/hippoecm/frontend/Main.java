@@ -190,7 +190,7 @@ public class Main extends WebApplication {
         if (Application.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
-
+        } else {
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
         }

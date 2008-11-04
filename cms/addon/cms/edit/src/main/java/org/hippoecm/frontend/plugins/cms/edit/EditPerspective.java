@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.i18n.NodeNameModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -27,7 +28,6 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,16 +67,8 @@ public class EditPerspective extends Perspective implements IEditService {
     }
 
     @Override
-    public void onModelChanged() {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
-        try {
-            if (nodeModel != null && nodeModel.getNode() != null) {
-                // FIXME: use translated node name when available
-                setTitle(ISO9075Helper.decodeLocalName(nodeModel.getNode().getName()));
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
+    public IModel getTitle() {
+        return new NodeNameModel((JcrNodeModel) getModel());
     }
 
     // IEditService

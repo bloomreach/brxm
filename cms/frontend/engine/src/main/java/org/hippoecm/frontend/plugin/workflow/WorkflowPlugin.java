@@ -179,6 +179,7 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
         wflConfig.put(IEditService.EDITOR_ID, config.get(IEditService.EDITOR_ID));
         wflConfig.put(IBrowseService.BROWSER_ID, config.get(IBrowseService.BROWSER_ID));
         wflConfig.put(IValidateService.VALIDATE_ID, config.get(IValidateService.VALIDATE_ID));
+        wflConfig.put("translator.id", config.get("translator.id"));
         return wflConfig;
     }
 

@@ -28,7 +28,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -98,7 +97,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
             final IModel text, final Visibility visible, final WorkflowAction action) {
-        DialogLink link = new DialogLink(dialogName, new Model(dialogLink), new IDialogFactory() {
+        DialogLink link = new DialogLink(dialogName, dialogLink, new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
@@ -159,7 +158,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
 
     protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
             final IModel text, final WorkflowAction action) {
-        addWorkflowDialog(dialogName, dialogTitle, dialogTitle, text, new Visibility() {
+        addWorkflowDialog(dialogName, dialogLink, dialogTitle, text, new Visibility() {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {

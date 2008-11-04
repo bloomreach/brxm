@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -59,7 +60,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         add(new Label("caption", new PropertyModel(this, "caption")));
 
-        add(new Label("status", new PropertyModel(this, "stateSummary")));
+        add(new Label("status", new StringResourceModel("state-${stateSummary}", this, new Model(this))));
 
         add(locked = new org.apache.wicket.markup.html.WebMarkupContainer("locked"));
 
