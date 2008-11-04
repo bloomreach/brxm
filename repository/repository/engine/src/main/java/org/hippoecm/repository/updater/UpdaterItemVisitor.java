@@ -26,6 +26,8 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 public abstract class UpdaterItemVisitor implements ItemVisitor {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     final protected boolean breadthFirst;
     private LinkedList<Item> currentQueue;
@@ -66,7 +68,6 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         if (node.getPath().equals("/jcr:system")) {
             return;
         }
-        //System.err.println("VISIT "+node.getPath());
         try {
             if (!breadthFirst) {
                 // depth-first traversal
@@ -114,7 +115,6 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     }
 
     public static class Default extends UpdaterItemVisitor {
-
         public Default() {
         }
 
@@ -140,7 +140,6 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     }
 
     public static class Converted extends Default {
-
         public void visit(Node node) throws RepositoryException {
             if (((UpdaterNode) node).hollow) {
                 return;

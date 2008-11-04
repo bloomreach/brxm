@@ -31,6 +31,9 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
 final class UpdaterProperty extends UpdaterItem implements Property {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     boolean isMultiple;
     Value value;
     Value[] values;
@@ -75,6 +78,7 @@ final class UpdaterProperty extends UpdaterItem implements Property {
     }
 
     // javax.jcr.Property interface
+
     public void setValue(Value value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
         if (value == null) {
             remove();

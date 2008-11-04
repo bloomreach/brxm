@@ -35,14 +35,17 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 public abstract class UpdaterItem implements Item {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Item origin;
     UpdaterNode parent;
     UpdaterSession session;
 
-    UpdaterItem(UpdaterSession session, UpdaterItem target) {
+    UpdaterItem(UpdaterSession session, UpdaterNode target) {
         this.session = session;
         this.origin = null;
-        this.parent = null;
+        this.parent = target;
     }
 
     UpdaterItem(UpdaterSession session, Item origin, UpdaterNode target) {
@@ -75,8 +78,8 @@ public abstract class UpdaterItem implements Item {
         if (getParent() != null) {
             String path = getParent().getPath();
             String name = getName();
-            int index = isNode() ? ((Node)this).getIndex() : 1;
-            if(index > 1)
+            int index = isNode() ? ((Node) this).getIndex() : 1;
+            if (index > 1)
                 name += "[" + index + "]";
             if (path.endsWith("/"))
                 return path + name;
@@ -91,17 +94,10 @@ public abstract class UpdaterItem implements Item {
         if (parent == null)
             return "jcr:root";
         String name = parent.reverse.get(this);
-        Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
-        for (int index = 0; iter.hasNext(); index++) {
-            if (iter.next() == this) {
-                if (name.startsWith(":"))
-                    return name.substring(1); // property name
-                else // node name
-                    // return index > 1 ? name + "[" + (index + 1) + "]" : name;
-                    return name;
-            }
-        }
-        throw new UpdaterException("internal error");
+        if (name.startsWith(":"))
+            return name.substring(1);
+        else
+            return name;
     }
 
     public Item getAncestor(int depth) throws ItemNotFoundException, AccessDeniedException, RepositoryException {
@@ -115,7 +111,7 @@ public abstract class UpdaterItem implements Item {
     }
 
     public Node getParent() throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        return (Node)parent;
+        return (Node) parent;
     }
 
     public int getDepth() throws RepositoryException {
@@ -161,16 +157,18 @@ public abstract class UpdaterItem implements Item {
 
     public void remove() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
         String name = parent.reverse.remove(this);
-        Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
-        while (iter.hasNext()) {
-            UpdaterItem item = iter.next();
-            if (item == this) {
-                iter.remove();
-                parent.removed.add(this);
-                return;
+        if (parent.children.containsKey(name)) {
+            Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
+            while (iter.hasNext()) {
+                UpdaterItem item = iter.next();
+                if (item == this) {
+                    iter.remove();
+                    parent.removed.add(this);
+                    return;
+                }
             }
+            if (parent.children.get(name).size() == 0)
+                parent.children.remove(name);
         }
-        if(parent.children.get(name).size() == 0)
-            parent.children.remove(name);
     }
 }

@@ -48,6 +48,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 final class UpdaterSession implements Session {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Session upstream;
     ValueFactory valueFactory;
     UpdaterNode root;
@@ -124,8 +127,8 @@ final class UpdaterSession implements Session {
     }
 
     public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
-        UpdaterNode node = (UpdaterNode)getItem(srcAbsPath);
-        UpdaterNode destination = (UpdaterNode)getItem(destAbsPath.substring(0, destAbsPath.lastIndexOf("/") - 1));
+        UpdaterNode node = (UpdaterNode) getItem(srcAbsPath);
+        UpdaterNode destination = (UpdaterNode) getItem(destAbsPath.substring(0, destAbsPath.lastIndexOf("/") - 1));
         node.parent = destination;
         node.setName(destAbsPath.substring(destAbsPath.lastIndexOf("/")));
     }
