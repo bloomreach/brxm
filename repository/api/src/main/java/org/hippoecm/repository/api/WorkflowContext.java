@@ -21,8 +21,7 @@ import javax.jcr.RepositoryException;
 public interface WorkflowContext {
     final static String SVN_ID = "$Id$";
 
-    // WARNING: THE call getWorkflowContext is not yet standardized
-    public WorkflowContext getWorkflowContext(Date timestamp);
+    public WorkflowContext getWorkflowContext(Object timestamp) throws MappingException, RepositoryException;
 
     public Document getDocument(String category, String identifier) throws RepositoryException;
     public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
