@@ -16,7 +16,10 @@
 package org.hippoecm.repository.updater;
 
 class UpdaterException extends Error {
-    UpdaterException(String reason) {
+     @SuppressWarnings("unused")
+     private final static String SVN_ID = "$Id$";
+
+     UpdaterException(String reason) {
         super(reason);
     }
 }

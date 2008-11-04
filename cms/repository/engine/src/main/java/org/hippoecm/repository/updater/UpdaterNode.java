@@ -51,6 +51,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
@@ -60,6 +61,9 @@ import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 final class UpdaterNode extends UpdaterItem implements Node {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     boolean hollow;
     Map<String, List<UpdaterItem>> children;
     Map<UpdaterItem, String> reverse;
@@ -67,7 +71,6 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
     UpdaterNode(UpdaterSession session, UpdaterNode target) {
         super(session, target);
-        System.err.println("FUCK");
         hollow = false;
     }
 
@@ -77,12 +80,12 @@ final class UpdaterNode extends UpdaterItem implements Node {
     }
 
     private final void substantiate() throws RepositoryException {
-        if(!hollow)
+        if (!hollow)
             return;
-        children = new LinkedHashMap<String,List<UpdaterItem>>();
-        reverse = new HashMap<UpdaterItem,String>();
+        children = new LinkedHashMap<String, List<UpdaterItem>>();
+        reverse = new HashMap<UpdaterItem, String>();
         removed = new HashSet<UpdaterItem>();
-        for (NodeIterator iter = ((Node)origin).getNodes(); iter.hasNext();) {
+        for (NodeIterator iter = ((Node) origin).getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
             String name = child.getName();
             if (!children.containsKey(name))
@@ -90,7 +93,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
             List<UpdaterItem> siblings = children.get(name);
             siblings.add(new UpdaterNode(session, child, this));
         }
-        for (PropertyIterator iter = ((Node)origin).getProperties(); iter.hasNext();) {
+        for (PropertyIterator iter = ((Node) origin).getProperties(); iter.hasNext();) {
             Property child = iter.nextProperty();
             String name = ":" + child.getName();
             if (!children.containsKey(name))
@@ -107,7 +110,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         hollow = false;
     }
 
-    private UpdaterProperty setProperty(String name, UpdaterProperty property) {
+    private UpdaterProperty setProperty(String name, UpdaterProperty property) throws RepositoryException {
         name = ":" + name;
         List<UpdaterItem> siblings = new LinkedList<UpdaterItem>();
         siblings.add(property);
@@ -116,33 +119,37 @@ final class UpdaterNode extends UpdaterItem implements Node {
         return property;
     }
 
+    public void setPrimaryNodeType(String name) throws RepositoryException {
+        setProperty("jcr:primaryType", name);
+    }
+
     private String[] getInternalProperty(String name) throws ValueFormatException, RepositoryException {
-        if(hollow) {
-            if(origin != null && ((Node)origin).hasProperty(name)) {
+        if (hollow) {
+            if (origin != null && ((Node) origin).hasProperty(name)) {
                 String[] strings;
-                Property property = ((Node)origin).getProperty(name);
-                if(property.getDefinition().isMultiple()) {
+                Property property = ((Node) origin).getProperty(name);
+                if (property.getDefinition().isMultiple()) {
                     Value[] values = property.getValues();
                     strings = new String[values.length];
-                    for(int i=0; i<strings.length; i++)
+                    for (int i = 0; i < strings.length; i++)
                         strings[i] = values[i].getString();
                 } else
-                    strings = new String[] { property.getString() };
+                    strings = new String[]{property.getString()};
                 return strings;
             } else
                 return new String[0];
         } else {
-            List<UpdaterItem> items = children.get(":"+name);
-            if(items != null && items.size() > 0) {
+            List<UpdaterItem> items = children.get(":" + name);
+            if (items != null && items.size() > 0) {
                 String[] strings;
                 UpdaterProperty property = (UpdaterProperty) items.get(0);
-                if(property.isMultiple()) {
+                if (property.isMultiple()) {
                     Value[] values = property.getValues();
                     strings = new String[values.length];
-                    for(int i=0; i<strings.length; i++)
+                    for (int i = 0; i < strings.length; i++)
                         strings[i] = values[i].getString();
                 } else
-                    strings = new String[] { property.getString() };
+                    strings = new String[]{property.getString()};
                 return strings;
             } else
                 return new String[0];
@@ -150,25 +157,30 @@ final class UpdaterNode extends UpdaterItem implements Node {
     }
 
     void commit() throws RepositoryException {
+        Item oldOrigin = null;
         boolean nodeTypesChanged;
         boolean nodeLocationChanged;
 
-        if(getInternalProperty("jcr:primaryType").length > 0)
-            nodeTypesChanged = !((Node)origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
+        if (getInternalProperty("jcr:primaryType").length > 0)
+            nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
         else
             nodeTypesChanged = true;
 
-        if(parent == null)
+        if (parent == null)
             nodeLocationChanged = false;
         else
             nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
 
-        System.err.println("COMMIT current="+getPath()+"{"+getName()+"} origin="+origin.getPath()+"{"+origin.getName()+"} modified="+nodeTypesChanged+" changed="+nodeLocationChanged+" hollow="+hollow);
-
         if (nodeTypesChanged) {
-            if(!hollow) {
-                ((Node)parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
-                // FIXME mixins
+            if (!hollow) {
+                oldOrigin = origin;
+                origin = ((Node) parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
+                String[] mixins = getInternalProperty("jcr:mixinTypes");
+                if (mixins != null) {
+                    for (int i = 0; i < mixins.length; i++) {
+                        ((Node) origin).addMixin(mixins[i]);
+                    }
+                }
             }
         } else {
             if (nodeLocationChanged) {
@@ -183,27 +195,56 @@ final class UpdaterNode extends UpdaterItem implements Node {
                     // FIXME: mixins, protected, computed
                     name = name.substring(1);
                     Node node = (Node) origin;
-                    if(node.hasProperty(name) && node.getProperty(name).getDefinition().isProtected())
+
+                    //if(node.hasProperty(name) && node.getProperty(name).getDefinition().isProtected())
+                    //continue;
+
+                    NodeType[] mixinNodeTypes = ((Node) origin).getMixinNodeTypes();
+                    NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
+                    nodeTypes[0] = ((Node) origin).getPrimaryNodeType();
+                    System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
+                    boolean isValid = false;
+                    for (int i = 0; i < nodeTypes.length; i++) {
+                        PropertyDefinition[] defs = nodeTypes[i].getPropertyDefinitions();
+                        for (int j = 0; j < defs.length; j++) {
+                            if (defs[j].getName().equals("*")) {
+                                isValid = true;
+                            } else if (defs[j].getName().equals(name)) {
+                                if (defs[j].isProtected()) {
+                                    isValid = false;
+                                } else {
+                                    isValid = true;
+                                }
+                                // break out of the outermost loop
+                                i = nodeTypes.length;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isValid)
                         continue;
-                    if(items.getValue().size() > 0) {
-                        UpdaterProperty property = (UpdaterProperty)items.getValue().get(0);
+
+                    if (items.getValue().size() > 0) {
+                        UpdaterProperty property = (UpdaterProperty) items.getValue().get(0);
                         if (property.isMultiple()) {
-                            ((Node)origin).setProperty(name, property.getValues());
+                            ((Node) origin).setProperty(name, property.getValues());
                         } else {
-                            ((Node)origin).setProperty(name, property.getValue());
+                            ((Node) origin).setProperty(name, property.getValue());
                         }
                     }
                 } else {
                     for (UpdaterItem item : items.getValue()) {
-                        ((UpdaterNode)item).commit();
+                        ((UpdaterNode) item).commit();
                     }
                 }
             }
             for (UpdaterItem item : removed) {
-                item.origin.remove();
+                if (item.origin != null)
+                    item.origin.remove();
             }
-            if(nodeTypesChanged && origin != null)
-                origin.remove();
+            if (oldOrigin != null) {
+                oldOrigin.remove();
+            }
         }
     }
 
@@ -215,7 +256,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
             last = node;
             node = node.getNode(iter.nextToken());
         }
-        return (UpdaterNode)last;
+        return (UpdaterNode) last;
     }
 
     private String resolveName(String relPath) {
@@ -251,7 +292,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
                 throw new PathNotFoundException(name);
             if (index >= items.size())
                 throw new PathNotFoundException(name + "[" + index + "]");
-            UpdaterNode item = (UpdaterNode)items.get(index);
+            UpdaterNode item = (UpdaterNode) items.get(index);
             return item.getItem(sequel, isProperty);
         } else {
             if (isProperty) {
@@ -279,11 +320,11 @@ final class UpdaterNode extends UpdaterItem implements Node {
             // big fat error
         }
         nodeTypes.add(nodeType);
-        if(hasProperty("jcr:mixinTypes")) {
+        if (hasProperty("jcr:mixinTypes")) {
             Value[] mixins = getProperty("jcr:mixinTypes").getValues();
-            for (int i = 0; i < nodeTypes.size(); i++) {
+            for (int i = 0; i < mixins.length; i++) {
                 nodeType = session.getNewType(mixins[i].getString());
-                
+                nodeTypes.add(nodeType);
             }
         }
         return nodeTypes.toArray(new NodeType[nodeTypes.size()]);
@@ -312,7 +353,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         Node node = this;
         String name = relPath;
         if (relPath.contains("/")) {
-            HierarchyResolver manager = ((HippoWorkspace)(session.getWorkspace())).getHierarchyResolver();
+            HierarchyResolver manager = ((HippoWorkspace) (session.getWorkspace())).getHierarchyResolver();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             manager.getItem(this, relPath, false, last);
             node = last.node;
@@ -338,19 +379,19 @@ final class UpdaterNode extends UpdaterItem implements Node {
         substantiate();
         if (srcChildRelPath.contains("/") || destChildRelPath.contains("/"))
             throw new ConstraintViolationException();
-        // FIXME
+    // FIXME
     }
 
     public Property setProperty(String name, Value value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        substantiate();
         return setProperty(name, value, value.getType());
     }
 
     public Property setProperty(String name, Value value, int type) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
         substantiate();
         if (!hasProperty(name)) {
-            UpdaterProperty child = new UpdaterProperty(session, this);
-            resolveNode(name).setProperty(resolveName(name), child);
+            UpdaterNode propertyParent = resolveNode(name);
+            UpdaterProperty child = new UpdaterProperty(session, propertyParent);
+            propertyParent.setProperty(resolveName(name), child);
             child.setValue(value);
             return child;
         } else {
@@ -434,7 +475,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
     public Node getNode(String relPath) throws PathNotFoundException, RepositoryException {
         substantiate();
-        return (UpdaterNode)getItem(relPath, false);
+        return (UpdaterNode) getItem(relPath, false);
     }
 
     public NodeIterator getNodes() throws RepositoryException {
@@ -443,7 +484,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         for (Map.Entry<String, List<UpdaterItem>> items : children.entrySet()) {
             if (!items.getKey().startsWith(":")) {
                 for (UpdaterItem item : items.getValue()) {
-                    set.add((UpdaterNode)item);
+                    set.add((UpdaterNode) item);
                 }
             }
         }
@@ -455,7 +496,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         Set<UpdaterNode> set = new LinkedHashSet<UpdaterNode>();
         if (children.containsKey(namePattern)) {
             for (UpdaterItem item : children.get(namePattern)) {
-                set.add((UpdaterNode)item);
+                set.add((UpdaterNode) item);
             }
         }
         return new SetNodeIterator(set);
@@ -463,7 +504,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
     public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
         substantiate();
-        return (UpdaterProperty)getItem(relPath, true);
+        return (UpdaterProperty) getItem(relPath, true);
     }
 
     public PropertyIterator getProperties() throws RepositoryException {
@@ -472,7 +513,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         for (Map.Entry<String, List<UpdaterItem>> items : children.entrySet()) {
             if (items.getKey().startsWith(":")) {
                 for (UpdaterItem item : items.getValue()) {
-                    set.add((UpdaterProperty)item);
+                    set.add((UpdaterProperty) item);
                 }
             }
         }
@@ -484,7 +525,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         Set<UpdaterProperty> set = new LinkedHashSet<UpdaterProperty>();
         if (children.containsKey(":" + namePattern)) {
             for (UpdaterItem item : children.get(":" + namePattern)) {
-                set.add((UpdaterProperty)item);
+                set.add((UpdaterProperty) item);
             }
         }
         return new SetPropertyIterator(set);
@@ -496,7 +537,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
     public String getUUID() throws UnsupportedRepositoryOperationException, RepositoryException {
         substantiate();
-        return ((Node)origin).getUUID();
+        return ((Node) origin).getUUID();
     }
 
     public int getIndex() throws RepositoryException {
@@ -506,7 +547,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
         for (int index = 0; iter.hasNext(); index++) {
             if (iter.next() == this)
-                return index+1;
+                return index + 1;
         }
         throw new UpdaterException("internal error");
     }
