@@ -15,27 +15,33 @@
  */
 package org.hippoecm.frontend.i18n;
 
+import java.util.Map;
+
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugin.IPlugin;
+import org.hippoecm.frontend.model.IModelProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ITranslateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrStringProviderPlugin implements IPlugin {
+public abstract class AbstractTranslateService implements IModelProvider<IModel>, ITranslateService {
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(JcrStringProviderPlugin.class);
+    final static Logger log = LoggerFactory.getLogger(AbstractTranslateService.class);
 
-    public final static String PROVIDER_ID = "provider.id";
-
-    public JcrStringProviderPlugin(IPluginContext context, IPluginConfig config) {
-        if (config.getString(PROVIDER_ID) != null) {
-            IModelProvider<IModel> provider = new JcrSearchingProvider();
-            context.registerService(provider, config.getString(PROVIDER_ID));
-        } else {
-            log.warn("No provider id (provider.id) specified.");
+    public AbstractTranslateService(IPluginContext context, IPluginConfig config) {
+        if (config.getString(ITranslateService.TRANSLATOR_ID) != null) {
+            context.registerService(this, config.getString(ITranslateService.TRANSLATOR_ID));
         }
+    }
+
+    public String translate(Map<String, String> criteria) {
+        IModel model = getModel(criteria);
+        if (model != null) {
+            return (String) model.getObject();
+        }
+        return null;
     }
 
 }

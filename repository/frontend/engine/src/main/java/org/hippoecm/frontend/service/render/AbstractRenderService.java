@@ -36,13 +36,13 @@ import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.i18n.IModelProvider;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
@@ -65,7 +65,6 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String FEEDBACK = "wicket.feedback";
     public static final String BEHAVIOR = "wicket.behavior";
-    public static final String LOCALIZER = "wicket.localizer";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -391,11 +390,17 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
     // implement IStringResourceProvider
     @SuppressWarnings("unchecked")
     public String getString(Map<String, String> criteria) {
-        IModelProvider<IModel> provider = (IModelProvider<IModel>) context.getService(config.getString(LOCALIZER), IModelProvider.class);
-        if (provider != null) {
-            IModel model = provider.getModel(criteria);
-            if (model != null) {
-                return (String) model.getObject();
+        String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
+        if (translators != null) {
+            for (String translatorId : translators) {
+                ITranslateService translator = (ITranslateService) context.getService(translatorId,
+                        ITranslateService.class);
+                if (translator != null) {
+                    String translation = translator.translate(criteria);
+                    if (translation != null) {
+                        return translation;
+                    }
+                }
             }
         }
         return null;

@@ -20,23 +20,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocalizationConfigWrapper implements Comparable<LocalizationConfigWrapper> {
+public class ConfigWrapper implements ITranslation<IModel> {
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(LocalizationConfigWrapper.class);
+    final static Logger log = LoggerFactory.getLogger(ConfigWrapper.class);
 
     private IPluginConfig config;
-    private Map<String, String> keys;
     private Set<String> matches;
 
-    LocalizationConfigWrapper(IPluginConfig config, Map<String, String> keys) {
+    ConfigWrapper(IPluginConfig config, Map<String, String> keys) {
         this.config = config;
-        this.keys = keys;
 
         matches = new HashSet<String>();
         for (Map.Entry<String, String> entry : keys.entrySet()) {
@@ -50,20 +47,24 @@ public class LocalizationConfigWrapper implements Comparable<LocalizationConfigW
     }
 
     public IModel getModel() {
-        return new PropertyModel(config, "hippo:message");
+        return new IModel() {
+            private static final long serialVersionUID = 1L;
+
+            public Object getObject() {
+                return config.getString("hippo:message");
+            }
+
+            public void setObject(Object object) {
+                config.put("hippo:message", object);
+            }
+
+            public void detach() {
+            }
+        };
     }
 
-    public int compareTo(LocalizationConfigWrapper that) {
-        for (Map.Entry<String, String> entry : keys.entrySet()) {
-            boolean matchA = matches.contains(entry.getKey());
-            boolean matchB = that.matches.contains(entry.getKey());
-            if (matchA && !matchB) {
-                return -1;
-            } else if (!matchA && matchB) {
-                return 1;
-            }
-        }
-        return 0;
+    public Set<String> getMatchingCriteria() {
+        return matches;
     }
 
 }
