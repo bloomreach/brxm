@@ -44,7 +44,11 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.VersionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -57,8 +61,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.EventLoggerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WorkflowManagerImpl implements WorkflowManager {
     @SuppressWarnings("unused")
@@ -125,7 +127,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         continue;
                     }
                     if (log.isDebugEnabled()) {
-                        log.debug("matching item type against " +
+                        StringBuffer sb = new StringBuffer();
+                        sb.append(item.getPrimaryNodeType().getName());
+                        NodeType[] nodeTypes = item.getMixinNodeTypes();
+                        for(int i=0; i<nodeTypes.length; i++) {
+                            sb.append(", ");
+                            sb.append(nodeTypes[i].getName());
+                        }
+                        log.debug("matching item of types "+new String(sb)+" against " +
                                   workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString());
                     }
                     if (item.isNodeType(workflowNode.getProperty(HippoNodeType.HIPPO_NODETYPE).getString())) {
@@ -160,8 +169,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         } catch (ValueFormatException ex) {
             log.error("misconfiguration of workflow definition");
         } catch (RepositoryException ex) {
-            log.error("generic error accessing workflow definitions "+ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error("generic error accessing workflow definitions "+ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
         return null;
     }
@@ -489,7 +497,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             } catch (IllegalAccessException ex) {
                 throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
             } catch (InvocationTargetException ex) {
-                ex.getCause().printStackTrace(System.err);
+                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw returnException = ex.getCause();
             } finally {
                 StringBuffer sb = new StringBuffer();
@@ -690,7 +698,13 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    private class WorkflowContextImpl implements WorkflowContext {
+    private abstract class AbstractWorkflowContext implements WorkflowContext {
+        public WorkflowContext getWorkflowContext(Object jobSpecification) throws MappingException, RepositoryException {
+            throw new MappingException("No context defined for class "+jobSpecification.getClass().getName());
+        }
+    }
+
+    private class WorkflowContextImpl extends AbstractWorkflowContext implements WorkflowContext {
         Node subject;
         DocumentManagerImpl documentManager;
 
