@@ -17,9 +17,11 @@
 package org.hippoecm.repository.standardworkflow;
 
 import java.rmi.RemoteException;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -53,6 +55,9 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             final DocumentManager documentManager = ((HippoWorkspace)rootSession.getWorkspace()).getDocumentManager();
             final WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
             return new WorkflowContext() {
+                public WorkflowContext getWorkflowContext(Object jobSpecification) throws MappingException, RepositoryException {
+                    throw new MappingException("No workflow context defined for class "+jobSpecification.getClass().getName());
+                }
                 public Document getDocument(String category, String identifier) throws RepositoryException {
                     return documentManager.getDocument(category, identifier);
                 }
