@@ -17,7 +17,10 @@ package org.hippoecm.hst.core.template.node.el;
 
 import java.util.Map;
 
+import org.hippoecm.hst.core.template.node.content.SourceRewriter;
+
 public interface ContentELNode extends ELNode{
     public Map getResourceUrl();
     public Map getHasResourceUrl();
+    public SourceRewriter getSourceRewriter();
 }

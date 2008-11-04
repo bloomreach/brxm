@@ -50,6 +50,11 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
      * If you want a custom source rewriter, use this constructor
      */
 
+    public ContentELNodeImpl(ContentELNode contentELNode){
+        super(contentELNode.getJcrNode());
+        this.sourceRewriter = contentELNode.getSourceRewriter();
+    }
+    
     public ContentELNodeImpl(Node node, SourceRewriter sourceRewriter) {
         super(node);
         this.sourceRewriter = sourceRewriter;
@@ -423,5 +428,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             log.error(e.getMessage(), e);
             return null;
         }
+    }
+    public SourceRewriter getSourceRewriter() {
+        return this.sourceRewriter;
     }
 }
