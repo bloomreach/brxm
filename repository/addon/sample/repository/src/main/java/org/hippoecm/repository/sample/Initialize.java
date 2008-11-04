@@ -69,7 +69,7 @@ public class Initialize
                 bootstrap = new Initialize();
             bootstrap.initializeRepository();
         } catch(RepositoryException ex) {
-            System.err.println("RepositoryException: "+ex.getMessage());
+            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(System.err);
         }
     }

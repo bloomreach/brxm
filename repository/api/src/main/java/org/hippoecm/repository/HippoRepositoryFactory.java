@@ -20,9 +20,10 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
     @SuppressWarnings("unused")
@@ -93,34 +94,24 @@ public class HippoRepositoryFactory {
                 } catch(IllegalAccessException ex) {
                     throw new RepositoryException(ex);
                 } catch(InvocationTargetException ex) {
-                    if(ex.getCause() instanceof RemoteException)
+                    if(ex.getCause() instanceof RemoteException) {
                         throw (RemoteException) ex.getCause();
-                    else if(ex.getCause() instanceof NotBoundException)
+                    } else if(ex.getCause() instanceof NotBoundException) {
                         throw (NotBoundException) ex.getCause();
-                    else if(ex.getCause() instanceof MalformedURLException)
+                    } else if(ex.getCause() instanceof MalformedURLException) {
                         throw (MalformedURLException) ex.getCause();
-                    else if(ex.getCause() instanceof RepositoryException)
+                    } else if(ex.getCause() instanceof RepositoryException) {
                         throw (RepositoryException) ex.getCause();
-                    else {
-                        ex.getCause().printStackTrace(System.err);
-                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage());
+                    } else {
+                        throw new RepositoryException("unchecked exception: "+ex.getCause().getMessage(), ex);
                     }
                 }
             } catch (RemoteException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-                return null;
-                // FIXME
+                throw new RepositoryException("Unable to connect to repository", ex);
             } catch (NotBoundException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-                return null;
-                // FIXME
+                throw new RepositoryException("Unable to find remote repository", ex);
             } catch (MalformedURLException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-                return null;
-                // FIXME
+                throw new RepositoryException("Unable to locate remote repository", ex);
             }
         }
 
@@ -173,8 +164,6 @@ public class HippoRepositoryFactory {
                 } else if (ex.getCause() instanceof IllegalArgumentException) {
                     throw new RepositoryException("Invalid data: " + ex.getCause());
                 } else {
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
                     throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 }
             }
@@ -195,8 +184,6 @@ public class HippoRepositoryFactory {
             } else if (ex.getCause() instanceof IllegalArgumentException) {
                 throw new RepositoryException("Invalid data: " + ex.getCause());
             } else {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
                 throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             }
         }

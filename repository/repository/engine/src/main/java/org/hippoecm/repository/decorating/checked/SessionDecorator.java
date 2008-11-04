@@ -72,8 +72,8 @@ public class SessionDecorator implements XASession, HippoSession {
         this.factory = factory;
         this.repository = repository;
         this.session = session;
-	this.credentials = credentials;
-	this.workspaceName = workspaceName;
+        this.credentials = credentials;
+        this.workspaceName = workspaceName;
     }
 
     public static Session unwrap(Session session) {
@@ -439,8 +439,8 @@ public class SessionDecorator implements XASession, HippoSession {
 
     public void check() throws RepositoryException {
         if(!session.isLive()) {
-	    repair();
-	}
+            repair();
+        }
     }
     
     private void repair() throws RepositoryException {

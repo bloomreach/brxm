@@ -215,8 +215,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     try {
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
+                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                         return null;
                     }
                 }
@@ -240,8 +239,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                         store(state);
                         return nodeState;
                     } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
+                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                         return null;
                     }
                 }
@@ -296,8 +294,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     try {
                         state = virtualNodeNames.get(nodeTypeName).populate(nodeState);
                     } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
+                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                         return null;
                     }
                 }
@@ -403,8 +400,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
                     try {
                         virtualNodeNames.get(((NodeState)state).getNodeTypeName()).populate((NodeState)state);
                     } catch(RepositoryException ex) {
-                        System.err.println(ex.getMessage());
-                        ex.printStackTrace(System.err);
+                        log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                     }
                 }
             }

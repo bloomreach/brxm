@@ -100,8 +100,7 @@ public class DisplayDocument extends RenderPlugin {
                     content.setModel(new Model("selected item has no default content to display"));
                 }
             } catch (RepositoryException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 content.setModel(new Model(""));
             }
         }

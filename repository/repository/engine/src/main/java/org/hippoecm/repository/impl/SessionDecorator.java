@@ -113,20 +113,16 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         try {
             derivedEngine.save();
         } catch(VersionException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw ex;
         } catch(LockException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw ex;
         } catch(ConstraintViolationException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw ex;
         } catch(RepositoryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw ex;
         }
         super.save();

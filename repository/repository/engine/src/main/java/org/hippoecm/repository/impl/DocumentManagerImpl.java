@@ -153,8 +153,7 @@ public class DocumentManagerImpl implements DocumentManager {
                 Throwable e = ex.getCause();
                 if(e instanceof RepositoryException) {
                     RepositoryException exception = (RepositoryException) e;
-                    System.err.println(exception.getClass().getName()+": "+exception.getMessage());
-                    exception.printStackTrace(System.err);
+                    log.error(exception.getClass().getName()+": "+exception.getMessage(), exception);
                 } else {
                     throw ex;
                 }
@@ -196,12 +195,10 @@ public class DocumentManagerImpl implements DocumentManager {
                 return null;
             }
         } catch(javax.jdo.JDODataStoreException ex) {
-            System.err.println("JDODataStoreException: "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new MappingException("Representing JCR data to Java object failed", ex);
         } catch(PathNotFoundException ex) {
-            System.err.println("PathNotFoundException: "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             /* getDocument cannot and should not be used to create documents.
              * null is a valid way to check whether the document looked for exist,
              * as this is the only way for e.g. Workflow plugins to lookup

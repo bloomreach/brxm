@@ -205,8 +205,7 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
                 }
             }
         } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
     }
 
