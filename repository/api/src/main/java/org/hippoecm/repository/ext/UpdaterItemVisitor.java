@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.updater;
+package org.hippoecm.repository.ext;
 
 import java.util.LinkedList;
 
@@ -24,6 +24,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 public abstract class UpdaterItemVisitor implements ItemVisitor {
     @SuppressWarnings("unused")
@@ -103,7 +106,7 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
                         currentQueue = nextQueue;
                         nextQueue = new LinkedList<Item>();
                     }
-                    Item item = (Item) currentQueue.removeFirst();
+                    Item item = currentQueue.removeFirst();
                     item.accept(this);
                 }
                 currentLevel = 0;
@@ -139,13 +142,34 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         }
     }
 
-    public static class Converted extends Default {
-        public void visit(Node node) throws RepositoryException {
-            if (((UpdaterNode) node).hollow) {
-                return;
-            }
-            super.visit(node);
+    public static abstract class Iterated extends Default {
+        public abstract NodeIterator iterator(Session session) throws RepositoryException;
+    }
+
+    public static class QueryVisitor extends Iterated {
+        String statement;
+        String language;
+        public QueryVisitor(String statement, String language) {
+            this.statement = statement;
+            this.language = language;
+        }
+        public NodeIterator iterator(Session session) throws RepositoryException {
+            Query query = session.getWorkspace().getQueryManager().createQuery(statement, language);
+            QueryResult result = query.execute();
+            return result.getNodes();
         }
     }
+
+    public static class NodeTypeVisitor extends Iterated {
+        String nodeType;
+        public NodeTypeVisitor(String nodeType) {
+        }
+        public NodeIterator iterator(Session session) throws RepositoryException {
+            Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM "+nodeType, javax.jcr.query.Query.SQL);
+            QueryResult result = query.execute();
+            return result.getNodes();
+        }
+    }
+
 }
 
