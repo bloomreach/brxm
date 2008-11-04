@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.updater;
 
+import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -25,9 +26,9 @@ import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.Utilities;
 
 public class UpdaterTest extends TestCase {
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
     private final String[] content = {
         "/test", "nt:unstructured",
         "/test/docs", "nt:unstructured",
