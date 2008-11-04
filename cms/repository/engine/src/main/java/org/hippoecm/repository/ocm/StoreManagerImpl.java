@@ -193,19 +193,19 @@ public class StoreManagerImpl extends StoreManager {
             }
             sm.provideFields(cmd.getAllFieldNumbers(), new FieldManagerImpl(sm, session, types, node));
         } catch (PathNotFoundException ex) {
-            System.err.println("PathNotFoundException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (ItemExistsException ex) {
-            System.err.println("ItemExistsException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (NoSuchNodeTypeException ex) {
-            System.err.println("NoSuchNodeTypeException :" + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (VersionException ex) {
-            System.err.println("VersionException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (ConstraintViolationException ex) {
-            System.err.println("ConstraintViolationException :" + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (LockException ex) {
-            System.err.println("LockException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (RepositoryException ex) {
-            System.err.println("RepositoryException :" + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } finally {
             mconn.release();
         }
@@ -224,9 +224,9 @@ public class StoreManagerImpl extends StoreManager {
             }
             sm.provideFields(fieldNumbers, new FieldManagerImpl(sm, session, types, node));
         } catch (ItemNotFoundException ex) {
-            System.err.println("RepositoryException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } catch (RepositoryException ex) {
-            System.err.println("RepositoryException: " + ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage());
         } finally {
             mconn.release();
         }

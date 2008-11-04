@@ -141,7 +141,7 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
             }
             ItemImpl item = createItemInstance(id);
             if (item == null) {
-                System.err.println("ITEM NULL!!!??");
+                log.error("Internal error: item null");
             }
             return item;
         } else {

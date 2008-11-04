@@ -72,16 +72,12 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
             versionWorkflow.version();
         } catch(MappingException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
-            // FIXME: should log a warning here
+            ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch(RemoteException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            ReviewedActionsWorkflowImpl.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
         } catch(RepositoryException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            ReviewedActionsWorkflowImpl.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
         }
     }
@@ -106,21 +102,17 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublished);
                 versionWorkflow.version();
             } catch(MappingException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
-                // FIXME: should log a warning here
+                ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new WorkflowException("Versioning of published document failed");
             } catch(RemoteException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
             } catch(RepositoryException ex) {
-                System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                ex.printStackTrace(System.err);
+                ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
             }
         } catch(CloneNotSupportedException ex) {
-            System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-            ex.printStackTrace(System.err);
+            ReviewedActionsWorkflowImpl.log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new WorkflowException("document is not a publishable document");
         }
     }

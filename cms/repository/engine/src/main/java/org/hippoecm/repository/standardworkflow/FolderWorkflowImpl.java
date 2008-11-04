@@ -42,6 +42,9 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
@@ -51,6 +54,8 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    final static Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +87,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                             if (templates.hasNode(foldertype)) {
                                 foldertypes.add(templates.getNode(foldertype));
                             } else {
-                                System.err.println("Unknown folder type " + foldertype);
+                                log.warn("Unknown folder type " + foldertype);
                             }
                         }
                     } else {
@@ -90,12 +95,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     }
                 } catch (PathNotFoundException ex) {
                     foldertypeRefs = null;
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 } catch (ValueFormatException ex) {
                     foldertypeRefs = null;
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 }
             }
             if (foldertypeRefs == null) {
@@ -104,8 +107,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                         foldertypes.add(iter.nextNode());
                     }
                 } catch (PathNotFoundException ex) {
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 }
             }
 
@@ -131,13 +133,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                     }
                     types.put(foldertype.getName(), prototypes);
                 } catch (InvalidQueryException ex) {
-                    System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-                    ex.printStackTrace(System.err);
+                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
                 }
             }
         } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
         return types;
     }

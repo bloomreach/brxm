@@ -243,14 +243,11 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     }
                 }
             } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (RemoteException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                ex.printStackTrace(System.err);
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
     }

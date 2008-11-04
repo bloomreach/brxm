@@ -152,9 +152,9 @@ public class CanonicalPathTest extends TestCase {
     @Test public void testFacetSelectCanonicalNodeHasOtherIdTest() throws RepositoryException{
         Node facetSelectNode = commonFacetSelectSetup();
         Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
-	ItemId mirroredId = unwrappedItemId(mirroredHippoDoc);
+        ItemId mirroredId = unwrappedItemId(mirroredHippoDoc);
         Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
-	ItemId canonicalId = unwrappedItemId(canonical);
+        ItemId canonicalId = unwrappedItemId(canonical);
         assertFalse(canonicalId.equals(mirroredId));
     }
 

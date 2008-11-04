@@ -25,12 +25,17 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.jpox.exceptions.JPOXDataStoreException;
 import org.jpox.identity.OID;
 
 public class JCROID implements OID {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    final static Logger log = LoggerFactory.getLogger(JCROID.class);
 
     String key;
     Node node;
@@ -65,17 +70,17 @@ public class JCROID implements OID {
         try {
             node = session.getNodeByUUID(key);
         } catch (ItemNotFoundException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (ValueFormatException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (VersionException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (ConstraintViolationException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (LockException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         } catch (RepositoryException ex) {
-            System.err.println(ex.getMessage());
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
         return node;
     }

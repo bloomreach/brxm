@@ -17,6 +17,9 @@ package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
@@ -26,6 +29,8 @@ public class HippoNodeId extends NodeId
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
+
+    final static Logger log = LoggerFactory.getLogger(HippoNodeId.class);
 
     NodeId parentId;
     Name name;
@@ -44,8 +49,7 @@ public class HippoNodeId extends NodeId
             NodeState nodeState = provider.populate(this, parentId);
             return nodeState;
         } catch(RepositoryException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             return null;
         }
     }
@@ -54,8 +58,7 @@ public class HippoNodeId extends NodeId
         try {
             return provider.populate(state);
         } catch(RepositoryException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             return null;
         }
     }

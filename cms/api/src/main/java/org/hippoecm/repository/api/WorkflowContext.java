@@ -15,10 +15,14 @@
  */
 package org.hippoecm.repository.api;
 
+import java.util.Date;
 import javax.jcr.RepositoryException;
 
 public interface WorkflowContext {
     final static String SVN_ID = "$Id$";
+
+    // WARNING: THE call getWorkflowContext is not yet standardized
+    public WorkflowContext getWorkflowContext(Date timestamp);
 
     public Document getDocument(String category, String identifier) throws RepositoryException;
     public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
