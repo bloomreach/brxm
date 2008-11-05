@@ -201,7 +201,7 @@ public class StatusServlet extends HttpServlet {
             writer.println("<tr><td>getCharacterEncoding</td><td>"+req.getCharacterEncoding()+"</td></tr>");
             
             Enumeration<String> headerNames = req.getHeaderNames();
-            writer.println("<tr><td><b>Header name</b></th><th><b>Header value</b></td></tr>");
+            writer.println("<tr><td><b>Header name</b></td><td><b>Header value</b></td></tr>");
             while(headerNames.hasMoreElements()) {
                 String headerName = headerNames.nextElement();
                 writer.println("<tr><td>"+headerName+"</td><td>"+req.getHeader(headerName)+"</td></tr>");
