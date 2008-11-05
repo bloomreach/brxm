@@ -135,7 +135,7 @@ public class StatusServlet extends HttpServlet {
                     entry.getValue().clear();
                 }
                 if(changeActive!=null && changeActive.equals(entry.getKey())) {
-                    entry.getValue().setActive(entry.getValue().isActive());
+                    entry.getValue().setActive(!entry.getValue().isActive());
                 }
                 if(disableAll) {
                     entry.getValue().setActive(false);
