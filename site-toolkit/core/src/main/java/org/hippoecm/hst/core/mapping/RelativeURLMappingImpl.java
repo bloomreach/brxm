@@ -78,7 +78,32 @@ public class RelativeURLMappingImpl implements URLMapping{
         while(absoluteLocation.endsWith("/")) {
             absoluteLocation =  absoluteLocation.substring(0,absoluteLocation.length()-1);
         }
-
+        
+        // special case:
+        if(currentRequestUri.startsWith(absoluteLocation)) {
+            String leftover = currentRequestUri.substring(absoluteLocation.length());
+           
+            if(leftover.length()==0) {
+                return "";
+            } else {
+                if(leftover.startsWith("/")) {
+                    leftover = leftover.substring(1);
+                }
+                int count = leftover.split("/").length;
+                String relativeUrl = "";
+                if(currentUriEndsWithSlash) {
+                    relativeUrl = relativeUrl+"../";
+                }
+                for(int i = 0; i < count; i++) {
+                    if(i==(count-1)) {
+                        relativeUrl = relativeUrl+ "./";
+                    } else {
+                        relativeUrl = relativeUrl+"../";
+                    }
+                }
+                return relativeUrl;
+            }
+        }
         String[] currentRequestUriParts = currentRequestUri.split("/");
         String[] absoluteLocationParts = absoluteLocation.split("/");
         StringBuffer relativeUrl = new StringBuffer("");
