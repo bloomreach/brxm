@@ -170,19 +170,22 @@
 - hippo:users (string) multiple
 - hippo:groups (string) multiple
 - hippo:role (string) mandatory
+- hippo:description (string)
 
 [hippo:facetrule] > nt:base
 - hippo:facet (string) mandatory 
 - hippo:value (string) mandatory 
 - hippo:type (string) = 'String' mandatory < 'String', 'Name'
 - hippo:equals (boolean) = 'true' mandatory autocreated
+- hippo:description (string)
 
 [hippo:domainrule] > nt:base
-+ hippo:facetrule (hippo:facetrule) = hippo:facetrule multiple
++ * (hippo:facetrule) = hippo:facetrule multiple
 
 [hippo:domain] > nt:base
-+ hippo:domainrule (hippo:domainrule) = hippo:domainrule multiple 
-+ hippo:authrole (hippo:authrole) = hippo:authrole multiple
++ * (hippo:domainrule) = hippo:domainrule multiple 
++ * (hippo:authrole) = hippo:authrole multiple
+- hippo:description (string)
 
 [hippo:userprovider] >  nt:base
 - hippo:dirlevels (long) = '0' autocreated
