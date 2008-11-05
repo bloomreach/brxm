@@ -17,7 +17,7 @@
 package org.hippoecm.repository;
 
 import java.security.AccessControlException;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -50,9 +50,9 @@ import javax.jcr.version.VersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
 public class DerivedDataEngine {
@@ -78,7 +78,24 @@ public class DerivedDataEngine {
 
             if(logger.isDebugEnabled())
                 logger.debug("Derived engine active");
-            Set<Node> recomputeSet = new HashSet<Node>();
+            Set<Node> recomputeSet = new TreeSet<Node>(new Comparator<Node>() {
+                    public int compare(Node o1, Node o2) {
+                        try {
+                            int comparison = o1.getPath().length() - o2.getPath().length();
+                            if (comparison == 0) {
+                                return o1.getPath().compareTo(o2.getPath());
+                            } else {
+                                return comparison;
+                            }
+                        } catch (RepositoryException ex) {
+                            logger.error("Error while comparing nodes: "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+                            return 0;
+                        }
+                    }
+                    public boolean equals(Object obj) {
+                        return obj == this;
+                    }
+                });
             try {
                 for(NodeIterator iter = session.pendingChanges(node,"mix:referenceable"); iter.hasNext(); ) {
                     Node modified = iter.nextNode();
@@ -92,26 +109,18 @@ public class DerivedDataEngine {
                             if(dependency.isNodeType(HippoNodeType.NT_DERIVED))
                                 recomputeSet.add(dependency);
                         } catch(AccessDeniedException ex) {
-                            // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                            // ex.printStackTrace(System.err);
                             logger.error(ex.getClass().getName()+": "+ex.getMessage());
                             throw new RepositoryException(ex); // configuration problem
                         } catch(ItemNotFoundException ex) {
-                            // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                            // ex.printStackTrace(System.err);
                             logger.error(ex.getClass().getName()+": "+ex.getMessage());
                             throw new RepositoryException(ex); // inconsistent state
                         }
                     }
                 }
             } catch(NamespaceException ex) {
-                // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                // ex.printStackTrace(System.err);
                 logger.error(ex.getClass().getName()+": "+ex.getMessage()); // internal error jcr:uuid not accessible
                 throw new RepositoryException("Internal error accessing jcr:uuid");
             } catch(NoSuchNodeTypeException ex) {
-                // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                // ex.printStackTrace(System.err);
                 logger.error(ex.getClass().getName()+": "+ex.getMessage()); // internal error jcr:uuid not found
                 throw new RepositoryException("Internal error jcr:uuid not found");
             }
@@ -123,13 +132,9 @@ public class DerivedDataEngine {
                     recomputeSet.add(modified);
                 }
             } catch(NamespaceException ex) {
-                // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                // ex.printStackTrace(System.err);
                 logger.error(ex.getClass().getName()+": "+ex.getMessage());
                 throw new RepositoryException("Internal error "+HippoNodeType.NT_DERIVED+" not found");
             } catch(NoSuchNodeTypeException ex) {
-                // System.err.println(ex.getClass().getName()+": "+ex.getMessage());
-                // ex.printStackTrace(System.err);
                 logger.error(ex.getClass().getName()+": "+ex.getMessage());
                 throw new RepositoryException("Internal error "+HippoNodeType.NT_DERIVED+" not found");
             }
@@ -201,16 +206,18 @@ public class DerivedDataEngine {
                                         logger.warn("Derived data definition contains unrecognized builtin reference, skipped");
                                     }
                                 } else if(propDef.isNodeType("hippo:relativepropertyreference")) {
-                                    Property property = modified.getProperty(propDef.getProperty("hippo:relPath").getString());
-                                    if(property.getParent().isNodeType("mix:referenceable")) {
-                                        dependencies.add(property.getParent().getUUID());
+                                    if(modified.hasProperty(propDef.getProperty("hippo:relPath").getString())) {
+                                        Property property = modified.getProperty(propDef.getProperty("hippo:relPath").getString());
+                                        if(property.getParent().isNodeType("mix:referenceable")) {
+                                            dependencies.add(property.getParent().getUUID());
+                                        }
+                                        if(!property.getDefinition().isMultiple()) {
+                                            Value[] values = new Value[1];
+                                            values[0] = property.getValue();
+                                            parameters.put(propName, values);
+                                        } else
+                                            parameters.put(propName, property.getValues());
                                     }
-                                    if(!property.getDefinition().isMultiple()) {
-                                        Value[] values = new Value[1];
-                                        values[0] = property.getValue();
-                                        parameters.put(propName, values);
-                                    } else
-                                        parameters.put(propName, property.getValues());
                                 } else if(propDef.isNodeType("hippo:resolvepropertyreference")) {
                                     /* FIXME: should read:
                                      * Property property = ((HippoWorkspace)(modified.getSession().getWorkspace())).getHierarchyResolver().getProperty(modified, propDef.getProperty("hippo:relPath").getString());
@@ -493,6 +500,19 @@ public class DerivedDataEngine {
     public static class CoreDerivedDataFunction extends DerivedDataFunction {
         static final long serialVersionUID = 1;
         public Map<String,Value[]> compute(Map<String,Value[]> parameters) {
+            return parameters;
+        }
+    }
+
+    public static class CopyDerivedDataFunction extends DerivedDataFunction {
+        static final long serialVersionUID = 1;
+        public Map<String,Value[]> compute(Map<String,Value[]> parameters) {
+            Value[] source = parameters.get("source");
+            if(source != null) {
+                Value[] destination = new Value[source.length];
+                System.arraycopy(source, 0, destination, 0, source.length);
+                parameters.put("destination", destination);
+            }
             return parameters;
         }
     }
