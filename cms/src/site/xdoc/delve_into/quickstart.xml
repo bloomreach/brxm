@@ -133,7 +133,7 @@
    <tr>
     <td>User</td>
     <td>
-     <em><img src='../images/user_icon.png' alt='user icon'/></em>
+     <span class='user-48 icon-48'/> 
     </td>
     <td>
      Learn more about Hippo CMS
@@ -143,7 +143,7 @@
    <tr>
     <td>Admin</td>  
     <td>
-     <em><img src='../images/admin_icon.png' alt='admin icon'/></em>
+     <span class='admin-48 icon-48'/> 
     </td>
     <td>An installed quickstart package may be adapted for
      production, see the <a href="sysadmin/index.html">Sysadmin Guide</a>.  
