@@ -126,9 +126,9 @@ public class FolderWorkflowTest extends TestCase {
         assertNotNull(workflow);
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
-        assertTrue(types.containsKey("New Folder"));
-        assertTrue(types.get("New Folder").contains("Folder"));
-        String path = workflow.add("New Folder", "Folder", "d");
+        assertTrue(types.containsKey("new-folder"));
+        assertTrue(types.get("new-folder").contains("Folder"));
+        String path = workflow.add("new-folder", "Folder", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
@@ -141,9 +141,9 @@ public class FolderWorkflowTest extends TestCase {
         assertNotNull(workflow);
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
-        assertTrue(types.containsKey("New Folder"));
-        assertTrue(types.get("New Folder").contains("Unordered folder"));
-        String path = workflow.add("New Folder", "Unordered folder", "d");
+        assertTrue(types.containsKey("new-folder"));
+        assertTrue(types.get("new-folder").contains("Unordered folder"));
+        String path = workflow.add("new-folder", "Unordered folder", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
@@ -157,9 +157,9 @@ public class FolderWorkflowTest extends TestCase {
         Map<String,String[]> renames = new TreeMap<String,String[]>();
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
-        assertTrue(types.containsKey("simple"));
-        assertTrue(types.get("simple").contains("New Document"));
-        String path = workflow.add("simple", "New Document", "d");
+        assertTrue(types.containsKey("simple-query"));
+        assertTrue(types.get("simple-query").contains("New Document"));
+        String path = workflow.add("simple-query", "New Document", "d");
         assertNotNull(path);
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
@@ -258,11 +258,11 @@ public class FolderWorkflowTest extends TestCase {
 
     */
 
-    private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int iters)
+    private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int numiters)
         throws RepositoryException, WorkflowException, RemoteException {
         Vector<String> paths = new Vector<String>();
         Vector<String> worklog = new Vector<String>();
-        do {
+        for(int itercount=0; itercount<numiters; ++itercount) {
             int parentIndex = (paths.size() > 0 ? random.nextInt(paths.size()) : -1);
             String parentPath;
             Node parent;
@@ -279,9 +279,9 @@ public class FolderWorkflowTest extends TestCase {
             assertNotNull(workflow);
             Map<String,Set<String>> types = workflow.list();
             assertNotNull(types);
-            assertTrue(types.containsKey("New Folder"));
-            assertTrue(types.get("New Folder").contains("Folder"));
-            String childPath = workflow.add("New Folder", "Folder", "f");
+            assertTrue(types.containsKey("new-folder"));
+            assertTrue(types.get("new-folder").contains("Folder"));
+            String childPath = workflow.add("new-folder", "Folder", "f");
             assertNotNull(childPath);
             Node child = session.getRootNode().getNode(childPath.substring(1));
             assertTrue(child.isNodeType("hippostd:folder"));
@@ -293,7 +293,7 @@ public class FolderWorkflowTest extends TestCase {
                 paths.add(childPath);
             }
             worklog.add(childPath);
-        } while(paths.size() < iters);
+        }
     }
 
     @Test
@@ -342,7 +342,7 @@ public class FolderWorkflowTest extends TestCase {
 
     @Test
     public void testMoreConcurrent() throws Exception {
-        final int nthreads = 32;
+        final int nthreads = 20;
         final int niters = 30;
         long seed = 1209235890128L;
         Thread[] threads = new Thread[nthreads];

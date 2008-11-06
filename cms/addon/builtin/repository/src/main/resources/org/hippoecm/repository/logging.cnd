@@ -36,4 +36,4 @@
 - hippolog:appender (string) = 'rolling' mandatory autocreated < 'rolling', 'folding'
 - hippolog:maxsize (long) = '100' mandatory autocreated 
 + * (hippolog:folder) = hippolog:folder
-+ * (hippolog:item) = hippolog:item
++ * (hippolog:item) = hippolog:item multiple

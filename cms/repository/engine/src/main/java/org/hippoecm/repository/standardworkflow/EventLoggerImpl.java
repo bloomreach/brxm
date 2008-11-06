@@ -18,6 +18,7 @@ package org.hippoecm.repository.standardworkflow;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -72,10 +73,6 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 long timestamp = System.currentTimeMillis();
 
                 Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
-                if (logFolder.hasNodes()) {
-                    Node firstNode = logFolder.getNodes().nextNode();
-                    logFolder.orderBefore(logNode.getName(), firstNode.getName());
-                }
 
                 logNode.setProperty("hippo:timestamp", timestamp);
                 logNode.setProperty("hippo:eventUser", who == null ? "null" : who);
@@ -100,10 +97,14 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 }
 
                 logFolder.save();
-                logFolder.refresh(true);
 
-            } catch (RepositoryException e) {
-                log.error("Event logging failed: " + e.getMessage(), e);
+            } catch (RepositoryException ex) {
+                log.warn("Event logging failed: " + ex.getMessage(), ex);
+                try {
+                    logFolder.refresh(false);
+                } catch (RepositoryException ex2) {
+                    log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
+                }
             }
         } else {
             log.info("Event log: [" + who + " -> " + className + "." + methodName + "]");
@@ -117,10 +118,6 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 long timestamp = System.currentTimeMillis();
 
                 Node logNode = logFolder.addNode(String.valueOf(timestamp), "hippolog:item");
-                if (logFolder.hasNodes()) {
-                    Node firstNode = logFolder.getNodes().nextNode();
-                    logFolder.orderBefore(logNode.getName(), firstNode.getName());
-                }
 
                 logNode.setProperty("hippo:timestamp", timestamp);
                 logNode.setProperty("hippo:eventUser", who == null ? "null" : who);
@@ -128,10 +125,14 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
                 logNode.setProperty("hippo:eventMethod", methodName == null ? "null" : methodName);
 
                 logFolder.save();
-                logFolder.refresh(true);
 
-            } catch (RepositoryException e) {
-                log.warn("Event logging failed: [" + who + " -> " + className + "." + methodName + "] : " + e.getMessage());
+            } catch (RepositoryException ex) {
+                log.warn("Event logging failed: [" + who + " -> " + className + "." + methodName + "] : " + ex.getMessage());
+                try {
+                    logFolder.refresh(false);
+                } catch (RepositoryException ex2) {
+                    log.error("Event logging fails in failure: " + ex2.getMessage(), ex2);
+                }
             }
         } else {
             log.info("Event log: [" + who + " -> " + className + "." + methodName + "]");
@@ -139,21 +140,42 @@ public class EventLoggerImpl implements EventLoggerWorkflow, InternalWorkflow {
     }
 
 
-    private void applyAppender() throws RepositoryException {
+    private void applyAppender() {
         if (appender.equals("folding")) {
             log.warn("Folding appender not implemented yet, falling back to rolling appender");
         }
         try {
+            logFolder.refresh(false);
             NodeIterator logNodes = logFolder.getNodes();
             if (logNodes.getSize() > maxSize) {
-                logNodes.skip(maxSize);
+                long count = logNodes.getSize() - maxSize;
                 while (logNodes.hasNext()) {
-                    Node toBeRemoved = logNodes.nextNode();
-                    toBeRemoved.remove();
+                    Node logEntry = logNodes.nextNode();
+                    if(logEntry != null) {
+                        try {
+                            logEntry.remove();
+                            if (--count <= 0) {
+                                break;
+                            }
+                        } catch(ItemNotFoundException ex) {
+                            // item was apparantly already deleted
+                            --count;
+                        }
+                    }
                 }
+                logFolder.save();
             }
-        } catch (NoSuchElementException e) {
-            throw new RepositoryException("Skipped past last element in logFolder", e);
+        } catch (RepositoryException ex) {
+            /* normally the cause of this exception is a org.apache.jackrabbit.core.state.NoSuchItemStateException
+             * indicating that the item has been deleted already.  There is no good way to detect this from
+             * occuring and what other kind of error occurs.  Therefor we will log only at debug level this problem.
+             */
+            log.debug("Event logging appender failed: "+ex.getClass().getName()+": "+ex.getMessage(), ex);
+            try {
+                logFolder.refresh(false);
+            } catch (RepositoryException ex2) {
+                log.error("Event appender fails in failure: " + ex2.getMessage(), ex2);
+            }
         }
     }
 }

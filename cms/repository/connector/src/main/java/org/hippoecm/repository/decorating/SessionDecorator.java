@@ -83,7 +83,10 @@ public abstract class SessionDecorator implements XASession, HippoSession {
         if (session == null) {
             return null;
         } else if (session instanceof SessionDecorator) {
-            return ((SessionDecorator)session).session;
+            session = (SessionDecorator)session;
+            while(session instanceof SessionDecorator)
+                session = ((SessionDecorator)session).session;
+            return session;
         } else {
             return session;
         }
