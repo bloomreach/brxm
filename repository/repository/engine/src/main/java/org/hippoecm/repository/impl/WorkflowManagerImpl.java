@@ -471,24 +471,24 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 String path = getPath(uuid);
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                returnObject = targetMethod.invoke(upstream, args);
-                if (uuid!=null) {
-                    synchronized (SessionDecorator.unwrap(rootSession)) {
+                synchronized (SessionDecorator.unwrap(rootSession)) {
+                    returnObject = targetMethod.invoke(upstream, args);
+                    if (uuid!=null) {
                         documentManager.putObject(uuid, types, upstream);
                         rootSession.save();
                     }
-                }
-                if (returnObject instanceof Document) {
-                    returnObject = new Document(((Document)returnObject).getIdentity());
-                }
-                EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
-                eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
-                        targetMethod.getName(), args, returnObject, path);
-
-                while (!invocationChain.isEmpty()) {
-                    WorkflowInvocation current = invocationChain.remove(0);
-                    invocationIndex = invocationChain.listIterator();
-                    current.invoke();
+                    if (returnObject instanceof Document) {
+                        returnObject = new Document(((Document)returnObject).getIdentity());
+                    }
+                    EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
+                    eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
+                            targetMethod.getName(), args, returnObject, path);
+    
+                    while (!invocationChain.isEmpty()) {
+                        WorkflowInvocation current = invocationChain.remove(0);
+                        invocationIndex = invocationChain.listIterator();
+                        current.invoke();
+                    }
                 }
 
                 return returnObject;
@@ -656,14 +656,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 }
 
                 Method targetMethod = workflow.getClass().getMethod(method.getName(), method.getParameterTypes());
-                Object returnObject = targetMethod.invoke(workflow, arguments);
-                if (uuid!=null) {
-                    synchronized (SessionDecorator.unwrap(rootSession)) {
+                synchronized (SessionDecorator.unwrap(rootSession)) {
+                    Object returnObject = targetMethod.invoke(workflow, arguments);
+                    if (uuid!=null) {
                         documentManager.putObject(uuid, types, workflow);
                         rootSession.save();
                     }
+                    return returnObject;
                 }
-                return returnObject;
             } catch (InvocationTargetException ex) {
                 throw new RepositoryException("standards plugin invalid", ex);
             } catch (NoSuchMethodException ex) {
