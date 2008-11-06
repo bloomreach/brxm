@@ -161,6 +161,7 @@ public class JcrSessionModel extends LoadableDetachableModel {
         }
 
         if (result == null) {
+            credentials = Main.DEFAULT_CREDENTIALS;
             Main main = (Main) Application.get();
             main.resetConnection();
             throw new RestartResponseException(InvalidLoginPage.class);
