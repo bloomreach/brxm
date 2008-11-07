@@ -15,14 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.console.breadcrumb;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.ISO9075Helper;
 
 public class BreadcrumbPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -44,8 +49,14 @@ public class BreadcrumbPlugin extends RenderPlugin {
         super.onModelChanged();
         IModel model = getModel();
         if (model instanceof JcrNodeModel) {
-            JcrNodeModel nodeNodel = (JcrNodeModel)model;
-            breadcrumb = ISO9075Helper.decodeLocalName(nodeNodel.getItemModel().getPath());
+            JcrNodeModel nodeModel = (JcrNodeModel) model;
+            List<String> components = new LinkedList<String>();
+            while (nodeModel != null) {
+                components.add((String) new NodeTranslator(nodeModel).getNodeName().getObject());
+                nodeModel = nodeModel.getParentModel();
+            }
+            Collections.reverse(components);
+            breadcrumb = Strings.join("/", components.toArray(new String[components.size()]));
             redraw();
         }
     }

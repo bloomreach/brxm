@@ -50,6 +50,11 @@ public class TranslationSelectionStrategy<T extends IModel> implements Comparato
                 return 1;
             }
         }
+        if (o1Matches.size() > o2Matches.size()) {
+            return 1;
+        } else if (o1Matches.size() < o2Matches.size()) {
+            return -1;
+        }
         return 0;
     }
 

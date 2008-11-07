@@ -42,10 +42,11 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
 import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                 void remove(AjaxRequestTarget target, Form form) {
                     if (initialType == LinkType.INTERNAL) {
                         //TODO: remove facet
-                        if (!dao.remove(initialHref)){
+                        if (!dao.remove(initialHref)) {
                             log.warn("Failed to remove internallink[" + initialHref + "]");
                         }
                     }
@@ -251,6 +252,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
     class InternalLinkPicker extends AbstractLinkPicker {
         private static final long serialVersionUID = 1L;
 
+        @SuppressWarnings("unused")
         private String jcrBrowsePath;
         private String uuid;
         private String link;
@@ -273,14 +275,12 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
                             jcrBrowseStartPath = deref.getParent().getPath();
                             jcrBrowsePath = deref.getPath();
                         } else {
-                            log
-                                    .error("docbase uuid does not refer to node of type hippo:handle: resetting link. uuid="
-                                            + uuid);
+                            log.error("docbase uuid does not refer to node of type hippo:handle: resetting link. uuid="
+                                    + uuid);
                             values.put(XinhaLink.HREF, "");
                         }
                     } else {
-                        log.error("docbase uuid does not refer to node but property: resetting link. uuid="
-                                + uuid);
+                        log.error("docbase uuid does not refer to node but property: resetting link. uuid=" + uuid);
                         values.put(XinhaLink.HREF, "");
                     }
                 } catch (RepositoryException e) {
@@ -385,7 +385,12 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
 
         public NodeItem(Node listNode, String displayName) throws RepositoryException {
             this.path = listNode.getPath();
-            this.displayName = (displayName == null) ? listNode.getName() : displayName;
+            if (displayName == null) {
+                this.displayName = (String) new NodeTranslator(new JcrNodeModel(listNode)).getNodeName()
+                        .getObject();
+            } else {
+                this.displayName = displayName;
+            }
             if (listNode.isNodeType("mix:referenceable")) {
                 this.uuid = listNode.getUUID();
             }
@@ -407,7 +412,7 @@ public class LinkPickerContentPanel extends XinhaContentPanel<XinhaLink> {
         }
 
         public String getDisplayName() {
-            return ISO9075Helper.decodeLocalName(displayName);
+            return displayName;
         }
     }
 }

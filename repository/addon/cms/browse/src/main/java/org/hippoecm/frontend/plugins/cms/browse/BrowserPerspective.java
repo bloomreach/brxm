@@ -31,6 +31,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.standardworkflow.types.i18n.TypeTranslator;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
@@ -210,7 +212,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     if (title != null) {
                         listingTitle = title.getTitle();
                     } else {
-                        listingTitle = new StringResourceModel(viewerName, this, null);
+                        listingTitle = new TypeTranslator(new JcrNodeTypeModel(type)).getTypeName();
                     }
                     redraw();
                 }

@@ -253,14 +253,19 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
 
     protected FolderWorkflowActionComponent createWorkflowActionComponent(final String category,
             final Set<String> prototypes) {
+        final IModel title = new StringResourceModel("add-category", (Component) null, null,
+                new Object[] { new StringResourceModel(category, this, null) });
+
         DialogAction action = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
                 if (category.contains("New Smart Folder")) // FIXME very bad check on name
-                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, category, prototypes);
+                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, title,
+                            category, prototypes);
                 else
-                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, category, prototypes);
+                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, title, category,
+                            prototypes);
             }
         }, getDialogService());
 

@@ -19,6 +19,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ public class ListItem extends AbstractReadOnlyModel {
     private static final Logger log = LoggerFactory.getLogger(ListItem.class);
 
     private String name;
+    private IModel displayName;
     private AttributeModifier cellModifier;
     private AttributeModifier columnModifier;
     private JcrNodeModel nodeModel;
@@ -39,12 +42,17 @@ public class ListItem extends AbstractReadOnlyModel {
         this.nodeModel = nodeModel;
         try {
             name = nodeModel.getNode().getName();
+            displayName = new NodeTranslator(nodeModel).getNodeName();
             IconAttributeModifier attributeModifier = new IconAttributeModifier();
             cellModifier = attributeModifier.getCellAttributeModifier(nodeModel.getNode());
             columnModifier = attributeModifier.getColumnAttributeModifier(nodeModel.getNode());
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public IModel getDisplayName() {
+        return displayName;
     }
 
     public String getName() {

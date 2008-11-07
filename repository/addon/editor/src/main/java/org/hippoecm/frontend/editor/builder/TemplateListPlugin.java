@@ -31,17 +31,18 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
 import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.frontend.plugins.standardworkflow.types.i18n.TypeTranslator;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -124,7 +125,7 @@ public class TemplateListPlugin extends RenderPlugin {
                     }
                 };
                 final String name = type.getName();
-                link.add(new Label("template-name", new Model(name)));
+                link.add(new Label("template-name", new TypeTranslator(new JcrNodeTypeModel(name)).getTypeName()));
                 item.add(link);
 
                 item.add(new AbstractBehavior() {

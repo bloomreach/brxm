@@ -229,18 +229,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="nodeTypeTranslator">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.i18n.NodeTypeTranslatePlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.nodetype</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -642,7 +630,6 @@
     </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.config</sv:value>
-      <sv:value>service.translator.nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>model.browse.folder</sv:value>
@@ -1684,7 +1671,6 @@
     </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.nodename</sv:value>
-      <sv:value>service.translator.nodetype</sv:value>
     </sv:property>
     <sv:property sv:name="workflow.id" sv:type="String">
       <sv:value>workflow.internal.id</sv:value>

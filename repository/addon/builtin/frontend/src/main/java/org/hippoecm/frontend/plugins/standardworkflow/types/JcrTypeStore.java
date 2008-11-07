@@ -48,7 +48,7 @@ public class JcrTypeStore implements ITypeStore {
     public static final String DRAFT = "draft";
 
     private String draftNs;
-    private transient Map<String, ITypeDescriptor> types = null;
+    private transient Map<String, JcrTypeDescriptor> types = null;
 
     public JcrTypeStore() {
         this(null);
@@ -58,15 +58,15 @@ public class JcrTypeStore implements ITypeStore {
         this.draftNs = prefix;
     }
 
-    public ITypeDescriptor getTypeDescriptor(String name) {
+    public JcrTypeDescriptor getTypeDescriptor(String name) {
         if ("rep:root".equals(name)) {
             // ignore the root node
             return null;
         }
         if (types == null) {
-            types = new HashMap<String, ITypeDescriptor>();
+            types = new HashMap<String, JcrTypeDescriptor>();
         }
-        ITypeDescriptor result = types.get(name);
+        JcrTypeDescriptor result = types.get(name);
         if (result == null) {
             try {
                 Node typeNode = lookupConfigNode(name);
@@ -194,7 +194,7 @@ public class JcrTypeStore implements ITypeStore {
         return current;
     }
 
-    public ITypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
+    public JcrTypeDescriptor createTypeDescriptor(Node typeNode, String type) throws RepositoryException {
         try {
             if (typeNode.isNodeType(HippoNodeType.NT_NODETYPE)) {
                 Node templateTypeNode = typeNode;

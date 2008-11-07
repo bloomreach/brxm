@@ -19,7 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.i18n.NodeNameModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -68,7 +68,7 @@ public class EditPerspective extends Perspective implements IEditService {
 
     @Override
     public IModel getTitle() {
-        return new NodeNameModel((JcrNodeModel) getModel());
+        return new NodeTranslator((JcrNodeModel) getModel()).getNodeName();
     }
 
     // IEditService

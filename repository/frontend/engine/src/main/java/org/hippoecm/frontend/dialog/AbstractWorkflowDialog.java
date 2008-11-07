@@ -56,9 +56,11 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title, IModel text) {
         super(plugin.getPluginContext(), dialogWindow, text);
 
-        IPluginContext context = plugin.getPluginContext();
-        this.title = title;
+        // title is translated by dialog
+        this.title = wrap(title);
+
         this.model = (WorkflowsModel) plugin.getModel();
+        IPluginContext context = plugin.getPluginContext();
         this.pluginRef = context.getReference(plugin);
 
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
@@ -76,7 +78,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         jcrServiceRef.detach();
         super.onDetach();
     }
-    
+
     public IModel getTitle() {
         return title;
     }

@@ -26,8 +26,8 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -52,9 +52,8 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
     private String value;
 
     public FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow,
-            String category, Set<String> prototypes) {
-        super(folderWorkflowPlugin, dialogWindow, new StringResourceModel("add-category", (Component) null, null,
-                new Object[] { category }));
+            IModel title, String category, Set<String> prototypes) {
+        super(folderWorkflowPlugin, dialogWindow, title);
         this.category = category;
         this.prototypes = prototypes;
 

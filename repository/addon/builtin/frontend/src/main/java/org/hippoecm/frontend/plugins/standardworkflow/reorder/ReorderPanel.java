@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.repository.api.ISO9075Helper;
 
 public class ReorderPanel extends Panel implements TableSelectionListener {
     @SuppressWarnings("unused")
@@ -92,7 +91,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
             public Component getRenderer(String id, IModel model) {
                 if (model instanceof ListItem) {
                     ListItem item = (ListItem) model;
-                    return new Label(id, ISO9075Helper.decodeLocalName(item.getName()));
+                    return new Label(id, item.getDisplayName());
                 }
                 return new Label(id);
             }

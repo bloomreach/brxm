@@ -15,40 +15,64 @@
  */
 package org.hippoecm.frontend.model.nodetypes;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.Session;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class JcrNodeTypeModel extends AbstractReadOnlyModel {
+public class JcrNodeTypeModel extends LoadableDetachableModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
+    static final Logger log = LoggerFactory.getLogger(JcrNodeTypeModel.class);
+
+    private String type;
 
     public JcrNodeTypeModel(NodeType nodeType) {
-        name = nodeType.getName();
+        super(nodeType);
+        type = nodeType.getName();
+    }
+
+    public JcrNodeTypeModel(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override
-    public Object getObject() {
-        return name;
+    protected Object load() {
+        NodeType result = null;
+        if (type != null) {
+            try {
+                UserSession sessionProvider = (UserSession) Session.get();
+                result = sessionProvider.getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(type);
+            } catch (RepositoryException e) {
+                log.warn("failed to load " + e.getMessage());
+            }
+        } else {
+            log.error("No type info present");
+        }
+        return result;
     }
-
 
     // override Object
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("name", name)
-            .toString();
-     }
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeType", type).toString();
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -58,17 +82,13 @@ public class JcrNodeTypeModel extends AbstractReadOnlyModel {
         if (this == object) {
             return true;
         }
-        JcrNodeTypeModel valueModel = (JcrNodeTypeModel) object;
-        return new EqualsBuilder()
-            .append(name, valueModel.name)
-            .isEquals();
+        JcrNodeTypeModel nodeModel = (JcrNodeTypeModel) object;
+        return new EqualsBuilder().append(type, nodeModel.type).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(73, 217)
-            .append(name)
-            .toHashCode();
+        return new HashCodeBuilder(57, 457).append(type).toHashCode();
     }
 
 }

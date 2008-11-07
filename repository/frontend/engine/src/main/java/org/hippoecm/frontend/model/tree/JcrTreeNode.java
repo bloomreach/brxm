@@ -27,10 +27,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 
 public class JcrTreeNode extends AbstractTreeNode {
     @SuppressWarnings("unused")
@@ -97,11 +97,10 @@ public class JcrTreeNode extends AbstractTreeNode {
 
     @Override
     public String renderNode() {
+        String result = (String) new NodeTranslator(getNodeModel()).getNodeName().getObject();
         HippoNode node = getNodeModel().getNode();
-        String result = "null";
         if (node != null) {
             try {
-                result = ISO9075Helper.decodeLocalName(node.getDisplayName());
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
