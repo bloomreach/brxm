@@ -133,7 +133,7 @@ hippo-ecm                    Pom       hippo-ecm
         <a href="../custom/plugins/index.html">plugin</a> documentation. The repository and frontend
         engines that make up the core of Hippo ECM don't implement much functionality themselves. All 'userland'
         functionality is implemented by plugins that are loaded by the engines. See the chapter on
-        <a href="../sysadmin/repository-bootstrap.html">Bootstrapping the repository</a> for
+        <a href="../custom/reference/repository/repository_bootstrap.html">Bootstrapping the repository</a> for
         further information about this subject.
       </p>
     </section>

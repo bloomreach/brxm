@@ -121,7 +121,7 @@
           <p>
             <b>Note:</b> Although it is not possible to create symbolic links with the tools that are provided by
             default by Windows, they do exist. This script uses one of the Microsoft supplied tools for this:
-            <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>.
+            <a href="http://technet.microsoft.com/en-us/sysinternals/bb896768.aspx">junction</a>.  <!-- Was:  <a href="http://www.microsoft.com/technet/sysinternals/fileanddisk/junction.mspx">junction</a>. -->
             If you prefer not to install junction the alternative is to manually copy the linked directories,
             please note that this has to be done every time there is an update in the linked directory. See
             the script for what needs to be done.

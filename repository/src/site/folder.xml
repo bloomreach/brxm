@@ -181,10 +181,18 @@
    path='xdoc/delve_into/custom/reference'
   >index</file>
      <folder>repository
+      <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='xdoc/delve_into/custom/reference/repository/repository_bootstrap.xml'
+   path='xdoc/delve_into/custom/reference/repository'
+  >repository_bootstrap</file>
       <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='xdoc/delve_into/custom/reference/repository/repository_plugins.xml'
    path='xdoc/delve_into/custom/reference/repository'
   >repository_plugins</file>
+      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='xdoc/delve_into/custom/reference/repository/workflow.xml'
+   path='xdoc/delve_into/custom/reference/repository'
+  >workflow</file>
      </folder>
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes'

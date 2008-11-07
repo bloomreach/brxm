@@ -263,9 +263,21 @@
    <shortdesc>Technical documentation on add-on development.</shortdesc>
    <subsection>Repository plugins vs. frontend plugins</subsection>
   </document>
+  <document ext="xml" filename="repository_bootstrap" path="..///delve_into/custom/reference/repository">Bootstrapping the repository
+   <section>Bootstrapping the repository</section>
+   <subsection>How to use</subsection>
+   <subsection>Example:</subsection>
+   <subsection>Building package with built-in bootstrap procedures</subsection>
+  </document>
   <document ext="xml" filename="repository_plugins" path="..///delve_into/custom/reference/repository">Repository Plugins
    <section>Repository Plugins</section>
    <shortdesc>Architecture of Hippo CMS and Hippo Repository</shortdesc>
+  </document>
+  <document ext="xml" filename="workflow" path="..///delve_into/custom/reference/repository">Workflow functionality
+   <section>Workflow functionality</section>
+   <subsection>Workflow model</subsection>
+   <subsection>Workflow access</subsection>
+   <subsection>Reviewed actions workflow</subsection>
   </document>
   <document ext="xml" filename="schemas" path="..///delve_into/custom">
   </document>
@@ -287,10 +299,10 @@
    <shortdesc>Quickly install and use standard Hippo CMS with example content.</shortdesc>
    <subsection>Install standard Hippo CMS with example content</subsection>
    <subsection>Using standard Hippo CMS with example content</subsection>
+   <index>localhost</index>
+   <index>number_8080</index>
    <subsection>Alternatives</subsection>
    <subsection>Next</subsection>
-   <img>user icon</img>
-   <img>admin icon</img>
   </document>
   <document ext="xml" filename="console" path="..///delve_into/sysadmin/configuration">Console
    <section>Console</section>
@@ -401,7 +413,9 @@
   <document ext="xml" filename="install_tomcat" path="..///delve_into/sysadmin/installation">Install Tomcat
    <section>Install Tomcat</section>
    <shortdesc>Learn how to install Apache Tomcat</shortdesc>
+   <index>Tomcat, install</index>
    <index>Tomcat 6.0</index>
+   <index>tomcat_5.5</index>
   </document>
   <document ext="xml" filename="plugins" path="..///delve_into/sysadmin/installation">Installing plugins from the Hippo forge
    <section>Installing plugins from the Hippo forge</section>

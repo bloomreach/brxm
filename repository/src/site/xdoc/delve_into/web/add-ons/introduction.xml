@@ -32,7 +32,7 @@ ________________________________________________________________________________
       <p>
         As you are developing your website, you'll need to be able to extend
         Hippo CMS.  Perhaps you have created your own 
-        <a href="../../user/information_architects/howtoi/document_types/index.html">Document Type</a>, a
+        <a href="../../user/information_architects/howto/document_types/index.html">Document Type</a>, a
         <a href="">[FIXME] site map</a> or some documents with test data.
         It is possible to capture this work in an add-on, thereby making
         it possible to use version control, use an automated build process, share
