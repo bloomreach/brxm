@@ -670,6 +670,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .website-add-24{background-image:url("images/icons/website-add-24.png");}
 .website-add-16{background-image:url("images/icons/website-add-16.png");}
 
+.rename-128{background-image:url("images/icons/rename-128.png")}
+.rename-48{background-image:url("images/icons/rename-48.png")}
+.rename-24{background-image:url("images/icons/rename-24.png");}
+.rename-16{background-image:url("images/icons/rename-16.png");}
+
 .document-lock-16{background-image:url("images/icons/document-lock-16.png")}
 
 .dialog-information-48{background-image:url("images/icons/dialog-information-48.png")}
