@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
@@ -47,6 +48,17 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void doDelete() throws WorkflowException {
         unpublished = draft = null;
+    }
+
+    public void rename(String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
+        ReviewedActionsWorkflowImpl.log.info("rename on document ");
+        if(current != null)
+            throw new WorkflowException("cannot rename document with pending publication request");
+        if(current2 != null)
+            throw new WorkflowException("cannot rename document with pending depublication request");
+        doDepublish();
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublished);
+        defaultWorkflow.rename(newName);
     }
 
     public void publish() throws WorkflowException, MappingException {

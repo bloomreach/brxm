@@ -42,6 +42,10 @@ public interface FolderWorkflow extends Workflow {
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void delete(Document offspring)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void rename(String name, String newName)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void rename(Document offspring, String newName)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void reorder(List<String> newOrder)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

@@ -19,12 +19,20 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.AbstractNameDialog;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -40,8 +48,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -162,6 +168,31 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             public void execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 workflow.delete();
+            }
+        });
+
+        IModel renameLabel = new StringResourceModel("rename-label", this, null);
+        final StringResourceModel renameTitle = new StringResourceModel("rename-title", this, null);
+        final StringResourceModel renameText = new StringResourceModel("rename-text", this, null);
+        addWorkflowDialog("rename-dialog", renameLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return true;
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService dialogService) {
+
+                return new AbstractNameDialog(FullReviewedActionsWorkflowPlugin.this, dialogService, renameTitle, renameText, "") {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
+                        workflow.rename(name);
+                    }
+                };
             }
         });
     }
