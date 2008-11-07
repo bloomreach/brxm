@@ -117,6 +117,14 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         updateActions();
     }
 
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, 
+            final Visibility visible, IDialogFactory dialogFactory) {
+        DialogLink link = new DialogLink(dialogName, dialogLink, dialogFactory, getDialogService());
+        add(link);
+        actions.put(dialogName, new Action(link, visible));
+        updateActions();
+    }
+
     protected void addWorkflowAction(final String linkName, IModel linkText, Visibility visible, final WorkflowAction action) {
         AjaxLink link = new AjaxLink(linkName) {
             private static final long serialVersionUID = 1L;

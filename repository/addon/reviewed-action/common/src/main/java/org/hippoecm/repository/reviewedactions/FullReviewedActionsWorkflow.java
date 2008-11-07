@@ -34,6 +34,13 @@ public interface FullReviewedActionsWorkflow extends BasicReviewedActionsWorkflo
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * Immediate unpublication and rename document.
+     * The current user must have authorization for this.
+     */
+    public void rename(String newName)
+        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Request unpublication and deletion of document.
      */
     public void requestDeletion()

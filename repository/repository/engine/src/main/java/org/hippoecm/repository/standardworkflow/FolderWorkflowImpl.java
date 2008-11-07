@@ -18,7 +18,6 @@ package org.hippoecm.repository.standardworkflow;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +25,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
@@ -229,18 +230,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         }
     }
 
-    public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        if(name.startsWith("/"))
-            name  = name.substring(1);
-        String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
-        if (folder.hasNode(name)) {
-            Node offspring = folder.getNode(name);
-            offspring.remove();
-            folder.save();
-        }
-    }
-    
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
        List<String> list = new ArrayList<String>(newOrder);
        Collections.reverse(list);
@@ -254,12 +243,77 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
        folder.save();
     }
 
+    public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        if(name.startsWith("/"))
+            name  = name.substring(1);
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        if (folder.hasNode(name)) {
+            Node offspring = folder.getNode(name);
+            offspring.remove();
+            folder.save();
+        }
+    }
+    
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
         Node documentNode = userSession.getNodeByUUID(document.getIdentity());
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
             documentNode.remove();
+            folderNode.save();
+        }
+    }
+
+    private void renameChildDocument(Node folderNode, String newName) throws RepositoryException {
+        Node documentNode = folderNode.getSession().getRootNode().getNode(folderNode.getPath().substring(1)+"/"+newName);
+        if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
+                Node child = children.nextNode();
+                if (child != null) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        child.checkout();
+                        folderNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
+                    }
+                }
+            }
+        }
+    }
+
+    public void rename(String name, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        if(name.startsWith("/"))
+            name  = name.substring(1);
+        String path = subject.getPath().substring(1);
+        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        if (folder.hasNode(name)) {
+            if (folder.hasNode(newName)) {
+                throw new WorkflowException("Cannot move document to same name");
+            }
+            Node offspring = folder.getNode(name);
+            if(offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
+                offspring = offspring.getParent();
+            }
+            offspring.checkout();
+            folder.getSession().move(offspring.getPath(), folder.getPath()+"/"+newName);
+            renameChildDocument(folder, newName);
+            folder.save();
+        }
+    }
+
+    public void rename(Document document, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        String path = subject.getPath().substring(1);
+        Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        Node documentNode = userSession.getNodeByUUID(document.getIdentity());
+        if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
+            documentNode = documentNode.getParent();
+        }
+        if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
+            if (folderNode.hasNode(newName)) {
+                throw new WorkflowException("Cannot move document to same name");
+            }
+            documentNode.checkout();
+            folderNode.getSession().move(documentNode.getPath(), folderNode.getPath()+"/"+newName);
+            renameChildDocument(folderNode, newName);
             folderNode.save();
         }
     }
