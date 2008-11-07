@@ -47,6 +47,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper implements IDataProvi
         super(nodeModel);
     }
 
+    @SuppressWarnings("unchecked")
     public Iterator iterator(int first, int count) {
         List list = new ArrayList();
         Node node = nodeModel.getNode();

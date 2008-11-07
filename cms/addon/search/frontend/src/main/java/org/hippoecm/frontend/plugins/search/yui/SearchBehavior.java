@@ -36,8 +36,11 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+import org.hippoecm.frontend.plugins.standardworkflow.types.i18n.TypeTranslator;
 import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteBehavior;
 import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
 import org.hippoecm.frontend.service.IBrowseService;
@@ -210,14 +213,17 @@ public class SearchBehavior extends AutoCompleteBehavior {
                             String path = row.getValue("jcr:path").getString();
                             HippoNode node = (HippoNode) session.getItem(path);
 
-                            String state = node.hasProperty("hippostd:state") ? node.getProperty("hippostd:state")
-                                    .getString() : "null";
-                            //FIXME: HREPTWO-1709, this should be handled elsewhere or by i18n.
-                            if (state.equals("published")) {
-                                state = "live";
-                            } else if (state.equals("unpublished")) {
-                                state = "offline";
+                            String state;
+                            if (node.hasProperty("hippostd:state")) {
+                                state = node.getProperty("hippostd:state").getString();
+                                TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(
+                                        "hippostd:publishable"));
+                                state = (String) translator.getValueName("hippostd:state", new Model(state))
+                                        .getObject();
+                            } else {
+                                state = "null";
                             }
+
                             String excerpt = row.getValue("rep:excerpt(.)").getString();
                             String displayName = ISO9075Helper.decodeLocalName(node.getDisplayName());
                             String url = node.getPath();

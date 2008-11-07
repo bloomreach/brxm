@@ -16,11 +16,12 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,7 +29,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
@@ -42,13 +42,12 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    @SuppressWarnings("unused")
-    private String caption = "unknown document";
+    private IModel caption = new Model("unknown document");
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new Label("caption", new PropertyModel(this, "caption")));
+        add(new Label("caption", caption));
 
         onModelChanged();
 
@@ -82,12 +81,6 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
     public void onModelChanged() {
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) getModel();
-        try {
-            Node node = model.getNodeModel().getNode();
-            caption = ISO9075Helper.decodeLocalName(node.getName());
-        } catch (RepositoryException ex) {
-            // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName()+": "+ex.getMessage());
-        }
+        caption = new NodeTranslator(model.getNodeModel()).getNodeName();
     }
 }

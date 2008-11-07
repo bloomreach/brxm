@@ -21,8 +21,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -33,7 +36,6 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
     @SuppressWarnings("unused")
-    private String caption = "unknown document";
+    private IModel caption = new Model("unknown document");
     private String stateSummary = "UNKNOWN";
     private boolean isLocked = false;
     private Component locked;
@@ -57,7 +59,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new Label("caption", new PropertyModel(this, "caption")));
+        add(new Label("caption", caption));
 
         add(new Label("status", new PropertyModel(this, "stateSummary")));
 
@@ -165,9 +167,10 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
-            Node node = model.getNodeModel().getNode();
-            caption = ISO9075Helper.decodeLocalName(node.getName());
+            JcrNodeModel nodeModel = model.getNodeModel();
+            caption = new NodeTranslator(nodeModel).getNodeName();
 
+            Node node = nodeModel.getNode();
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {

@@ -25,17 +25,19 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
+import org.hippoecm.frontend.plugins.standardworkflow.types.i18n.TypeTranslator;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.slf4j.Logger;
@@ -49,8 +51,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    @SuppressWarnings("unused")
-    private String caption = "unknown document";
+    private IModel caption = new Model("unknown document");
     private String stateSummary = "UNKNOWN";
     private boolean isLocked = false;
     private Component locked;
@@ -58,9 +59,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     public FullReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new Label("caption", new PropertyModel(this, "caption")));
+        add(new Label("caption", caption));
 
-        add(new Label("status", new StringResourceModel("state-${stateSummary}", this, new Model(this))));
+        TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
+        add(new Label("status", translator.getValueName("hippostd:stateSummary", new PropertyModel(this, "stateSummary"))));
 
         add(locked = new org.apache.wicket.markup.html.WebMarkupContainer("locked"));
 
@@ -170,9 +172,10 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         WorkflowsModel model = (WorkflowsModel) getModel();
         try {
-            Node node = model.getNodeModel().getNode();
-            caption = ISO9075Helper.decodeLocalName(node.getName());
+            JcrNodeModel nodeModel = model.getNodeModel();
+            caption = new NodeTranslator(nodeModel).getNodeName();
 
+            Node node = nodeModel.getNode();
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext();) {

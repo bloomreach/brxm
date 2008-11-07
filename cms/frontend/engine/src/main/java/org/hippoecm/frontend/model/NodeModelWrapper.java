@@ -18,7 +18,7 @@ package org.hippoecm.frontend.model;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
-public class NodeModelWrapper implements IChainingModel {
+public abstract class NodeModelWrapper implements IChainingModel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 

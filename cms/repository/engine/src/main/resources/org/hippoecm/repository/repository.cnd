@@ -280,6 +280,17 @@
   // A multivalue property that links to all the nodes that where used to
   // compute derived proper
 
+// translation
+[hippo:translation]
+- hippo:language (string) mandatory
+- hippo:message (string) mandatory
+- hippo:property (string)
+- hippo:value (string)
+- * (string)
+
+[hippo:translated] mixin
++ hippo:translation (hippo:translation) multiple
+
 [hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
 - hippo:paths (string) multiple mandatory
 
@@ -292,15 +303,6 @@
 
 [hippo:queryfolder] > hippo:basequeryfolder
 + * (nt:query, hippo:basequeryfolder)
-
-// translation
-[hippo:translation]
-- hippo:language (string) mandatory
-- hippo:message (string) mandatory
-- * (string)
-
-[hippo:translated] mixin
-+ hippo:translation (hippo:translation) multiple
 
 [hippo:configuration] > nt:base
 + hippo:workflows (hippo:workflowfolder) = hippo:workflowfolder mandatory

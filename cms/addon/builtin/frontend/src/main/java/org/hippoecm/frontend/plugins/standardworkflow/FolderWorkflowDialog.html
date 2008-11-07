@@ -16,22 +16,27 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
     <table class="hippo-window-form">
-    <tr>
-      <td>Name</td>
-      <td>
-    <span wicket:id="name"></span>
-      </td>
-    </tr>
-    <tr>
-      <td><span wicket:id="typelabel"></span></td>
-      <td><select class="hippo-form-select" wicket:id="prototype"></select></td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>
-    <span wicket:id="notypes"></span><br/>
-      </td>
-    </tr>
+      <tr>
+        <td><wicket:message key="name-label">Name</wicket:message></td>
+        <td>
+          <span wicket:id="name"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span wicket:id="typelabel"/>
+        </td>
+        <td>
+          <select class="hippo-form-select" wicket:id="prototype"/>
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <span wicket:id="notypes"/>
+          <br/>
+        </td>
+      </tr>
     </table>
   </wicket:extend>
 </html>

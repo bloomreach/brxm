@@ -24,6 +24,7 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -68,10 +69,9 @@ public class BrowseLink extends Panel {
                    !node.getPath().equals("/")) {
                 node = node.getParent();
             }
-            String nodeName = node.getName();
             String path = node.getPath();
             path = ISO9075Helper.decodeLocalName(path);
-            nodeName = ISO9075Helper.decodeLocalName(nodeName);
+            String nodeName = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
             link.add(new Label("label", nodeName));
             link.add(new SimpleAttributeModifier("title", path));
             

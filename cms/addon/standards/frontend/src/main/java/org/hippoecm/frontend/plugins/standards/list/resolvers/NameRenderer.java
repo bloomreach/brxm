@@ -19,8 +19,9 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.ISO9075Helper;
 
 public class NameRenderer extends AbstractNodeRenderer {
     @SuppressWarnings("unused")
@@ -30,11 +31,7 @@ public class NameRenderer extends AbstractNodeRenderer {
     
     @Override
     protected Component getViewer(String id, HippoNode node) throws RepositoryException {
-        String name = "";
-        if (node != null) {
-            name = ISO9075Helper.decodeLocalName(node.getName());
-        }
-        return new Label(id, name);
+        return new Label(id, new NodeTranslator(new JcrNodeModel(node)).getNodeName());
     }
 
 }

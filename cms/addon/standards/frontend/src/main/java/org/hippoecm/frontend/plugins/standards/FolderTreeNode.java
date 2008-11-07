@@ -26,11 +26,11 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,12 +107,10 @@ public class FolderTreeNode extends AbstractTreeNode {
 
     @Override
     public String renderNode() {
+        String result = (String) new NodeTranslator(getNodeModel()).getNodeName().getObject();
         HippoNode node = getNodeModel().getNode();
-        String result = "null";
         if (node != null) {
             try {
-                result = config.getDisplayName(node);
-                result = ISO9075Helper.decodeLocalName(result);
                 if (node.hasProperty(HippoNodeType.HIPPO_COUNT)) {
                     result += " [" + node.getProperty(HippoNodeType.HIPPO_COUNT).getLong() + "]";
                 }
