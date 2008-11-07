@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (644 terms)">
+    <section name="Term index (654 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -196,12 +196,6 @@
             <a href="..///delve_into/core/project-structure.html#Addon">Addon</a>
           </td>
           <td>Project Structure</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/quickstart.html#admin_icon">admin icon</a>
-          </td>
-          <td>Quickstart Steps</td>
         </tr>
         <tr>
           <td>
@@ -385,6 +379,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/custom/reference/repository/repository_bootstrap.html#Bootstrapping_the_repository">Bootstrapping the repository</a>
+          </td>
+          <td>Bootstrapping the repository</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/contributors/howto/browsing_history_of_document.html#Browsing_history_of_a_document">Browsing history of a document</a>
           </td>
           <td>Browsing history of a document</td>
@@ -406,6 +406,12 @@
             <a href="..///delve_into/core/building/index.html#Building_Hippo_ECM">Building Hippo ECM</a>
           </td>
           <td>Building Hippo ECM</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/custom/reference/repository/repository_bootstrap.html#Building_package_with_built-in_bootstrap_procedures">Building package with built-in bootstrap procedures</a>
+          </td>
+          <td>Bootstrapping the repository</td>
         </tr>
         <tr>
           <td>
@@ -1168,6 +1174,12 @@
             <a href="..///delve_into/custom/jcr/examples.html#Example_4:_Get_latest_news_articles">Example 4: Get latest news articles</a>
           </td>
           <td>JCR Examples</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/custom/reference/repository/repository_bootstrap.html#Example:">Example:</a>
+          </td>
+          <td>Bootstrapping the repository</td>
         </tr>
         <tr>
           <td>
@@ -2201,6 +2213,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/custom/reference/repository/repository_bootstrap.html#How_to_use">How to use</a>
+          </td>
+          <td>Bootstrapping the repository</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/user/index.html#How_to_work_as_a_user_of_Hippo_CMS_">How to work as a user of Hippo CMS.</a>
           </td>
           <td>User Guide</td>
@@ -2426,6 +2444,12 @@
             <a href="..///delve_into/web/add-ons/howto/index.html#Learn_how_to_make_your_own_content_add-ons_">Learn how to make your own content add-ons.</a>
           </td>
           <td>Howto</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/quickstart.html#localhost">localhost</a>
+          </td>
+          <td>Quickstart Steps</td>
         </tr>
         <tr>
           <td>
@@ -2969,6 +2993,12 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/quickstart.html#number_8080">number_8080</a>
+          </td>
+          <td>Quickstart Steps</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/sysadmin/installation/in_application_server.html#Obtain_the_EAR_package">Obtain the EAR package</a>
           </td>
           <td>Deploying in Application Server</td>
@@ -3188,6 +3218,12 @@
             <a href="..///delve_into/user/contributors/howto/restore_previous_version.html#Restoring_a_previous_version_of_a_document">Restoring a previous version of a document</a>
           </td>
           <td>Restoring a previous version of a document</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/custom/reference/repository/workflow.html#Reviewed_actions_workflow">Reviewed actions workflow</a>
+          </td>
+          <td>Workflow functionality</td>
         </tr>
         <tr>
           <td>
@@ -3582,6 +3618,18 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/sysadmin/installation/install_tomcat.html#Tomcat,_install">Tomcat, install</a>
+          </td>
+          <td>Install Tomcat</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/sysadmin/installation/install_tomcat.html#tomcat_5_5">tomcat_5.5</a>
+          </td>
+          <td>Install Tomcat</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/web/toolkits/index.html#Toolkits">Toolkits</a>
           </td>
           <td>Toolkits</td>
@@ -3657,12 +3705,6 @@
             <a href="..///delve_into/user/index.html#User_Guide">User Guide</a>
           </td>
           <td>User Guide</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="..///delve_into/quickstart.html#user_icon">user icon</a>
-          </td>
-          <td>Quickstart Steps</td>
         </tr>
         <tr>
           <td>
@@ -3846,9 +3888,27 @@
         </tr>
         <tr>
           <td>
+            <a href="..///delve_into/custom/reference/repository/workflow.html#Workflow_access">Workflow access</a>
+          </td>
+          <td>Workflow functionality</td>
+        </tr>
+        <tr>
+          <td>
             <a href="..///delve_into/sysadmin/configuration/nodes/workflow.html#Workflow_configuration">Workflow configuration</a>
           </td>
           <td>Workflow configuration</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/custom/reference/repository/workflow.html#Workflow_functionality">Workflow functionality</a>
+          </td>
+          <td>Workflow functionality</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/custom/reference/repository/workflow.html#Workflow_model">Workflow model</a>
+          </td>
+          <td>Workflow functionality</td>
         </tr>
         <tr>
           <td>

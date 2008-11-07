@@ -49,9 +49,9 @@ The repository can be extended with additional functionality in a number of
 explicit ways.  It allows the addition of:
 </p>
 <ul>
-<li><a href="../../../sysadmin/repository-bootstrap.html">Default content,
+<li><a href="./repository_bootstrap.html">Default content,
 pre-defining a namespace, and node-types</a>;</li>
-<li><a href="workflow.html">New types of workflows</a>;</li>
+<li><a href="./workflow.html">New types of workflows</a>;</li>
 <li>Mirroring of external data in the repository (not yet available as API).</li>
 </ul>
 

@@ -51,7 +51,7 @@
       <item name="Hippo CMS" href="/index.html"/>
       <item name="Hippo Site Toolkit" href="http://docs.onehippo.org/site-toolkit/" />
       <!-- <item name="Hippo Portal" href="http://docs.onehippo.org/portal2"/> -->
-      <item name="Hippo CMS 6.x" href="http://www.hippocms.org/"/>
+      <item name="Hippo GCMS 6.x" href="http://www.hippocms.org/"/>
     </links>
     <menu name="About Hippo CMS">
       <item name="What is Hippo CMS?" href="/index.html"/>
@@ -300,7 +300,7 @@
           <item name="Examples" href="/delve_into/custom/jcr/examples.html"/>
           <item name="Data Migration" href="/delve_into/custom/jcr/data_migration.html"/>
           <item name="Reference Guide" href="/delve_into/custom/jcr/reference/index.html" collapse="true">
-            <item name="Derived Data" href="/delve_into/custom/jcr/derived_data.html"/>
+            <item name="Derived Data" href="/delve_into/custom/jcr/reference/derived_data.html"/>
           </item>
         </item>
         <item name="List of Concepts" href="/delve_into/custom/concepts/index.html" collapse="true">
