@@ -40,6 +40,8 @@
   <document ext="xml" filename="advanced_search" path="..///delve_into/howto">Advanced Search
    <section>Advanced Search</section>
    <shortdesc>How to search using metadata?</shortdesc>
+   <index>Search, advanced</index>
+   <index>Search, on metadata</index>
    <subsection>Subsection title</subsection>
    <section>Next</section>
   </document>
@@ -68,6 +70,7 @@
   </document>
   <document ext="xml" filename="free_text_search" path="..///delve_into/howto">Free text Search
    <section>Free text Search</section>
+   <index>Search, free text</index>
    <subsection>First subsection</subsection>
    <section>Next</section>
   </document>

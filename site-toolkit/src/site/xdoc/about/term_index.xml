@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (141 terms)">
+    <section name="Term index (144 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -685,6 +685,24 @@
             <a href="..///delve_into/howto/start_project.html#screenshot">screenshot</a>
           </td>
           <td>Start a project</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/howto/advanced_search.html#Search,_advanced">Search, advanced</a>
+          </td>
+          <td>Advanced Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/howto/free_text_search.html#Search,_free_text">Search, free text</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/howto/advanced_search.html#Search,_on_metadata">Search, on metadata</a>
+          </td>
+          <td>Advanced Search</td>
         </tr>
         <tr>
           <td>
