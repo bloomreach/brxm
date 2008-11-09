@@ -35,11 +35,11 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.lang.Bytes;
+import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.plugins.gallery.Gallery;
 import org.hippoecm.frontend.plugins.gallery.ImageInfo;
 import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -89,7 +89,7 @@ class UploadForm extends Form {
                 DropDownChoice folderChoice;
                 type = galleryTypes.get(0);
                 add(folderChoice = new DropDownChoice("type", new PropertyModel(this, "type"), galleryTypes,
-                        new NamespaceFriendlyChoiceRenderer(galleryTypes)));
+                        new TypeChoiceRenderer(this)));
                 folderChoice.setNullValid(false);
                 folderChoice.setRequired(true);
             } else if (galleryTypes != null && galleryTypes.size() == 1) {

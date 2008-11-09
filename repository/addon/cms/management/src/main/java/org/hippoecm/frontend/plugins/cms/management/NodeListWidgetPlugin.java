@@ -32,7 +32,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -134,9 +136,9 @@ public class NodeListWidgetPlugin extends RenderPlugin {
         listContainer.add(listView);
         add(listContainer);
 
-        String label = config.getString("label");
+        IModel label = new StringResourceModel(config.getString("label"), this, null);
         String nodeType = config.getString("nodeType");
-        add(new AddNodeWidget("newNode", new Model(label), parentNodeModel, nodeType) {
+        add(new AddNodeWidget("newNode", label, parentNodeModel, nodeType) {
             private static final long serialVersionUID = 1L;
 
             @Override

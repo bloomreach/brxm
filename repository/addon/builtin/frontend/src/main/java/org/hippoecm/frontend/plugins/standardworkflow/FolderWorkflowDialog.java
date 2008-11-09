@@ -30,10 +30,10 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
-import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
@@ -73,7 +73,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             final List<String> prototypesList = new LinkedList<String>(prototypes);
             DropDownChoice folderChoice;
             add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), prototypesList,
-                    new NamespaceFriendlyChoiceRenderer(prototypesList)) {
+                    new TypeChoiceRenderer(this)) {
                 private static final long serialVersionUID = 1L;
 
                 @Override

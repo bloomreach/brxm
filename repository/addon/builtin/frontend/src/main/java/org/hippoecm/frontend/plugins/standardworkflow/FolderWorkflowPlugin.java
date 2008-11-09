@@ -84,15 +84,6 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
-                StringResourceModel text;
-                try {
-                    Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode()
-                            .getName() };
-                    text = new StringResourceModel("delete-message-extended", null, null, params);
-                } catch (RepositoryException ex) {
-                    text = new StringResourceModel("delete-message", (Component) null, null);
-                }
-
                 return new AbstractNameDialog(FolderWorkflowPlugin.this, dialogService, renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 

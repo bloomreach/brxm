@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
@@ -34,6 +33,7 @@ import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
-import org.hippoecm.frontend.plugins.standardworkflow.types.i18n.TypeTranslator;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
@@ -57,7 +56,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
 
-    private IModel caption = new Model("unknown document");
+    private IModel caption = new StringResourceModel("unknown", this, null);
     private String stateSummary = "UNKNOWN";
     private boolean isLocked = false;
     private Component locked;

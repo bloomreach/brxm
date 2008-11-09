@@ -15,16 +15,21 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.IStringResourceProvider;
+import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
+import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
@@ -38,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * extend this class and implement the doOk() method.
  *
  */
-public abstract class AbstractWorkflowDialog extends AbstractDialog {
+public abstract class AbstractWorkflowDialog extends AbstractDialog implements IStringResourceProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -48,6 +53,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
     private WorkflowsModel model;
     private IServiceReference<AbstractWorkflowPlugin> pluginRef;
     private IServiceReference<IJcrService> jcrServiceRef;
+    private ITranslateService translator;
 
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title) {
         this(plugin, dialogWindow, title, null);
@@ -69,6 +75,9 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
         if (model.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
+
+        // FIXME: refactor the plugin so that we can use a service instead here 
+        translator = new SearchingTranslatorPlugin(context, null);
     }
 
     @Override
@@ -81,6 +90,10 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog {
 
     public IModel getTitle() {
         return title;
+    }
+
+    public String getString(Map<String, String> criteria) {
+        return translator.translate(criteria);
     }
 
     protected AbstractWorkflowPlugin getPlugin() {

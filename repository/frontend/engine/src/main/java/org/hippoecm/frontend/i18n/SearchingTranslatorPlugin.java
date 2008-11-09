@@ -34,12 +34,12 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeNameTranslatePlugin extends AbstractTranslateService implements IPlugin {
+public class SearchingTranslatorPlugin extends AbstractTranslateService implements IPlugin {
     private static final long serialVersionUID = 1L;
 
-    final static Logger log = LoggerFactory.getLogger(NodeNameTranslatePlugin.class);
+    final static Logger log = LoggerFactory.getLogger(SearchingTranslatorPlugin.class);
 
-    public NodeNameTranslatePlugin(IPluginContext context, IPluginConfig config) {
+    public SearchingTranslatorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 

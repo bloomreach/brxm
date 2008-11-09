@@ -35,7 +35,21 @@ public class TranslationSelectionStrategy<T extends IModel> implements Comparato
     }
 
     public ITranslation<T> select(Set<? extends ITranslation<T>> candidates) {
-        return Collections.max(candidates, this);
+        if (candidates.size() > 0) {
+            return Collections.max(candidates, this);
+        }
+        return new ITranslation<T>() {
+            private static final long serialVersionUID = 1L;
+
+            public Set<String> getMatchingCriteria() {
+                return keys;
+            }
+
+            public T getModel() {
+                return null;
+            }
+            
+        };
     }
 
     public int compare(ITranslation<T> o1, ITranslation<T> o2) {

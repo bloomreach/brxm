@@ -16,11 +16,8 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
-
-import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
@@ -33,7 +30,7 @@ public abstract class AbstractNameDialog extends AbstractWorkflowDialog {
     protected String name;
 
     public AbstractNameDialog(AbstractWorkflowPlugin workflowPlugin, IDialogService dialogWindow,
-            StringResourceModel title, StringResourceModel question, String name) {
+            IModel title, IModel question, String name) {
         super(workflowPlugin, dialogWindow, title);
         this.name = name;
         add(new Label("question", question));

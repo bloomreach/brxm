@@ -30,11 +30,11 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +51,8 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
     protected String mode;
     protected IFieldDescriptor field;
     protected AbstractProvider<C> provider;
+    protected String fieldName;
 
-    private String fieldName;
     private TemplateController controller;
 
     protected FieldPlugin(IPluginContext context, IPluginConfig config) {

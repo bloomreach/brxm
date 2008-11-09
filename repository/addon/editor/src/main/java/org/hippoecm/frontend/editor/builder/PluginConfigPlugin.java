@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -38,17 +39,18 @@ import org.hippoecm.frontend.plugin.IPluginControl;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JavaFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JavaTypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeStore;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.JavaTypeDescriptor;
+import org.hippoecm.frontend.types.JcrTypeDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +76,7 @@ public class PluginConfigPlugin extends RenderPlugin {
         super(context, config);
 
         children = new LinkedList<IRenderService>();
-        templateStore = new BuiltinTemplateStore(new AutoTypeStore());
+        templateStore = new BuiltinTemplateStore(new AutoTypeStore(), this);
 
         addExtension("fieldParams");
         addExtension("template");

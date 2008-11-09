@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2007 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -13,45 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.types;
+package org.hippoecm.frontend.types;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
+
+import javax.jcr.Value;
 
 import org.apache.wicket.model.IDetachable;
 
-public interface IFieldDescriptor extends IDetachable {
+public interface ITypeDescriptor extends IDetachable {
     final static String SVN_ID = "$Id$";
 
     String getName();
 
     String getType();
 
-    void setType(String type);
+    List<String> getSuperTypes();
 
-    String getPath();
+    void setSuperTypes(List<String> superTypes);
 
-    void setPath(String path);
+    Map<String, IFieldDescriptor> getFields();
 
-    void setMultiple(boolean multiple);
+    IFieldDescriptor getField(String key);
 
-    boolean isMultiple();
+    String addField(String type);
 
-    boolean isBinary();
+    void removeField(String name);
 
-    boolean isProtected();
+    void setPrimary(String name);
 
-    boolean isMandatory();
+    boolean isNode();
 
-    void setMandatory(boolean mandatory);
+    void setIsNode(boolean isNode);
 
-    boolean isOrdered();
+    boolean isMixin();
 
-    void setOrdered(boolean isOrdered);
+    void setIsMixin(boolean isMixin);
 
-    boolean isPrimary();
-
-    Set<String> getExcluded();
-
-    void setExcluded(Set<String> set);
+    Value createValue();
 
 }

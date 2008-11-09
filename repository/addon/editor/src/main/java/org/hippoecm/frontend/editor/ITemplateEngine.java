@@ -18,7 +18,7 @@ package org.hippoecm.frontend.editor;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public interface ITemplateEngine extends IClusterable {
     final static String SVN_ID = "$Id$";

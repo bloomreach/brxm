@@ -35,8 +35,8 @@
   <sv:property sv:name="hippo:paths" sv:type="String">
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
-    <sv:value>new-document</sv:value>
-    <sv:value>new-folder</sv:value>
+    <sv:value>New Document</sv:value>
+    <sv:value>New Folder</sv:value>
   </sv:property>
   <sv:node sv:name="articles">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -49,8 +49,8 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-document</sv:value>
-      <sv:value>new-folder</sv:value>
+      <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -174,8 +174,8 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-document</sv:value>
-      <sv:value>new-folder</sv:value>
+      <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:paths" sv:type="String">
       <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -303,8 +303,8 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-document</sv:value>
-      <sv:value>new-folder</sv:value>
+      <sv:value>New Document</sv:value>
+      <sv:value>New Folder</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="gallery">
@@ -321,7 +321,7 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-image-folder</sv:value>
+      <sv:value>New Image Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:exampleImageSet</sv:value>
@@ -341,7 +341,7 @@
       <sv:value>hippo:harddocument</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-      <sv:value>new-file-folder</sv:value>
+      <sv:value>New File Folder</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:gallerytype" sv:type="String">
       <sv:value>hippogallery:exampleAssetSet</sv:value>

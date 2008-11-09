@@ -31,7 +31,10 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -97,42 +100,32 @@ public class ListDataTable extends DataTable {
     }
 
     private IModel getDocumentType(IModel model) {
-        String documentType;
+        IModel documentType = new Model("unknown");
+        boolean isFolder = true;
         if (model instanceof JcrNodeModel) {
             HippoNode node = (HippoNode) model.getObject();
             try {
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    documentType = node.getPrimaryNodeType().getName();
+                    isFolder = false;
                     NodeIterator nodeIt = node.getNodes();
                     while (nodeIt.hasNext()) {
                         Node childNode = nodeIt.nextNode();
                         if (childNode.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            documentType = childNode.getPrimaryNodeType().getName();
+                            documentType = new TypeTranslator(new JcrNodeTypeModel(childNode.getPrimaryNodeType())).getTypeName();
                             break;
                         }
                     }
-                } else if (node.isNodeType("hippostd:folder")) {
-                    documentType = "folder";
-                } else if (node.isNodeType("hippostd:directory")) {
-                    documentType = "Unordered folder";
                 } else {
-                    documentType = node.getPrimaryNodeType().getName();
-                }
-                if (documentType.indexOf(":") > -1) {
-                    documentType = documentType.substring(documentType.indexOf(":") + 1);
+                    documentType = new TypeTranslator(new JcrNodeTypeModel(node.getPrimaryNodeType())).getTypeName();
                 }
             } catch (RepositoryException e) {
-                documentType = "unknown";
             }
-        } else {
-            documentType = "unknown";
         }
-        if (documentType.endsWith("folder")) {
-            documentType = "This is a " + documentType;
+        if (isFolder) {
+            return new StringResourceModel("folder-title", this, null, new Object[] { documentType });
         } else {
-            documentType = "This is a " + documentType + " document";
+            return new StringResourceModel("document-title", this, null, new Object[] { documentType });
         }
-        return new Model(documentType);
     }
 
 }

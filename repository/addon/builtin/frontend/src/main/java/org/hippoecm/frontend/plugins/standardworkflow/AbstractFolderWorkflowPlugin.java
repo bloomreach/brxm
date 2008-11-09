@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.jcr.Node;
@@ -44,6 +45,7 @@ import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -135,13 +137,8 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         super.onModelChanged();
         WorkflowsModel model = (WorkflowsModel) AbstractFolderWorkflowPlugin.this.getModel();
         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
-        try {
-            if (model.getNodeModel() != null) {
-                if (model.getNodeModel().getNode() != null) {
-                    folderName.setModel(new Model((model.getNodeModel().getNode()).getDisplayName()));
-                }
-            }
-        } catch (RepositoryException ex) {
+        if (model.getNodeModel() != null) {
+            folderName.setModel(new NodeTranslator(model.getNodeModel()).getNodeName());
         }
         try {
             Workflow workflow = manager.getWorkflow(model.getWorkflowDescriptor());
@@ -157,6 +154,13 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         redraw();
     }
 
+    @Override
+    public String getString(Map<String, String> criteria) {
+        Map<String, String> map = new TreeMap<String, String>(criteria);
+        map.put("hippo:workflow", FolderWorkflow.class.getName());
+        return super.getString(map);
+    }
+    
     @SuppressWarnings("unchecked")
     public void select(JcrNodeModel nodeModel) {
         IBrowseService<JcrNodeModel> browser = getPluginContext().getService(

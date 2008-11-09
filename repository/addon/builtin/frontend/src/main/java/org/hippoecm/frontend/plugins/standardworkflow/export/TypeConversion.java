@@ -19,9 +19,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeStore;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
 

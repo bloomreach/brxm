@@ -22,8 +22,8 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public class FieldEditor extends Panel {
     @SuppressWarnings("unused")

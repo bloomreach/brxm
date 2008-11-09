@@ -49,6 +49,12 @@
 [hippostd:templates] > nt:base
 + *
 
+[hippostd:translations]
++ * (nt:base)
+
+[hippostd:translated] mixin
++ hippostd:translations (hippostd:translations)
+
 [hippostd:templatequery] > nt:query
 - hippostd:icon (string)
 - hippostd:renderer (string)
@@ -65,11 +71,3 @@
 [hippostd:gallery] > hippostd:folder
 - hippostd:gallerytype (string) multiple copy
 // the children of this node are supposed to be images or other assets
-
-// FIXME: these should be moved into seperate namespace
-
-[hippo:namespace] > hippostd:folder
-+ * (hippo:templatetype) = hippo:templatetype
-
-[hippo:namespacefolder] > hippostd:folder
-+ * (hippo:namespace) = hippo:namespace

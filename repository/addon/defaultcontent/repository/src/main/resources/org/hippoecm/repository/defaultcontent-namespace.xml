@@ -332,7 +332,7 @@
             <sv:value>10</sv:value>
           </sv:property>
         </sv:node>
-
+        
         <sv:node sv:name="body">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
@@ -359,7 +359,7 @@
             <sv:value>Body</sv:value>
           </sv:property>
         </sv:node>
-
+        
       </sv:node>
     </sv:node>
 

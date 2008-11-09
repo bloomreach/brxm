@@ -17,15 +17,9 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import javax.jcr.Node;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -39,8 +33,9 @@ import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -50,7 +45,7 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    private IModel caption = new Model("unknown document");
+    private IModel caption = new StringResourceModel("unknown", this, null);
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

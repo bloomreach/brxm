@@ -35,14 +35,14 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeStore;
+import org.hippoecm.frontend.types.JcrTypeDescriptor;
+import org.hippoecm.frontend.types.JcrTypeStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class PreviewPlugin extends RenderPlugin implements IJcrNodeModelListener
             IClusterConfig clusterConfig;
             JcrNodeModel templateModel = typeHelper.getTemplate();
             if (templateModel == null) {
-                BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore);
+                BuiltinTemplateStore builtinStore = new BuiltinTemplateStore(typeStore, null);
                 if ("edit".equals(mode)) {
                     IClusterConfig cluster = builtinStore.getTemplate(type, "edit");
                     templateModel = typeHelper.storeTemplate(cluster);

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend;
 
+import org.apache.wicket.model.StringResourceModel;
+
 public class PageExpiredErrorPage extends Home {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -22,6 +24,6 @@ public class PageExpiredErrorPage extends Home {
     
     public PageExpiredErrorPage() {
         super();
-        info("Session expired, please login again.");
+        info(new StringResourceModel("session-expired", this, null).getString());
     }
 }

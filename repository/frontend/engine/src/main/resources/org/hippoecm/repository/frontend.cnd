@@ -53,3 +53,11 @@
 - frontend:firstname (string)
 - frontend:lastname (string)
 - frontend:email (string)
+
+// FIXME: move into frontend namespace
+
+[hippo:namespace]
++ * (hippo:templatetype) = hippo:templatetype
+
+[hippo:namespacefolder]
++ * (hippo:namespace) = hippo:namespace

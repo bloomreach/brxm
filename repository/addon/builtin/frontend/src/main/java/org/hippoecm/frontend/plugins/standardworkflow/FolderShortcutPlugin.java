@@ -37,6 +37,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -48,7 +49,6 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.widgets.NamespaceFriendlyChoiceRenderer;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -76,6 +76,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
         super(context, config);
 
         AjaxLink link = new AjaxLink("link") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
@@ -340,7 +342,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             if (templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<String>(templates.get(templateCategory));
                 folderChoice.setChoices(prototypesList);
-                folderChoice.setChoiceRenderer(new NamespaceFriendlyChoiceRenderer(prototypesList));
+                folderChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
                 if (prototypesList.size() > 1) {
                     folderChoice.setVisible(true);
                     folderChoice.setNullValid(false);

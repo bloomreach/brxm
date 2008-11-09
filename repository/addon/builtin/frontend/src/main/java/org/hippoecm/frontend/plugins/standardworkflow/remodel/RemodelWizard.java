@@ -22,6 +22,7 @@ import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.extensions.wizard.WizardStep;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,20 +64,12 @@ public class RemodelWizard extends Wizard {
     private static final class Step1 extends WizardStep {
         private static final long serialVersionUID = 1L;
 
-        public Step1() {
-            super();
-            add(new Label(
-                    "message",
-                    "Updating all content to match the updated types might take a long time and is irreversible. Are you sure you want to proceed?"));
-        }
     }
 
     private static final class Step2 extends WizardStep {
         private static final long serialVersionUID = 1L;
 
         public Step2() {
-            super();
-            add(new Label("message", "Updating all content in progress.."));
             add(new AjaxLazyLoadPanel("progress") {
                 private static final long serialVersionUID = 1L;
 
@@ -86,7 +79,7 @@ public class RemodelWizard extends Wizard {
                     try {
                         RemodelDialog dialog = (RemodelDialog)findParent(RemodelDialog.class);
                         dialog.remodel();
-                        result = new Label(id, "  ..Success");
+                        result = new Label(id, new StringResourceModel("success", this, null));
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
                         String msg = "  ..FAILED!" + e.getClass().getName() + ": " + e.getMessage();
@@ -99,7 +92,6 @@ public class RemodelWizard extends Wizard {
 
         @Override
         protected void onBeforeRender() {
-            System.out.println("");
             super.onBeforeRender();
         }
     }

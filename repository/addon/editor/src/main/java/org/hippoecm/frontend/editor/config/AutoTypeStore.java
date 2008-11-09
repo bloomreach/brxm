@@ -31,12 +31,12 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JavaFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JavaTypeDescriptor;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeStore;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
