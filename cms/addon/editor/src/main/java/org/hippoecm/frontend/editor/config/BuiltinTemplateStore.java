@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin;
@@ -26,10 +28,10 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.standardworkflow.types.IFieldDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.ITypeStore;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.ITypeStore;
 
 public class BuiltinTemplateStore implements IClusterable {
     @SuppressWarnings("unused")
@@ -38,9 +40,11 @@ public class BuiltinTemplateStore implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private ITypeStore typeConfig;
+    private Component component;
 
-    public BuiltinTemplateStore(ITypeStore typeConfig) {
+    public BuiltinTemplateStore(ITypeStore typeConfig, Component component) {
         this.typeConfig = typeConfig;
+        this.component = component;
     }
 
     public IClusterConfig getTemplate(ITypeDescriptor type, String mode) {
@@ -92,7 +96,11 @@ public class BuiltinTemplateStore implements IClusterable {
                 config.put("wicket.model", "${wicket.model}");
                 config.put("engine", "${engine}");
                 config.put("mode", "${mode}");
-                config.put("caption", entry.getKey());
+                String caption = component != null ? component.getString(entry.getKey(), null, entry.getKey()) : null;
+                if (caption == null) {
+                    caption = entry.getKey();
+                }
+                config.put("caption", caption);
                 config.put("field", entry.getKey());
                 list.add(config);
             }

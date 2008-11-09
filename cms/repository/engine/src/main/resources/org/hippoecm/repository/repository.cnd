@@ -286,7 +286,7 @@
 - hippo:message (string) mandatory
 - hippo:property (string)
 - hippo:value (string)
-- * (string)
+- hippo:workflow (string)
 
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple

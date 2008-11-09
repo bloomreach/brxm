@@ -30,7 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -86,7 +86,7 @@ public class NodeActionsPlugin extends RenderPlugin {
                         super.onError(target, form);
                     }
 
-                }.add(new Label("actionLabel", new Model(operation))));
+                }.add(new Label("actionLabel", new StringResourceModel(operation, this, null))));
             }
         };
         add(actionsView);

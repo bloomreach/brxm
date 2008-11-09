@@ -15,7 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.AbstractSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -63,6 +67,53 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                     return obj;
                 }
 
+                @Override
+                public Set<Map.Entry> entrySet() {
+                    return new AbstractSet<Map.Entry>() {
+
+                        @Override
+                        public Iterator<Map.Entry> iterator() {
+                            final Iterator<Map.Entry> upstream = conf.entrySet().iterator();
+                            return new Iterator<Map.Entry>() {
+
+                                public boolean hasNext() {
+                                    return upstream.hasNext();
+                                }
+
+                                public Map.Entry next() {
+                                    final Map.Entry original = upstream.next();
+                                    return new Map.Entry() {
+
+                                        public Object getKey() {
+                                            return original.getKey();
+                                        }
+
+                                        public Object getValue() {
+                                            return get(original.getKey());
+                                        }
+
+                                        public Object setValue(Object value) {
+                                            return put(original.getKey(), value);
+                                        }
+                                        
+                                    };
+                                }
+
+                                public void remove() {
+                                    upstream.remove();
+                                }
+                                
+                            };
+                        }
+
+                        @Override
+                        public int size() {
+                            return conf.entrySet().size();
+                        }
+                        
+                    };
+                }
+                
                 @Override
                 public Object put(Object key, Object value) {
                     return conf.put(key, value);

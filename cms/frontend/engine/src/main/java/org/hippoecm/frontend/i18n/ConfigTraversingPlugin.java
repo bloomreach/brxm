@@ -35,7 +35,7 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
 
     public ConfigTraversingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        this.translations = config.getPluginConfig("translations");
+        this.translations = config.getPluginConfig("hippostd:translations");
     }
 
     public IModel getModel(Map<String, String> criteria) {
@@ -53,6 +53,12 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
             }
         }
         return null;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        translations.detach();
     }
 
 }

@@ -17,6 +17,7 @@ package org.hippoecm.frontend.i18n;
 
 import java.util.Map;
 
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -25,13 +26,17 @@ import org.hippoecm.frontend.service.ITranslateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractTranslateService implements IModelProvider<IModel>, ITranslateService {
+public abstract class AbstractTranslateService implements IModelProvider<IModel>, ITranslateService, IDetachable {
     private static final long serialVersionUID = 1L;
 
     final static Logger log = LoggerFactory.getLogger(AbstractTranslateService.class);
 
+    private IPluginConfig config;
+
     public AbstractTranslateService(IPluginContext context, IPluginConfig config) {
-        if (config.getString(ITranslateService.TRANSLATOR_ID) != null) {
+        this.config = config;
+
+        if (config != null && config.getString(ITranslateService.TRANSLATOR_ID) != null) {
             context.registerService(this, config.getString(ITranslateService.TRANSLATOR_ID));
         }
     }
@@ -44,4 +49,9 @@ public abstract class AbstractTranslateService implements IModelProvider<IModel>
         return null;
     }
 
+    public void detach() {
+        if (config != null) {
+            config.detach();
+        }
+    }
 }

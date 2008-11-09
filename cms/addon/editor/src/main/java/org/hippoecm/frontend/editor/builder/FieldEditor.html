@@ -16,12 +16,12 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <div class="hippo-editor-field hippo-editor-template-field-edit">
-      <label class="hippo-editor-field-title" for="text">Path</label>
+      <label class="hippo-editor-field-title" for="text"><wicket:message key="path"/></label>
       <input type="text" wicket:id="path" size="20"/>
       <table>
         <tr>
           <td>
-            <label for="mandatory">Mandatory</label>
+            <label for="mandatory"><wicket:message key="mandatory" /></label>
           </td>
           <td>
             <input type="checkbox" wicket:id="mandatory"/>
@@ -29,7 +29,7 @@
         </tr>
         <tr>
           <td>
-            <label for="multiple">Multiple</label>
+            <label for="multiple"><wicket:message key="multiple"/></label>
           </td>
           <td>
             <input type="checkbox" wicket:id="multiple"/>
@@ -37,7 +37,7 @@
         </tr>
         <tr>
           <td>
-            <label for="ordered">Ordered</label>
+            <label for="ordered"><wicket:message key="ordered"/></label>
           </td>
           <td>
             <input type="checkbox" wicket:id="ordered"/>
@@ -45,7 +45,7 @@
         </tr>
         <tr>
           <td>
-            <label for="primary">Primary</label>
+            <label for="primary"><wicket:message key="primary"/></label>
           </td>
           <td>
             <input type="checkbox" wicket:id="primary"/>

@@ -22,12 +22,13 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
+import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
+import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -50,8 +51,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
-    @SuppressWarnings("unused")
-    private IModel caption = new Model("unknown document");
+    private IModel caption = new StringResourceModel("unknown", this, null);
     private String stateSummary = "UNKNOWN";
     private boolean isLocked = false;
     private Component locked;
@@ -61,7 +61,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         add(new Label("caption", caption));
 
-        add(new Label("status", new PropertyModel(this, "stateSummary")));
+        TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel("hippostd:publishableSummary"));
+        add(new Label("status", translator.getValueName("hippostd:stateSummary", new PropertyModel(this, "stateSummary"))));
 
         add(locked = new org.apache.wicket.markup.html.WebMarkupContainer("locked"));
 

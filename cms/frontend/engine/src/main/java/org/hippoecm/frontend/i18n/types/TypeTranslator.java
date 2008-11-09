@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.types.i18n;
+package org.hippoecm.frontend.i18n.types;
 
 import java.util.Locale;
 
@@ -27,8 +27,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.nodetypes.NodeTypeModelWrapper;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeDescriptor;
-import org.hippoecm.frontend.plugins.standardworkflow.types.JcrTypeStore;
+import org.hippoecm.frontend.types.JcrTypeDescriptor;
+import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
