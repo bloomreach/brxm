@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -85,7 +86,7 @@ public class BinariesServlet extends HttpServlet {
                 return;
             }
             if (!item.isNode()) {
-                log.warn("item at path " + path + " is not a node, response status = 404)");
+                log.warn("item at path " + path + " is not a node, response status = 415)");
                 res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
@@ -107,8 +108,8 @@ public class BinariesServlet extends HttpServlet {
             }
 
             if (!node.hasProperty("jcr:mimeType")) {
-                log.warn("item at path " + path + " has no property jcr:mimeType, response status = 404)");
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                log.warn("item at path " + path + " has no property jcr:mimeType, response status = 415)");
+                res.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
                 return;
             }
 
@@ -126,7 +127,7 @@ public class BinariesServlet extends HttpServlet {
             res.setStatus(HttpServletResponse.SC_OK);
             res.setContentType(mimeType);
 
-            // TODO add a coonfigurable factor + default minimum for expires. Ideally, this value is
+            // TODO add a configurable factor + default minimum for expires. Ideally, this value is
             // stored in the repository
             if(node.hasProperty("jcr:lastModified")) {
                 long lastModified = 0;
@@ -155,11 +156,14 @@ public class BinariesServlet extends HttpServlet {
             while ((len = istream.read(buffer)) >= 0) {
                 ostream.write(buffer, 0, len);
             }
+        } catch (PathNotFoundException ex) {
+            log.debug("PathNotFoundException with message " + ex.getMessage() + " while getting binary data stream item "
+                    + "at path " + path + ", response status = 404)");
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (RepositoryException ex) {
             log.warn("Repository exception while resolving binaries request '" + req.getRequestURI() + "' : " + ex.getMessage());
             log.debug("RepositoryException : ", ex );
-            
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {
             if(session!=null && session instanceof ReadOnlyPooledSession) {
                 ((ReadOnlyPooledSession)session).getJcrSessionPool().release(req.getSession());
