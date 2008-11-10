@@ -156,8 +156,9 @@ public class BinariesServlet extends HttpServlet {
                 ostream.write(buffer, 0, len);
             }
         } catch (RepositoryException ex) {
-            log.error("RepositoryException with message " + ex.getMessage() + " while getting binary data stream item "
-                    + "at path " + path + ", response status = 404)");
+            log.warn("Repository exception while resolving binaries request '" + req.getRequestURI() + "' : " + ex.getMessage());
+            log.debug("RepositoryException : ", ex );
+            
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } finally {
             if(session!=null && session instanceof ReadOnlyPooledSession) {
