@@ -38,14 +38,14 @@ public class DocumentTypesListModule extends ModuleBase{
 
 	private static final Logger log = LoggerFactory.getLogger(DocumentTypesListModule.class);
 	public static final String NAMESPACE = "namespace";
-    private List items;
+    private List<NodeType> items;
     private String namespace;
     
 	
 	public void render(PageContext pageContext) throws TemplateException{
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-        Session jcrSession = ctxBase.getSession();
+        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        final ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
+        final Session jcrSession = ctxBase.getSession();
 
         boolean params = false;
         if (moduleParameters != null) {
@@ -67,11 +67,11 @@ public class DocumentTypesListModule extends ModuleBase{
         pageContext.setAttribute(getVar(), getTypes());
 	}
 
-	public List getTypes() {
+	public List<NodeType> getTypes() {
 		return this.items;
 	}
 
-	private void getNodeTypes(Session session, String namespacePrefix) throws RepositoryException {
+    private void getNodeTypes(Session session, String namespacePrefix) throws RepositoryException {
 		NodeTypeManager ntmgr = session.getWorkspace().getNodeTypeManager();
 		NodeTypeIterator it = ntmgr.getAllNodeTypes();
 		List<NodeType> types = new ArrayList<NodeType>();
