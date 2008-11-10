@@ -73,39 +73,59 @@ margin: 2px;
 
 /* Login */
 /* ================================================ */
-.hippo-login {text-align: center; width: 100%; background: none; padding-top: 145px; padding-bottom: 10px}
 .hippo-login-panel {
-background:transparent url(images/loginback.png) no-repeat scroll left top;
+background:transparent url(images/loginback.png) repeat-y scroll center top;
 margin:100px auto;
 position:relative;
 text-align:left;
-padding:30px;
 width: 460px;
-padding-bottom:95px;
 }
-
-.hippo-login-feedback{color: red; margin-bottom: 6px; text-align: center;}
 
 .hippo-login-panel h2{
-margin-bottom: 50px; padding-left: 100px; font-size: 18px; font-weight: normal; color: white;
-height: 49px;
+margin-bottom: 20px; font-size: 18px; font-weight: normal; color: white;
+height: 129px;
 padding-top: 0px;
+background:transparent url(images/loginhead.png) no-repeat scroll center top;
 }
-.hippo-login-panel label{color: #333333; display: block; padding-left: 35px;}
-.hippo-login-panel h2 span{font-size: 12px;  display: block}
-.hippo-login-panel table tr td{padding: 2px; vertical-align: middle}
 
-.hippo-login-panel select, .hippo-login-panel input[type="password"], .hippo-login-panel input[type="text"]{
+.hippo-login-panel-form table{width: 100%;}
+.hippo-login-panel-form label{color: #333333; display: block;}
+.hippo-login-panel-form h2 span{font-size: 12px;  display: block}
+.hippo-login-panel-form table tr td{padding: 2px; vertical-align: middle}
+
+.hippo-login-form-container{padding-left: 75px; padding-right: 75px;}
+
+.hippo-login-panel-form select, .hippo-login-panel-form input.hippo-form-text, .hippo-login-panel-form input.hippo-form-password{
 color: #333333; 
-width: 150px;
+width: 178px;
 padding: 2px;
 }
-.hippo-login-panel select{padding: none;}
-.hippo-login-panel input[type="submit"]{padding: 6px; padding-left: 15px; padding-right: 15px; margin-top: 5px;}
+.hippo-login-panel select{padding: none; width: 186px;}
+.hippo-login-panel input.hippo-form-submit{padding: 6px; padding-left: 15px; padding-right: 15px; margin-top: 5px;}
 
-/* Copyright */
-/* ================================================ */
-.hippo-copyright{color: #666666; padding: 15px; text-align: center; margin-top: 15px;}
+.hippo-login-panel-copyright{color: #999999; padding-bottom: 20px; text-align: center; margin-top: 23px; background: url("images/loginbottom.png") no-repeat bottom center}
+
+/* feedback */
+.hippo-login-feedback ul {
+text-align: left;
+margin-left: 60px; 
+margin-right: 60px; 
+border: 2px solid #1691e7; 
+color: #1691e7;
+background-color: #fff8d5; 
+margin-bottom: 15px; 
+font-weight: bold;
+background-image: url("images/icons/dialog-information-32.png");
+background-repeat: no-repeat;
+background-position: 10px 5px;
+padding-left: 70px;
+min-height: 35px;
+height: 35px;
+padding-top: 8px;
+}
+.hippo-login-feedback ul li{list-style-type: disc}
+
+
 
 /* Wicket Ajaxloader */
 /* ================================================ */
