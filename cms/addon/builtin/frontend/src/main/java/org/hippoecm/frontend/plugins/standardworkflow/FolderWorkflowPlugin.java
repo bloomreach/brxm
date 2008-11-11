@@ -71,7 +71,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                         Node node = model.getNodeModel().getNode();
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                        workflow.delete(node.getName());
+                        workflow.delete(node.getName() + "[" + node.getIndex() + "]");
                     }
                 };
             }
@@ -96,7 +96,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                         Node node = model.getNodeModel().getNode();
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                        workflow.rename(node.getName(), name);
+                        workflow.rename(node.getName() + "[" + node.getIndex() + "]", name);
                     }
                 };
             }
