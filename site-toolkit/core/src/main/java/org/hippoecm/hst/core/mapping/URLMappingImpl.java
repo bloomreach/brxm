@@ -270,7 +270,7 @@ public class URLMappingImpl implements URLMapping {
              * to get the link and not the location of the hippo document if the parent is a handle
              */  
             boolean isHandle = false;
-            if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            if(!node.getPath().equals("/") && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 node = node.getParent();
                 isHandle = true;
             } else if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
