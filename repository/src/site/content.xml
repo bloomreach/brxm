@@ -993,6 +993,8 @@
    <subsection>Hippo Site Toolkit</subsection>
    <subsection>Hippo Portal</subsection>
   </document>
+  <document ext="xml" filename="errorlist" path="..//">
+  </document>
   <document ext="xml" filename="folderview" path="..//">
   </document>
   <document ext="xml" filename="index" path="..//">What is Hippo CMS?

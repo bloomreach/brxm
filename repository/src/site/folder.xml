@@ -48,6 +48,10 @@
    fullname='xdoc/delve_into/core/building/netbeans.xml'
    path='xdoc/delve_into/core/building'
   >netbeans</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='xdoc/delve_into/core/building/netbeans.xml~'
+   path='xdoc/delve_into/core/building'
+  >netbeans</file>
     </folder>
     <folder>concepts
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
@@ -753,6 +757,10 @@
     </folder>
    </folder>
   </folder>
+  <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='xdoc/errorlist.xml'
+   path='xdoc'
+  >errorlist</file>
   <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='xdoc/folderview.xml'
    path='xdoc'
