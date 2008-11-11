@@ -27,25 +27,120 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
+
+/**
+ * FolderWorkflow API
+ * This interface defines the 
+ * FIXME: complete javadoc and add example usage
+ *
+ */
 public interface FolderWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
+    /**
+     * 
+     * @return
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
     public Map<String,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public String add(String category, String type, String name)
+    
+    /**
+     * 
+     * @param category
+     * @param type
+     * @param relPath the relative path from the parent folder (including the index number)
+     * @return
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    public String add(String category, String type, String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    
+    /**
+     * FIXME: document the argument map
+     * @param category
+     * @param type
+     * @param arguments
+     * @return
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
     public String add(String category, String type, Map<String,String> arguments)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void archive(String name)
+    
+    /**
+     * 
+     * @param relPath the relative path from the parent folder (including the index number)
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    public void archive(String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void delete(String name)
+    
+    /**
+     * 
+     * @param relPath the relative path from the parent folder (including the index number)
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    public void delete(String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    
+    /**
+     * 
+     * @param offspring
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
     public void delete(Document offspring)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    public void rename(String name, String newName)
+    
+    /**
+     * 
+     * @param relPath the relative path from the parent folder (including the index number)
+     * @param newName the new name excluding the index number
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    public void rename(String relPath, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    
+    /**
+     * 
+     * @param offspring
+     * @param newName the new name excluding the index number
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
     public void rename(Document offspring, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    
+    /**
+     * 
+     * @param newOrder
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
     public void reorder(List<String> newOrder)
         throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
