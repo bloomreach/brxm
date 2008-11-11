@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document xmlns="http://www.w3.org/1999/xhtml">
+  <!--
+    Copyright 2008 Hippo
+  
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+  
+    Do not edit! This html file is automatically generated from an XML file
+    by index2xdoc.xsl  (written by Rita Bylsma)
+   -->
+  <properties>
+    <title>Error and/or todo list</title>
+  </properties>
+  <body>
+    <section name="Error and/or todo list">
+      <span class="shortdesc">Documents with errors and/or todos: 15.</span>
+      <subsection name="empty documents: 3">
+        <ol>
+          <li>
+            <a href=".//about/architecture.html">architecture: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//about/features.html">features: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//about/use_cases.html">use_cases: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="rewrite documents: 4">
+        <ol>
+          <li>
+            <a href=".//about/architecture.html">architecture: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//about/features.html">features: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//about/use_cases.html">use_cases: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/quickstart.html">quickstart: Quickstart</a>
+            <ul>
+              <li>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
+             I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
+             Or maybe there is some other consistent and clear naming scheme.
+            </li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Add something to documents: 4">
+        <ol>
+          <li>
+            <a href=".//delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <ul>
+              <li>More introduction</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
+            <ul>
+              <li>Try to present several possible next tasks to do.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Try to present several possible next tasks to do.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/quickstart.html">quickstart: Quickstart</a>
+            <ul>
+              <li>This is probably the moment where things can be tried out. Please mention that
+              explicitely. Are there interesting points to try? Please list them here.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents with unidentified TODO strings: 4">
+        <ol>
+          <li>
+            <a href=".//delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
+            <ul>
+              <li>How to search using metadata? Search, advanced Search, on metadata<span xmlns="" class="bad"> TODO </span>TODO</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Search, free text<span xmlns="" class="bad"> TODO </span>TODO</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/index.html">index: Components</a>
+            <ul>
+              <li><span xmlns="" class="bad"> TODO </span>Filters - TODO Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Map</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>Filters -<span xmlns="" class="bad"> TODO </span>Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Mapping - TODO Mod</li>
+              <li>Filters -<span xmlns="" class="bad"> TODO </span></li>
+              <li>URL Mapping -<span xmlns="" class="bad"> TODO </span></li>
+              <li>Modules -<span xmlns="" class="bad"> TODO </span></li>
+              <li>Binaries -<span xmlns="" class="bad"> TODO </span></li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/modules.html">modules: Modules</a>
+            <ul>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents with empty elements: 8">
+        <ol>
+          <li>
+            <a href=".//delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <ul>
+              <li>
+        &lt;span class='quickstart-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='howto-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='reference-48 icon-48'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/facebook.html">facebook: Create a Facebook</a>
+            <ul>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-create-type-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-2-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-new-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-edit-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-people-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/hello_world.html">hello_world: Hello World</a>
+            <ul>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-new-document-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-document-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/start_project.html">start_project: Start a project</a>
+            <ul>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-cms-signin-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/quickstart.html">quickstart: Quickstart</a>
+            <ul>
+              <li>
+        &lt;span class='download-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='unzip-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='download-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='commandline-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='commandline-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='commandline-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='web-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='web-48 icon-48'&gt;</li>
+              <li>
+        &lt;span class='user-48 icon-48'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
+            <ul>
+              <li>
+        &lt;source</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
+            <ul>
+              <li>
+        &lt;a name='BinariesServlet'&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
+            <ul>
+              <li>
+        &lt;img src='../../images/reference/hst-configuration-nodes.png'&gt; width='284'&gt; height='131'&gt; alt='HST2 configuration nodes'&gt;</li>
+              <li>
+        &lt;img src='../../images/reference/hst-configuration-sitemap.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</li>
+              <li>
+        &lt;img src='../../images/reference/hst-configuration-sitemap2.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</li>
+              <li>
+        &lt;img src='../../images/reference/hst-configuration-layouts.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 layouts configuration'&gt;</li>
+              <li>
+        &lt;img src='../../images/reference/hst-configuration-modules.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 modules configuration'&gt;</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+    </section>
+  </body>
+</document>

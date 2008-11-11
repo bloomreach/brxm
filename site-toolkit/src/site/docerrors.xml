@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<document_list>
+  <!--
+     Do not edit! This html file is automatically generated from an XML file
+     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
+   -->
+  <document ext="xml" filename="architecture" path=".//about">Change to the document title
+    <empty>Document has template content: 'Change to the browser title'.</empty>
+    <empty>Document has template content: 'Change to the document title'.</empty>
+    <empty>Document has template content: 'Change to document short description'.</empty>
+    <rewrite>this whole document.</rewrite></document>
+  <document ext="xml" filename="features" path=".//about">Change to the document title
+    <empty>Document has template content: 'Change to the browser title'.</empty>
+    <empty>Document has template content: 'Change to the document title'.</empty>
+    <empty>Document has template content: 'Change to document short description'.</empty>
+    <rewrite>this whole document.</rewrite></document>
+  <document ext="xml" filename="term_index" path=".//about"/>
+  <document ext="xml" filename="use_cases" path=".//about">Change to the document title
+    <empty>Document has template content: 'Change to the browser title'.</empty>
+    <empty>Document has template content: 'Change to the document title'.</empty>
+    <empty>Document has template content: 'Change to document short description'.</empty>
+    <rewrite>this whole document.</rewrite></document>
+  <document ext="xml" filename="how_does_hst2_work" path=".//delve_into">How does Hippo Site Toolkit 2 work?
+    <add>More introduction</add>
+    <empty_elem>
+        &lt;span class='quickstart-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='howto-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='reference-48 icon-48'&gt;</empty_elem></document>
+  <document ext="xml" filename="advanced_search" path=".//delve_into/howto">Advanced Search
+    <add>Try to present several possible next tasks to do.</add>
+    <todo>How to search using metadata? Search, advanced Search, on metadata<span class="bad"> TODO </span>TODO</todo>
+    <todo><span class="bad"> TODO </span></todo>
+    <todo><span class="bad"> TODO </span></todo>
+    <todo><span class="bad"> TODO </span></todo></document>
+  <document ext="xml" filename="facebook" path=".//delve_into/howto">Create a Facebook
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-create-type-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-2-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-new-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-edit-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-people-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem></document>
+  <document ext="xml" filename="free_text_search" path=".//delve_into/howto">Free text Search
+    <add>Try to present several possible next tasks to do.</add>
+    <todo>Search, free text<span class="bad"> TODO </span>TODO</todo>
+    <todo><span class="bad"> TODO </span></todo>
+    <todo><span class="bad"> TODO </span></todo>
+    <todo><span class="bad"> TODO </span></todo></document>
+  <document ext="xml" filename="hello_world" path=".//delve_into/howto">Hello World
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-new-document-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-document-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem></document>
+  <document ext="xml" filename="index" path=".//delve_into/howto">Howto</document>
+  <document ext="xml" filename="start_project" path=".//delve_into/howto">Start a project
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-cms-signin-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</empty_elem></document>
+  <document ext="xml" filename="quickstart" path=".//delve_into">Quickstart
+    <rewrite>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
+             I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
+             Or maybe there is some other consistent and clear naming scheme.
+            </rewrite>
+    <add>This is probably the moment where things can be tried out. Please mention that
+              explicitely. Are there interesting points to try? Please list them here.</add>
+    <empty_elem>
+        &lt;span class='download-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='unzip-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='download-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='commandline-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='commandline-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='commandline-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='web-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='web-48 icon-48'&gt;</empty_elem>
+    <empty_elem>
+        &lt;span class='user-48 icon-48'&gt;</empty_elem></document>
+  <document ext="xml" filename="binaries" path=".//delve_into/reference/components">Serving binaries with the BinariesServlet</document>
+  <document ext="xml" filename="el-index" path=".//delve_into/reference/components">HST2 Expression Language</document>
+  <document ext="xml" filename="el-queries" path=".//delve_into/reference/components">Using dynamic queries in the expression language
+    <empty_elem>
+        &lt;source</empty_elem></document>
+  <document ext="xml" filename="filters" path=".//delve_into/reference/components">HST2 Filters</document>
+  <document ext="xml" filename="index" path=".//delve_into/reference/components">Components
+    <todo><span class="bad"> TODO </span>Filters - TODO Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Map</todo>
+    <todo><span class="bad"> TODO </span></todo>
+    <todo>Filters -<span class="bad"> TODO </span>Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Mapping - TODO Mod</todo>
+    <todo>Filters -<span class="bad"> TODO </span></todo>
+    <todo>URL Mapping -<span class="bad"> TODO </span></todo>
+    <todo>Modules -<span class="bad"> TODO </span></todo>
+    <todo>Binaries -<span class="bad"> TODO </span></todo></document>
+  <document ext="xml" filename="jsp-taglib" path=".//delve_into/reference/components">The JSP tag library</document>
+  <document ext="xml" filename="modules" path=".//delve_into/reference/components">Modules
+    <todo><span class="bad"> TODO </span></todo>
+    <todo><span class="bad"> TODO </span></todo></document>
+  <document ext="xml" filename="container-tag" path=".//delve_into/reference/components/tag">The &lt;hst-tmpl:container&gt; tag</document>
+  <document ext="xml" filename="content-tag" path=".//delve_into/reference/components/tag">The &lt;hst:content&gt; tag</document>
+  <document ext="xml" filename="context-tag" path=".//delve_into/reference/components/tag">The &lt;hst:context&gt; tag</document>
+  <document ext="xml" filename="documents-tag" path=".//delve_into/reference/components/tag">The &lt;hst:documents&gt; tag and derived tags</document>
+  <document ext="xml" filename="encodeurl-tag" path=".//delve_into/reference/components/tag">The &lt;hst:encodeURL&gt; tag</document>
+  <document ext="xml" filename="include-tag" path=".//delve_into/reference/components/tag">The &lt;hst:include&gt; tag</document>
+  <document ext="xml" filename="link-tag" path=".//delve_into/reference/components/tag">The &lt;hst-tmpl:link&gt; tag</document>
+  <document ext="xml" filename="menu-tag" path=".//delve_into/reference/components/tag">The &lt;hst:menu&gt; tag</document>
+  <document ext="xml" filename="moduleParameter-tag" path=".//delve_into/reference/components/tag">The &lt;hst-tmpl:moduleParameter&gt; tag</document>
+  <document ext="xml" filename="module-tag" path=".//delve_into/reference/components/tag">The &lt;hst-tmpl:module&gt; tag</document>
+  <document ext="xml" filename="node-tag" path=".//delve_into/reference/components/tag">The &lt;hst-tmpl:node&gt; tag</document>
+  <document ext="xml" filename="sitemap-tag" path=".//delve_into/reference/components/tag">The &lt;hst:siteMap&gt; tag</document>
+  <document ext="xml" filename="url-mapping" path=".//delve_into/reference/components">URL mapping</document>
+  <document ext="xml" filename="index" path=".//delve_into/reference/concepts">Concepts</document>
+  <document ext="xml" filename="concepts" path=".//delve_into/reference">Concepts</document>
+  <document ext="xml" filename="configuration" path=".//delve_into/reference/configuration">HST Configuration
+    <empty_elem>
+        &lt;a name='BinariesServlet'&gt;</empty_elem></document>
+  <document ext="xml" filename="hstproperties" path=".//delve_into/reference/configuration">HST Configuration in hst.properties</document>
+  <document ext="xml" filename="repository" path=".//delve_into/reference/configuration">Configuration in Repository
+    <empty_elem>
+        &lt;img src='../../images/reference/hst-configuration-nodes.png'&gt; width='284'&gt; height='131'&gt; alt='HST2 configuration nodes'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img src='../../images/reference/hst-configuration-sitemap.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img src='../../images/reference/hst-configuration-sitemap2.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img src='../../images/reference/hst-configuration-layouts.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 layouts configuration'&gt;</empty_elem>
+    <empty_elem>
+        &lt;img src='../../images/reference/hst-configuration-modules.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 modules configuration'&gt;</empty_elem></document>
+  <document ext="xml" filename="webxml" path=".//delve_into/reference/configuration">HST Configuration in web.xml</document>
+  <document ext="xml" filename="index" path=".//delve_into/reference">Reference</document>
+  <document ext="xml" filename="index" path="./">What is Hippo Site Toolkit 2?</document>
+</document_list>
