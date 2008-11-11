@@ -108,11 +108,13 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
         try {
             return ((UserSession) Session.get()).getJcrSession().getNodeByUUID(docbaseUUID).getPath();
         } catch (ValueFormatException e) {
-            log.error("invalid docbase" + e.getMessage());
+            log.warn("Invalid value format for docbase " + e.getMessage());
+            log.debug("Invalid value format for docbase ", e);
         } catch (PathNotFoundException e) {
-            log.error("invalid docbase" + e.getMessage());
+            log.warn("Docbase not found " + e.getMessage());
+            log.debug("Docbase not found ", e);
         } catch (RepositoryException e) {
-            log.error("invalid docbase" + e.getMessage());
+            log.error("Invalid docbase" + e.getMessage(), e);
         }
         return "[...]";
     }
