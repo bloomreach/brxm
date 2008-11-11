@@ -28,11 +28,15 @@ public class ModuleAttributeModule extends ModuleBase {
             }
         }
 
-        try {
-            propertyValue = getPropertyValueFromModuleNode(propertyName);
-        } catch (TemplateException e) {
-            log.error("Cannot get property " + propertyName, e);
+        if(propertyName!=null) {
+            try {
+                propertyValue = getPropertyValueFromModuleNode(propertyName);
+            } catch (TemplateException e) {
+                log.warn("Cannot get property '" + propertyName + "' : " + e.getMessage() );
+                log.debug("TemplateException : ",e);
+            }
         }
+        
         pageContext.setAttribute(getVar(), propertyValue);
     }
 
