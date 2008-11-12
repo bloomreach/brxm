@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<document_list>
+<document_list rootpath="/home/rita/werk/cms/src/site">
   <!--
      Do not edit! This html file is automatically generated from an XML file
      by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
@@ -321,6 +321,9 @@ repository is;
   <document ext="xml" filename="index" path=".//delve_into/web/add-ons">Hippo CMS Add-ons</document>
   <document ext="xml" filename="introduction" path=".//delve_into/web/add-ons">Introduction to content add-on development</document>
   <document ext="xml" filename="index" path=".//delve_into/web">Website Development</document>
+  <document ext="" filename="*" path=".//delve_into/web/jcr">
+    <invalid>Document is invalid XML.</invalid>
+  </document>
   <document ext="xml" filename="index" path=".//delve_into/web/toolkits">Toolkits</document>
   <document ext="xml" filename="errorlist" path="./">
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>

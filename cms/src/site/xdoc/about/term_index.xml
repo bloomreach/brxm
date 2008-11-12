@@ -23,7 +23,7 @@
     <title>Term Index</title>
   </properties>
   <body>
-    <section name="Term index (654 terms)">
+    <section name="Term index (655 terms)">
       <table>
         <tr>
           <th>Term</th>
@@ -1054,6 +1054,12 @@
             <a href="..///delve_into/user/contributors/concepts/document.html#Document">Document</a>
           </td>
           <td>Document</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="..///delve_into/web/jcr/*.html#Document_is_invalid_XML_">Document is invalid XML.</a>
+          </td>
+          <td/>
         </tr>
         <tr>
           <td>
