@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
 import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 
@@ -64,10 +63,7 @@ public class SearchModule extends ModuleBase implements Search {
     private int currentPageNumber = 1;
     private boolean validStatement = true;
 
-    
-    // TODO fixme 
-    
-    
+   
     /**
      * set search configuration parameters. This method is called directly in the render() method 
      * 
@@ -76,18 +72,13 @@ public class SearchModule extends ModuleBase implements Search {
     public void prepareSearch(PageContext pageContext) {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
-        boolean params = false;
-        if (moduleParameters != null) {
-            params = true;
-        }
+        if (moduleParameters == null) {
+            validStatement =false;
+            return;
+        }  
 
         // initPath 
-        if (request.getParameter(TARGET) != null && !"".equals(request.getParameter(TARGET))) {
-            String target = request.getParameter(TARGET);
-            if (!"".equals(target)) {
-                setTarget(target);
-            }
-        } else if (params && moduleParameters.containsKey(TARGET)) {
+        if (moduleParameters.containsKey(TARGET)) {
             String target = moduleParameters.get(TARGET);
             if (!"".equals(target)) {
                 setTarget(target);
@@ -100,9 +91,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // nodetype 
-        if (request.getParameter(NODETYPE) != null && !"".equals(request.getParameter(NODETYPE))) {
-            setNodeType(request.getParameter(NODETYPE));
-        } else if (params && moduleParameters.containsKey(NODETYPE)) {
+        if (moduleParameters.containsKey(NODETYPE)) {
             String nodetype = moduleParameters.get(NODETYPE);
             if (!"".equals(nodetype)) {
                 setNodeType(nodetype);
@@ -110,7 +99,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // where 
-        if (params && moduleParameters.containsKey(WHERE)) {
+        if (moduleParameters.containsKey(WHERE)) {
             String whereParam = moduleParameters.get(WHERE);
             if (!"".equals(whereParam)) {
                 setWhere(whereParam);
@@ -118,12 +107,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // query text
-        if (request.getParameter(QUERY) != null && !"".equals(request.getParameter(QUERY))) {
-            String queryParam = request.getParameter(QUERY);
-            if (!"".equals(queryParam)) {
-                setQueryText(queryParam.replaceAll("'", "''"));
-            }
-        } else if (params && moduleParameters.containsKey(QUERY)) {
+        if (moduleParameters.containsKey(QUERY)) {
             String queryParam = moduleParameters.get(QUERY);
             if (!"".equals(queryParam)) {
                 queryParam.replaceAll("'", "''");
@@ -132,12 +116,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // orderby 
-        if (request.getParameter(ORDERBY) != null && !"".equals(request.getParameter(ORDERBY))) {
-            String orderbyParam = request.getParameter(ORDERBY);
-            if (!"".equals(orderbyParam)) {
-                setOrderBy(orderbyParam);
-            }
-        } else if (params && moduleParameters.containsKey(ORDERBY)) {
+        if (moduleParameters.containsKey(ORDERBY)) {
             String orderbyParam = moduleParameters.get(ORDERBY);
             if (!"".equals(orderbyParam)) {
                 setOrderBy(orderbyParam);
@@ -146,12 +125,7 @@ public class SearchModule extends ModuleBase implements Search {
 
         // order 
         if (orderby != null) {
-            if (request.getParameter(ORDER) != null && !"".equals(request.getParameter(ORDER))) {
-                String orderParam = request.getParameter(ORDER);
-                if (orderParam.equals("descending") || orderParam.equals("desc")) {
-                    setOrder(orderParam);
-                }
-            } else if (params && moduleParameters.containsKey(ORDER)) {
+            if (moduleParameters.containsKey(ORDER)) {
                 String orderParam = moduleParameters.get(ORDER);
                 if (orderParam.equals("descending") || orderParam.equals("desc")) {
                     setOrder("descending");
@@ -161,12 +135,7 @@ public class SearchModule extends ModuleBase implements Search {
 
 
      // limit 
-        if (request.getParameter(LIMIT) != null && !"".equals(request.getParameter(LIMIT))) {
-            String limitParam = request.getParameter(LIMIT);
-            if (!"".equals(limitParam) && isNumber(LIMIT, limitParam)) {
-                setLimit(Integer.parseInt(limitParam));
-            }
-        } else if (params && moduleParameters.containsKey(LIMIT)) {
+        if (moduleParameters.containsKey(LIMIT)) {
             String limitParam = moduleParameters.get(LIMIT);
             if (!"".equals(limitParam) && isNumber(LIMIT, limitParam)) {
                 setLimit(Integer.parseInt(limitParam));
@@ -174,21 +143,15 @@ public class SearchModule extends ModuleBase implements Search {
         }
         
      // offset 
-        if (request.getParameter(OFFSET) != null && !"".equals(request.getParameter(OFFSET))) {
-            String offsetParam = request.getParameter(OFFSET);
-            if (!"".equals(offsetParam) && isNumber(OFFSET, offsetParam)) {
-                setOffset(Integer.parseInt(offsetParam));
-            }
-        } else if (params && moduleParameters.containsKey(OFFSET)) {
+        if (moduleParameters.containsKey(OFFSET)) {
             String offsetParam = moduleParameters.get(OFFSET);
             if (!"".equals(offsetParam) && isNumber(OFFSET, offsetParam)) {
                 setOffset(Integer.parseInt(offsetParam));
             }
         }
 
-        
         // pagename 
-        if (params && moduleParameters.containsKey(PAGENAME)) {
+        if (moduleParameters.containsKey(PAGENAME)) {
             String l_pageName = moduleParameters.get(PAGENAME);
             setPageName(l_pageName);
         }
@@ -202,7 +165,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // depth 
-        if (params && moduleParameters.containsKey(DEPTH)) {
+        if (moduleParameters.containsKey(DEPTH)) {
             String depthParam = moduleParameters.get(DEPTH);
             if (!"".equals(depthParam) && isNumber(DEPTH, depthParam)) {
                 setDepth(Integer.parseInt(depthParam));
@@ -210,18 +173,18 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // keepparameters 
-        if (params && moduleParameters.containsKey(KEEPPARAMETERS)) {
+        if (moduleParameters.containsKey(KEEPPARAMETERS)) {
             String keeparams = moduleParameters.get(KEEPPARAMETERS);
             setKeepParameters(Boolean.valueOf(keeparams));
         }
         
         // didyoumean 
-        if (params && moduleParameters.containsKey(DIDYOUMEAN)) {
+        if (moduleParameters.containsKey(DIDYOUMEAN)) {
             String didyoumeanParam = moduleParameters.get(DIDYOUMEAN);
             setDidYouMeanNeeded(Boolean.valueOf(didyoumeanParam));
         }
         // didyoumean treshhold
-        if (params && moduleParameters.containsKey(DIDYOUMEAN_MINIMUM)) {
+        if (moduleParameters.containsKey(DIDYOUMEAN_MINIMUM)) {
             String didyoumean_minimum = moduleParameters.get(DIDYOUMEAN_MINIMUM);
             if (!"".equals(didyoumean_minimum) && isNumber(DIDYOUMEAN_MINIMUM, didyoumean_minimum)) {
                 setDidYouMeanThreshold(Integer.parseInt(didyoumean_minimum));
@@ -229,18 +192,18 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         // similar
-        if (params && moduleParameters.containsKey(SIMILAR)) {
+        if (moduleParameters.containsKey(SIMILAR)) {
             String show_similar = moduleParameters.get(SIMILAR);
             setSimilarNeeded(new Boolean(show_similar));
         }
 
         // excerpt
-        if (params && (moduleParameters.containsKey(EXCERPT))) {
+        if (moduleParameters.containsKey(EXCERPT)) {
             String show_excerpt = moduleParameters.get(EXCERPT);
             setExcerptNeeded(new Boolean(show_excerpt));
         }
         // highlight = other term for exceprt
-        if (params && (moduleParameters.containsKey(HIGHLIGHT))) {
+        if (moduleParameters.containsKey(HIGHLIGHT)) {
             String show_excerpt = moduleParameters.get(HIGHLIGHT);
             setExcerptNeeded(new Boolean(show_excerpt));
         }
