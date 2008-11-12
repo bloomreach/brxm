@@ -63,12 +63,10 @@ public class ResetDialog extends AbstractDialog {
                 message = new MultiLineLabel("message", buf.toString());
             } else {
                 message = new Label("message", "There are no pending changes");
-                ok.setVisible(false);
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
             e.printStackTrace();
-            ok.setVisible(false);
         }
         add(message);
     }
@@ -78,10 +76,10 @@ public class ResetDialog extends AbstractDialog {
         MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node rootNode = nodeModel.getNode().getSession().getRootNode();
-        if (hasPendingChanges) {
-            rootNode.refresh(false);
-            plugin.flushNodeModel(new JcrNodeModel(rootNode));
-        }
+        // always refresh regardless of the local changes, so external changes
+        // can also be exposed.
+        rootNode.refresh(false);
+        plugin.flushNodeModel(new JcrNodeModel(rootNode));
     }
 
     public IModel getTitle() {
