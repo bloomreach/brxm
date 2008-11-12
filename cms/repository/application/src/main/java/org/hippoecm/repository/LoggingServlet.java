@@ -18,12 +18,14 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -31,14 +33,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class LoggingServlet extends HttpServlet {
+    
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoggingServlet.class);
+    private final static Logger log = LoggerFactory.getLogger(LoggingServlet.class);
+    
+    private final static boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
+    private final static boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
+    
+    private final static Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO, Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL };
 
-    Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO, Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL };
+    private final static String[] log4jLevels = new String[] { 
+        "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG", "TRACE", "ALL"
+    };
 
+    private final static String[] jdk14Levels = new String[] { 
+        "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE", "FINER", "FINEST", "ALL"
+    };
+    
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
@@ -63,83 +81,96 @@ public class LoggingServlet extends HttpServlet {
         writer.println("    <tr><td>context path</td><td>: <code>" + req.getContextPath() + "</code></td></tr>");
         writer.println("    <tr><td>servlet path</td><td>: <code>" + req.getServletPath() + "</code></td></tr>");
         writer.println("    <tr><td>request uri</td><td>: <code>" + req.getRequestURI() + "</code></td></tr>");
-        /*
-         * for(Enumeration<String> e = req.getParameterNames(); e.hasMoreElements(); ) {
-         *    String param = e.nextElement();
-         *    writer.println("    <tr><td><em>"+param+ "</em></td><td>: <code>"+req.getParameter(param)+"</code></td></tr>");
-         * }
-         */
         writer.println("    </table>");
         writer.println("  <h3>Logging</h3>");
 
-        writer.println("<p>Logger in use: "+log.getClass().getName()+"</p><p>\n");
-        if(log.getClass().getName().equals("org.slf4j.impl.JDK14LoggerAdapter")) {
-            writer.println("  <form action=\".\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
-            writer.println("    <table>");
-            writer.println("      <tr><th>logger</th><th>level</th><th>change to</th></tr>");
+        writer.println("<p>Logger in use: " + log.getClass().getName() + "</p><p>\n");
 
-            LoggerHierarchy logs = new LoggerHierarchy();
-            LogManager manager = LogManager.getLogManager();
-            for(Enumeration<String> namesIter = manager.getLoggerNames(); namesIter.hasMoreElements(); ) {
-                String loggerName = namesIter.nextElement();
-                Logger logger = manager.getLogger(loggerName);
-                logs.add(logger);
-            }
-
-            logs.print(writer,"","");
-            writer.println("    </table>");
-            writer.println("    <input type=\"submit\" name=\"submit\" value=\"Apply\">");
-            writer.println("  </form>");
-        } else {
-            writer.println("Since no JDK logging in use there is no further information.");
-        }
+        SortedMap<String, String> loggerLevelMap = getLoggerLevelMap();
+        printForm(writer, loggerLevelMap);
+        printLoggerLevels(writer, loggerLevelMap);
 
         writer.println("</p>");
         writer.println("</body></html>");
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        if(log.getClass().getName().equals("org.slf4j.impl.JDK14LoggerAdapter")) {
-            LogManager manager = LogManager.getLogManager();
-            for(Enumeration<String> e = req.getParameterNames(); e.hasMoreElements(); ) {
-                String param = e.nextElement();
-                Logger logger = manager.getLogger(param);
-                if(!req.getParameter(param).trim().equals("")) {
-                    try {
-                        logger.setLevel(Level.parse(req.getParameter(param)));
-                    } catch(IllegalArgumentException ex) {
-                        // ignore
-                    }
-                }
-            }
-        }
+        String loggerName = req.getParameter("logger");
+        String loggerLevel = req.getParameter("level");
+        setLoggerLevel(loggerName, loggerLevel);
         doGet(req, res);
     }
 
+    private void printForm(PrintWriter writer, Map<String, String> loggerLevelMap) {
+        writer.println("  <form action=\".\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
+        writer.println("    <table>");
+        writer.println("      <tr>");
+        writer.println("        <td>");
+        writer.println("Logger: <select name=\"logger\">");
+        for (Iterator<String> iter = loggerLevelMap.keySet().iterator(); iter.hasNext();) {
+            String loggerName = iter.next();
+            writer.println("<option label=\"" + loggerName + "\" value=\"" + loggerName + "\">" + loggerName
+                    + "</option>");
+        }
+        writer.println("</select>");
+        writer.println("        </td>");
+        writer.println("        <td>");
+        writer.println("level: <select name=\"level\">");
+        if (isJDK14Log) {
+            for (int i = 0; i < jdk14Levels.length; i++) {
+                writer.println("<option label=\"" + jdk14Levels[i] + "\" value=\"" + jdk14Levels[i] + "\">"
+                        + jdk14Levels[i] + "</option>");
+            }
+        } else if (isLog4jLog) {
+            for (int i = 0; i < log4jLevels.length; i++) {
+                writer.println("<option label=\"" + log4jLevels[i] + "\" value=\"" + log4jLevels[i] + "\">"
+                        + log4jLevels[i] + "</option>");
+            }
+        }
+        writer.println("</select>");
+        writer.println("        </td>");
+        writer.println("        <td><input type=\"submit\" name=\"submit\" value=\"Apply\"></td>");
+        writer.println("      </tr>");
+        writer.println("    </table>");
+        writer.println("  </form>");
+
+    }
+
+    private void printLoggerLevels(PrintWriter writer, Map<String, String> loggerLevelMap) {
+        writer.println("    <table>");
+        writer.println("      <tr><th>logger</th><th>level</th></tr>");
+        for (Iterator<Map.Entry<String, String>> iter = loggerLevelMap.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<String, String> logMap = iter.next();
+            writer.println("      <tr><td><tt>" + logMap.getKey() + "</tt></td><td>" + logMap.getValue()
+                    + "</td></tr>");
+        }
+        writer.println("    </table>");
+    }
+    
     public void destroy() {
     }
 
     private class LoggerHierarchy {
         String name;
-        Logger logger;
+        java.util.logging.Logger logger;
         Map<String, LoggerHierarchy> hierarchy;
         LoggerHierarchy() {
             name = "";
             logger = null;
             hierarchy = new TreeMap<String,LoggerHierarchy>();
         }
-        LoggerHierarchy(Logger logger) {
+        LoggerHierarchy(java.util.logging.Logger logger) {
             this.name = logger.getName();
             this.logger = logger;
             hierarchy = new TreeMap<String,LoggerHierarchy>();
         }
 
-        LoggerHierarchy add(Logger logger) {
+        LoggerHierarchy add(java.util.logging.Logger logger) {
             if(logger == this.logger) {
                 return this;
             }
             LoggerHierarchy loggerHierarchy;
-            Logger parent = logger.getParent();
+            java.util.logging.Logger parent = logger.getParent();
             if(parent != null) {
                 LoggerHierarchy parentHierarchy = add(parent);
                 if(!parentHierarchy.hierarchy.containsKey(logger.getName())) {
@@ -202,6 +233,115 @@ public class LoggingServlet extends HttpServlet {
                 last = child.print(writer, name, last);
             }
             return last;
+        }
+    }
+    
+    /**
+     * Get a sorted map with sets "logger name" => "logger level"
+     * @return SortedMap<String, String>
+     */
+    private SortedMap<String, String> getLoggerLevelMap() {
+        SortedMap<String, String> logLevelMap = new TreeMap<String, String>();
+        
+        if (isJDK14Log) {
+            java.util.logging.LogManager manager = java.util.logging.LogManager.getLogManager();
+            for(Enumeration<String> namesIter = manager.getLoggerNames(); namesIter.hasMoreElements(); ) {
+                String loggerName = namesIter.nextElement();
+                java.util.logging.Logger logger = manager.getLogger(loggerName);
+                java.util.logging.Level level = logger.getLevel();
+                java.util.logging.Level effectiveLevel = level;
+                
+                // try to find effective level
+                if (level == null) {
+                    for(java.util.logging.Logger l = logger; l != null; l=l.getParent()) {
+                        if(l.getLevel() != null) {
+                            effectiveLevel = l.getLevel();
+                            break;
+                        }
+                    }
+                }
+                String loggerLevel = (level == null) ? effectiveLevel.toString() + " (unset)" : level.toString();
+                logLevelMap.put(loggerName, loggerLevel);
+            }
+        } else if (isLog4jLog) {
+            try {
+                // Log4j Classes
+                Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
+                Class<?> managerClass = Class.forName("org.apache.log4j.LogManager");
+                
+                // Log4j Methods
+                Method getName = loggerClass.getMethod("getName", null);
+                Method getLevel = loggerClass.getMethod("getLevel", null);
+                Method getEffectiveLevel = loggerClass.getMethod("getEffectiveLevel", null);
+                Method getLoggers = managerClass.getMethod("getCurrentLoggers", null);
+    
+                // get and sort loggers and log levels
+                Enumeration loggers = (Enumeration) getLoggers.invoke(null, null);
+                while (loggers.hasMoreElements()) {
+                    try {
+                        Object logger = loggers.nextElement();
+                        String loggerName = (String) getName.invoke(logger, null);
+                        Object level = getLevel.invoke(logger, null);
+                        Object effectiveLevel = getEffectiveLevel.invoke(logger, null);
+                        String loggerLevel = (level == null) ? effectiveLevel.toString() + " (unset)" : level.toString();
+                        logLevelMap.put(loggerName, loggerLevel);
+                    } catch (Exception e) {
+                        log.error("Error getting logger name and level : " + e.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error getting log4j through reflection: " + e.getMessage(), e);
+            }
+        }
+        return logLevelMap;
+    }
+    
+    
+    /**
+     * Set the logger's log level through reflection
+     * @param name String the name of the logger to change
+     * @param level String the new log level
+     */
+    private void setLoggerLevel(String name, String level) {
+        if (name == null || name.length() == 0) {
+            log.warn("Invalid empty name. Not settting log level");
+            return;
+        }
+        if (isJDK14Log) {
+            java.util.logging.LogManager logManager = java.util.logging.LogManager.getLogManager();
+            java.util.logging.Logger logger = logManager.getLogger(name);
+            if (logger != null) {
+                logger.setLevel(Level.parse(level));
+            } else {
+                log.warn("Logger not found : " + name);
+            }
+        } else if (isLog4jLog) {
+            try {
+                log.warn("Setting logger " + name + " to level " + level);
+
+                // basic log4j reflection
+                Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
+                Class<?> levelClass = Class.forName("org.apache.log4j.Level");
+                Class<?> logManagerClass = Class.forName("org.apache.log4j.LogManager");
+                Method setLevel = loggerClass.getMethod("setLevel", levelClass);
+
+                // get the logger
+                Object logger = logManagerClass.getMethod("getLogger", String.class).invoke(null, name);
+
+                // get the static level object field, e.g. Level.INFO
+                Field levelField;
+                levelField = levelClass.getField(level);
+                Object levelObj = levelField.get(null);
+
+                // set the level
+                setLevel.invoke(logger, levelObj);
+            } catch (NoSuchFieldException e) {
+                log.warn("Unable to find Level." + level + " , not adjusting logger " + name);
+            } catch (Exception e) {
+                log.error("Unable to set logger " + name + " + to level " + level, e);
+            }
+        } else {
+            log.warn("Unable to determine logger");
         }
     }
 }
