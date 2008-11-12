@@ -28,10 +28,4 @@ public interface ImportReferenceBehavior {
     public static final int IMPORT_REFERENCE_NOT_FOUND_REMOVE = 0;
     public static final int IMPORT_REFERENCE_NOT_FOUND_TO_ROOT = 1;
     public static final int IMPORT_REFERENCE_NOT_FOUND_THROW = 2;
-    
-    public static final String[] STRINGS = new String[] { 
-        "remove reference when not found",
-        "add reference to root node when not found", 
-        "throw error when not found" 
-    };
 }
