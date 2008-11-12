@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<document_list>
+<document_list rootpath="/home/rita/werk/cms/src/site">
   <!--
      Do not edit! This html file is automatically generated from an XML file
      by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
@@ -986,6 +986,9 @@
    <section>Website Development</section>
    <shortdesc>Publish your Hippo CMS managed content on the web.</shortdesc>
    <subsection>Need more functionality?</subsection>
+  </document>
+  <document ext="" filename="*" path="..///delve_into/web/jcr">
+    <invalid>Document is invalid XML.</invalid>
   </document>
   <document ext="xml" filename="index" path="..///delve_into/web/toolkits">Toolkits
    <section>Toolkits</section>

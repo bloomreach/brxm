@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">133 errors and/or todos in 68 out of 172 documents (39%).</span>
+      <span class="shortdesc">134 errors and/or todos in 69 out of 173 documents (39%).</span>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
@@ -719,6 +719,16 @@ repository is;
             <a href=".//delve_into/web/add-ons/howto/packaging.html">packaging: Creating your own WAR package</a>
             <ul>
               <li>Has 4 sections.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="invalid documents: 1">
+        <ol>
+          <li>
+            <a href=".//delve_into/web/jcr/*.html">*: </a>
+            <ul>
+              <li>Document is invalid XML.</li>
             </ul>
           </li>
         </ol>
