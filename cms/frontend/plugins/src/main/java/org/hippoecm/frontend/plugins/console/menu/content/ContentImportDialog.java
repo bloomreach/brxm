@@ -19,7 +19,10 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidSerializedDataException;
@@ -68,10 +71,48 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     Component message;
     Model msgText;
 
+    public class LookupHashMap<K,V> extends HashMap<K,V> {
+        private static final long serialVersionUID = 9065806784464553409L;
+
+        public K getFirstKey(Object value) {
+            if (value == null) {
+                return null;
+            }
+            for (Map.Entry<K, V> e: entrySet()) {
+                if (value.equals(e.getValue())) {
+                    return e.getKey();
+                }
+            }
+            return null;
+        }
+    }
+    
+    private final LookupHashMap<Integer, String> uuidOpts = new LookupHashMap<Integer, String>();
+    private final LookupHashMap<Integer, String> mergeOpts = new LookupHashMap<Integer, String>();
+    private final LookupHashMap<Integer, String> derefOpts = new LookupHashMap<Integer, String>();
+    
+    private final void InitMaps() {
+        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
+        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
+        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW), "Throw error on uuid collision");
+        uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW), "Create new uuids on import");
+
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE), "Try to add, else overwrite same name nodes");
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP), "Try to add, else skip same name nodes");
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE), "Overwrite same name nodes");
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_SKIP), "Skip same name nodes");
+        mergeOpts.put(new Integer(ImportMergeBehavior.IMPORT_MERGE_THROW), "Throw error on naming conflict");
+
+        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
+        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
+        derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT), "Add reference to root node when not found");
+        
+    }
+    
 
     public ContentImportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
         super(context, dialogWindow);
-
+        InitMaps();
         pluginRef = context.getReference(plugin);
         nodeModel = (JcrNodeModel) plugin.getModel();
         
@@ -102,22 +143,20 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
         private FileUploadField fileUploadField;
 
-        private final List<String> mergeOpts = new ArrayList<String>();
-        private final List<String> referenceOpts = new ArrayList<String>();
         
-        private String mergeBehavior = ImportMergeBehavior.STRINGS[ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP];
-        private String referenceBehavior = ImportReferenceBehavior.STRINGS[ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE];
+        private String uuidBehavior = uuidOpts.get(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+        private String mergeBehavior = mergeOpts.get(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+        private String derefBehavior = derefOpts.get(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
         
         public FileUploadForm(String name) {
             
             super(name);
-            setMergeBehaviors();
-            setReferenceBehaviors();
 
-            DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), mergeOpts);
-            DropDownChoice reference = new DropDownChoice("referenceBehaviors", new PropertyModel(this, "referenceBehavior"),
-                    referenceOpts);
-            
+            DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
+            DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
+            DropDownChoice reference = new DropDownChoice("derefBehaviors", new PropertyModel(this, "derefBehavior"), new ArrayList<String>(derefOpts.values()));
+
+            add(uuid.setNullValid(false).setRequired(true));
             add(merge.setNullValid(false).setRequired(true));
             add(reference.setNullValid(false).setRequired(true));
             
@@ -131,8 +170,9 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         protected void onSubmit() {
             final FileUpload upload = fileUploadField.getFileUpload();
 
-            int mergeOpt = mergeOpts.indexOf(mergeBehavior);
-            int referenceOpt = referenceOpts.indexOf(referenceBehavior);
+            int uuidOpt = uuidOpts.getFirstKey(uuidBehavior).intValue();
+            int mergeOpt = mergeOpts.getFirstKey(mergeBehavior).intValue();
+            int derefOpt = derefOpts.getFirstKey(derefBehavior).intValue();
             
             if (upload != null) {
                 msgText.setObject("File uploaded. Start import..");
@@ -141,10 +181,9 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                 try {
                     InputStream contentStream = new BufferedInputStream(upload.getInputStream());
                     String absPath = nodeModel.getNode().getPath();
-                    log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW + "," + mergeBehavior + "," +referenceBehavior);
+                    log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," +derefBehavior);
                     
-                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, mergeOpt , referenceOpt);
-                    //((HippoSession)((UserSession) Session.get()).getJcrSession()).importXML(absPath, contentStream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                     msgText.setObject("Import done.");
                 } catch (PathNotFoundException ex) {
                     log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
@@ -174,32 +213,27 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             }
         }
 
-        private void setMergeBehaviors() {
-            for (String s : ImportMergeBehavior.STRINGS) {
-                mergeOpts.add(s);
-            }
+        public void setMergeBehavior(String mergeBehavior) {
+            this.mergeBehavior = mergeBehavior;
         }
-
-        private void setReferenceBehaviors() {
-            for (String s : ImportReferenceBehavior.STRINGS) {
-                referenceOpts.add(s);
-            }
-        }
-
         public String getMergeBehavior() {
             return mergeBehavior;
         }
 
-        public void setMergeBehavior(String mergeBehavior) {
-            this.mergeBehavior = mergeBehavior;
-        }
 
-        public String getReferenceBehavrior() {
-            return referenceBehavior;
+        public void setDerefBehavior(String derefBehavior) {
+            this.derefBehavior = derefBehavior;
         }
+        public String getDerefBehavior() {
+            return derefBehavior;
+        }
+        
 
-        public void setgetReferenceBehavriorBehavior(String referenceBehavior) {
-            this.referenceBehavior = referenceBehavior;
+        public void setUuidBehavior(String uuidBehavior) {
+            this.uuidBehavior = uuidBehavior;
+        }
+        public String getUuidBehavior() {
+            return uuidBehavior;
         }
     }
 
