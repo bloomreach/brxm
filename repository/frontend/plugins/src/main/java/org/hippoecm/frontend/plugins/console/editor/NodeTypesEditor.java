@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.console.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,6 +119,7 @@ class NodeTypesEditor extends CheckGroup {
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
+        Collections.sort(list);
         return list;
     }
 
