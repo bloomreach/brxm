@@ -179,6 +179,24 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+    </tag>
+    
+    <tag>
+        <name>moduleAttribute</name>
+        <tag-class>org.hippoecm.hst.core.template.tag.ModuleAttributeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <description>Variable name which will be available on the page.</description>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <description>Name of the property that is going to be fetched</description>
+            <name>propertyName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>    
     
     <tag>
