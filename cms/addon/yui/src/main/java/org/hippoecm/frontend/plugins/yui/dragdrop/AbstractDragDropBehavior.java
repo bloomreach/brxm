@@ -15,40 +15,37 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import javax.jcr.RepositoryException;
+import java.util.Map;
 
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelService;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.HippoTemplate;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
-import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 
-public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavior {
+public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    protected IPluginConfig config;
-    protected IPluginContext context;
-    private HeaderContributorHelper headerContribHelper = new HeaderContributorHelper();
+    protected final DragDropSettings settings;
 
-    public AbstractDragDropBehavior(IPluginContext context, IPluginConfig config) {
-        this.config = config;
-        this.context = context;
+    public AbstractDragDropBehavior(IPluginContext context, IPluginConfig config, DragDropSettings settings) {
+        super(context, config);
+        this.settings = settings;
+    }
 
-        headerContribHelper.addModule(HippoNamespace.NS, "dragdropmanager");
-
-        headerContribHelper.addTemplate(new HippoTemplate(getHeaderContributorClass(),
-                getHeaderContributorFilename(), getModelClass()) {
+    @Override
+    public void addHeaderContribution(IYuiContext helper) {
+        helper.addModule(HippoNamespace.NS, "dragdropmanager");
+        
+        helper.addTemplate(new HippoTextTemplate(getHeaderContributorClass(), getHeaderContributorFilename(),
+                getModelClass()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -57,72 +54,44 @@ public abstract class AbstractDragDropBehavior extends AbstractDefaultAjaxBehavi
             }
 
             @Override
-            public JsConfig getJsConfig() {
-                return AbstractDragDropBehavior.this.getJavacriptConfig();
+            public JavascriptSettings getJavascriptSettings() {
+                updateSettings();
+                return AbstractDragDropBehavior.this.settings;
             }
 
         });
-        headerContribHelper.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
+        helper.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
     }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        headerContribHelper.renderHead(response);
-        super.renderHead(response);
+    
+    protected void updateSettings() {
+        settings.put("callbackUrl", getCallbackUrl().toString());
+        settings.put("callbackFunction", getCallbackScript().toString(), false);
+        settings.put("callbackParameters", getCallbackParameters());
     }
 
     @Override
     protected CharSequence getCallbackScript(boolean onlyTargetActivePage) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
         return buf.toString();
-    }
-
-    protected abstract String getHeaderContributorFilename();
-
-    protected abstract Class<? extends IBehavior> getHeaderContributorClass();
-
-    /**
-     * Specify the clientside class that is used as the DragDropModel 
-     */
-    abstract protected String getModelClass();
-
-    protected String getLabel() {
-        String pluginModelId = config.getString(RenderService.MODEL_ID);
-        if (pluginModelId != null) {
-            IModelService pluginModelService = context.getService(pluginModelId, IModelService.class);
-            if (pluginModelService != null) {
-                IModel draggedModel = pluginModelService.getModel();
-                if (draggedModel instanceof JcrNodeModel) {
-                    JcrNodeModel nodeModel = (JcrNodeModel) draggedModel;
-                    try {
-                        return nodeModel.getNode().getDisplayName();
-                    } catch (RepositoryException e) {
-                        return getComponent().getMarkupId();
-                    }
-                }
-            }
-        }
-        return getComponent().getMarkupId();
-    }
-
-    protected JsConfig getJavacriptConfig() {
-        JsConfig jsConfig = new JsConfig();
-        jsConfig.put("label", getLabel());
-        jsConfig.put("groups", config.getStringArray("yui.dd.groups"));
-        jsConfig.put("callbackUrl", getCallbackUrl().toString());
-        jsConfig.put("callbackFunction", getCallbackScript().toString(), false);
-        jsConfig.put("callbackParameters", getCallbackParameters());
-        return jsConfig;
     }
 
     /**
      * Provide custom callbackParameters
      * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
      */
-    protected JsConfig getCallbackParameters() {
+    protected Map<String, String> getCallbackParameters() {
         return null;
     }
+    
+    abstract protected String getHeaderContributorFilename();
+
+    abstract protected Class<? extends IBehavior> getHeaderContributorClass();
+
+    /**
+     * Specify the clientside class that is used as the DragDropModel 
+     */
+    abstract protected String getModelClass();
 
 }

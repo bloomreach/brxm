@@ -41,8 +41,10 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteBehavior;
-import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -59,15 +61,20 @@ public class SearchBehavior extends AutoCompleteBehavior {
     private final IBrowseService<IModel> browseService;
     private final SearchBuilder searchBuilder;
 
-    public SearchBehavior(AutoCompleteSettings settings, IBrowseService<IModel> browse, String[] searchPaths) {
-        super(settings);
+    public SearchBehavior(IPluginContext context, IPluginConfig config, IBrowseService<IModel> browse) {
+        super(context, config);
         this.browseService = browse;
-        searchBuilder = new SearchBuilder(searchPaths);
-        contribHelper.addModule(SearchNamespace.NS, "searchbox");
+        searchBuilder = new SearchBuilder(config.getStringArray("search.paths"));
+    }
+    
+    @Override
+    public void addHeaderContribution(IYuiContext helper) {
+        super.addHeaderContribution(helper);
+        helper.addModule(SearchNamespace.NS, "searchbox");
     }
 
     @Override
-    protected String getModuleClass() {
+    protected String getClientClassname() {
         return "YAHOO.hippo.SearchBox";
     }
 

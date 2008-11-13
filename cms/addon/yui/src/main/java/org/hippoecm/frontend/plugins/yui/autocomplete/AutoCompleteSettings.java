@@ -20,13 +20,13 @@ import java.util.Map;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
+import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
 
 /**
  * This class encapsulates various settings for {@link AutoCompleteBehavior}
  */
 
-public final class AutoCompleteSettings extends JsConfig {
+public final class AutoCompleteSettings extends JavascriptSettings {
     private static final long serialVersionUID = 1L;
     
     private static final String CONTAINER_ID = "containerId";  //String

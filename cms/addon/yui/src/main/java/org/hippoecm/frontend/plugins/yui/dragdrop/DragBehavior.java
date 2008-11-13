@@ -23,22 +23,22 @@ import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.IModelService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
-import org.hippoecm.frontend.service.render.RenderService;
 
-public class DragBehavior extends AbstractDragDropBehavior {
+public abstract class DragBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    public DragBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+    
+    protected DragSettings dragSettings;
+    
+    public DragBehavior(IPluginContext context, IPluginConfig config, DragSettings settings) {
+        super(context, config, settings);
+        dragSettings = settings;
     }
-
+    
     @SuppressWarnings("unchecked")
     @Override
     protected void respond(final AjaxRequestTarget target) {
@@ -62,22 +62,16 @@ public class DragBehavior extends AbstractDragDropBehavior {
         });
     }
 
+    /**
+     * Lookup and return the IModel that will be used to drop on the dropBehavior
+     * @return
+     */
+    abstract protected IModel getDragModel();
+
     protected boolean lookupDropBehavior() {
         return true;
     }
-
-    protected IModel getDragModel() {
-        String pluginModelId = config.getString(RenderService.MODEL_ID);
-        if (pluginModelId != null) {
-            //TODO: generic gedrag uitzoeken
-            IModelService pluginModelService = context.getService(pluginModelId, IModelService.class);
-            if (pluginModelService != null) {
-                return pluginModelService.getModel();
-            }
-        }
-        return null;
-    }
-
+    
     @Override
     protected String getHeaderContributorFilename() {
         return "Drag.js";
@@ -87,13 +81,10 @@ public class DragBehavior extends AbstractDragDropBehavior {
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return DragBehavior.class;
     }
-
+    
     @Override
-    protected JsConfig getJavacriptConfig() {
-        JsConfig config = super.getJavacriptConfig();
-        config.put("centerFrame", true);
-        config.put("resizeFrame", false);
-        return config;
+    protected String getModelClass() {
+        return "YAHOO.hippo.DDFallbackModel";
     }
 
     private abstract class DropPointVisitor implements IVisitor {
@@ -113,10 +104,4 @@ public class DragBehavior extends AbstractDragDropBehavior {
 
         abstract void visit(DropBehavior draggable);
     }
-
-    @Override
-    protected String getModelClass() {
-        return "YAHOO.hippo.DDModel";
-    }
-
 }

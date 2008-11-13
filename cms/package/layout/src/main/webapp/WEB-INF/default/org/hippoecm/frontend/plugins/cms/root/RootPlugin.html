@@ -18,16 +18,22 @@
         <title>Hippo CMS 7</title>
     </wicket:head>
     <wicket:panel>
-        <div yui:id="root-layout-header">
-            <div class="headerplugin" wicket:id="extension.header">[header here]</div>
-        </div>    
-        <div yui:id="root-layout-center">
-            <div class="centerplugin" wicket:id="extension.center">[center here]</div>
-        </div>  
-        <div yui:id="root-layout-footer">
-            <div class="footerplugin" wicket:id="extension.footer">[footer here]</div>
+      <div id="doc3">
+        <div id="hd">
+            <div class="headerplugin" wicket:id="extension.header">[header here]</div>          
         </div>
-        <div wicket:id="extension.search">[search box]</div>
-        <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
+        <div id="bd">
+          <div id="yui-main">
+            <div class="yui-b">
+              <div class="centerplugin" wicket:id="extension.center">[center here]</div>
+            </div>
+          </div>
+        </div>
+        <div id="ft">
+          <div class="footerplugin" wicket:id="extension.footer">[footer here]</div>
+        </div>
+      </div>  
+      <div wicket:id="extension.search">[search box]</div>
+      <div wicket:id="pinger" class="hideme">[Prevents session timeouts]</div>
     </wicket:panel>
 </html>

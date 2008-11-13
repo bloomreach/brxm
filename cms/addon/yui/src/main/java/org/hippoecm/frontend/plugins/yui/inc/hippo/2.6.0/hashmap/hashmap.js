@@ -135,6 +135,16 @@ Array.prototype.removeAt = _removeAt;
             return ar;
         },
         
+        forEach : function(context, visitor) {
+            var ar = this.entrySetAsArray();
+            for(var i=0; i<ar.length; i++) {
+                var br = visitor.call(context, ar[i].getKey(), ar[i].getValue());
+                if(br === true) {
+                    break;
+                }
+            }
+        },
+
         _getIndex : function(key) {
             for (var i=0; i < this.keys.length; i++) {
                 if( this.keys[ i ] == key ) {
@@ -146,10 +156,11 @@ Array.prototype.removeAt = _removeAt;
         
         toString : function() {
             var x = '';
-            for(var i=0; i<this.keys.length; i++) {
+            var entries = this.entrySetAsArray();
+            for(var i=0; i<entries.length; i++) {
                 if (i>0) x += ', ';
-                var value = this.values[this.keys[i]];
-                x +='{' + this.keys[i] + '=' + value + '}'; 
+                var entry = entries[i];
+                x +='{' + entry.getKey() + '=' + entry.getValue()+ '}'; 
             }
             return 'HashMap[' + x + ']';
         }

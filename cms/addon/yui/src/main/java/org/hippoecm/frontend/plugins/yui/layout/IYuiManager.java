@@ -13,26 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.remodel;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+package org.hippoecm.frontend.plugins.yui.layout;
 
-public final class FinishLink extends AbstractWizardLink {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    private static final long serialVersionUID = 1L;
+import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
-    public FinishLink(String id, RemodelWizard wizard) {
-        super(id, wizard);
-    }
+public interface IYuiManager extends IClusterable {
     
-    @Override
-    public boolean isVisible() {
-        return !getWizardModel().isNextAvailable();
-    }
-
-    @Override
-    public void onClick(AjaxRequestTarget target) {
-        getWizardModel().finish();
-    }
+    IYuiContext newContext();
 }

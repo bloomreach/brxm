@@ -16,28 +16,38 @@
 
 package org.hippoecm.frontend.plugins.yui.autocomplete;
 
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.HippoTemplate;
-import org.hippoecm.frontend.plugins.yui.util.HeaderContributorHelper.JsConfig;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
+import org.hippoecm.frontend.plugins.yui.layout.IYuiManager;
 
-public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
+public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     private static final PackagedTextTemplate INIT_AUTOCOMPLETE = new PackagedTextTemplate(AutoCompleteBehavior.class,
             "init_autocomplete.js");
 
-    protected final HeaderContributorHelper contribHelper = new HeaderContributorHelper();
     protected final AutoCompleteSettings settings;
 
-    public AutoCompleteBehavior(final AutoCompleteSettings settings) {
+    public AutoCompleteBehavior(IYuiManager service, AutoCompleteSettings settings) {
+        super(service);
         this.settings = settings;
-
-        contribHelper.addModule(HippoNamespace.NS, "autocompletemanager");
-        contribHelper.addTemplate(new HippoTemplate(INIT_AUTOCOMPLETE, getModuleClass()) {
+    }
+    
+    public AutoCompleteBehavior(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        this.settings = new AutoCompleteSettings(config.getPluginConfig("yui.config"));
+    }
+    
+    @Override
+    public void addHeaderContribution(IYuiContext helper) {
+        helper.addModule(HippoNamespace.NS, "autocompletemanager");
+        helper.addTemplate(new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -46,12 +56,11 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
             }
 
             @Override
-            public JsConfig getJsConfig() {
+            public JavascriptSettings getJavascriptSettings() {
                 return getSettings();
             }
-
         });
-        contribHelper.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
+        helper.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
     }
 
     protected AutoCompleteSettings getSettings() {
@@ -67,15 +76,8 @@ public abstract class AutoCompleteBehavior extends AbstractDefaultAjaxBehavior {
      * Determines which javascript class is used
      * @return
      */
-    protected String getModuleClass() {
+    protected String getClientClassname() {
         return "YAHOO.hippo.HippoAutoComplete";
     }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        contribHelper.renderHead(response);
-    }
-
 
 }
