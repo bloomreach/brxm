@@ -13,32 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.layout;
+
+package org.hippoecm.frontend.plugins.yui.webapp;
 
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.layout.IYuiManager;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class YuiUnitPlugin extends YuiUnitBehavior implements IPlugin, IBehaviorService, IDetachable {
+public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService, IDetachable,
+        IYuiManager {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(YuiUnitPlugin.class);
-
-    public static final String POSITION = "yui.position";
-    public static final String OPTIONS = "yui.options";
+    private final static Logger log = LoggerFactory.getLogger(WebAppPlugin.class);
 
     private IPluginConfig config;
 
-    public YuiUnitPlugin(IPluginContext context, IPluginConfig config) {
-        super(config.getString(POSITION), (config.getString(OPTIONS) != null) ? new ValueMap(config.getString(OPTIONS)) : null);
-
+    public WebAppPlugin(IPluginContext context, IPluginConfig config) {
+        super(new WebAppSettings(config.getPluginConfig("yui.config")));
+        
         this.config = config;
-
         context.registerService(this, config.getString(ID));
     }
 
@@ -49,4 +48,9 @@ public class YuiUnitPlugin extends YuiUnitBehavior implements IPlugin, IBehavior
     public void detach() {
         config.detach();
     }
+
+    public IYuiContext newContext() {
+        return headerContributor.new YuiContext();
+    }
+
 }

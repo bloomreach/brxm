@@ -17,6 +17,22 @@ fieldset,img { border : 0; }
 caption,th { text-align : left; }
 /* ======================================== */
 
+
+#hd {
+  text-align: left;
+}
+#bd {
+  text-align: left;
+}
+
+#doc3 {
+  margin: 0;
+}
+
+#wicketAjaxDebugWindow{
+text-align: left;
+}
+
 /* Hippo Global CSS tools */
 /* ================================================ */
 .hippo-global-halfwidth{width: 50%;}
@@ -199,7 +215,7 @@ padding-top: 24px;
 .hippo-search  {width: 350px; position: absolute;/*has to reach outside yui setup*/ left: 240px; top:5px;}
 
 /* styles for entire widget */
-.hippo-search .yui-ac {position:relative;font-family:arial;font-size:100%;}
+.hippo-search .yui-ac {position:relative;font-family:arial;font-size:100%;text-align:left;}
 
 /* styles for input field */
 .hippo-search .yui-ac-input {position:absolute;width:100%;margin-top: 8px; padding: 2px;}

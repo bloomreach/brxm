@@ -13,26 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standardworkflow.remodel;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-public final class CancelLink extends AbstractWizardLink {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+
+public class DragDropSettings extends JavascriptSettings {
     private static final long serialVersionUID = 1L;
 
-    public CancelLink(String id, RemodelWizard wizard) {
-        super(id, wizard);
-    }
+    private static final String GROUPS = "groups"; //String[]
 
-    @Override
-    public void onClick(AjaxRequestTarget target) {
-        getWizardModel().cancel();
+    public DragDropSettings() {
+        setGroups("default");
     }
     
-    @Override
-    public final boolean isVisible() {
-        return getWizardModel().isNextAvailable();
+    public DragDropSettings(IPluginConfig config) {
+        setGroups(config.getStringArray(GROUPS));
     }
+
+    public DragDropSettings setGroups(String... groups) {
+        put(GROUPS, groups);
+        return this;
+    }
+
 }

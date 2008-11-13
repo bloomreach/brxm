@@ -362,10 +362,8 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.root</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.skin" sv:type="String">
-      <sv:value>skin/screen.css</sv:value>
-    </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
+      <sv:value>service.behavior.yui</sv:value>
       <sv:value>service.behavior.root</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
@@ -387,37 +385,57 @@
       <sv:value>service.search</sv:value>
     </sv:property>
   </sv:node>
-
-  <sv:node sv:name="rootLayout">
+  
+    <sv:node sv:name="yuiWebappBehavior">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.webapp.WebAppPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="behavior.id" sv:type="String">
+      <sv:value>service.behavior.yui</sv:value>
+    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="load.wicket.ajax" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="load.css.reset" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="load.css.fonts" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="load.css.grids" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+    </sv:node>  
+  </sv:node>
+
+  <sv:node sv:name="pageLayoutBehavior">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.PageLayoutPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.root</sv:value>
     </sv:property>
-    <sv:property sv:name="yui.root" sv:type="String">
-      <sv:value/>
-    </sv:property>
-    <sv:property sv:name="yui.linked" sv:type="Boolean">
-      <sv:value>false</sv:value>
-    </sv:property>
-    <sv:property sv:name="yui.units" sv:type="String">
-      <sv:value>top</sv:value>
-      <sv:value>center</sv:value>
-      <sv:value>bottom</sv:value>
-    </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=root-layout-header,height=73</sv:value>
-    </sv:property>
-    <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=root-layout-center,gutter=4px 4px 4px 4px</sv:value>
-    </sv:property>
-    <sv:property sv:name="bottom" sv:type="String">
-      <sv:value>id=root-layout-footer,height=0</sv:value>
-    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.element.id" sv:type="String">
+        <sv:value>doc3</sv:value>
+      </sv:property>
+      <sv:property sv:name="header.height" sv:type="String">
+        <sv:value>73</sv:value>
+      </sv:property>
+    </sv:node>  
   </sv:node>
 
   <sv:node sv:name="ajaxIndicator">
@@ -470,15 +488,15 @@
     <sv:property sv:name="search.paths" sv:type="String">
       <sv:value>/content</sv:value>
     </sv:property>
-    <sv:node sv:name="yui.autocomplete.config">
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
       <sv:property sv:name="animVert" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="useShadow" sv:type="Boolean">
         <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
       </sv:property>
       <sv:property sv:name="containerId" sv:type="String">
         <sv:value>searchBoxContainer</sv:value>
@@ -513,6 +531,9 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.center</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.skin" sv:type="String">
+      <sv:value>skin/screen.css</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.center</sv:value>
     </sv:property>
@@ -529,7 +550,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
@@ -547,7 +568,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.path" sv:type="String">
       <sv:value>tabs</sv:value>
@@ -578,7 +599,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.path" sv:type="String">
       <sv:value>tabs:tabs-container</sv:value>
@@ -644,7 +665,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.dashboard</sv:value>
@@ -654,6 +675,9 @@
     </sv:property>
     <sv:property sv:name="yui.linked" sv:type="Boolean">
       <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="yui.classname" sv:type="String">
+      <sv:value>YAHOO.hippo.RelativeWireframe</sv:value>
     </sv:property>
     <sv:property sv:name="yui.units" sv:type="String">
       <sv:value>left</sv:value>
@@ -789,7 +813,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.browser</sv:value>
@@ -846,7 +870,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.navigator</sv:value>
@@ -1897,7 +1921,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.management</sv:value>
@@ -2059,7 +2083,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.management.editor</sv:value>
@@ -2101,7 +2125,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiWireframePlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.WireframePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.path" sv:type="String">
       <sv:value>tabs</sv:value>
@@ -2132,7 +2156,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>service.behavior.editor.tabs.center</sv:value>
@@ -2150,7 +2174,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.yui.layout.YuiUnitPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.yui.layout.UnitPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="behavior.path" sv:type="String">
       <sv:value>tabs:tabs-container</sv:value>

@@ -6,7 +6,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.search.yui.SearchBehavior;
-import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
@@ -21,8 +20,7 @@ public class SearchPlugin extends RenderPlugin implements IBrowseService<IModel>
         super(context, config);
 
         TextField tx = new TextField("searchBox");
-        AutoCompleteSettings settings = new AutoCompleteSettings(config.getPluginConfig("yui.autocomplete.config"));
-        tx.add(new SearchBehavior(settings, this, config.getStringArray("search.paths")));
+        tx.add(new SearchBehavior(context, config, this));
         add(tx);
     }
 

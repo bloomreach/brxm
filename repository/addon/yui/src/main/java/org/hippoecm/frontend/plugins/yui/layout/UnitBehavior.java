@@ -23,7 +23,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
-public class YuiUnitBehavior extends AbstractBehavior {
+public class UnitBehavior extends AbstractBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -37,11 +37,11 @@ public class YuiUnitBehavior extends AbstractBehavior {
      * @param position  Position in the wireframe
      * @param options   String array containing options in key=value scheme
      */
-    public YuiUnitBehavior(String position, String... options) {
+    public UnitBehavior(String position, String... options) {
         this(position, OptionsUtil.keyValuePairsToMap(options));
     }
 
-    public YuiUnitBehavior(String position, Map<String, String> options) {
+    public UnitBehavior(String position, Map<String, String> options) {
         this.position = position;
         if (options == null) {
             this.options = new HashMap<String, String>();
@@ -50,8 +50,8 @@ public class YuiUnitBehavior extends AbstractBehavior {
         }
     }
 
-    public String addUnit(Component component, YuiWireframeConfig config, String parentMarkupId) {
-        String unitElementId = config.getUnitElement(position);
+    public String addUnit(Component component, WireframeSettings settings, String parentMarkupId) {
+        String unitElementId = settings.getUnitElement(position);
         String bodyId = component.getMarkupId(true);
         if (unitElementId == null) {
             options.put("id", bodyId);
@@ -59,7 +59,7 @@ public class YuiUnitBehavior extends AbstractBehavior {
             options.put("id", parentMarkupId + ":" + unitElementId);
             options.put("body", bodyId);
         }
-        config.addUnit(position, options);
+        settings.addUnit(position, options);
         return position;
     }
 

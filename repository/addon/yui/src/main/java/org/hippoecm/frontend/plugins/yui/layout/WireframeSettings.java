@@ -21,30 +21,35 @@ import java.util.Map;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.util.collections.MiniMap;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
 import org.hippoecm.frontend.plugins.yui.util.JavascriptUtil;
 import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
-public class YuiWireframeConfig implements IClusterable {
+public class WireframeSettings implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    private JavascriptSettings settings = new JavascriptSettings();
+    
     private String rootElementId;
     private String parentElementId;
     private boolean linkedWithParent = false;
-
+    private String clientClassName = "YAHOO.hippo.Wireframe";
     private String baseMarkupId;
     private Map<String, Unit> units;
     private Map<String, String> unitElements;
 
-    public YuiWireframeConfig(String rootElemId, boolean linkedWithParent) {
+    public WireframeSettings(String rootElemId, boolean linkedWithParent) {
         this();
         this.rootElementId = rootElemId;
         this.linkedWithParent = linkedWithParent;
     }
 
-    public YuiWireframeConfig() {
+    public WireframeSettings() {
         units = new MiniMap(5);
         units.put(Unit.TOP, null);
         units.put(Unit.BOTTOM, null);
@@ -90,6 +95,14 @@ public class YuiWireframeConfig implements IClusterable {
             return rootElementId;
         }
     }
+    
+    public String getClientClassName() {
+        return clientClassName;
+    }
+
+    public void setClientClassName(String clientClassName) {
+        this.clientClassName = clientClassName;
+    }
 
     public void setBaseMarkupId(String id) {
         baseMarkupId = id;
@@ -123,16 +136,14 @@ public class YuiWireframeConfig implements IClusterable {
 
     }
 
-    public Map<String, Object> getMap() {
-        Map<String, Object> newMap = new HashMap<String, Object>();
-        newMap.put("rootElementId", JavascriptUtil.serialize2JS(getRootElementId()));
-        newMap.put("parentElementId", JavascriptUtil.serialize2JS(parentElementId));
-        newMap.put("linkedWithParent", linkedWithParent);
-
+    public JavascriptSettings getSettings() {
+        settings.put("rootElementId", getRootElementId());
+        settings.put("parentElementId", parentElementId);
+        settings.put("linkedWithParent", linkedWithParent);
+        
         StringBuilder config = new StringBuilder();
-        config.append("{");
         if (units.size() > 0) {
-            config.append("units: [");
+            config.append("[");
             for (String unitKey : units.keySet()) {
                 Unit unit = units.get(unitKey);
                 if (unit != null) {
@@ -159,9 +170,8 @@ public class YuiWireframeConfig implements IClusterable {
             }
             config.append("]");
         }
-        config.append("}");
-        newMap.put("config", config.toString());
-        return newMap;
+        settings.put("units", config.toString(), false);
+        return settings;
     }
 
     public String getParentId() {

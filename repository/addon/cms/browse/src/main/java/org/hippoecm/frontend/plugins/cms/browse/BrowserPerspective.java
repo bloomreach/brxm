@@ -22,7 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -63,6 +65,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
     private String viewerName;
     private IPluginControl viewer;
     private IModel listingTitle;
+    private Component listingLabel;
 
     public BrowserPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -98,7 +101,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
             context.registerService(this, config.getString(IBrowseService.BROWSER_ID));
         }
 
-        add(new Label("listing.title", new PropertyModel(this, "listingTitle")) {
+        add(listingLabel = new Label("listing.title", new PropertyModel(this, "listingTitle")) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -107,6 +110,7 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                 tag.put("class", (String) listingTitle.getObject());
             }
         });
+        listingLabel.setOutputMarkupId(true);
     }
 
     public void browse(IModel model) {
@@ -163,7 +167,6 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     viewerName = null;
                 }
             }
-            redraw();
         }
     }
 
@@ -214,7 +217,10 @@ public class BrowserPerspective extends Perspective implements IBrowseService {
                     } else {
                         listingTitle = new TypeTranslator(new JcrNodeTypeModel(type)).getTypeName();
                     }
-                    redraw();
+                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    if (target != null) {
+                        target.addComponent(listingLabel);
+                    }
                 }
                 return true;
             }

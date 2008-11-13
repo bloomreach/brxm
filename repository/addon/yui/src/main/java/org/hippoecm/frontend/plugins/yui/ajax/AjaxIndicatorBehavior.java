@@ -26,49 +26,43 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
-public class AjaxIndicatorBehavior extends AbstractBehavior {
+public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     
-    final private WicketAjaxIndicatorAppender ajaxIndicator;
+    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AjaxIndicatorBehavior.class, "ajax-loader.gif");
     
-    public AjaxIndicatorBehavior() {
+    final private WicketAjaxIndicatorAppender ajaxIndicator;
+
+    public AjaxIndicatorBehavior(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+        
         ajaxIndicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(new ResourceReference(AjaxIndicatorBehavior.class, "ajax-loader.gif"));
+                return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
             }
         };
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        YuiHeaderContributor.forModule(HippoNamespace.NS, "ajaxindicator").renderHead(response);
-        TextTemplateHeaderContributor.forJavaScript(AjaxIndicatorBehavior.class,
-                "init_ajax_indicator.js", new AbstractReadOnlyModel() {
-                    private static final long serialVersionUID = 1L;
-
-                    private Map<String, Object> variables;
-
-                    @Override
-                    public Object getObject() {
-                        if (variables == null) {
-                            variables = new MiniMap(1);
-                            variables.put("id", ajaxIndicator.getMarkupId());
-                        }
-                        return variables;
-                    }
-                }).renderHead(response);
-
-
-        super.renderHead(response);
+    public void addHeaderContribution(IYuiContext helper) {
+        helper.addModule(HippoNamespace.NS, "ajaxindicator");
+        
+        Map<String, Object> parameters = new MiniMap(1);
+        parameters.put("id", ajaxIndicator.getMarkupId());
+        helper.addTemplate(AjaxIndicatorBehavior.class, "init_ajax_indicator.js", parameters);
     }
 
     @Override

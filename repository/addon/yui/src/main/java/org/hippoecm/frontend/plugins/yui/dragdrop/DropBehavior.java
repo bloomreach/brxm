@@ -28,9 +28,9 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
+    
     public DropBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config, new DragDropSettings(config));
     }
 
     @Override

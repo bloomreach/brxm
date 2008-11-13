@@ -13,9 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.yui.ajax;
+package org.hippoecm.frontend.plugins.yui.layout;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -23,16 +24,19 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AjaxIndicatorPlugin extends AjaxIndicatorBehavior implements IPlugin, IBehaviorService, IDetachable {
+public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorService, IDetachable {
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(AjaxIndicatorPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(UnitPlugin.class);
+
+    public static final String POSITION = "yui.position";
+    public static final String OPTIONS = "yui.options";
 
     private IPluginConfig config;
 
-    public AjaxIndicatorPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-        
+    public UnitPlugin(IPluginContext context, IPluginConfig config) {
+        super(config.getString(POSITION), (config.getString(OPTIONS) == null) ? null : new ValueMap(config.getString(OPTIONS)));
+
         this.config = config;
 
         context.registerService(this, config.getString(ID));
