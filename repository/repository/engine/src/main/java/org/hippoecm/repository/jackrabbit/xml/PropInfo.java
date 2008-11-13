@@ -161,7 +161,12 @@ public class PropInfo {
         Value[] va = new Value[values.length];
         int targetType = getTargetType(def);
         for (int i = 0; i < values.length; i++) {
-            va[i] = values[i].getValue(targetType, resolver);
+            if (isPathReference) {
+                // the string value is needed, but the target type is reference
+                va[i] = values[i].getValue(PropertyType.STRING, resolver);
+            } else {
+                va[i] = values[i].getValue(targetType, resolver);
+            }
         }
 
         if (isPathReference) {
@@ -198,32 +203,6 @@ public class PropInfo {
             node.setProperty(name, rootRef);
             
             return;
-            
-//            // always multiple, one entry per property
-//            for (int i = 0; i < values.length; i++) {
-//
-//                
-//                Reference ref =  new Reference(va[i].getString());
-//                derefNodes.put(node.getNodeId(), ref);
-//                String targetPropName = ref.getPropertyName();
-//                
-//                if (node.getDefinition().getDeclaringNodeType().canRemoveItem(targetPropName)) {
-//                    // not mandatory
-//                    continue;
-//                }
-//                
-//                // best effort guess, original data multi value prop => new data multi value prop
-//                if (ref.isMulti()) {
-//                    // set empty
-//                    node.setProperty(targetPropName, new Value[] {});
-//                    continue;
-//                }
-//                
-//                // sigle value mandatory property, temporary set ref to rootNode
-//                Value rootRef = node.getSession().getValueFactory().createValue(node.getSession().getRootNode().getUUID(), PropertyType.REFERENCE);
-//                node.setProperty(targetPropName, rootRef);
-//            }
-//            return;
         }
         
         
