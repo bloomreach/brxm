@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<document_list>
+<document_list rootpath="/home/rita/werk/hst/src/site">
   <!--
      Do not edit! This html file is automatically generated from an XML file
      by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
@@ -225,6 +225,8 @@
    <shortdesc>
           The concepts and technical details of the Hippo Site Toolkit.
         </shortdesc>
+  </document>
+  <document ext="xml" filename="errorlist" path="..//">
   </document>
   <document ext="xml" filename="index" path="..//">What is Hippo Site Toolkit 2?
    <section>What is Hippo Site Toolkit 2?</section>

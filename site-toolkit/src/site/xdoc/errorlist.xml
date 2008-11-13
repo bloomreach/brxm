@@ -24,7 +24,209 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">Documents with errors and/or todos: 15.</span>
+      <span class="shortdesc">72 errors and/or todos in 38 out of 41 documents (92%).</span>
+      <subsection name="Documents with empty elements: 1">
+        <ol>
+          <li>
+            <a href=".//delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
+            <ul>
+              <li>&lt;source/&gt;</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents lacking some information: 31">
+        <ol>
+          <li>
+            <a href=".//about/term_index.html">term_index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/binaries.html">binaries: Serving binaries with the BinariesServlet</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/el-index.html">el-index: HST2 Expression Language</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/filters.html">filters: HST2 Filters</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/index.html">index: Components</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/jsp-taglib.html">jsp-taglib: The JSP tag library</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/modules.html">modules: Modules</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/container-tag.html">container-tag: The &lt;hst-tmpl:container&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/content-tag.html">content-tag: The &lt;hst:content&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/context-tag.html">context-tag: The &lt;hst:context&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/documents-tag.html">documents-tag: The &lt;hst:documents&gt; tag and derived tags</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/encodeurl-tag.html">encodeurl-tag: The &lt;hst:encodeURL&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/include-tag.html">include-tag: The &lt;hst:include&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/link-tag.html">link-tag: The &lt;hst-tmpl:link&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/menu-tag.html">menu-tag: The &lt;hst:menu&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/moduleParameter-tag.html">moduleParameter-tag: The &lt;hst-tmpl:moduleParameter&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/module-tag.html">module-tag: The &lt;hst-tmpl:module&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/node-tag.html">node-tag: The &lt;hst-tmpl:node&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/tag/sitemap-tag.html">sitemap-tag: The &lt;hst:siteMap&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/components/url-mapping.html">url-mapping: URL mapping</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/concepts/index.html">index: Concepts</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/concepts.html">concepts: Concepts</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/hstproperties.html">hstproperties: HST Configuration in hst.properties</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//delve_into/reference/configuration/webxml.html">webxml: HST Configuration in web.xml</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//errorlist.html">errorlist: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href=".//index.html">index: What is Hippo Site Toolkit 2?</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
       <subsection name="empty documents: 3">
         <ol>
           <li>
@@ -172,116 +374,30 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 8">
+      <subsection name="multisection documents: 4">
         <ol>
           <li>
-            <a href=".//delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <a href=".//delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
             <ul>
-              <li>
-        &lt;span class='quickstart-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='howto-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='reference-48 icon-48'&gt;</li>
+              <li>Has 2 sections.</li>
             </ul>
           </li>
           <li>
-            <a href=".//delve_into/howto/facebook.html">facebook: Create a Facebook</a>
+            <a href=".//delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
             <ul>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-create-type-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-type-editor-2-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-new-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-edit-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-people-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-people-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-module-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-person-sitemapitem-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/facebook-site-person-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>Has 2 sections.</li>
             </ul>
           </li>
           <li>
             <a href=".//delve_into/howto/hello_world.html">hello_world: Hello World</a>
             <ul>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-new-document-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-document-editor-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/hello-world-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
+              <li>Has 2 sections.</li>
             </ul>
           </li>
           <li>
             <a href=".//delve_into/howto/start_project.html">start_project: Start a project</a>
             <ul>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-cms-signin-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-              <li>
-        &lt;img alt='screenshot'&gt; src='../../images/tutorials/getting-started-site-thumbnail.jpg'&gt; width='400'&gt; height='310'&gt;</li>
-            </ul>
-          </li>
-          <li>
-            <a href=".//delve_into/quickstart.html">quickstart: Quickstart</a>
-            <ul>
-              <li>
-        &lt;span class='download-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='unzip-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='download-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='commandline-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='commandline-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='commandline-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='web-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='web-48 icon-48'&gt;</li>
-              <li>
-        &lt;span class='user-48 icon-48'&gt;</li>
-            </ul>
-          </li>
-          <li>
-            <a href=".//delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
-            <ul>
-              <li>
-        &lt;source</li>
-            </ul>
-          </li>
-          <li>
-            <a href=".//delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
-            <ul>
-              <li>
-        &lt;a name='BinariesServlet'&gt;</li>
-            </ul>
-          </li>
-          <li>
-            <a href=".//delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
-            <ul>
-              <li>
-        &lt;img src='../../images/reference/hst-configuration-nodes.png'&gt; width='284'&gt; height='131'&gt; alt='HST2 configuration nodes'&gt;</li>
-              <li>
-        &lt;img src='../../images/reference/hst-configuration-sitemap.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</li>
-              <li>
-        &lt;img src='../../images/reference/hst-configuration-sitemap2.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 sitemap configuration'&gt;</li>
-              <li>
-        &lt;img src='../../images/reference/hst-configuration-layouts.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 layouts configuration'&gt;</li>
-              <li>
-        &lt;img src='../../images/reference/hst-configuration-modules.png'&gt; width='800'&gt; height='609'&gt; alt='HST2 modules configuration'&gt;</li>
+              <li>Has 2 sections.</li>
             </ul>
           </li>
         </ol>
