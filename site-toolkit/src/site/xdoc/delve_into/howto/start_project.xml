@@ -49,13 +49,13 @@
 
         <source>
 mvn archetype:create \
- -DgroupId=org.example \
- -DartifactId=myproject \
- -Dversion=1.01.00 \
- -DarchetypeRepository=http://repository.hippocms.org/maven2 \
+ -DremoteRepositories=http://repository.hippocms.org/maven2,http://repo1.maven.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
  -DarchetypeArtifactId=site-toolkit-archetype \
- -DarchetypeVersion=2.01.01-SNAPSHOT
+ -DarchetypeVersion=2.01.02 \
+ -Dversion=1.01.00 \
+ -DgroupId=org.example \
+ -DartifactId=myproject
         </source>
         
         <p>
