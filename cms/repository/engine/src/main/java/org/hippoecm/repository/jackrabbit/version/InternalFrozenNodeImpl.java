@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.version;
+package org.hippoecm.repository.jackrabbit.ver;
 
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.PropertyImpl;
@@ -24,11 +24,6 @@ import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.core.version.InternalFreeze;
-import org.apache.jackrabbit.core.version.InternalFrozenNode;
-import org.apache.jackrabbit.core.version.InternalFrozenVersionHistory;
-import org.apache.jackrabbit.core.version.InternalVersionItem;
-import org.apache.jackrabbit.core.version.NodeStateEx;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -43,7 +38,10 @@ import javax.jcr.version.VersionException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.jackrabbit.core.version.VersionManager;
+import org.apache.jackrabbit.core.version.InternalFreeze;
+import org.apache.jackrabbit.core.version.InternalFrozenNode;
+import org.apache.jackrabbit.core.version.InternalFrozenVersionHistory;
+import org.apache.jackrabbit.core.version.InternalVersionItem;
 
 /**
  * Implements a <code>InternalFrozenNode</code>
@@ -98,7 +96,7 @@ class InternalFrozenNodeImpl extends InternalFreezeImpl
      * @param node
      * @throws javax.jcr.RepositoryException
      */
-    public InternalFrozenNodeImpl(HippoVersionManager vMgr, NodeStateEx node,
+    public InternalFrozenNodeImpl(AbstractVersionManager vMgr, NodeStateEx node,
                                   InternalVersionItem parent)
             throws RepositoryException {
         super(vMgr, node, parent);
@@ -272,6 +270,7 @@ class InternalFrozenNodeImpl extends InternalFreezeImpl
                                        NodeImpl src, int mode)
             throws RepositoryException {
 System.err.println("CHECKIN "+src.safeGetJCRPath());
+
         // create new node
         NodeStateEx node = parent.addNode(name, NameConstants.NT_FROZENNODE, null, true);
 

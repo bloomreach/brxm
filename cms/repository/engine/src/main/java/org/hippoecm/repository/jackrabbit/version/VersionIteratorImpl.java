@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.version;
+package org.hippoecm.repository.jackrabbit.ver;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.version.InternalVersion;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,6 +26,7 @@ import javax.jcr.version.VersionIterator;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import org.apache.jackrabbit.core.version.InternalVersion;
 
 /**
  * This Class implements a VersionIterator that iterates over a version
