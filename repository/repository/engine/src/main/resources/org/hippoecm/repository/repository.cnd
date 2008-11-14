@@ -35,11 +35,11 @@
 
 [hippo:mirror]
 - hippo:docbase (string) mandatory
-+ * multiple
++ * multiple ignore
 
 [hippo:facetresult]
 - hippo:count (long)
-+ * multiple
++ * multiple ignore
 
 [hippo:facetsubsearch]
 - hippo:queryname (string) mandatory
@@ -48,7 +48,7 @@
 - hippo:search (string) multiple
 - hippo:count (long)
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
-+ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
++ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple ignore
 
 [hippo:facetsearch]
 - hippo:queryname (string) mandatory
@@ -56,7 +56,7 @@
 - hippo:facets (string) mandatory multiple
 - hippo:count (long)
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
-+ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple
++ * (hippo:facetsubsearch) = hippo:facetsubsearch multiple ignore
 
 [hippo:request] > nt:unstructured, mix:versionable
 
@@ -66,10 +66,10 @@
 - hippo:facets (string) mandatory multiple
 - hippo:values (string) mandatory multiple
 - hippo:modes (string) mandatory multiple < 'select', 'stick', 'clear', 'single', 'prefer', 'prefer-single'
-+ * multiple
++ * multiple ignore
 
 [hippo:document] > nt:base
-+ * (hippo:facetselect)
++ * (hippo:facetselect) version
 
 [hippo:handle] > nt:unstructured
 - hippo:discriminator (string) multiple
@@ -83,7 +83,7 @@
 
 [hippo:reference] > hippo:handle
 - hippo:docbase (string) mandatory
-+ * (hippo:document) multiple
++ * (hippo:document) multiple ignore
 
 [hippo:resource]
 - jcr:encoding (string)
