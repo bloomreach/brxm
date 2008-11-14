@@ -268,7 +268,6 @@ class InternalFrozenNodeImpl extends InternalFreezeImpl
     private static NodeStateEx checkin(NodeStateEx parent, Name name,
                                        NodeImpl src, int mode)
             throws RepositoryException {
-System.err.println("CHECKIN "+src.safeGetJCRPath());
 
         // create new node
         NodeStateEx node = parent.addNode(name, NameConstants.NT_FROZENNODE, null, true);
@@ -318,7 +317,6 @@ System.err.println("CHECKIN "+src.safeGetJCRPath());
         }
 
         if(src.isNodeType("hippo:facetselect") || src.isNodeType("hippo:facetsearch")) {
-            System.err.println("SKIP CHILDREN");
             return node;
         }
         
@@ -328,10 +326,8 @@ System.err.println("CHECKIN "+src.safeGetJCRPath());
             NodeImpl child = (NodeImpl) niter.nextNode();
             int opv;
             if ((mode & MODE_COPY_RECURSIVE) > 0) {
-System.err.println("CHILD "+child.safeGetJCRPath()+" recurse");
                 opv = OnParentVersionAction.COPY;
             } else {
-System.err.println("CHILD "+child.safeGetJCRPath()+" "+child.getDefinition().getDeclaringNodeType().getName());
                 opv = child.getDefinition().getOnParentVersion();
             }
             switch (opv) {
@@ -340,10 +336,8 @@ System.err.println("CHILD "+child.safeGetJCRPath()+" "+child.getDefinition().get
                 case OnParentVersionAction.COMPUTE:
                 case OnParentVersionAction.IGNORE:
                 case OnParentVersionAction.INITIALIZE:
-System.err.println("IGNORE");
                     break;
                 case OnParentVersionAction.VERSION:
-System.err.println("VERSION");
                     if (child.isNodeType(NameConstants.MIX_VERSIONABLE)) {
                         // create frozen versionable child
                         NodeStateEx newChild = node.addNode(child.getQName(), NameConstants.NT_VERSIONEDCHILD, null, false);
@@ -359,7 +353,6 @@ System.err.println("VERSION");
                     checkin(node, child.getQName(), child, MODE_COPY);
                     break;
                 case OnParentVersionAction.COPY:
-System.err.println("COPY");
                     checkin(node, child.getQName(), child, MODE_COPY_RECURSIVE);
                     break;
             }
