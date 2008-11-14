@@ -111,10 +111,9 @@ public class Main extends WebApplication {
         resourceSettings.setResourceStreamLocator(new ResourceStreamLocator() {
             @Override
             public IResourceStream locate(final Class clazz, final String path) {
-                ServletContext layoutContext = getServletContext().getContext("/layout");
-                if (layoutContext != null) {
                     // EAR packaging
                     try {
+                        ServletContext layoutContext = getServletContext().getContext("/layout");
                         URL url = layoutContext.getResource(layout + path);
                         if (url != null) {
                             return new UrlResourceStream(url);
@@ -122,7 +121,6 @@ public class Main extends WebApplication {
                     } catch (MalformedURLException ex) {
                         log.warn("malformed url for layout override " + ex.getMessage());
                     }
-                } else {
                     // WAR packaging
                     try {
                         URL url = getServletContext().getResource("/layout" + layout + path);
@@ -132,7 +130,6 @@ public class Main extends WebApplication {
                     } catch (MalformedURLException ex) {
                         log.warn("malformed url for layout override " + ex.getMessage());
                     }
-                }
                 return oldLocator.locate(clazz, path);
             }
         });
