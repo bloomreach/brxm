@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -30,10 +32,15 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.SearchManager;
+import org.apache.jackrabbit.core.config.PersistenceManagerConfig;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.apache.jackrabbit.core.config.VersioningConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
+import org.apache.jackrabbit.core.data.DataStore;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.observation.DelegatingObservationDispatcher;
+import org.apache.jackrabbit.core.persistence.PMContext;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -41,9 +48,11 @@ import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 
+import org.apache.jackrabbit.core.version.VersionManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
+import org.hippoecm.repository.jackrabbit.ver.VersionManagerImpl;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @SuppressWarnings("unused")
@@ -135,8 +144,43 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return ((WorkspaceInfo) getWorkspaceInfo(workspaceName)).getRootSession();
     }
 
+    @Override
     protected WorkspaceInfo createWorkspaceInfo(WorkspaceConfig wspConfig) {
         return new WorkspaceInfo(wspConfig);
+    }
+
+    private static PersistenceManager createPersistenceManager(File homeDir,
+                                                               FileSystem fs,
+                                                               PersistenceManagerConfig pmConfig,
+                                                               NodeId rootNodeId,
+                                                               NamespaceRegistry nsReg,
+                                                               NodeTypeRegistry ntReg,
+                                                               DataStore dataStore)             throws RepositoryException {
+        try {
+            PersistenceManager pm = (PersistenceManager) pmConfig.newInstance();            pm.init(new PMContext(homeDir, fs, rootNodeId, nsReg, ntReg, dataStore));
+            return pm;
+        } catch (Exception e) {
+            String msg = "Cannot instantiate persistence manager " + pmConfig.getClassName();
+            throw new RepositoryException(msg, e);
+        }
+    }
+
+    @Override
+    protected org.apache.jackrabbit.core.version.VersionManagerImpl createVersionManager(VersioningConfig vConfig,
+                                                      DelegatingObservationDispatcher delegatingDispatcher)
+            throws RepositoryException {
+
+        FileSystem fs = vConfig.getFileSystemConfig().createFileSystem();
+        PersistenceManager pm = createPersistenceManager(vConfig.getHomeDir(),
+                fs,
+                vConfig.getPersistenceManagerConfig(), getRootNodeId(), getNamespaceRegistry(),
+                getNodeTypeRegistry(),
+                getDataStore()); 
+        ISMLocking ismLocking = vConfig.getISMLockingConfig().createISMLocking();
+
+        return new VersionManagerImpl(pm, fs, getNodeTypeRegistry(), delegatingDispatcher,
+                VERSION_STORAGE_NODE_ID, SYSTEM_ROOT_NODE_ID, getItemStateCacheFactory(),
+                ismLocking);
     }
 
     protected class WorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
@@ -145,6 +189,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             super(config);
         }
 
+        @Override
         protected SearchManager getSearchManager() throws RepositoryException {
             return super.getSearchManager();
         }
@@ -164,6 +209,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * Wrapper for login, adds rootSession to credentials if credentials are of SimpleCredentials.
      * @return session the authenticated session
      */
+    @Override
     public Session login(Credentials credentials, String workspaceName) throws LoginException,
             NoSuchWorkspaceException, RepositoryException {
         char[] empty = {};
@@ -192,6 +238,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * @return session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login(Credentials credentials) throws LoginException, RepositoryException {
         return login(credentials, null);
     }
@@ -202,6 +249,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * @return session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
         return login(null, workspaceName);
     }
@@ -212,7 +260,12 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * @return session
      * @see #login(Credentials, String)
      */
+    @Override
     public Session login() throws LoginException, RepositoryException {
         return login(null, null);
+    }
+    
+    protected VersionManager getVersionManager() {
+        return super.getVersionManager();
     }
 }
