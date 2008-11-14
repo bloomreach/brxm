@@ -54,6 +54,7 @@ public class BrowserPlugin extends RenderPlugin implements IJcrNodeModelListener
         tree = newTree(treeModel);
         add(tree);
 
+        add(new ScrollBehavior());
         onModelChanged();
     }
 
