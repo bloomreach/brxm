@@ -25,9 +25,54 @@
     <section name="Requirements">
      <span class='shortdesc'>What do you need to run Hippo CMS?</span>
 
+
+<!-- <img src='../../images/java_logo.jpg'/> -->
+
+      <subsection name="Supported Stacks">
+
+       Unfinished.
+ 
+       <div class='stack'>
+        <table>
+         <tr>
+          <td>Database</td>
+          <td>
+            <div>
+             <img src='../../images/derby_logo.png' alt='derby logo'/>
+             <br/>Derby &gt; 10.0
+	    </div>
+
+            <div>
+             <img src='../../images/logo_mysql_sun_a.gif' alt='MySQL logo'/>
+              <br/>MySQL 
+	    </div>
+            
+           </td>
+	 </tr>
+
+         <tr>
+          <td>Java container</td>
+           <td><img src='http://tomcat.apache.org/images/tomcat.gif' alt='tomcat logo'/>
+           Tomcat 6.0</td>
+	 </tr>
+
+         <tr>
+          <td>Java</td>
+           <td><img src='http://java.sun.com/im/logo_sun_small_sdn.gif' alt='Sun logo'/>
+           Sun's JVM 6</td>    
+	 </tr>
+
+         <tr>
+          <td>OS</td>
+          <td><img src='../../images/Tux.png' alt='linux logo'/> Linux &gt;= 2007</td>
+         </tr>
+	</table>
+       </div>
+
+      </subsection>
+
       <subsection name="Operating System">
       
-      <blockquote>  
         <table>
          <tr>
           <td>Overall</td>
@@ -107,7 +152,6 @@
           </td>
     </tr>
     </table>
-      </blockquote>
       </subsection>
 
       <subsection name="Java">
@@ -246,7 +290,7 @@
       
    <td>
           Hippo CMS uses a relational database for it's datastorage. By default 
-          <a href='http://db.apache.org/derby/'>Apache Derby</a>
+          <a href='http://db.apache.org/derby/'>Apache Derby</a> &gt; 10.0
           is embedded and configured and runs "out of the box". 
           Hippo CMS can easily be configured to use an other relational database. 
           Possibilities are e.g.:

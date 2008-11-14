@@ -35,20 +35,60 @@
           Hippo supplies a Java <span class='index' id='WAR'>WAR</span> package to deploy in Java servlet containers and
           a <span class='index' id='EAR'>EAR</span> package to deploy in Java application servers. 
         </p>
-        <p>Compatible Java servlet containers:</p>
-          <ul>
-            <li><a href='http://tomcat.apache.org/'>Apache Tomcat</a></li>
-            <li><a href='http://jetty.mortbay.com/jetty/'>Jetty</a></li> 
-          </ul>
-        <p>Compatible Java application servers:</p>
-          <ul>
-            <li><a href='https://glassfish.dev.java.net/'>Sun Glassfish</a></li>
-            <li><a href='http://www.jboss.org/'>JBoss</a></li>
+
+        <table>
+        <tr><th class='title'>Compatible Java servlet containers:</th></tr>
+        <tr>
+          <td>
+           <img src='http://tomcat.apache.org/images/tomcat.gif' alt='tomcat logo'/>
+	  </td>
+          <td>
+            <a href='http://tomcat.apache.org/'>Apache Tomcat</a>
+	  </td>
+          <td>
+            <a href='in_servlet_container.html#Deploying_in_Tomcat'>Deploying Hippo</a>
+	  </td>
+	</tr>
+        <tr>
+          <td>
+           <img src='http://jetty.mortbay.com/jetty/images/jetty_banner.gif' alt='jetty logo'/>
+	  </td>
+          <td>
+            <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>
+	  </td>
+          <td>
+            <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
+	  </td>
+	</tr>
+        <tr><th colspan='0'>Compatible Java application servers:</th></tr>
+        <tr>
+          <td>
+           <img src='https://glassfish-theme.dev.java.net/logo.gif' alt='glassfish logo'/>
+	  </td>
+          <td>
+            <a href='https://glassfish.dev.java.net/'>Sun Glassfish</a>
+	  </td>
+          <td>
+            <a href='in_application_server.html#Deploying_in_Glassfish'>Deploying Hippo</a> 
+	  </td>
+	</tr>
+
+        <tr>
+          <td>
+           <img src='http://www.jboss.org/community/themes/jbossorg-custom-css/jbossorg_hdrlogo.gif' alt='jboss logo'/>
+	  </td>
+          <td>
+            <a href='http://www.jboss.org/'>JBoss</a>
+	  </td>
+          <td>
+            <a href='in_application_server.html#Deploying_in_JBoss'>Deploying Hippo</a> 
+	  </td>
+	</tr>
+	</table>
             <!--
             <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
             <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>
             -->
-          </ul>
       </section>
   </body>
 </document>
