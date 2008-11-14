@@ -114,9 +114,11 @@ public class Main extends WebApplication {
                     // EAR packaging
                     try {
                         ServletContext layoutContext = getServletContext().getContext("/layout");
-                        URL url = layoutContext.getResource(layout + path);
-                        if (url != null) {
-                            return new UrlResourceStream(url);
+                        if (layoutContext != null) {
+                            URL url = layoutContext.getResource(layout + path);
+                            if (url != null) {
+                                return new UrlResourceStream(url);
+                            }
                         }
                     } catch (MalformedURLException ex) {
                         log.warn("malformed url for layout override " + ex.getMessage());
