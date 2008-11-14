@@ -52,7 +52,7 @@ import org.apache.jackrabbit.core.version.VersionManager;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngineFirstImpl;
 import org.hippoecm.repository.FacetedNavigationEngineWrapperImpl;
-import org.hippoecm.repository.jackrabbit.ver.VersionManagerImpl;
+import org.hippoecm.repository.jackrabbit.version.VersionManagerImpl;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     @SuppressWarnings("unused")
