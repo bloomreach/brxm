@@ -44,6 +44,9 @@ import org.apache.jackrabbit.core.security.AuthContext;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.jackrabbit.core.version.VersionManager;
+import org.hippoecm.repository.jackrabbit.ver.VersionManagerImpl;
+import org.hippoecm.repository.jackrabbit.ver.XAVersionManager;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.slf4j.Logger;
@@ -137,10 +140,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
         return helper.getUserID();
     }
 
-    /**
-     * Method to expose the authenticated users' principals
-     * @return Set An unmodifiable set containing the principals
-     */
     public Set<Principal> getUserPrincipals() {
         return helper.getUserPrincipals();
     }
@@ -164,4 +163,13 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
             getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
         new DefaultContentHandler(handler).parse(in);
     }
+
+    @Override
+    protected VersionManager createVersionManager(org.apache.jackrabbit.core.RepositoryImpl rep)
+            throws RepositoryException {
+
+        VersionManagerImpl vMgr = (VersionManagerImpl) ((RepositoryImpl)rep).getVersionManager();
+        return new XAVersionManager(vMgr, ((RepositoryImpl)rep).getNodeTypeRegistry(), this, rep.getItemStateCacheFactory());
+    }
+
 }
