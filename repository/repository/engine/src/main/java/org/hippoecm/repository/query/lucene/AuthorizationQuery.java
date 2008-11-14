@@ -139,9 +139,8 @@ public class AuthorizationQuery {
                         if (facetRule.isEqual()) {
                             return new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm));
                         } else {
-                            // * in combination with unequal should never return a hit (though should not be possible
-                            // to exist anyway )
-                            return QueryHelper.getNoHitsQuery();
+                            // When the rule is : facet != * , the authorization is allowed on all nodes not having the property
+                            return QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
                         }
                     }
                     else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_USER)) {
