@@ -22,13 +22,14 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Free text Search</title>
+    <title>Free Meta Search</title>
   </properties>
 
   <body>
-    <section name="Free text Search">
-      <span class="shortdesc">How to add text search functionality to a website so that the user can perform text searches on all documents?</span>
-      <span class='hidden_index'>Search, free text</span>
+    <section name="Free Meta Search">
+      <span class="shortdesc">How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</span>
+      <span class='hidden_index'>Search, advanced</span>
+      <span class='hidden_index'>Search, on metadata</span>
 
        <span class='rewrite'>this whole document.</span>
 

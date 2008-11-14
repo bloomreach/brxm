@@ -24,7 +24,371 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">0 errors and/or todos in 0 out of 0 documents (NaN%).</span>
+      <span class="shortdesc">69 errors and/or todos in 36 out of 39 documents (92%).</span>
+      <subsection name="Documents with empty elements: 1">
+        <ol>
+          <li>
+            <a href="./delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
+            <ul>
+              <li>&lt;source/&gt;</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents lacking some information: 29">
+        <ol>
+          <li>
+            <a href="./about/term_index.html">term_index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/binaries.html">binaries: Serving binaries with the BinariesServlet</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/el-index.html">el-index: HST2 Expression Language</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/filters.html">filters: HST2 Filters</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/index.html">index: Components</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/jsp-taglib.html">jsp-taglib: The JSP tag library</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/modules.html">modules: Modules</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/container-tag.html">container-tag: The &lt;hst-tmpl:container&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/content-tag.html">content-tag: The &lt;hst:content&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/context-tag.html">context-tag: The &lt;hst:context&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/documents-tag.html">documents-tag: The &lt;hst:documents&gt; tag and derived tags</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/encodeurl-tag.html">encodeurl-tag: The &lt;hst:encodeURL&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/include-tag.html">include-tag: The &lt;hst:include&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/link-tag.html">link-tag: The &lt;hst-tmpl:link&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/menu-tag.html">menu-tag: The &lt;hst:menu&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/moduleParameter-tag.html">moduleParameter-tag: The &lt;hst-tmpl:moduleParameter&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/module-tag.html">module-tag: The &lt;hst-tmpl:module&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/node-tag.html">node-tag: The &lt;hst-tmpl:node&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/tag/sitemap-tag.html">sitemap-tag: The &lt;hst:siteMap&gt; tag</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/url-mapping.html">url-mapping: URL mapping</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/concepts/index.html">index: Concepts</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/concepts.html">concepts: Concepts</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/hstproperties.html">hstproperties: HST Configuration in hst.properties</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/webxml.html">webxml: HST Configuration in web.xml</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="empty documents: 3">
+        <ol>
+          <li>
+            <a href="./about/architecture.html">architecture: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./about/features.html">features: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./about/use_cases.html">use_cases: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+              <li>Document has template content: 'Change to document short description'.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="rewrite documents: 4">
+        <ol>
+          <li>
+            <a href="./about/architecture.html">architecture: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./about/features.html">features: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./about/use_cases.html">use_cases: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/quickstart.html">quickstart: Quickstart</a>
+            <ul>
+              <li>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
+             I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
+             Or maybe there is some other consistent and clear naming scheme.
+            </li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Add something to documents: 4">
+        <ol>
+          <li>
+            <a href="./delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
+            <ul>
+              <li>More introduction</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
+            <ul>
+              <li>Try to present several possible next tasks to do.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Try to present several possible next tasks to do.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/quickstart.html">quickstart: Quickstart</a>
+            <ul>
+              <li>This is probably the moment where things can be tried out. Please mention that
+              explicitely. Are there interesting points to try? Please list them here.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents with unidentified TODO strings: 4">
+        <ol>
+          <li>
+            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
+            <ul>
+              <li>How to search using metadata? Search, advanced Search, on metadata<span xmlns="" class="bad"> TODO </span>TODO</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Search, free text<span xmlns="" class="bad"> TODO </span>TODO</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/index.html">index: Components</a>
+            <ul>
+              <li><span xmlns="" class="bad"> TODO </span>Filters - TODO Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Map</li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>Filters -<span xmlns="" class="bad"> TODO </span>Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Mapping - TODO Mod</li>
+              <li>Filters -<span xmlns="" class="bad"> TODO </span></li>
+              <li>URL Mapping -<span xmlns="" class="bad"> TODO </span></li>
+              <li>Modules -<span xmlns="" class="bad"> TODO </span></li>
+              <li>Binaries -<span xmlns="" class="bad"> TODO </span></li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/components/modules.html">modules: Modules</a>
+            <ul>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="multisection documents: 4">
+        <ol>
+          <li>
+            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
+            <ul>
+              <li>Has 2 sections.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <ul>
+              <li>Has 2 sections.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/hello_world.html">hello_world: Hello World</a>
+            <ul>
+              <li>Has 2 sections.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/start_project.html">start_project: Start a project</a>
+            <ul>
+              <li>Has 2 sections.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
     </section>
   </body>
 </document>

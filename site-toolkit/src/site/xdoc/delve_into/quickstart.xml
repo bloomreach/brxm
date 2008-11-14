@@ -23,7 +23,14 @@
   </properties>
   <body>
     <section name="Quickstart">
-      <span class='shortdesc'>Check it out yourself and install the quickstart demo site.</span>
+      <span class='shortdesc quickstart-48 icon-text-48'>Check it out yourself and install the quickstart demo site.</span>
+
+      <p><span class='quickstart-48 icon-48'/></p>
+
+      <p><span class='download-48 icon-48'/></p>
+
+      <span class='download-48'/>
+
       <p> 
         The HST2 Getting Started packages contain all the core components, and have been
         pre-configured with a number of modules and settings, to give you a quick overview of the
