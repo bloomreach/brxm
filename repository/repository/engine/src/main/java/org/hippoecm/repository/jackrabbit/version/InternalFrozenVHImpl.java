@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.version;
+package org.hippoecm.repository.jackrabbit.ver;
 
-import org.apache.jackrabbit.core.NodeId;
-import org.apache.jackrabbit.core.version.InternalFrozenVersionHistory;
-import org.apache.jackrabbit.core.version.InternalVersion;
-import org.apache.jackrabbit.core.version.InternalVersionHistory;
-import org.apache.jackrabbit.core.version.InternalVersionItem;
-import org.apache.jackrabbit.core.version.NodeStateEx;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.version.VersionException;
-import org.apache.jackrabbit.core.version.VersionManager;
+import org.apache.jackrabbit.core.version.InternalFrozenVersionHistory;
+import org.apache.jackrabbit.core.version.InternalVersion;
+import org.apache.jackrabbit.core.version.InternalVersionHistory;
+import org.apache.jackrabbit.core.version.InternalVersionItem;
 
 /**
  * Implements a <code>InternalFrozenVersionHistory</code>
@@ -40,7 +38,7 @@ class InternalFrozenVHImpl extends InternalFreezeImpl
      *
      * @param node
      */
-    public InternalFrozenVHImpl(HippoVersionManager vMgr, NodeStateEx node,
+    public InternalFrozenVHImpl(AbstractVersionManager vMgr, NodeStateEx node,
                                 InternalVersionItem parent) {
         super(vMgr, node, parent);
     }

@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.version;
+package org.hippoecm.repository.jackrabbit.ver;
 
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
-import org.apache.jackrabbit.core.version.NodeStateEx;
-import org.apache.jackrabbit.core.version.VersionManager;
 
 /**
  * Implements a <code>InternalVersionItem</code>.
@@ -34,14 +32,14 @@ abstract class InternalVersionItemImpl implements InternalVersionItem {
     /**
      * the version manager
      */
-    protected final HippoVersionManager vMgr;
+    protected final AbstractVersionManager vMgr;
 
     /**
      * Creates a new Internal version item impl
      *
      * @param vMgr
      */
-    protected InternalVersionItemImpl(HippoVersionManager vMgr, NodeStateEx node) {
+    protected InternalVersionItemImpl(AbstractVersionManager vMgr, NodeStateEx node) {
         this.vMgr = vMgr;
         this.node = node;
     }
@@ -51,7 +49,7 @@ abstract class InternalVersionItemImpl implements InternalVersionItem {
      *
      * @return the version manager.
      */
-    protected HippoVersionManager getVersionManager() {
+    protected AbstractVersionManager getVersionManager() {
         return vMgr;
     }
 

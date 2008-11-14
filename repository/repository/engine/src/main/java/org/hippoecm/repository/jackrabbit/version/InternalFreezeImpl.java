@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.jackrabbit.version;
+package org.hippoecm.repository.jackrabbit.ver;
 
 import org.apache.jackrabbit.core.version.InternalFreeze;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
-import org.apache.jackrabbit.core.version.NodeStateEx;
-import org.apache.jackrabbit.core.version.VersionManager;
 
 /**
  * Implements a <code>InternalFreeze</code>
@@ -38,7 +36,7 @@ abstract class InternalFreezeImpl extends InternalVersionItemImpl
      * @param vMgr
      * @param parent
      */
-    protected InternalFreezeImpl(HippoVersionManager vMgr, NodeStateEx node, InternalVersionItem parent) {
+    protected InternalFreezeImpl(AbstractVersionManager vMgr, NodeStateEx node, InternalVersionItem parent) {
         super(vMgr, node);
         this.parent = parent;
     }
@@ -49,4 +47,5 @@ abstract class InternalFreezeImpl extends InternalVersionItemImpl
     public InternalVersionItem getParent() {
         return parent;
     }
+
 }
