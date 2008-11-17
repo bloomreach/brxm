@@ -40,7 +40,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
     Name handleName;
     Name requestName;
 
-    FacetSelectProvider() {
+    public FacetSelectProvider() {
         super();
     }
 

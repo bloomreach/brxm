@@ -43,7 +43,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
+    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     private static Pattern facetPropertyPattern;
     static {
@@ -75,16 +75,16 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     PropDef countPropDef;
     PropDef primaryTypePropDef;
 
-    FacetResultSetProvider()
+    public FacetResultSetProvider()
         throws IllegalNameException, NamespaceException, RepositoryException {
         super();
     }
 
     @Override
-    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+    void initialize(DataProviderContext stateMgr) throws RepositoryException {
         super.initialize(stateMgr);
-        this.facetedEngine = stateMgr.facetedEngine;
-        this.facetedContext = stateMgr.facetedContext;
+        this.facetedEngine = stateMgr.getFacetedEngine();
+        this.facetedContext = stateMgr.getFacetedContext();
     }
 
     @Override

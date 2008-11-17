@@ -112,7 +112,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
         }
     }
 
-    ViewVirtualProvider() throws RepositoryException {
+    public ViewVirtualProvider() throws RepositoryException {
         super();
     }
 

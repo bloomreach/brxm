@@ -54,7 +54,7 @@ public abstract class HippoVirtualProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private HippoLocalItemStateManager stateMgr;
+    private DataProviderContext stateMgr;
     private NameFactory nameFactory;
     private PathFactory pathFactory;
     private NameResolver nameResolver;
@@ -65,7 +65,7 @@ public abstract class HippoVirtualProvider
     protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     protected final PropDef lookupPropDef(Name nodeTypeName, Name propName) throws RepositoryException {
-        PropDef[] propDefs = stateMgr.ntReg.getNodeTypeDef(nodeTypeName).getPropertyDefs();
+        PropDef[] propDefs = stateMgr.getNodeTypeRegistry().getNodeTypeDef(nodeTypeName).getPropertyDefs();
         int i;
         for(i=0; i<propDefs.length; i++)
             if(propDefs[i].getName().equals(propName)) {
@@ -79,13 +79,13 @@ public abstract class HippoVirtualProvider
         try {
             HashSet set = new HashSet(parent.getMixinTypeNames());
             set.add(parent.getNodeTypeName());
-            effNodeType = stateMgr.ntReg.getEffectiveNodeType((Name[]) set.toArray(new Name[set.size()]));
+            effNodeType = stateMgr.getNodeTypeRegistry().getEffectiveNodeType((Name[]) set.toArray(new Name[set.size()]));
             try {
-                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
+                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.getNodeTypeRegistry());
             } catch (RepositoryException re) {
                 // FIXME? hack, use nt:unstructured as parent
-                effNodeType = stateMgr.ntReg.getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
-                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.ntReg);
+                effNodeType = stateMgr.getNodeTypeRegistry().getEffectiveNodeType(NameConstants.NT_UNSTRUCTURED);
+                return effNodeType.getApplicableChildNodeDef(nodeName, nodeTypeName, stateMgr.getNodeTypeRegistry());
             }
         } catch (NoSuchNodeTypeException ex) {
             throw new RepositoryException("internal error: failed to build effective node type for node " + parent.getNodeId(),
@@ -99,11 +99,11 @@ public abstract class HippoVirtualProvider
     protected HippoVirtualProvider() {
     }
 
-    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+    void initialize(DataProviderContext stateMgr) throws RepositoryException {
         this.stateMgr = stateMgr;
         nameFactory = NameFactoryImpl.getInstance();
         pathFactory = PathFactoryImpl.getInstance();
-        nameResolver = new ParsingNameResolver(nameFactory, stateMgr.nsResolver);
+        nameResolver = new ParsingNameResolver(nameFactory, stateMgr.getNamespaceResolver());
         initialize();
     }
 
@@ -121,7 +121,7 @@ public abstract class HippoVirtualProvider
     }
 
     protected final Name resolveName(String name) throws IllegalNameException, NamespaceException {
-        return name != null ? NameParser.parse(name, stateMgr.nsResolver, nameFactory) : null;
+        return name != null ? NameParser.parse(name, stateMgr.getNamespaceResolver(), nameFactory) : null;
     }
 
     protected final Path resolvePath(String path) throws IllegalNameException, NamespaceException, MalformedPathException {
@@ -207,7 +207,7 @@ public abstract class HippoVirtualProvider
 
     protected final NodeState getNodeState(String absPath) throws RepositoryException {
         try {
-            ItemId itemId = stateMgr.hierMgr.resolveNodePath(resolvePath(absPath));
+            ItemId itemId = stateMgr.getHierarchyManager().resolveNodePath(resolvePath(absPath));
             if(itemId == null || !itemId.denotesNode())
                 return null;
             return stateMgr.getNodeState((NodeId)itemId);

@@ -26,7 +26,7 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    FacetSearchProvider()
+    public FacetSearchProvider()
         throws RepositoryException
     {
         super();

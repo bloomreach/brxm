@@ -18,6 +18,7 @@ package org.hippoecm.repository.jackrabbit;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -53,8 +54,9 @@ import org.slf4j.LoggerFactory;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
+import org.hippoecm.repository.Modules;
 
-class HippoLocalItemStateManager extends XAItemStateManager {
+class HippoLocalItemStateManager extends XAItemStateManager implements DataProviderContext {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -79,7 +81,7 @@ class HippoLocalItemStateManager extends XAItemStateManager {
     protected HierarchyManager hierMgr;
     FacetedNavigationEngine<Query, Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
-    protected FilteredChangeLog filteredChangeLog = null;
+    protected HippoLocalItemStateManager.FilteredChangeLog filteredChangeLog = null;
     protected boolean noUpdateChangeLog = false;
     protected Map<String,HippoVirtualProvider> virtualProviders;
     protected Map<Name,HippoVirtualProvider> virtualNodeNames;
@@ -96,57 +98,66 @@ class HippoLocalItemStateManager extends XAItemStateManager {
         virtualPropertyNames = new HashSet<Name>();
     }
 
-    void registerProvider(Name nodeTypeName, HippoVirtualProvider provider) {
+    public NodeTypeRegistry getNodeTypeRegistry() {
+        return ntReg;
+    }
+
+    public NamespaceResolver getNamespaceResolver() {
+        return nsResolver;
+    }
+
+    public HierarchyManager getHierarchyManager() {
+        return hierMgr;
+    }
+
+    public FacetedNavigationEngine<FacetedNavigationEngine.Query, Context> getFacetedEngine() {
+        return facetedEngine;
+    }
+
+    public FacetedNavigationEngine.Context getFacetedContext() {
+        return facetedContext;
+    }
+
+    public void registerProvider(Name nodeTypeName, HippoVirtualProvider provider) {
         virtualNodeNames.put(nodeTypeName, provider);
     }
 
-    void registerProviderProperty(Name propName) {
+    public void registerProviderProperty(Name propName) {
         virtualPropertyNames.add(propName);
     }
 
-    void registerProvider(String moduleName, HippoVirtualProvider provider) {
+    public void registerProvider(String moduleName, HippoVirtualProvider provider) {
         virtualProviders.put(moduleName, provider);
     }
 
-    HippoVirtualProvider lookupProvider(String moduleName) {
+    public HippoVirtualProvider lookupProvider(String moduleName) {
         return virtualProviders.get(moduleName);
     }
 
     void initialize(NamespaceResolver nsResolver, HierarchyManager hierMgr,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
-
         this.nsResolver = nsResolver;
         this.hierMgr = hierMgr;
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        String[] providerClassnames = new String[] { "org.hippoecm.repository.jackrabbit.MirrorVirtualProvider", "org.hippoecm.repository.jackrabbit.ViewVirtualProvider", "org.hippoecm.repository.jackrabbit.FacetSelectProvider", "org.hippoecm.repository.jackrabbit.FacetResultSetProvider", "org.hippoecm.repository.jackrabbit.FacetSubSearchProvider", "org.hippoecm.repository.jackrabbit.FacetSearchProvider" }; // FIXME: should be configurable
-        HippoVirtualProvider[] providerInstances = new HippoVirtualProvider[providerClassnames.length];
-
-        for(int i=0; i<providerClassnames.length; i++) {
-            try {
-                Object instance = Class.forName(providerClassnames[i]).newInstance();
-                if(instance instanceof HippoVirtualProvider) {
-                    providerInstances[i] = (HippoVirtualProvider) instance;
-                    registerProvider(providerClassnames[i], providerInstances[i]);
-                } else
-                    providerInstances[i] = null;
-            } catch(ClassNotFoundException ex) {
-                log.error("cannot instantiate virtual provider "+providerClassnames[i]+": "+ex);
-            } catch(InstantiationException ex) {
-                log.error("cannot instantiate virtual provider "+providerClassnames[i]+": "+ex);
-            } catch(IllegalAccessException ex) {
-                log.error("cannot instantiate virtual provider "+providerClassnames[i]+": "+ex);
-            }
+        Modules<HippoVirtualProvider> modules;
+        modules = new Modules<HippoVirtualProvider>(getClass().getClassLoader(), HippoVirtualProvider.class);
+        LinkedHashSet<HippoVirtualProvider> providerInstances = new LinkedHashSet<HippoVirtualProvider>();
+        for(HippoVirtualProvider module : modules) {
+            log.info("Provider module "+module.toString());
+            providerInstances.add(module);
         }
-        for(int i=0; i<providerInstances.length; i++) {
+
+        for(HippoVirtualProvider provider : providerInstances) {
+            registerProvider(provider.getClass().getName(), provider);
+        }
+        for(HippoVirtualProvider provider : providerInstances) {
             try {
-                if(providerInstances[i] != null) {
-                    providerInstances[i].initialize(this);
-                }
+                provider.initialize(this);
             } catch(RepositoryException ex) {
-                log.error("cannot initialize virtual provider "+providerClassnames[i]+": "+ex);
+                log.error("cannot initialize virtual provider "+provider.getClass().getName()+": "+ex);
             }
         }
     }
