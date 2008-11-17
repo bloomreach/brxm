@@ -16,7 +16,8 @@
 
 var openModalDialog = null;
 
-ModalDialog = function(url, plugin, token) {
+ModalDialog = function(url, plugin, token, editor) {
+    this.editor = editor;
     this.callbackUrl = url; 
     this.callbackUrl += url.indexOf('?') > -1 ? "&" : "?";
     this.callbackUrl += ('pluginName=' + encodeURIComponent(plugin));
@@ -27,6 +28,8 @@ ModalDialog.prototype = {
     _values : null,
         
     show : function(parameters) {
+        this.saveState();
+        
         var url = this.callbackUrl;
         for (var p in parameters) {
             url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
@@ -36,12 +39,14 @@ ModalDialog.prototype = {
     },
 
     close : function(values) {
+        this.restoreState();
         this._values = values;
         this.onOk(values);
         openModalDialog = null;
     },
 
     cancel : function() {
+        this.restoreState();
         this.onCancel();
         openModalDialog = null;        
         this._values = null;
@@ -54,6 +59,41 @@ ModalDialog.prototype = {
     onOk : function(values){
     },
     onCancel: function(){
+    },
+    
+    saveState: function() {
+        // We need to preserve the selection
+        // if this is called before some editor has been activated, it activates the editor
+        if (Xinha._someEditorHasBeenActivated)
+        {
+          this._lastRange = this.editor.saveSelection();
+        }
+        this.editor.deactivateEditor();
+        this.editor.suspendUpdateToolbar = true;
+        this.editor.currentModal = this;
+
+        // unfortunately we have to hide the editor (iframe/caret bug)
+        if (Xinha.is_ff2)
+        {
+          this._restoreTo = [this.editor._textArea.style.display, this.editor._iframe.style.visibility, this.editor.hidePanels()];
+          this.editor._textArea.style.display = 'none';
+          this.editor._iframe.style.visibility   = 'hidden';
+        }
+    },
+    
+    restoreState: function() {
+        if (Xinha.is_ff2) {
+          this.editor._textArea.style.display = this._restoreTo[0];
+          this.editor._iframe.style.visibility   = this._restoreTo[1];
+          this.editor.showPanels(this._restoreTo[2]);
+        }
+
+        this.editor.suspendUpdateToolbar = false;
+        this.editor.currentModal = null;
+        this.editor.activateEditor();
+        this.editor.restoreSelection(this._lastRange);
+        this.editor.updateToolbar();
+        this.editor.focusEditor();
     }
 }
 
