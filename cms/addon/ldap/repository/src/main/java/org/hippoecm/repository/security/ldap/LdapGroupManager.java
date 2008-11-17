@@ -184,7 +184,7 @@ public class LdapGroupManager extends AbstractGroupManager {
         
         try {
             SearchControls ctls = new SearchControls();
-            ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             Attributes attrs = systemCtx.getAttributes(dn);
             for (LdapMapping mapping : mappings) {
                 try {
@@ -216,10 +216,10 @@ public class LdapGroupManager extends AbstractGroupManager {
         Set<String> groups  = new HashSet<String>();
         NamingEnumeration<SearchResult> results = null;
         String dn = user.getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
-        String userId = user.getName();        
+        String userId = user.getName();
         try {
             SearchControls ctls = new SearchControls();
-            ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+            ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             for (LdapGroupSearch search : searches) { 
                 if (search.getBaseDn() == null || search.getNameAttr() == null || search.getFilter() == null) {
                     // skip wrongly configured search
@@ -235,12 +235,12 @@ public class LdapGroupManager extends AbstractGroupManager {
                             + "' providerId: " + providerId);
                 }
                 results = systemCtx.search(search.getBaseDn(), filter, ctls);
+                String groupId = null;
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
-                    Attributes attrs = sr.getAttributes();
-                    Attribute nameAttr = attrs.get(search.getNameAttr());
-                    if ( nameAttr != null) {
-                        groups.add((String) nameAttr.get());
+                    groupId = buildGroupName(search, sr);
+                    if (groupId != null) {
+                        groups.add(groupId);
                     }
                 }
             }
@@ -276,15 +276,16 @@ public class LdapGroupManager extends AbstractGroupManager {
                 if (log.isDebugEnabled()) {
                     log.debug("Searching for groups in '"+search.getBaseDn()+"' with filter '"+search.getFilter()+"'");
                 }
+                String nameAttrName = null;
+                String groupId = null;
+                
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
                     Attributes attrs = sr.getAttributes();
-                    Attribute nameAttr = attrs.get(search.getNameAttr());
                     dn = sr.getName() + "," + search.getBaseDn();
-                    if (nameAttr == null) {
-                        log.warn("Skipping dn='" + sr.getName() + "' because the naming attribute is not found.");
-                    } else {
-                        String groupId = (String) nameAttr.get();
+                    nameAttrName = search.getNameAttr();
+                    groupId = buildGroupName(search, sr);
+                    if (groupId != null) {
                         try {
                             Node group = getOrCreateGroup(groupId);
                             List<String> members = LdapUtils.getAllAttributeValues(attrs.get(search.getMemberAttr()));
@@ -388,5 +389,53 @@ public class LdapGroupManager extends AbstractGroupManager {
 
     public String getNodeType() {
         return HippoNodeType.NT_EXTERNALGROUP;
+    }
+    
+    public String buildGroupName(LdapGroupSearch search, SearchResult sr) {
+        String groupId = null;
+        Attributes attrs = sr.getAttributes();
+        String nameAttrName = search.getNameAttr();
+        groupId = null;
+        if (LdapGroupSearch.DN_MATCHER.equals(nameAttrName)) {
+            groupId = sr.getName();
+        } else if (LdapGroupSearch.COMPACT_DN_MATCHER.equals(nameAttrName)) {
+            String[] parts = sr.getName().split(",");
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (int i = 0; i < parts.length; i++) {
+                if (parts[i] != null && parts[i].contains("=")) {
+                    if (!first) {
+                        sb.append('.');
+                    }
+                    sb.append(parts[i].substring(parts[i].indexOf("=") + 1, parts[i].length()));
+                    first = false;
+                }
+            }
+            groupId = sb.toString();
+        } else if (LdapGroupSearch.REVERSE_COMPACT_DN_MATCHER.equals(nameAttrName)) {
+            String[] parts = sr.getName().split(",");
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (int i = (parts.length - 1); i >= 0; i--) {
+                if (parts[i] != null && parts[i].contains("=")) {
+                    if (!first) {
+                        sb.append('.');
+                    }
+                    sb.append(parts[i].substring(parts[i].indexOf("=") + 1, parts[i].length()));
+                    first = false;
+                }
+            }
+            groupId = sb.toString();
+        } else {
+            try {
+                Attribute nameAttr = attrs.get(nameAttrName);
+                if (nameAttr != null) {
+                    groupId = (String) nameAttr.get();
+                }
+            } catch (NamingException e) {
+                log.warn("Skipping dn='" + sr.getName() + "' because the naming attribute is not found.");
+            }
+        }
+        return groupId;
     }
 }
