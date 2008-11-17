@@ -216,6 +216,8 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
      * Returns the event state collection factory.
      * @return the event state collection factory.
      */
+    @Override
+    @Deprecated
     public org.apache.jackrabbit.core.version.VersionManagerImpl.DynamicESCFactory getEscFactory() {
         return null;
     }
@@ -224,12 +226,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         return escFactory;
     }
     
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * This method must not be synchronized since it could cause deadlocks with
-     * item-reading listeners in the observation thread.
-     */
+    @Override
     public VersionHistory createVersionHistory(Session session, final NodeState node)
             throws RepositoryException {
         InternalVersionHistory history = (InternalVersionHistory)
@@ -245,9 +242,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         return (VersionHistory) ((SessionImpl) session).getNodeById(history.getId());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasItem(NodeId id) {
         acquireReadLock();
         try {
@@ -257,9 +252,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public InternalVersionItem getItem(NodeId id)
             throws RepositoryException {
 
@@ -285,12 +278,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
     }
     
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * This method must not be synchronized since it could cause deadlocks with
-     * item-reading listeners in the observation thread.
-     */
+    @Override
     public Version checkin(final NodeImpl node) throws RepositoryException {
         InternalVersion version = (InternalVersion)
                 escFactory.doSourced((SessionImpl) node.getSession(), new SourcedTarget(){
@@ -305,16 +293,9 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
                 ((SessionImpl) node.getSession()).getNodeById(version.getId());
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * This method must not be synchronized since it could cause deadlocks with
-     * item-reading listeners in the observation thread.
-     */
+    @Override
     public void removeVersion(VersionHistory history, final Name name)
             throws VersionException, RepositoryException {
-
-        /*
         final VersionHistoryImpl historyImpl = (VersionHistoryImpl) history;
         if (!historyImpl.hasNode(name)) {
             throw new VersionException("Version with name " + name.toString()
@@ -324,31 +305,34 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         escFactory.doSourced((SessionImpl) history.getSession(), new SourcedTarget(){
             public Object run() throws RepositoryException {
                 InternalVersionHistoryImpl vh = (InternalVersionHistoryImpl)
-                        historyImpl.getInternalVersionHistory();
+                        getInternalVersionHistory(historyImpl);
                 removeVersion(vh, name);
                 return null;
             }
         });
-        */
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * This method must not be synchronized since it could cause deadlocks with
-     * item-reading listeners in the observation thread.
-     */
+     static InternalVersionHistory getInternalVersionHistory(VersionHistoryImpl vh)
+            throws RepositoryException {
+        InternalVersionHistory history =
+                ((SessionImpl)vh.getSession()).getVersionManager().getVersionHistory((NodeId) vh.getId());
+        if (history == null) {
+            throw new InvalidItemStateException(vh.getId() + ": the item does not exist anymore");
+        }
+        return history;
+    }
+    
+    @Override
     public Version setVersionLabel(final VersionHistory history,
                                    final Name version, final Name label,
                                    final boolean move)
             throws RepositoryException {
 
-        /*
         InternalVersion v = (InternalVersion)
                 escFactory.doSourced((SessionImpl) history.getSession(), new SourcedTarget(){
             public Object run() throws RepositoryException {
                 InternalVersionHistoryImpl vh = (InternalVersionHistoryImpl)
-                        ((VersionHistoryImpl) history).getInternalVersionHistory();
+                        getInternalVersionHistory((VersionHistoryImpl) history);
                 return setVersionLabel(vh, version, label, move);
             }
         });
@@ -359,17 +343,9 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
             return (Version)
                     ((SessionImpl) history.getSession()).getNodeByUUID(v.getId().getUUID());
         }
-        */
-        return null;
     }
 
-    /**
-     * Invoked by some external source to indicate that some items in the
-     * versions tree were updated. Version histories are reloaded if possible.
-     * Matching items are removed from the cache.
-     *
-     * @param items items updated
-     */
+    @Override
     public void itemsUpdated(Collection items) {
         acquireReadLock();
         try {
@@ -396,19 +372,13 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
     }
 
-    /**
-     * Set an event channel to inform about updates.
-     *
-     * @param eventChannel event channel
-     */
+    @Override
     public void setEventChannel(UpdateEventChannel eventChannel) {
         sharedStateMgr.setEventChannel(eventChannel);
         eventChannel.setListener(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void itemDiscarded(InternalVersionItem item) {
         // evict removed item from cache
         acquireReadLock();
@@ -419,9 +389,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasItemReferences(InternalVersionItem item)
             throws RepositoryException {
         try {
@@ -444,24 +412,12 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         return historyRoot.getState().getNodeId();
     }
 
-    /**
-     * Return the shared item state manager.
-     */
+    @Override
     protected SharedItemStateManager getSharedStateMgr() {
         return sharedStateMgr;
     }
 
-    /**
-     * Creates a <code>VersionItemStateManager</code> or derivative.
-     *
-     * @param pMgr          persistence manager
-     * @param rootId        root node id
-     * @param ntReg         node type registry
-     * @param cacheFactory  cache factory
-     * @param ismLocking    the ISM locking implementation
-     * @return item state manager
-     * @throws ItemStateException if an error occurs
-     */
+    @Override
     public VersionItemStateManager createItemStateManager(PersistenceManager pMgr,
                                                              NodeId rootId,
                                                              NodeTypeRegistry ntReg,
@@ -471,25 +427,13 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         return new VersionItemStateManager(pMgr, rootId, ntReg, cacheFactory, ismLocking);
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Not used.
-     */
+    @Override
     public void stateCreated(ItemState created) {}
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Not used.
-     */
+    @Override
     public void stateModified(ItemState modified) {}
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Remove item from cache on removal.
-     */
+    @Override
     public void stateDestroyed(ItemState destroyed) {
         // evict removed item from cache
         acquireReadLock();
@@ -500,20 +444,14 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Not used.
-     */
+    @Override
     public void stateDiscarded(ItemState discarded) {}
 
     //--------------------------------------------------< UpdateEventListener >
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void externalUpdate(ChangeLog changes, List events) throws RepositoryException {
-        EventStateCollection esc = getEscFactory().createEventStateCollection(null);
+        EventStateCollection esc = getHippoEscFactory().createEventStateCollection(null);
         esc.addAll(events);
 
         sharedStateMgr.externalUpdate(changes, esc);
@@ -542,14 +480,6 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
             this.obsMgr = obsMgr;
         }
 
-        /**
-         * {@inheritDoc}
-         * <p/>
-         * This object uses one instance of a <code>LocalItemStateManager</code>
-         * to update data on behalf of many sessions. In order to maintain the
-         * association between update operation and session who actually invoked
-         * the update, an internal event source is used.
-         */
         public synchronized EventStateCollection createEventStateCollection()
                 throws RepositoryException {
             if (source == null) {
@@ -558,25 +488,10 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
             return createEventStateCollection(source);
         }
 
-        /**
-         * {@inheritDoc}
-         * <p/>
-         * This object uses one instance of a <code>LocalItemStateManager</code>
-         * to update data on behalf of many sessions. In order to maintain the
-         * association between update operation and session who actually invoked
-         * the update, an internal event source is used.
-         */
         public EventStateCollection createEventStateCollection(SessionImpl source) {
             return obsMgr.createEventStateCollection(source, VERSION_STORAGE_PATH);
         }
 
-        /**
-         * Executes the given runnable using the given event source.
-         *
-         * @param eventSource
-         * @param runnable
-         * @throws RepositoryException
-         */
         public synchronized Object doSourced(SessionImpl eventSource, SourcedTarget runnable)
                 throws RepositoryException {
             this.source = eventSource;

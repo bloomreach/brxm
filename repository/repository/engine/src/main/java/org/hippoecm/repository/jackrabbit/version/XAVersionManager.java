@@ -176,15 +176,13 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
      */
     public void removeVersion(VersionHistory history, Name versionName)
             throws RepositoryException {
-        /*
         if (isInXA()) {
             InternalVersionHistoryImpl vh = (InternalVersionHistoryImpl)
-                    ((VersionHistoryImpl) history).getInternalVersionHistory();
+                    VersionManagerImpl.getInternalVersionHistory((VersionHistoryImpl) history);
             removeVersion(vh, versionName);
             return;
         }
         vMgr.removeVersion(history, versionName);
-        */
     }
 
     /**
@@ -193,11 +191,9 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
     public Version setVersionLabel(VersionHistory history, Name version,
                                    Name label, boolean move)
             throws RepositoryException {
-
-        /*
         if (isInXA()) {
             InternalVersionHistoryImpl vh = (InternalVersionHistoryImpl)
-                    ((VersionHistoryImpl) history).getInternalVersionHistory();
+                    VersionManagerImpl.getInternalVersionHistory((VersionHistoryImpl) history);
             InternalVersion v = setVersionLabel(vh, version, label, move);
             if (v == null) {
                 return null;
@@ -206,8 +202,6 @@ public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersi
             }
         }
         return vMgr.setVersionLabel(history, version, label, move);
-        */
-        return null;
     }
 
     /**

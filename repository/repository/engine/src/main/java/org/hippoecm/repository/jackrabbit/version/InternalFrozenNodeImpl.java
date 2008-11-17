@@ -41,6 +41,7 @@ import org.apache.jackrabbit.core.version.InternalFreeze;
 import org.apache.jackrabbit.core.version.InternalFrozenNode;
 import org.apache.jackrabbit.core.version.InternalFrozenVersionHistory;
 import org.apache.jackrabbit.core.version.InternalVersionItem;
+import org.hippoecm.repository.api.HippoNodeType;
 
 /**
  * Implements a <code>InternalFrozenNode</code>
@@ -316,7 +317,7 @@ class InternalFrozenNodeImpl extends InternalFreezeImpl
             }
         }
 
-        if(src.isNodeType("hippo:facetselect") || src.isNodeType("hippo:facetsearch")) {
+        if(src.isNodeType(HippoNodeType.NT_FACETSELECT) || src.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
             return node;
         }
         

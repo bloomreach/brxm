@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
@@ -29,21 +30,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Modules<T extends Object> implements Iterable<T> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
-    final Logger log = LoggerFactory.getLogger(Modules.class);
-    Set modules;
+    final static Logger log = LoggerFactory.getLogger(Modules.class);
+
+    private static Modules allModules;
+
+    private Set modules;
 
     public Modules() {
-        modules = new TreeSet<T>();
+        modules = new TreeSet<T>(new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return o1.getClass().getName().compareTo(o2.getClass().getName());
+            }
+        });
     }
 
     public Modules(Collection<T> modules) {
         this();
         this.modules.addAll(modules);
-    }
-
-    public Modules(T module) {
-        this();
     }
 
     public Modules(Modules modules, Class<T> clazz) {
@@ -56,23 +62,34 @@ public final class Modules<T extends Object> implements Iterable<T> {
     }
 
     public Modules(ClassLoader loader) {
+        this(loader, null);
+    }
+
+    public Modules(ClassLoader loader, Class<T> clazz) {
         this();
         try {
-            for (Enumeration<URL> e = loader.getResources("/META-INF/MANIFEST.MF"); e.hasMoreElements(); ) {
+            for (Enumeration<URL> e = loader.getResources("META-INF/MANIFEST.MF"); e.hasMoreElements();) {
                 URL url = e.nextElement();
                 try {
                     Manifest manifest = new Manifest(url.openStream());
                     String modulesString = manifest.getMainAttributes().getValue("Hippo-Modules");
+                    log.info("Modules as specified by manifest {} are {}", url.toString(), (modulesString != null ? modulesString : "none"));
                     if (modulesString != null) {
                         for (StringTokenizer tok = new StringTokenizer(modulesString); tok.hasMoreTokens();) {
                             String moduleClassName = tok.nextToken().trim();
                             if (!moduleClassName.equals("")) {
                                 try {
-                                    Object instance = Class.forName(moduleClassName, true, loader).newInstance();
-                                    modules.add(instance);
+                                    Class moduleClass = Class.forName(moduleClassName, true, loader);
+                                    if (clazz == null || clazz.isAssignableFrom(moduleClass)) {
+                                        Object moduleInstance = moduleClass.newInstance();
+                                        modules.add(moduleInstance);
+                                    }
                                 } catch (ClassNotFoundException ex) {
+                                    log.warn("Cannot instantiate module class {}: {}", moduleClassName, ex);
                                 } catch (InstantiationException ex) {
+                                    log.warn("Failure instantiating module class {}: {}", moduleClassName, ex);
                                 } catch (IllegalAccessException ex) {
+                                    log.warn("Failed instantiating module class {}: {}", moduleClassName, ex);
                                 }
                             }
                         }
@@ -89,8 +106,6 @@ public final class Modules<T extends Object> implements Iterable<T> {
     public Iterator<T> iterator() {
         return modules.iterator();
     }
-    
-    private static Modules allModules;
 
     public static Modules getModules() {
         return allModules;
@@ -98,5 +113,11 @@ public final class Modules<T extends Object> implements Iterable<T> {
 
     static void setModules(Modules modules) {
         allModules = modules;
+        if (log.isDebugEnabled()) {
+            log.debug("Default list of modules set to:");
+            for (Object module : allModules) {
+                log.debug("  " + module.getClass().getName());
+            }
+        }
     }
 }
