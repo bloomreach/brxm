@@ -137,7 +137,7 @@
       <subsection name="ServicingIndexingConfigurationImpl">
         <p>
           The ServicingIndexingConfigurationImpl only serves to have the
-          <code>http://www.hippoecm.org/nt/1.0</code>
+          <code>http://www.hippoecm.org/nt/1.1</code>
           namespace available, and to know wether a property is a Hippo Facet or Hippo Path, and needs
           to be indexed as such. The indexing_configuration is ignored.
         </p>
@@ -145,7 +145,7 @@
           Configuration can look like:
         </p>
         <source>
-&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0"&gt;
+&lt;configuration xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.1"&gt;
     &lt;facets&gt;
          &lt;property name="author"/&gt;
          &lt;property name="date"/&gt;

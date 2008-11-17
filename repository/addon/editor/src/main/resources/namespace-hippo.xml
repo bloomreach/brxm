@@ -18,7 +18,7 @@
   xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-  xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:hippo="http://www.hippoecm.org/nt/1.1" xmlns:fn="http://www.w3.org/2005/xpath-functions"
   sv:name="hippo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:namespace</sv:value>
@@ -42,7 +42,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <sv:node sv:name="hippo:field">
@@ -280,7 +280,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <sv:node sv:name="hippo:field">
@@ -322,7 +322,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -442,7 +442,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>hippo:document</sv:value>
@@ -544,7 +544,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -612,7 +612,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:query</sv:value>
@@ -731,7 +731,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:resource</sv:value>
@@ -903,7 +903,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -1184,7 +1184,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -1464,7 +1464,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:node" sv:type="Boolean">
           <sv:value>true</sv:value>
@@ -1691,7 +1691,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:supertype" sv:type="String">
           <sv:value>nt:unstructured</sv:value>
@@ -1779,7 +1779,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- description -->
@@ -1978,7 +1978,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- active -->
@@ -2312,7 +2312,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- facet -->
@@ -2574,7 +2574,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- facetrule -->
@@ -2670,7 +2670,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- users -->
@@ -2881,7 +2881,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- authrole -->
@@ -3104,7 +3104,7 @@
           <sv:value>hippo:remodel</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/nt/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/nt/1.1</sv:value>
         </sv:property>
 
         <!-- jcrread -->

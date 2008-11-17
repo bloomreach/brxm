@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node sv:name="cms-static" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.0" xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0" xmlns:hippolog="http://www.hippoecm.org/hippolog/nt/1.0" xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0">
+<sv:node sv:name="cms-static" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:hippo="http://www.hippoecm.org/nt/1.1" xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.1" xmlns:hippolog="http://www.hippoecm.org/hippolog/nt/1.1" xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1">
 
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
