@@ -57,6 +57,9 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -67,6 +70,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -74,8 +78,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.repository.updater.UpdaterEngine;
 
 class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
@@ -83,7 +86,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     private final static String SVN_ID = "$Id$";
 
     /** Hippo Namespace */
-    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
+    public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.1";
 
     /** Hippo Namespace prefix */
     public final static String NAMESPACE_PREFIX = "hippo";
@@ -93,6 +96,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** System property for overriding the repository config file */
     public final static String SYSTEM_CONFIG_PROPERTY = "repo.config";
+
+    /** System property for overriding the repository config file */
+    public final static String SYSTEM_UPGRADE_PROPERTY = "repo.upgrade";
 
     /** System property for overriding the servlet config file */
     public final static String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
@@ -122,6 +128,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
     private final boolean dump = false;
+
+    /** Whether to perform an automatic upgrade from previous releases */
+    private boolean upgradeEnabled = true;
 
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
@@ -241,12 +250,20 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     private void initialize() throws RepositoryException {
 
+        Modules.setModules(new Modules(getClass().getClassLoader()));
+
         jackrabbitRepository = new LocalRepositoryImpl(RepositoryConfig.create(getRepositoryConfigAsStream(),
                 getRepositoryPath()));
         repository = jackrabbitRepository;
 
         String result = repository.getDescriptor("OPTION_NODE_TYPE_REG_SUPPORTED");
         log.info("Node type registration support: " + (result != null ? result : "no"));
+
+        result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
+        if (result != null) {
+            upgradeEnabled = Boolean.parseBoolean(result);
+        }
+        log.info("Automatic upgrade enabled: " + (upgradeEnabled ? "yes" : "no"));
 
         hippoRepositoryFactory = new DecoratorFactoryImpl();
         repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
@@ -255,11 +272,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init
             Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
-            
-            if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
-                jcrRootSession.getRootNode().addMixin("mix:referenceable");
-                jcrRootSession.save();
-            }
 
             try {
                 log.info("Initializing hippo namespace");
@@ -268,6 +280,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
+            }
+
+            if (upgradeEnabled) {
+                UpdaterEngine.migrate(jcrRootSession);
             }
 
             try {
@@ -295,8 +311,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
             // After initializing namespaces and nodetypes switch to the decorated session.
             rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
-            
-            
+ 
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
                 InputStream configuration = getClass().getResourceAsStream("configuration.xml");
