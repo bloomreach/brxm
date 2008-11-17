@@ -30,7 +30,7 @@ import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
 public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private static PackagedTextTemplate INIT_SCRIPT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
