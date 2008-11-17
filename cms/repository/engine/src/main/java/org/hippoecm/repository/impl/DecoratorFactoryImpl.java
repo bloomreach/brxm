@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.util.WeakHashMap;
-
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
