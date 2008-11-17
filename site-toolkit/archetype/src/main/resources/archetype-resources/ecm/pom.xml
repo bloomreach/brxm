@@ -27,7 +27,7 @@
   <name>My Hippo Site Toolkit Project ECM WAR package</name>
   <description>My Hippo Site Toolkit Project ECM WAR package</description>
   <groupId>${groupId}</groupId>
-  <artifactId>${artifactId}-ecm</artifactId>
+  <artifactId>${rootArtifactId}-ecm</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${artifactId}-sample-content</artifactId>
+      <artifactId>${rootArtifactId}-sample-content</artifactId>
       <version>${version}</version>
       <type>jar</type>
     </dependency>

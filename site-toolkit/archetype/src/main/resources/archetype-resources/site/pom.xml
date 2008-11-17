@@ -26,7 +26,7 @@
 
   <name>My Hippo Site Toolkit Project website</name>
   <description>My Hippo Site Toolkit Project website</description>
-  <artifactId>${artifactId}-site</artifactId>
+  <artifactId>${rootArtifactId}-site</artifactId>
   <groupId>${groupId}</groupId>
   <version>${version}</version>
   <packaging>war</packaging>

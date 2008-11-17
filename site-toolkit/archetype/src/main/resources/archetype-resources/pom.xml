@@ -1,3 +1,6 @@
+#set($dollar = '$')
+#set($hyphen = '-')
+#set($underscore = '_')
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
@@ -36,7 +39,7 @@
 
   <properties>
     <hippoecm.version>2.01.00.14266</hippoecm.version>
-    <hst.version>2.01.01-SNAPSHOT</hst.version>
+    <hst.version>2.01.03-SNAPSHOT</hst.version>
   </properties>
 
   <dependencyManagement>
@@ -44,25 +47,25 @@
       <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>hippo-ecm-package-war</artifactId>
-        <version>${hippoecm.version}</version>
+        <version>${dollar}{hippoecm.version}</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-components</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-core</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.ecm.hst</groupId>
         <artifactId>site-toolkit-addon-repository</artifactId>
-        <version>${hst.version}</version>
+        <version>${dollar}{hst.version}</version>
         <type>jar</type>
       </dependency>
     </dependencies>

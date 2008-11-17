@@ -27,7 +27,7 @@
   <name>My Hippo Site Toolkit Project Sample Content</name>
   <description>My Hippo Site Toolkit Project Sample Content</description>
   <groupId>${groupId}</groupId>
-  <artifactId>${artifactId}-sample-content</artifactId>
+  <artifactId>${rootArtifactId}-sample-content</artifactId>
   <packaging>jar</packaging>
 
   <build>

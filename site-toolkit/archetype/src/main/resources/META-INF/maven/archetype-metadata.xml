@@ -16,7 +16,7 @@
 -->
 <archetype-descriptor name="gettingstarted">
   <modules>
-    <module id="${artifactId}-sample-content" dir="content" name="${artifactId}-sample-content">
+    <module id="${rootArtifactId}-sample-content" dir="content" name="${rootArtifactId}-sample-content">
       <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/resources</directory>
@@ -32,7 +32,7 @@
         </fileSet>
       </fileSets>
     </module>
-    <module id="${artifactId}-ecm" dir="ecm" name="${artifactId}-ecm">
+    <module id="${rootArtifactId}-ecm" dir="ecm" name="${rootArtifactId}-ecm">
       <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/resources</directory>
@@ -48,7 +48,7 @@
         </fileSet>
       </fileSets>
     </module>
-    <module id="${artifactId}-site" dir="site" name="${artifactId}-site">
+    <module id="${rootArtifactId}-site" dir="site" name="${rootArtifactId}-site">
       <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/webapp</directory>
