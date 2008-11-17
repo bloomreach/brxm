@@ -171,6 +171,11 @@ final class UpdaterNode extends UpdaterItem implements Node {
         else
             nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
 
+        if (!hollow && origin != null && origin.isNode()) {
+            if(((Node)origin).isNodeType("jcr:versionable")) {
+                ((Node)origin).checkout();
+            }
+        }
         if (nodeTypesChanged) {
             if (!hollow) {
                 oldOrigin = origin;
@@ -375,11 +380,12 @@ final class UpdaterNode extends UpdaterItem implements Node {
         return child;
     }
 
+    @Deprecated
     public void orderBefore(String srcChildRelPath, String destChildRelPath) throws UnsupportedRepositoryOperationException, VersionException, ConstraintViolationException, ItemNotFoundException, LockException, RepositoryException {
         substantiate();
         if (srcChildRelPath.contains("/") || destChildRelPath.contains("/"))
             throw new ConstraintViolationException();
-    // FIXME
+        throw new UpdaterException("illegal method");
     }
 
     public Property setProperty(String name, Value value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
@@ -531,6 +537,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         return new SetPropertyIterator(set);
     }
 
+    @Deprecated
     public Item getPrimaryItem() throws ItemNotFoundException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
