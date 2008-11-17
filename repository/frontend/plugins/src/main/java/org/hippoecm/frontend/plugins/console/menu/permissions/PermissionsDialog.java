@@ -155,6 +155,7 @@ public class PermissionsDialog extends AbstractDialog {
         try {
             Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryType);
             NodeIterator nodeIter = query.execute().getNodes();
+            log.debug("Number of memberships found with query '{}' : {}", queryString, nodeIter.getSize());
             while (nodeIter.hasNext()) {
                 Node node = nodeIter.nextNode();
                 if (node != null) {
