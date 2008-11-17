@@ -18,13 +18,16 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
-<hippo='http://www.hippoecm.org/nt/1.0'>
+<hippo='http://www.hippoecm.org/nt/1.1'>
 
 [hippo:ntunstructured] > nt:unstructured
 
 [hippo:testdocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple
 - *
+
+[hippo:realdocument] > hippo:document
++ hippo:mirror (hippo:facetselect) version
 
 [hippo:testderived] > hippo:derived mixin
 - hippo:c (Long) mandatory
