@@ -128,13 +128,6 @@ public class HippoAccessManager implements AccessManager {
      */
     private NameResolver nRes;
     
-
-
-    /**
-     * Hippo Namespace, TODO: move to better place
-     */
-    //public final static String NAMESPACE_URI = "http://www.hippoecm.org/nt/1.0";
-
     /**
      * Name of hippo:handle, needed for document model checking
      */
