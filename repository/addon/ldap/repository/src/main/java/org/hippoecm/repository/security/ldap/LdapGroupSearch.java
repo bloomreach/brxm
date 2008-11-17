@@ -21,12 +21,14 @@ public class LdapGroupSearch extends LdapUserSearch {
     public final static String PROPERTY_MEMBERNAME_MATCHER = "hippoldap:membernamematcher";
 
     // matchers for substitution
-    public final static String UID_MATCHER = "<uid>";
-    public final static String DN_MATCHER = "<dn>";
+    public final static String UID_MATCHER = "<uid>"; // get's replaced with uid: username
+    public final static String DN_MATCHER = "<dn>"; // get's replaced with full dn: cn=username,dc=mycompany,dc=com
+    public final static String COMPACT_DN_MATCHER = "<compact-dn>"; // implode attr values: username.mycompany.com
+    public final static String REVERSE_COMPACT_DN_MATCHER = "<reverse-compact-dn>"; // implode attr values in rev. order: com.mycompany.username
     
     // defaults
     private String memberAttr = "memberUid";
-    private String memberNameMatcher = "uid=" + UID_MATCHER;
+    private String memberNameMatcher = UID_MATCHER;
     
     private static final String DEFAULT_FILTER = "(objectclass=posixGroup)";
 
