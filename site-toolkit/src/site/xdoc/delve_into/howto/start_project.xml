@@ -48,7 +48,7 @@
         </p>
 
         <source>
-mvn archetype:create \
+mvn archetype:generate \
  -DremoteRepositories=http://repository.hippocms.org/maven2,http://repo1.maven.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
  -DarchetypeArtifactId=site-toolkit-archetype \
