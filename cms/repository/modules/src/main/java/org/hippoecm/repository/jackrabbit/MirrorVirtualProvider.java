@@ -81,7 +81,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
     }
 
-    MirrorVirtualProvider() throws RepositoryException {
+    public MirrorVirtualProvider() throws RepositoryException {
         super();
     }
 

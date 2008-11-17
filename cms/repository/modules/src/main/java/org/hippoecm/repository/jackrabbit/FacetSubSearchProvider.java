@@ -32,7 +32,7 @@ public class FacetSubSearchProvider extends AbstractFacetSearchProvider
 
     PropDef primaryTypePropDef;
 
-    FacetSubSearchProvider()
+    public FacetSubSearchProvider()
         throws RepositoryException
     {
     }

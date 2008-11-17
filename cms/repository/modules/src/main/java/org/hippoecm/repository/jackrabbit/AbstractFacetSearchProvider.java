@@ -46,7 +46,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
+    protected final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 
     class FacetSearchNodeId extends HippoNodeId {
         private static final long serialVersionUID = 1L;
@@ -91,10 +91,10 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
     }
 
     @Override
-    void initialize(HippoLocalItemStateManager stateMgr) throws RepositoryException {
+    void initialize(DataProviderContext stateMgr) throws RepositoryException {
         super.initialize(stateMgr);
-        this.facetedEngine = stateMgr.facetedEngine;
-        this.facetedContext = stateMgr.facetedContext;
+        this.facetedEngine = stateMgr.getFacetedEngine();
+        this.facetedContext = stateMgr.getFacetedContext();
         stateMgr.registerProviderProperty(countName);
     }
 
