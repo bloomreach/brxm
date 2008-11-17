@@ -58,7 +58,7 @@ InsertImage.prototype.prepareDialog = function()
     var config = this.editor.config;
     var callbackUrl = config.InsertImage.callbackUrl;
 
-    this.dialog = new ModalDialog(callbackUrl, InsertImage._pluginInfo.name, config.xinhaParamToken);
+    this.dialog = new ModalDialog(callbackUrl, InsertImage._pluginInfo.name, config.xinhaParamToken, this.editor);
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {
