@@ -16,9 +16,12 @@
 package org.hippoecm.repository.security;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -154,16 +157,16 @@ public class HippoAccessManager implements AccessManager {
     private boolean initialized;
 
     /**
-     * SuperSimpleLRUCache
+     * The HippoAccessCache instance
      */
-    private PermissionLRUCache readAccessCache;
+    private HippoAccessCache readAccessCache;
 
     private static final int DEFAULT_PERM_CACHE_SIZE = 20000;
 
     /**
      * Cache for determining if a type is a instance of another type
      */
-    private final NodeTypeInstanceOfCache ntIOCache = new NodeTypeInstanceOfCache(20);
+    private final NodeTypeInstanceOfCache ntIOCache = NodeTypeInstanceOfCache.getInstance();
     
     /**
      * Flag whether current user is anonymous
@@ -262,7 +265,8 @@ public class HippoAccessManager implements AccessManager {
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
         log.debug("Setting cache size: {}", cacheSize);
-        readAccessCache = new PermissionLRUCache(cacheSize);
+        HippoAccessCache.setMaxSize(cacheSize);
+        readAccessCache = HippoAccessCache.getInstance(userId);
 
         // we're done
         initialized = true;
@@ -275,8 +279,22 @@ public class HippoAccessManager implements AccessManager {
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
-        readAccessCache.clear();
         initialized = false;
+        
+        // clear out all caches
+        readAccessCache.clear();
+        requestItemStateCache.clear();
+        groupIds.clear();
+        currentDomainRoleIds.clear();
+        
+        // Aggressively nullify
+        subject = null;
+        hierMgr = null;
+        itemMgr = null;
+        ntMgr = null;
+        nsRes = null;
+        npRes = null;
+        nRes = null;
     }
 
     /**
@@ -983,201 +1001,25 @@ public class HippoAccessManager implements AccessManager {
     }
 
     /**
-     * Super Simple LRU Cache for <ItemId,Boolean> key-value pairs
+     * Simple Cache for <String, <String,Boolean>> key-value pairs
      */
-    private class PermissionLRUCache {
-
-        /**
-         * Set size to zero to disable cache
-         */
-        private boolean enabled = true;
-
+    private static class NodeTypeInstanceOfCache {
+ 
         /**
          * The cache map
          */
-        private LRUMap map = null;
+        private static Map<String, Map<String, Boolean>> map = new WeakHashMap<String,Map<String, Boolean>>();
 
-        /**
-         * Local counter for cache hits
-         */
-        private long hit;
-
-        /**
-         * Local counter for cache misses
-         */
-        private long miss;
-
-        /**
-         * Local counter for total number of cache access
-         */
-        private long total;
-
+        private static NodeTypeInstanceOfCache cache = new NodeTypeInstanceOfCache();
         /**
          * Create a new LRU cache
          * @param size max number of cache objects
          */
-        public PermissionLRUCache(int size) {
-            if (size < 0) {
-                throw new IllegalArgumentException("size < 0");
-            }
-            hit = 0;
-            miss = 0;
-            total = 0;
-            if (size == 0) {
-                enabled = false;
-                return;
-            }
-            map = new LRUMap(size);
+        private NodeTypeInstanceOfCache() {            
         }
-
-        /**
-         * Fetch cache value
-         * @param id ItemId
-         * @return cached value or null when not in cache
-         */
-        synchronized public Boolean get(ItemId id) {
-            if (!enabled) {
-                return null;
-            }
-            total++;
-            Boolean obj = (Boolean) map.get(id.hashCode());
-            if (obj == null) {
-                miss++;
-            } else {
-                hit++;
-            }
-            return obj;
-        }
-
-        /**
-         * Store key-value in cache
-         * @param id ItemId the key
-         * @param isGranted the value
-         */
-        synchronized public void put(ItemId id, boolean isGranted) {
-            if (!enabled) {
-                return;
-            }
-            map.put(id.hashCode(), isGranted);
-        }
-
-        /**
-         * Remove key-value from cache
-         * @param id ItemId the key
-         */
-        synchronized public void remove(ItemId id) {
-            if (!enabled) {
-                return;
-            }
-            if (map.containsKey(id.hashCode())) {
-                map.remove(id.hashCode());
-            }
-        }
-
-        /**
-         * Clear the cache
-         */
-        synchronized public void clear() {
-            if (!enabled) {
-                return;
-            }
-            map.clear();
-        }
-
-        /**
-         * Total number of times this cache is accessed
-         * @return long
-         */
-        public long getTotalAccess() {
-            return total;
-        }
-
-        /**
-         * Total number of cache hits
-         * @return long
-         */
-        public long getHits() {
-            return hit;
-        }
-
-        /**
-         * Total number of cache misses
-         * @return long
-         */
-        public long getMisses() {
-            return miss;
-        }
-
-        /**
-         * The current size of the cache
-         * @return int
-         */
-        public int getSize() {
-            if (!enabled) {
-                return 0;
-            }
-            return map.size();
-        }
-
-        /**
-         * The max size of the cache
-         * @return int
-         */
-        public int getMaxSize() {
-            if (!enabled) {
-                return 0;
-            }
-            return map.maxSize();
-        }
-    }
-    
-
-    /**
-     * Simple Cache for <<String,String>,Boolean> key-value pairs
-     */
-    private class NodeTypeInstanceOfCache {
-
-        /**
-         * Set size to zero to disable cache
-         */
-        private boolean enabled = true;
-
-        /**
-         * The cache map
-         */
-        private Map<String, Map<String, Boolean>> map = null;
-
-        /**
-         * Local counter for cache hits
-         */
-        private long hit;
-
-        /**
-         * Local counter for cache misses
-         */
-        private long miss;
-
-        /**
-         * Local counter for total number of cache access
-         */
-        private long total;
-
-        /**
-         * Create a new LRU cache
-         * @param size max number of cache objects
-         */
-        public NodeTypeInstanceOfCache(int size) {
-            if (size < 0) {
-                throw new IllegalArgumentException("size < 0");
-            }
-            hit = 0;
-            miss = 0;
-            total = 0;
-            if (size == 0) {
-                enabled = false;
-                return;
-            }
-            map = new HashMap<String,Map<String, Boolean>>(size);
+        
+        private static NodeTypeInstanceOfCache getInstance() {
+            return cache;
         }
 
         /**
@@ -1186,19 +1028,10 @@ public class HippoAccessManager implements AccessManager {
          * @return cached value or null when not in cache
          */
         synchronized public Boolean get(String type, String instanceOfType) {
-            if (!enabled) {
-                return null;
-            }
             Boolean bool = null;
-            total++;
             Map<String, Boolean> typeMap = map.get(instanceOfType);
             if (typeMap != null) {
-                bool = typeMap.get(type);
-            }
-            if (bool == null) {
-                miss++;
-            } else {
-                hit++;
+                return typeMap.get(type);
             }
             return bool;
         }
@@ -1209,13 +1042,9 @@ public class HippoAccessManager implements AccessManager {
          * @param isGranted the value
          */
         synchronized public void put(String type, String instanceOfType, boolean isInstanceOf) {
-            if (!enabled) {
-                return;
-            }
-
             Map<String, Boolean> typeMap = map.get(instanceOfType);
             if (typeMap == null) {
-                typeMap = new HashMap<String, Boolean>();
+                typeMap = new WeakHashMap<String, Boolean>();
             }
             typeMap.put(type, isInstanceOf);
             map.put(instanceOfType, typeMap);
@@ -1226,10 +1055,6 @@ public class HippoAccessManager implements AccessManager {
          * @param id ItemId the key
          */
         synchronized public void remove(String type, String instanceOfType) {
-            if (!enabled) {
-                return;
-            }
-
             Map<String, Boolean> typeMap = map.get(instanceOfType);
             if (typeMap == null) {
                 return;
@@ -1244,45 +1069,9 @@ public class HippoAccessManager implements AccessManager {
          * Clear the cache
          */
         synchronized public void clear() {
-            if (!enabled) {
-                return;
-            }
             map.clear();
         }
-
-        /**
-         * Total number of times this cache is accessed
-         * @return long
-         */
-        public long getTotalAccess() {
-            return total;
-        }
-
-        /**
-         * Total number of cache hits
-         * @return long
-         */
-        public long getHits() {
-            return hit;
-        }
-
-        /**
-         * Total number of cache misses
-         * @return long
-         */
-        public long getMisses() {
-            return miss;
-        }
-
-        /**
-         * The current size of the cache
-         * @return int
-         */
-        public int getSize() {
-            if (!enabled) {
-                return 0;
-            }
-            return map.size();
-        }
     }
+    
+    
 }
