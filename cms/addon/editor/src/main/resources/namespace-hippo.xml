@@ -1791,7 +1791,7 @@
             <sv:value>description</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>Html</sv:value>
+            <sv:value>String</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>hippo:description</sv:value>
