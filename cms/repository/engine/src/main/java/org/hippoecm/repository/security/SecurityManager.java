@@ -45,27 +45,20 @@ public class SecurityManager {
     private final Map<String, SecurityProvider> providers = new LinkedHashMap<String, SecurityProvider>();
 
     /**
-     * Needs to be volatile for the getInstance method the be thread safe.
+     * The instance
      */
-    private static volatile SecurityManager instance;
+    private static final SecurityManager instance = new SecurityManager();
 
     /**
      * Logger
      */
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(SecurityManager.class);
 
     /**
      * Get the SecurityManager instance with lazy initialization.
      * @return
      */
     public static SecurityManager getInstance() {
-        if (instance == null) {
-            synchronized(SecurityManager.class) {
-                if (instance == null) {
-                    instance = new SecurityManager();
-                }
-            }
-        }
         return instance;
     }
 
@@ -148,6 +141,7 @@ public class SecurityManager {
                 boolean authenticated = false;
                 for(Iterator<String> iter = providers.keySet().iterator(); iter.hasNext();) {
                     providerId = iter.next();
+                    log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
                     if (providers.get(providerId).getUserManger().authenticate(creds)) {
                         authenticated = true;
                         break;
