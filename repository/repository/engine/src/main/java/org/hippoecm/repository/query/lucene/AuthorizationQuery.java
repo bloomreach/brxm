@@ -32,8 +32,8 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.name.IllegalNameException;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -223,14 +223,14 @@ public class AuthorizationQuery {
                 // FIXME: implement
                 log.debug("Nodename match not implemented yet.");
                 return QueryHelper.getNoHitsQuery();
-            } else if (nodeNameString.equals("jcr:primaryType")) {
+            } else if ("jcr:primaryType".equals(nodeNameString)) {
                 return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
-
-            } else if (nodeNameString.equals("jcr:mixinTypes")) {
+            } else if ("jcr:mixinTypes".equals(nodeNameString)) {
                 return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
             } else {
-                log.error("hippo:facet must be either 'nodetype', 'jcr:primaryType' "
-                        + "or 'jcr:mixinTypes' when hippo:type = Name \n Ignoring facetrule");
+                log.error("Ignoring facetrule with facet '" + nodeNameString
+                        + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' "
+                        + "or 'jcr:mixinTypes' when hippo:type = Name.");
             }
             break;
         }
