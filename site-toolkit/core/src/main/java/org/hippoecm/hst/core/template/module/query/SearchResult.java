@@ -27,6 +27,7 @@ public class SearchResult {
     private List<Page> pages;
     private int size;
     private int offset;
+    private int pagingOffset;
     private int pagesize;
     private int limit;
     private int currentPageNumber;
@@ -53,6 +54,14 @@ public class SearchResult {
 
     public void setOffset(int offset) {
         this.offset = offset;
+    }
+    
+    public long getPagingOffset() {
+        return pagingOffset;
+    }
+
+    public void setPagingOffset(int pagingOffset) {
+        this.pagingOffset = pagingOffset;
     }
 
     public long getPagesize() {
@@ -175,9 +184,10 @@ public class SearchResult {
                 }
             }
         }
-        if (pagesize > 0 && size > 0) {
-            int nrOfPages = size / pagesize;
-            if (pagesize * nrOfPages < size) {
+        int sizeMinusOffset = size - offset;
+        if (pagesize > 0 && sizeMinusOffset > 0) {
+            int nrOfPages = sizeMinusOffset / pagesize;
+            if (pagesize * nrOfPages < sizeMinusOffset) {
                 nrOfPages++;
             }
             String link;

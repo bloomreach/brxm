@@ -338,7 +338,8 @@ public class SearchModule extends ModuleBase implements Search {
             searchResult.setSize((int)rows.getSize());
             searchResult.setCurrentPageNumber(currentPageNumber);
             int pagingOffset = offset + (currentPageNumber-1)*limit;
-            searchResult.setOffset(pagingOffset);
+            searchResult.setPagingOffset(pagingOffset);
+            searchResult.setOffset(offset);
             searchResult.setPagesize(limit);
             searchResult.setQuery(querytext);
             searchResult.setNodeType(nodetype);
