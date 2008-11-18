@@ -93,18 +93,10 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     class ContextImpl extends FacetedNavigationEngine.Context {
-        Session session;
-        String userId;
-        Subject subject;
         AuthorizationQuery authorizationQuery;
-        NodeTypeManager ntMgr;
 
         ContextImpl(Session session, String userId, Subject subject, NodeTypeManager ntMgr)
                 throws RepositoryException {
-            this.session = session;
-            this.userId = userId;
-            this.subject = subject;
-            this.ntMgr = ntMgr;
             this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
                     (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
         }

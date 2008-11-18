@@ -17,6 +17,7 @@ package org.hippoecm.repository.query.lucene;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -65,8 +66,7 @@ public class AuthorizationQuery {
     private final NodeTypeManager ntMgr;
     private final NamespaceMappings nsMappings;
     private final ServicingIndexingConfiguration indexingConfig;
-    private final Set<FacetAuthPrincipal> facetAuths;
-    private final Set<GroupPrincipal> groupPrincipals;
+    private final Set<String> memberships = new HashSet<String>();
     private final SessionImpl session;
     private final static String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
@@ -74,8 +74,6 @@ public class AuthorizationQuery {
             ServicingIndexingConfiguration indexingConfig, NodeTypeManager ntMgr, Session session)
             throws RepositoryException {
 
-        this.facetAuths = subject.getPrincipals(FacetAuthPrincipal.class);
-        this.groupPrincipals  = subject.getPrincipals(GroupPrincipal.class);
         this.nsMappings = nsMappings;
         this.indexingConfig = indexingConfig;
         this.ntMgr = ntMgr;
@@ -83,11 +81,15 @@ public class AuthorizationQuery {
             throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
         }
         this.session = (SessionImpl) session;
-        this.query = initQuery();
+
+        for(GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
+            memberships.add(groupPrincipal.getName());
+        }
+        this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
 
     }
 
-    private BooleanQuery initQuery() {
+    private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths) {
 
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
@@ -168,12 +170,12 @@ public class AuthorizationQuery {
                     }
                     else if (facetRule.getValue().equals(FacetAuthConstants.EXPANDER_GROUP)) {
                      // boolean OR query of groups
-                        if(groupPrincipals.isEmpty()) {
+                        if(memberships.isEmpty()) {
                             return QueryHelper.getNoHitsQuery();
                         }
                         BooleanQuery b = new BooleanQuery(true);
-                        for(GroupPrincipal groupPrincipal : groupPrincipals) {
-                            Term term = new Term(internalFieldName,groupPrincipal.getName());
+                        for(String groupName : memberships) {
+                            Term term = new Term(internalFieldName, groupName);
                             b.add(new TermQuery(term), Occur.SHOULD);
                         }
                         if (facetRule.isEqual()) {
