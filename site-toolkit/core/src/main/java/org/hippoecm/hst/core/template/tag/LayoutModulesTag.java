@@ -49,7 +49,6 @@ public class LayoutModulesTag  extends BodyTagSupport {
         
         boolean debugView = false;
         String disableTemplate = "";
-        System.out.println(getName());
         if(request.getParameter("debugview")!=null && (request.getParameter("debugview").equals(getName()) || request.getParameter("debugview").equalsIgnoreCase("all"))){
            log.debug("show template names for container: " + getName());
            debugView = true;
