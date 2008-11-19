@@ -39,7 +39,7 @@
 
   <properties>
     <hippoecm.version>2.01.00.14715</hippoecm.version>
-    <hst.version>2.01.03-SNAPSHOT</hst.version>
+    <hst.version>2.01.03</hst.version>
   </properties>
 
   <dependencyManagement>
