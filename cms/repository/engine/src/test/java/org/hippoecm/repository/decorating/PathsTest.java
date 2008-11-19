@@ -81,10 +81,11 @@ public class PathsTest extends TestCase {
         for (int i = 0; i < values.length; i++) {
             valuesSet.add(values[i].getString());
         }
-        assertTrue(values.length == 3);
+        assertTrue(values.length == 4);
         assertTrue(valuesSet.contains(session.getRootNode().getUUID()));
         assertTrue(valuesSet.contains(session.getRootNode().getNode("test").getUUID()));
         assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub").getUUID()));
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub/node").getUUID()));
     }
 
     @Test
@@ -143,6 +144,6 @@ public class PathsTest extends TestCase {
         session.save();
         session.refresh(false);
         assertEquals(session.getRootNode().getNode("test/f").getUUID(),
-                     session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[0].getString());
+                     session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[1].getString());
     }
 }
