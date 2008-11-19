@@ -65,7 +65,6 @@ public class ReviewedActionsWorkflowTest extends ReviewedActionsWorkflowAbstract
     public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node node, root = session.getRootNode();
         {
-            Utilities.dump(getNode("test"));
             assertTrue(session.getRootNode().hasNode("test"));
             assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
             assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
