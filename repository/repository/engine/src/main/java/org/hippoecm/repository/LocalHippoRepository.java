@@ -57,9 +57,6 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -70,7 +67,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
@@ -79,6 +75,8 @@ import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.updater.UpdaterEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
@@ -418,7 +416,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             Workspace workspace = rootSession.getWorkspace();
             NamespaceRegistry nsreg = workspace.getNamespaceRegistry();
 
-            // {ossibly create a query per type here. That would remove the need for all the if statements
+            // possibly create a query per type here. That would remove the need for all the if statements
             Query getInitializeItems = rootSession.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
             NodeIterator initializeItems = getInitializeItems.execute().getNodes();
             Node configurationNode = rootSession.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
@@ -428,7 +426,19 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 Node node = initializeItems.nextNode();
                 log.info("Initializing configuration from " + node.getName());
                 try {
+                    // Delete content
+                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Found content delete configuration");
+                        }
+                        Property p = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE);
+                        String path = p.getString();
+                        log.info("Delete content in initialization: " + node.getName() + " " + path);
+                        removeNodecontent(rootSession, path);
+                        p.remove();
+                    }
 
+                    
                     // Namespace
                     if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
                         if (log.isDebugEnabled()) {
@@ -703,6 +713,29 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
+
+    private void removeNodecontent(Session session, String absPath) {
+        if ("".equals(absPath) || "/".equals(absPath)) {
+            log.warn("Not allowed to delete rootNode from initialization.");
+            return;
+        }
+        
+        String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
+        try {
+            if (relpath.length() > 0 && session.getRootNode().hasNode(relpath)) {
+                session.getRootNode().getNode(relpath).remove();
+                session.save();
+            }
+        } catch (RepositoryException ex) {
+            if (log.isDebugEnabled()) {
+                log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage(), ex);
+            } else {
+                log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage());
+            }
+        }
+        
+    }
+    
     private void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
         try {
             String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
