@@ -54,11 +54,13 @@ final class UpdaterSession implements Session {
     Session upstream;
     ValueFactory valueFactory;
     UpdaterNode root;
+    UpdaterWorkspace workspace;
 
     public UpdaterSession(Session session) throws UnsupportedRepositoryOperationException, RepositoryException {
         this.upstream = session;
         this.valueFactory = session.getValueFactory();
-        this.root = new UpdaterNode(this, session.getRootNode(), null);
+        this.workspace = new UpdaterWorkspace(this, session.getWorkspace());
+        this.root = new UpdaterNode(this, upstream.getRootNode(), null);
     }
 
     NodeType getNewType(String type) throws RepositoryException {
@@ -67,6 +69,7 @@ final class UpdaterSession implements Session {
 
     public void commit() throws RepositoryException {
         root.commit();
+        this.root = new UpdaterNode(this, upstream.getRootNode(), null);
     }
 
     // interface javax.jcr.Session
@@ -93,7 +96,7 @@ final class UpdaterSession implements Session {
 
     @Deprecated
     public Workspace getWorkspace() {
-        throw new UpdaterException("illegal method");
+        return workspace;
     }
 
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
@@ -149,7 +152,7 @@ final class UpdaterSession implements Session {
     }
 
     public ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
-        throw new UpdaterException("illegal method");
+        return valueFactory;
     }
 
     @Deprecated

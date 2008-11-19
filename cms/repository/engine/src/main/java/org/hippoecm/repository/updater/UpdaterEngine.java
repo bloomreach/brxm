@@ -25,7 +25,9 @@ import java.util.TreeSet;
 import java.util.Vector;
 import javax.jcr.Item;
 import javax.jcr.ItemVisitor;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -38,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.Modules;
+import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
@@ -49,8 +52,8 @@ public class UpdaterEngine {
 
     protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);    
 
-    private Session session;
-    private UpdaterSession updaterSession;
+    Session session;
+    UpdaterSession updaterSession;
     private Vector<ModuleRegistration> modules;
 
     private static class Converted extends UpdaterItemVisitor.Default {
@@ -126,6 +129,56 @@ public class UpdaterEngine {
         }
     }
 
+    private Property getOrCreateVersionProperty(boolean createIfNotExists) throws RepositoryException {
+        Node rootNode = session.getRootNode();
+        Node configurationNode = null;
+        Node initializeNode = null;
+        Property versionProperty = null;
+        if(!rootNode.hasNode("hippo:configuration")) {
+            for(NodeIterator iter = rootNode.getNodes(); iter.hasNext(); ) {
+                Node child = iter.nextNode();
+                if(child.getName().startsWith("hippo_") && child.getName().endsWith(":configuration")) {
+                    configurationNode = child;
+                }
+            }
+        } else {
+            configurationNode = rootNode.getNode("hippo:configuration");
+        }
+        if(configurationNode == null) {
+            return null; // cannot create also
+        }
+        if(!configurationNode.hasNode("hippo:initialize")) {
+            for(NodeIterator iter = configurationNode.getNodes(); iter.hasNext(); ) {
+                Node child = iter.nextNode();
+                if(child.getName().startsWith("hippo_") && child.getName().endsWith(":initialize")) {
+                    initializeNode = child;
+                }                
+            }
+        } else {
+            initializeNode = configurationNode.getNode("hippo:initialize");
+        }
+        if(initializeNode == null) {
+            return null; // cannot create also
+        }
+
+        if(!initializeNode.hasNode("hippo:version")) {
+            for(PropertyIterator iter = initializeNode.getProperties(); iter.hasNext(); ) {
+                Property child = iter.nextProperty();
+                if((child.getName().startsWith("hippo_") && child.getName().endsWith(":version")) ||
+                   child.getName().equals("hippo:version")) {
+                    versionProperty = child;
+                }                
+            }
+        } else {
+            versionProperty = initializeNode.getProperty("hippo:version");
+        }
+        if(versionProperty == null && createIfNotExists) {
+            String prefix = initializeNode.getName().substring(0, initializeNode.getName().indexOf(":")+1);
+            versionProperty = initializeNode.setProperty(prefix+"version", new Value[0]);
+        }
+        return versionProperty;
+    }
+
     public UpdaterEngine(Session session) throws RepositoryException {
         this(session, Modules.getModules());
     }
@@ -134,26 +187,40 @@ public class UpdaterEngine {
         this.session = session;
         this.modules = new Vector<ModuleRegistration>();
         for (UpdaterModule module : new Modules<UpdaterModule>(allModules, UpdaterModule.class)) {
-            module.register(new ModuleRegistration(module));
+            ModuleRegistration registration = new ModuleRegistration(module);
+            module.register(registration);
+            modules.add(registration);
         }
         updaterSession = new UpdaterSession(session);
     }
 
     public boolean prepare() throws RepositoryException {
         // Obtain which version we are currently at
-        Node initializeNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
         Set<String> currentVersions = new HashSet<String>();
-        if(initializeNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
-            Value[] values = initializeNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
+
+        Property versionProperty = getOrCreateVersionProperty(false);
+        if(versionProperty != null) {
+            Value[] values = versionProperty.getValues();
             for (int i = 0; i < values.length; i++) {
                 currentVersions.add(values[i].getString());
             }
         }
+        StringBuffer logInfo = new StringBuffer();
+        for(String tag : currentVersions) {
+            logInfo.append(" ");
+            logInfo.append(tag);
+        }
+        log.info("Migration cycle starting with version tags:"+new String(logInfo));
 
         // Select applicable modules for the current version.
         for (Iterator<ModuleRegistration> iter = modules.iterator(); iter.hasNext();) {
             ModuleRegistration registration = iter.next();
             boolean isValid = false;
+            if(registration.startTag.size() == 0) {
+                log.warn("module "+registration.name+" did not specify start tag");
+                if(currentVersions.size() == 0)
+                    isValid = true;
+            }
             for (String requestedVersion : registration.startTag) {
                 if (currentVersions.contains(requestedVersion)) {
                     isValid = true;
@@ -180,7 +247,8 @@ public class UpdaterEngine {
                 if (!modified) {
                     for (String before : module.beforeModule) {
                         int index = -1;
-                        for (ListIterator<ModuleRegistration> findBefore = modules.listIterator(); findBefore.nextIndex() <= iter.previousIndex();) {
+                        for (ListIterator<ModuleRegistration> findBefore = modules.listIterator();
+                             findBefore.nextIndex() <= iter.previousIndex(); ) {
                             if (findBefore.next().name.equals(before)) {
                                 index = findBefore.previousIndex();
                                 break;
@@ -223,9 +291,10 @@ public class UpdaterEngine {
     }
 
     public void wrapup() throws RepositoryException {
-        Node initializeNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
+        Property versionProperty = getOrCreateVersionProperty(true);
+
         Set<String> currentVersions = new HashSet<String>();
-        Value[] values = initializeNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
+        Value[] values = versionProperty.getValues();
         for (int i = 0; i < values.length; i++) {
             currentVersions.add(values[i].getString());
         }
@@ -239,8 +308,15 @@ public class UpdaterEngine {
                 currentVersions.add(registration.endTag);
             }
         }
+        StringBuffer logInfo = new StringBuffer();
+        for(String tag : currentVersions) {
+            logInfo.append(" ");
+            logInfo.append(tag);
+        }
+        log.info("Migration cycle ending with version tags:"+new String(logInfo));
         String[] newVersions = currentVersions.toArray(new String[currentVersions.size()]);
-        initializeNode.setProperty(HippoNodeType.HIPPO_ACTIVE, newVersions);
+        versionProperty.setValue(newVersions);
+        versionProperty.getParent().save();
     }
 
     public static void migrate(Session session) {
@@ -249,8 +325,18 @@ public class UpdaterEngine {
                 session.getRootNode().addMixin("mix:referenceable");
                 session.save();
             }
-            if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) || !session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).hasNode(HippoNodeType.INITIALIZE_PATH)) {
-                log.info("no migration cycle because clean repository startup");
+            for(NodeIterator ii = session.getRootNode().getNodes(); ii.hasNext(); ) {
+                Node nn = ii.nextNode();
+            }
+            try {
+                session.getWorkspace().getNamespaceRegistry().getURI("hippo");
+            } catch(NamespaceException ex) {
+                log.info("no migration cycle because clean repository startup without hippo namespace");
+                return;
+            }
+            if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
+               !session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).hasNode(HippoNodeType.INITIALIZE_PATH)) {
+                log.info("no migration cycle because clean repository startup without hippo configuration");
                 return;
             }
             boolean updates;
@@ -261,10 +347,15 @@ public class UpdaterEngine {
                     log.info("migration update cycle starting");
                     try {
                         engine.update();
+                        log.info("migration cycle commit");
                         engine.commit();
+                        log.info("migration cycle save");
+                        session.save();
                     } catch(UpdaterException ex) {
+                        session.refresh(false);
                         log.error("error in migration cycle, skipping but might lead to serious errors");
                     } finally {
+                        log.info("migration cycle wrapup");
                         engine.wrapup();
                     }
                 }
@@ -278,6 +369,7 @@ public class UpdaterEngine {
     public void update() throws RepositoryException {
         UpdaterException exception = null;
         for (ModuleRegistration module : modules) {
+            log.info("migration update cycle for module "+module.name);
             for (ItemVisitor visitor : module.visitors) {
                 try {
                     updaterSession.getRootNode().accept(visitor);
@@ -299,7 +391,7 @@ public class UpdaterEngine {
     }
 
     public void commit() throws RepositoryException {
-        updaterSession.getRootNode().accept(new Cleaner(new ModuleRegistration(null)));
+        //updaterSession.getRootNode().accept(new Cleaner(new ModuleRegistration(null)));
         updaterSession.commit();
     }
 

@@ -62,11 +62,20 @@ public abstract class UpdaterItem implements Item {
         for (int index = 0; iter.hasNext(); index++) {
             if (iter.next() == this) {
                 iter.remove();
-                if (parent.children.containsKey(name))
-                    throw new RepositoryException("cannot rename to existing item");
+                if(parent.children.get(oldName).size() == 0) {
+                    parent.children.remove(oldName);
+                }
                 List<UpdaterItem> siblings = new LinkedList<UpdaterItem>();
+                if (parent.children.containsKey(name)) {
+                    siblings = parent.children.get(name);
+                } else {
+                    siblings = new LinkedList<UpdaterItem>();
+                }
                 siblings.add(this);
                 parent.children.put(name, siblings);
+                parent.reverse.remove(this);
+                parent.reverse.put(this, name);
+                return;
             }
         }
         throw new UpdaterException("internal error");
@@ -156,6 +165,9 @@ public abstract class UpdaterItem implements Item {
     }
 
     public void remove() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
+        if(UpdaterEngine.log.isDebugEnabled()) {
+            UpdaterEngine.log.debug("action remove "+getPath());
+        }
         String name = parent.reverse.remove(this);
         if (parent.children.containsKey(name)) {
             Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
