@@ -104,6 +104,7 @@ public interface HippoNodeType {
     final public static String HIPPO_CONTENT = "hippo:content";
     final public static String HIPPO_CONTENTRESOURCE = "hippo:contentresource";
     final public static String HIPPO_CONTENTROOT = "hippo:contentroot";
+    final public static String HIPPO_CONTENTDELETE = "hippo:contentdelete";
     final public static String HIPPO_COUNT = "hippo:count";
     final public static String HIPPO_DIRLEVELS = "hippo:dirlevels";
     final public static String HIPPO_DISCRIMINATOR = "hippo:discriminator";
