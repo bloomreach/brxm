@@ -187,18 +187,18 @@ public class DerivedDataEngine {
                                         Vector<Value> ancestors = new Vector<Value>();
                                         Node ancestor = modified;
                                         while(ancestor != null) {
-                                            try {
-                                                ancestor = ancestor.getParent();
-                                            } catch(ItemNotFoundException ex) {
-                                                ancestor = null; // valid exception outcome, no parent because we are at root
-                                            }
-                                            if(ancestor != null && ancestor.isNodeType("mix:referenceable")) {
+                                            if(ancestor.isNodeType("mix:referenceable")) {
                                                 try {
                                                     ancestors.add(valueFactory.createValue(ancestor.getUUID()));
                                                 } catch(UnsupportedRepositoryOperationException ex) {
                                                     // cannot happen because of check on mix:referenceable
                                                     logger.error("Impossible state reached");
                                                 }
+                                            }
+                                            try {
+                                                ancestor = ancestor.getParent();
+                                            } catch(ItemNotFoundException ex) {
+                                                ancestor = null; // valid exception outcome, no parent because we are at root
                                             }
                                         }
                                         parameters.put(propName, ancestors.toArray(new Value[ancestors.size()]));
