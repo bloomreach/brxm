@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -49,10 +50,12 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.ItemDefinition;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
@@ -171,46 +174,94 @@ final class UpdaterNode extends UpdaterItem implements Node {
         else
             nodeLocationChanged = (!parent.origin.isSame(origin.getParent()) || !origin.getName().equals(getName()));
 
+        if(UpdaterEngine.log.isDebugEnabled()) {
+            UpdaterEngine.log.debug("commit node "+getPath()+" origin "+(origin!=null?origin.getPath():"null")+(nodeTypesChanged?" type changed":"")+(nodeLocationChanged?" location changed":""));
+        }
+        
         if (!hollow && origin != null && origin.isNode()) {
             if(((Node)origin).isNodeType("jcr:versionable")) {
+                if(UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit checkout "+origin.getPath());
+                }
                 ((Node)origin).checkout();
             }
         }
         if (nodeTypesChanged) {
             if (!hollow) {
                 oldOrigin = origin;
-                origin = ((Node) parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
-                String[] mixins = getInternalProperty("jcr:mixinTypes");
-                if (mixins != null) {
-                    for (int i = 0; i < mixins.length; i++) {
-                        ((Node) origin).addMixin(mixins[i]);
+                if ((((Node)parent.origin).hasNode(getName())) &&
+                        ((Node)parent.origin).getNode(getName()).getDefinition().isAutoCreated() &&
+                        !((Node)parent.origin).getNode(getName()).getDefinition().allowsSameNameSiblings()) {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit autocreated "+origin.getPath());
                     }
+                    origin = ((Node)parent.origin).getNode(getName());
+                } else {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" type "+getInternalProperty("jcr:primaryType")[0]);
+                    }
+                    origin = ((Node)parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
                 }
             }
         } else {
             if (nodeLocationChanged) {
                 // first move item
+                if(UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit move "+origin.getPath()+" to "+parent.origin.getPath() + "/" + getName());
+                }
                 origin.getSession().move(origin.getPath(), parent.origin.getPath() + "/" + getName());
             }
         }
         if (!hollow) {
+            Set<String> curMixins = new TreeSet();
+            Set<String> newMixins = new TreeSet();
+            String[] mixins = getInternalProperty("jcr:mixinTypes");
+            if (mixins != null) {
+                for(String mixin : mixins) {
+                    newMixins.add(mixin);
+                }
+            }
+            if(((Node)origin).hasProperty("jcr:mixinTypes")) {
+                for(Value mixin : ((Node)origin).getProperty("jcr:mixinTypes").getValues()) {
+                    curMixins.add(mixin.getString());
+                }
+            }
+            for(String mixin : curMixins) {
+                if(!newMixins.contains(mixin)) {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit removeMixin "+origin.getPath()+" mixin "+mixin);
+                    }
+                    ((Node)origin).removeMixin(mixin);
+                }
+            }
+            for(String mixin : newMixins) {
+                if(!curMixins.contains(mixin)) {
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit addMixin "+origin.getPath()+" mixin "+mixin);
+                    }
+                    ((Node)origin).addMixin(mixin);
+                }
+            }
+
+            List<NodeType> nodetypes = new LinkedList<NodeType>();
+            NodeTypeManager ntMgr = origin.getSession().getWorkspace().getNodeTypeManager();
+            nodetypes.add(ntMgr.getNodeType(getInternalProperty("jcr:primaryType")[0]));
+            for(String mixin : newMixins) {
+                nodetypes.add(ntMgr.getNodeType(mixin));
+            }
             for (Map.Entry<String, List<UpdaterItem>> items : children.entrySet()) {
                 String name = items.getKey();
                 if (name.startsWith(":")) {
-                    // FIXME: mixins, protected, computed
                     name = name.substring(1);
                     Node node = (Node) origin;
 
                     //if(node.hasProperty(name) && node.getProperty(name).getDefinition().isProtected())
                     //continue;
 
-                    NodeType[] mixinNodeTypes = ((Node) origin).getMixinNodeTypes();
-                    NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
-                    nodeTypes[0] = ((Node) origin).getPrimaryNodeType();
-                    System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
                     boolean isValid = false;
-                    for (int i = 0; i < nodeTypes.length; i++) {
-                        PropertyDefinition[] defs = nodeTypes[i].getPropertyDefinitions();
+                    for(NodeType nodeType : nodetypes) {
+                        PropertyDefinition[] defs = nodeType.getPropertyDefinitions();
+                        boolean breakLoop = false;
                         for (int j = 0; j < defs.length; j++) {
                             if (defs[j].getName().equals("*")) {
                                 isValid = true;
@@ -221,19 +272,28 @@ final class UpdaterNode extends UpdaterItem implements Node {
                                     isValid = true;
                                 }
                                 // break out of the outermost loop
-                                i = nodeTypes.length;
+                                breakLoop = true;
                                 break;
                             }
                         }
+                        if(breakLoop)
+                            break;
                     }
-                    if (!isValid)
+                    if (!isValid) {
                         continue;
+                    }
 
                     if (items.getValue().size() > 0) {
                         UpdaterProperty property = (UpdaterProperty) items.getValue().get(0);
                         if (property.isMultiple()) {
+                            if(UpdaterEngine.log.isDebugEnabled()) {
+                                UpdaterEngine.log.debug("commit set multivalue property "+name+ " on "+getPath());
+                            }
                             ((Node) origin).setProperty(name, property.getValues());
                         } else {
+                            if(UpdaterEngine.log.isDebugEnabled()) {
+                                UpdaterEngine.log.debug("commit set singlevalue property "+name+ " on "+getPath());
+                            }
                             ((Node) origin).setProperty(name, property.getValue());
                         }
                     }
@@ -244,10 +304,20 @@ final class UpdaterNode extends UpdaterItem implements Node {
                 }
             }
             for (UpdaterItem item : removed) {
-                if (item.origin != null)
-                    item.origin.remove();
+                if (item.origin != null) {
+                    ItemDefinition definition = ( item.origin.isNode() ? ((Node)item.origin).getDefinition() : ((Property)item.origin).getDefinition() );
+                    if(UpdaterEngine.log.isDebugEnabled()) {
+                        UpdaterEngine.log.debug("commit remove old child "+item.origin.getPath());
+                    }
+                    if(!definition.isProtected()) {
+                        item.origin.remove();
+                    }
+                }
             }
             if (oldOrigin != null) {
+                if(UpdaterEngine.log.isDebugEnabled()) {
+                    UpdaterEngine.log.debug("commit remove old origin "+oldOrigin.getPath());
+                }
                 oldOrigin.remove();
             }
         }
@@ -553,8 +623,9 @@ final class UpdaterNode extends UpdaterItem implements Node {
         String name = parent.reverse.get(this);
         Iterator<UpdaterItem> iter = parent.children.get(name).iterator();
         for (int index = 0; iter.hasNext(); index++) {
-            if (iter.next() == this)
+            if (iter.next() == this) {
                 return index + 1;
+            }
         }
         throw new UpdaterException("internal error");
     }

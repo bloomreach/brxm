@@ -271,6 +271,10 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             // get the current root/system session for the default workspace for namespace and nodetypes init
             Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
 
+            if (upgradeEnabled) {
+                UpdaterEngine.migrate(jcrRootSession);
+            }
+
             try {
                 log.info("Initializing hippo namespace");
                 initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
@@ -278,10 +282,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
-            }
-
-            if (upgradeEnabled) {
-                UpdaterEngine.migrate(jcrRootSession);
             }
 
             try {

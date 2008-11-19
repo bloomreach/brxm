@@ -53,7 +53,6 @@ public class UpdaterTest extends TestCase {
 
     @Test
     public void test() throws RepositoryException {
-        Utilities.dump(session.getRootNode().getNode("test"));
         UpdaterEngine updater = new UpdaterEngine(session, new Modules());
         updater.update(new UpdaterItemVisitor.Default() {
                 @Override
@@ -68,7 +67,6 @@ public class UpdaterTest extends TestCase {
             }
         });
         updater.commit();
-        Utilities.dump(session.getRootNode().getNode("test"));
         session.save();
     }
 }
