@@ -31,8 +31,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
+import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.ContextBase;
 import org.hippoecm.hst.core.template.node.content.SourceRewriter;
 import org.hippoecm.hst.core.template.node.content.SourceRewriterImpl;
 import org.hippoecm.repository.api.HippoNode;

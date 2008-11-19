@@ -25,14 +25,11 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.query.ContextWhereClause;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
@@ -46,10 +43,9 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	public static final String DOCUMENT_TYPE = "documentType";
 	private String docType="";
 	
-	public void render(PageContext pageContext) throws TemplateException{
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-        URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+	public void render(PageContext pageContext, URLMapping urlMapping,
+			ContextBase ctxBase) throws TemplateException {
+		
         List<ELNode> wrappedNodes = new ArrayList<ELNode>();
         
         boolean params = false;

@@ -8,7 +8,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

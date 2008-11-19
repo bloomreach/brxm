@@ -76,7 +76,7 @@
     
     <tag>
         <name>module</name>
-        <tagclass>org.hippoecm.hst.core.template.tag.ModuleRenderTag</tagclass>
+        <tagclass>org.hippoecm.hst.core.template.tag.ModuleTag</tagclass>
         <body-content>JSP</body-content>
         <attribute>            
             <name>className</name>

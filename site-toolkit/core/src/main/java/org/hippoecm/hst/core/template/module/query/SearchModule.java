@@ -35,9 +35,9 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 
 public class SearchModule extends ModuleBase implements Search {
@@ -46,6 +46,7 @@ public class SearchModule extends ModuleBase implements Search {
     private int didYouMeanThreshold = DEFAULT_THRESHOLD;
     private int limit = DEFAULT_LIMIT;
     private int offset = DEFAULT_OFFSET;
+    // TODO depth is here for future seasons to search within a depth
     private int depth = DEFAULT_DEPTH;
     private boolean didYouMeanNeeded = DEFAULT_DIDYOUMEANNEEDED;
     private boolean excerptNeeded = DEFAULT_EXCERPTNEEDED;
@@ -295,7 +296,7 @@ public class SearchModule extends ModuleBase implements Search {
      * this render is a final, since it is delegate code, and is not meant for extending
      */
     @Override
-    public final void render(PageContext pageContext) throws TemplateException {
+    public final void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
 
         prepareSearch(pageContext);
         prepareStatement(pageContext);
@@ -309,9 +310,7 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-
+        
         String statement = getStatement();
         String querytext = getQueryText();
         String language = getLanguage();
@@ -417,7 +416,6 @@ public class SearchModule extends ModuleBase implements Search {
             log.warn("RepositoryException while executing search " + e.getMessage());
         }
 
-        super.render(pageContext);
     }
 
     private void logSearch(SearchResult searchResult) {

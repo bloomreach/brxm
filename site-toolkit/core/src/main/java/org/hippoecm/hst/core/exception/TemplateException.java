@@ -13,18 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.components.modules.content;
+package org.hippoecm.hst.core.exception;
 
-import javax.jcr.Node;
-
-import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
-
-public class ContentModuleNode extends ContentELNodeImpl{
+public class TemplateException extends Exception {
   
-	public ContentModuleNode(ContextBase ctxBase, Node node, URLMapping urlMapping){
-		super(node, urlMapping);
-	}	
-	
+    private static final long serialVersionUID = 1L;
+
+    public TemplateException() {
+    	 super();
+     }
+     
+     public TemplateException(String s) {
+    	 super(s);
+     }
+     
+     public TemplateException(Exception e) {
+    	 super(e);
+     }
 }

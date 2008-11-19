@@ -18,18 +18,18 @@ package org.hippoecm.hst.core.template.module;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 
 public interface Module {
-	public static final String HTTP_MODULEMAP_ATTRIBUTE  = HSTHttpAttributes.MODULE_RENDER_MAP_SESSION_ATTRIBUTE;
-	
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
-    public void render(PageContext pageContext) throws TemplateException;
+	public ExecutionResult execute(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException;
+	public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException;
+	public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase, ExecutionResult executionResult) throws TemplateException;
     void setModuleParameters(Map<String, String> parameters);
     public void init(HttpServletRequest request);
     public void setPageModuleNode(PageContainerModuleNode node);

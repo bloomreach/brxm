@@ -18,21 +18,18 @@ package org.hippoecm.hst.core.template.module;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 
 public abstract class ModuleBase implements Module {
 	protected PageContainerModuleNode pageContainerModule = null;
 	protected String var;
 	protected Map<String, String> moduleParameters;
-	
-	//public abstract String execute(HttpServletRequest request, HttpServletResponse response) throws TemplateException;
 	
 	public final void setPageModuleNode(PageContainerModuleNode node) {
 		this.pageContainerModule = node;
@@ -50,11 +47,6 @@ public abstract class ModuleBase implements Module {
 		this.var = var;
 	}
 
-	public String execute(HttpServletRequest request,
-			HttpServletResponse response) throws TemplateException {
-		return null;
-	}
-
 	public void init(HttpServletRequest request) {
 	}
 
@@ -62,11 +54,16 @@ public abstract class ModuleBase implements Module {
 		moduleParameters = parameters;
 	}
 
-	public void render(PageContext pageContext) throws TemplateException {		
+    
+	public ExecutionResult execute(PageContext pageContext,URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+		return null;
 	}
+
+	// Concrete module implementations can decide to need the executionResult by overriding this method and implementing there own execution result
+    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase, ExecutionResult executionResult) throws TemplateException{
+    	this.render(pageContext, urlMapping, ctxBase);
+    }
 	
-	public ContextBase getContentContextBase(HttpServletRequest request) {
-	    return (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);     
-	}
+	public abstract void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException;
 
 }

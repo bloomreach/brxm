@@ -16,64 +16,48 @@
 package org.hippoecm.hst.core.template.tag;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.template.module.Module;
-import org.hippoecm.hst.core.template.node.ModuleNode;
+import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/** 
- * @deprecated
+
+/**
+ * The tag class that performs the render() and or execute() methods in a module template (JSP).
  *
  */
-public class ModuleTag extends TagSupport {
+public class ModuleTag extends ModuleTagBase {
 	
-	private String className;
-	private String contextBaseRequestParameter;
-
-	@Override
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ModuleTag.class);
+	
+	public int doStartTag() throws JspException {		
+	    return EVAL_BODY_BUFFERED;
+	}
+	
 	public int doEndTag() throws JspException {
-		
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();	
-		HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-		ModuleNode moduleNode = (ModuleNode) request.getAttribute("currentModuleNode");
-		
-		Module module;
-		try {
-			module = getModule();
-		} catch (Exception e) {
-			throw new JspException(e);
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		PageContainerModuleNode pcm = null;
+		if (doExecute || doRender) {
+			pcm = (PageContainerModuleNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE);
 		}
-		//module.setContextBase(contextBase);
-/*		try {
-			module.setModuleNode(moduleNode);
-			module.execute(request, response);
-		} catch (TemplateException e) {
-			throw new JspException(e);
+		if (doExecute) {
+			doExecute(request, pcm);
 		}
-*/
-		return super.doEndTag();
+		
+		if (doRender) {
+		   try {
+		   doRender(request, pcm);
+		   } catch (JspException e) {
+               log.warn("error rendering module: " + e.getMessage());
+               log.debug("error rendering module: " + e);
+		       throw(e);
+		   }
+		}
+		return EVAL_PAGE;
 	}
-	
-	private Module getModule() throws Exception {
-		Object o = null;
-			o = Class.forName(getClassName()).newInstance();
-			if (!Module.class.isInstance(o)) {
-				throw new Exception(getClassName() + " does not implement the interface " + Module.class.getName());
-			}
-		return (Module) o;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-	
-	
-	
-
 }
+
+

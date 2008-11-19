@@ -21,8 +21,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.template.node.el.AbstractELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

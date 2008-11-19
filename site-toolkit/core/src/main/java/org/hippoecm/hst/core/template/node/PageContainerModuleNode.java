@@ -18,8 +18,8 @@ package org.hippoecm.hst.core.template.node;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

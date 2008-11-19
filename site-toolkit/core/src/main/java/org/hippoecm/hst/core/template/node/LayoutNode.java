@@ -20,7 +20,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 
 public class LayoutNode  extends TemplateNode{   
 	public static final String TEMPLATEPAGE_PROPERTY_NAME = "hst:template";
@@ -49,7 +49,7 @@ public class LayoutNode  extends TemplateNode{
     }
     
     public NodeList<LayoutAttributeNode> getSubNodes() throws RepositoryException {
-    	return new NodeList(contextBase, jcrNode, LayoutAttributeNode.class);
+    	return new NodeList<LayoutAttributeNode>(contextBase, jcrNode, LayoutAttributeNode.class);
     }
     
     

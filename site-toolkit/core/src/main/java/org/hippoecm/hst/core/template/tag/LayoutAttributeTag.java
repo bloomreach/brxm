@@ -24,7 +24,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
+import org.hippoecm.hst.core.filters.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
@@ -52,14 +52,14 @@ public class LayoutAttributeTag extends TagSupport {
         try {
         	pcNodeModules = pcNode.getModules();
 		} catch (RepositoryException e) {		
-			log.error("Cannot get modules for a pageNode", e);
+			log.warn("Cannot get modules for a pageNode", e);
 			pcNodeModules = new  NodeList<PageContainerModuleNode>();
 		}
         
         pcmList = pcNodeModules.getItems();
         
         index = 0;
-        log.info("DO START");
+        
         if (pcmList == null || pcmList.size() == 0) {
         	return SKIP_BODY;
         }

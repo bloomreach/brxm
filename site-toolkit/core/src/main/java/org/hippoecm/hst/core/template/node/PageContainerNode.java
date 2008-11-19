@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.template.node;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 
 public class PageContainerNode extends TemplateNode {
 	public static final String LAYOUT_ATTRIBUTE_PROPERTY = "hst:layoutAttribute";
@@ -29,7 +29,7 @@ public class PageContainerNode extends TemplateNode {
     
     
     public NodeList<PageContainerModuleNode> getModules() throws RepositoryException {
-    	return new NodeList(contextBase, getJcrNode(), PageContainerModuleNode.class) ;
+    	return new NodeList<PageContainerModuleNode>(contextBase, getJcrNode(), PageContainerModuleNode.class) ;
     }
     
     public String getLayoutAttributeValue() throws RepositoryException {
@@ -38,7 +38,6 @@ public class PageContainerNode extends TemplateNode {
     
     public PageContainerModuleNode getContainerModuleNodeByModuleName(String moduleName) throws RepositoryException {
     	NodeList<PageContainerModuleNode> modules = getModules();
-    	PageContainerModuleNode node = null; 
     	
     	/* search for the pagecontainernode that refers to the modulenode with the name to search for */
     	for (PageContainerModuleNode item : modules.getItems()) {		
@@ -52,7 +51,6 @@ public class PageContainerNode extends TemplateNode {
     
     public PageContainerModuleNode getContainerModuleNodeByName(String name) throws RepositoryException {
     	NodeList<PageContainerModuleNode> modules = getModules();
-    	PageContainerModuleNode node = null; 
     	
     	/* search for the pagecontainernode that refers to the modulenode with the name to search for */
     	for (PageContainerModuleNode item : modules.getItems()) {		    				

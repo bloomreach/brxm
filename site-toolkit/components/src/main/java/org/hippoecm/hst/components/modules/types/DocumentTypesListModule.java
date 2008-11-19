@@ -23,13 +23,11 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.TemplateException;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +40,10 @@ public class DocumentTypesListModule extends ModuleBase{
     private String namespace;
     
 	
-	public void render(PageContext pageContext) throws TemplateException{
-        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        final ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-        final Session jcrSession = ctxBase.getSession();
+	public void render(PageContext pageContext, URLMapping urlMapping,
+			ContextBase ctxBase) throws TemplateException {
+        
+		final Session jcrSession = ctxBase.getSession();
 
         boolean params = false;
         if (moduleParameters != null) {

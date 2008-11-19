@@ -18,18 +18,14 @@ package org.hippoecm.hst.components.modules.content;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.TemplateException;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +33,10 @@ public class ContentModule extends ModuleBase {
 
 	private static final Logger log = LoggerFactory.getLogger(ContentModule.class);
 	
-	public void render(PageContext pageContext) throws TemplateException {
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-
+	@Override
+	public void render(PageContext pageContext, URLMapping urlMapping,
+			ContextBase ctxBase) throws TemplateException {
+	
 		String path = null;
 		String uuid = null;
 		
@@ -63,9 +60,6 @@ public class ContentModule extends ModuleBase {
             pageContext.setAttribute(getVar(),null);
             return;
         }
-		
-		ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-
 		ContentModuleNode contentModuleNode = null;
 		Node node=null;
 		
@@ -84,10 +78,7 @@ public class ContentModule extends ModuleBase {
 				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
 			}
 		}		
-	
-		URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 		contentModuleNode = new ContentModuleNode(ctxBase, node, urlMapping);
-
 		pageContext.setAttribute(getVar(), contentModuleNode);
 	}
 }

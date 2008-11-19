@@ -15,23 +15,22 @@
  */
 package org.hippoecm.hst.core.template.tag;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.template.ModuleRenderAttributes;
-import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.Module;
+import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
-import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,37 +47,41 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     protected String var;
     protected boolean doExecute = false;
     protected boolean doRender = true;
+    protected ExecutionResult executionResult;
     
     private static final Logger log = LoggerFactory.getLogger(ModuleTagBase.class);
     
     protected void doExecute(HttpServletRequest request, PageContainerModuleNode pcm) {           
-        PageContainerNode pcNode = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);
-        PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);            
-        ModuleRenderAttributes attributes = new ModuleRenderAttributes(pageNode.getName(), pcNode.getName(), pcm.getName(), getClassName());
-        addModuleMapAttribute(request, attributes);
+        try {
+            Module module = getModule();
+            module.setVar(var);
+            module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
+            module.setModuleParameters(parameters);
+            URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+            ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
+            
+            log.debug("Executing module '" + className + "' now");
+            
+            this.executionResult = module.execute(pageContext,urlMapping, ctxBase);
+            
+        } catch (Exception e) {
+             log.warn("Error in doExecute : " + e.getMessage());
+         }
     }
     
     protected void doRender(HttpServletRequest request, PageContainerModuleNode pcm) throws JspException {           
-        try {
-            Module module = getModule();
+           try {
+               Module module = getModule();
                module.setVar(var);
                module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
                module.setModuleParameters(parameters);
-               module.render(pageContext);
+               URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+               ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
+               module.render(pageContext,urlMapping, ctxBase, this.executionResult);
             } catch (Exception e) {
                 throw new JspException(e);
             }
     }
-    
-    protected final void addModuleMapAttribute(HttpServletRequest request, ModuleRenderAttributes renderAttributes) {
-        List moduleList = (List) request.getSession().getAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE);
-        if (moduleList == null) {
-            moduleList = new ArrayList();
-        }
-       
-        moduleList.add(renderAttributes);
-        request.getSession().setAttribute(Module.HTTP_MODULEMAP_ATTRIBUTE, moduleList);    
-   }
     
     protected final PageContainerModuleNode getPageModuleNode(HttpServletRequest request, String moduleName)  throws RepositoryException {
         PageContainerNode pcn = (PageContainerNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_CONTAINER_NAME_REQ_ATTRIBUTE);  
@@ -102,7 +105,6 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     
     protected final Module getModule() throws Exception {
         Object o = null;
-        log.info("Create instance of class " + getClassName());
         o = Class.forName(getClassName()).newInstance();
         if (!Module.class.isInstance(o)) {
             throw new Exception(getClassName() + " does not implement the interface " + Module.class.getName());
@@ -129,7 +131,9 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     }
 
     public void setExecute(String execute) {
-        doExecute = execute.toLowerCase().trim().equals("true");
+    	if(execute!=null) {
+    		doExecute = "true".equals(execute.toLowerCase().trim());
+    	}
     }
     
     public String getVar() {
@@ -149,7 +153,9 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     }
     
     public void setRender(String render) {
-        doRender = render.toLowerCase().trim().equals("true");
+    	if(render != null) {
+    		doRender = "true". equals(render.toLowerCase().trim());
+    	}
     }
     
     public String getRender() {

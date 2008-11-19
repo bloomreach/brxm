@@ -17,7 +17,7 @@
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 
 public class TemplatePartNode extends TemplateNode {
     public TemplatePartNode(ContextBase contextBase, String relativePath) throws RepositoryException {

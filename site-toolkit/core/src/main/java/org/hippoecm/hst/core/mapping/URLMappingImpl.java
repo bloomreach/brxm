@@ -36,8 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.Timer;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.filters.HstBaseFilter;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -80,7 +80,7 @@ public class URLMappingImpl implements URLMapping {
             // TODO when the configuration is a combination of multiple facetselects, we need to add all canonical path
             // configurations. currently, only the base path is added
             
-            Node siteMapRootNode = hstConf.getNode(HstFilterBase.SITEMAP_RELATIVE_LOCATION);
+            Node siteMapRootNode = hstConf.getNode(HstBaseFilter.SITEMAP_RELATIVE_LOCATION);
             siteMapRootNodePath = siteMapRootNode.getPath();
             try {
                 if (siteMapRootNode.hasProperty("hst:entrypointid")

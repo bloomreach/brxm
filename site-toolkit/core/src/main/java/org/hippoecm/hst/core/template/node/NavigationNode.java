@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.template.node;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 
 public class NavigationNode extends TemplateNode {
 	
@@ -32,7 +32,7 @@ public class NavigationNode extends TemplateNode {
 	}
 	
 	 public NodeList<NavigationItemNode> getNavigationItems() throws RepositoryException {
-	    return new NodeList(contextBase, getJcrNode(), NavigationItemNode.class) ;
+	    return new NodeList<NavigationItemNode>(contextBase, getJcrNode(), NavigationItemNode.class) ;
 	 }
 	
 }

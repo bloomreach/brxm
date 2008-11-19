@@ -26,10 +26,10 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.filters.HstBaseFilter;
+import org.hippoecm.hst.core.filters.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.ContextBase;
-import org.hippoecm.hst.core.template.HstFilterBase;
-import org.hippoecm.hst.core.template.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;

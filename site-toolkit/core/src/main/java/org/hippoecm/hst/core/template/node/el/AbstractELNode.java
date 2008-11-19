@@ -32,7 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.slf4j.Logger;

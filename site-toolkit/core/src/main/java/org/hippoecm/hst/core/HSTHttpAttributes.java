@@ -32,8 +32,5 @@ public interface HSTHttpAttributes {
     
     public static final String REQUEST_IGNORE_HSTPROCESSING_REQ_ATTRIBUTE = "ignore.hst.proccessing";
     
-    //session attributes
-    public static final String MODULE_RENDER_MAP_SESSION_ATTRIBUTE = "";
-    
-    
+    public static final String  MODULE_RENDER_MAP_SESSION_ATTRIBUTE = "module.render.map.session.attr";
 }

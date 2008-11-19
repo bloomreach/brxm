@@ -21,7 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.template.ContextBase;
+import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 public interface URLMapping {
