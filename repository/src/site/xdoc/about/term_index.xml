@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 649 terms</span>
+      <span class="shortdesc">Term index, 664 terms</span>
       <table>
         <tr>
           <th>Term</th>
@@ -1010,6 +1010,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/requirements.html#derby_logo">derby logo</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/custom/jcr/reference/derived_data.html#Derived_Data">Derived Data</a>
           </td>
           <td>Derived Data</td>
@@ -1524,6 +1530,18 @@
             <a href="../delve_into/sysadmin/installation/in_application_server.html#Glassfish_and_Ubuntu">Glassfish and Ubuntu</a>
           </td>
           <td>Deploying in Application Server</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#glassfish_logo">glassfish logo</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#glassfish_logo">glassfish logo</a>
+          </td>
+          <td>Requirements</td>
         </tr>
         <tr>
           <td>
@@ -2388,6 +2406,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/installation/index.html#jboss_logo">jboss logo</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#JBoss_logo">JBoss logo</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/custom/jcr/jcr.html#JCR_Basics">JCR Basics</a>
           </td>
           <td>JCR Basics</td>
@@ -2403,6 +2433,12 @@
             <a href="../delve_into/custom/jcr/index.html#JCR_Interface">JCR Interface</a>
           </td>
           <td>JCR Interface</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/index.html#jetty_logo">jetty logo</a>
+          </td>
+          <td>Installation</td>
         </tr>
         <tr>
           <td>
@@ -2445,6 +2481,12 @@
             <a href="../delve_into/web/add-ons/howto/index.html#Learn_how_to_make_your_own_content_add-ons_">Learn how to make your own content add-ons.</a>
           </td>
           <td>Howto</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#linux_logo">linux logo</a>
+          </td>
+          <td>Requirements</td>
         </tr>
         <tr>
           <td>
@@ -2595,6 +2637,12 @@
             <a href="../delve_into/custom/howto/editing_template_plugin.html#My_Favorite_Developer_Template_Plugin">My Favorite Developer Template Plugin</a>
           </td>
           <td>Create an Editing Template Plugin</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#MySQL_logo">MySQL logo</a>
+          </td>
+          <td>Requirements</td>
         </tr>
         <tr>
           <td>
@@ -3007,6 +3055,12 @@
         <tr>
           <td>
             <a href="../delve_into/sysadmin/requirements.html#Operating_System">Operating System</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#oracle_logo">oracle logo</a>
           </td>
           <td>Requirements</td>
         </tr>
@@ -3456,6 +3510,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/requirements.html#Solaris_logo">Solaris logo</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/cms_admins/howto/start_CMS.html#Start_CMS">Start CMS</a>
           </td>
           <td>Start CMS</td>
@@ -3516,9 +3576,21 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/requirements.html#Sun_logo">Sun logo</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/custom/jcr/reference/derived_data.html#Supplying_the_method_that_computes_the_derived_property">Supplying the method that computes the derived property</a>
           </td>
           <td>Derived Data</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#Supported_Stacks">Supported Stacks</a>
+          </td>
+          <td>Requirements</td>
         </tr>
         <tr>
           <td>
@@ -3601,6 +3673,18 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/installation/index.html#tomcat_logo">tomcat logo</a>
+          </td>
+          <td>Installation</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#tomcat_logo">tomcat logo</a>
+          </td>
+          <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/sysadmin/installation/install_tomcat.html#Tomcat,_install">Tomcat, install</a>
           </td>
           <td>Install Tomcat</td>
@@ -3640,6 +3724,12 @@
             <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Type_in_editing_region">Type in editing region</a>
           </td>
           <td>Type in editing region</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/requirements.html#Unix_logo">Unix logo</a>
+          </td>
+          <td>Requirements</td>
         </tr>
         <tr>
           <td>

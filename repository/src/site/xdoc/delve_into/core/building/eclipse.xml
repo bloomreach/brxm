@@ -60,7 +60,7 @@
       <source>~/> mvn -Declipse.workspace=&lt;path-to-eclipse-workspace&gt; eclipse:add-maven-repo</source>
       <p> 
         Import the Eclipse update site bookmarks file 
-        <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/bookmark.xml"><b>
+        <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/bookmark.xml"><b>
         ~/hippo-ecm/tools/eclipse/bookmark.xml</b></a> using the Eclipse update manager.
         <br/><br/>
         This will add update sites for the following Eclipse plugins which need to be installed:
@@ -115,7 +115,7 @@
         <li>
           <p>
             <b>Windows: </b> Open a command shell, go to the <b>~\hippo-ecm\tools\eclipse</b> directory and run the 
-            <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.bat"><b>
+            <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.bat"><b>
             createlinks.bat</b></a> script.
           </p>
           <p>
@@ -130,7 +130,7 @@
         <li>
           <p>
             <b>Unix: </b> Open a command shell, go to the <b>~/hippo-ecm/tools/eclipse</b> directory and run the 
-            <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.sh"><b>
+            <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/createlinks.sh"><b>
             createlinks.sh</b></a> script.
           </p>
         </li>
@@ -182,7 +182,7 @@
       </ol>     
       <p>
         As a final step you need to run the 
-        <a href="https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/monkey/prepareProjects.gm">
+        <a href="http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/tools/eclipse/monkey/prepareProjects.gm">
         <b>prepareProjects.gm</b></a> script that you can find under
         the <i>Prepare Hippo ECM projects</i> menu item in the <i>Groovy Monkey</i> Eclipse menu.
         This script will fix some project dependencies that were not set correctly by

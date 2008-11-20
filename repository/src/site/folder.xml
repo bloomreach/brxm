@@ -36,12 +36,20 @@
    fullname='delve_into/core/building/eclipse.xml'
    relpath='delve_into/core/building'
   >eclipse</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/core/building/eclipse.xml~'
+   relpath='delve_into/core/building'
+  >eclipse</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/core/building/maven.xml'
+   relpath='delve_into/core/building'
+  >maven</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/core/building/maven.xml~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
@@ -311,6 +319,10 @@
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/requirements.xml'
+   relpath='delve_into/sysadmin'
+  >requirements</file>
+    <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/requirements.xml~'
    relpath='delve_into/sysadmin'
   >requirements</file>
    </folder>

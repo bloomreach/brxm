@@ -379,6 +379,10 @@
    <index>Java application server</index>
    <index>WAR</index>
    <index>EAR</index>
+   <img>tomcat logo</img>
+   <img>jetty logo</img>
+   <img>glassfish logo</img>
+   <img>jboss logo</img>
   </document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container
    <section>Deploying in Servlet Container</section>
    <shortdesc>Get Hippo CMS up and running 
@@ -404,6 +408,17 @@
   </document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
    <section>Requirements</section>
    <shortdesc>What do you need to run Hippo CMS?</shortdesc>
+   <subsection>Supported Stacks</subsection>
+   <img>MySQL logo</img>
+   <img>oracle logo</img>
+   <img>derby logo</img>
+   <img>tomcat logo</img>
+   <img>glassfish logo</img>
+   <img>JBoss logo</img>
+   <img>Sun logo</img>
+   <img>linux logo</img>
+   <img>Solaris logo</img>
+   <img>Unix logo</img>
    <subsection>Operating System</subsection>
    <subsection>Java</subsection>
    <subsection>Java Servlet Container</subsection>

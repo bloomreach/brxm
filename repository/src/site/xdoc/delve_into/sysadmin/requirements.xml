@@ -30,42 +30,278 @@
 
       <subsection name="Supported Stacks">
 
-       Unfinished.
+   <span class='hallo'>Unfinished.</span>
+
+
+ <div class='vink'>
+  <table>
+  <tr>
+   <th colspan='2'></th>
+   <th colspan='5'>(almost) POSIX compatible OS'ses</th>
+   <th colspan='4'>Microsoft OS'ses</th>
+  </tr>
+  <tr>
+   <th>program<br/>type</th>
+   <th>program</th>
+   <th>Linux</th>
+   <th>Solaris</th>
+   <th>Mac<br/>OS X</th>
+   <th>HP/UX</th>
+   <th>Other<br/> POSIX</th>
+   <th>Windows<br/> XP</th>
+   <th>Windows<br/> Vista</th>
+   <th>MS server<br/> 2002</th>
+   <th>MS server<br/> 2003</th>
+  </tr>
+  <tr>
+   <th rowspan='4'>Java<br/>container</th> 
+   <th>JBoss</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>Glassfish 2UR2</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>Tomcat 6.0</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+  </tr>
+  <tr>
+   <th>Tomcat 5.5</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+   <td><span class='warn'>1</span></td>
+  </tr>
+  <tr>
+   <th rowspan='2'>Java</th> 
+   <th>SUN JVM 6</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>SUN JVM 5</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th rowspan='4'>Database</th> 
+   <th>MySQL</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>Derby</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>Oracle</th> 
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  <tr>
+   <th>MS SQLserver</th> 
+   <td><span class='ko'>X</span></td>
+   <td><span class='ko'>X</span></td>
+   <td><span class='ko'>X</span></td>
+   <td><span class='ko'>X</span></td>
+   <td><span class='ko'>X</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+  </tr>
+  </table>
+ </div>
+
+  <p>1: Tomcat runs slow on MS OS'ses so is preferably run on <span class='posix'>(allmost) POSIX compliant OS'ses.</span>  
+   The cause is that Tomcat makes excessive use of thread switching, which eventually has to be taken care of
+   by the OS and MS OS's are not very good at that.
+ </p>
+
  
        <div class='stack'>
         <table>
-         <tr>
-          <td>Database</td>
-          <td>
-            <div>
-             <img src='../../images/derby_logo.png' alt='derby logo'/>
-             <br/>Derby &gt; 10.0
-	    </div>
 
-            <div>
-             <img src='../../images/logo_mysql_sun_a.gif' alt='MySQL logo'/>
-              <br/>MySQL 
-	    </div>
-            
-           </td>
+         <tr>
+          <td>Site<br/>toolkit</td>
+          <td colspan='0'>Hippo JSP toolkit</td>  
 	 </tr>
 
          <tr>
-          <td>Java container</td>
-           <td><img src='http://tomcat.apache.org/images/tomcat.gif' alt='tomcat logo'/>
-           Tomcat 6.0</td>
+          <td>CMS</td>
+          <th colspan='0'>Hippo CMS 7</th>           
+	 </tr>
+
+         <tr>
+          <td>Database</td>          
+          <td>
+            <table>
+             <tr>
+              <td>
+               <img src='../../images/logo_mysql_sun_a.gif' alt='MySQL logo'/>
+	      </td>
+              <td>
+               <img src='../../images/oracle_icon.png' alt='oracle logo'/>
+	      </td>
+              <td>
+               <img src='../../images/derby_logo.png' alt='derby logo'/>
+	      </td>
+	     </tr>
+             <tr>
+              <td>
+               MySQL
+	      </td>
+              <td>
+               Oracle
+	      </td>
+              <td>
+               Derby &gt; 10.0
+	      </td>
+	     </tr>
+	    </table>
+	  </td>
+          <td>
+           MS SQLserver
+          </td>
+	 </tr>
+
+         <tr>
+          <td>Java<br/>container</td>
+          <td>
+            <table>
+             <tr>
+              <td>
+               <img src='../../images/tomcat_icon.png' alt='tomcat logo'/>
+	      </td>
+              <td>
+               <img src='../../images/glassfish_icon.png' alt='glassfish logo'/>
+	      </td>
+              <td>
+               <img src='../../images/jboss_icon.png' alt='JBoss logo'/>
+	      </td>
+	     </tr>
+             <tr>
+              <td>
+               Tomcat 6.0 or 5.5
+	      </td>
+              <td>
+               glassfish 2UR2 aka<br/>Sun Java<br/>Application Server 9.1 
+	      </td>
+              <td>
+               JBoss
+	      </td>
+	     </tr>
+	    </table>
+	  </td>
 	 </tr>
 
          <tr>
           <td>Java</td>
-           <td><img src='http://java.sun.com/im/logo_sun_small_sdn.gif' alt='Sun logo'/>
-           Sun's JVM 6</td>    
+          <td colspan='0'>
+           <img src='http://java.sun.com/im/logo_sun_small_sdn.gif' alt='Sun logo'/><br/>
+           Sun's JVM 6 or 5
+          </td>    
 	 </tr>
 
          <tr>
           <td>OS</td>
-          <td><img src='../../images/Tux.png' alt='linux logo'/> Linux &gt;= 2007</td>
-         </tr>
+          <td>
+            <table>
+             <tr>
+               <td>
+                <img src='../../images/Tux_icon.png' alt='linux logo'/>
+	      </td>
+               <td>
+                <img src='../../images/solaris_icon.png' alt='Solaris logo'/>
+	      </td>
+               <td>
+                <img src='../../images/solaris_icon.png' alt='Unix logo'/>
+	      </td>
+	     </tr>
+             <tr>
+              <td>
+                   Linux with kernel 2.6
+	      </td>
+              <td>
+                   Solaris
+	      </td>
+              <td>
+                   Unix
+	      </td>
+	     </tr>
+	    </table>
+	  </td>
+          <td>
+            MS XP
+	  </td>
+	 </tr>
+
 	</table>
        </div>
 
