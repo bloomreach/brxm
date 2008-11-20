@@ -32,14 +32,16 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.hippoecm.tools.importer.api.ImportException;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class ExternalContentImportMain {
 
     private static final String DEFAULT_CONFIG = "import.properties";
     private static Configuration config;
 
-    private static Logger log = Logger.getLogger(ExternalContentImportMain.class);
+    private static Logger log = LoggerFactory.getLogger(ExternalContentImportMain.class);
 
     private ExternalContentImportMain() {
     }
@@ -49,7 +51,7 @@ public class ExternalContentImportMain {
      * @throws RepositoryException 
      * @throws IOException 
      */
-    public static void main(String[] args) throws IOException, RepositoryException {
+    public static void main(String[] args) throws ImportException {
 
         if (log.isDebugEnabled()) {
             log.debug("Content import starting.");
