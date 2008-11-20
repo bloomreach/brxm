@@ -158,8 +158,10 @@ repository is;
    
    <document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation</document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat</document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements</document></folder><folder>user
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation
+    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat</document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
+    <empty_elem>&lt;th colspan='2'/&gt;</empty_elem></document></folder><folder>user
    
    <folder>cms_admins
    

@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">127 errors and/or todos in 65 out of 169 documents (38%).</span>
+      <span class="shortdesc">129 errors and/or todos in 67 out of 169 documents (39%).</span>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
@@ -40,7 +40,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 8">
+      <subsection name="Documents with empty elements: 10">
         <ol>
           <li>
             <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
@@ -63,6 +63,18 @@
             <a href="./delve_into/custom/jcr/jcr_dropbox_example.html">jcr_dropbox_example: Demo on interfacing with Hippo ECM Repository</a>
             <ul>
               <li>&lt;p/&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/installation/index.html">index: Installation</a>
+            <ul>
+              <li>&lt;td/&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/requirements.html">requirements: Requirements</a>
+            <ul>
+              <li>&lt;th colspan='2'/&gt;</li>
             </ul>
           </li>
           <li>
