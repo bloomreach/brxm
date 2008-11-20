@@ -15,10 +15,11 @@
  */
 package org.hippoecm.tools.importer;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,53 +27,88 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.tools.importer.api.Content;
+import org.hippoecm.tools.importer.api.Context;
+import org.hippoecm.tools.importer.api.Converter;
+import org.hippoecm.tools.importer.api.ImportException;
+import org.hippoecm.tools.importer.api.Mapper;
+import org.hippoecm.tools.importer.api.Mapping;
+import org.hippoecm.tools.importer.content.FolderContent;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class ExternalContentImport {
 
     final static String SVN_ID = "$Id$";
-    
+
     private static final String JCR_RMI_URL = "repository.rmiurl";
     private static final String JCR_USER = "repository.username";
     private static final String JCR_PASS = "repository.password";
     private static final String JCR_PATH = "repository.path";
-    private static final String FILE_PATH = "filesystem.path";
-    private static final String DOCUMENT_CONVERTER = "contentimporter";
-    
-    private static final String DEFAULT_DOCUMENT_CONVERTER = "org.hippoecm.tools.importer.SimpleXmlImporter";
 
+    private static final String FILE_PATH = "filesystem.path";
+
+    private static final String MAPPER_PREFIX = "mapper";
+    private static final String CONVERTER_PREFIX = "converter";
 
     private final String rmiurl;
     private final String username;
     private final String password;
     private String repopath;
-    private final String filepath;
+    private String filepath;
+    private boolean overwrite;
 
     private final Session session;
-    private ContentImporter contentImporter;
-    
     private final Node baseNode;
-    private Node currentNode;
 
-    private static Logger log = Logger.getLogger(ExternalContentImport.class);
+    private Mapper mapper;
+    private Map<String, Converter> converters;
 
-    public ExternalContentImport(Configuration config) throws IOException, RepositoryException {
+    private static Logger log = LoggerFactory.getLogger(ExternalContentImport.class);
+
+    public ExternalContentImport(Configuration config) throws ImportException {
         rmiurl = config.getString(JCR_RMI_URL);
         username = config.getString(JCR_USER);
         password = config.getString(JCR_PASS);
         repopath = config.getString(JCR_PATH);
         filepath = config.getString(FILE_PATH);
 
-        // document converter
-        String converter = config.getString(DOCUMENT_CONVERTER);
-        if (converter == null || "".equals(converter)) {
-            converter = DEFAULT_DOCUMENT_CONVERTER;
-        }
+        overwrite = config.getBoolean("overwrite", true);
+        log.info("Overwriting existing content: " + overwrite);
 
         try {
-            contentImporter = (ContentImporter) Class.forName(converter).newInstance();
+            // document mapper
+            String mapperClassName = config.getString(MAPPER_PREFIX);
+            if (mapperClassName == null || "".equals(mapperClassName)) {
+                throw new ImportException("No mapper class specified");
+            }
+            mapper = (Mapper) Class.forName(mapperClassName).newInstance();
+            mapper.setup(config.subset(MAPPER_PREFIX));
+
+            converters = new TreeMap<String, Converter>();
+            Iterator<String> handlerIter = config.getKeys(CONVERTER_PREFIX);
+            while (handlerIter.hasNext()) {
+                String key = handlerIter.next();
+                String[] elements = StringUtils.split(key, '.');
+                if (elements.length == 2) {
+
+                    // document converter
+                    String importerClassName = config.getString(key);
+                    if (importerClassName == null || "".equals(importerClassName)) {
+                        throw new ImportException("No importer class specified");
+                    }
+                    Converter importer = (Converter) Class.forName(importerClassName).newInstance();
+                    importer.setup(config.subset(key));
+
+                    for (String nodeType : importer.getNodeTypes()) {
+                        converters.put(nodeType, importer);
+                    }
+                }
+            }
+
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("ContentImporter class not found: " + e.getMessage());
         } catch (InstantiationException e) {
@@ -81,36 +117,42 @@ public class ExternalContentImport {
             throw new IllegalArgumentException("ContentImporter class access exception: " + e.getMessage());
         }
 
-        // add trainling slash
-        if (!repopath.endsWith("/")) {
-            repopath = repopath + "/";
+        try {
+            // add trailing slash
+            if (!repopath.endsWith("/")) {
+                repopath = repopath + "/";
+            }
+
+            File file = new File(filepath);
+            log.info("Repository : " + rmiurl);
+            log.info("user       : " + username);
+            log.info("File path  : " + file.getCanonicalPath());
+            log.info("Repo path : " + repopath);
+
+            // test and setup connection and login
+            HippoRepository repository;
+            // get the repository
+            repository = HippoRepositoryFactory.getHippoRepository(rmiurl);
+
+            // login and get session
+            session = repository.login(new SimpleCredentials(username, password.toCharArray()));
+
+            Context context = new ContextImpl(session.getRootNode(), null, overwrite);
+            baseNode = context.createPath(repopath);
+
+            Content content = new FolderContent(file, filepath);
+            Iterator<Content> contents = content.getChildren();
+            while (contents.hasNext()) {
+                Content childContent = contents.next();
+                contentImport(childContent);
+            }
+            session.save();
+
+        } catch (IOException ex) {
+            throw new ImportException("Import failed due to IO exception", ex);
+        } catch (RepositoryException ex) {
+            throw new ImportException("Import failed", ex);
         }
-
-        File file = new File(filepath);
-        log.info("Repository : " + rmiurl);
-        log.info("user       : " + username);
-        log.info("File path  : " + file.getCanonicalPath());
-        log.info("Repo path : " + repopath);
-        
-
-        // test and setup connection and login
-        HippoRepository repository;
-        // get the repository
-        repository = HippoRepositoryFactory.getHippoRepository(rmiurl);
-
-        // login and get session
-        session = repository.login( new SimpleCredentials(username, password.toCharArray()));
-
-        // setup converter
-        contentImporter.setup(config);
-        baseNode = contentImporter.createPath(session.getRootNode(), repopath);
-        session.save();
-     
-        // start the import
-        currentNode = baseNode;
-        contentImport(file);
-        session.save();
-
     }
 
     /**
@@ -118,34 +160,22 @@ public class ExternalContentImport {
      * @param file
      * @throws RepositoryException 
      */
-    private void contentImport(File file) throws IOException, RepositoryException {
-        if (file.isFile() && !file.getName().startsWith(".")) {
-            FileInputStream fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            try {
-                contentImporter.convertDocToJCR(currentNode, file.getName(), bis);
-            } finally {
-                try {
-                    bis.close();
-                    fis.close();
-                } catch (IOException e) {
-                    log.warn("Error while closing inputstream for " + file.getAbsolutePath());
-                }
+    private void contentImport(Content content) throws IOException, RepositoryException, ImportException {
+        Mapping mapping = mapper.map(content);
+        Converter converter = converters.get(mapping.getNodeType());
+
+        Context context = new ContextImpl(baseNode, mapping, overwrite);
+
+        Node childNode = converter.convert(context, content);
+
+        if (content.isFolder()) {
+            Iterator<Content> contents = content.getChildren();
+            while (contents.hasNext()) {
+                Content childContent = contents.next();
+                contentImport(childContent);
             }
-        } else if (file.isDirectory() && !file.getName().startsWith(".")) {
-            try {
-                currentNode = contentImporter.createFolder(currentNode, file.getName());
-            } catch (RepositoryException e) {
-                log.error("Unable to create collection: " + file.getName());
-            }
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (!contentImporter.skipPath(files[i].getAbsolutePath())) {
-                    contentImport(files[i]);
-                }
-            }
-            currentNode = currentNode.getParent();
             session.save();
         }
     }
+
 }
