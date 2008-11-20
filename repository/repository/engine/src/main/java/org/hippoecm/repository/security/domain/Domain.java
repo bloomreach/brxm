@@ -95,9 +95,8 @@ public class Domain {
         // loop over all the facetrules and authroles
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
+            Node child = iter.nextNode();
             try {
-                // TODO: Check on primaryType instead of node name?
-                Node child = iter.nextNode();
                 if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOMAINRULE)) {
                     domainRules.add(new DomainRule(child));
                 } else if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_AUTHROLE)) {
@@ -106,7 +105,8 @@ public class Domain {
                     log.warn("Unknown domain config node " + child.getName() + " found in " + node.getPath());
                 }
             } catch (RepositoryException e) {
-                log.warn("Unable to add FacetRule: {}", e.getMessage());
+                log.warn("Unable to add DomainRule: " + child.getPath() + " : " + e.getMessage());
+                log.debug("{}", e.getClass().getName(), e);
             }
         }
     }

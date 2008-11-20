@@ -476,8 +476,10 @@ public class HippoAccessManager implements AccessManager {
             } else {
                 return !match;
             }
+        }
+
         // is this a 'NodeName' facet rule?
-        } else if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
+        if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
             boolean match = false;
             if (facetRule.getType() == PropertyType.NAME) {
                 log.trace("Checking node : {} for nodeType: {}", nodeState.getNodeId(), facetRule);
@@ -495,8 +497,10 @@ public class HippoAccessManager implements AccessManager {
             } else {
                 return !match;
             }
-        } else if (matchPropertyWithFacetRule(nodeState, facetRule)) {
-            // check if node has the required property value
+        }
+
+        // check if node has the required property value
+        if (matchPropertyWithFacetRule(nodeState, facetRule)) {
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);
             return true;
         }
@@ -846,12 +850,31 @@ public class HippoAccessManager implements AccessManager {
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName()) && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
+            
+            // if this is a filter facet rule the property doesn't have to be set
+            if (rule.isFilter()) {
+                return true;
+            }
+            
             if(FacetAuthConstants.WILDCARD.equals(rule.getValue()) && !rule.isEqual()) {
                 return true;
             } else {
                 return false;
             }
         }
+
+        // Property is set
+
+        // Check WILDCARD match
+        if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
+            if (rule.isEqual()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // Check property value
         PropertyId propertyId = new PropertyId(nodeState.getNodeId(), rule.getFacetName());
         PropertyState state = (PropertyState) getItemState(propertyId);
         InternalValue[] iVals = state.getValues();
@@ -860,11 +883,6 @@ public class HippoAccessManager implements AccessManager {
             // types must match
             if (iVal.getType() != rule.getType()) {
                 continue;
-            }
-
-            // WILDCARD match
-            if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
-                match = true;
             }
 
             if (iVal.getType() == PropertyType.STRING) {

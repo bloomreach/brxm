@@ -38,7 +38,6 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class DomainRule implements Serializable {
 
-
     /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -53,35 +52,28 @@ public class DomainRule implements Serializable {
      */
     private Set<FacetRule> facetRules = new HashSet<FacetRule>();
 
-
     /**
      * The hash code
      */
     private transient int hash;
 
-
     /**
-     * Instantiate the domain rule with the given configuration node
+     * Instantiate the domain rule with the given configuration node. If
+     * a FacetRule of this DomainRule fails, the complete DomainRule must 
+     * fail to prevent widening the authorization on misconfiguration. 
      * @param node the node folding the domain rule configuration
      * @throws RepositoryException
      */
     public DomainRule(Node node) throws RepositoryException {
         if (node == null) {
-            throw new IllegalArgumentException("FacetRule node cannot be null");
+            throw new IllegalArgumentException("DomainRule node cannot be null");
         }
-
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                try {
-                    facetRules.add(new FacetRule(child));
-                } catch (RepositoryException e) {
-                    Domain.log.warn("Unable to parse FacetRule: {} for DomainRule: {}", e.getMessage(), node.getPath());
-                }
-            } else {
-                Domain.log.warn("Unknown domain rule config node " + child.getName() + " found in " + node.getPath());
+                facetRules.add(new FacetRule(child));
             }
         }
     }
@@ -100,7 +92,6 @@ public class DomainRule implements Serializable {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         Set<FacetRule> fr = getFacetRules();
-
         sb.append("DomainRule: ");
         sb.append("\r\n");
         for (FacetRule rule : fr) {
