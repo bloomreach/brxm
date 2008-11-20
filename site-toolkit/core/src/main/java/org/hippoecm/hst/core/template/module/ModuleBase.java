@@ -64,6 +64,8 @@ public abstract class ModuleBase implements Module {
     	this.render(pageContext, urlMapping, ctxBase);
     }
 	
-	public abstract void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException;
+	public  void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+	// to be implemented by subclasses
+	}
 
 }
