@@ -110,7 +110,7 @@ public class SecurityManager {
         String userId = creds.getUserID();
         try {
             if (providers.size() == 0) {
-                log.error("No security providers found: login is not be possible!");
+                log.error("No security providers found: login is not possible!");
                 return false;
             }
             
