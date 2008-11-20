@@ -22,8 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.PasswordHelper;
 import org.hippoecm.repository.security.ManagerContext;
 
 /**
