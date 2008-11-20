@@ -2,11 +2,11 @@ package org.hippoecm.hst.core.template.module.execution;
 
 public class NOOPExecutionResultImpl implements ExecutionResult{
 
-	private boolean succes = true;
+	private boolean success = true;
 	private String message;
 	
-	public void setSucces(boolean succes) {
-		this.succes = succes;
+	public void setSuccess(boolean success) {
+		this.success = success;
 	}
 
 	public void setMessage(String message) {
@@ -17,8 +17,8 @@ public class NOOPExecutionResultImpl implements ExecutionResult{
 		return message;
 	}
 
-	public boolean isSucces() {
-		return succes;
+	public boolean isSuccess() {
+		return success;
 	}
 
 }
