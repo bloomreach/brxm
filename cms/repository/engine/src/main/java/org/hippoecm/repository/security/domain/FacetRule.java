@@ -17,17 +17,15 @@ package org.hippoecm.repository.security.domain;
 
 import java.io.Serializable;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.NameFactory;
-import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
@@ -53,10 +51,6 @@ public class FacetRule implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * NameFactory for resolving JCR names
-     */
-    private static final NameFactory nameFactory = NameFactoryImpl.getInstance();
     /**
      * The property type: PropertyType.STRING or PropertyType.NAME
      * @see PropertyType
@@ -89,6 +83,11 @@ public class FacetRule implements Serializable {
     private final boolean equals;
 
     /**
+     * If the match is equals or not equals
+     */
+    private final boolean filter;
+
+    /**
      * The hash code
      */
     private transient int hash;
@@ -102,22 +101,87 @@ public class FacetRule implements Serializable {
         if (node == null) {
             throw new IllegalArgumentException("FacetRule node cannot be null");
         }
-        // all properties are mandatory
+        
+
+        // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
-        type = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
-        value = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+        filter = node.getProperty("hippo:filter").getBoolean();
 
+        int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
+        String tmpValue = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+        
         //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
-        Name name = null;
-        if (type == PropertyType.NAME && !value.equals(FacetAuthConstants.WILDCARD)) {
-            name = getQName(value, new SessionNamespaceResolver(node.getSession()));
+        Name tmpName = null;
+        if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
+            tmpName = NameParser.parse(tmpValue, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
+        } else if (tmpType == PropertyType.REFERENCE) {
+            // convert to a String matcher on UUID
+            tmpType = PropertyType.STRING;
+            tmpValue = parseReferenceTypeValue(node);
         }
-        valueName = name;
+        
 
         // Set the JCR Name for the facet (string)
-        facetName = getQName(facet, new SessionNamespaceResolver(node.getSession()));
+        facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
+
+        // set final values
+        type = tmpType;
+        value = tmpValue;
+        valueName = tmpName;
+    }
+    
+    /**
+     * Parse the facet rule of type Reference. Try to find the UUID of the 
+     * value of the FacetRule.
+     * @param facetNode the node of the FacetRule
+     * @return String the String representation of the UUID
+     * @throws RepositoryException
+     */
+    private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
+        String uuid = null;
+        String pathValue = facetNode.getProperty(HippoNodeType.HIPPO_VALUE).getString();
+        String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
+        if ("".equals(path)) {
+            uuid = facetNode.getSession().getRootNode().getUUID().toString();
+        } else {
+            try {
+                uuid = facetNode.getSession().getRootNode().getNode(path).getUUID().toString();
+            } catch (PathNotFoundException e) {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Path not found for facetRule ");
+                msg.append("'").append(facetNode.getPath()).append("' : ");
+                msg.append("FacetRule");
+                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPO_TYPE).getString()).append(")");
+                msg.append("[");
+                msg.append(facet);
+                if (equals) {
+                    msg.append(" == ");
+                } else {
+                    msg.append(" != ");
+                }
+                msg.append(pathValue).append("]");
+                throw new RepositoryException(msg.toString(), e);
+            } catch (UnsupportedRepositoryOperationException e) {
+                StringBuilder msg = new StringBuilder();
+                msg.append("Path not found for facetRule ");
+                msg.append("'").append(facetNode.getPath()).append("' : ");
+                msg.append("FacetRule");
+                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPO_TYPE).getString()).append(")");
+                msg.append("[");
+                msg.append(facet);
+                if (equals) {
+                    msg.append(" == ");
+                } else {
+                    msg.append(" != ");
+                }
+                msg.append(pathValue).append("]");
+                throw new RepositoryException(msg.toString(), e);
+            }
+        }
+        return uuid;
+        
     }
 
     /**
@@ -152,12 +216,21 @@ public class FacetRule implements Serializable {
     public Name getValueName() {
         return valueName;
     }
+
     /**
      * Check for equality or inequality
      * @return true if to rule has to check for equality
      */
     public boolean isEqual() {
         return equals;
+    }
+
+    /**
+     * Check for equality or inequality
+     * @return true if to rule has to check for equality
+     */
+    public boolean isFilter() {
+        return filter;
     }
 
     /**
@@ -172,8 +245,18 @@ public class FacetRule implements Serializable {
      * {@inheritDoc}
      */
     public String toString() {
-        String eq = isEqual() ? "==" : "!=";
-        return "FacetRule [" + facet + " " + eq + " " + value + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("FacetRule");
+        sb.append("(").append(type).append(")");
+        sb.append("[");
+        sb.append(facet);
+        if (equals) {
+            sb.append(" == ");
+        } else {
+            sb.append(" != ");
+        }
+        sb.append(value).append("]");
+        return sb.toString();
     }
 
     /**
@@ -201,17 +284,5 @@ public class FacetRule implements Serializable {
             hash = this.toString().hashCode();
         }
         return hash;
-    }
-    
-    /**
-     * Parses the prefixed JCR name and returns the resolved qualified name.
-     *
-     * @param name prefixed JCR name
-     * @return qualified name
-     * @throws IllegalNameException if the JCR name format is invalid
-     * @throws NamespaceException if the namespace prefix can not be resolved
-     */
-    private Name getQName(String name, NamespaceResolver resolver) throws IllegalNameException, NamespaceException {
-        return NameParser.parse(name, resolver, nameFactory);
     }
 }

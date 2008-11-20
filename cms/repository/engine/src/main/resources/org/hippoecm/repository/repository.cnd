@@ -176,12 +176,14 @@
 [hippo:facetrule] > nt:base
 - hippo:facet (string) mandatory 
 - hippo:value (string) mandatory 
-- hippo:type (string) = 'String' mandatory < 'String', 'Name'
+- hippo:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
 - hippo:equals (boolean) = 'true' mandatory autocreated
+- hippo:filter (boolean) = 'false' mandatory autocreated
 - hippo:description (string)
 
 [hippo:domainrule] > nt:base
 + * (hippo:facetrule) = hippo:facetrule multiple
+- hippo:description (string)
 
 [hippo:domain] > nt:base
 + * (hippo:domainrule) = hippo:domainrule multiple 
