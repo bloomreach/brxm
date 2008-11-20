@@ -13,17 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.api;
+package org.hippoecm.repository;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.StringTokenizer;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.jackrabbit.util.Base64;
 
 /**
  * <p>
@@ -95,19 +99,22 @@ public class PasswordHelper {
      * @throws IOException
      */
     public static byte[] base64ToByte(String data) throws IOException {
-        BASE64Decoder decoder = new BASE64Decoder();
-        return decoder.decodeBuffer(data);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Base64.decode(data, out);
+        return out.toByteArray();
     }
 
     /**
      * From a byte[] returns a base 64 representation
      * @param data byte[]
      * @return String
+     * @throws IOException 
      * @throws IOException
      */
-    public static String byteToBase64(byte[] data) {
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode(data);
+    public static String byteToBase64(byte[] data) throws IOException {
+        StringWriter writer = new StringWriter();
+        Base64.encode(data, 0, data.length, writer);
+        return writer.toString();
     }
 
     /**
@@ -131,10 +138,10 @@ public class PasswordHelper {
      * @param salt
      * @return String the base64 digest string
      * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
+     * @throws IOException 
      */
     public static String getDigest(String alogrithm, char[] plainText, byte[] salt) throws NoSuchAlgorithmException,
-            UnsupportedEncodingException {
+            IOException {
 
         // the null encryption :(
         if (alogrithm == null || alogrithm.length() == 0 || alogrithm.endsWith("plain")) {
@@ -170,9 +177,9 @@ public class PasswordHelper {
      * @param salt
      * @return
      * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
+     * @throws IOException 
      */
-    public static String getHash(char[] plainText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String getHash(char[] plainText) throws NoSuchAlgorithmException, IOException {
 
         // the null encryption :(
         if (hashingAlogrithm == null || hashingAlogrithm.length() == 0 || hashingAlogrithm.endsWith("plain")) {
@@ -189,10 +196,10 @@ public class PasswordHelper {
      * @param salt
      * @return String
      * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
+     * @throws IOException 
      */
     public static String buildHashString(String algorithm, char[] plainText, byte[] salt)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException {
+            throws NoSuchAlgorithmException, IOException {
         return "$" + algorithm + "$" + byteToBase64(salt) + "$" + getDigest(algorithm, plainText, salt);
     }
 
