@@ -179,26 +179,13 @@ public class M8 {
 
                 try {
                     EffectiveNodeType effnt = ntreg.registerNodeType(ntd);
-                    System.err.println("Added NodeType: " + ntd.getName().getLocalName());
                 } catch (NamespaceException ex) {
-                    System.err.println(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName());
                 } catch (InvalidNodeTypeDefException ex) {
-                    if (ex.getMessage().endsWith("already exists")) {
-                        System.err.println(ex.getMessage() + ". In " + cndName + " for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName());
-                    } else {
-                        System.err.println(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName());
-                    }
                 } catch (RepositoryException ex) {
-                    if (!ex.getMessage().equals("not yet implemented")) {
-                        System.err.println(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName());
-                        ex.printStackTrace();
-                    }
                 }
             }
         } catch (ParseException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
         } catch (RepositoryException ex) {
-            System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }
