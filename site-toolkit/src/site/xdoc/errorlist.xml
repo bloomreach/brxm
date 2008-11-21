@@ -24,18 +24,8 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">69 errors and/or todos in 36 out of 39 documents (92%).</span>
-      <subsection name="Documents with empty elements: 1">
-        <ol>
-          <li>
-            <a href="./delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
-            <ul>
-              <li>&lt;source/&gt;</li>
-            </ul>
-          </li>
-        </ol>
-      </subsection>
-      <subsection name="Documents lacking some information: 29">
+      <span class="shortdesc">63 errors and/or todos in 38 out of 41 documents (92%).</span>
+      <subsection name="Documents lacking some information: 30">
         <ol>
           <li>
             <a href="./about/term_index.html">term_index: </a>
@@ -51,7 +41,7 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
+            <a href="./delve_into/quickstart.html">quickstart: Quickstart</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -64,12 +54,6 @@
           </li>
           <li>
             <a href="./delve_into/reference/components/el-index.html">el-index: HST2 Expression Language</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/reference/components/el-queries.html">el-queries: Using dynamic queries in the expression language</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -212,9 +196,22 @@
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
           </li>
+          <li>
+            <a href="./errorlist.html">errorlist: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./index.html">index: What is Hippo Site Toolkit 2?</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
-      <subsection name="empty documents: 3">
+      <subsection name="empty documents: 4">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Change to the document title</a>
@@ -240,9 +237,16 @@
               <li>Document has template content: 'Change to document short description'.</li>
             </ul>
           </li>
+          <li>
+            <a href="./delve_into/reference/components/el-queries.html">el-queries: Change to the document title</a>
+            <ul>
+              <li>Document has template content: 'Change to the browser title'.</li>
+              <li>Document has template content: 'Change to the document title'.</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
-      <subsection name="rewrite documents: 4">
+      <subsection name="rewrite documents: 7">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Change to the document title</a>
@@ -258,6 +262,18 @@
           </li>
           <li>
             <a href="./about/use_cases.html">use_cases: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_meta_search.html">free_meta_search: Free Meta Search</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
             <ul>
               <li>this whole document.</li>
             </ul>
@@ -271,26 +287,20 @@
             </li>
             </ul>
           </li>
+          <li>
+            <a href="./delve_into/reference/components/el-queries.html">el-queries: Change to the document title</a>
+            <ul>
+              <li>this whole document.</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 4">
+      <subsection name="Add something to documents: 2">
         <ol>
           <li>
             <a href="./delve_into/how_does_hst2_work.html">how_does_hst2_work: How does Hippo Site Toolkit 2 work?</a>
             <ul>
               <li>More introduction</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
-            <ul>
-              <li>Try to present several possible next tasks to do.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
-            <ul>
-              <li>Try to present several possible next tasks to do.</li>
             </ul>
           </li>
           <li>
@@ -302,38 +312,8 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with unidentified TODO strings: 4">
+      <subsection name="Documents with unidentified TODO strings: 2">
         <ol>
-          <li>
-            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
-            <ul>
-              <li>How to search using metadata? Search, advanced Search, on metadata<span xmlns="" class="bad"> TODO </span>TODO</li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
-            <ul>
-              <li>Search, free text<span xmlns="" class="bad"> TODO </span>TODO</li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/reference/components/index.html">index: Components</a>
             <ul>
@@ -361,20 +341,8 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="multisection documents: 4">
+      <subsection name="multisection documents: 2">
         <ol>
-          <li>
-            <a href="./delve_into/howto/advanced_search.html">advanced_search: Advanced Search</a>
-            <ul>
-              <li>Has 2 sections.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free text Search</a>
-            <ul>
-              <li>Has 2 sections.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/howto/hello_world.html">hello_world: Hello World</a>
             <ul>

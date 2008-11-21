@@ -3,8 +3,10 @@
     Do not edit! This html file is automatically generated from an XML file
     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
   -->
-<document_list rootpath="../">.
-  <folder>about
+<document_list rootpath="../">
+  <folder>.
+   
+   <folder>about
    
    <document ext="xml" filename="architecture" relpath="about">Change to the document title
    <section>Change to the document title</section>
@@ -31,22 +33,14 @@
    <h4>First subsubsection title</h4>
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
-  </document></folder>
-  <folder>delve_into
+  </document></folder><folder>delve_into
    
    <document ext="xml" filename="how_does_hst2_work" relpath="delve_into">How does Hippo Site Toolkit 2 work?
    <section>How does Hippo Site Toolkit 2 work?</section>
    <subsection>Delve into Hippo Site Toolkit</subsection>
   </document><folder>howto
    
-   <document ext="xml" filename="advanced_search" relpath="delve_into/howto">Advanced Search
-   <section>Advanced Search</section>
-   <shortdesc>How to search using metadata?</shortdesc>
-   <index>Search, advanced</index>
-   <index>Search, on metadata</index>
-   <subsection>Subsection title</subsection>
-   <section>Next</section>
-  </document><document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook
+   <document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook
    <section>Create a Facebook</section>
    <shortdesc>Learn how to create a new document type, and how to use it in your website,
               by adding a simple facebook to the sample website.</shortdesc>
@@ -68,11 +62,25 @@
    <img>screenshot</img>
    <subsection>Browse your facebook!</subsection>
    <img>screenshot</img>
+  </document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
+   <section>Free Meta Search</section>
+   <shortdesc>How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</shortdesc>
+   <index>Search, advanced</index>
+   <index>Search, on metadata</index>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free text Search
    <section>Free text Search</section>
+   <shortdesc>How to add text search functionality to a website so that the user can perform text searches on all documents?</shortdesc>
    <index>Search, free text</index>
-   <subsection>First subsection</subsection>
-   <section>Next</section>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
    <section>Hello World</section>
    <shortdesc>Adding a simple page to your website saying hello to the world.</shortdesc>
@@ -97,7 +105,6 @@
    <section>Next Step</section>
   </document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart
    <section>Quickstart</section>
-   <shortdesc>Check it out yourself and install the quickstart demo site.</shortdesc>
    <subsection>Download</subsection>
    <subsection>Deploying in Tomcat 6.0</subsection>
   </document><folder>reference
@@ -110,9 +117,14 @@
    <subsection>Usage</subsection>
   </document><document ext="xml" filename="el-index" relpath="delve_into/reference/components">HST2 Expression Language
    <section>HST2 Expression Language</section>
-  </document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Using dynamic queries in the expression language
-   <section>Using dynamic queries in the expression language</section>
-   <subsection>-</subsection>
+  </document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Change to the document title
+   <section>Change to the document title</section>
+   <shortdesc>Using dynamic queries in the expression language.</shortdesc>
+   <subsection>First subsection title</subsection>
+   <index>index word</index>
+   <h4>First subsubsection title</h4>
+   <h4>First subsubsection title</h4>
+   <subsection>Second subsection title</subsection>
   </document><document ext="xml" filename="filters" relpath="delve_into/reference/components">HST2 Filters
    <section>HST2 Filters</section>
    <subsection>ModuleFilter</subsection>
@@ -204,7 +216,10 @@
    <shortdesc>
           The concepts and technical details of the Hippo Site Toolkit.
         </shortdesc>
-  </document></folder></folder>
-  errorlist
-  index
- </document_list>
+  </document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+  </document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?
+   <section>What is Hippo Site Toolkit 2?</section>
+   <subsection>Learn more</subsection>
+   <subsection>Delve into Hippo Site Toolkit</subsection>
+  </document></folder>
+</document_list>

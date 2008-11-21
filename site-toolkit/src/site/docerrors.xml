@@ -3,8 +3,10 @@
     Do not edit! This html file is automatically generated from an XML file
     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
   -->
-<document_list rootpath="./">.
-  <folder>about
+<document_list rootpath="./">
+  <folder>.
+   
+   <folder>about
    
    <document ext="xml" filename="architecture" relpath="about">Change to the document title
     <empty>Document has template content: 'Change to the browser title'.</empty>
@@ -20,27 +22,15 @@
     <empty>Document has template content: 'Change to the browser title'.</empty>
     <empty>Document has template content: 'Change to the document title'.</empty>
     <empty>Document has template content: 'Change to document short description'.</empty>
-    <rewrite>this whole document.</rewrite></document></folder>
-  <folder>delve_into
+    <rewrite>this whole document.</rewrite></document></folder><folder>delve_into
    
    <document ext="xml" filename="how_does_hst2_work" relpath="delve_into">How does Hippo Site Toolkit 2 work?
     <add>More introduction</add>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>howto
    
-   <document ext="xml" filename="advanced_search" relpath="delve_into/howto">Advanced Search
-    <add>Try to present several possible next tasks to do.</add>
-    <todo>How to search using metadata? Search, advanced Search, on metadata<span class="bad"> TODO </span>TODO</todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook</document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free text Search
-    <add>Try to present several possible next tasks to do.</add>
-    <todo>Search, free text<span class="bad"> TODO </span>TODO</todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
+   <document ext="xml" filename="facebook" relpath="delve_into/howto">Create a Facebook</document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free text Search
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
     <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto</document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project
     <multisection>Has 2 sections.</multisection></document></folder><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart
     <rewrite>For CMS the quickstart package is called quickstart and this one gettingstarted, while `hst' is not part of the package name. 
@@ -48,15 +38,17 @@
              Or maybe there is some other consistent and clear naming scheme.
             </rewrite>
     <add>This is probably the moment where things can be tried out. Please mention that
-              explicitely. Are there interesting points to try? Please list them here.</add></document><folder>reference
+              explicitely. Are there interesting points to try? Please list them here.</add>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>reference
    
    <folder>components
    
    <document ext="xml" filename="binaries" relpath="delve_into/reference/components">Serving binaries with the BinariesServlet
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-index" relpath="delve_into/reference/components">HST2 Expression Language
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Using dynamic queries in the expression language
-    <empty_elem>&lt;source/&gt;</empty_elem>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="filters" relpath="delve_into/reference/components">HST2 Filters
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="el-queries" relpath="delve_into/reference/components">Change to the document title
+    <empty>Document has template content: 'Change to the browser title'.</empty>
+    <empty>Document has template content: 'Change to the document title'.</empty>
+    <rewrite>this whole document.</rewrite></document><document ext="xml" filename="filters" relpath="delve_into/reference/components">HST2 Filters
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/components">Components
     <todo><span class="bad"> TODO </span>Filters - TODO Tags - Learn which default tags are available in the Hippo Site Toolkit 2 Expression Language - Learn how to use Expression Language in combination with the Hippo Site Toolkit 2 URL Map</todo>
     <todo><span class="bad"> TODO </span></todo>
@@ -94,7 +86,8 @@
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="repository" relpath="delve_into/reference/configuration">Configuration in Repository
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference</document></folder></folder>
-  errorlist
-  index
- </document_list>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference</document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder>
+</document_list>

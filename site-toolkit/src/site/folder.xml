@@ -25,8 +25,8 @@
    relpath='delve_into'
   >how_does_hst2_work</file>
    <folder>howto
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
-   fullname='delve_into/howto/advanced_search.xml'
+    <file ext='xml~' mimetype='text/xml' note='todo'
+   fullname='delve_into/howto/advanced_search.xml~'
    relpath='delve_into/howto'
   >advanced_search</file>
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
@@ -34,7 +34,15 @@
    relpath='delve_into/howto'
   >facebook</file>
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='delve_into/howto/free_meta_search.xml'
+   relpath='delve_into/howto'
+  >free_meta_search</file>
+    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/howto/free_text_search.xml'
+   relpath='delve_into/howto'
+  >free_text_search</file>
+    <file ext='xml~' mimetype='text/xml' note='todo'
+   fullname='delve_into/howto/free_text_search.xml~'
    relpath='delve_into/howto'
   >free_text_search</file>
     <file ext='xml' mimetype='text/xml' valid='yes'
@@ -54,6 +62,10 @@
    fullname='delve_into/quickstart.xml'
    relpath='delve_into'
   >quickstart</file>
+   <file ext='xml~' mimetype='text/xml' note='todo'
+   fullname='delve_into/quickstart.xml~'
+   relpath='delve_into'
+  >quickstart</file>
    <folder>reference
     <folder>components
      <file ext='xml' mimetype='text/xml' valid='yes'
@@ -64,8 +76,12 @@
    fullname='delve_into/reference/components/el-index.xml'
    relpath='delve_into/reference/components'
   >el-index</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/reference/components/el-queries.xml'
+   relpath='delve_into/reference/components'
+  >el-queries</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/reference/components/el-queries.xml~'
    relpath='delve_into/reference/components'
   >el-queries</file>
      <file ext='xml' mimetype='text/xml' valid='yes'

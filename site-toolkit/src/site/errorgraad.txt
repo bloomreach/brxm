@@ -30,3 +30,5 @@
       <span class="shortdesc">69 errors and/or todos in 36 out of 39 documents (92%).</span>
 #_______________________________________________________________________________________________________________________rita_2008-w46-5-11:45
       <span class="shortdesc">69 errors and/or todos in 36 out of 39 documents (92%).</span>
+#_______________________________________________________________________________________________________________________rita_2008-w47-5-12:15
+      <span class="shortdesc">63 errors and/or todos in 38 out of 41 documents (92%).</span>

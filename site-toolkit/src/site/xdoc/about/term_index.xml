@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 141 terms</span>
+      <span class="shortdesc">Term index, 155 terms</span>
       <table>
         <tr>
           <th>Term</th>
@@ -37,12 +37,6 @@
         </a>
           </td>
           <td>Reference</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/reference/components/el-queries.html#-">-</a>
-          </td>
-          <td>Using dynamic queries in the expression language</td>
         </tr>
         <tr>
           <td>
@@ -61,12 +55,6 @@
             <a href="../delve_into/howto/hello_world.html#Adding_a_simple_page_to_your_website_saying_hello_to_the_world_">Adding a simple page to your website saying hello to the world.</a>
           </td>
           <td>Hello World</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/howto/advanced_search.html#Advanced_Search">Advanced Search</a>
-          </td>
-          <td>Advanced Search</td>
         </tr>
         <tr>
           <td>
@@ -112,9 +100,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/quickstart.html#Check_it_out_yourself_and_install_the_quickstart_demo_site_">Check it out yourself and install the quickstart demo site.</a>
+            <a href="../delve_into/reference/components/el-queries.html#Change_to_the_document_title">Change to the document title</a>
           </td>
-          <td>Quickstart</td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
@@ -220,6 +208,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#Delve_into_Hippo_Site_Toolkit">Delve into Hippo Site Toolkit</a>
+          </td>
+          <td>What is Hippo Site Toolkit 2?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/quickstart.html#Deploying_in_Tomcat_6_0">Deploying in Tomcat 6.0</a>
           </td>
           <td>Quickstart</td>
@@ -256,12 +250,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/howto/free_text_search.html#First_subsection">First subsection</a>
-          </td>
-          <td>Free text Search</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../about/architecture.html#First_subsection_title">First subsection title</a>
           </td>
           <td>Change to the document title</td>
@@ -280,6 +268,24 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/howto/free_meta_search.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/components/el-queries.html#First_subsection_title">First subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../about/architecture.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
@@ -313,6 +319,48 @@
             <a href="../about/use_cases.html#First_subsubsection_title">First subsubsection title</a>
           </td>
           <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_meta_search.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_meta_search.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/components/el-queries.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/components/el-queries.html#First_subsubsection_title">First subsubsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_meta_search.html#Free_Meta_Search">Free Meta Search</a>
+          </td>
+          <td>Free Meta Search</td>
         </tr>
         <tr>
           <td>
@@ -346,9 +394,15 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/howto/advanced_search.html#How_to_search_using_metadata_">How to search using metadata?</a>
+            <a href="../delve_into/howto/free_meta_search.html#How_to_add_free_meta_search_functionality_to_a_website_so_that_the_user_can_perform_searches_within_meta_data_on_all_documents_">How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</a>
           </td>
-          <td>Advanced Search</td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#How_to_add_text_search_functionality_to_a_website_so_that_the_user_can_perform_text_searches_on_all_documents_">How to add text search functionality to a website so that the user can perform text searches on all documents?</a>
+          </td>
+          <td>Free text Search</td>
         </tr>
         <tr>
           <td>
@@ -466,6 +520,24 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/howto/free_meta_search.html#index_word">index word</a>
+          </td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#index_word">index word</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/components/el-queries.html#index_word">index word</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/reference/concepts/index.html#Layouts">Layouts</a>
           </td>
           <td>Concepts</td>
@@ -491,6 +563,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#Learn_more">Learn more</a>
+          </td>
+          <td>What is Hippo Site Toolkit 2?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/reference/components/filters.html#ModuleFilter">ModuleFilter</a>
           </td>
           <td>HST2 Filters</td>
@@ -512,18 +590,6 @@
             <a href="../delve_into/reference/concepts.html#Modules">Modules</a>
           </td>
           <td>Concepts</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/howto/advanced_search.html#Next">Next</a>
-          </td>
-          <td>Advanced Search</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/howto/free_text_search.html#Next">Next</a>
-          </td>
-          <td>Free text Search</td>
         </tr>
         <tr>
           <td>
@@ -677,9 +743,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/howto/advanced_search.html#Search,_advanced">Search, advanced</a>
+            <a href="../delve_into/howto/free_meta_search.html#Search,_advanced">Search, advanced</a>
           </td>
-          <td>Advanced Search</td>
+          <td>Free Meta Search</td>
         </tr>
         <tr>
           <td>
@@ -689,9 +755,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/howto/advanced_search.html#Search,_on_metadata">Search, on metadata</a>
+            <a href="../delve_into/howto/free_meta_search.html#Search,_on_metadata">Search, on metadata</a>
           </td>
-          <td>Advanced Search</td>
+          <td>Free Meta Search</td>
         </tr>
         <tr>
           <td>
@@ -708,6 +774,24 @@
         <tr>
           <td>
             <a href="../about/use_cases.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Change to the document title</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_meta_search.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Free Meta Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/howto/free_text_search.html#Second_subsection_title">Second subsection title</a>
+          </td>
+          <td>Free text Search</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/reference/components/el-queries.html#Second_subsection_title">Second subsection title</a>
           </td>
           <td>Change to the document title</td>
         </tr>
@@ -740,12 +824,6 @@
             <a href="../delve_into/howto/start_project.html#Start_a_project">Start a project</a>
           </td>
           <td>Start a project</td>
-        </tr>
-        <tr>
-          <td>
-            <a href="../delve_into/howto/advanced_search.html#Subsection_title">Subsection title</a>
-          </td>
-          <td>Advanced Search</td>
         </tr>
         <tr>
           <td>
@@ -863,15 +941,21 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/reference/components/el-queries.html#Using_dynamic_queries_in_the_expression_language">Using dynamic queries in the expression language</a>
+            <a href="../delve_into/reference/components/el-queries.html#Using_dynamic_queries_in_the_expression_language_">Using dynamic queries in the expression language.</a>
           </td>
-          <td>Using dynamic queries in the expression language</td>
+          <td>Change to the document title</td>
         </tr>
         <tr>
           <td>
             <a href="../delve_into/howto/hello_world.html#View_the_document_on_the_website">View the document on the website</a>
           </td>
           <td>Hello World</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#What_is_Hippo_Site_Toolkit_2_">What is Hippo Site Toolkit 2?</a>
+          </td>
+          <td>What is Hippo Site Toolkit 2?</td>
         </tr>
         <tr>
           <td>
