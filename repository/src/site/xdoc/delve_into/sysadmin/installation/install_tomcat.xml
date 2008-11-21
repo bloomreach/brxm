@@ -26,6 +26,13 @@
       <span class='shortdesc'>Learn how to install Apache Tomcat</span>
       <span class='hidden_index' id='Tomcat, install'/>
 
+     <p>
+      If you do not have Tomcat
+      installed, there may be another servlet container or application server installed
+      on your system, which you can use for Hippo CMS, see <a href=' index.html'>here</a>.
+      If you decide you want Tomcat, continue.
+     </p>
+
       <blockquote>
        <table>
         <tr> 

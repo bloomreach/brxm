@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">129 errors and/or todos in 67 out of 169 documents (39%).</span>
+      <span class="shortdesc">134 errors and/or todos in 70 out of 172 documents (40%).</span>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
@@ -117,7 +117,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="review documents: 2">
+      <subsection name="review documents: 3">
         <ol>
           <li>
             <a href="./delve_into/custom/reference/repository/repository_plugins.html">repository_plugins: Repository Plugins</a>
@@ -148,9 +148,15 @@ repository is;
               <li>Whole folder, and rewrite if necessary.</li>
             </ul>
           </li>
+          <li>
+            <a href="./index.html">index: What is Hippo CMS?</a>
+            <ul>
+              <li>all text: move short features list to feature document?</li>
+            </ul>
+          </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 42">
+      <subsection name="Documents lacking some information: 44">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -402,6 +408,19 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./errorlist.html">errorlist: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./releasing.html">releasing: Performing a release of the Hippo-ECM suite</a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./support/community_support.html">community_support: Community Support</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -474,7 +493,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 6">
+      <subsection name="Add something to documents: 7">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
@@ -504,6 +523,12 @@ repository is;
             <a href="./delve_into/user/information_architects/concepts/index.html">index: CMS Information Architects Concepts</a>
             <ul>
               <li>Concepts</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./index.html">index: What is Hippo CMS?</a>
+            <ul>
+              <li>Enlightning diagram?</li>
             </ul>
           </li>
           <li>

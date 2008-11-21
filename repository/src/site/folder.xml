@@ -304,12 +304,20 @@
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/installation/in_servlet_container.xml~'
+   relpath='delve_into/sysadmin/installation'
+  >in_servlet_container</file>
      <file ext='xml~rita' mimetype='text/xml' note='todo'
    fullname='delve_into/sysadmin/installation/in_servlet_container.xml~rita'
    relpath='delve_into/sysadmin/installation'
   >in_servlet_container</file>
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/sysadmin/installation/install_tomcat.xml'
+   relpath='delve_into/sysadmin/installation'
+  >install_tomcat</file>
+     <file ext='xml~' mimetype='text/xml' note='todo'
+   fullname='delve_into/sysadmin/installation/install_tomcat.xml~'
    relpath='delve_into/sysadmin/installation'
   >install_tomcat</file>
      <file ext='xml' mimetype='text/xml' valid='yes'

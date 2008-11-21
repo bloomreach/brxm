@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 664 terms</span>
+      <span class="shortdesc">Term index, 670 terms</span>
       <table>
         <tr>
           <th>Term</th>
@@ -1001,6 +1001,12 @@
             <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat">Deploying in Tomcat</a>
           </td>
           <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../releasing.html#Deploying_the_targets">Deploying the targets</a>
+          </td>
+          <td>Performing a release of the Hippo-ECM suite</td>
         </tr>
         <tr>
           <td>
@@ -3102,6 +3108,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../releasing.html#Performing_a_release_of_the_Hippo-ECM_suite">Performing a release of the Hippo-ECM suite</a>
+          </td>
+          <td>Performing a release of the Hippo-ECM suite</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Plugin_Configuration">Plugin Configuration</a>
           </td>
           <td>Frontend Plugin Architecture</td>
@@ -3144,6 +3156,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../releasing.html#Preparing_a_release">Preparing a release</a>
+          </td>
+          <td>Performing a release of the Hippo-ECM suite</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/core/project-structure.html#Project_Structure">Project Structure</a>
           </td>
           <td>Project Structure</td>
@@ -3177,6 +3195,12 @@
             <a href="../delve_into/sysadmin/requirements.html#Relational_Database">Relational Database</a>
           </td>
           <td>Requirements</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../releasing.html#Releasing_in_subversion">Releasing in subversion</a>
+          </td>
+          <td>Performing a release of the Hippo-ECM suite</td>
         </tr>
         <tr>
           <td>
@@ -3925,9 +3949,21 @@
         </tr>
         <tr>
           <td>
+            <a href="../index.html#What_is_Hippo_CMS_">What is Hippo CMS?</a>
+          </td>
+          <td>What is Hippo CMS?</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/user/contributors/concepts/versioning.html#What_is_versioning_to_a_content_contributor_">What is versioning to a content contributor?</a>
           </td>
           <td>Versioning</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../index.html#What_part_of_the_Hippo_ECM_is_it,_what_are_its_tasks_">What part of the Hippo ECM is it, what are its tasks?</a>
+          </td>
+          <td>What is Hippo CMS?</td>
         </tr>
         <tr>
           <td>
