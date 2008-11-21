@@ -78,7 +78,6 @@ public class StatusServlet extends HttpServlet {
         writer.println("  <h3>Version</h3>");
         try {
             InputStream istream = null;
-            String manifestSource="";/*
             istream = getServletContext().getResourceAsStream("/META-INF/MANIFEST.MF");
             String manifestSource = "war/ear manifest";
             if (istream == null) {
@@ -86,9 +85,9 @@ public class StatusServlet extends HttpServlet {
                 if(manifestFile.exists())
                     istream = new FileInputStream(manifestFile);
                 manifestSource = "servlet manifest";
-            }*/
+            }
             if (istream == null) {
-                istream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+                istream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
                 manifestSource = "jar";
             }
             writer.println("    Manifest" + (manifestSource != null ? " from "+manifestSource : "") + ":<br/>");
