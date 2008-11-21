@@ -41,9 +41,6 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-//    protected Node node;
-//    protected HippoSession session;
-
     protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);
         this.session = (HippoSession) session;
