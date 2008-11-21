@@ -16,6 +16,7 @@
 package org.hippoecm.repository.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.jar.Manifest;
 
 import javax.jcr.Credentials;
@@ -78,8 +79,13 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
             return "http://www.onehippo.org/";
         } else if(REP_VERSION_DESC.equals(key)) {
             try {
-                Manifest manifest = new Manifest(getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF"));
-                return manifest.getMainAttributes().getValue("Implementation-Version");
+                InputStream istream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
+                if (istream != null) {
+                    Manifest manifest = new Manifest(istream);
+                    return manifest.getMainAttributes().getValue("Implementation-Version");
+                } else {
+                    return null;
+                }
             } catch(IOException ex) {
                 return null;
             }
