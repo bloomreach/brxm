@@ -24,7 +24,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.filters.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
@@ -34,6 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LayoutAttributeTag extends TagSupport {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private static final Logger log = LoggerFactory.getLogger(LayoutAttributeTag.class);
     private String name;
     private String module;

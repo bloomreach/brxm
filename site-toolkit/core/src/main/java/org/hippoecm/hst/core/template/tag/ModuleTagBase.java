@@ -47,12 +47,25 @@ public abstract class ModuleTagBase extends BodyTagSupport {
     protected String var;
     protected boolean doExecute = false;
     protected boolean doRender = true;
-    protected ExecutionResult executionResult;
+    protected transient ExecutionResult executionResult;
     
     private static final Logger log = LoggerFactory.getLogger(ModuleTagBase.class);
     
-    protected void doExecute(HttpServletRequest request, PageContainerModuleNode pcm) {           
+	// Really important to clear here used parameters!!
+    @Override
+	public void release() {
+    	cleanup();
+		super.release();
+	}
+
+    public void cleanup(){
+    	if(this.parameters != null) {
+    		this.parameters.clear();
+    	}
+    }
+	protected void doExecute(HttpServletRequest request, PageContainerModuleNode pcm) {           
         try {
+        	
             Module module = getModule();
             module.setVar(var);
             module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));

@@ -62,6 +62,16 @@ public class ModuleTag extends ModuleTagBase {
 		       throw(e);
 		   }
 		}
+		
+		/*
+		 * important to release after the module is rendered to clear the used parameters
+		 * We need to call it here directly as a workaround, because Jetty does not properly seem 
+		 * to call the release() method. If we do not cleanup parameters, moduleParameters from different
+		 * BodyTagSupport classes within one single jsp seem to be mixed up.
+		 */ 
+		
+		cleanup();
+		
 		return EVAL_PAGE;
 	}
 }
