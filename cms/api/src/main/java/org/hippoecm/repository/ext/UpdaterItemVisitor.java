@@ -28,6 +28,8 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.hippoecm.repository.api.HippoNode;
+
 public abstract class UpdaterItemVisitor implements ItemVisitor {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -70,6 +72,17 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     public void visit(Node node) throws RepositoryException {
         if (node.getPath().equals("/jcr:system")) {
             return;
+        }
+        if(node instanceof HippoNode) {
+            Node canonical = ((HippoNode) node).getCanonicalNode();
+            if(canonical == null || canonical.isSame(node)) {
+                return;
+            }
+        } else {
+            // FIXME: it is not always guaranteed in the initialization phase that all nodes
+            // are properly decorated, so this can happen, but the check is not good enough
+            if(node.hasProperty("hippo:uuid"))
+                return;
         }
         try {
             if (!breadthFirst) {

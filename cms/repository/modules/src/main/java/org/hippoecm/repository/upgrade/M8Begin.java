@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.upgrade;
 
-
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,7 +33,6 @@ public class M8Begin extends M8 implements UpdaterModule {
     }
 
     public void register(final UpdaterContext context) {
-        System.err.println("BERRY REGISTER M8END MODULE");
         context.registerName("m8-begin");
         context.registerStartTag("m7");
         context.registerEndTag("m8-begin");
@@ -42,12 +40,7 @@ public class M8Begin extends M8 implements UpdaterModule {
             @Override
             public void visit(Node node) throws RepositoryException {
                     NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
-//dump(System.err, context, context.unwrap(node));
-//Utilities.dump(System.err, context.unwrap(node));
                     for(NamespaceMapping mapping : mappings) {
-                        System.err.println("BERRY REREGISTER "+mapping.prefix+"  "+mapping.newNamespaceURI);
-                        // nsReg.registerNamespace(mapping.prefix, mapping.newNamespaceURI);
-                        // FIXME nsReg.unregisterNamespace(mapping.prefix+, mapping.newNamespaceURI);
                         ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix, mapping.prefix+"_"+mapping.oldVersion, mapping.oldNamespaceURI);
                         ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix+"_"+mapping.oldVersion, mapping.prefix, mapping.newNamespaceURI); 
                     }
