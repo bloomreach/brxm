@@ -98,10 +98,14 @@ public class URIFragmentContextBaseFilter extends HstBaseFilter implements Filte
     public void destroy() {
         jcrSessionPoolManager.dispose();
         try {
-            ObservationManager obMgr = observer.getWorkspace().getObservationManager();
-            obMgr.removeEventListener(listener);
-            observer.logout();
+        	if(listener != null && observer != null && observer.getWorkspace() != null) {
+	            ObservationManager obMgr = observer.getWorkspace().getObservationManager();
+	            if(obMgr != null){
+	            	obMgr.removeEventListener(listener);
+	            	observer.logout();
+	            }
             log.debug("Destroy succesfully disposed all jcr sessions");
+        	}
         } catch (UnsupportedRepositoryOperationException e) {
             log.error("UnsupportedRepositoryOperationException during 'destroy()' of filter in disposing jcr sessions and unregistering listener. " + e.getMessage());
         } catch (RepositoryException e) {
