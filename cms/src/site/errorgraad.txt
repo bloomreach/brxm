@@ -38,3 +38,5 @@
       <span class="shortdesc">133 errors and/or todos in 67 out of 169 documents (39%).</span>
 #______________________________________________________________________________________________________rita_2008-w47-4-19:23
       <span class="shortdesc">129 errors and/or todos in 67 out of 169 documents (39%).</span>
+#_______________________________________________________________________________________________________________________rita_2008-w47-5-12:03
+      <span class="shortdesc">134 errors and/or todos in 70 out of 172 documents (40%).</span>

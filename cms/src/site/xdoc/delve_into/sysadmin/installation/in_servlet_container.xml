@@ -34,10 +34,13 @@
 
       <subsection name="Deploying in Tomcat">
 
-      These deploying steps assume that you have Tomcat installed. If want it, but
-      not have it, <a href='install_tomcat.html'>install Tomcat like this</a> first.
-      Below, the Tomcat folder will be called $TOMCATDIR. 
- 
+      <p>
+       These deploying steps assume that you have Tomcat installed. <a href='install_tomcat.html'>I don't</a>.
+      </p>
+      <p>
+       Below, the Tomcat folder is called $TOMCATDIR. 
+      </p>
+  
       <blockquote>
        <table>
         <tr> 

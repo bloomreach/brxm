@@ -3,8 +3,10 @@
     Do not edit! This html file is automatically generated from an XML file
     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
   -->
-<document_list rootpath="../">.
-  <folder>about
+<document_list rootpath="../">
+  <folder>.
+   
+   <folder>about
    
    <document ext="xml" filename="architecture" relpath="about">Architecture
    <section>Architecture</section>
@@ -13,8 +15,7 @@
   </document><document ext="xml" filename="term_index" relpath="about">
   </document><document ext="xml" filename="use_cases" relpath="about">Use cases
    <section>Use cases</section>
-  </document></folder>
-  <folder>delve_into
+  </document></folder><folder>delve_into
    
    <document ext="xml" filename="bin_startup_help" relpath="delve_into">Bin Startup Help
    <section>Bin Startup Help</section>
@@ -919,16 +920,21 @@
    <shortdesc>Get the right tools for your project.</shortdesc>
    <subsection>Hippo Site Toolkit</subsection>
    <subsection>Hippo Portal</subsection>
-  </document></folder></folder></folder>
-  errorlist
-  index
-  releasing
-  <folder>support
+  </document></folder></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+  </document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?
+   <section>What is Hippo CMS?</section>
+   <shortdesc>What part of the Hippo ECM is it, what are its tasks?</shortdesc>
+  </document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo-ECM suite
+   <section>Performing a release of the Hippo-ECM suite</section>
+   <subsection>Preparing a release</subsection>
+   <subsection>Releasing in subversion</subsection>
+   <subsection>Deploying the targets</subsection>
+  </document><folder>support
    
    <document ext="xml" filename="community_support" relpath="support">Community Support
    <section>Community Support</section>
   </document><document ext="xml" filename="contributing" relpath="support">Contributing
    <section>Contributing</section>
    <shortdesc>Contributing to Hippo CMS.</shortdesc>
-  </document></folder>
- </document_list>
+  </document></folder></folder>
+</document_list>

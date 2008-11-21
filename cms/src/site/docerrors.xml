@@ -3,8 +3,10 @@
     Do not edit! This html file is automatically generated from an XML file
     by makeindex.xsl  (written by Rita Bylsma, Scholarita project)
   -->
-<document_list rootpath="./">.
-  <folder>about
+<document_list rootpath="./">
+  <folder>.
+   
+   <folder>about
    
    <document ext="xml" filename="architecture" relpath="about">Architecture
     <todo><span class="bad"> TODO </span></todo>
@@ -17,8 +19,7 @@
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="use_cases" relpath="about">Use cases
     <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder>
-  <folder>delve_into
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>delve_into
    
    <document ext="xml" filename="bin_startup_help" relpath="delve_into">Bin Startup Help
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>core
@@ -235,13 +236,14 @@ repository is;
    
    <document ext="" filename="*" relpath="delve_into/web/jcr"><invalid>Document is invalid XML.</invalid></document></folder><folder>toolkits
    
-   <document ext="xml" filename="index" relpath="delve_into/web/toolkits">Toolkits</document></folder></folder></folder>
-  errorlist
-  index
-  releasing
-  <folder>support
+   <document ext="xml" filename="index" relpath="delve_into/web/toolkits">Toolkits</document></folder></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?
+    <add>Enlightning diagram?</add>
+    <review>all text: move short features list to feature document?</review></document><document ext="xml" filename="releasing" relpath=".">Performing a release of the Hippo-ECM suite
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
    
    <document ext="xml" filename="community_support" relpath="support">Community Support
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="contributing" relpath="support">Contributing
-    <add>information about Hippo Forge</add></document></folder>
- </document_list>
+    <add>information about Hippo Forge</add></document></folder></folder>
+</document_list>
