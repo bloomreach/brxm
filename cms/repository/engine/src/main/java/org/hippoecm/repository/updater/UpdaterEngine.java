@@ -217,7 +217,9 @@ public class UpdaterEngine {
             ModuleRegistration registration = iter.next();
             boolean isValid = false;
             if(registration.startTag.size() == 0) {
-                log.warn("module "+registration.name+" did not specify start tag");
+                if (!"m8-bootstrap".equals(registration.name)) {
+                    log.warn("module "+registration.name+" did not specify start tag");
+                }
                 if(currentVersions.size() == 0)
                     isValid = true;
             }
