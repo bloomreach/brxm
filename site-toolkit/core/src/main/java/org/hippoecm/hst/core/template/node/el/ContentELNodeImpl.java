@@ -405,6 +405,10 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             log.warn("cannot get relpath because no urlMapping");
             return null;
         }
+        if(jcrNode == null) {
+        	log.warn("cannot get relpath because wrapped jcrNode is null");
+            return null;
+        }
         URLMapping urlMapping = sourceRewriter.getUrlMapping();
         String contextPrefixPath = urlMapping.getContextPrefix();
         if(contextPrefixPath == null || "".equals(contextPrefixPath)) {
