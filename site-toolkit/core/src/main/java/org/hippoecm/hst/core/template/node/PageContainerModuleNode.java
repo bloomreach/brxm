@@ -40,20 +40,24 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 		super(contextBase, jcrNode);		
 	} 
 	
-	public ModuleNode getModuleNode() throws RepositoryException {	 	
-	    return new ModuleNode(contextBase, getTemplateNodeFromPropertyValue(MODULE_NAME_PROPERTY));
+	public ModuleNode getModuleNode() throws RepositoryException {	 
+		Node n = getTemplateNodeFromPropertyValue(MODULE_NAME_PROPERTY);
+		if(n == null) {
+			log.warn("Unable to get ModuleNode. Probably in the layout node, the 'hst:module' property path does not resolve to a module. Fix this in configuration");
+		}
+	    return new ModuleNode(contextBase, n);
 	}
 	
 	
 	public String getTemplatePage() throws RepositoryException {	
 		if (jcrNode.hasProperty(ModuleNode.TEMPLATE_PROPERTY_NAME)) {
 			try {
-				return getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
+				return super.getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);	
 			} catch (TemplateException e) {
 			    log.error("No " + ModuleNode.TEMPLATE_PROPERTY_NAME+ " property in current node " + jcrNode.getPath());
 			    return null;
 			}
-		} else {			
+		} else {
 			return getModuleNode().getPropertyValue(ModuleNode.TEMPLATE_PROPERTY_NAME);
 		}
 				

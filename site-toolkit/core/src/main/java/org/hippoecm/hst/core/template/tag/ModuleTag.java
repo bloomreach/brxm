@@ -43,6 +43,12 @@ public class ModuleTag extends ModuleTagBase {
 		if (doExecute || doRender) {
 			pcm = (PageContainerModuleNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_MODULE_NAME_REQ_ATTRIBUTE);
 		}
+		
+		if(pcm == null) {
+     	   log.warn("PageContainerModuleNode is null. Cannot render module. This might happen because the hst:layout node is pointing to a module jsp instead of to a layout jsp. Check you hst:configuration for this");
+     	   throw new JspException("PageContainerModuleNode is null. Cannot render module. This might happen because the hst:layout node is pointing to a module jsp instead of to a layout jsp. Check you hst:configuration for this");
+        }
+		
 		if (doExecute) {
 			doExecute(request, pcm);
 		}

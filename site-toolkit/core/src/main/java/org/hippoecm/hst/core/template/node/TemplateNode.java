@@ -83,7 +83,7 @@ public class TemplateNode extends AbstractELNode {
 	protected Node getTemplateNodeFromPropertyValue(String propertyName)
 	 throws RepositoryException {
 		try {
-			log.info("retrieving property " + propertyName + " of node " + jcrNode.getPath());
+			log.debug("retrieving property " + propertyName + " of node " + jcrNode.getPath());
 			Property layoutProperty = jcrNode.getProperty(propertyName);	
 			return contextBase.getRelativeNode(layoutProperty.getValue().getString());
 		} catch (PathNotFoundException e) {
