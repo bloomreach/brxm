@@ -51,7 +51,6 @@ public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWire
     
     @Override
     protected void respond(AjaxRequestTarget target) {
-        System.out.println("ajax request");
     }
 
     public String getParentId() {
