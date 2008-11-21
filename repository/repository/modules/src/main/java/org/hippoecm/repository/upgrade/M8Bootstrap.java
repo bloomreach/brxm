@@ -35,19 +35,14 @@ public class M8Bootstrap extends M8 implements UpdaterModule {
     }
 
     public void register(final UpdaterContext context) {
-        System.err.println("BERRY REGISTER M8START MODULE");
-
         context.registerName("m8-bootstrap");
         context.registerEndTag("m7");
         context.registerVisitor(new UpdaterItemVisitor.Default() {
             @Override
             protected void entering(Node node, int level) throws RepositoryException {
-                System.err.println("BERRY ENTER " + node.getPath() + " " + level);
                 if (level == 0) {
-dump(System.err, context, node);
                     NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
                     for(NamespaceMapping mapping : mappings) {
-                        System.err.println("BERRY REGISTER "+mapping.prefix+"_"+mapping.newVersion+"  "+mapping.newNamespaceURI);
                         nsReg.registerNamespace(mapping.prefix+"_"+mapping.newVersion, mapping.newNamespaceURI);
                         loadNodeTypes(node.getSession().getWorkspace(), mapping.cndName, mapping.cndStream);
                     }

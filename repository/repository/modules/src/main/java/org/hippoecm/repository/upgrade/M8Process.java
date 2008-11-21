@@ -34,7 +34,6 @@ public class M8Process implements UpdaterModule {
     }
 
     public void register(final UpdaterContext context) {
-        System.err.println("BERRY REGISTER M8REINIT MODULE");
         context.registerName("m8-process");
         context.registerStartTag("m8-begin");
         context.registerStartTag("m8-process");
