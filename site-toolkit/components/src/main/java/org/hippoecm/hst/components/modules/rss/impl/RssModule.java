@@ -30,17 +30,27 @@ public class RssModule extends ModuleBase{
 			ContextBase ctxBase) throws TemplateException {
 		
 		RssFeed feed = null;
-		if(this.moduleParameters == null || this.moduleParameters.containsKey("url")) {
-			String url = moduleParameters.get("url");
+		
+		String url = getUrl();
+		
+		if(url!=null) {
 			SimpleRssReader reader = new SimpleRssReader();
 			feed = reader.read(url);
-			  
 		} else {
-			RssFeed.log.warn("There is no module parameter specifying the rss url (parameter name = 'url'). Return null");
+			RssFeed.log.warn("Cannot getch rss feed because url is null");
 		}
 		pageContext.setAttribute(getVar(), feed);   
 		
 	}
 
+	public String getUrl(){
+		String url = null;
+		if(this.moduleParameters == null || this.moduleParameters.containsKey("url")) {
+			url = moduleParameters.get("url");
+		} else {
+			RssFeed.log.warn("There is no module parameter specifying the rss url (parameter name = 'url'). Return null");
+		}
+		return url;
+	}
 
 }
