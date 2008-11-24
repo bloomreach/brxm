@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 
-<!-- Use of ${version} gives Oct 2008 the string 2.01.00-SNAPSHOT, 
+<!-- Use of ${version} gives Oct 2008 the string 2.02.00-SNAPSHOT, 
      which is defined as such in the pom.xml of the cms 7 project.
 -->
 
@@ -28,7 +28,7 @@
     <version>1.01.04-SNAPSHOT</version>
     <!-- To change
      - Edit trunk/maven-skin/src/main/resources/css/screen.css      
-     - Run mvn install in trunk/maven-skin/ to get changed screen.css in $HOME/.m2/repository/org/hippoecm/hippo-ecm-maven-skin/2.01.00-SNAPSHOT/hippo-ecm-maven-skin-2.01.00-SNAPSHOT.jar 
+     - Run mvn install in trunk/maven-skin/ to get changed screen.css in $HOME/.m2/repository/org/hippoecm/hippo-ecm-maven-skin/2.02.00-SNAPSHOT/hippo-ecm-maven-skin-2.02.00-SNAPSHOT.jar 
      - Run mvn -N site in trunk/ to use the new screen.css
 
      Possible Errors:
