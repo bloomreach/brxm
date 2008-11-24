@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.FileNotFoundException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -87,26 +88,32 @@ public class StatusServlet extends HttpServlet {
                 manifestSource = "servlet manifest";
             }
             if (istream == null) {
-                istream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
-                manifestSource = "jar";
+                try {
+                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                    manifestSource = "jar";
+                } catch (FileNotFoundException ex) {
+                    manifestSource = "none";
+                }
             }
             writer.println("    Manifest" + (manifestSource != null ? " from "+manifestSource : "") + ":<br/>");
-            Manifest manifest = new Manifest(istream);
-            Attributes atts = manifest.getMainAttributes();
-            writer.println("    <table style=\"params\" summary=\"request parameters\">");
-            writer.println("    <tr><td>Version</td><td>: " + atts.getValue("Implementation-Version") + "</td></tr>");
-            writer.println("    <tr><td>Build</td><td>: " + atts.getValue("Implementation-Build") + "</td></tr>");
-            writer.println("    </table>");
-            if(manifestSource == null) {
-                writer.println("<!--");
-            }
-            writer.print("<pre>");
-            ByteArrayOutputStream tmpStream = new ByteArrayOutputStream();
-            manifest.write(tmpStream);
-            writer.print(tmpStream.toString());
-            writer.println("</pre>");
-            if(manifestSource == null) {
-                writer.println("-->");
+            if (istream != null) {
+                Manifest manifest = new Manifest(istream);
+                Attributes atts = manifest.getMainAttributes();
+                writer.println("    <table style=\"params\" summary=\"request parameters\">");
+                writer.println("    <tr><td>Version</td><td>: " + atts.getValue("Implementation-Version") + "</td></tr>");
+                writer.println("    <tr><td>Build</td><td>: " + atts.getValue("Implementation-Build") + "</td></tr>");
+                writer.println("    </table>");
+                if(manifestSource == null) {
+                    writer.println("<!--");
+                }
+                writer.print("<pre>");
+                ByteArrayOutputStream tmpStream = new ByteArrayOutputStream();
+                manifest.write(tmpStream);
+                writer.print(tmpStream.toString());
+                writer.println("</pre>");
+                if(manifestSource == null) {
+                    writer.println("-->");
+                }
             }
         } catch(Throwable ex) {
             writer.print("Error occured:<br/><pre>");

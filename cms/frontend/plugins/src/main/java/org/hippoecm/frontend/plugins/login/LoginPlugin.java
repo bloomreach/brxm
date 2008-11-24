@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -49,6 +50,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.Pinger;
+import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class LoginPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -68,7 +70,7 @@ public class LoginPlugin extends RenderPlugin {
         add(repositoryLabel = new Label("repository"));
         ServletContext servletContext = ((WebApplication)getApplication()).getServletContext();
         try {
-            InputStream istream = servletContext.getResourceAsStream("/META-INF/MANIFEST.MF");
+            InputStream istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
             if (istream == null) {
                 File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
                 if(manifestFile.exists()) {
@@ -76,7 +78,11 @@ public class LoginPlugin extends RenderPlugin {
                 }
             }
             if (istream == null) {
-                istream = getClass().getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+                try {
+                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                } catch(FileNotFoundException ex) {
+                } catch(IOException ex) {
+                }
             }
             if (istream != null) {
                 Manifest manifest = new Manifest(istream);

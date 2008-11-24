@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -200,5 +201,22 @@ public class HippoRepositoryFactory {
         if (repository == defaultRepository) {
             defaultRepository = null;
         }
+    }
+
+    public static URL getManifest(Class clazz) {
+        try {
+            StringBuffer sb = new StringBuffer();
+            String[] classElements = clazz.getName().split("\\.");
+            for (int i=0; i<classElements.length-1; i++) {
+                sb.append("../");
+            }
+            sb.append("META-INF/MANIFEST.MF");
+            URL classResource = clazz.getResource(classElements[classElements.length-1]+".class");
+            if (classResource != null) {
+                return new URL(classResource, new String(sb));
+            }
+        } catch (MalformedURLException ex) {
+        }
+        return null;
     }
 }
