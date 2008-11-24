@@ -31,7 +31,7 @@ public class RssModule extends ModuleBase{
 		
 		RssFeed feed = null;
 		
-		String url = getUrl();
+		String url = getUrl( pageContext,  urlMapping, ctxBase);
 		
 		if(url!=null) {
 			SimpleRssReader reader = new SimpleRssReader();
@@ -43,7 +43,8 @@ public class RssModule extends ModuleBase{
 		
 	}
 
-	public String getUrl(){
+	public String getUrl(PageContext pageContext, URLMapping urlMapping,
+			ContextBase ctxBase){
 		String url = null;
 		if(this.moduleParameters == null || this.moduleParameters.containsKey("url")) {
 			url = moduleParameters.get("url");
