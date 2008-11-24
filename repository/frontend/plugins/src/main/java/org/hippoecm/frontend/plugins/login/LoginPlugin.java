@@ -97,13 +97,15 @@ public class LoginPlugin extends RenderPlugin {
         } catch(IOException ex) {
             // delibate ignore
         }
-        Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
-        if(repository != null) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
-            sb.append(" ");
-            sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
-            repositoryLabel.setModel(new Model(new String(sb)));
+        if(((UserSession) getSession()).getJcrSession() != null) {
+            Repository repository = ((UserSession) getSession()).getJcrSession().getRepository();
+            if(repository != null) {
+                StringBuffer sb = new StringBuffer();
+                sb.append(repository.getDescriptor(Repository.REP_NAME_DESC));
+                sb.append(" ");
+                sb.append(repository.getDescriptor(Repository.REP_VERSION_DESC));
+                repositoryLabel.setModel(new Model(new String(sb)));
+            }
         }
     }
 
