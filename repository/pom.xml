@@ -17,7 +17,7 @@
 
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
+  <version>2.02.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
   <description>Hippo ECM suite</description>
