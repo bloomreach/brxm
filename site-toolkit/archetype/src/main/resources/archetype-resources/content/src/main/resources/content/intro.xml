@@ -1,15 +1,15 @@
 #set($hyphen = '-')
 #set($underscore = '_')
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
-    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.0"
-    xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.0"
+    xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
+    xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.1"
     xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:hippo="http://www.hippoecm.org/nt/1.0"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:hippo="http://www.hippoecm.org/nt/1.1"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
-    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.0"
+    xmlns:reporting="http://www.hippoecm.org/reporting/nt/1.1"
     xmlns:hst="http://www.hippoecm.org/hst/nt/1.0"
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
-    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.0"
+    xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:${rootArtifactId.replace($hyphen,$underscore)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0" sv:name="intro">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

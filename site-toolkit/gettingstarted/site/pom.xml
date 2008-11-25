@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.onehippo.ecm.hst</groupId>
     <artifactId>site-toolkit-gettingstarted</artifactId>
-    <version>2.01.05-SNAPSHOT</version>
+    <version>2.02.00-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -62,14 +62,14 @@
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-core</artifactId>
-      <version>2.01.05-SNAPSHOT</version>
+      <version>2.02.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.ecm.hst</groupId>
       <artifactId>site-toolkit-components</artifactId>
-      <version>2.01.05-SNAPSHOT</version>
+      <version>2.02.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
 

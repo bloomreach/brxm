@@ -5,7 +5,7 @@
   <description>Hippo Site Toolkit</description>
   <groupId>org.onehippo.ecm.hst</groupId>
   <artifactId>site-toolkit</artifactId>
-  <version>2.01.05-SNAPSHOT</version>
+  <version>2.02.00-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://docs.onehippo.org/site-toolkit/</url>
   <inceptionYear>2008</inceptionYear>
@@ -15,7 +15,7 @@
   </issueManagement>
 
   <properties>
-    <hippoecm.version>2.01.00.14715</hippoecm.version>
+    <hippoecm.version>2.01.01</hippoecm.version>
   </properties>
   
   <scm>
