@@ -39,7 +39,7 @@ public class ModuleParameterTag  extends BodyTagSupport {
     	}
     	
     	ModuleTagBase moduleTag = (ModuleTagBase) t;
-    	log.debug("Adding parameter to ModuleRenderTag '" + getName() + "=" + getValue() + "'.");
+    	log.debug("Adding parameter to ModuleTag '" + getName() + "=" + getValue() + "'.");
         moduleTag.addParameter(name, value);  	
 		return EVAL_PAGE;
 	}
