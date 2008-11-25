@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node sv:name="gettingstarted"
-  xmlns:gettingstarted="http://www.hippoecm.org/hst2/gettingstarted/1.0"
+  xmlns:gettingstarted="http://www.hippoecm.org/gettingstarted/1.0"
   xmlns:fn="http://www.w3.org/2005/xpath-functions"
   xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
   xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
@@ -59,7 +59,7 @@
           <sv:value>gettingstarted:textpage</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:uri" sv:type="String">
-          <sv:value>http://www.hippoecm.org/hst2/gettingstarted/1.0</sv:value>
+          <sv:value>http://www.hippoecm.org/gettingstarted/1.0</sv:value>
         </sv:property>
         <sv:node sv:name="hippo:field">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

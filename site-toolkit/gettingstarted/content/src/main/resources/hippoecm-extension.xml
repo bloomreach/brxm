@@ -36,7 +36,7 @@
       <sv:value>10000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hst2/gettingstarted/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/gettingstarted/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>gettingstarted-types.cnd</sv:value>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
-    xmlns:gettingstarted="http://www.hippoecm.org/hst2/gettingstarted/1.0"
+    xmlns:gettingstarted="http://www.hippoecm.org/gettingstarted/1.0"
     xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.1"
     xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
     xmlns:mix="http://www.jcp.org/jcr/mix/1.0"

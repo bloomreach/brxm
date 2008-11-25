@@ -10,7 +10,7 @@
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
     xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:gettingstarted="http://www.hippoecm.org/hst2/gettingstarted/1.0" sv:name="pagecontent">
+    xmlns:gettingstarted="http://www.hippoecm.org/gettingstarted/1.0" sv:name="pagecontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:folder</sv:value>
     </sv:property>
