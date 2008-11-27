@@ -24,17 +24,71 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">134 errors and/or todos in 70 out of 172 documents (40%).</span>
+      <span class="shortdesc">118 errors and/or todos in 71 out of 173 documents (41%).</span>
+      <ul>
+        <li>0 documents referencing password protected sites.
+     </li>
+        <li>1 documents using dummy references.
+     </li>
+        <li>3 unlinked documents.
+       </li>
+        <li>1 documents with typo's.
+     </li>
+        <li>3 documents to review.
+     </li>
+        <li>43 documents missing required info.
+     </li>
+        <li>3 empty documents.
+     </li>
+        <li>5 documents to rewrite.
+     </li>
+        <li>7 documents requiring additions.
+     </li>
+        <li>10 documents with unidentified TODO strings.
+     </li>
+        <li>11 multisection documents.
+     </li>
+        <li>2 invalid documents.
+     </li>
+      </ul>
+      <subsection name="Documents with dummy references: 1">
+        <ol>
+          <li>
+            <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
+            <ul>
+              <li>en a version of a document must be checked in. Workflows are written as plain Java code, as explained<span xmlns="" class="bad"> in X </span>. When such a custom workflow is invoked it may indicate that a version must be created of a document by in its turn invoking the internal workflow for versioning. This versioning workflow is a built-</li>
+              <li>mes with the interface for remote access and the implementation of the document, similar as described<span xmlns="" class="bad"> in X </span>.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Unlinked documents (compared to previous linkreport): 3">
+        <ol>
+          <li>
+            <a href="./delve_into/custom/schemas.html">schemas: </a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/cms_admins/howto/schemas.html">schemas: </a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/user/cms_admins/howto/schemas.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./errorlist.html">errorlist: </a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/errorlist.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
       <subsection name="Documents with standard typos: 1">
         <ol>
           <li>
             <a href="./delve_into/core/building/eclipse.html">eclipse: Introduction</a>
             <ul>
-              <li>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field. Groovy Monkey: see the official documentation. The Hippo ECM Maven build extensively uses WAR overlays, in order to mimic this for Eclipse some scripts have been made that crea</li>
-              <li>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field. Groovy Monkey: see the official documentation.</li>
-              <li>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
-              <li>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
-              <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
               <li>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span xmlns="" class="bad"> the the </span>'Class Enhancer' field.</li>
             </ul>
           </li>
@@ -156,7 +210,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 44">
+      <subsection name="Documents lacking some information: 43">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -353,12 +407,6 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/sysadmin/installation/help_startup_servlet_container.html">help_startup_servlet_container: Help startup in Servlet Container</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/sysadmin/installation/help_web_servlet_container.html">help_web_servlet_container: Help web Servlet Container</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
@@ -547,17 +595,11 @@ repository is;
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
             </ul>
           </li>
           <li>
             <a href="./about/features.html">features: Features</a>
             <ul>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
@@ -569,15 +611,11 @@ repository is;
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/core/architecture/index.html">index: Architecture</a>
             <ul>
-              <li><span xmlns="" class="bad"> TODO </span>: in-depth explanation of architecture</li>
               <li><span xmlns="" class="bad"> TODO </span>: in-depth explanation of architecture</li>
             </ul>
           </li>
@@ -585,27 +623,17 @@ repository is;
             <a href="./delve_into/core/concepts/index.html">index: Concepts</a>
             <ul>
               <li><span xmlns="" class="bad"> TODO </span>: concepts behind the code explained</li>
-              <li><span xmlns="" class="bad"> TODO </span>: concepts behind the code explained</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/custom/howto/customize_editing_template.html">customize_editing_template: Customize an Editing Template</a>
             <ul>
-              <li>(see the Create an editing template addon tutorial). Build the project with Maven and you're all set!<span xmlns="" class="bad"> TODO </span>: include screenshot</li>
-              <li>(see the Create an editing template addon tutorial). Build the project with Maven and you're all set!<span xmlns="" class="bad"> TODO </span>: include screenshot</li>
               <li><span xmlns="" class="bad"> TODO </span>: include screenshot</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/custom/jcr/data_migration.html">data_migration: Data Migration</a>
             <ul>
-              <li>Working with external data: hint, tips, best practices.<span xmlns="" class="bad"> TODO </span>TODO TODO</li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
@@ -623,21 +651,11 @@ repository is;
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/user/information_architects/howto/document_types/fieldtypes.html">fieldtypes: Field Types Reference</a>
             <ul>
-              <li>ad field to attach files or images to a document. An uploaded image is directly visible in a preview.<span xmlns="" class="bad"> TODO </span>TODO</li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
-              <li>
-                <span xmlns="" class="bad"> TODO </span>
-              </li>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
@@ -649,8 +667,6 @@ repository is;
           <li>
             <a href="./delve_into/user/information_architects/howto/document_types/index.html">index: Document Types</a>
             <ul>
-              <li><span xmlns="" class="bad"> TODO </span>These documents were moved over from the old 'extension' guide. They have to be fitted in the new howto structure under the user guide for information architects. Document types describe how your cont</li>
-              <li><span xmlns="" class="bad"> TODO </span>These documents were moved over from the old 'extension' guide. They have to be fitted in the new howto structure under the user guide for information architects.</li>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
               </li>
@@ -728,8 +744,14 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="invalid documents: 1">
+      <subsection name="invalid documents: 2">
         <ol>
+          <li>
+            <a href="./delve_into/sysadmin/installation/help_startup_servlet_container.html">help_startup_servlet_container: </a>
+            <ul>
+              <li>Document is invalid XML.</li>
+            </ul>
+          </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>

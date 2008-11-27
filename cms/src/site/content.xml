@@ -353,10 +353,10 @@
    <shortdesc>What does a sysadmin needs to know and do for Hippo CMS?</shortdesc>
   </document><folder>installation
    
-   <document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container
-   <section>Help startup in Servlet Container</section>
-   <subsection>Configuration file syntax error</subsection>
-  </document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
+   <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed
+   <section>help renamed</section>
+   <shortdesc>How to download a file into a folder renamed to some name?</shortdesc>
+  </document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
    <section>Help web Servlet Container</section>
    <subsection>Empty page after login to Hippo CMS</subsection>
   </document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server
@@ -390,6 +390,8 @@
        in a Java servlet container.</shortdesc>
    <index>servlet container</index>
    <subsection>Deploying in Tomcat</subsection>
+   <h4>Install required libraries</h4>
+   <h4>Deploy Hippo CMS WAR</h4>
   </document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
    <section>Install Tomcat</section>
    <shortdesc>Learn how to install Apache Tomcat</shortdesc>

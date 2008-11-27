@@ -10,14 +10,11 @@
    
    <document ext="xml" filename="architecture" relpath="about">Architecture
     <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="features" relpath="about">Features
-    <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="term_index" relpath="about">
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="use_cases" relpath="about">Use cases
-    <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>delve_into
    
@@ -28,15 +25,9 @@
    
    <document ext="xml" filename="index" relpath="delve_into/core/architecture">Architecture
     <todo><span class="bad"> TODO </span>: in-depth explanation of architecture</todo>
-    <todo><span class="bad"> TODO </span>: in-depth explanation of architecture</todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>building
    
    <document ext="xml" filename="eclipse" relpath="delve_into/core/building">Introduction
-    <typo>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field. Groovy Monkey: see the official documentation. The Hippo ECM Maven build extensively uses WAR overlays, in order to mimic this for Eclipse some scripts have been made that crea</typo>
-    <typo>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field. Groovy Monkey: see the official documentation.</typo>
-    <typo>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo>
-    <typo>-beta-2.jar &lt;maven-repository&gt;/bcel/bcel/5.2/bcel-5.2.jar Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo>
-    <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo>
     <typo>Select JPOX -&gt; Enhancer and enter 'BCEL' in<span class="bad"> the the </span>'Class Enhancer' field.</typo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <multisection>Has 6 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo ECM
@@ -47,7 +38,6 @@
     <multisection>Has 4 sections.</multisection></document></folder><folder>concepts
    
    <document ext="xml" filename="index" relpath="delve_into/core/concepts">Concepts
-    <todo><span class="bad"> TODO </span>: concepts behind the code explained</todo>
     <todo><span class="bad"> TODO </span>: concepts behind the code explained</todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/core">Development Guide
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="project-structure" relpath="delve_into/core">Project Structure
@@ -74,16 +64,13 @@
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><folder>howto
    
    <document ext="xml" filename="customize_editing_template" relpath="delve_into/custom/howto">Customize an Editing Template
-    <todo>(see the Create an editing template addon tutorial). Build the project with Maven and you're all set!<span class="bad"> TODO </span>: include screenshot</todo>
-    <todo>(see the Create an editing template addon tutorial). Build the project with Maven and you're all set!<span class="bad"> TODO </span>: include screenshot</todo>
-    <todo><span class="bad"> TODO </span>: include screenshot</todo></document><document ext="xml" filename="customize_skin" relpath="delve_into/custom/howto">Frontend skin customization</document><document ext="xml" filename="customize_versioning" relpath="delve_into/custom/howto">Customize versioning</document><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin</document><document ext="xml" filename="extend_dashboard" relpath="delve_into/custom/howto">Giving our plugin a place on the dashboard</document><document ext="xml" filename="gui_plugin" relpath="delve_into/custom/howto">Hello World</document><document ext="xml" filename="hello_model" relpath="delve_into/custom/howto">Making the Hello World plugin context sensitive
+    <todo><span class="bad"> TODO </span>: include screenshot</todo></document><document ext="xml" filename="customize_skin" relpath="delve_into/custom/howto">Frontend skin customization</document><document ext="xml" filename="customize_versioning" relpath="delve_into/custom/howto">Customize versioning
+    <dummyref>en a version of a document must be checked in. Workflows are written as plain Java code, as explained<span class="bad"> in X </span>. When such a custom workflow is invoked it may indicate that a version must be created of a document by in its turn invoking the internal workflow for versioning. This versioning workflow is a built-</dummyref>
+    <dummyref>mes with the interface for remote access and the implementation of the document, similar as described<span class="bad"> in X </span>.</dummyref></document><document ext="xml" filename="editing_template_plugin" relpath="delve_into/custom/howto">Create an Editing Template Plugin</document><document ext="xml" filename="extend_dashboard" relpath="delve_into/custom/howto">Giving our plugin a place on the dashboard</document><document ext="xml" filename="gui_plugin" relpath="delve_into/custom/howto">Hello World</document><document ext="xml" filename="hello_model" relpath="delve_into/custom/howto">Making the Hello World plugin context sensitive
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/custom/howto">Howto</document><document ext="xml" filename="packaging" relpath="delve_into/custom/howto">Testing the Hello World plugin</document><document ext="xml" filename="workflow" relpath="delve_into/custom/howto">Developing workflows
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/custom">Hippo CMS Add-ons</document><document ext="xml" filename="introduction" relpath="delve_into/custom">Introduction to add-on development</document><folder>jcr
    
    <document ext="xml" filename="data_migration" relpath="delve_into/custom/jcr">Data Migration
-    <todo>Working with external data: hint, tips, best practices.<span class="bad"> TODO </span>TODO TODO</todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo></document><document ext="xml" filename="examples" relpath="delve_into/custom/jcr">JCR Examples</document><document ext="xml" filename="index" relpath="delve_into/custom/jcr">JCR Interface</document><document ext="xml" filename="jcr_dropbox_example" relpath="delve_into/custom/jcr">Demo on interfacing with Hippo ECM Repository
@@ -125,6 +112,7 @@ repository is;
 
 </review></document><document ext="xml" filename="workflow" relpath="delve_into/custom/reference/repository">Workflow functionality
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="schemas" relpath="delve_into/custom">
+    <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
     <add>Enlighting and attractive diagram.</add></document><document ext="xml" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
@@ -157,8 +145,7 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/sysadmin">System Administration Guide</document><folder>installation
    
-   <document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
+   <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed</document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation
     <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat</document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
@@ -175,6 +162,7 @@ repository is;
     <empty_elem>...&lt;span class='usermanagement_16'/&gt;,
      at the left of the screen. 
     .../&lt;p&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="goto_user_properties" relpath="delve_into/user/cms_admins/howto">Goto User Properties</document><document ext="xml" filename="index" relpath="delve_into/user/cms_admins/howto">CMS admin Howto</document><document ext="xml" filename="login" relpath="delve_into/user/cms_admins/howto">Login as Admin</document><document ext="xml" filename="logout" relpath="delve_into/user/cms_admins/howto">Logout</document><document ext="xml" filename="save_settings" relpath="delve_into/user/cms_admins/howto">Save settings</document><document ext="xml" filename="schemas" relpath="delve_into/user/cms_admins/howto">
+    <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/user/cms_admins/howto/schemas.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS</document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/howto">Type in editing region</document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide</document><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour</document></folder><folder>contributors
    
@@ -210,16 +198,10 @@ repository is;
    <document ext="xml" filename="editor" relpath="delve_into/user/information_architects/howto/document_types">The Document Type Editor
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="examples" relpath="delve_into/user/information_architects/howto/document_types">Examples of document types
     <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="fieldtypes" relpath="delve_into/user/information_architects/howto/document_types">Field Types Reference
-    <todo>ad field to attach files or images to a document. An uploaded image is directly visible in a preview.<span class="bad"> TODO </span>TODO</todo>
-    <todo><span class="bad"> TODO </span></todo>
-    <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/howto/document_types">Document Types
-    <todo><span class="bad"> TODO </span>These documents were moved over from the old 'extension' guide. They have to be fitted in the new howto structure under the user guide for information architects. Document types describe how your cont</todo>
-    <todo><span class="bad"> TODO </span>These documents were moved over from the old 'extension' guide. They have to be fitted in the new howto structure under the user guide for information architects.</todo>
     <todo><span class="bad"> TODO </span></todo>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="tutorial" relpath="delve_into/user/information_architects/howto/document_types">Document Type Tutorial
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="fieldcaption" relpath="delve_into/user/information_architects/howto">Fieldcaption</document><document ext="xml" filename="fieldsize" relpath="delve_into/user/information_architects/howto">Fieldsize</document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/information_architects/howto">Goto Content Browse Tab
@@ -237,6 +219,7 @@ repository is;
    <document ext="" filename="*" relpath="delve_into/web/jcr"><invalid>Document is invalid XML.</invalid></document></folder><folder>toolkits
    
    <document ext="xml" filename="index" relpath="delve_into/web/toolkits">Toolkits</document></folder></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+    <unlinked> The file file:///home/rita/werk/cms/target/site/errorlist.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo CMS?
     <add>Enlightning diagram?</add>

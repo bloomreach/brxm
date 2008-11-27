@@ -39,8 +39,12 @@
       </p>
       <p>
        Below, the Tomcat folder is called $TOMCATDIR. 
+       It may be something like /usr/local/share/apache-tomcat-6.0.18, depending of course where you
+       put Tomcat and which version of Tomcat you have.
       </p>
-  
+
+      <h4>Install required libraries</h4>
+
       <blockquote>
        <table>
         <tr> 
@@ -54,7 +58,15 @@
          <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> jar file
             to <code>$TOMCATDIR/lib</code>.
 	</td>
-        </tr>
+
+	</tr>
+       </table>
+      </blockquote>
+
+      <h4>Deploy Hippo CMS WAR</h4>
+  
+      <blockquote>
+       <table>
           <tr>
          <td>
             Download 
@@ -63,8 +75,8 @@
           <span class='download-48 icon-48'/>
 	 </td>
    <td>          
-     Download the <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war'>Hippo CMS WAR</a>
-     to the $TOMCATDIR/webapps/ folder renamed to cms.war.
+     Download the <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war'>Hippo CMS package WAR</a>
+     to the <code>$TOMCATDIR/webapps/</code> folder with the package file <a href='help_renamed.html'>renamed to</a> <code>cms.war</code>.
    </td>
   </tr>
   <tr>
@@ -73,8 +85,8 @@
     <span class='commandline-48 icon-48'/>
    </td>
    <td>          
-       Start Tomcat normally. Tomcat will automatically deploy the cms.war and create an
-       cms folder. <a href='help_startup_servlet_container.html'>Need help?</a>
+       Startup Tomcat <a href='install_tomcat.html#startup'>normally</a>. Tomcat will automatically deploy the <code>cms.war</code> and create an
+       <code>cms</code> folder. <a href='help_startup_servlet_container.html'>Need help?</a>
    </td>
    </tr>
   <tr>
