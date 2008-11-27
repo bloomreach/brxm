@@ -23,6 +23,10 @@ html1/DTD/xhtml1-strict.dtd">
   .ms { background: #FFDDDD }
   .prefposix { background: #F9EFFD }
 
+  table, td, th { text-align:center; vertical-align: middle; }
+
+  th { background: #E0E0E0; border: solid;}
+
   div.stack table {border-collapse: collapse; }
   div.stack td { text-align:center; vertical-align: middle; border: solid; margin: 0pt; padding: 0pt }
 
@@ -38,6 +42,17 @@ html1/DTD/xhtml1-strict.dtd">
   span.warn, #content span.warn, #content ol li span.warn, #content ul li span.warn {color: orange;}
   span.ko, #content span.ko, #content ol li span.ko, #content ul li span.ko {color: red;}
 
+ .check-16{background-image:url("images/check-16.png")}
+ .edit-delete-16{background-image:url("images/edit-delete-16.png")}
+
+.icon-16,.icon-32, .icon-48, .icon-128 {background-repeat: no-repeat; background-position: center center; display: block;} 
+.icon-16{width: 6ex; height: 16px; text-align:center;}
+.icon-32 {width: 32px; height: 32px;}
+.icon-48 {width: 48px; height: 48px;}
+.icon-128 {width: 128px; height: 128px;}
+
+.right { float:right; }
+
  </style>
 
 
@@ -45,166 +60,179 @@ html1/DTD/xhtml1-strict.dtd">
 
 <body>
 
+ <h1>Supported stacks</h1>
+
+  <p>Hippo CMS requires a stack of system software to be able to run.  
+     Hippo CMS support is only OS type dependent, not stack dependent. I.e.: given a particular OS type, 
+     you can choose a particular piece of system software for every layer of the stack and none of your choices depends on your other choices.
+  </p>
+
+  <h2>table view</h2>
+
+   <p>The table below shows which system software required by Hippo CMS are supported on what OS (type).
+      As support depends only on OS type, not on OS, two columns, one for each OS type, would suffice. 
+   </p>
+  
  <div class='vink'>
   <table>
   <tr>
    <th colspan='2'></th>
-   <th colspan='5'>(almost) POSIX compatible OS'ses</th>
-   <th colspan='4'>Microsoft OS'ses</th>
+   <th colspan='5' class='posix'>(almost) POSIX compatible OS'ses</th>
+   <th colspan='4' class='ms'>Microsoft OS'ses</th>
   </tr>
   <tr>
    <th>program<br/>type</th>
    <th>program</th>
-   <th>Linux</th>
-   <th>Solaris</th>
-   <th>Mac<br/>OS X</th>
-   <th>HP/UX</th>
-   <th>Other<br/> POSIX</th>
-   <th>Windows<br/> XP</th>
-   <th>Windows<br/> Vista</th>
-   <th>MS server<br/> 2002</th>
-   <th>MS server<br/> 2003</th>
+   <th class='posix'>Linux</th>
+   <th class='posix'>Solaris</th>
+   <th class='posix'>Mac<br/>OS X</th>
+   <th class='posix'>HP/UX</th>
+   <th class='posix'>Other<br/> POSIX</th>
+   <th class='ms'>XP</th>
+   <th class='ms'>Vista</th>
+   <th class='ms'>Server<br/> 2002</th>
+   <th class='ms'>Server<br/> 2003</th>
   </tr>
   <tr>
    <th rowspan='4'>Java<br/>container</th> 
    <th>JBoss</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>Glassfish 2UR2</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>Tomcat 6.0</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
   </tr>
   <tr>
    <th>Tomcat 5.5</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
-   <td><span class='warn'>1</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
+   <td><span class='check-16 icon-16'/><span class='warn right'>1</span></td>
   </tr>
   <tr>
    <th rowspan='2'>Java</th> 
    <th>SUN JVM 6</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>SUN JVM 5</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th rowspan='4'>Database</th> 
    <th>MySQL</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>Derby</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>Oracle</th> 
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   <tr>
    <th>MS SQLserver</th> 
-   <td><span class='ko'>X</span></td>
-   <td><span class='ko'>X</span></td>
-   <td><span class='ko'>X</span></td>
-   <td><span class='ko'>X</span></td>
-   <td><span class='ko'>X</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
-   <td><span class='ok'>V</span></td>
+   <td><span class='edit-delete-16 icon-16'/></td>
+   <td><span class='edit-delete-16 icon-16'/></td>
+   <td><span class='edit-delete-16 icon-16'/></td>
+   <td><span class='edit-delete-16 icon-16'/></td>
+   <td><span class='edit-delete-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
+   <td><span class='check-16 icon-16'/></td>
   </tr>
   </table>
  </div>
 
  <ol>
-  <li>Tomcat runs slow on MS OS'ses so is preferably run on <span class='posix'>(allmost) POSIX compliant OS'ses.</span>  
+  <li><span class='warn'>Tomcat runs slow on MS OS'ses so is preferably run on <span class='posix'>(allmost) POSIX compliant OS'ses.</span>  
    The cause is that Tomcat makes excessive use of thread switching, which eventually has to be taken care of
-   by the OS and MS OS's are not very good at that.
+   by the OS and MS OS's are not very good at that.</span>
   </li>
  </ol>
 
-
+  <h2>Layer View</h2>
 
  <div class='stack'>
         <table>
 
          <tr>
-          <td class='start end'>5.<br/>Website<br/>toolkit</td>
+          <th class='start end'>5.<br/>Website<br/>toolkit</th>
           <td colspan='0' class='both start end'>
             <img src='images/HST_logo.png' alt='HST logo'/>
             <br/>
@@ -213,7 +241,7 @@ html1/DTD/xhtml1-strict.dtd">
 	 </tr>
 
          <tr>
-          <td class='start end'>4.<br/>CMS</td>
+          <th class='start end'>4.<br/>CMS</th>
           <td colspan='0' class='both start end'>
             <img src='images/CMS_logo.png' alt='CMS logo'/>
             <br/>Hippo CMS 7
@@ -221,7 +249,7 @@ html1/DTD/xhtml1-strict.dtd">
 	 </tr>
 
          <tr>
-          <td class='start end'>3.<br/>Java<br/>container</td>
+          <th class='start end'>3.<br/>Java<br/>container</th>
           <td>
            <table>
             <tr>
@@ -254,7 +282,7 @@ html1/DTD/xhtml1-strict.dtd">
 	 </tr>
 
          <tr>
-          <td class='start end'>2a.<br/>Java</td>
+          <th class='start end'>2a.<br/>Java</th>
           <td class='both start end'>
            <img src='images/sun_icon.png' alt='Sun logo'/>
            <img src='images/java_icon.png' alt='Java logo'/>
@@ -270,7 +298,7 @@ html1/DTD/xhtml1-strict.dtd">
 	 </tr>
 	 </table>
 	 </td>
-          <td class='start end'>2b.<br/>Database</td>
+          <th class='start end'>2b.<br/>Database</th>
            <td>
             <table> 
              <tr>            
@@ -306,7 +334,7 @@ html1/DTD/xhtml1-strict.dtd">
 	 </tr>
 
          <tr>
-          <td class='start'>1.<br/>OS</td>
+          <th class='start'>1.<br/>OS</th>
           <td colspan='0'>
            <table>
            <tr>
