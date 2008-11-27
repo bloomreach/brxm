@@ -37,8 +37,8 @@
       <subsection name="Creating your project">
 
         <p>
-          To kick start your project, you can use the <code>hippo-ecm-hst-archetype-start</code> template.
-          The default code provides: a custom ECM project containing a pre-configured content repository 
+          To kick start your project, you can use the <code>site-toolkit-archetype</code> template.
+          The default code provides: a custom CMS project containing a pre-configured content repository 
           and CMS, sample content, and a sample website. 
         </p>
         
@@ -52,7 +52,7 @@ mvn archetype:generate \
  -DremoteRepositories=http://repository.hippocms.org/maven2,http://repo1.maven.org/maven2 \
  -DarchetypeGroupId=org.onehippo.ecm.hst \
  -DarchetypeArtifactId=site-toolkit-archetype \
- -DarchetypeVersion=2.01.02 \
+ -DarchetypeVersion=2.02.01 \
  -Dversion=1.01.00 \
  -DgroupId=org.example \
  -DartifactId=myproject
@@ -65,7 +65,7 @@ mvn archetype:generate \
         
         <ul>
           <li>
-            <p>ecm - a pre-configured content repository and CMS</p>
+            <p>cms - a pre-configured content repository and CMS</p>
           </li>
           <li>
             <p>content - sample content including a document type and some documents for the sample site</p>
@@ -87,7 +87,7 @@ mvn archetype:generate \
         
         <ul>
           <li>
-            <p>myproject-ecm-1.01.00.war (located in <code>ecm/target</code>)</p>
+            <p>myproject-cms-1.01.00.war (located in <code>cms/target</code>)</p>
           </li>
           <li>
             <p>myproject-site-1.01.00.war (located in <code>site/target</code>)</p>
@@ -110,7 +110,7 @@ mvn archetype:generate \
         </p>
         
         <p>
-          Copy <code>myproject-ecm-1.01.00.war</code> to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
+          Copy <code>myproject-cms-1.01.00.war</code> to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
         </p>
         
         <p>
@@ -137,13 +137,13 @@ mvn archetype:generate \
         </p>
         
         <p>
-          To run the CMS and repository, run the following command from the <code>ecm</code> directory:
+          To run the CMS and repository, run the following command from the <code>cms</code> directory:
         </p>
         
         <source>mvn jetty:run-war</source>
         
         <p>
-          Hippo CMS 7 is now available at <a href="http://localhost:8080/">http://localhost:8080/</a>.
+          Hippo CMS 7 is now available at <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>.
           You can login as user <i>admin</i> using the password <i>admin</i>.
         </p>
         
@@ -154,7 +154,7 @@ mvn archetype:generate \
         <source>mvn jetty:run</source>
 
         <p>
-          The sample website is now available at <a href="http://127.0.0.1:8085/preview/index">http://127.0.0.1:8085/preview/index</a>.
+          The sample website is now available at <a href="http://127.0.0.1:8085/site/preview/index">http://127.0.0.1:8085/site/preview/index</a>.
         </p>
 
         <p>
