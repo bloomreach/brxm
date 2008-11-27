@@ -36,20 +36,12 @@
    fullname='delve_into/core/building/eclipse.xml'
    relpath='delve_into/core/building'
   >eclipse</file>
-     <file ext='xml~' mimetype='text/xml'
-   fullname='delve_into/core/building/eclipse.xml~'
-   relpath='delve_into/core/building'
-  >eclipse</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/core/building/index.xml'
    relpath='delve_into/core/building'
   >index</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/core/building/maven.xml'
-   relpath='delve_into/core/building'
-  >maven</file>
-     <file ext='xml~' mimetype='text/xml'
-   fullname='delve_into/core/building/maven.xml~'
    relpath='delve_into/core/building'
   >maven</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
@@ -281,6 +273,10 @@
   >index</file>
     <folder>installation
      <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/sysadmin/installation/help_renamed.xml'
+   relpath='delve_into/sysadmin/installation'
+  >help_renamed</file>
+     <file ext='xml' mimetype='text/xml' valid='no'
    fullname='delve_into/sysadmin/installation/help_startup_servlet_container.xml'
    relpath='delve_into/sysadmin/installation'
   >help_startup_servlet_container</file>
@@ -316,10 +312,6 @@
    fullname='delve_into/sysadmin/installation/install_tomcat.xml'
    relpath='delve_into/sysadmin/installation'
   >install_tomcat</file>
-     <file ext='xml~' mimetype='text/xml' note='todo'
-   fullname='delve_into/sysadmin/installation/install_tomcat.xml~'
-   relpath='delve_into/sysadmin/installation'
-  >install_tomcat</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/installation/plugins.xml'
    relpath='delve_into/sysadmin/installation'
@@ -327,10 +319,6 @@
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/requirements.xml'
-   relpath='delve_into/sysadmin'
-  >requirements</file>
-    <file ext='xml~' mimetype='text/xml'
-   fullname='delve_into/sysadmin/requirements.xml~'
    relpath='delve_into/sysadmin'
   >requirements</file>
    </folder>

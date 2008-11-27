@@ -23,6 +23,40 @@
     </properties>
     <body>
      <section name="Help startup in Servlet Container">
+      <span class='shortdesc'>Help for when you have problems starting up Hippo in a servlet container.</span>
+
+
+      <subsection name="Failed to Connect. Firefox can't establish a connection to the server at localhost:8080.">
+
+       <ul>
+        <li>
+         <p>
+           You may have configured your servlet container to run on a non-default port.
+	 </p>
+         <p>The examples in the documentation assume default values. You must adapt the examples to
+            your own customized port number. 
+        </p>
+	</li>
+        <li><p>You may be deploying the application on a machine other than your local
+               machine.</p>
+             <p>The examples in the documentation assume that you deploy the application on the same machine
+                as you are working. If you are deploying the application on a remote machine, you  
+                have to use the name of that remote machine everywhere that the documenation refers to &quot;localhost&quot;.
+             </p>
+	</li>
+       </ul>
+
+      <subsection name='The browser window of the CMS is an empty page'>
+
+        <p>You maybe trying to run more than one CMS without configuring the <a href='http://en.wikipedia.org/wiki/Java_remote_method_invocation'>RMI</a> ports appriopiately.
+           In this case the second one that the servlet container or application server tries to start will crash.
+        </p>
+
+        <p>The CMS opens a RMI connection and normally uses the default port 1099 for that. If you want to
+           run more than one CMS at the same time, you must configure one of them to use another port for
+           the RMI connection.   
+        </p>
+
    
       <subsection name='Configuration file syntax error'>
     

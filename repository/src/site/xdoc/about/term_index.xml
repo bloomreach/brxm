@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 670 terms</span>
+      <span class="shortdesc">Term index, 673 terms</span>
       <table>
         <tr>
           <th>Term</th>
@@ -632,12 +632,6 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Configuration_file_syntax_error">Configuration file syntax error</a>
-          </td>
-          <td>Help startup in Servlet Container</td>
-        </tr>
-        <tr>
-          <td>
             <a href="../delve_into/sysadmin/configuration/nodes/index.html#Configuration_nodes">Configuration nodes</a>
           </td>
           <td>Configuration nodes</td>
@@ -956,6 +950,12 @@
         </tr>
         <tr>
           <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Deploy_Hippo_CMS_WAR">Deploy Hippo CMS WAR</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
+        </tr>
+        <tr>
+          <td>
             <a href="../delve_into/quickstart_in_existing_container.html#Deploy_the_binary_distribution">Deploy the binary distribution</a>
           </td>
           <td>Your own Quickstart</td>
@@ -1061,6 +1061,12 @@
             <a href="../delve_into/user/contributors/concepts/document.html#Document">Document</a>
           </td>
           <td>Document</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Document_is_invalid_XML_">Document is invalid XML.</a>
+          </td>
+          <td/>
         </tr>
         <tr>
           <td>
@@ -1719,9 +1725,9 @@
         </tr>
         <tr>
           <td>
-            <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Help_startup_in_Servlet_Container">Help startup in Servlet Container</a>
+            <a href="../delve_into/sysadmin/installation/help_renamed.html#help_renamed">help renamed</a>
           </td>
-          <td>Help startup in Servlet Container</td>
+          <td>help renamed</td>
         </tr>
         <tr>
           <td>
@@ -2011,6 +2017,12 @@
             <a href="../delve_into/user/information_architects/howto/fieldsize.html#How_to_define_the_size_for_a_field_in_a_documenttype_">How to define the size for a field in a documenttype.</a>
           </td>
           <td>Fieldsize</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/help_renamed.html#How_to_download_a_file_into_a_folder_renamed_to_some_name_">How to download a file into a folder renamed to some name?</a>
+          </td>
+          <td>help renamed</td>
         </tr>
         <tr>
           <td>
@@ -2313,6 +2325,12 @@
             <a href="../delve_into/core/building/maven.html#Install_Maven">Install Maven</a>
           </td>
           <td>Building with Maven</td>
+        </tr>
+        <tr>
+          <td>
+            <a href="../delve_into/sysadmin/installation/in_servlet_container.html#Install_required_libraries">Install required libraries</a>
+          </td>
+          <td>Deploying in Servlet Container</td>
         </tr>
         <tr>
           <td>
