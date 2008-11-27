@@ -1,6 +1,6 @@
 #set($dollar = '$')
 #set($hyphen = '-')
-#set($underscore = '_')
+#set($empty = '')
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo

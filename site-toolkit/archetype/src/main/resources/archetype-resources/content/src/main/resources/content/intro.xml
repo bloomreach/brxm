@@ -1,5 +1,5 @@
 #set($hyphen = '-')
-#set($underscore = '_')
+#set($empty = '')
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
     xmlns:hippogallery="http://www.hippoecm.org/hippogallery/nt/1.1"
@@ -11,7 +11,7 @@
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
     xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:${rootArtifactId.replace($hyphen,$underscore)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0" sv:name="intro">
+    xmlns:${rootArtifactId.replace($hyphen,$empty)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0" sv:name="intro">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
@@ -20,21 +20,21 @@
     </sv:property>
     <sv:node sv:name="intro">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
+        <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
       </sv:property>
-      <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:body" sv:type="String">
+      <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:body" sv:type="String">
         <sv:value>This getting started application is meant as experimental playground for the HST2. You can try to create your own modules, sitemap items.</sv:value>
       </sv:property>
-      <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:date" sv:type="Date">
+      <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:date" sv:type="Date">
         <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
       </sv:property>
-      <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:summary" sv:type="String">
+      <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:summary" sv:type="String">
         <sv:value>Welcome to the Hippo ECM HST 2 Getting Started application!</sv:value>
       </sv:property>
-      <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:title" sv:type="String">
+      <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
         <sv:value>Getting Started application</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String"/>

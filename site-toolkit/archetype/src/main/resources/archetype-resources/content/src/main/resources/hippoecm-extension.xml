@@ -1,5 +1,5 @@
 #set($hyphen = '-')
-#set($underscore = '_')
+#set($empty = '')
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2008 Hippo
@@ -30,7 +30,7 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
 
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$underscore)}">
+  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -38,14 +38,14 @@
       <sv:value>10000</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>gettingstarted-types.cnd</sv:value>
+      <sv:value>${rootArtifactId}-types.cnd</sv:value>
     </sv:property>
   </sv:node>
   
-  <sv:node sv:name="${rootArtifactId.replace($hyphen,$underscore)}-namespace">
+  <sv:node sv:name="${rootArtifactId.replace($hyphen,$empty)}-namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -53,7 +53,7 @@
       <sv:value>10001</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>gettingstarted-namespace.xml</sv:value>
+      <sv:value>${rootArtifactId}-namespace.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>

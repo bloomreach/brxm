@@ -1,5 +1,5 @@
 #set($hyphen = '-')
-#set($underscore = '_')
+#set($empty = '')
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:rep="internal"
     xmlns:frontend="http://www.hippoecm.org/frontend/nt/1.1"
@@ -12,7 +12,7 @@
     xmlns:fn_old="http://www.w3.org/2004/10/xpath-functions"
     xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:${rootArtifactId.replace($hyphen,$underscore)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$underscore)}/1.0" sv:name="pagecontent">
+    xmlns:${rootArtifactId.replace($hyphen,$empty)}="http://www.hippoecm.org/hst2/${rootArtifactId.replace($hyphen,$empty)}/1.0" sv:name="pagecontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:folder</sv:value>
     </sv:property>
@@ -47,12 +47,12 @@
             </sv:property>
             <sv:node sv:name="Products">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
+                    <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:body" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:body" sv:type="String">
                     <sv:value>&lt;div id="content_main"&gt; &lt;p&gt;Hippo products
                         enable you to optimize information management in your organization. Our
                         current offering exists out of three products:&lt;/p&gt;
@@ -76,13 +76,13 @@
                         other players in this field).&lt;/p&gt;
                     &lt;/div&gt;</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:date" sv:type="Date">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:date" sv:type="Date">
                     <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:summary" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:summary" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:title" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Products</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String"/>
@@ -107,12 +107,12 @@
             </sv:property>
             <sv:node sv:name="Hippo_x0020_CMS">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
+                    <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:body" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:body" sv:type="String">
                     <sv:value>&lt;p&gt;With Hippo CMS it is possible to merge various
                         external sources seamlessly into a single whole. Hippo CMS itself therefore
                         works with all the usual open standards and is deployed in particular in
@@ -170,16 +170,16 @@
                         website can be placed by the HRM department, so that the information is
                         relevant and up to date.&lt;/p&gt;</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:date" sv:type="Date">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:date" sv:type="Date">
                     <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:summary" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:summary" sv:type="String">
                     <sv:value>Hippo CMS is a user-friendly content management system for maintaining
                         all your information in a structured publication on Internet, intranet or
                         extranet. The key points of Hippo CMS are user-friendliness,
                         interoperability and expandability.</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:title" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Hippo CMS</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String"/>
@@ -218,12 +218,12 @@
             </sv:property>
             <sv:node sv:name="Solutions">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
-                    <sv:value>${rootArtifactId.replace($hyphen,$underscore)}:textpage</sv:value>
+                    <sv:value>${rootArtifactId.replace($hyphen,$empty)}:textpage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hippo:harddocument</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:body" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:body" sv:type="String">
                     <sv:value>&lt;div id="content_main"&gt; &lt;p&gt;We believe that
                         every organization is unique, and that software has to fit like a glove.
                         However, there are also certain similarities between organizations. It's our
@@ -244,13 +244,13 @@
                         &lt;p&gt;We can advise you in picking the right Hippo
                         solution.&lt;/p&gt; &lt;/div&gt;</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:date" sv:type="Date">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:date" sv:type="Date">
                     <sv:value>2008-08-15T10:05:07.580+02:00</sv:value>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:summary" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:summary" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="${rootArtifactId.replace($hyphen,$underscore)}:title" sv:type="String">
+                <sv:property sv:name="${rootArtifactId.replace($hyphen,$empty)}:title" sv:type="String">
                     <sv:value>Solutions</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippo:paths" sv:type="String"/>

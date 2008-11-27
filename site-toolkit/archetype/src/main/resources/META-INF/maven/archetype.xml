@@ -42,8 +42,8 @@
     <resource>content/src/main/resources/modules/news.xml</resource>
     <resource>content/src/main/resources/content/pagecontent.xml</resource>
     <resource>content/src/main/resources/content/intro.xml</resource>
-    <resource>content/src/main/resources/gettingstarted-namespace.xml</resource>
-    <resource>content/src/main/resources/gettingstarted-types.cnd</resource>
+    <resource>content/src/main/resources/archetype-namespace.xml</resource>
+    <resource>content/src/main/resources/archetype-types.cnd</resource>
     <resource>content/src/main/resources/hippoecm-extension.xml</resource>
     <resource>content/pom.xml</resource>
   </resources>
