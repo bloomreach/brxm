@@ -29,6 +29,7 @@ import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,9 @@ public class DocumentTypesListModule extends ModuleBase{
 		while (it.hasNext()) {
 			NodeType nt = it.nextNodeType();			
 			if (nt.getName().startsWith(namespacePrefix)) {
-				types.add(nt);
+				if(nt.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+					types.add(nt);
+				}
 			}
 		}
 		this.items=types;
