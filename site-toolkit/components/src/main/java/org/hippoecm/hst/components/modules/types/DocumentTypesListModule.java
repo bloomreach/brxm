@@ -57,12 +57,13 @@ public class DocumentTypesListModule extends ModuleBase{
             }
         }
         
-        try {
+
+		try {
 			getNodeTypes(jcrSession,namespace);
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("An error occured while fetching document types for namespace {} with message: ",namespace,e.getMessage());
 		}
+		
         pageContext.setAttribute(getVar(), getTypes());
 	}
 
