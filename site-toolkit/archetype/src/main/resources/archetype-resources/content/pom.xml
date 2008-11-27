@@ -24,10 +24,10 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>My Hippo Site Toolkit Project Sample Content</name>
-  <description>My Hippo Site Toolkit Project Sample Content</description>
+  <name>My Hippo Site Toolkit Project Content</name>
+  <description>My Hippo Site Toolkit Project Content</description>
   <groupId>${groupId}</groupId>
-  <artifactId>${rootArtifactId}-sample-content</artifactId>
+  <artifactId>${rootArtifactId}-content</artifactId>
   <packaging>jar</packaging>
 
   <build>

@@ -17,9 +17,9 @@
 <archetype>
   <id>gettingstarted</id>
   <resources>
-    <resource>ecm/src/main/resources/log4j.dtd</resource>
-    <resource>ecm/src/main/resources/log4j.xml</resource>
-    <resource>ecm/pom.xml</resource>
+    <resource>cms/src/main/resources/log4j.dtd</resource>
+    <resource>cms/src/main/resources/log4j.xml</resource>
+    <resource>cms/pom.xml</resource>
     <resource>site/src/main/webapp/WEB-INF/hst.properties</resource>
     <resource>site/src/main/webapp/WEB-INF/web.xml</resource>
     <resource>site/src/main/webapp/resources/css/screen.css</resource>

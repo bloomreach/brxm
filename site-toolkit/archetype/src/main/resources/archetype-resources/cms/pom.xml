@@ -24,10 +24,10 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>My Hippo Site Toolkit Project ECM WAR package</name>
-  <description>My Hippo Site Toolkit Project ECM WAR package</description>
+  <name>My Hippo Site Toolkit Project CMS WAR package</name>
+  <description>My Hippo Site Toolkit Project CMS WAR package</description>
   <groupId>${groupId}</groupId>
-  <artifactId>${rootArtifactId}-ecm</artifactId>
+  <artifactId>${rootArtifactId}-cms</artifactId>
   <packaging>war</packaging>
 
   <dependencies>
@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-sample-content</artifactId>
+      <artifactId>${rootArtifactId}-content</artifactId>
       <version>${version}</version>
       <type>jar</type>
     </dependency>
@@ -84,7 +84,7 @@
               <port>8080</port>
             </connector>
           </connectors>
-          <contextPath>/</contextPath>
+          <contextPath>/cms</contextPath>
         </configuration>
         <dependencies>
           <!-- atomikos dependecies for running jetty:run[-war|-exploded] -->

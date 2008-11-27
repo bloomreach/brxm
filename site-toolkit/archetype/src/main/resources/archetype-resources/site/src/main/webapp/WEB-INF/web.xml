@@ -44,7 +44,7 @@
     </init-param>
     <init-param>      
       <param-name>ignorePaths</param-name>
-      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+      <param-value>/static,/binaries,/jvmStatus,/resources,/favicon.ico</param-value>
     </init-param>
   </filter>
   
@@ -57,7 +57,7 @@
     </init-param>
     <init-param>      
       <param-name>ignorePaths</param-name>
-      <param-value>/static,/binaries,/resources,/favicon.ico</param-value>    
+      <param-value>/static,/binaries,/jvmStatus,/resources,/favicon.ico</param-value>     
     </init-param>
   </filter>
 
@@ -84,6 +84,16 @@
     <servlet-name>BinariesServlet</servlet-name>
     <url-pattern>/binaries/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>StatusServlet</servlet-name>
+    <servlet-class>org.hippoecm.hst.core.StatusServlet</servlet-class>   
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>StatusServlet</servlet-name>
+    <url-pattern>/jvmStatus/*</url-pattern>
+  </servlet-mapping>  
   
   <!-- Timeout in minutes -->
   <session-config>

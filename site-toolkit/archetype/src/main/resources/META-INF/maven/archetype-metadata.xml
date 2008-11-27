@@ -32,7 +32,7 @@
         </fileSet>
       </fileSets>
     </module>
-    <module id="${rootArtifactId}-ecm" dir="ecm" name="${rootArtifactId}-ecm">
+    <module id="${rootArtifactId}-cms" dir="cms" name="${rootArtifactId}-cms">
       <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
           <directory>src/main/resources</directory>
