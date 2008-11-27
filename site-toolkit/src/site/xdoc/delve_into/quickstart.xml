@@ -43,69 +43,61 @@
              I think all quickstart packages should have `quickstart' in their name and they also all should contain the project (product) name in their name.
              Or maybe there is some other consistent and clear naming scheme.
             </span>
-
-            <a
-              href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war"
-              >Hippo ECM getting started package WAR</a>
-          </li>
-          <li>
-            <a
-              href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-20080904.141142-1.war"
-              >Hippo HST2 getting started package WAR</a>
           </li>
         </ul>
       </subsection>
+
       
       <subsection name="Deploying in Tomcat 6.0">
+
+      <p>
+       Below, the Tomcat folder is called $TOMCATDIR. 
+       It may be something like /usr/local/share/apache-tomcat-6.0.18, depending of course where you
+       have or will put Tomcat and which version of Tomcat you have.
+      </p>
+
       <blockquote>
        <table>
         <tr> 
          <td>
-            Download 
+            Prepare
 	 </td>
          <td> 
           <span class='download-48 icon-48'/>
 	 </td>
          <td>
-            Tomcat 6.0 from the <a href="http://tomcat.apache.org/download-60.cgi">Apache
-            Tomcat</a> website.
+           <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/in_servlet_container.html#Deploying_in_Tomcat'>
+            ...
+           </a>
 	 </td>
 	</tr>
-  <tr>
-   <td>Unzip</td>
-   <td>
-    <span class='unzip-48 icon-48'/>
-   </td>
-   <td>unpack the zip</td>
-  </tr>  
-        <tr> 
-         <td>
-            Download 
-	 </td>
-         <td> 
-          <span class='download-48 icon-48'/>
-	 </td>
-        <td> 
-         <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a>
-            to <code>apache-tomcat-6.0.16/lib</code>.
-	</td>
-        </tr>
           <tr>
-   <td>Copy</td>
+   <td>Download</td>
    <td>
-    <span class='commandline-48 icon-48'/>
+    <span class='download-48 icon-48'/>
    </td>
    <td>          
-            Copy the ECM Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/cms.war</code>.
+         Download             <a
+          href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-ecm/1.01.00-SNAPSHOT/gettingstarted-ecm-1.01.00-20080904.141142-1.war"
+          >Hippo CMS quickstart demo package WAR for HST2</a> to the folder
+          <code>$TOMCATDIR/webapps/</code> with the package file <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/help_renamed.html'>renamed to</a> <code>cms.war</code>.
+          This package contains in addition to the plain Hippo CMS and repository a plugin adding some hst structural elements to the repository and
+          a plugin adding some sample content to the repository.
    </td>
 	  </tr>
           <tr>
-   <td>Copy</td>
+   <td>Download</td>
    <td>
-    <span class='commandline-48 icon-48'/>
+    <span class='download-48 icon-48'/>
    </td>
    <td>          
-            Copy the HST2 Getting started WAR from the link above to <code>apache-tomcat-6.0.16/webapps/site.war</code>.
+        Download
+            <a
+              href="http://repository.hippocms.org/maven2/org/hippoecm/hst/gettingstarted-site/1.01.00-SNAPSHOT/gettingstarted-site-1.01.00-20080904.141142-1.war"
+              >Hippo HST2 quickstart demo package WAR</a>
+               to the folder <code>$TOMCATDIR/webapps/</code> with the package file
+              <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/help_renamed.html'>renamed to</a> 
+              <code>site.war</code>.
    </td>
    </tr>
           <tr>
@@ -114,7 +106,10 @@
     <span class='commandline-48 icon-48'/>
    </td>
    <td>          
-            Start Tomcat with one of the startup scripts in <code>apache-tomcat-6.0.16/bin</code>.
+       Startup Tomcat <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/install_tomcat.html#startup'>normally</a>. 
+       Tomcat will automatically deploy the new war files and create equally named folders for them,
+       in this case 'cms' and 'site'. 
+       <a href='http://docs.onehippo.org/hippo-ecm/SNAPSHOT/delve_into/sysadmin/installation/help_startup_servlet_container.html'>Need help?</a>
    </td>
    </tr>
   <tr>
@@ -123,7 +118,8 @@
     <span class='web-48 icon-48'/>
    </td>
   <td>
-            Open your browser and surf to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a> for the CMS.
+      The sample site can be found at <a href="http://localhost:8085/preview/index">http://localhost:8085/preview/index</a>
+      via your browser. First look at how the sample site looks like and think of something you might want to change.
   </td>
   </tr>
   <tr>
@@ -132,8 +128,37 @@
     <span class='web-48 icon-48'/>
    </td>
   <td>
-            Open your browser and surf to <a href="http://localhost:8080/site/preview/index">http://localhost:8080/site/preview/index</a>
-            for the site.
+        For configuring the sample site, 
+        open the site <a href="http://localhost:8080/cms/console">http://localhost:8080/cms/console/</a> in your browser.
+  </td>
+  </tr>
+  <tr>
+   <td>Web Browser</td>
+   <td>
+    <span class='web-48 icon-48'/>
+   </td>
+  <td>
+    You can read the repository with any JCR client. Hippo supplies a readonly JCR client at <a href="http://localhost:8080/cms/repository">http://localhost:8080/cms/repository</a>.
+    
+    JCR clients allow a subset of <a href="http://www.w3.org/TR/xpath20/">XPATH</a> and <a href='http://www.sql.org/'>SQL</a> to be used to query a repository. 
+    For example <a href="http://localhost:8080/cms/repository?xpath=/jcr:root/content//*">http://localhost:8080/cms/repository?xpath=/jcr:root/content//*</a> in your browser.
+    Warning: The XPATH query <code>//*</code> will never finish on the Hippo repository, due to recursive references.  
+    
+
+   <a href="https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_JCP-Site/en_US/-/USD/ViewFilteredProducts-SimpleBundleDownload">JSR specification download page</a>
+
+   <a href="http://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_JCP-Site/en_US/-/USD/VerifyItem-Start/cr-1_0-fr-spec.zip?BundledLineItemUUID=iPtIBe.oyOEAAAEdyLNaJdhi&amp;OrderID=WqRIBe.oFuAAAAEduLNaJdhi&amp;ProductID=jkDACUFBJNgAAAEYDac5AXuR&amp;FileName=/cr-1_0-fr-spec.zip">JSR-000170 specification</a>
+
+
+  </td>
+  </tr>
+  <tr>
+   <td>Web Browser</td>
+   <td>
+    <span class='web-48 icon-48'/>
+   </td>
+  <td>
+            For the CMS open the site <a href="http://localhost:8080/cms/">http://localhost:8080/cms</a> in your browser.
   </td>
   </tr>
   <tr>
@@ -149,12 +174,7 @@
        </table>
       </blockquote>
 
-        <p> 
-          <i>Note: The port number might be different if you configured you application or servlet container to run
-          on a different port. If you deploy the application on a machine other than your local
-          machine you need to change &quot;localhost&quot; to the correct machine name.</i> 
-        </p>
-      </subsection>
+     </subsection>
 
     </section>
   </body>
