@@ -296,7 +296,7 @@ public class SearchModule extends ModuleBase implements Search {
      * this render is a final, since it is delegate code, and is not meant for extending
      */
     @Override
-    public final void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
 
         prepareSearch(pageContext);
         prepareStatement(pageContext);
