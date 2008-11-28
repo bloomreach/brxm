@@ -282,16 +282,16 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
             }
 
-            Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
-
             try {
                 log.info("Initializing hippo namespace");
-                initializeNamespace(syncSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
+                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
             } catch (UnsupportedRepositoryOperationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             }
+
+            Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
             try {
                 String cndName = "repository.cnd";
