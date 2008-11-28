@@ -40,7 +40,7 @@
         <tr><th class='title'>Compatible Java servlet containers:</th></tr>
         <tr>
           <td>
-           <img src='http://tomcat.apache.org/images/tomcat.gif' alt='tomcat logo'/>
+             <img src='../../images/tomcat_icon.png' alt='tomcat logo'/>
 	  </td>
           <td>
             <a href='http://tomcat.apache.org/'>Apache Tomcat</a>
@@ -63,7 +63,7 @@
         <tr><th colspan='0'>Compatible Java application servers:</th></tr>
         <tr>
           <td>
-           <img src='https://glassfish-theme.dev.java.net/logo.gif' alt='glassfish logo'/>
+            <img src='../../images/glassfish_icon.png' alt='glassfish logo'/>
 	  </td>
           <td>
             <a href='https://glassfish.dev.java.net/'>Sun Glassfish</a>
@@ -75,7 +75,7 @@
 
         <tr>
           <td>
-           <img src='http://www.jboss.org/community/themes/jbossorg-custom-css/jbossorg_hdrlogo.gif' alt='jboss logo'/>
+            <img src='../../images/jboss_icon.png' alt='JBoss logo'/>
 	  </td>
           <td>
             <a href='http://www.jboss.org/'>JBoss</a>
