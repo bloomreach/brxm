@@ -29,7 +29,7 @@ public interface URLMapping {
     public String rewriteLocation(Node node);
     public String getContextPath();
     public String getContextPrefix();
-    public String rewriteLocation(String path, Session jcrSession);
+    public String rewriteLocation(String sitemapNodeName, Session jcrSession);
     public String getLocation(String path);
     public List<String> getCanonicalPathsConfiguration();
     public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase);

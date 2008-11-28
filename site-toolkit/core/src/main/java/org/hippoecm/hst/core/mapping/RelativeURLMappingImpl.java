@@ -53,8 +53,8 @@ public class RelativeURLMappingImpl implements URLMapping{
     }
 
 
-    public String rewriteLocation(String path, Session jcrSession) {
-        String absoluteLocation = delegatee.rewriteLocation(path, jcrSession);
+    public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
+        String absoluteLocation = delegatee.rewriteLocation(sitemapNodeName, jcrSession);
         return computeRelativeUrl(absoluteLocation, currentRequestUri);
     }
     

@@ -333,10 +333,9 @@ public class URLMappingImpl implements URLMapping {
         }
         return path;
     }
-    public String rewriteLocation(String path, Session jcrSession) {
+    public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
         long start = System.currentTimeMillis();
-        String origPath = path;
-        String rewritten = this.rewriteLRUCache.get(origPath);
+        String rewritten = this.rewriteLRUCache.get(sitemapNodeName);
         if (rewritten != null) {
             return rewritten;
         }
@@ -351,17 +350,17 @@ public class URLMappingImpl implements URLMapping {
             }
         }
         String rewrite = null;
-        if (siteMapRootNode != null && path != null && !"".equals(path)) {
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-                if (path.length() == 0) {
+        if (siteMapRootNode != null && sitemapNodeName != null && !"".equals(sitemapNodeName)) {
+            if (sitemapNodeName.startsWith("/")) {
+                sitemapNodeName = sitemapNodeName.substring(1);
+                if (sitemapNodeName.length() == 0) {
                     log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
                     rewrite = contextPrefix;
                 }
             }
             try {
-                if (siteMapRootNode.hasNode(path)) {
-                    Node sitemapNode = siteMapRootNode.getNode(path);
+                if (siteMapRootNode.hasNode(sitemapNodeName)) {
+                    Node sitemapNode = siteMapRootNode.getNode(sitemapNodeName);
                     String newLink = null;
                     if(sitemapNode.hasProperty("hst:prefixlinkrewrite") || sitemapNode.hasProperty("hst:linkrewriteprefix")) {
                         if(sitemapNode.hasProperty("hst:prefixlinkrewrite")) {
@@ -382,10 +381,10 @@ public class URLMappingImpl implements URLMapping {
                     
                     if(newLink == null) {
                         // this happens a lot, for now set this loglevel to debug
-                        log.debug("cannot rewrite path '{}' because the sitemap node does not have the property 'hst:prefixlinkrewrite|hst:linkrewriteprefix' and not hst:linkrewrite'. Node : {}",
-                                        path, sitemapNode.getPath());
+                        log.warn("cannot rewrite path '{}' because the sitemap node does not have the property 'hst:prefixlinkrewrite|hst:linkrewriteprefix' and not hst:linkrewrite'. Node : {}",
+                                        sitemapNodeName, sitemapNode.getPath());
                     } else {
-                        log.debug("rewriting '{}' --> '{}'", path, newLink);
+                        log.debug("rewriting '{}' --> '{}'", sitemapNodeName, newLink);
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
@@ -393,22 +392,22 @@ public class URLMappingImpl implements URLMapping {
                     }
                 } else {
                     log.warn("'{}' does not exist in sitemap node '{}'. Prefixing path with context, but no rewrite.",
-                            path, siteMapRootNode.getPath());
+                            sitemapNodeName, siteMapRootNode.getPath());
                 }
 
             } catch (RepositoryException e) {
                 log.warn(
                                 "Unable to rewrite link for path = '{}'.  Prefixing path with context, but no rewrite. RepositoryException: {}",
-                                path, e.getMessage());
+                                sitemapNodeName, e.getMessage());
                 log.debug("RepositoryException:", e);
             }
         }
         Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         if (rewrite == null) {
-            rewrite = contextPrefix + "/" + path;
+            rewrite = contextPrefix + "/" + sitemapNodeName;
         }
         rewrite = UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
-        this.rewriteLRUCache.put(origPath, rewrite);
+        this.rewriteLRUCache.put(sitemapNodeName, rewrite);
         return rewrite;
     }
 
