@@ -32,6 +32,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -343,7 +344,8 @@ public class UpdaterEngine {
             }
             boolean updates;
             do {
-                UpdaterEngine engine = new UpdaterEngine(session);
+                Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
+                UpdaterEngine engine = new UpdaterEngine(subSession);
                 updates = engine.prepare();
                 if (updates) {
                     log.info("migration update cycle starting");
@@ -352,14 +354,19 @@ public class UpdaterEngine {
                         log.info("migration cycle commit");
                         engine.commit();
                         log.info("migration cycle save");
-                        session.save();
-                    } catch(UpdaterException ex) {
-                        session.refresh(false);
-                        log.error("error in migration cycle, skipping but might lead to serious errors");
-                    } finally {
+                        subSession.save();
+                        log.info("migration cycle saved");
                         log.info("migration cycle wrapup");
                         engine.wrapup();
+                    } catch(UpdaterException ex) {
+                        subSession.refresh(false);
+                        log.error("error in migration cycle, skipping but might lead to serious errors");
+                    } finally {
+                        // log.info("migration cycle wrapup");
+                        // engine.wrapup();
+                        // subSession.logout();
                     }
+                    subSession.logout();
                 }
             } while (updates);
             log.info("migration cycle finished successfully");

@@ -89,10 +89,13 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     private Set<ItemState> virtualStates = new HashSet<ItemState>();
     private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
 
+    private boolean virtualLayerEnabled = true;
+
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
-            ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg) {
+                                      ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg, boolean enabled) {
         super(sharedStateMgr, factory, cacheFactory);
         this.ntReg = ntReg;
+        this.virtualLayerEnabled = enabled;
         virtualProviders = new HashMap<String,HippoVirtualProvider>();
         virtualNodeNames = new HashMap<Name,HippoVirtualProvider>();
         virtualPropertyNames = new HashSet<Name>();
@@ -142,12 +145,14 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        Modules<HippoVirtualProvider> modules;
-        modules = new Modules<HippoVirtualProvider>(getClass().getClassLoader(), HippoVirtualProvider.class);
         LinkedHashSet<HippoVirtualProvider> providerInstances = new LinkedHashSet<HippoVirtualProvider>();
-        for(HippoVirtualProvider module : modules) {
-            log.info("Provider module "+module.toString());
-            providerInstances.add(module);
+        if (virtualLayerEnabled) {
+            Modules<HippoVirtualProvider> modules;
+            modules = new Modules<HippoVirtualProvider>(getClass().getClassLoader(), HippoVirtualProvider.class);
+            for(HippoVirtualProvider module : modules) {
+                log.info("Provider module "+module.toString());
+                providerInstances.add(module);
+            }
         }
 
         for(HippoVirtualProvider provider : providerInstances) {

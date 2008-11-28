@@ -21,6 +21,7 @@ import java.util.Calendar;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
@@ -41,10 +42,12 @@ final class UpdaterProperty extends UpdaterItem implements Property {
 
     UpdaterProperty(UpdaterSession session, UpdaterNode target) {
         super(session, target);
+        this.valueFactory = session.valueFactory;
     }
 
     UpdaterProperty(UpdaterSession session, Property origin, UpdaterNode target) throws RepositoryException {
         super(session, origin, target);
+        this.valueFactory = session.valueFactory;
         if (origin.getDefinition().isMultiple()) {
             value = null;
             values = origin.getValues();
@@ -59,6 +62,19 @@ final class UpdaterProperty extends UpdaterItem implements Property {
             return true;
         else
             return false;
+    }
+
+
+    void commit() throws RepositoryException {
+        if(origin != null) {
+            if(values != null) {
+                for(int i=0; i<values.length; i++) {
+                    values[i] = session.retarget(values[i]);
+                }
+            } else {
+                value = session.retarget(value);
+            }
+        }
     }
 
     @Override

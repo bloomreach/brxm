@@ -33,6 +33,6 @@ public class WorkspaceImpl extends org.apache.jackrabbit.core.WorkspaceImpl {
     }
 
     protected LocalItemStateManager createItemStateManager(SharedItemStateManager shared) {
-        return new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry());
+        return new HippoLocalItemStateManager(shared, this, rep.getItemStateCacheFactory(), ((RepositoryImpl)rep).getNodeTypeRegistry(), ((RepositoryImpl)rep).isStarted());
     }
 }

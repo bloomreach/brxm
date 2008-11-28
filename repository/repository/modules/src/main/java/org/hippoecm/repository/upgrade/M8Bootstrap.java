@@ -15,13 +15,12 @@
  */
 package org.hippoecm.repository.upgrade;
 
-
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-
 
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
@@ -32,6 +31,7 @@ public class M8Bootstrap extends M8 implements UpdaterModule {
     private final static String SVN_ID = "$Id$";
 
     public M8Bootstrap() {
+        initialize();
     }
 
     public void register(final UpdaterContext context) {
@@ -40,39 +40,17 @@ public class M8Bootstrap extends M8 implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.Default() {
             @Override
             protected void entering(Node node, int level) throws RepositoryException {
-                if (level == 0) {
-                    NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
-                    for(NamespaceMapping mapping : mappings) {
-                        nsReg.registerNamespace(mapping.prefix+"_"+mapping.newVersion, mapping.newNamespaceURI);
-                        loadNodeTypes(node.getSession().getWorkspace(), mapping.cndName, mapping.cndStream);
+                if(level == 0)
+                    return;
+                for(NodeIterator iter = node.getNodes(); iter.hasNext(); ) {
+                    Node child = iter.nextNode();
+                    if(child.getName().equals("jcr:system")) {
+                        child.remove();
+                    } else if(child.isNodeType("hippo:facetselect")) {
+                        child.remove();
+                    } else if(child.isNodeType("hippo:facetsearch")) {
+                        child.remove();
                     }
-                }
-                String nodetype = node.getProperty("jcr:primaryType").getString();
-                if(isPrefix(nodetype)) {
-                    node.setProperty("jcr:primaryType", rename(nodetype));                    
-                }
-                if (node.hasProperty("jcr:mixinTypes")) {
-                    Value[] mixintypes = node.getProperty("jcr:mixinTypes").getValues();
-                    boolean changed = false;
-                    for (int i = 0; i < mixintypes.length; i++) {
-                        if (isPrefix(mixintypes[i].getString())) {
-                            changed = true;
-                            mixintypes[i] = node.getSession().getValueFactory().createValue(rename(mixintypes[i].getString()));
-                        }
-                    }
-                    if (changed) {
-                        node.setProperty("jcr:mixinTypes", mixintypes);
-                    }
-                }
-                if (isPrefix(node.getName())) {
-                    context.setName(node, rename(node.getName()));
-                }
-            }            
-
-            @Override
-            protected void entering(Property prop, int level) throws RepositoryException {
-                if (isPrefix(prop.getName())) {
-                    context.setName(prop, rename(prop.getName()));
                 }
             }
         });

@@ -61,6 +61,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 final class UpdaterNode extends UpdaterItem implements Node {
@@ -163,7 +164,16 @@ final class UpdaterNode extends UpdaterItem implements Node {
         Item oldOrigin = null;
         boolean nodeTypesChanged;
         boolean nodeLocationChanged;
+        boolean nodeRelinked = false;
 
+	if (origin != null) {
+	    if(origin instanceof HippoNode) {
+                if(origin.isSame(((HippoNode)origin).getCanonicalNode())) {
+	            return;
+	        }
+	    }
+	}
+        
         if (getInternalProperty("jcr:primaryType").length > 0)
             nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
         else
@@ -201,6 +211,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
                         UpdaterEngine.log.debug("commit create "+getPath()+" in "+((Node)parent.origin).getPath()+" type "+getInternalProperty("jcr:primaryType")[0]);
                     }
                     origin = ((Node)parent.origin).addNode(getName(), getInternalProperty("jcr:primaryType")[0]);
+                    nodeRelinked = true;
                 }
             }
         } else {
@@ -241,6 +252,9 @@ final class UpdaterNode extends UpdaterItem implements Node {
                     }
                     ((Node)origin).addMixin(mixin);
                 }
+            }
+            if (nodeRelinked) {
+                session.relink((Node)oldOrigin, (Node)origin);
             }
 
             List<NodeType> nodetypes = new LinkedList<NodeType>();
@@ -285,6 +299,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
                     if (items.getValue().size() > 0) {
                         UpdaterProperty property = (UpdaterProperty) items.getValue().get(0);
+                        property.commit();
                         if (property.isMultiple()) {
                             if(UpdaterEngine.log.isDebugEnabled()) {
                                 UpdaterEngine.log.debug("commit set multivalue property "+name+ " on "+getPath());
@@ -336,15 +351,15 @@ final class UpdaterNode extends UpdaterItem implements Node {
 
     private String resolveName(String relPath) {
         if (relPath.contains("/"))
-            relPath = relPath.substring(0, relPath.lastIndexOf("/") - 1);
+            relPath = relPath.substring(0, relPath.lastIndexOf("/"));
         if (relPath.contains("[") && relPath.endsWith("]"))
-            relPath = relPath.substring(0, relPath.indexOf("[") - 1);
+            relPath = relPath.substring(0, relPath.indexOf("["));
         return relPath;
     }
 
     private int resolveIndex(String name) {
         if (name.contains("["))
-            return Integer.parseInt(name.substring(name.indexOf("[") + 1, name.lastIndexOf("]") - 1));
+            return Integer.parseInt(name.substring(name.indexOf("[") + 1, name.lastIndexOf("]")));
         else
             return 0;
     }
@@ -354,12 +369,12 @@ final class UpdaterNode extends UpdaterItem implements Node {
         String sequel = null;
         int index = 0;
         if (name.contains("/")) {
-            name = name.substring(0, name.indexOf("/") - 1);
             sequel = name.substring(name.indexOf("/") + 1);
+            name = name.substring(0, name.indexOf("/"));
         }
         if (name.contains("[") && name.endsWith("]")) {
             index = Integer.parseInt(name.substring(name.indexOf("[") + 1, name.length() - 1));
-            name = name.substring(0, name.indexOf("[") - 1);
+            name = name.substring(0, name.indexOf("["));
         }
         if (sequel != null) {
             List<UpdaterItem> items = children.get(name);
@@ -612,9 +627,9 @@ final class UpdaterNode extends UpdaterItem implements Node {
         throw new UpdaterException("illegal method");
     }
 
+    @Deprecated
     public String getUUID() throws UnsupportedRepositoryOperationException, RepositoryException {
-        substantiate();
-        return ((Node) origin).getUUID();
+        throw new UpdaterException("illegal method");
     }
 
     public int getIndex() throws RepositoryException {

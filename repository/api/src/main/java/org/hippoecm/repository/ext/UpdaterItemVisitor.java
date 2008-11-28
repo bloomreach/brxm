@@ -78,12 +78,8 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             if(canonical == null || canonical.isSame(node)) {
                 return;
             }
-        } else {
-            // FIXME: it is not always guaranteed in the initialization phase that all nodes
-            // are properly decorated, so this can happen, but the check is not good enough
-            if(node.hasProperty("hippo:uuid"))
-                return;
         }
+
         try {
             if (!breadthFirst) {
                 // depth-first traversal
