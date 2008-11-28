@@ -246,6 +246,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         protected Session getRootSession(String workspaceName) throws RepositoryException {
             return super.getRootSession(workspaceName);
         }
+        void enableVirtualLayer(boolean enabled) throws RepositoryException {
+            isStarted = enabled;
+        }
     }
 
     private void initialize() throws RepositoryException {
@@ -274,12 +277,16 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
 
             if (upgradeEnabled) {
+                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
                 UpdaterEngine.migrate(jcrRootSession);
+                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
             }
+
+            Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
             try {
                 log.info("Initializing hippo namespace");
-                initializeNamespace(jcrRootSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
+                initializeNamespace(syncSession.getWorkspace().getNamespaceRegistry(), NAMESPACE_PREFIX, NAMESPACE_URI);
             } catch (UnsupportedRepositoryOperationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo namespace", ex);
             } catch (AccessDeniedException ex) {
@@ -289,8 +296,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             try {
                 String cndName = "repository.cnd";
                 log.info("Initializing nodetypes from: " + cndName);
-                initializeNodetypes(jcrRootSession.getWorkspace(), getClass().getResourceAsStream(cndName), cndName);
-                jcrRootSession.save();
+                initializeNodetypes(syncSession.getWorkspace(), getClass().getResourceAsStream(cndName), cndName);
+                syncSession.save();
             } catch (ConstraintViolationException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             } catch (InvalidItemStateException ex) {
@@ -310,7 +317,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             }
 
             // After initializing namespaces and nodetypes switch to the decorated session.
-            rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
  
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");

@@ -15,18 +15,15 @@
  */
 package org.hippoecm.repository.upgrade;
 
-
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-
-import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 
-public class M8Process implements UpdaterModule {
+public class M8Process extends M8 implements UpdaterModule {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -36,31 +33,48 @@ public class M8Process implements UpdaterModule {
     public void register(final UpdaterContext context) {
         context.registerName("m8-process");
         context.registerStartTag("m8-begin");
-        context.registerStartTag("m8-process");
+        context.registerEndTag("m8-process");
         context.registerVisitor(new UpdaterItemVisitor.Default() {
             @Override
-            public void visit(Node node) throws RepositoryException {
-                String[] items = new String[] {
-                    "hippostd-queries",
-                    "hippogallery-images",
-                    "hippogallery-files",
-                    "hippogallery-image",
-                    "core-workflows",
-                    "domain-defaultwrite",
-                    "domain-defaultread",
-                    "domain-hippofolders",
-                    "domain-hippodocuments",
-                    "domain-workflow",
-                    "domain-hipporequests",
-                    "cms-static",
-                    "cms-editor",
-                    "cms-preview",
-                    "cms-dashboard",
-                    "cms-reports",
-                    "cms-folder-views" };
-                node = node.getNode("hippo:configuration/hippo:initialize");
-                for(String item : items) {
-                    node.getNode(item).remove();
+            public void leaving(Node node, int level) throws RepositoryException {
+                if (level == 0) {
+                    String[] items = new String[] {
+                        "hippostd-queries",
+                        "hippogallery-images",
+                        "hippogallery-files",
+                        "hippogallery-image",
+                        "core-workflows",
+                        "domain-defaultwrite",
+                        "domain-defaultread",
+                        "domain-hippofolders",
+                        "domain-hippodocuments",
+                        "domain-workflow",
+                        "domain-hipporequests",
+                        "cms-static",
+                        "cms-editor",
+                        "cms-preview",
+                        "cms-dashboard",
+                        "cms-reports",
+                        "cms-folder-views"
+                    };
+                    node = node.getNode("hippo:configuration/hippo:initialize");
+                    /*for(String item : items) {
+                        if(node.hasNode(item)) {
+                            node.getNode(item).remove();
+                        }
+                    }*/
+                }
+            }
+            @Override
+            public void entering(Property prop, int level) throws RepositoryException {
+                if (prop.getName().equals("hippo:uri")) {
+                    String currentURI = prop.getString();
+                    for (NamespaceMapping mapping : mappings) {
+                        if (mapping.oldNamespaceURI.equals(currentURI)) {
+                            prop.setValue(mapping.newNamespaceURI);
+                            return;
+                        }
+                    }
                 }
             }
         });

@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessControlException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.jcr.AccessDeniedException;
@@ -31,18 +35,27 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
+import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
+import javax.jcr.PropertyType;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
+import javax.jcr.ValueFormatException;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -67,9 +80,87 @@ final class UpdaterSession implements Session {
         return upstream.getWorkspace().getNodeTypeManager().getNodeType(type);
     }
 
+    private class Relink {
+        Property property;
+        String sourceUUID;
+        String targetUUID;
+        public Relink(Property property, String sourceUUID, String targetUUID) {
+            this.property = property;
+            this.sourceUUID = sourceUUID;
+            this.targetUUID = targetUUID;
+        }
+    }
+    private List<Relink> relinking = new LinkedList<Relink>();
+    private Map<String,String> relinkMap = new HashMap<String,String>();
+
+    void relink(Node source, Node target) throws RepositoryException {
+        if(source.isNodeType("mix:referenceable")) {
+            String sourceUUID = source.getUUID();
+            String targetUUID = (target.isNodeType("mix:referenceable") ? target.getUUID() : upstream.getRootNode().getUUID());
+            relinkMap.put(sourceUUID, targetUUID);
+            for(PropertyIterator iter = source.getReferences(); iter.hasNext(); ) {
+                Property reference = iter.nextProperty();
+                relinking.add(new Relink(reference, sourceUUID, targetUUID));
+                if(reference.getDefinition().isMultiple()) {
+                    Value[] values = reference.getValues();
+                    for(int i=0; i<values.length; i++) {
+                        if(values[i].getString().equals(sourceUUID))
+                            values[i] = valueFactory.createValue(upstream.getRootNode());
+                    }
+                    reference.setValue(values);
+                } else {
+                    reference.setValue(upstream.getRootNode());
+                }
+            }
+            QueryManager queryMgr = upstream.getWorkspace().getQueryManager();
+            Query query = queryMgr.createQuery("//*[(hippo:docbase='"+sourceUUID+"')]", Query.XPATH);
+            QueryResult result = query.execute();
+            for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
+                Node reference = iter.nextNode();
+                relinking.add(new Relink(reference.getProperty("hippo:docbase"), sourceUUID, targetUUID));
+            }
+        }
+    }
+
+    Value retarget(Value value) throws RepositoryException {
+        if(value.getType() == PropertyType.REFERENCE || value.getType() == PropertyType.STRING) {
+            try {
+                if(relinkMap.containsKey(value.getString())) {
+                    return valueFactory.createValue(relinkMap.get(value.getString()), value.getType());
+                }
+            } catch(ValueFormatException ex) {
+                // deliberate ignore
+            }
+        }
+        return value;
+    }
+
     public void commit() throws RepositoryException {
         root.commit();
         this.root = new UpdaterNode(this, upstream.getRootNode(), null);
+        for(Relink relink : relinking) {
+            try {
+                if(relink.property.getDefinition().isMultiple()) {
+                    boolean changed = false;
+                    Value[] values = relink.property.getValues();
+                    for(int i=0; i<values.length; i++) {
+                        if(values[i].getString().equals(relink.sourceUUID)) {
+                            changed = true;
+                            values[i] = valueFactory.createValue(relink.targetUUID, values[0].getType());
+                        }
+                    }
+                    if (changed) {
+                        relink.property.setValue(values);
+                    }
+                } else {
+                    if(relink.property.getString().equals(relink.sourceUUID)) {
+                        relink.property.setValue(relink.targetUUID);
+                    }
+                }
+            } catch(RepositoryException ex) {
+            }
+        }
+        this.relinking = new LinkedList<Relink>();
     }
 
     // interface javax.jcr.Session
@@ -131,7 +222,7 @@ final class UpdaterSession implements Session {
 
     public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
         UpdaterNode node = (UpdaterNode) getItem(srcAbsPath);
-        UpdaterNode destination = (UpdaterNode) getItem(destAbsPath.substring(0, destAbsPath.lastIndexOf("/") - 1));
+        UpdaterNode destination = (UpdaterNode) getItem(destAbsPath.substring(0, destAbsPath.lastIndexOf("/")));
         node.parent = destination;
         node.setName(destAbsPath.substring(destAbsPath.lastIndexOf("/")));
     }

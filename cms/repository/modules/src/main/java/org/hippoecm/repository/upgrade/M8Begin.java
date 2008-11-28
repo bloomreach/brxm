@@ -34,7 +34,7 @@ public class M8Begin extends M8 implements UpdaterModule {
 
     public void register(final UpdaterContext context) {
         context.registerName("m8-begin");
-        context.registerStartTag("m7");
+        context.registerStartTag("m8-boot");
         context.registerEndTag("m8-begin");
         context.registerVisitor(new UpdaterItemVisitor.Default() {
             @Override
