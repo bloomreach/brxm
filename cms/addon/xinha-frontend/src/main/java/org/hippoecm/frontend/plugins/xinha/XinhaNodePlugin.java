@@ -15,25 +15,39 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XinhaPlugin extends AbstractXinhaPlugin {
+public class XinhaNodePlugin extends AbstractXinhaPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(XinhaNodePlugin.class);
 
-    public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
+    public XinhaNodePlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
     
     protected JcrPropertyValueModel getValueModel() {
-        return (JcrPropertyValueModel) getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        try {
+            Node node = nodeModel.getNode();
+            Property prop = node.getProperty("hippostd:content");
+            return new JcrPropertyValueModel(-1, prop.getValue(), new JcrPropertyModel(prop));
+        } catch(RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return null;
     }
 }

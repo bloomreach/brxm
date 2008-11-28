@@ -557,7 +557,7 @@
         <sv:value>nl</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Uitgebreide tekst</sv:value>
+        <sv:value>Geformatteerde tekst</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -568,7 +568,7 @@
         <sv:value>en</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Rich text</sv:value>
+        <sv:value>Formatted text</sv:value>
       </sv:property>
     </sv:node>
     
@@ -643,16 +643,10 @@
             <sv:value>${height}</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
-            <sv:value>fullscreen</sv:value>
-            <sv:value>createlink</sv:value>
             <sv:value>formatblock</sv:value>
             <sv:value>bold</sv:value>
             <sv:value>italic</sv:value>
             <sv:value>underline</sv:value>
-            <sv:value>insertorderedlist</sv:value>
-            <sv:value>insertunorderedlist</sv:value>
-            <sv:value>insertimage</sv:value>
-            <sv:value>inserttable</sv:value>
           </sv:property>
           <sv:property sv:name="Xinha.skin" sv:type="String">
             <sv:value>hippo-lite</sv:value>
@@ -662,15 +656,9 @@
           </sv:property>
           <sv:property sv:name="Xinha.plugins" sv:type="String">
             <sv:value>AutoSave</sv:value>
-            <sv:value>CreateLink</sv:value>
-            <sv:value>InsertImage</sv:value>
-            <sv:value>FullscreenCompatible</sv:value>
           </sv:property>
           <sv:property sv:name="AutoSave" sv:type="String">
             <sv:value>timeoutLength=1500</sv:value>
-          </sv:property>
-          <sv:property sv:name="yui.dd.groups" sv:type="String">
-            <sv:value>drop-on-xinha</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
