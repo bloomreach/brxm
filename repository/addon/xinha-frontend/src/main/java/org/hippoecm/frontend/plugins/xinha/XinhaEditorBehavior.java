@@ -67,10 +67,10 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
     IHeaderContributor[] getHeaderContributorsPartly() {
 
         final Page page = context.getService(Home.class.getName(), Home.class);
-        final List<XinhaPlugin.Configuration> configurations = new LinkedList<XinhaPlugin.Configuration>();
-        List<XinhaPlugin.Configuration> registered = context.getServices(XinhaPlugin.Configuration.class.getName(),
-                XinhaPlugin.Configuration.class);
-        for (XinhaPlugin.Configuration config : registered) {
+        final List<AbstractXinhaPlugin.Configuration> configurations = new LinkedList<AbstractXinhaPlugin.Configuration>();
+        List<AbstractXinhaPlugin.Configuration> registered = context.getServices(AbstractXinhaPlugin.Configuration.class.getName(),
+                AbstractXinhaPlugin.Configuration.class);
+        for (AbstractXinhaPlugin.Configuration config : registered) {
             if (config.getName() != null) {
                 configurations.add(config);
             }
@@ -83,12 +83,12 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
             public void renderHead(IHeaderResponse response) {
 
-                String xinhaEditorUrl = XinhaPlugin.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
+                String xinhaEditorUrl = AbstractXinhaPlugin.getFixedRelativePathPrefixToContextRoot() + "xinha/xinha/";
 
                 StringBuffer sb = new StringBuffer();
                 sb.append("_editor_url = '" + xinhaEditorUrl + "';\n");
                 sb.append("_editor_lang = '" + page.getLocale().getLanguage() + "';\n");
-                for (XinhaPlugin.Configuration config : configurations) {
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
                     if (config.getSkin() != null) {
                         sb.append("_editor_skin = '" + config.getSkin() + "';\n");
                         break;
@@ -98,7 +98,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
             }
         },
 
-        XinhaPlugin.forJavaScript("xinha/xinha/XinhaLoader.js"),
+        AbstractXinhaPlugin.forJavaScript("xinha/xinha/XinhaLoader.js"),
 
         new IHeaderContributor() {
             private static final long serialVersionUID = 1L;
@@ -118,16 +118,16 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 //Declare Xinha editors
                 sb.append("  var new_editors = [];\n");
-                for (XinhaPlugin.Configuration config : configurations) {
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(xinha_editors.").append(config.getName()).append(" == undefined) {\n");
                     sb.append("    new_editors.push('").append(config.getName()).append("');\n");
                     sb.append("  }\n");
                 }
 
                 //Declare and load Xinha plugins
-                Set<XinhaPlugin.PluginConfiguration> plugins = new HashSet<XinhaPlugin.PluginConfiguration>();
-                for (XinhaPlugin.Configuration config : configurations) {
-                    for (XinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
+                Set<AbstractXinhaPlugin.PluginConfiguration> plugins = new HashSet<AbstractXinhaPlugin.PluginConfiguration>();
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
+                    for (AbstractXinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
                         plugins.add(pluginConfig);
                     }
                 }
@@ -143,7 +143,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 //collect all stylesheets and add to global Xinha configuration
                 boolean hasCss = false;
-                for (XinhaPlugin.Configuration config : configurations) {
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
                     if (config.getStyleSheets() != null && config.getStyleSheets().size() > 0) {
                         if (!hasCss) {
                             sb.append("  xinha_config.pageStyleSheets = [");
@@ -165,7 +165,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
 
                 //Instantiate Xinha editors and override editor specific (plugin)configuration values
                 sb.append("  new_editors   = Xinha.makeEditors(new_editors, xinha_config);\n");
-                for (XinhaPlugin.Configuration config : configurations) {
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(new_editors.").append(config.getName()).append(" != undefined) {\n");
                     sb.append("    new_editors.").append(config.getName()).append(".registerPlugins(");
                     appendAsJSArray(sb, config.getPluginConfigurations());
@@ -183,7 +183,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                         }
                         sb.append("]];\n");
                     }
-                    for (XinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
+                    for (AbstractXinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
                         appendProperties(sb, prefix + pluginConfig.getName() + ".", pluginConfig.getProperties());
                     }
                     sb.append("  }\n");
@@ -193,7 +193,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 sb.append("  Xinha.startEditors(new_editors);\n");
 
                 //Update xinha_editors
-                for (XinhaPlugin.Configuration config : configurations) {
+                for (AbstractXinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(new_editors.").append(config.getName()).append(" != undefined) {\n");
                     sb.append("    xinha_editors.").append(config.getName()).append(" = new_editors.").append(
                             config.getName()).append(";\n");
@@ -208,9 +208,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 response.renderJavascript(sb, null);
             }
 
-            private void appendAsJSArray(StringBuffer sb, Set<? extends XinhaPlugin.BaseConfiguration> configs) {
+            private void appendAsJSArray(StringBuffer sb, Set<? extends AbstractXinhaPlugin.BaseConfiguration> configs) {
                 sb.append("  [\n");
-                for (Iterator<? extends XinhaPlugin.BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
+                for (Iterator<? extends AbstractXinhaPlugin.BaseConfiguration> iter = configs.iterator(); iter.hasNext();) {
                     sb.append("    ");
                     sb.append(serialize2JS(iter.next().getName()));
                     if (iter.hasNext())

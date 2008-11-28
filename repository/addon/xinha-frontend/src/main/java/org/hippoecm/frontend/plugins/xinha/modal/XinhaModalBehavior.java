@@ -22,7 +22,7 @@ import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.hippoecm.frontend.plugins.xinha.XinhaPlugin;
+import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 
 public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
     @SuppressWarnings("unused")
@@ -47,8 +47,8 @@ public abstract class XinhaModalBehavior extends AbstractDefaultAjaxBehavior {
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String> requestParams = request.getRequestParameters().getParameters();
         for (String key : requestParams.keySet()) {
-            if (key.startsWith(XinhaPlugin.XINHA_PARAM_PREFIX)) {
-                params.put(key.substring(XinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));
+            if (key.startsWith(AbstractXinhaPlugin.XINHA_PARAM_PREFIX)) {
+                params.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));
             }
         }
 

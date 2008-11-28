@@ -30,13 +30,13 @@
 - defaultcontent:title (string)
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)
-- defaultcontent:body (string)
++ defaultcontent:body (hippostd:html)
 
 [defaultcontent:event] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)
-- defaultcontent:body (string)
++ defaultcontent:body (hippostd:html)
 
 [defaultcontent:overview] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
