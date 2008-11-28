@@ -110,9 +110,9 @@ public class SimpleRssReader {
         rssFeed.addItem(rssItem);
       }
     } catch (URISyntaxException e) {
-		RssFeed.log.warn("Not a valid URI " + e.getMessage());
+		RssFeed.log.warn("Not a valid URI " + e.getMessage() +  " for '" + url +"'");
 	} catch (Exception e) {
-		RssFeed.log.warn("Exception reading Rss Feed " + e.getMessage());
+		RssFeed.log.warn("Exception reading Rss Feed " + e.getMessage() +  " for '" + url +"'");
     }
 
     return rssFeed;
