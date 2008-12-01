@@ -53,7 +53,9 @@ public class TabbedPanel extends WebMarkupContainer {
 
         this.plugin = plugin;
         this.tabs = tabs;
-
+        
+        setOutputMarkupId(true);
+        
         final IModel tabCount = new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
 
