@@ -75,5 +75,6 @@
 [hst:reaction] mixin
 - hst:reactionto (String) mandatory
 - hst:reactiondate (date)
+- hst:reactionby (String)
 
 
