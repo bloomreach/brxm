@@ -619,6 +619,20 @@
       </sv:node>
     </sv:node>
 
+    <sv:node sv:name="hippo:prototype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippo:prototype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value />
+        </sv:property>
+      </sv:node>
+    </sv:node>
+
     <sv:node sv:name="hippo:template">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
