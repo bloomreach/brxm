@@ -31,6 +31,7 @@
 - defaultcontent:date (date)
 - defaultcontent:introduction (string)
 + defaultcontent:body (hippostd:html)
++ defaultcontent:internallink (hippo:facetselect)
 
 [defaultcontent:event] > hippo:document, hippostd:publishable, hippostd:publishableSummary
 - defaultcontent:title (string)
