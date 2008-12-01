@@ -33,7 +33,7 @@ YAHOO.namespace("hippo");
         args[1] = config.containerId;
         
         this.callbackUrl = config.callbackUrl; //used for getting search results, currently uses YUI to do callbacks
-        this.callbackMethod = config.callbackMethod; //used for handling clicks
+        this.callbackMethod = config.callbackFunction; //used for handling clicks
         
         var respSchema = {
                 resultsList: config.schemaResultList, 
