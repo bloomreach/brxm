@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
@@ -373,6 +374,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
         for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
             Node child = iter.nextNode();
+            if(child instanceof HippoNode) {
+                Node canonical = ((HippoNode)child).getCanonicalNode();
+                if(canonical == null || !canonical.isSame(child)) {
+                    continue;
+                }
+            }
             String childPath;
             if(renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/"+ child.getName()))
                 childPath = path + "/_node";
