@@ -18,113 +18,99 @@ package org.hippoecm.frontend.plugins.yui.autocomplete;
 
 import java.util.Map;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.DoubleSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
+import org.hippoecm.frontend.plugins.yui.javascript.StringMapSetting;
+import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 
 /**
  * This class encapsulates various settings for {@link AutoCompleteBehavior}
  */
 
-public final class AutoCompleteSettings extends JavascriptSettings {
+public final class AutoCompleteSettings extends AjaxSettings {
     private static final long serialVersionUID = 1L;
-    
-    private static final String CONTAINER_ID = "containerId";  //String
-    private static final String PRE_HIGHLIGHT_CLASSNAME = "prehighlightClassName"; //String
-    private static final String USE_SHADOW = "useShadow";  //boolean
-    private static final String USE_IFRAME = "useIFrame";  //boolean
-    private static final String MAX_RESULTS_DISPLAYED = "maxResultsDisplayed";  //int
-    private static final String MIN_QUERY_LENGTH = "minQueryLength";  //int
-    private static final String QUERY_DELAY = "queryDelay";  //double
-    private static final String SUBMIT_ONLY_ON_ENTER = "submitOnlyOnEnter";  //boolean
-    private static final String SCHEMA_RESULT_LIST = "schemaResultList";  //String
-    private static final String SCHEMA_FIELDS = "schemaFields";  //String[]
-    private static final String SCHEMA_META_FIELDS = "schemaMetaFields";  //Map<String,String>
 
-    private static final int NUMBER_OF_SETTINGS = 11;
+    private static final StringSetting CONTAINER_ID = new StringSetting("containerId");
+    private static final StringSetting PRE_HIGHLIGHT_CLASSNAME = new StringSetting("prehighlightClassName");
+    private static final BooleanSetting USE_SHADOW = new BooleanSetting("useShadow");
+    private static final BooleanSetting USE_IFRAME = new BooleanSetting("useIframe");
+    private static final BooleanSetting ANIM_VERT = new BooleanSetting("animVert");
+    private static final IntSetting MAX_RESULTS_DISPLAYED = new IntSetting("maxResultsDisplayed", 10);
+    private static final IntSetting MIN_QUERY_LENGTH = new IntSetting("minQueryLength", 1);
+    private static final DoubleSetting QUERY_DELAY = new DoubleSetting("queryDelay", 0.3);
+    private static final BooleanSetting SUBMIT_ONLY_ON_ENTER = new BooleanSetting("submitOnlyOnEnter");
+    private static final StringSetting SCHEMA_RESULT_LIST = new StringSetting("schemaResultList");
+    private static final StringArraySetting SCHEMA_FIELDS = new StringArraySetting("schemaFields");
+    private static final StringMapSetting SCHEMA_META_FIELDS = new StringMapSetting("schemaMetaFields");
 
-    public AutoCompleteSettings() {
-        super(NUMBER_OF_SETTINGS);
-    }
-    
-    //this constructor can be replaced by the same pluginc onfig approach used with the layout/wireframes
     public AutoCompleteSettings(IPluginConfig config) {
-        this();
+        super(config);
+    }
 
-        //initialize JsConfig map. 
-        put(CONTAINER_ID, config.getString(CONTAINER_ID));
-        put(PRE_HIGHLIGHT_CLASSNAME, config.getString(PRE_HIGHLIGHT_CLASSNAME));
-        put(USE_SHADOW, config.getBoolean(USE_SHADOW));
-        put(USE_IFRAME, config.getBoolean(USE_IFRAME));
-        put(SUBMIT_ONLY_ON_ENTER, config.getBoolean(SUBMIT_ONLY_ON_ENTER));
-        put(SCHEMA_RESULT_LIST, config.getString(SCHEMA_RESULT_LIST));
-        put(SCHEMA_FIELDS, config.getStringArray(SCHEMA_FIELDS));
-        put(SCHEMA_META_FIELDS, config.getPluginConfig(SCHEMA_META_FIELDS));
-        
-        //Don't override clientside defaults
-        if(config.containsKey(MAX_RESULTS_DISPLAYED)) 
-            put(MAX_RESULTS_DISPLAYED, config.getInt(MAX_RESULTS_DISPLAYED));
-        
-        if(config.containsKey(MIN_QUERY_LENGTH))
-                put(MIN_QUERY_LENGTH, config.getInt(MIN_QUERY_LENGTH));
-        
-        if(config.containsKey(QUERY_DELAY))
-            put(QUERY_DELAY, config.getDouble(QUERY_DELAY, 0.3));
-
+    @Override
+    protected void initValues() {
+        super.initValues();
+        add(CONTAINER_ID, PRE_HIGHLIGHT_CLASSNAME, USE_SHADOW, USE_IFRAME, ANIM_VERT, MAX_RESULTS_DISPLAYED,
+                MIN_QUERY_LENGTH, QUERY_DELAY, SUBMIT_ONLY_ON_ENTER, SCHEMA_RESULT_LIST, SCHEMA_FIELDS,
+                SCHEMA_META_FIELDS);
     }
 
     public AutoCompleteSettings setContainerId(String containerId) {
-        put(CONTAINER_ID, containerId);
+        CONTAINER_ID.set(containerId, this);
         return this;
     }
 
     public AutoCompleteSettings setPrehighlightClassName(String className) {
-        put(PRE_HIGHLIGHT_CLASSNAME, className);
+        PRE_HIGHLIGHT_CLASSNAME.set(className, this);
         return this;
     }
 
     public AutoCompleteSettings setUseShadow(boolean useShadow) {
-        put(USE_SHADOW, useShadow);
+        USE_SHADOW.set(useShadow, this);
         return this;
     }
 
     public AutoCompleteSettings setUseIFrame(boolean useIFrame) {
-        put(USE_IFRAME, useIFrame);
+        USE_IFRAME.set(useIFrame, this);
         return this;
     }
 
     public AutoCompleteSettings setMaxResultsDisplayed(int maxResultsDisplayed) {
-        put(MAX_RESULTS_DISPLAYED, maxResultsDisplayed);
+        MAX_RESULTS_DISPLAYED.set(maxResultsDisplayed, this);
         return this;
     }
 
     public AutoCompleteSettings setMinQueryLength(int minQueryLength) {
-        put(MIN_QUERY_LENGTH, minQueryLength);
+        MIN_QUERY_LENGTH.set(minQueryLength, this);
         return this;
     }
 
-    public AutoCompleteSettings  setQueryDelay(double queryDelay) {
-        put(QUERY_DELAY, queryDelay);
+    public AutoCompleteSettings setQueryDelay(double queryDelay) {
+        QUERY_DELAY.set(queryDelay, this);
         return this;
     }
 
     public AutoCompleteSettings setSubmitOnlyOnEnter(boolean submitOnEnter) {
-        put(SUBMIT_ONLY_ON_ENTER, submitOnEnter);
+        SUBMIT_ONLY_ON_ENTER.set(submitOnEnter, this);
         return this;
     }
 
     public AutoCompleteSettings setSchemaResultList(String schemaResultList) {
-        put(SCHEMA_RESULT_LIST, schemaResultList);
+        SCHEMA_RESULT_LIST.set(schemaResultList, this);
         return this;
     }
 
     public AutoCompleteSettings setSchemaFields(String... schemaFields) {
-        put(SCHEMA_FIELDS, schemaFields);
+        SCHEMA_FIELDS.set(schemaFields, this);
         return this;
     }
 
     public AutoCompleteSettings setSchemaMetaFields(Map<String, String> schemaMetaFields) {
-        put(SCHEMA_META_FIELDS, schemaMetaFields);
+        SCHEMA_META_FIELDS.set(schemaMetaFields, this);
         return this;
     }
 

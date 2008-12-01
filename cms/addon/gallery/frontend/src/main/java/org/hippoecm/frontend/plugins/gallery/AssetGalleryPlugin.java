@@ -32,6 +32,8 @@ import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 
 public class AssetGalleryPlugin extends AbstractListingPlugin {
@@ -56,37 +58,37 @@ public class AssetGalleryPlugin extends AbstractListingPlugin {
         column = new ListColumn(new StringResourceModel("assetgallery-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
-        
+
         column = new ListColumn(new StringResourceModel("assetgallery-size", this, null), "size");
         column.setRenderer(new SizeRenderer());
         column.setComparator(new SizeComparator());
-        columns.add(column);        
-        
+        columns.add(column);
+
         return new TableDefinition(columns);
     }
-    
+
     @Override
     protected ListDataTable getListDataTable(String id, TableDefinition tableDefinition,
             ISortableDataProvider dataProvider, TableSelectionListener selectionListener, int rowsPerPage,
             boolean triState) {
         return new DraggableListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
     }
-    
-    class DraggableListDataTable extends ListDataTable  {
+
+    class DraggableListDataTable extends ListDataTable {
         private static final long serialVersionUID = 1L;
-        
+
         public DraggableListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, int rowsPerPage, boolean triState) {
             super(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
         }
-        
+
         @Override
         protected Item newRowItem(String id, int index, IModel model) {
             Item item = super.newRowItem(id, index, model);
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel nodeModel = (JcrNodeModel) model;
-                item.add(new NodeDragBehavior(getPluginContext(), getPluginConfig(), nodeModel.getItemModel()
-                                .getPath()));
+                item.add(new NodeDragBehavior(YuiPluginHelper.getManager(getPluginContext()), new DragSettings(
+                        YuiPluginHelper.getConfig(getPluginConfig())), nodeModel));
             }
             return item;
         }

@@ -4,6 +4,7 @@ import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public class PageLayoutPlugin extends PageLayoutBehavior implements IPlugin, IBe
     private IPluginConfig config;
 
     public PageLayoutPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(YuiPluginHelper.getManager(context), new PageLayoutSettings(YuiPluginHelper.getConfig(config)));
 
         this.config = config;
         context.registerService(this, config.getString(ID));

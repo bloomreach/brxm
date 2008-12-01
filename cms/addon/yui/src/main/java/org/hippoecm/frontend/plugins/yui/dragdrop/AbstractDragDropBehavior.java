@@ -15,19 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import java.util.Map;
-
 import org.apache.wicket.behavior.IBehavior;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
+import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
-
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -35,17 +32,17 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
 
     protected final DragDropSettings settings;
 
-    public AbstractDragDropBehavior(IPluginContext context, IPluginConfig config, DragDropSettings settings) {
-        super(context, config);
+    public AbstractDragDropBehavior(IYuiManager service, DragDropSettings settings) {
+        super(service,  settings);
         this.settings = settings;
     }
 
     @Override
-    public void addHeaderContribution(IYuiContext helper) {
-        helper.addModule(HippoNamespace.NS, "dragdropmanager");
-        
-        helper.addTemplate(new HippoTextTemplate(getHeaderContributorClass(), getHeaderContributorFilename(),
-                getModelClass()) {
+    public void addHeaderContribution(IYuiContext context) {
+        context.addModule(HippoNamespace.NS, "dragdropmanager");
+
+        context.addTemplate(new HippoTextTemplate(getHeaderContributorClass(), getHeaderContributorFilename(),
+                getClientSideClassname()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -54,19 +51,17 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
             }
 
             @Override
-            public JavascriptSettings getJavascriptSettings() {
-                updateSettings();
+            public Settings getSettings() {
+                updateAjaxSettings();
                 return AbstractDragDropBehavior.this.settings;
             }
-
         });
-        helper.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
+        context.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
     }
     
-    protected void updateSettings() {
-        settings.put("callbackUrl", getCallbackUrl().toString());
-        settings.put("callbackFunction", getCallbackScript().toString(), false);
-        settings.put("callbackParameters", getCallbackParameters());
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
     }
 
     @Override
@@ -77,21 +72,24 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
         return buf.toString();
     }
 
+
     /**
-     * Provide custom callbackParameters
-     * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
+     * Return a class from the same package as the javascript file you want to load 
+     * @return Class from the same package as the javascript file you want to load
      */
-    protected Map<String, String> getCallbackParameters() {
-        return null;
+    protected Class<? extends IBehavior> getHeaderContributorClass() {
+        return AbstractDragDropBehavior.class;
     }
     
+    /**
+     * Provide the name of the javascript file that should be loaded on the client
+     * @return Filename of the javascript
+     */
     abstract protected String getHeaderContributorFilename();
-
-    abstract protected Class<? extends IBehavior> getHeaderContributorClass();
 
     /**
      * Specify the clientside class that is used as the DragDropModel 
      */
-    abstract protected String getModelClass();
+    abstract protected String getClientSideClassname();
 
 }

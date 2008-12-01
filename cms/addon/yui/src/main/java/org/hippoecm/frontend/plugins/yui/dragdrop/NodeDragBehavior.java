@@ -20,8 +20,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +34,14 @@ public class NodeDragBehavior extends DragBehavior {
 
     final JcrNodeModel nodeModel;
 
-    public NodeDragBehavior(IPluginContext context, IPluginConfig config, JcrNodeModel nodeModel) {
-        super(context, config, new DragSettings(config));
+    public NodeDragBehavior(IYuiManager service, DragSettings settings, JcrNodeModel nodeModel) {
+        super(service, settings);
         this.nodeModel = nodeModel;
     }
 
-    public NodeDragBehavior(IPluginContext context, IPluginConfig config, String nodePath) {
-        this(context, config, new JcrNodeModel(nodePath));
-    }
-
     @Override
-    protected void updateSettings() {
-        super.updateSettings();
+    protected void updateAjaxSettings() {
+        super.updateAjaxSettings();
         dragSettings.setLabel(getLabel());
     }
 

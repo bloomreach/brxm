@@ -16,10 +16,8 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.hippoecm.frontend.plugins.yui.util.OptionsUtil;
 
@@ -29,9 +27,12 @@ public class UnitBehavior extends AbstractBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private String position;
-    private Map<String, String> options;
-
+    private UnitSettings settings;
+    
+    public UnitBehavior(UnitSettings settings) {
+        this.settings = settings;
+    }
+    
     /**
      * Configure a LayoutUnit
      * @param position  Position in the wireframe
@@ -42,25 +43,12 @@ public class UnitBehavior extends AbstractBehavior {
     }
 
     public UnitBehavior(String position, Map<String, String> options) {
-        this.position = position;
-        if (options == null) {
-            this.options = new HashMap<String, String>();
-        } else {
-            this.options = options;
-        }
+        settings = new UnitSettings(position);
+        settings.updateValues(options);
     }
-
-    public String addUnit(Component component, WireframeSettings settings, String parentMarkupId) {
-        String unitElementId = settings.getUnitElement(position);
-        String bodyId = component.getMarkupId(true);
-        if (unitElementId == null) {
-            options.put("id", bodyId);
-        } else {
-            options.put("id", parentMarkupId + ":" + unitElementId);
-            options.put("body", bodyId);
-        }
-        settings.addUnit(position, options);
-        return position;
+    
+    public UnitSettings getSettings() {
+        return settings;
     }
-
+ 
 }

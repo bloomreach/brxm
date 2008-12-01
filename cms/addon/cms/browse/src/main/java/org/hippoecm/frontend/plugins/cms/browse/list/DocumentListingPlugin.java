@@ -37,6 +37,8 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.Tabl
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.StateIconAttributeModifier;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,8 +96,8 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
             Item item = super.newRowItem(id, index, model);
             if (model instanceof JcrNodeModel) {
                 JcrNodeModel nodeModel = (JcrNodeModel) model;
-                item.add(new NodeDragBehavior(getPluginContext(), getPluginConfig(), nodeModel.getItemModel()
-                                .getPath()));
+                item.add(new NodeDragBehavior(YuiPluginHelper.getManager(getPluginContext()), new DragSettings(
+                        YuiPluginHelper.getConfig(getPluginConfig())), nodeModel));
             }
             return item;
         }

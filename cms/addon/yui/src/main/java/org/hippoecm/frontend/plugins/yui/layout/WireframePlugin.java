@@ -5,6 +5,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,35 +25,33 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
     private IPluginConfig config;
     
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config, new WireframeSettings(config.getString(ROOT), config.getBoolean(LINKED)));
+        super(YuiPluginHelper.getManager(context), new WireframeSettings(YuiPluginHelper.getConfig(config)));
         
-        settings.setClientClassName(config.getString(CLIENT_CLASSNAME, settings.getClientClassName()));
-        
-        String[] units = config.getStringArray(UNITS);
-        if (units != null) {
-            for (String unit : units) {
-                String serialized = config.getString(unit);
-                ValueMap map;
-                if (serialized != null) {
-                    map = new ValueMap(config.getString(unit));
-                } else {
-                    map = new ValueMap();
-                    log.warn("No config found for unit {}", unit);
-                }
-                addUnit(unit, map);
-            }
-        }
-
-        String[] wrappers = config.getStringArray(WRAPPERS);
-        if (wrappers != null) {
-            for (String position : wrappers) {
-                registerUnitElement(position, config.getString(position));
-            }
-        }
-
-        if (units == null && wrappers == null) {
-            log.warn("No units defined");
-        }
+//        String[] units = config.getStringArray(UNITS);
+//        if (units != null) {
+//            for (String unit : units) {
+//                String serialized = config.getString(unit);
+//                ValueMap map;
+//                if (serialized != null) {
+//                    map = new ValueMap(config.getString(unit));
+//                } else {
+//                    map = new ValueMap();
+//                    log.warn("No config found for unit {}", unit);
+//                }
+//                addUnit(unit, map);
+//            }
+//        }
+//
+//        String[] wrappers = config.getStringArray(WRAPPERS);
+//        if (wrappers != null) {
+//            for (String position : wrappers) {
+//                registerUnitElement(position, config.getString(position));
+//            }
+//        }
+//
+//        if (units == null && wrappers == null) {
+//            log.warn("No units defined");
+//        }
         
         this.config = config;
         context.registerService(this, config.getString(ID));

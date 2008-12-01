@@ -1,39 +1,69 @@
 package org.hippoecm.frontend.plugins.yui;
 
+import java.util.Map;
+
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.markup.html.IHeaderResponse;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.layout.IYuiManager;
+import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavior {
     private static final long serialVersionUID = 1L;
     
-    private IYuiContext _helper;
+    private IYuiContext context;
+    private AjaxSettings settings;
 
-    public AbstractYuiAjaxBehavior(IPluginContext context, IPluginConfig config) {
-        this(context.getService("service.behavior.yui", IYuiManager.class));
+    public AbstractYuiAjaxBehavior(IYuiManager manager) {
+        this(manager, null);
     }
-
-    public AbstractYuiAjaxBehavior(IYuiManager service) {
-        if (service == null) {
+    
+    public AbstractYuiAjaxBehavior(IYuiManager manager, AjaxSettings settings) {
+        if (manager == null) {
             throw new IllegalStateException("No root yui behavior found, unable to register module dependencies.");
         }
-        _helper = service.newContext();
+        context = manager.newContext();
+        this.settings = settings;
     }
+    
+    protected void updateAjaxSettings() {
+        if(settings != null) {
+            settings.setCallbackUrl(getCallbackUrl().toString());
+            settings.setCallbackFunction(getCallbackFunction());
+            settings.setCallbackParameters(getCallbackParameters());
+        }
+    }
+    
+    /**
+     * Wrap the callback script in a function called doCallBack*component-id*(url){}
+     */
+    protected String getCallbackFunction() {
+        StringBuilder buf = new StringBuilder();
+        buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
+        buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
+        return buf.toString();
+    }
+    
+    /**
+     * Provide custom callbackParameters
+     * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
+     */
+    protected Map<String, String> getCallbackParameters() {
+        return null;
+    }
+
     
     @Override
     protected void onBind() {
         super.onBind();
-        addHeaderContribution(_helper);
+        addHeaderContribution(context);
     }
     
     /**
      * Override to implement header contrib
-     * @param helper
+     * @param context
      */
-    public void addHeaderContribution(IYuiContext helper) {
+    public void addHeaderContribution(IYuiContext context) {
     }
 
     
@@ -43,7 +73,8 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      */
     @Override
     public void renderHead(IHeaderResponse response) {
-        _helper.renderHead(response);
+        updateAjaxSettings();
+        context.renderHead(response);
     }
     
 }

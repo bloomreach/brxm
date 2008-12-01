@@ -22,6 +22,8 @@ import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.ImageNodeDragBehavior;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
@@ -53,9 +55,8 @@ public class ImageContainer extends Panel {
                 }
             }
         };
-
-        String path = model.getItemModel().getPath();
-        img.add(new ImageNodeDragBehavior(pluginContext, pluginConfig, path));
+        img.add(new ImageNodeDragBehavior(YuiPluginHelper.getManager(pluginContext), new DragSettings(YuiPluginHelper
+                .getConfig(pluginConfig)), model));
         add(img);
     }
 

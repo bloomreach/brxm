@@ -23,8 +23,7 @@ import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class DragBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
@@ -33,9 +32,9 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
     private static final long serialVersionUID = 1L;
     
     protected DragSettings dragSettings;
-    
-    public DragBehavior(IPluginContext context, IPluginConfig config, DragSettings settings) {
-        super(context, config, settings);
+
+    public DragBehavior(IYuiManager service, DragSettings settings) {
+        super(service, settings);
         dragSettings = settings;
     }
     
@@ -78,12 +77,7 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
     }
 
     @Override
-    protected Class<? extends IBehavior> getHeaderContributorClass() {
-        return DragBehavior.class;
-    }
-    
-    @Override
-    protected String getModelClass() {
+    protected String getClientSideClassname() {
         return "YAHOO.hippo.DDFallbackModel";
     }
 

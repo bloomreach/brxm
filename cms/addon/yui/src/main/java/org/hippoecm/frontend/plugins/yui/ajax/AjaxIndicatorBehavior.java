@@ -20,32 +20,27 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.collections.MiniMap;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
-    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AjaxIndicatorBehavior.class, "ajax-loader.gif");
-    
+
+    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AjaxIndicatorBehavior.class,
+            "ajax-loader.gif");
+
     final private WicketAjaxIndicatorAppender ajaxIndicator;
 
-    public AjaxIndicatorBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-        
+    public AjaxIndicatorBehavior(IYuiManager service) {
+        super(service);
+
         ajaxIndicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
@@ -59,7 +54,7 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addModule(HippoNamespace.NS, "ajaxindicator");
-        
+
         Map<String, Object> parameters = new MiniMap(1);
         parameters.put("id", ajaxIndicator.getMarkupId());
         helper.addTemplate(AjaxIndicatorBehavior.class, "init_ajax_indicator.js", parameters);

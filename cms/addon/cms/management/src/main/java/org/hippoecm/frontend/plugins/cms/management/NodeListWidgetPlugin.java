@@ -38,6 +38,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNode;
@@ -104,19 +106,19 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                 if (entry.newEntry) {
                     name += " *";
                 }
-
+                
+                final JcrNodeModel nodeModel = new JcrNodeModel(entry.path);
                 item.add(new AjaxLink("link") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        JcrNodeModel nodeModel = new JcrNodeModel(entry.path);
                         NodeListWidgetPlugin.this.setModel(nodeModel);
                     }
 
                 }.add(new Label("name", name)));
                 if (!entry.newEntry)
-                    item.add(new NodeDragBehavior(context, config, entry.path) {
+                    item.add(new NodeDragBehavior(YuiPluginHelper.getManager(context), new DragSettings(YuiPluginHelper.getConfig(config)), nodeModel) {
                         private static final long serialVersionUID = 1L;
 
                         @Override

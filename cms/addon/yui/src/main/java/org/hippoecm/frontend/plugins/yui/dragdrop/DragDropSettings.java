@@ -17,24 +17,26 @@
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
 
-public class DragDropSettings extends JavascriptSettings {
+public class DragDropSettings extends AjaxSettings {
     private static final long serialVersionUID = 1L;
 
-    private static final String GROUPS = "groups"; //String[]
-
-    public DragDropSettings() {
-        setGroups("default");
-    }
+    private static final StringArraySetting GROUPS = new StringArraySetting("groups", "default");
     
     public DragDropSettings(IPluginConfig config) {
-        setGroups(config.getStringArray(GROUPS));
+        super(config);
+    }
+
+    @Override
+    protected void initValues() {
+        super.initValues();
+        add(GROUPS);
     }
 
     public DragDropSettings setGroups(String... groups) {
-        put(GROUPS, groups);
+        GROUPS.set(groups, this);
         return this;
     }
-
 }

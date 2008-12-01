@@ -137,22 +137,27 @@
           <sv:property sv:name="behavior.id" sv:type="String">
             <sv:value>${cluster.id}.behavior.root</sv:value>
           </sv:property>
-          <sv:property sv:name="yui.root" sv:type="String">
-            <sv:value>template-type-wrapper</sv:value>
-          </sv:property>
-          <sv:property sv:name="yui.linked" sv:type="Boolean">
-            <sv:value>true</sv:value>
-          </sv:property>
-          <sv:property sv:name="yui.units" sv:type="String">
-            <sv:value>center</sv:value>
-            <sv:value>right</sv:value>
-          </sv:property>
-          <sv:property sv:name="center" sv:type="String">
-            <sv:value>id=template-type-center,body=template-type-center-body,scroll=true</sv:value>
-          </sv:property>
-          <sv:property sv:name="right" sv:type="String">
-            <sv:value>id=template-type-right,width=250,body=template-type-right-body,resize=true,scroll=true</sv:value>
-          </sv:property>
+          <sv:node sv:name="yui.config">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="root.id" sv:type="String">
+              <sv:value>template-type-wrapper</sv:value>
+            </sv:property>
+            <sv:property sv:name="linked.with.parent" sv:type="Boolean">
+              <sv:value>true</sv:value>
+            </sv:property>
+            <sv:property sv:name="units" sv:type="String">
+              <sv:value>center</sv:value>
+              <sv:value>right</sv:value>
+            </sv:property>
+            <sv:property sv:name="center" sv:type="String">
+              <sv:value>id=template-type-center,body=template-type-center-body,scroll=true</sv:value>
+            </sv:property>
+            <sv:property sv:name="right" sv:type="String">
+              <sv:value>id=template-type-right,width=250,body=template-type-right-body,resize=true,scroll=true</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="preview">
@@ -1931,9 +1936,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Users</sv:value>
           </sv:property>
-          <sv:property sv:name="yui.dd.groups" sv:type="String">
-            <sv:value>add-user-to-group</sv:value>
-          </sv:property>
+          <sv:node sv:name="yui.config">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="groups" sv:type="String">
+              <sv:value>add-user-to-group</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="actions">
@@ -2265,9 +2275,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Groups</sv:value>
           </sv:property>
-          <sv:property sv:name="yui.dd.groups" sv:type="String">
-            <sv:value>add-group-to-user</sv:value>
-          </sv:property>
+          <sv:node sv:name="yui.config">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="groups" sv:type="String">
+              <sv:value>add-group-to-user</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="actions">

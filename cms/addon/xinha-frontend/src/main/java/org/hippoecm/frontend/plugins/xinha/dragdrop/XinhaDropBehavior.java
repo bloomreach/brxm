@@ -26,8 +26,12 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragDropSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
+import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -42,82 +46,83 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     static final Logger log = LoggerFactory.getLogger(XinhaDropBehavior.class);
 
     public XinhaDropBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(YuiPluginHelper.getManager(context), new DragDropSettings(YuiPluginHelper.getConfig(config)));
     }
-    
+
     enum Type {
         Image, Document;
     }
-    
+
     @Override
-    public void renderHead(IHeaderResponse response) {
-        YuiHeaderContributor.forModule(XinhaNamespace.NS, "xinhadropmodel").renderHead(response);
-        super.renderHead(response);
-    }
+    public void addHeaderContribution(IYuiContext context) {
+        super.addHeaderContribution(context);
+        context.addModule(XinhaNamespace.NS, "xinhadropmodel");
+    }    
 
     @Override
     public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
-            
+
             Type type = getType(nodeModel);
-            if(type == null)
+            if (type == null)
                 return;
-            
-            if(type == Type.Image) //images are dragged with the nt_resource node, use parent instead.
+
+            if (type == Type.Image) //images are dragged with the nt_resource node, use parent instead.
                 nodeModel = nodeModel.getParentModel();
-            
+
             String activeElement = parameters.containsKey("activeElement") ? parameters.get("activeElement")[0] : "";
-            boolean emptySelection = parameters.containsKey("emptySelection") ? Boolean.parseBoolean(parameters.get("emptySelection")[0]) : true;
-            
+            boolean emptySelection = parameters.containsKey("emptySelection") ? Boolean.parseBoolean(parameters
+                    .get("emptySelection")[0]) : true;
+
             switch (type) {
             case Image:
-                if(emptySelection) {
+                if (emptySelection) {
                     insertImage(nodeModel, target);
                     break;
-                } else if(activeElement.equals("img")) {
+                } else if (activeElement.equals("img")) {
                     updateImage(nodeModel, target);
                     break;
-                } 
+                }
             case Document:
-                if(!emptySelection) {
-                    if(activeElement.equals("")) {
+                if (!emptySelection) {
+                    if (activeElement.equals("")) {
                         //Only text selected, create internal link
                         insertLink(nodeModel, target);
                         break;
-                    } else if(activeElement.equals("img")) {
+                    } else if (activeElement.equals("img")) {
                         insertLink(nodeModel, target);
                         break;
                     }
                 } else {
-                    break;    
+                    break;
                 }
             default:
-                if(activeElement.equals("a")) {
+                if (activeElement.equals("a")) {
                     updateLink(nodeModel, target);
                 }
                 break;
             }
         }
     }
-    
+
     private Type getType(JcrNodeModel nodeModel) {
         HippoNode node = nodeModel.getNode();
         try {
             if (node.isNodeType(HippoNodeType.NT_RESOURCE)) {
                 //asset or image
-                
+
                 //The ImagePicker expects a node of type ImageSet but as this is not a 'generic' nodeType we assume
                 //that the node dropped on Xinha is the thumbnail of an Imageset and calling parent
                 //will give us the ImageSet node
 
                 //assume it's an image
                 String mimeType = node.getProperty("jcr:mimeType").getValue().getString();
-                
-                if(mimeType.startsWith("image/")) {
+
+                if (mimeType.startsWith("image/")) {
                     return Type.Image;
-                } 
-            } 
+                }
+            }
             return Type.Document;
         } catch (RepositoryException e) {
             log.error("An error occurred while handling the onDrop event with node["
@@ -128,11 +133,11 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     }
 
     abstract protected void insertImage(JcrNodeModel model, AjaxRequestTarget target);
-    
+
     abstract protected void updateImage(JcrNodeModel model, AjaxRequestTarget target);
 
     abstract protected void insertLink(JcrNodeModel model, AjaxRequestTarget target);
-    
+
     abstract protected void updateLink(JcrNodeModel model, AjaxRequestTarget target);
 
 }
