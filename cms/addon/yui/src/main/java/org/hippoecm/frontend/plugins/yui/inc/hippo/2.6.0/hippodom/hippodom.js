@@ -72,6 +72,9 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.enhance = function(el, id) {
+            if(el == null) {
+                return;
+            }
             var yid = el.getAttribute("yui:id");
             if (yid && yid == id.split(':')[1] && el.id != id) {
                 el.id = id;
