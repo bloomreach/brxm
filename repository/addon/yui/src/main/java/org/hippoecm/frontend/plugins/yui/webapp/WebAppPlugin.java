@@ -21,7 +21,6 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.layout.IYuiManager;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

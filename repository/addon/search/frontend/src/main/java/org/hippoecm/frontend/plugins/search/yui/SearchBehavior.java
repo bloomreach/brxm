@@ -43,7 +43,9 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteBehavior;
+import org.hippoecm.frontend.plugins.yui.autocomplete.AutoCompleteSettings;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
@@ -62,15 +64,15 @@ public class SearchBehavior extends AutoCompleteBehavior {
     private final SearchBuilder searchBuilder;
 
     public SearchBehavior(IPluginContext context, IPluginConfig config, IBrowseService<IModel> browse) {
-        super(context, config);
+        super(YuiPluginHelper.getManager(context), new AutoCompleteSettings(YuiPluginHelper.getConfig(config)));
         this.browseService = browse;
         searchBuilder = new SearchBuilder(config.getStringArray("search.paths"));
     }
     
     @Override
-    public void addHeaderContribution(IYuiContext helper) {
-        super.addHeaderContribution(helper);
-        helper.addModule(SearchNamespace.NS, "searchbox");
+    public void addHeaderContribution(IYuiContext context) {
+        super.addHeaderContribution(context);
+        context.addModule(SearchNamespace.NS, "searchbox");
     }
 
     @Override

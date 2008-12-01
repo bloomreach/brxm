@@ -24,7 +24,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
+import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 
 public abstract class DynamicTextTemplate implements IHeaderContributor {
 
@@ -56,11 +56,11 @@ public abstract class DynamicTextTemplate implements IHeaderContributor {
         if (variables == null) {
             variables = new MiniMap(5);
         }
-        variables.put("config", getJavascriptSettings());
+        variables.put("config", getSettings().toScript());
         return variables;
     }
     
-    abstract public JavascriptSettings getJavascriptSettings();
+    abstract public Settings getSettings();
 
 
     private static abstract class DynamicReadOnlyModel extends AbstractReadOnlyModel {

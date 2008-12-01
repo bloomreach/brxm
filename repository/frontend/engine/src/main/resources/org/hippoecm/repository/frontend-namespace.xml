@@ -404,9 +404,14 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Groups</sv:value>
           </sv:property>
-          <sv:property sv:name="yui.dd.groups" sv:type="String">
-            <sv:value>add-group-to-user</sv:value>
-          </sv:property>
+          <sv:node sv:name="yui.config">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>frontend:pluginconfig</sv:value>
+            </sv:property>
+            <sv:property sv:name="groups" sv:type="String">
+              <sv:value>add-group-to-user</sv:value>
+            </sv:property>
+          </sv:node>
         </sv:node>
 
         <sv:node sv:name="actions">

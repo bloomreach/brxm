@@ -18,31 +18,24 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class DropBehavior extends AbstractDragDropBehavior {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
-    public DropBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config, new DragDropSettings(config));
-    }
 
+    public DropBehavior(IYuiManager service, DragDropSettings settings) {
+        super(service, settings);
+    }
+    
     @Override
     protected String getHeaderContributorFilename() {
         return "Drop.js";
     }
 
-    @Override
-    protected Class<? extends IBehavior> getHeaderContributorClass() {
-        return DropBehavior.class;
-    }
-    
     public String getComponentMarkupId() {
         return getComponent().getMarkupId();
     }
@@ -52,7 +45,7 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     }
     
     @Override
-    protected String getModelClass() {
+    protected String getClientSideClassname() {
         return "YAHOO.hippo.DDDropModel";
     }
     

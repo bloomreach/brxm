@@ -20,6 +20,7 @@ import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,16 +30,12 @@ public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorServic
 
     static final Logger log = LoggerFactory.getLogger(UnitPlugin.class);
 
-    public static final String POSITION = "yui.position";
-    public static final String OPTIONS = "yui.options";
-
     private IPluginConfig config;
 
     public UnitPlugin(IPluginContext context, IPluginConfig config) {
-        super(config.getString(POSITION), (config.getString(OPTIONS) == null) ? null : new ValueMap(config.getString(OPTIONS)));
+        super(createSettings(YuiPluginHelper.getConfig(config)));
 
         this.config = config;
-
         context.registerService(this, config.getString(ID));
     }
 
@@ -48,5 +45,13 @@ public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorServic
 
     public void detach() {
         config.detach();
+    }
+
+    static UnitSettings createSettings(IPluginConfig config) {
+        if (config.containsKey("options")) {
+            return new UnitSettings(config.getString("position"), new ValueMap(config.getString("options")));
+        } else {
+            return new UnitSettings(config);
+        }
     }
 }

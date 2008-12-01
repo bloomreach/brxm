@@ -33,6 +33,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.management.AbstractManagementListingPlugin;
 import org.hippoecm.frontend.plugins.cms.management.users.GroupsListPlugin;
+import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
+import org.hippoecm.frontend.plugins.yui.dragdrop.DragDropSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +52,13 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
 
         String caption = config.getString("caption");
         add(new Label("listLabel", new Model(caption)));
-        
+
         JcrNodeModel rootModel = (JcrNodeModel) getModel();
         if (!rootModel.getNode().isNew()) {
             add(new GroupDropBehavior(context, config));
         }
         add(new SimpleAttributeModifier("class", "userGroupsList"));
-        
+
         onModelChanged();
     }
 
@@ -64,7 +66,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
     protected List<IModel> getRows() {
         final List<IModel> list = new ArrayList<IModel>();
         final String usersPath = "/hippo:configuration/hippo:users/";
-        
+
         JcrNodeModel rootModel = (JcrNodeModel) getModel();
         try {
             if (rootModel.getNode().hasProperty("hippo:members")) {
@@ -75,18 +77,17 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
                 }
             }
         } catch (RepositoryException e) {
-            log.error("Error while getting hippo:members property from group["
-                    + rootModel.getItemModel().getPath() + "]", e);
+            log.error("Error while getting hippo:members property from group[" + rootModel.getItemModel().getPath()
+                    + "]", e);
         }
         return list;
     }
 
-    
     private class GroupDropBehavior extends DropBehavior {
         private static final long serialVersionUID = 1L;
 
         public GroupDropBehavior(IPluginContext context, IPluginConfig config) {
-            super(context, config);
+            super(YuiPluginHelper.getManager(context), new DragDropSettings(YuiPluginHelper.getConfig(config)));
         }
 
         @Override
@@ -108,8 +109,7 @@ public class UsersListPlugin extends AbstractManagementListingPlugin {
                 }
             }
         }
-        
-    }
 
+    }
 
 }

@@ -1,0 +1,14 @@
+package org.hippoecm.frontend.plugins.yui.javascript;
+
+public class DoubleValue extends Value<Double> {
+    private static final long serialVersionUID = 1L;
+    
+    public DoubleValue(Double value) {
+        super(value);
+    }
+
+    public String getScriptValue() {
+        return Double.toString(value);
+    }
+
+}

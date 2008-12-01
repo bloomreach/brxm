@@ -80,24 +80,29 @@
     <sv:property sv:name="behavior.id" sv:type="String">
       <sv:value>${cluster.id}.behavior.perspective</sv:value>
     </sv:property>
-    <sv:property sv:name="yui.root" sv:type="String">
-      <sv:value>editor-perspective-wrapper</sv:value>
-    </sv:property>
-    <sv:property sv:name="yui.linked" sv:type="Boolean">
-      <sv:value>true</sv:value>
-    </sv:property>
-    <sv:property sv:name="yui.units" sv:type="String">
-      <sv:value>top</sv:value>
-      <sv:value>center</sv:value>
-    </sv:property>
-    <sv:property sv:name="top" sv:type="String">
-      <sv:value>id=editor-perspective-top,height=32</sv:value>
-    </sv:property>
-    <sv:property sv:name="center" sv:type="String">
-      <sv:value>id=editor-perspective-center,body=editor-perspective-center-body,scroll=true</sv:value>
-    </sv:property>
+    <sv:node sv:name="yui.config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:pluginconfig</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.id" sv:type="String">
+        <sv:value>editor-perspective-wrapper</sv:value>
+      </sv:property>
+      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
+      <sv:property sv:name="units" sv:type="String">
+        <sv:value>top</sv:value>
+        <sv:value>center</sv:value>
+      </sv:property>
+      <sv:property sv:name="top" sv:type="String">
+        <sv:value>id=editor-perspective-top,height=32</sv:value>
+      </sv:property>
+      <sv:property sv:name="center" sv:type="String">
+        <sv:value>id=editor-perspective-center,body=editor-perspective-center-body,scroll=true</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
-  
+    
   <sv:node sv:name="editorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

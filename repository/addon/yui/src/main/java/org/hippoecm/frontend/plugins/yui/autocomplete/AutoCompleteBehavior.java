@@ -17,14 +17,12 @@
 package org.hippoecm.frontend.plugins.yui.autocomplete;
 
 import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.layout.IYuiManager;
+import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     private static final long serialVersionUID = 1L;
@@ -35,19 +33,14 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     protected final AutoCompleteSettings settings;
 
     public AutoCompleteBehavior(IYuiManager service, AutoCompleteSettings settings) {
-        super(service);
+        super(service, settings);
         this.settings = settings;
     }
     
-    public AutoCompleteBehavior(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-        this.settings = new AutoCompleteSettings(config.getPluginConfig("yui.config"));
-    }
-    
     @Override
-    public void addHeaderContribution(IYuiContext helper) {
-        helper.addModule(HippoNamespace.NS, "autocompletemanager");
-        helper.addTemplate(new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
+    public void addHeaderContribution(IYuiContext context) {
+        context.addModule(HippoNamespace.NS, "autocompletemanager");
+        context.addTemplate(new HippoTextTemplate(INIT_AUTOCOMPLETE, getClientClassname()) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -56,19 +49,19 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
             }
 
             @Override
-            public JavascriptSettings getJavascriptSettings() {
-                return getSettings();
+            public Settings getSettings() {
+                return AutoCompleteBehavior.this.getSettings();
             }
         });
-        helper.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
+        context.addOnload("YAHOO.hippo.AutoCompleteManager.onLoad()");
     }
 
     protected AutoCompleteSettings getSettings() {
+        updateAjaxSettings();
         StringBuffer buf = new StringBuffer();
         buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
-        settings.put("callbackMethod", buf.toString(), false);
-        settings.put("callbackUrl", getCallbackUrl().toString());
+        settings.setCallbackFunction(buf.toString());
         return settings;
     }
 

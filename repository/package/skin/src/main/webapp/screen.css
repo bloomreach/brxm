@@ -150,8 +150,8 @@ padding-top: 8px;
 
 /* Header */
 /* ================================================ */
-.hippo-header{background: url("images/headingback.png") repeat-x; height: 45px; margin-top: 4px;}
-.hippo-header a.hippo-header-home{background: url("images/headingback-left.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;margin-right:20px;}
+.hippo-header{background: url("images/headingback.png") repeat-x; height: 45px;}
+.hippo-header a.hippo-header-home{background: url("images/headingback-left2.png") no-repeat; height: 43px; width: 220px; display: block; float: left; text-indent: -300px;margin-right:20px;}
 
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
@@ -199,8 +199,8 @@ padding-bottom: 5px; padding-left: 25px; text-decoration: none; text-align: cent
 
 /* Logout */
 /* ================================================ */
-.hippo-logout {position: absolute; right: 0px; top: 4px; z-index: 10; padding: 6px; width: 400px; color: white;
-background: url("images/headingback-right.png") no-repeat top right;
+.hippo-logout {position: absolute; right: 0px; top: 0px; z-index: 10; padding: 6px; width: 400px; color: white;
+background: url("images/headingback-right2.png") no-repeat top right;
 text-align: right;
 padding-right: 9px;
 padding-top: 24px;
@@ -325,7 +325,7 @@ padding-top: 24px;
 
 /* Shortcuts */
 /* ================================================ */
-.hippo-header-shortcuts {margin-left: 35px; padding: 6px}
+.hippo-header-shortcuts {/*margin-left: 35px;*/ padding: 6px}
 .hippo-header-shortcuts div div{float: left; margin-right: 8px;}
 .hippo-header-shortcuts div div a{color: #333333}
 .hippo-header-shortcuts div div a.document-16{background: none}

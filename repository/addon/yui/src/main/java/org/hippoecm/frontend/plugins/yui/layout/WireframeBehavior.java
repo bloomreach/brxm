@@ -16,120 +16,119 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.util.Iterator;
-import java.util.Map;
-
-import net.sf.json.JSONObject;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
-import org.hippoecm.frontend.plugins.yui.HippoNamespace;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.hippoecm.frontend.plugins.yui.header.JavascriptSettings;
 import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
-import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings.Unit;
+import org.hippoecm.frontend.plugins.yui.javascript.Settings;
+import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
-public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWireframeService {
+public class WireframeBehavior extends AbstractYuiBehavior implements IWireframeService {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    private static final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class, "add_wireframe.js");
+    private static final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
+            "add_wireframe.js");
 
     public WireframeSettings settings;
     private boolean initialized = false;
-    
-    public WireframeBehavior(IPluginContext context, IPluginConfig config, WireframeSettings settings) {
-        super(context, config);
+    private Component component;
+
+    public WireframeBehavior(IYuiManager manager, WireframeSettings settings) {
+        super(manager);
         this.settings = settings;
     }
 
-    public WireframeBehavior registerUnitElement(String position, String elId) {
-        settings.registerUnitElement(position, elId);
-        return this;
-    }
+    //    public WireframeBehavior registerUnitElement(String position, String elId) {
+    //        settings.registerUnitElement(position, elId);
+    //        return this;
+    //    }
+    //
+    //    public WireframeBehavior addUnit(String position, Map<String, String> options) {
+    //        settings.addUnit(position, options);
+    //        return this;
+    //    }
+    //
+    //    public WireframeBehavior addUnit(String position, String... options) {
+    //        settings.addUnit(position, options);
+    //        return this;
+    //    }
 
-    public WireframeBehavior addUnit(String position, Map<String, String> options) {
-        settings.addUnit(position, options);
-        return this;
-    }
-
-    public WireframeBehavior addUnit(String position, String... options) {
-        settings.addUnit(position, options);
-        return this;
-    }
-    
-    public WireframeSettings getConfiguration() {
-        return settings;
-    }
-
+    /**
+     * Implements IWireframeService
+     */
     public String getParentId() {
         return settings.getRootElementId();
     }
 
-    @Override
-    protected void respond(AjaxRequestTarget target) {
-        RequestCycle requestCycle = RequestCycle.get();
-        String sizes = requestCycle.getRequest().getParameter("sizes");
-        if (sizes != null) {
-            JSONObject json = JSONObject.fromObject(sizes);
-            Iterator<String> i = json.keys();
-            while (i.hasNext()) {
-                String key = i.next();
-                Unit u = settings.getUnitByPosition(key);
-                if (u != null) {
-                    u.addOption("width", json.getJSONObject(key).getString("w"));
-                    u.addOption("height", json.getJSONObject(key).getString("h"));
-                }
-            }
-        }
-    }
+    //    @Override
+    //    protected void respond(AjaxRequestTarget target) {
+    //        RequestCycle requestCycle = RequestCycle.get();
+    //        String sizes = requestCycle.getRequest().getParameter("sizes");
+    //        if (sizes != null) {
+    //            JSONObject json = JSONObject.fromObject(sizes);
+    //            Iterator<String> i = json.keys();
+    //            while (i.hasNext()) {
+    //                String key = i.next();
+    //                UnitSettings unitSettings = settings.getUnitSettingsByPosition(key);
+    //                unitSettings.setWidth(json.getJSONObject(key).getString("w"));
+    //                unitSettings.setHeight(json.getJSONObject(key).getString("h"));
+    //            }
+    //        }
+    //    }
+
+    //    @Override
+    //    protected void onBind() {
+    //        super.onBind();
+    //        if (!(getComponent() instanceof MarkupContainer)) {
+    //            throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
+    //        }
+    //    }
 
     @Override
-    protected void onBind() {
-        super.onBind();
-        if (!(getComponent() instanceof MarkupContainer)) {
-            throw new RuntimeException("YuiWireframeBehavior can only be added to a MarkupContainer");
-        }
+    public void bind(Component component) {
+        super.bind(component);
+        this.component = component;
     }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         if (!initialized) {
-            initialize();    
+            initialize();
         }
         super.renderHead(response);
     }
-    
+
     @Override
-    public void addHeaderContribution(IYuiContext helper) {
-        helper.addTemplate(new HippoTextTemplate(behaviorJs, settings.getClientClassName()){
+    public void addHeaderContribution(IYuiContext context) {
+        context.addTemplate(new HippoTextTemplate(behaviorJs, settings.getClientClassName()) {
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public String getId() {
                 return settings.getRootElementId();
             }
 
             @Override
-            public JavascriptSettings getJavascriptSettings() {
-                return settings.getSettings();
+            public Settings getSettings() {
+                return settings;
             }
         });
-        helper.addOnload("YAHOO.hippo.LayoutManager.render()");
+        context.addOnload("YAHOO.hippo.LayoutManager.render()");
     }
 
     private void initialize() {
+        settings.setMarkupId(component.getMarkupId(true));
+
         if (settings.isLinkedWithParent()) {
-            Component parent = getComponent();
+            Component parent = component;
             boolean found = false;
             while (!found) {
                 parent = parent.getParent();
@@ -148,8 +147,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
             }
         }
 
-        settings.setBaseMarkupId(getComponent().getMarkupId(true));
-        MarkupContainer cont = (MarkupContainer) getComponent();
+        MarkupContainer cont = (MarkupContainer) component;
         cont.visitChildren(new IVisitor() {
             public Object component(Component component) {
                 for (Iterator i = component.getBehaviors().iterator(); i.hasNext();) {
@@ -157,15 +155,17 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
                     if (behavior instanceof IWireframeService) {
                         return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     } else if (behavior instanceof UnitBehavior) {
-                        UnitBehavior unitBehavior = (UnitBehavior) behavior;
-                        unitBehavior.addUnit(component, settings, getComponent().getMarkupId(true));
+                        UnitSettings unitSettings = ((UnitBehavior) behavior).getSettings();
+                        unitSettings.setMarkupId(component.getMarkupId(true));
+                        settings.register(unitSettings);
                         return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
                     }
                 }
                 return IVisitor.CONTINUE_TRAVERSAL;
             }
         });
+        settings.enhanceIds();
         initialized = true;
     }
-    
+
 }
