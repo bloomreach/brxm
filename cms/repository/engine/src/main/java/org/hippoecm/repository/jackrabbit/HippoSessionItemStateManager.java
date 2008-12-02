@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
+import org.apache.jackrabbit.core.PropertyId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -71,6 +72,11 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         }
     }
 
+    @Override
+    public void dispose() {
+        localStateMgr.dispose();
+        super.dispose();
+    }
 
     @Override
     public HierarchyManager getHierarchyMgr() {
@@ -91,18 +97,25 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
 
     /**
      * This is a hack for the missing method in the o.a.j.c.SessionItemStateManager.
-     * "return atticStore.get(id);" shold all that's needed, see getTransientItemState.
+     * "return atticStore.get(id);" should all that's needed, see getTransientItemState.
      * @param id the item id
      * @return the ItemState
      * @throws NoSuchItemStateException when the item is not in the attic store
-     * @thorws ItemStateException when the item should be in the attic but cannot be found
+     * @throws ItemStateException when the item should be in the attic but cannot be found
      */
     public ItemState getAtticItemState(ItemId id) throws NoSuchItemStateException, ItemStateException {
         ItemState itemState = null;
 
+        // If the item id is in the attic it should be in the localStateManager as well
+        if (localStateMgr.hasItemState(id)) {
+            return localStateMgr.getItemState(id);
+        }
+
         if (!hasTransientItemStateInAttic(id)) {
             throw new NoSuchItemStateException("Item state not found in attic: " + id);
         }
+
+        // FIXME: FIX_IN_JACKRABBIT! This is extremely expensive on large deletes.
         // somehow we do have getTransientState but not getAtticState
         // it is possible to get a list of all attic states from the root node
         Iterator iter = getDescendantTransientItemStatesInAttic(rootNodeId);
