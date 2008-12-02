@@ -21,13 +21,10 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.yui.HippoNamespace;
-import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.YuiPluginHelper;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DragDropSettings;
 import org.hippoecm.frontend.plugins.yui.dragdrop.DropBehavior;
