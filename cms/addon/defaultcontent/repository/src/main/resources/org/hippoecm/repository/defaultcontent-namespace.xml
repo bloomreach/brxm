@@ -499,7 +499,7 @@
             <sv:value>hippo:field</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:name" sv:type="String">
-            <sv:value>file</sv:value>
+            <sv:value>internallink</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:internallink</sv:value>
