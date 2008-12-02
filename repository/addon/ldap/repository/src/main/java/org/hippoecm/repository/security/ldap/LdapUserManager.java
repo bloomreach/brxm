@@ -79,6 +79,12 @@ public class LdapUserManager extends AbstractUserManager {
     private final Logger log = LoggerFactory.getLogger(LdapUserManager.class);
 
     /**
+     * Use case sensitive uid matching
+     * TODO: make configurable
+     */
+    private boolean isCaseSensitive = false;
+
+    /**
      * initialize
      */
     public void initManager(ManagerContext context) throws RepositoryException {
@@ -139,6 +145,9 @@ public class LdapUserManager extends AbstractUserManager {
     public void syncUserInfo(String userId) {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized: " + providerId);
+        }
+        if (!isCaseSensitive) {
+            userId = userId.toLowerCase();
         }
         String dn = null;
         Node user = null;
@@ -213,6 +222,9 @@ public class LdapUserManager extends AbstractUserManager {
                         } else {
                             try {
                                 userId = (String) uidAttr.get();
+                                if (!isCaseSensitive) {
+                                    userId = userId.toLowerCase();
+                                }
                                 user = getUser(userId);
                                 
                                 // create the user if it doesn't exists
