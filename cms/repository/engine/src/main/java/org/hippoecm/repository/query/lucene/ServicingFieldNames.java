@@ -58,10 +58,4 @@ public class ServicingFieldNames {
      */
     public static final String FACET_PROPERTIES_SET = "_:FACET_PROPERTIES_SET".intern();
     
-    /**
-     * Name of the field that contains the UUIDs of the hippo aggregated nodes. The
-     * terms are not tokenized and not stored, only indexed.
-     */
-    public static final String HIPPO_AGGREGATED_NODE_UUID = "_:HIPPO_AGGR_NODE_UUID".intern();
-
 }
