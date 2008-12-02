@@ -13,11 +13,11 @@ public abstract class Value<K> implements IValue<K> {
         this.value = value;
     }
 
-    public K get() {
+    public final K get() {
         return value;
     }
 
-    public void set(K value) {
+    public final void set(K value) {
         this.value = value;
     }
 

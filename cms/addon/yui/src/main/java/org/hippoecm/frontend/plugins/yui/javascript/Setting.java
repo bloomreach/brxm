@@ -1,5 +1,6 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
@@ -16,11 +17,11 @@ public abstract class Setting<K> implements ISetting<K> {
         this.defaultValue = defaultValue;
     }
     
-    public K get(Settings settings) {
+    public final K get(Settings settings) {
         return getValue(settings).get();
     }
 
-    public void set(K value, Settings settings) {
+    public final void set(K value, Settings settings) {
         getValue(settings).set(value);
     }
     
@@ -53,8 +54,22 @@ public abstract class Setting<K> implements ISetting<K> {
         return b.toString();
     }
     
-    /*@Override
+    @Override
+    public boolean equals(Object o) {
+        if(o != null && o instanceof Setting) {
+            Setting os = (Setting)o;
+            return os.getKey().equals(getKey());
+        }
+        return false;
+    }
+    
+    @Override
     public String toString() {
         return new ToStringBuilder(this).append("key", javascriptKey).toString();
-    }*/
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 13).append(javascriptKey).toHashCode();
+    }
 }
