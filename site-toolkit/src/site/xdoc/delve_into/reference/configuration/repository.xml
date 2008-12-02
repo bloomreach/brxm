@@ -41,7 +41,7 @@
                 By default you will need the following node structure:
             </p>
             <p>
-                <img src="../../images/reference/hst-configuration-nodes.png" width="284" height="131" alt="HST2 configuration nodes"/>
+                <img src="../../../images/reference/hst-configuration-nodes.png" width="284" height="131" alt="HST2 configuration nodes"/>
             </p>
             
             <subsection name="hst:sitemap">
@@ -66,7 +66,7 @@
                     </li>
                 </ul>
                 <p>
-                    <img src="../../images/reference/hst-configuration-sitemap.png" width="800" height="609" alt="HST2 sitemap configuration"/>
+                    <img src="../../../images/reference/hst-configuration-sitemap.png" width="800" height="609" alt="HST2 sitemap configuration"/>
                 </p>
                 <p>
                     As you can see in the figure above. The sitemap item with the name 'home' is
@@ -99,7 +99,7 @@
                     use in a specific placeholder.
                 </p>
                 <p>
-                    <img src="../../images/reference/hst-configuration-sitemap2.png" width="800" height="609" alt="HST2 sitemap configuration"/>
+                    <img src="../../../images/reference/hst-configuration-sitemap2.png" width="800" height="609" alt="HST2 sitemap configuration"/>
                 </p>
 
             </subsection>
@@ -124,7 +124,7 @@
                     in the root of the web application context.
                 </p>
                 <p>
-                    <img src="../../images/reference/hst-configuration-layouts.png" width="800" height="609" alt="HST2 layouts configuration"/>
+                    <img src="../../../images/reference/hst-configuration-layouts.png" width="800" height="609" alt="HST2 layouts configuration"/>
                 </p>
                 <p>
                     In this case the threepane.jsp will have 3 containers, which are defined by the
@@ -168,7 +168,7 @@
                     /content/news.
                 </p>
                 <p>
-                    <img src="../../images/reference/hst-configuration-modules.png" width="800" height="609" alt="HST2 modules configuration"/>
+                    <img src="../../../images/reference/hst-configuration-modules.png" width="800" height="609" alt="HST2 modules configuration"/>
                 </p>
 
             </subsection>
