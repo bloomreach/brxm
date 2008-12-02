@@ -15,7 +15,9 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -57,6 +59,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName Hippo Path qualified name
      */
     private Name hippoPath;
+    
+    /**
+     * QName's of all the child node that should be aggregated
+     */
+    private Name[] hippoAggregates;
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
@@ -64,6 +71,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         NamespaceResolver nsResolver = new AdditionalNamespaceResolver(getNamespaces(config));
         NameResolver resolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
         NodeList indexingConfigs = config.getChildNodes();
+
+        List<Name> idxHippoAggregates = new ArrayList<Name>();
+        
         for (int i = 0; i < indexingConfigs.getLength(); i++) {
             Node configNode = indexingConfigs.item(i);
             if (configNode.getNodeName().equals("facets")) {
@@ -78,19 +88,31 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     }
                 }
             }
+            if (configNode.getNodeName().equals("aggregates")) {
+                NodeList nameChildNodes = configNode.getChildNodes();
+                for (int k = 0; k < nameChildNodes.getLength(); k++) {
+                    Node nodeTypeNode = nameChildNodes.item(k);
+                    if (nodeTypeNode.getNodeName().equals("nodetype")) {
+                        // get property name
+                        Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
+                        idxHippoAggregates.add(nodeTypeName);
+                        log.debug("Added nodetype '"+nodeTypeName.getNamespaceURI()+":"+nodeTypeName.getLocalName()+"' to be indexed as a hippo aggregate.");
+                    }
+                }
+            }
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
+        
+        hippoAggregates = (Name[]) idxHippoAggregates.toArray(
+                new Name[idxHippoAggregates.size()]);
+        
     }
 
     public boolean isFacet(Name propertyName) {
-        if(facetProperties.contains(propertyName)){
-          return true;
-        }
         // TODO for now, all fields that are possible to index as a facet are index
         // as a facet by the '|| true' part. When the indexing_configuration is maintainable
         // through the repository, we can change this to only index facet properties as facets
         return true;
-        //return false;
     }
 
     public boolean isHippoPath(Name propertyName) {
@@ -134,5 +156,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         }
         return content.toString();
     }
+
+	public Name[] getHippoAggregates() {
+		return hippoAggregates;
+	}
 
 }
