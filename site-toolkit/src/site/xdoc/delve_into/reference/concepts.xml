@@ -23,40 +23,61 @@
     </properties>
     <body>
         <section name="Concepts">
+            <span class="shortdesc"> The concepts of the site toolkit explained. </span>
 
-            <p>The initial idea behind the HST 2 is to create a set of components that allow
-                developers to create web application with Hippo ECM.
-                It's has now grown to a modular set of components that allow the web developer to create a
-                web application based on layouts and modules.
-            </p>
-            <ul>
-                <li>Sitemap</li>
-                <li>Modules</li>
-                <li>Layouts</li>
-            </ul>
-            
-            <subsection name="Sitemap">
-                <p>The sitemap is the main controller of the HST2. This is where you can configure your URL space, 
-                    attach layouts to a page and attached modules to the containers on your layout.                                        
-                </p>
-            </subsection>
+            <p> The Site Toolkit is a set of components that allows web developers to create web
+                sites within a Hippo ECM environment. It is based on the concept of <i>modules</i>:
+                reusable chunks of functionality from which web pages and indeed complete web sites
+                can be assembled. This assembly is made possible by two additional concepts: <i>layouts</i>
+                and <i>sitemap</i>. Basically, the sitemap defines for each URL in a web site, which layout
+                is used, and which modules. </p>
 
             <subsection name="Modules">
-                <p>A webpage can contain multiple pieces of functionality on one single page. 
-                    For instance a homepage that contains a list of news articles, some banners and some text. 
-                    Each single element can be split up into a HST2 module. 
-                    For a news module, the module will consist of 2 things:
-                </p>
-                <ul>
-                    <li>a template file, for intance a JSP file that renders the news content</li>
-                    <li>a contentlocation, which specifies where the news content comes from</li>
-                </ul>
+                <p> Modules are chunks of well defined functionality, that can be displayed as part
+                    of a web page. A web page can be made up of many modules, each implementing a
+                    different functionality. Modules can be (re)used on different web pages. </p>
+
+                <p> Examples of modules are a list of news articles, a search form, a list of
+                    related articles, and a navigational menu. </p>
+                <p> Modules are implemented as a Java class, and have a view written in JSP. </p>
             </subsection>
 
             <subsection name="Layouts">
-                <p>Each page of a website or web application has it's own layout. 
-                    Withing the HST2 configuration you are be able to define the layout that belongs to a certain page. 
-                    Each specific layout can contain different placeholders that belong to that page(top, bottom, left, right).</p>
+                <p> Layouts describe how modules are laid out on a page. Layouts are abstract
+                    wireframes: they only describe placeholders for modules, they don't actually
+                    define which particular modules are used. This makes layouts reusable on
+                    different pages. </p>
+                <p> As an example, consider a 3-column page layout such as visualized in the drawing
+                    below: </p>
+                <p>
+                    <img src="../../images/reference/concepts/3-column-layout.png" alt="3-column layout"/>
+                </p>
+                <p> The layout identifies 4 placeholders or “containers”: Header, LeftNav, Content,
+                    and RightNav. On one page, Content could contain a module displaying a news
+                    article, and RightNav a module displaying related news articles. Yet on a
+                    different page, Content could contain a module displaying a list of news
+                    articles published on a certain date, and RightNav a calendar module to let the
+                    user select a date. </p>
+                <p> Layouts consist of a configuration stored in the repository, and a JSP defining
+                    the contours of the web page, and the exact locations of the containers in the
+                    page. </p>
+            </subsection>
+
+            <subsection name="Sitemap">
+                <p> The sitemap is the main controller in the site toolkit. The sitemap defines the
+                    URL space of a web site, attaches a layout to each page, and modules the a
+                    layout's containers. </p>
+                <p> As an example, consider the figure below: </p>
+                <p>
+                    <img src="../../images/reference/concepts/sitemap.png" alt="sitemap"/>
+                </p>
+                <p> In the top left corner is the 3-column layout. In the bottom left corner is a
+                    bunch of modules. Right in the middle of the figure is the sitemap, which
+                    assigns the 3-column layout to the URL “/home”, and assigns a module to each
+                    container in the layout. The result is a complete web page that is displayed
+                    when the URL “/home” is requested. </p>
+                <p> The sitemap consists of a configuration stored in the repository. This
+                    configuration is managed through a GUI. </p>
             </subsection>
 
         </section>
