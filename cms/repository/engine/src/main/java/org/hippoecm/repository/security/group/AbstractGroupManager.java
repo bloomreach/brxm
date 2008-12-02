@@ -29,6 +29,7 @@ import javax.jcr.query.QueryResult;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +135,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         int length = groupId.length();
         Node groupsNode = session.getRootNode().getNode(groupsPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
-            String c = Character.toString(Character.toLowerCase(groupId.charAt(i)));
+            String c = NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(i)));
             if (!groupsNode.hasNode(c)) {
                 groupsNode = groupsNode.addNode(c, HippoNodeType.NT_GROUPFOLDER);
             } else {
@@ -155,7 +156,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         int length = groupId.length();
         StringBuilder path = new StringBuilder(groupsPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
-            path.append('/').append(Character.toLowerCase(groupId.charAt(i)));
+            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(i))));
         }
         path.append('/').append(groupId);
         return path.toString();
