@@ -26,6 +26,7 @@ ModalDialog = function(url, plugin, token, editor) {
 
 ModalDialog.prototype = {
     _values : null,
+    _lastRange: null,
         
     show : function(parameters) {
         this.saveState();
@@ -82,6 +83,9 @@ ModalDialog.prototype = {
     },
     
     restoreState: function() {
+        if(this.editor.editorIsActivated()) {
+            return;
+        }
         if (Xinha.is_ff2) {
           this.editor._textArea.style.display = this._restoreTo[0];
           this.editor._iframe.style.visibility   = this._restoreTo[1];
@@ -91,7 +95,9 @@ ModalDialog.prototype = {
         this.editor.suspendUpdateToolbar = false;
         this.editor.currentModal = null;
         this.editor.activateEditor();
-        this.editor.restoreSelection(this._lastRange);
+        if (this._lastRange != null) { 
+          this.editor.restoreSelection(this._lastRange);
+        }
         this.editor.updateToolbar();
         this.editor.focusEditor();
     }
