@@ -115,7 +115,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
         "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " + 
         "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " + 
-        "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL) " +
+        "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL " + 
+        "OR " + HippoNodeType.HIPPO_CONTENTDELETE + " IS NOT NULL) " +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     /** hippo decorated root session */
