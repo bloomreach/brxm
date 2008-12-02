@@ -101,6 +101,17 @@ public final class NodeNameCodec {
     }
 
     /**
+     * <p>Encode the char to a valid JCR string.</p>
+     * <p>Calling encode multiple times on the same string will return 
+     * the same result as encoding the string once.</p>
+     * @param c the char to encode 
+     * @return the encoded char as string
+     */
+    public final static String encode(final char c) {
+        return encodeOneCharSimpleName(c);
+    }
+
+    /**
      * <p>Encode the name to a valid JCR name. If the name is prefixed with a 
      * namespace, the prefix is not encoded but returned as-is. The force 
      * simple name option, forces the codec to encode the name as simple name by 
