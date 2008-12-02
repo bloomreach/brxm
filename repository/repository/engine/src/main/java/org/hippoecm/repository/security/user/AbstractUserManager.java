@@ -27,6 +27,7 @@ import javax.jcr.query.QueryResult;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +177,7 @@ public abstract class AbstractUserManager implements UserManager {
         int length = userId.length();
         Node usersNode = session.getRootNode().getNode(usersPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
-            String c = Character.toString(Character.toLowerCase(userId.charAt(i)));
+            String c = NodeNameCodec.encode(Character.toLowerCase(userId.charAt(i)));
             if (!usersNode.hasNode(c)) {
                 usersNode = usersNode.addNode(c, HippoNodeType.NT_USERFOLDER);
             } else {
@@ -195,7 +196,7 @@ public abstract class AbstractUserManager implements UserManager {
         int length = userId.length();
         StringBuilder path = new StringBuilder(usersPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
-            path.append('/').append(Character.toLowerCase(userId.charAt(i)));
+            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(userId.charAt(i))));
         }
         path.append('/').append(userId);
         return path.toString();
