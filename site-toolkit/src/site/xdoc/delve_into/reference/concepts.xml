@@ -52,7 +52,7 @@
                 <p>
                     <img src="../../images/reference/concepts/3-column-layout.png" alt="3-column layout"/>
                 </p>
-                <p> The layout identifies 4 placeholders or “containers”: Header, LeftNav, Content,
+                <p> The layout identifies 4 placeholders or "containers": Header, LeftNav, Content,
                     and RightNav. On one page, Content could contain a module displaying a news
                     article, and RightNav a module displaying related news articles. Yet on a
                     different page, Content could contain a module displaying a list of news
@@ -73,9 +73,9 @@
                 </p>
                 <p> In the top left corner is the 3-column layout. In the bottom left corner is a
                     bunch of modules. Right in the middle of the figure is the sitemap, which
-                    assigns the 3-column layout to the URL “/home”, and assigns a module to each
+                    assigns the 3-column layout to the URL "/home", and assigns a module to each
                     container in the layout. The result is a complete web page that is displayed
-                    when the URL “/home” is requested. </p>
+                    when the URL "/home" is requested. </p>
                 <p> The sitemap consists of a configuration stored in the repository. This
                     configuration is managed through a GUI. </p>
             </subsection>
