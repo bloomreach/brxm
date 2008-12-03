@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
 public class LdapUtils {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
-    protected transient static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
+    private final static Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     /**
      * Private constructor to prevent instantiation
@@ -58,6 +58,9 @@ public class LdapUtils {
         lcf.setContextFactoryClassName(configNode.getProperty(LdapSecurityProvider.PROPERTY_INITIAL_FACTORY).getString());
 
         // optional properties
+        if (configNode.hasProperty(LdapSecurityProvider.PROPERTY_CONNECT_TIMEOUT_MS)) {
+            lcf.setConnectionTimeoutMs(configNode.getProperty(LdapSecurityProvider.PROPERTY_CONNECT_TIMEOUT_MS).getString());
+        }
         if (configNode.hasProperty(LdapSecurityProvider.PROPERTY_SEARCH_BASE)) {
             lcf.setSearchBase(configNode.getProperty(LdapSecurityProvider.PROPERTY_SEARCH_BASE).getString());
         }
@@ -102,7 +105,7 @@ public class LdapUtils {
      */
     public static List<String> getAllAttributeValues(Attribute attr) throws NamingException {
         List<String> values = new ArrayList<String>();
-        for (NamingEnumeration e = attr.getAll(); e.hasMoreElements();) {
+        for (NamingEnumeration<?> e = attr.getAll(); e.hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof String) {
                 String value = (String) o;

@@ -19,7 +19,7 @@ package org.hippoecm.repository.security.ldap;
 public class LdapUserSearch {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     /**
      * The search base: ou=Users,dc=onehippo,dc=org
@@ -40,10 +40,10 @@ public class LdapUserSearch {
     private static final String DEFAULT_FILTER = "(objectclass=posixAccount)";
 
     // mandatory
-    protected final String baseDn;
-    protected final String nameAttr;
+    private final String baseDn;
+    private final String nameAttr;
     
-    protected String filter;
+    private String filter;
 
     public LdapUserSearch(String baseDn, String nameAttr) {
         this.baseDn = baseDn;

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     // the nodetypes don't have to be exposed through the api because they are ldap specific
     final public static String NT_LDAPMAPPING = "hippoldap:mapping";
@@ -54,6 +54,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     public final static String PROPERTY_AUTHENTICATION = "hippoldap:authentication";
     public final static String PROPERTY_INITIAL_FACTORY = "hippoldap:initialfactory";
     public final static String PROPERTY_SOCKET_FACTORY = "hippoldap:socketfactory";
+    public final static String PROPERTY_CONNECT_TIMEOUT_MS = "hippoldap:connecttimeoutms";
     public final static String PROPERTY_SEARCH_BASE = "hippoldap:searchbase";
     public final static String PROPERTY_PRINCIPAL = "hippoldap:principal";
     public final static String PROPERTY_CREDENTIALS = "hippoldap:credentials";
@@ -74,7 +75,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     /**
      * Logger
      */
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final static Logger log = LoggerFactory.getLogger(LdapSecurityProvider.class);
 
     /**
      * {@inheritDoc}

@@ -59,14 +59,9 @@ public class LdapUserManager extends AbstractUserManager {
     private LdapContextFactory lcf;
 
     /**
-     * The system context
-     */
-    LdapContext systemCtx;
-
-    /**
      * The attribute to property mappings
      */
-    Set<LdapMapping> mappings = new HashSet<LdapMapping>();
+    private final Set<LdapMapping> mappings = new HashSet<LdapMapping>();
 
     /**
      * The user searches
@@ -76,7 +71,7 @@ public class LdapUserManager extends AbstractUserManager {
     /**
      * Logger
      */
-    private final Logger log = LoggerFactory.getLogger(LdapUserManager.class);
+    private final static Logger log = LoggerFactory.getLogger(LdapUserManager.class);
 
     /**
      * Use case sensitive uid matching
@@ -90,10 +85,14 @@ public class LdapUserManager extends AbstractUserManager {
     public void initManager(ManagerContext context) throws RepositoryException {
         LdapManagerContext ldapContext = (LdapManagerContext) context;
         lcf = ldapContext.getLdapContextFactory();
+        LdapContext ctx = null;
         try {
-            systemCtx = lcf.getSystemLdapContext();
+            // test connection
+            ctx = lcf.getSystemLdapContext();
         } catch (NamingException e) {
             throw new RepositoryException("Unable to connect to the ldap server for: " + providerId, e);
+        } finally {
+            lcf.close(ctx);
         }
         Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
         loadSearches(providerNode);
@@ -181,13 +180,17 @@ public class LdapUserManager extends AbstractUserManager {
             return;
         }
 
+        LdapContext ctx = null;
         try {
+            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-            Attributes attrs = systemCtx.getAttributes(dn);
+            Attributes attrs = ctx.getAttributes(dn);
             syncMappingInfo(user, attrs);
         } catch (NamingException e) {
             log.error("Unable to sync user: {} : {}", userId, e);
+        } finally {
+            lcf.close(ctx);
         }
     }
 
@@ -199,7 +202,6 @@ public class LdapUserManager extends AbstractUserManager {
      */
     public synchronized void updateUsers() {
         log.info("Starting synchronizing ldap users for: " + providerId);
-
         NamingEnumeration<SearchResult> results = null;
         String dn = null;
         Node user = null;
@@ -208,8 +210,10 @@ public class LdapUserManager extends AbstractUserManager {
         ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         int count = 0;
         for (LdapUserSearch search : searches) {
+            LdapContext ctx = null;
             try {
-                results = systemCtx.search(search.getBaseDn(), search.getFilter(), ctls);
+                ctx = lcf.getSystemLdapContext();
+                results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
                 while (results.hasMore()) {
                     try {
                         SearchResult sr = results.next();
@@ -252,11 +256,13 @@ public class LdapUserManager extends AbstractUserManager {
                             }
                         }
                     } catch (NamingException e) {
-                        log.error("Error while trying fetching users from ldap: " + providerId, e);
+                        log.error("Error while trying fetching user info from ldap: " + providerId, e);
                     }
                 }
             } catch (NamingException e) {
                 log.error("Error while trying fetching users from ldap: " + providerId, e);
+            } finally {
+                lcf.close(ctx);
             }
         }
 
@@ -276,7 +282,9 @@ public class LdapUserManager extends AbstractUserManager {
      */
     private String getDnForUser(String userId) throws RepositoryException {
         // Try to find the user in the ldap server.
+        LdapContext ctx = null;
         try {
+            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             NamingEnumeration<SearchResult> results = null;
@@ -286,7 +294,7 @@ public class LdapUserManager extends AbstractUserManager {
                 log
                         .debug("Searching for user: '" + userId + "' with filter '" + filter + "' in: "
                                 + search.getBaseDn());
-                results = systemCtx.search(search.getBaseDn(), filter, ctls);
+                results = ctx.search(search.getBaseDn(), filter, ctls);
                 // just use the first match found
                 if (results.hasMore()) {
                     SearchResult sr = results.next();
@@ -295,7 +303,9 @@ public class LdapUserManager extends AbstractUserManager {
                 }
             }
         } catch (NamingException e) {
-            log.error("Error while trying fetching users from ldap: " + providerId, e);
+            log.error("Error while trying fetching dn from ldap: " + providerId, e);
+        } finally {
+            lcf.close(ctx);
         }
         return null;
     }

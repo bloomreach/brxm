@@ -55,6 +55,7 @@
 - hippoldap:authentication (string) = 'simple' mandatory autocreated
 - hippoldap:initialfactory (string) = 'com.sun.jndi.ldap.LdapCtxFactory' mandatory autocreated
 - hippoldap:socketfactory (string)
+- hippoldap:connecttimeoutms (string)
 - hippoldap:searchbase (string)
 - hippoldap:principal (string)
 - hippoldap:credentials (string)

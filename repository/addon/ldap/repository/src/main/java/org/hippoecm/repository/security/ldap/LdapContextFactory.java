@@ -38,35 +38,38 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class LdapContextFactory {
-    
+
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The Sun LDAP property used to enable connection pooling.  This is used in the default implementation
      * to enable LDAP connection pooling.
      */
     protected static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
+    protected static final String SUN_CONNECTION_TIMEOUT_PROPERTY = "com.sun.jndi.ldap.connect.timeout";
 
-    protected transient final Log log = LogFactory.getLog(getClass());
+    private final static Log log = LogFactory.getLog(LdapContextFactory.class);
 
-    protected String authentication = "simple";
+    private String authentication = "simple";
 
-    protected String principalSuffix = null;
+    private String principalSuffix = null;
 
-    protected String searchBase = null;
+    private String searchBase = null;
 
-    protected String contextFactoryClassName = "com.sun.jndi.ldap.LdapCtxFactory";
+    private String contextFactoryClassName = "com.sun.jndi.ldap.LdapCtxFactory";
 
-    protected String url = null;
+    private String url = null;
 
-    protected String referral = "follow";
+    private String referral = "follow";
 
-    protected String systemUsername = null;
+    private String systemUsername = null;
 
-    protected char[] systemPassword = null;
+    private char[] systemPassword = null;
 
     private boolean usePooling = true;
+
+    private String connectTimeoutMs = "1000";
 
     private Map<String, String> additionalEnvironment;
 
@@ -127,6 +130,13 @@ public class LdapContextFactory {
         this.referral = referral;
     }
 
+    /**
+     * Set the connection timeout in ms (Sun impl only)
+     * @param timeoutMs
+     */
+    public void setConnectionTimeoutMs(String timeout) {
+        this.connectTimeoutMs = timeout;
+    }
     /**
      * The system username that will be used when connecting to the LDAP server to retrieve authorization
      * information about a user.  This must be specified for LDAP authorization to work, but is not required for
@@ -200,6 +210,7 @@ public class LdapContextFactory {
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
         env.put(Context.PROVIDER_URL, url);
         env.put(Context.REFERRAL, referral);
+        env.put(SUN_CONNECTION_TIMEOUT_PROPERTY, connectTimeoutMs);
 
         // Only pool connections for system contexts
         if (usePooling && username != null && username.equals(systemUsername)) {
@@ -219,5 +230,19 @@ public class LdapContextFactory {
         }
 
         return new InitialLdapContext(env, null);
+    }
+
+    /**
+     * Convenience method to user in finally blocks
+     * @param ctx
+     */
+    public void close(LdapContext ctx) {
+        if (ctx != null) {
+            try {
+                ctx.close();
+            } catch (NamingException e) {
+                log.warn("Exception while closing ldap context", e);
+            }
+        }
     }
 }
