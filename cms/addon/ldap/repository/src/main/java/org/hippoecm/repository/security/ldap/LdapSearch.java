@@ -19,7 +19,7 @@ package org.hippoecm.repository.security.ldap;
 public class LdapSearch {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
     
     // the properties don't have to be exposed through the api because they are ldap specific
     public final static String PROPERTY_BASE_DN = "hippoldap:basedn";

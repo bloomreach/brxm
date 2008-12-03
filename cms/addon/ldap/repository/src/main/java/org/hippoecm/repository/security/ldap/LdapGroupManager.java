@@ -61,14 +61,9 @@ public class LdapGroupManager extends AbstractGroupManager {
     private LdapContextFactory lcf;
 
     /**
-     * The initialized ldap context factory
-     */
-    LdapContext systemCtx = null;
-
-    /**
      * The attribute to property mappings
      */
-    Set<LdapMapping> mappings = new HashSet<LdapMapping>();
+    private final Set<LdapMapping> mappings = new HashSet<LdapMapping>();
 
     /**
      * The user searches
@@ -86,10 +81,14 @@ public class LdapGroupManager extends AbstractGroupManager {
     public void initManager(ManagerContext context) throws RepositoryException {
         LdapManagerContext ldapContext = (LdapManagerContext) context;
         lcf = ldapContext.getLdapContextFactory();
+        LdapContext ctx = null;
         try {
-            systemCtx = lcf.getSystemLdapContext();
+            // test connection
+            ctx = lcf.getSystemLdapContext();
         } catch (NamingException e) {
             throw new RepositoryException("Unable to connect to the ldap server for: " + providerId, e);
+        } finally {
+            lcf.close(ctx);
         }
         Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
         loadSearches(providerNode);
@@ -182,10 +181,12 @@ public class LdapGroupManager extends AbstractGroupManager {
             return;
         }
         
+        LdapContext ctx = null;
         try {
+            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            Attributes attrs = systemCtx.getAttributes(dn);
+            Attributes attrs = ctx.getAttributes(dn);
             for (LdapMapping mapping : mappings) {
                 try {
                     Attribute attr = attrs.get(mapping.getSource());
@@ -203,6 +204,8 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Unable to sync group attributes: {}", e.getMessage());
+        } finally {
+            lcf.close(ctx);
         }
     }
     
@@ -217,7 +220,9 @@ public class LdapGroupManager extends AbstractGroupManager {
         NamingEnumeration<SearchResult> results = null;
         String dn = user.getProperty(LdapSecurityProvider.PROPERTY_LDAP_DN).getString();
         String userId = user.getName();
+        LdapContext ctx = null;
         try {
+            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
             for (LdapGroupSearch search : searches) { 
@@ -234,7 +239,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.debug("Searching for memberships of user '" + userId + "' with filter '" + filter
                             + "' providerId: " + providerId);
                 }
-                results = systemCtx.search(search.getBaseDn(), filter, ctls);
+                results = ctx.search(search.getBaseDn(), filter, ctls);
                 String groupId = null;
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
@@ -246,6 +251,8 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
+        } finally {
+            lcf.close(ctx);
         }
         return groups;
     }
@@ -260,7 +267,9 @@ public class LdapGroupManager extends AbstractGroupManager {
         log.info("Starting synchronizing ldap groups for: " + providerId);
         NamingEnumeration<SearchResult> results = null;
         String dn = null;
+        LdapContext ctx = null;
         try {
+            ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
@@ -272,18 +281,16 @@ public class LdapGroupManager extends AbstractGroupManager {
                     continue;
                 }
                 
-                results = systemCtx.search(search.getBaseDn(), search.getFilter(), ctls);
+                results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
                 if (log.isDebugEnabled()) {
                     log.debug("Searching for groups in '"+search.getBaseDn()+"' with filter '"+search.getFilter()+"'");
                 }
-                String nameAttrName = null;
                 String groupId = null;
                 
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
                     Attributes attrs = sr.getAttributes();
                     dn = sr.getName() + "," + search.getBaseDn();
-                    nameAttrName = search.getNameAttr();
                     groupId = buildGroupName(search, sr);
                     if (groupId != null) {
                         try {
@@ -311,6 +318,8 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         } catch (NamingException e) {
             log.error("Error while trying fetching users from ldap", e);
+        } finally {
+            lcf.close(ctx);
         }
 
         // save remaining unsaved group nodes
