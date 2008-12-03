@@ -16,7 +16,6 @@
 package org.hippoecm.repository.gallery.impl;
 
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,11 +27,8 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.ext.InternalWorkflow;
-
 import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 // FIXME: this implementation should be totally rewritten as it should not
@@ -62,7 +58,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         Date date = new Date();
         Calendar timestamp = Calendar.getInstance();
         timestamp.setTime(new Date());
-        name = ISO9075Helper.encodeLocalName(name);
+        name = NodeNameCodec.encode(name);
         node = folder.addNode(name, "hippo:handle");
         node.addMixin("hippo:hardhandle");
         node.setProperty("hippo:discriminator", new Value[0]);

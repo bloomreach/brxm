@@ -15,20 +15,13 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
-
-import org.hippoecm.repository.api.ISO9075Helper;
-import org.hippoecm.repository.api.RepositoryMap;
 
 
 public class RepositoryMapTest extends TestCase {

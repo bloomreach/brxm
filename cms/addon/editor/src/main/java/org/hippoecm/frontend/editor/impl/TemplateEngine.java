@@ -18,12 +18,8 @@ package org.hippoecm.frontend.editor.impl;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,7 +27,9 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeStore;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TemplateEngine implements ITemplateEngine, IDetachable {
     @SuppressWarnings("unused")
@@ -75,7 +73,7 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
                         while (parent != null) {
                             if (parent.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
                                 return getType(parent.getParent().getName() + ":"
-                                        + ISO9075Helper.decodeLocalName(parent.getName()));
+                                        + NodeNameCodec.decode(parent.getName()));
                             }
                             parent = parent.getParent();
                         }

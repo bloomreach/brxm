@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
@@ -47,9 +46,6 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
@@ -58,14 +54,14 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
-import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.value.ReferenceValue;
-
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.FieldIdentifier;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow.TypeUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Remodeling {
     @SuppressWarnings("unused")
@@ -529,7 +525,7 @@ public class Remodeling {
 
             // convert draft
             NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
-            NodeType newType = ntMgr.getNodeType(newPrefix + ":" + ISO9075.decode(node.getName()));
+            NodeType newType = ntMgr.getNodeType(newPrefix + ":" + NodeNameCodec.decode(node.getName()));
             if (newType != null) {
                 Node newChild = handle.addNode(HippoNodeType.HIPPO_PROTOTYPE, newType.getName());
 

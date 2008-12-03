@@ -31,6 +31,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +47,10 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
     public IModel getModel(Map<String, String> criteria) {
         try {
             QueryManager qMgr = ((UserSession) Session.get()).getQueryManager();
-            String strQuery = "//element(" + ISO9075Helper.encodeLocalName(criteria.get("hippo:key"))
-                    + ", hippo:translated)/element(hippo:translation, hippo:translation)[@hippo:language='"
-                    + ISO9075Helper.encodeLocalName(criteria.get("hippo:language")) + "']";
+            String strQuery = "//element(*, hippo:translated)[fn:name()='"
+                    + ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get("hippo:key")))
+                    + "']/element(hippo:translation, hippo:translation)[@hippo:language='"
+                    + NodeNameCodec.encode(criteria.get("hippo:language")) + "']";
             Query query = qMgr.createQuery(strQuery, Query.XPATH);
             NodeIterator nodes = query.execute().getNodes();
             if (nodes.getSize() > 0) {

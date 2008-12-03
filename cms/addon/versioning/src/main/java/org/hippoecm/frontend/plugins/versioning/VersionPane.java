@@ -48,7 +48,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -164,7 +164,7 @@ public class VersionPane extends RenderPlugin implements IJcrNodeModelListener {
                     }
                 }
                 if (modelNode.isNodeType(HippoNodeType.NT_DOCUMENT) && !modelNode.isNodeType("hippostd:folder")) {
-                    documentComponent.setModel(new Model(ISO9075Helper.decodeLocalName(modelNode.getName())));
+                    documentComponent.setModel(new Model(NodeNameCodec.decode(modelNode.getName())));
                     infoComponent.setModel(new Model("This is the current document"));
                     versionComponent.setModel(new Model(""));
                     subModel.setModel(new JcrNodeModel(modelNode));

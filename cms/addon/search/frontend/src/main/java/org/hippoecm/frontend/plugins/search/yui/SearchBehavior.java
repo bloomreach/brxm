@@ -51,7 +51,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +234,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
                             }
 
                             String excerpt = row.getValue("rep:excerpt(.)").getString();
-                            String displayName = ISO9075Helper.decodeLocalName(node.getDisplayName());
+                            String displayName = NodeNameCodec.decode(node.getDisplayName());
                             String url = node.getPath();
 
                             results[count++] = new ResultItem(displayName, url, state, excerpt);

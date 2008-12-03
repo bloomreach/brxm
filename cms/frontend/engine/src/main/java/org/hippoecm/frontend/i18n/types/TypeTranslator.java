@@ -29,7 +29,7 @@ import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.model.nodetypes.NodeTypeModelWrapper;
 import org.hippoecm.frontend.types.JcrTypeDescriptor;
 import org.hippoecm.frontend.types.JcrTypeStore;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                 Node node = nodeModel.getNode();
                 if (node != null) {
                     try {
-                        name = ISO9075Helper.decodeLocalName(node.getName());
+                        name = NodeNameCodec.decode(node.getName());
                         if (node.isNodeType("hippo:translated")) {
                             Locale locale = Session.get().getLocale();
                             NodeIterator nodes = node.getNodes("hippo:translation");

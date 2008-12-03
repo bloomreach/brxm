@@ -33,7 +33,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +155,7 @@ public class JcrTypeStore implements ITypeStore {
         String subType = type;
         if (type.indexOf(':') > 0) {
             prefix = type.substring(0, type.indexOf(':'));
-            subType = ISO9075Helper.encodeLocalName(type.substring(type.indexOf(':') + 1));
+            subType = NodeNameCodec.encode(type.substring(type.indexOf(':') + 1));
         }
 
         String uri = getUri(prefix);

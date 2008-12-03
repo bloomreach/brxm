@@ -16,7 +16,7 @@
 package org.hippoecm.tools.importer.api;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 public final class PathHelper {
 
@@ -32,7 +32,7 @@ public final class PathHelper {
         String[] elements = StringUtils.split(path, '/');
         String[] replacements = new String[elements.length];
         for (int i = 0; i < elements.length; i++) {
-            replacements[i] = ISO9075Helper.encodeLocalName(elements[i]);
+            replacements[i] = NodeNameCodec.encode(elements[i]);
         }
         return StringUtils.join(replacements, '/');
     }
