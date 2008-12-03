@@ -20,13 +20,13 @@ import java.io.IOException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.tools.importer.api.Content;
 import org.hippoecm.tools.importer.api.Context;
 import org.hippoecm.tools.importer.api.Mapping;
 import org.hippoecm.tools.importer.api.PathHelper;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default importer implementation.
@@ -98,8 +98,8 @@ public class ContextImpl implements Context {
             String[] elements = path.split("\\/");
             Node parent = root;
             for (int i = 0; i < elements.length; i++) {
-                if (parent.hasNode(ISO9075Helper.encodeLocalName(elements[i]))) {
-                    parent = parent.getNode(ISO9075Helper.encodeLocalName(elements[i]));
+                if (parent.hasNode(NodeNameCodec.encode(elements[i]))) {
+                    parent = parent.getNode(NodeNameCodec.encode(elements[i]));
                 } else {
                     parent = createFolderNode(parent, elements[i], defaultFolderType);
                 }
@@ -117,7 +117,7 @@ public class ContextImpl implements Context {
      * @throws RepositoryException
      */
     protected Node createDocumentNode(Node parent, String name, String type) throws RepositoryException {
-        String encoded = ISO9075Helper.encodeLocalName(name);
+        String encoded = NodeNameCodec.encode(name);
 
         if (parent.hasNode(encoded)) {
             if (overwrite) {
@@ -142,7 +142,7 @@ public class ContextImpl implements Context {
     }
 
     protected Node createFolderNode(Node parent, String name, String type) throws RepositoryException {
-        String encoded = ISO9075Helper.encodeLocalName(name);
+        String encoded = NodeNameCodec.encode(name);
         if (parent.hasNode(encoded)) {
             if (overwrite) {
                 log.info("Removing folder: " + buildPath(encoded));

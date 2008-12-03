@@ -29,7 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public class NodeTranslator extends NodeModelWrapper {
             String name = "node name";
             if (node != null) {
                 try {
-                    name = ISO9075Helper.decodeLocalName(node.getName());
+                    name = NodeNameCodec.decode(node.getName());
                     if (node.isNodeType("hippo:translated")) {
                         Locale locale = Session.get().getLocale();
                         NodeIterator nodes = node.getNodes("hippo:translation");

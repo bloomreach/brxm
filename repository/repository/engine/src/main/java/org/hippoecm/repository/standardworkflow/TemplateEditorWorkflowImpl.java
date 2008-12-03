@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
@@ -45,7 +45,6 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
     }
 
     public void createType(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        String encoded = ISO9075Helper.encodeLocalName(name);
         FolderWorkflow folderWorkflow = (FolderWorkflow) getWorkflowContext().getWorkflow("internal");
         Map<String,String> replacements = new TreeMap<String,String>();
         replacements.put("./_name", name);

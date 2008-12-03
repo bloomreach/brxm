@@ -47,7 +47,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JcrTypeStore;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class TemplateListPlugin extends RenderPlugin {
                         templateNodeModel = new JcrNodeModel(template);
                         JcrTypeStore typeStore = new JcrTypeStore(typeNode.getParent().getName());
                         editedType = typeStore.getTypeDescriptor(typeNode.getParent().getName() + ":"
-                                + ISO9075Helper.decodeLocalName(typeNode.getName()));
+                                + NodeNameCodec.decode(typeNode.getName()));
                         break;
                     }
                 }

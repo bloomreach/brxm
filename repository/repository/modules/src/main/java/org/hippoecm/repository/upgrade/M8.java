@@ -17,7 +17,6 @@ package org.hippoecm.repository.upgrade;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -55,8 +54,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.core.nodetype.compact.ParseException;
-
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.ext.UpdaterContext;
 
 public class M8 {
@@ -518,7 +516,7 @@ public class M8 {
                     prefix += ":";
                 }
 
-                String encLocalName = ISO9075Helper.encodeLocalName(name.substring(name.indexOf(":") + 1));
+                String encLocalName = NodeNameCodec.encode(name.substring(name.indexOf(":") + 1));
                 String resolvedName = prefix + encLocalName;
 
                 // check for '-' and '+'

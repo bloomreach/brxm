@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -42,16 +41,15 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     @SuppressWarnings("unused")
@@ -151,7 +149,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     }
 
     public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        String name = ISO9075Helper.encodeLocalName(arguments.get("name"));
+        String name = NodeNameCodec.encode(arguments.get("name"), true);
         QueryManager qmgr = rootSession.getWorkspace().getQueryManager();
         Node foldertype = rootSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates").getNode(category);
         Query query = qmgr.getQuery(foldertype);

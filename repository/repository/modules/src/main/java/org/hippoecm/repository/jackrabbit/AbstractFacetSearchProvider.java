@@ -38,7 +38,7 @@ import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.HitsRequested;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,7 +204,7 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                     }
                     try {
                         String name = getDisplayName(nextFacet, facetTypeConstant);
-                        Name childName = resolveName(ISO9075Helper.encodeLocalName(name));
+                        Name childName = resolveName(NodeNameCodec.encode(name, true));
                         FacetSearchNodeId childNodeId = new FacetSearchNodeId(subSearchProvider, state.getNodeId(),
                                 childName);
                         state.addChildNodeEntry(childName, childNodeId);

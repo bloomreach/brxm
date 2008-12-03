@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.dashboard;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -30,7 +31,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +70,11 @@ public class BrowseLink extends Panel {
                    !node.getPath().equals("/")) {
                 node = node.getParent();
             }
-            String path = node.getPath();
-            path = ISO9075Helper.decodeLocalName(path);
+            String[] elements = StringUtils.split(node.getPath(), '/');
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = NodeNameCodec.decode(elements[i]);
+            }
+            String path = StringUtils.join(elements, '/');
             String nodeName = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
             link.add(new Label("label", nodeName));
             link.add(new SimpleAttributeModifier("title", path));

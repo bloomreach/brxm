@@ -25,7 +25,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Test;
 
 public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTest {
@@ -66,15 +66,15 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
         Node facetNode = session.getRootNode().getNode(path);
         assertNotNull(facetNode);
         facetNode.hashCode(); // This earlier caused a NullPointerException, see HREPTWO-269
-        assertEquals(ISO9075Helper.encodeLocalName("success"), facetNode.getName());
+        assertEquals("success", facetNode.getName());
 
 
         Node nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
         try {
-            path = "test/navigation/navxy/success/"+ISO9075Helper.encodeLocalName(encodeMe);
+            path = "test/navigation/navxy/success/"+NodeNameCodec.encode(encodeMe, true);
             facetNode = session.getRootNode().getNode(path);
             //System.out.println(facetNode.getName());
-            assertEquals(ISO9075Helper.encodeLocalName(encodeMe), facetNode.getName());
+            assertEquals(NodeNameCodec.encode(encodeMe, true), facetNode.getName());
             nodeFromFacet = (Node) facetNode.getNode(HippoNodeType.HIPPO_RESULTSET).getNodes().nextNode();
             Node docNode = session.getRootNode().getNode("test/documents").getNode(simple);
             assertTrue(nodeFromFacet.hasProperty("x"));

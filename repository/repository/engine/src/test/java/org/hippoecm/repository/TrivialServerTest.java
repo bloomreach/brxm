@@ -24,7 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Test;
 
 public class TrivialServerTest extends TestCase {
@@ -99,16 +99,17 @@ public class TrivialServerTest extends TestCase {
 
     @Test public void testEncodedNode() throws RepositoryException {
         String name = "2..,!@#$%^&*()_-[]{}|\\:;'\".,/?testnode";
-        Node encodedNode = root.addNode(ISO9075Helper.encodeLocalName(name));
+        String encoded = NodeNameCodec.encode(name, true);
+        Node encodedNode = root.addNode(encoded);
         assertNotNull(encodedNode);
-        assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
+        assertEquals(encoded, encodedNode.getName());
         session.save();
-        Node encodedNode2 = root.getNode(ISO9075Helper.encodeLocalName(name));
+        Node encodedNode2 = root.getNode(encoded);
 
         // assertEquals(encodedNode, encodedNode2);    -- this test is WRONG [BvH], instead:
         assertTrue(encodedNode.isSame(encodedNode2));
 
-        assertEquals(ISO9075Helper.encodeLocalName(name),encodedNode.getName());
+        assertEquals(encoded, encodedNode.getName());
         encodedNode2.remove();
     }
 

@@ -30,7 +30,7 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 
 public class Dropbox {
     @SuppressWarnings("unused")
@@ -122,7 +122,7 @@ public class Dropbox {
                 //String nodeName = org.apache.jackrabbit.util.ISO9075.encode(files[i].getName());
                 //nodeName = files[i].getName().replace(":", "_x003A_");
 
-                String nodeName = ISO9075Helper.encodeLocalName(files[i].getName());
+                String nodeName = NodeNameCodec.encode(files[i].getName());
 
                 if (folder.hasNode(nodeName)) {
                     dropFiles(files[i], session, folder.getNode(nodeName));
@@ -149,7 +149,7 @@ public class Dropbox {
         FileDataSource ds = new FileDataSource(f);
         ds.setFileTypeMap(new MimetypesFileTypeMap(getClass().getResourceAsStream("mime.types")));
 
-        String nodeName = ISO9075Helper.encodeLocalName(f.getName());
+        String nodeName = NodeNameCodec.encode(f.getName());
 
         if (folder.hasNode(nodeName)) {
             if (recreate) {
