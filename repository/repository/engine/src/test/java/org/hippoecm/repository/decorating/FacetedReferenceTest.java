@@ -24,6 +24,9 @@ import static org.junit.Assert.assertTrue;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
+import org.hippoecm.repository.Utilities;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,22 +46,32 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         "/test/documents/pages/index/index/thema",                           "nt:unstructured",
         "/test/documents/articles",                                          "nt:unstructured",
         "/test/documents/articles/brave-new-world",                          "hippo:handle",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/brave-new-world/brave-new-world",          "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
         "language","english",
         "/test/documents/articles/the-invisible-man",                        "hippo:handle",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/the-invisible-man/the-invisible-man",      "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
         "language","english",
         "/test/documents/articles/war-of-the-worlds",                        "hippo:handle",
         "jcr:mixinTypes", "mix:referenceable",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
         "language","english",
         "/test/documents/articles/war-of-the-worlds/war-of-the-worlds",      "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
         "language","dutch",
         "/test/documents/articles/nineteeneightyfour",                       "hippo:handle",
+        "jcr:mixinTypes", "mix:referenceable",
         "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
-        "language","dutch",
-        "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
         "language","english",
+        "/test/documents/articles/nineteeneightyfour/nineteeneightyfour",    "hippo:testdocument",
+        "jcr:mixinTypes", "mix:referenceable",
+        "language","dutch",
         "/test/english",                                                     "hippo:facetselect",
         "hippo:docbase", "/test/documents",
         "hippo:facets",  "language",
@@ -95,7 +108,6 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
     @Test
     public void testFacetedReference() throws Exception {
         assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds"));
@@ -107,7 +119,6 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[language='dutch']"));
         assertNull(traverse(session,"/test/dutch/war-of-the-worlds[language='english']"));
     }
-
     @Test
     public void testPreferenceOrder() throws Exception {
         Node node = traverse(session, "/test/prefer/articles/war-of-the-worlds");
@@ -130,9 +141,9 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertEquals("english", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
     }
-
     @Test
     public void testPreferenceOnceOrder() throws Exception {
+        System.out.println("!!!!!!!!!!");
         Node node = traverse(session, "/test/preferonce/articles/war-of-the-worlds");
         NodeIterator iter = node.getNodes(node.getName());
         assertTrue(iter.hasNext());
@@ -149,4 +160,29 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertEquals("english", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
     }
+    
+    @Test
+    public void testSimpleMirrorAfterPreferSingle() throws Exception {
+        /**
+         * After a prefer-single mode, a facetselects below this prefer single should inherit the prefer-single (thus correct ordening).
+         * 
+         * This is a test for this scenario
+         */
+        
+        HippoNode n = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
+        assertEquals("dutch", n.getProperty("language").getString());
+        assertNotNull(n.getCanonicalNode());
+        Node dutchNodeCanonical = n.getCanonicalNode();
+        Node mirror = dutchNodeCanonical.addNode("mirror","hippo:facetselect");
+        Node docBaseNode = (Node)session.getItem("/test/documents/articles/nineteeneightyfour");
+        mirror.setProperty(HippoNodeType.HIPPO_DOCBASE, docBaseNode.getUUID());
+        mirror.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
+        mirror.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
+        mirror.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
+        dutchNodeCanonical.save();
+        HippoNode n2 = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
+        n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString();
+        assertEquals("dutch", n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString());
+    }
+    
 }
