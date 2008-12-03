@@ -39,6 +39,9 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     private final static String SVN_ID = "$Id$";
 
     protected class MirrorNodeId extends HippoNodeId {
+        
+        private static final long serialVersionUID = 1L;
+        
         NodeId upstream;
 
         protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {

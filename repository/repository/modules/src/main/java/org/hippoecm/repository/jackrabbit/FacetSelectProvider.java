@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Vector;
 
 import javax.jcr.RepositoryException;
 
@@ -26,6 +28,7 @@ import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.uuid.UUID;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId;
+import org.hippoecm.repository.jackrabbit.ViewVirtualProvider.ViewNodeId.Child;
 
 public class FacetSelectProvider extends HippoVirtualProvider
 {
@@ -57,6 +60,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
+        
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
         String[] newFacets = getProperty(state.getNodeId(), facetsName);
         String[] newValues = getProperty(state.getNodeId(), valuesName);
@@ -81,6 +85,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
              * a facetselect below a facetselect. We need to take into account the view of the parent select.
              * In principle, a state of type HippoNodeId always has a parent. To be sure, check for null
              */
+            
             if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
                ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
                if(viewNodeId.view != null) {
@@ -117,25 +122,40 @@ public class FacetSelectProvider extends HippoVirtualProvider
                     view.remove(resolveName(newFacets[i]));
                 }
             }
-
             boolean isHandle = dereference.getNodeTypeName().equals(handleName);
-            for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
-                NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
-                if(subNodesProvider.match(view, entry.getId())) {
-                    /*
-                     * below we check on the entry's nodestate wether the node type is hippo:request,
-                     * because we do not show these nodes in the facetselects in mode single.
-                     * Since match() already populates the nodestates of the child entries, this won't impose
-                     * extra performance hit
-                     */
-                    if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
-                        continue;
-                    } else {
-                        NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
-                        state.addChildNodeEntry(entry.getName(), childNodeId);
-                        if(isHandle && singledView) {
-                           // stop after first match because single hippo document view
-                           break;
+            if(order != null && isHandle) {
+                // since the order is not null, we first have to sort all childs according the order. We only order below a handle
+                Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
+                for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ){
+                    NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                    ViewNodeId childNodeId = subNodesProvider. new ViewNodeId(dereference.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
+                    children.add(childNodeId . new Child(entry.getName(), childNodeId));
+                }
+                ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
+                Arrays.sort(childrenArray);
+                for(int i = 0; i < childrenArray.length && (i == 0 || !singledView) ; i ++) {
+                    state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
+                }
+                
+            } else {
+                for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
+                    NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();
+                    if(subNodesProvider.match(view, entry.getId())) {
+                        /*
+                         * below we check on the entry's nodestate wether the node type is hippo:request,
+                         * because we do not show these nodes in the facetselects in mode single.
+                         * Since match() already populates the nodestates of the child entries, this won't impose
+                         * extra performance hit
+                         */
+                        if(isHandle && singledView && getNodeState(entry.getId()).getNodeTypeName().equals(requestName)) {
+                            continue;
+                        } else {
+                            NodeId childNodeId = subNodesProvider . new ViewNodeId(state.getNodeId(), entry.getId(), entry.getName(), view, order, singledView);
+                            state.addChildNodeEntry(entry.getName(), childNodeId);
+                            if(isHandle && singledView) {
+                               // stop after first match because single hippo document view
+                               break;
+                            }
                         }
                     }
                 }
