@@ -8,7 +8,7 @@ body{padding: 15px;}
 .hippo-console-menu-advanced{position: absolute; top: 0px; right: 100px;}
 .hippo-console-tree-add {position: absolute; top: 39px; left: 25px;}
 .hippo-console-save{position: absolute; top: 39px; right: 25px;}
-.hippo-console-tree-actions {width: 336px; height: 24px; position: absolute; top: 72px; background: white; left: 21px; border-bottom: 1px solid #666666;}
+.hippo-console-tree-actions {width: 333px; height: 18px; position: absolute; top: 72px; background: white; left: 21px; border-bottom: 1px solid #666666; padding: 3px;}
 
 .hippo-console-editor{overflow: auto; height: 600px; padding: 15px;}
 .hippo-console-tree{overflow: auto; height: 600px; padding-bottom: 30px; font-size: 13px; width: 356px;}
@@ -23,7 +23,7 @@ body{padding: 15px;}
 .hippo-console-save a, .hippo-console-tree-add a:hover{color: white; background: #32629b;}
 .hippo-console-tree-add{clear: left; margin-bottom: 25px;}
 
-.hippo-console-tree-actions  li{display: block; float: left; padding: 4px;}
+.hippo-console-tree-actions  li{display: inline;}
 .hippo-console-tree-actions  li a{ color: #666666; font-size: 11px; margin-right: 0px;}
 .hippo-console-tree-actions  li span em{ color: #cccccc; font-size: 11px; margin-right: 0px; font-style: normal}
 .hippo-console-tree-actions  li a:hover{color: black}
@@ -37,7 +37,7 @@ body{padding: 15px;}
 .hippo-console-leftpanel{width: 356px; border: 1px solid #666666;}
 .hippo-console-rightpanel{border: 1px solid #666666;}
 
-.hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 375px; margin-top: 10px;}
+.hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 375px; margin-top: 10px; height: 21px;}
 .hippo-console-breadcrumbs strong span{font-weight: normal; color: white; font-size: 18px; font-family: arial, helvetica, sans-serif}
 .hippo-console-rightpanel{}
 
