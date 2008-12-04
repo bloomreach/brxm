@@ -51,6 +51,7 @@
         <item name="Facebook" href="/delve_into/howto/facebook.html"/>
         <item name="Free Text Search" href="/delve_into/howto/free_text_search.html"/>
         <item name="Advanced Search" href="/delve_into/howto/advanced_search.html"/>
+        <item name="Form Handling" href="/delve_into/howto/form.html"/>
       </item>
       <item name="Reference" href="/delve_into/reference/index.html" collapse="true">
         <item name="Concepts" href="/delve_into/reference/concepts.html"/>
