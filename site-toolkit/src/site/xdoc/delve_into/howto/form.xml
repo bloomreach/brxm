@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+    <properties>
+        <title>Form Handling</title>
+    </properties>
+    <body>
+        <section name="Form Handling">
+           <span class='shortdesc'>Adding a form to a web page, and processing the submitted form.</span>
+
+            <p>
+                This howto lets you create a simple module which displays a form containing one
+                text field, and which prints the value of the text field upon submitting the form.
+            </p>
+            
+            <subsection name="The module class">
+                <p>
+                    To handle our form, we will need to write our own module class. It needs to
+                    implement the <code>Module</code> interface, meaning that we need to implement
+                    the <code>render</code> and <code>execute</code> methods. The <code>render</code> method
+                    is called just before the JSP view is rendered, and it puts the data on
+                    the page context that is needed to render the view. The <code>execute</code> method
+                    is optional, and is used in case information can be posted back from the page
+                    to the module, for example using a form. The <code>execute</code> method is called
+                    just before <code>render</code>, so that all the posted date is processed
+                    before the view is rendered.
+                </p>
+                
+<source>
+<![CDATA[
+package org.example;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
+
+import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.template.module.ModuleBase;
+import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
+import org.hippoecm.hst.core.template.module.execution.NOOPExecutionResultImpl;
+
+public class MyModule extends ModuleBase {
+
+    private String myVar = "Hello World!";
+
+    @Override
+    public ExecutionResult execute(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase)
+            throws TemplateException {
+
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+
+        if (request.getParameter("MODULE_NAME") == null) {
+            return null;
+        }
+
+        NOOPExecutionResultImpl executionResult = new NOOPExecutionResultImpl();
+
+        if (request.getParameter("myvar") != null) {
+            myVar = request.getParameter("myvar");
+            executionResult.setMessage(myVar);
+            executionResult.setSuccess(true);
+        }
+        else {
+            executionResult.setSuccess(false);
+        }
+
+        return executionResult;
+    }
+
+    @Override
+    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+        super.render(pageContext, urlMapping, ctxBase);
+
+        pageContext.setAttribute(getVar(), myVar);
+    }
+
+    @Override
+    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase,
+            ExecutionResult executionResult) throws TemplateException {
+
+        if (executionResult != null && executionResult.isSuccess()) {
+            myVar = executionResult.getMessage();
+        }
+        render(pageContext, urlMapping, ctxBase);
+    }
+
+}
+]]>
+</source>                
+                
+            </subsection>
+            
+            <subsection name="The module view">
+                <p>
+                    The JSP implementing our module's view uses our module class through
+                    the <a href="../reference/components/tag/module-tag.html">hst-tmpl:module</a> tag.
+                    Make sure you set the <code>execute</code> attribute to <code>true</code>,
+                    so the <code>execute()</code> method of our module class will be called
+                    before rendering the view.
+                </p>
+                
+                <p>
+                    The form contained in the view should post to the same URL it is displayed on,
+                    so leave the <code>form</code> tag's <code>action</code> attribute empty, or
+                    leave it out all together.
+                </p>
+                
+                <p>
+                    Since we check for a request parameter <code>MODULE_NAME</code> in the <code>execute()</code>
+                    method of our module class, add a hidden form field with that name to the form, and
+                    give it a non-empty value (e.g. the module's class name as we did in the example below).
+                </p>
+                
+                <p>
+                    Also add a text field to the form with the name <code>myvar</code>, as we assume
+                    a request parameter with that name in the module class. This is the String we are
+                    going to display by putting it on the page context, so it becomes available for
+                    use in the JSP through the <code>var</code> attribute
+                    of the <code>hst-tmpl:module</code> tag.
+                </p>
+                
+<source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
+  
+<hst-tmpl:module name="mymodule" var="myvar" className="org.example.MyModule" execute="true" render="true"/>
+
+${myvar}
+
+<form name="myform" method="post">
+  <input type="hidden" name="MODULE_NAME" value="org.example.MyModule"/>
+  <input type="text" name="myvar" value="Hello again!!"/>
+  <input type="submit" value="Submit"/>
+</form>
+]]>
+</source>
+            </subsection>
+
+        </section>
+
+    </body>
+</document>
