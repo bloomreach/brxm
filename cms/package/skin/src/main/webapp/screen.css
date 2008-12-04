@@ -33,19 +33,21 @@ caption,th { text-align : left; }
 text-align: left;
 }
 
-.hippo-window #wicketAjaxDebugLink{
-float: left}
+.hippo-window #wicketDebugLink{
+display: none;}
 
 
 /* Hippo Global CSS tools */
 /* ================================================ */
+.hippo-global-fullwidth{width: 100%;}
 .hippo-global-halfwidth{width: 50%;}
 .hippo-global-alignright{text-align: right}
 .hippo-global-alignmiddle{text-align: center; vertical-align: middle}
 .hippo-global-clearer {clear: both; height: 0px;}
 .hippo-global-hideme {display:none;}
 .hippo-global-floatleft {float: left}
-
+.hippo-global-align-bottom{vertical-align: bottom}
+ 
 .hippo-global-roundedcorner-topleft,
 .hippo-global-roundedcorner-topright,
 .hippo-global-roundedcorner-bottomleft,
@@ -119,7 +121,7 @@ color: #333333;
 width: 178px;
 padding: 2px;
 }
-.hippo-login-panel select{padding: none; width: 186px;}
+.hippo-login-panel select{padding: 0; width: 186px;}
 .hippo-login-panel input.hippo-form-submit{padding: 6px; padding-left: 15px; padding-right: 15px; margin-top: 5px;}
 
 .hippo-login-panel-copyright{color: #999999; padding-bottom: 20px; text-align: center; margin-top: 23px; background: url("images/loginbottom.png") no-repeat bottom center}
@@ -360,7 +362,9 @@ padding-top: 24px;
 .hippo-window{padding: 25px; background: none}
 .hippo-window .hippo-root{background: none}
 .hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
-.hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom:15px;}
+.hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 15px; }
+.hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar{}
+
 .hippo-window-buttons input{} 
 /* forms inside windows */
 .hippo-window-form td{padding: 5px;}

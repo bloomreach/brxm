@@ -15,23 +15,25 @@
  -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
-    <title>Hippo ECM Console</title>
+    <title>Hippo CMS Console</title>
+    <link href="skin/screen.css" type="text/css" rel="stylesheet" />
+    <link href="skin/screen-console.css" type="text/css" rel="stylesheet" /> 
   </wicket:head>
   <wicket:panel>
-    <table width="99%">
-      <tr valign="top">
-        <td align="left">
-          <div wicket:id="extension.breadcrumb"/>
-          <div wicket:id="extension.menu"/>
-        </td>
-        <td align="right">
-          <div wicket:id="extension.logout"/>
-        </td>
-      </tr>
+   <div class="hippo-console">
+      <div class="hippo-console-logout" wicket:id="extension.logout"/>
+          <div class="hippo-console-menu" wicket:id="extension.menu"/>
+          <div class="hippo-console-breadcrumbs" wicket:id="extension.breadcrumb"/>          
+    <table class="hippo-global-fullwidth">
+       <tr>
+    <td class="hippo-console-leftpanel">
+    <div class="hippo-console-tree" wicket:id="extension.browser"/>
+    </td>
+         <td class="hippo-console-rightpanel">
+    <div class="hippo-console-editor" wicket:id="extension.editor"/>
+    </td>
+    </tr>
     </table>
-    <hr/>
-    <div style="max-height: 800px; overflow: auto; float: left; width: 360px;"
-      wicket:id="extension.browser"/>
-    <div style="max-height: 800px; overflow: auto;" wicket:id="extension.editor"/>
+    </div>
   </wicket:panel>
 </html>
