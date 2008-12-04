@@ -15,21 +15,15 @@
 -->
 <wicket:panel>
   <wicket:extend>
-   <div class="link-picker">
+   <div class="hippo-xinha-linkpicker">
       Link type: <select wicket:id="linkTypeDropDown">[ LinkTypeDropDown ]</select>
-    </div>
-    <div class="link-picker">
       <wicket:panel wicket:id="linkPickerWidget">[ LinkPickerWidget ]</wicket:panel>
-    </div>  
     <wicket:fragment wicket:id="externalLink">
       <h3>URL: </h3>
       <input type="text" wicket:id="externalLinkUrl" />
     </wicket:fragment>
     <wicket:fragment wicket:id="internalLink">
-      <div class="internal-link-label">Link to: <span wicket:id="pathLabel"> [ pathLabel ]</span></div>
-      <table width="200">
-        <tr>
-          <td>
+      <div class="internal-link-label">Selected: <span wicket:id="pathLabel"> [ pathLabel ]</span></div>
             <div wicket:id="wrapper" class="internal-link-wrapper">
               <div wicket:id="item" class="internal-link-node">
                 <a wicket:id="callback">
@@ -38,9 +32,7 @@
                 </a>
               </div>
             </div>
-          </td>
-        </tr>
-      </table>
     </wicket:fragment>  
+   </div>
   </wicket:extend>
 </wicket:panel>

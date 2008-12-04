@@ -79,7 +79,7 @@ public class MenuPlugin extends RenderPlugin {
                 return new SaveDialog(MenuPlugin.this, getPluginContext(), service);
             }
         };
-        add(new DialogLink("save-dialog", new Model("Save"), dialogFactory, dialogService));
+        add(new DialogLink("save-dialog", new Model("Write changes to repository"), dialogFactory, dialogService));
 
         dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;

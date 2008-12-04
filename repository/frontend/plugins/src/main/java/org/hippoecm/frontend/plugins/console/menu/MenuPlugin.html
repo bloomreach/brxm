@@ -15,27 +15,29 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <table width="99%">
-        <tr valign="top">
-            <td align="left"><span wicket:id="node-dialog" /></td>
-            <td align="left"><span wicket:id="copy-dialog" /></td>
-            <td align="left"><span wicket:id="rename-dialog" /></td>
-            <td align="left"><span wicket:id="content-export-dialog" /></td>
-            <td align="left"><span wicket:id="cnd-import-dialog" /></td>
-            <td align="left"><span wicket:id="permissions-dialog" /></td>
-            <td align="left"><span wicket:id="save-dialog" /></td>
-            <td align="left"><span wicket:id="namespace-dialog" /></td>
-        </tr>
-        <tr valign="top">
-            <td align="left"><span wicket:id="delete-dialog" /></td>
-            <td align="left"><span wicket:id="move-dialog" /></td>
-            <td align="left"><span wicket:id="property-dialog" /></td>
-            <td align="left"><span wicket:id="content-import-dialog" /></td>
-            <td align="left"><span wicket:id="cnd-export-dialog" /></td>
-            <td align="left"><span wicket:id="workflow-dialog" /></td>
-            <td align="left"><span wicket:id="reset-dialog" /></td>
-            <td align="left"><span wicket:id="sorter-panel" /></td>
-        </tr>
-    </table>
+    <ul class="hippo-console-menu-advanced">   
+        <li wicket:id="workflow-dialog" />
+        <li wicket:id="permissions-dialog" />
+        <li wicket:id="content-export-dialog" />
+        <li wicket:id="cnd-import-dialog" />
+        <li wicket:id="content-import-dialog" />
+        <li wicket:id="cnd-export-dialog" />
+    </ul>
+<ul class="hippo-console-tree-add">
+        <li wicket:id="node-dialog" />
+        <li wicket:id="namespace-dialog" />
+        <li wicket:id="property-dialog" />
+    </ul>
+    <ul class="hippo-console-save">
+    <li class="hippo-console-menu-actions-reset" wicket:id="reset-dialog" />
+    <li class="hippo-console-menu-actions-save" wicket:id="save-dialog" />
+    </ul>
+        <ul class="hippo-console-tree-actions">
+        <li wicket:id="copy-dialog" />
+        <li wicket:id="move-dialog" />
+        <li wicket:id="delete-dialog" />
+        <li wicket:id="rename-dialog" />
+        <li class="hippo-console-tree-actions-sorter" wicket:id="sorter-panel" />
+        </ul>
 </wicket:panel>
 </html>
