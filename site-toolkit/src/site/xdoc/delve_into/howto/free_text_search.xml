@@ -22,50 +22,178 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Free text Search</title>
+    <title>Free Text Search</title>
   </properties>
 
   <body>
-    <section name="Free text Search">
-      <span class="shortdesc">How to add text search functionality to a website so that the user can perform text searches on all documents?</span>
+    <section name="Free Text Search">
+      <span class="shortdesc">Add text search functionality to a website.</span>
       <span class='hidden_index'>Search, free text</span>
 
-       <span class='rewrite'>this whole document.</span>
-
-        <p>Introductory text.
-           Introductory text.
+        <p>
+            This howto lets you add a simple free text search to your website. We are going to
+            create two modules: a search form module and a search results module.
         </p>
 
-
-        <subsection name="First subsection title">
-
-          <p>This is text with an <span class="index">index word</span>.
+      <subsection name="Search form module">
+          <p>
+              First we create a module which displays a little search form. It is really
+              just a JSP containing an HTML form at the moment. Later on page sensitive
+              stuff could be added. You can put this module on any page you like.
           </p>
+          <p>
+              The form needs to post to the URL of our search results page (which we will
+              create shortly). Assuming we will create a sitemap item names "search"
+              for our search results page, we create a link item that links to it
+              using the <a href="../reference/components/tag/link-tag.html">hst-tmpl:link</a> tag.
+          </p>
+          <p>
+              Below is the JSP code. Save it in a .jsp file, e.g. "searchform.jsp" in your
+              site project. Using the console, create a module (e.g. "searchform") and set
+              the value of its <code>hst:template</code> property to the location of the
+              JSP file.
+          </p>
+        <source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
 
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
+<hst-tmpl:link var="linkItem" location="search"/>
+<form method="get" action="${linkItem.href}">
+    <b>Search</b>
+    <input name="query" type="text" value="${param.query}" />
+    <input value="search" type="submit"/>
+</form>
+]]>
+        </source>
+          <p>
+              You can now add the "searchform" module to any page (sitemap item) you
+              like. You could add a dedicated container to your layout for it, or
+              use an existing one. It's up to you.
           </p>
-      
-          <h4>First subsubsection title</h4> 
-          <p>Text
-             text
-          </p>
-      
+      </subsection>
+
+        <subsection name="Search results module">
+            <p>
+                Let's move on to the more exciting stuff. The second module we are
+                going to create actually performs the search action, and displays
+                the results. A generic SearchModule class is available in the site
+                toolkit, so we don't need to write any Java code. All we need to do
+                is reference it from the JSP code, using the
+                <a href="../reference/components/tag/module-tag.html">hst-tmpl:module</a>
+                tag. The SearchModule takes a number of parameters (through the
+                <a href="../reference/components/tag/moduleParameter-tag.html">hst-tmpl:moduleParameter</a> tag):
+            </p>
+            <dl>
+                <dt>query</dt>
+                <dd>The actual search query. We get it from the request parameter <code>query</code> (posted through the form).</dd>
+                <dt>target</dt>
+                <dd>The repository path to search under. User 'content' to search through all documents.</dd>
+                <dt>nodetype</dt>
+                <dd>The document type to search for. User 'hippo:document' to search all document types.</dd>
+                <dt>limit</dt>
+                <dd>The number of results per page.</dd>
+                <dt>pagename</dt>
+                <dd>A unique string to prevent the search results paging from conflicting with possible other search results on the same page.</dd>
+                <dt>excerpt</dt>
+                <dd>Value 'true' if you want to search results to include excerpts from the documents, 'false' if not.</dd>
+            </dl>
+            <p>
+                The SearchModule will provide a list of search hits (through the variable <code>items</code> in our code).
+                We iterate through the search hits using <code>c:forEach</code>.
+            </p>
+            <p>
+                Finally, the SearchModule also provides the necessary information to display a results page navigation.
+                Using the <code>nextpage</code>, <code>prevpage</code>, <code>firstpage</code>, <code>lastpage</code>
+                and <code>pages</code> attributes of the SearchResult object the SearchModule returns, it is
+                fairly straightforward to generate the links.
+            </p>
+            <p>
+                Below is the JSP code for the search results module. Save it as a .jsp file in your site project.
+                Using the console, create a module and make sure it's <code>hst:template</code> property
+                points to this JSP file.
+            </p>
+            <source>
+<![CDATA[
+<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst-template" prefix="hst-tmpl"%>
+
+<hst-tmpl:module name="search" var="items" className="org.hippoecm.hst.core.template.module.query.SearchModule" execute="false" render="true">
+    <hst-tmpl:moduleParameter name="query" value="${param.query}"/>
+    <hst-tmpl:moduleParameter name="target" value="content" />
+    <hst-tmpl:moduleParameter name="nodetype" value="hippo:document"/>
+    <hst-tmpl:moduleParameter name="limit" value="10" />
+    <hst-tmpl:moduleParameter name="pagename" value="searchpage"/>
+    <hst-tmpl:moduleParameter name="excerpt" value="true" />
+</hst-tmpl:module>
+
+<p>Your search yielded <b>${items.size}</b> result(s)...</p>
+
+<c:if test="${items.hits[0] != null}">
+    <c:forEach var="item" items="${items.hits}">
+        <hst-tmpl:link var="linkItem" item="${item}"/>
+        <h3><a href="${linkItem.href}" title="${item.property['hippoblog:title']}" class="highlight">${item.decodedName}</a></h3>
+     </c:forEach>
+</c:if>
+
+<p>
+<c:set var="nextpage" value="${items.nextpage}"/>
+<c:set var="prevpage" value="${items.prevpage}"/>
+<c:set var="firstpage" value="${items.firstpage}"/>
+<c:set var="lastpage" value="${items.lastpage}"/>
+<c:if test="${prevpage.exists}">
+    <a href="${prevpage.link}">&lt;&lt;</a> &nbsp;
+</c:if>
+<c:forEach var="page" items="${items.pages}">
+    <c:choose>
+        <c:when test="${page.current}">
+            <b>${page.number}&nbsp;</b>
+        </c:when>
+        <c:otherwise>
+            <a href="${page.link}">${page.number}</a>&nbsp;
+        </c:otherwise>
+    </c:choose>
+</c:forEach>                            
+<c:if test="${nextpage.exists}">
+    <a href="${nextpage.link}">&gt;&gt;</a>
+</c:if>
+</p>
+]]>
+            </source>
         </subsection>
-
-
-        <subsection name="Second subsection title">
-     
-          <p>Text
-          </p>
-     
-          <source>
-            code line 1
-            code line 2
-          </source>
+        
+        <subsection name="Search results page">
+            <p>
+                Finally, create a sitemap item for a search results page. The name (e.g. "search") you give
+                to this sitemap item, is the <code>location</code> attribute of the
+                link we generate in the search form module JSP code (see above).
+                Map the sitemap item to a URL (e.g. "/search") using the <code>hst:urlmapping</code> property.
+                Also make sure to add a <code>hst:prefixlinkrewrite</code> property with the same value
+                so the link object in the search form module can resolve the URL.
+            </p>
+        </subsection>
+        
+        <subsection name="Search!">
+            <p>
+                By now your site should have a working free text search. Go ahead and play
+                with the paramters of the SearchModule (see above). Change the <code>nodetype</code>
+                and <code>location</code> parameters to get more specific search results.
+            </p>
         </subsection>
 
     </section>
+      
+      <!--
+      <section name="Next">
+          <p>
+              
+          </p>
+      </section>
+      -->
+      
   </body>
 </document>
