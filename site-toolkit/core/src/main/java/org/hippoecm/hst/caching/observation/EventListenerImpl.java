@@ -65,23 +65,17 @@ public class EventListenerImpl implements EventListener, Serializable{
         Map<String, Cache> caches = CacheManager.getCaches();
         List<EventCache> eventCaches = new ArrayList<EventCache>();
         synchronized(caches) {
-            Iterator<Cache> cachesIt = caches.values().iterator();
-            while(cachesIt.hasNext()) {
-                Cache c = cachesIt.next();
-                if(c instanceof EventCache) {
-                    eventCaches.add((EventCache)c);
+            for (Cache cache : caches.values()) {
+                if (cache instanceof EventCache) {
+                    eventCaches.add((EventCache) cache);
                 }
             }
         }
         
         // process each event
-        Iterator<NamedEvent> eventsIt = namedEvents.iterator();
-        while(eventsIt.hasNext()) {
-            NamedEvent nEvent = eventsIt.next();
-            Iterator<EventCache> eventCacheIt = eventCaches.iterator();
-            while(eventCacheIt.hasNext()) {
-                EventCache ec = eventCacheIt.next();
-                ec.processEvent(nEvent);
+        for (NamedEvent namedEvent : namedEvents) {
+            for (EventCache eventCache : eventCaches) {
+                eventCache.processEvent(namedEvent);
             }
         }
     }
@@ -91,11 +85,11 @@ public class EventListenerImpl implements EventListener, Serializable{
         String[] parts = path.split("/");
         StringBuffer eventPath = new StringBuffer("/");
         eventList.add(new NamedEvent(eventPath.toString()));
-        for(int i = 0; i < parts.length; i++) {
-            if(!eventPath.toString().equals("/")) {
-                eventPath.append("/"); 
+        for (String part : parts) {
+            if (!eventPath.toString().equals("/")) {
+                eventPath.append("/");
             }
-            eventPath.append(parts[i]);
+            eventPath.append(part);
             eventList.add(new NamedEvent(eventPath.toString()));
         }
         return eventList;
