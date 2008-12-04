@@ -167,9 +167,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 sb.append("  new_editors   = Xinha.makeEditors(new_editors, xinha_config);\n");
                 for (AbstractXinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(new_editors.").append(config.getName()).append(" != undefined) {\n");
-                    sb.append("    new_editors.").append(config.getName()).append(".registerPlugins(");
-                    appendAsJSArray(sb, config.getPluginConfigurations());
-                    sb.append(");\n");
+                    
 
                     String prefix = "    new_editors." + config.getName() + ".config.";
                     appendProperties(sb, prefix, config.getProperties());
@@ -186,6 +184,9 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                     for (AbstractXinhaPlugin.PluginConfiguration pluginConfig : config.getPluginConfigurations()) {
                         appendProperties(sb, prefix + pluginConfig.getName() + ".", pluginConfig.getProperties());
                     }
+                    sb.append("    new_editors.").append(config.getName()).append(".registerPlugins(");
+                    appendAsJSArray(sb, config.getPluginConfigurations());
+                    sb.append(");\n");
                     sb.append("  }\n");
                 }
 
