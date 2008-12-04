@@ -333,6 +333,8 @@ padding-top: 24px;
 .hippo-header-shortcuts {/*margin-left: 35px;*/ padding: 6px}
 .hippo-header-shortcuts div div{float: left; margin-right: 8px;}
 .hippo-header-shortcuts div div a{color: #333333}
+.hippo-header-shortcuts div div a.publish-16{background: none}
+.hippo-header-shortcuts div div a.depublish-16{background: none}
 .hippo-header-shortcuts div div a.document-16{background: none}
 .hippo-header-shortcuts div div a.website-add-16{background: none}
 .hippo-header-shortcuts div div a.image-add{background: none}
@@ -743,8 +745,9 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .reqdelete_ico{background-image:url("images/icons/workflow-requestdelete-16.png")}
 .reqpublish_ico{background-image:url("images/icons/workflow-requestpublish-16.png")}
 .reqdepublish_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
-.publish_ico{background-image:url("images/icons/publish-16.png")}
-.depublish_ico{background-image:url("images/icons/unplublish-16.png")}
+.publish-16, .publish_ico{background-image:url("images/icons/publish-16.png")}
+.depublish-16, .depublish_ico{background-image:url("images/icons/unplublish-16.png")}
+
 
 .reqcancel_ico{background-image:url("images/icons/unplublish-16.png")}
 .reqaccept_ico{background-image:url("images/icons/workflow-accept-16.png")}
