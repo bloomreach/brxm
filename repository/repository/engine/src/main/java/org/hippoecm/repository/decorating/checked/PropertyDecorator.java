@@ -35,21 +35,34 @@ public class PropertyDecorator extends ItemDecorator implements Property {
     private final static String SVN_ID = "$Id$";
 
     protected Property property;
+    protected String originalPath;
     protected Node originalParent;
     protected String originalName;
 
     protected PropertyDecorator(DecoratorFactory factory, SessionDecorator session, Property property) {
-        super(factory, session, property);
+        super(factory, session, property, false);
         this.property = property;
         try {
-            this.originalParent = getParent();
-            this.originalName = getName();
+            originalPath = property.getPath();
+        } catch(RepositoryException ex) {
+        }
+    }
+
+    protected PropertyDecorator(DecoratorFactory factory, SessionDecorator session, Property property, NodeDecorator parent) {
+        super(factory, session, property, false);
+        this.property = property;
+        try {
+            originalPath = property.getPath();
         } catch(RepositoryException ex) {
         }
     }
 
     protected void repair() throws RepositoryException {
-        property = (Property) PropertyDecorator.unwrap(originalParent.getProperty(originalName));
+        if(originalPath != null) {
+            property = (Property) PropertyDecorator.unwrap((Property)session.getItem(originalPath));;
+        } else {
+            property = (Property) PropertyDecorator.unwrap(originalParent.getProperty(originalName));
+        }
     }
 
     /**
