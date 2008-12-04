@@ -50,6 +50,17 @@ public class ItemDecorator extends AbstractDecorator implements Item {
         }
     }
 
+    protected ItemDecorator(DecoratorFactory factory, SessionDecorator session, Item item, boolean recoverable) {
+        super(factory, session);
+        this.item = item;
+        if (recoverable) {
+            try {
+                this.originalPath = item.getPath(); // best effort
+            } catch(RepositoryException ex) {
+            }
+        }
+    }
+
     @Override
     protected void repair(Session upstreamSession) throws RepositoryException {
         this.item = upstreamSession.getItem(originalPath);

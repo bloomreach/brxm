@@ -80,6 +80,10 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
         return new PropertyDecorator(this, session, property);
     }
 
+    public Property getPropertyDecorator(SessionDecorator session, Property property, NodeDecorator parent) {
+        return new PropertyDecorator(this, session, property, parent);
+    }
+
     public Lock getLockDecorator(SessionDecorator session, Lock lock) {
         return new LockDecorator(this, session, lock);
     }

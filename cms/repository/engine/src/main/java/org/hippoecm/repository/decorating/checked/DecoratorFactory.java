@@ -106,6 +106,17 @@ public interface DecoratorFactory {
     Property getPropertyDecorator(SessionDecorator session, Property property);
 
     /**
+     * Creates a property decorator.
+     *
+     * @param session  the session (decorator) instance used to create the
+     *                 property decorator
+     * @param property the underlying property instance
+     * @param parent   the parent in which the property is located
+     * @return property decorator
+     */
+    Property getPropertyDecorator(SessionDecorator session, Property property, NodeDecorator parent);
+
+    /**
      * Creates an item decorator.
      *
      * @param session the session (decorator) instance used to create the

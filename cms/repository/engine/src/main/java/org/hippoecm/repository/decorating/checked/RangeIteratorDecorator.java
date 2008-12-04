@@ -149,7 +149,11 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
         } else if (object instanceof Node) {
             return factory.getNodeDecorator(session, (Node) object);
         } else if (object instanceof Property) {
-            return factory.getPropertyDecorator(session, (Property) object);
+            if (parent == null) {
+                return factory.getPropertyDecorator(session, (Property) object);
+            } else {
+                return factory.getPropertyDecorator(session, (Property) object, parent);
+            }
         } else if (object instanceof Item) {
             return factory.getItemDecorator(session, (Item) object);
         } else {

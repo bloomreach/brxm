@@ -54,19 +54,28 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     protected HippoNode node;
     protected SessionDecorator session;
     private String originalUUID = null;
-    private String originalPath = null;;
+    private String originalPath = null;
+    private Node originalParent = null;
+    private String originalName = null;
+    private int originalIndex = 1;
 
     protected NodeDecorator(DecoratorFactory factory, SessionDecorator session, HippoNode node) {
-        super(factory, session, node);
+        super(factory, session, node, false);
         this.session = session;
         this.node = node;
+
         try {
-            this.originalUUID = node.getUUID();
-        } catch(RepositoryException ex) {
-            try {
-                this.originalPath = node.getPath(); // this is unreliable, but a best effort.
-            } catch(RepositoryException e) {
+            if(node.hasProperty("jcr:uuid")) {
+                try {
+                    originalUUID = node.getUUID();
+                } catch(UnsupportedRepositoryOperationException ex) {
+                }
             }
+            if(originalUUID == null) {
+                // this is unreliable, but a best effort.
+                originalPath = node.getPath();
+            }
+        } catch(RepositoryException ex) {
         }
     }
 
@@ -74,8 +83,10 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     protected void repair(Session upstreamSession) throws RepositoryException {
         if(originalUUID != null) {
             node = (HippoNode) upstreamSession.getNodeByUUID(originalUUID);
-        } else {
+        } else if(originalPath != null) {
             node = (HippoNode) upstreamSession.getRootNode().getNode(originalPath.substring(1));
+        } else {
+            node = (HippoNode) NodeDecorator.unwrap(originalParent.getNode(originalName));
         }
     }
 
@@ -136,7 +147,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -146,7 +157,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value, type);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -156,7 +167,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, values);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -166,7 +177,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, values, type);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -176,7 +187,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, values);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -186,7 +197,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, values, type);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -196,7 +207,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -206,7 +217,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value, type);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -216,7 +227,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -226,7 +237,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -236,7 +247,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -246,7 +257,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -256,7 +267,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             LockException, ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, value);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -266,7 +277,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
             ConstraintViolationException, RepositoryException {
         check();
         Property prop = node.setProperty(name, NodeDecorator.unwrap(value));
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -301,7 +312,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
     public Property getProperty(String relPath) throws PathNotFoundException, RepositoryException {
         check();
         Property prop = node.getProperty(relPath);
-        return factory.getPropertyDecorator(session, prop);
+        return factory.getPropertyDecorator(session, prop, this);
     }
 
     /**
@@ -309,7 +320,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public PropertyIterator getProperties() throws RepositoryException {
         check();
-        return new PropertyIteratorDecorator(factory, session, node.getProperties());
+        return new PropertyIteratorDecorator(factory, session, node.getProperties(), this);
     }
 
     /**
@@ -317,7 +328,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public PropertyIterator getProperties(String namePattern) throws RepositoryException {
         check();
-        return new PropertyIteratorDecorator(factory, session, node.getProperties(namePattern));
+        return new PropertyIteratorDecorator(factory, session, node.getProperties(namePattern), this);
     }
 
     /**
@@ -349,7 +360,7 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
      */
     public PropertyIterator getReferences() throws RepositoryException {
         check();
-        return new PropertyIteratorDecorator(factory, session, node.getReferences());
+        return new PropertyIteratorDecorator(factory, session, node.getReferences()); // note: do not pass this as fourth arg
     }
 
     /**

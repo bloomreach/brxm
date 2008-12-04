@@ -35,6 +35,11 @@ public class PropertyIteratorDecorator extends RangeIteratorDecorator implements
         super(factory, session, iterator);
     }
 
+    protected PropertyIteratorDecorator(DecoratorFactory factory, SessionDecorator session, PropertyIterator iterator,
+                                        NodeDecorator parent) {
+        super(factory, session, iterator, parent);
+    }
+
     /**
      * @inheritDoc
      */
