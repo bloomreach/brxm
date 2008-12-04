@@ -66,9 +66,11 @@ public class NodeDecorator extends ItemDecorator implements HippoNode {
 
         try {
             if(node.hasProperty("jcr:uuid")) {
-                try {
-                    originalUUID = node.getUUID();
-                } catch(UnsupportedRepositoryOperationException ex) {
+                if(node.isNodeType("mix:referenceable")) {
+                    try {
+                        originalUUID = node.getUUID();
+                    } catch(UnsupportedRepositoryOperationException ex) {
+                    }
                 }
             }
             if(originalUUID == null) {

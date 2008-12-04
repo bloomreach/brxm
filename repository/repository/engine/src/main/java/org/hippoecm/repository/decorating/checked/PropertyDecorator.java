@@ -52,7 +52,8 @@ public class PropertyDecorator extends ItemDecorator implements Property {
         super(factory, session, property, false);
         this.property = property;
         try {
-            originalPath = property.getPath();
+            originalParent = parent;
+            originalName = property.getName();
         } catch(RepositoryException ex) {
         }
     }
