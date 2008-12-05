@@ -213,11 +213,11 @@ public class ImageInfo {
     /** Return value of {@link #getFormat()} for PSD streams. */
     public static final int FORMAT_PSD = 10;
 
-    /*	public static final int COLOR_TYPE_UNKNOWN = -1;
-    	public static final int COLOR_TYPE_TRUECOLOR_RGB = 0;
-    	public static final int COLOR_TYPE_PALETTED = 1;
-    	public static final int COLOR_TYPE_GRAYSCALE= 2;
-    	public static final int COLOR_TYPE_BLACK_AND_WHITE = 3;*/
+    /*  public static final int COLOR_TYPE_UNKNOWN = -1;
+        public static final int COLOR_TYPE_TRUECOLOR_RGB = 0;
+        public static final int COLOR_TYPE_PALETTED = 1;
+        public static final int COLOR_TYPE_GRAYSCALE= 2;
+        public static final int COLOR_TYPE_BLACK_AND_WHITE = 3;*/
 
     /**
      * The names of all supported file formats.
