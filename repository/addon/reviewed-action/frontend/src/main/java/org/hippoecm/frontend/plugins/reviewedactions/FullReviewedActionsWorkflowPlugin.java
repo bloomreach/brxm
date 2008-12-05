@@ -45,6 +45,7 @@ import org.hippoecm.frontend.service.IEditService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
@@ -189,7 +190,7 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
-                        workflow.rename(name);
+                        workflow.rename(NodeNameCodec.encode(name, true));
                     }
                 };
             }

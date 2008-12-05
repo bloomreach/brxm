@@ -32,6 +32,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.plugin.workflow.WorkflowAction;
 import org.hippoecm.frontend.service.IEditService;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
@@ -98,7 +99,7 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
                     @Override
                     protected void execute() throws Exception {
                         DefaultWorkflow workflow = (DefaultWorkflow) getWorkflow();
-                        workflow.rename(name);
+                        workflow.rename(NodeNameCodec.encode(name, true));
                     }
                 };
             }

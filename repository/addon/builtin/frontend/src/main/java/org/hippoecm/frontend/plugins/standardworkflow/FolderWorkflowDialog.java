@@ -35,6 +35,7 @@ import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
@@ -142,7 +143,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
                 log.error("unknown folder type " + prototype);
                 throw new WorkflowException("Unknown folder type " + prototype);
             }
-            String path = workflow.add(category, prototype, name);
+            String path = workflow.add(category, prototype, NodeNameCodec.encode(name, true));
             JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
             folderWorkflowPlugin.select(nodeModel);
         } else {

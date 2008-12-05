@@ -22,6 +22,7 @@ import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.standardworkflow.TemplateEditorWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,6 @@ public class NamespaceDialog extends AbstractWorkflowDialog {
     @Override
     protected void execute() throws Exception {
         TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) getWorkflow();
-        workflow.createNamespace(prefix, url);
+        workflow.createNamespace(NodeNameCodec.encode(prefix, true), url);
     }
 }

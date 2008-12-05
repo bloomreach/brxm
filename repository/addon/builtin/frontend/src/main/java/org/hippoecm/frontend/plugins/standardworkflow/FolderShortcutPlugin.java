@@ -54,6 +54,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
@@ -403,7 +404,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     IJcrService jcrService = jcrServiceRef.getService();
                     jcrService.flush(((WorkflowsModel) getModel()).getNodeModel().getParentModel());
 
-                    String path = workflow.add(templateCategory, prototype, name);
+                    String path = workflow.add(templateCategory, prototype, NodeNameCodec.encode(name, true));
                     JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                     select(nodeModel, browseServiceRef, editServiceRef);
                 } else {
