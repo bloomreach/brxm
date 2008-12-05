@@ -35,6 +35,7 @@ import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
@@ -96,7 +97,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                         Node node = model.getNodeModel().getNode();
                         WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
                         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                        workflow.rename(node.getName() + "[" + node.getIndex() + "]", name);
+                        workflow.rename(node.getName() + "[" + node.getIndex() + "]", NodeNameCodec.encode(name, true));
                     }
                 };
             }

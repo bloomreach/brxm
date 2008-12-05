@@ -35,6 +35,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 
 public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
@@ -119,7 +120,7 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
                 return;
             }
             Map<String, String> arguments = new TreeMap<String, String>();
-            arguments.put("name", name);
+            arguments.put("name", NodeNameCodec.encode(name, true));
             String path = (docbase.startsWith("/") ? docbase.substring(1) : docbase);
             arguments.put("docbase", ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path)
                     .getUUID());
