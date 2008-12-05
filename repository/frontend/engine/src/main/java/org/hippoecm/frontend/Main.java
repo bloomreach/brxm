@@ -39,10 +39,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.IAuthorizationStrategy;
+import org.apache.wicket.protocol.http.HttpSessionStore;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.RequestParameters;
 import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
+import org.apache.wicket.session.ISessionStore;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.resource.IResourceStream;
@@ -259,6 +261,11 @@ public class Main extends WebApplication {
     @Override
     public Session newSession(Request request, Response response) {
         return new UserSession(request, new JcrSessionModel(DEFAULT_CREDENTIALS));
+    }
+
+    @Override
+    public ISessionStore newSessionStore() {
+        return new HttpSessionStore(this);
     }
 
     @Override
