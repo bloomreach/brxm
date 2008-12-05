@@ -51,7 +51,7 @@ public class LdapUserManager extends AbstractUserManager {
     /**
      * On sync save every after every SAVE_INTERVAL changes
      */
-    private final int SAVE_INTERVAL = 2500;
+    private final int SAVE_INTERVAL = 250;
 
     /**
      * The initialized ldap context factory
@@ -209,6 +209,7 @@ public class LdapUserManager extends AbstractUserManager {
         SearchControls ctls = new SearchControls();
         ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         int count = 0;
+        int total = 0;
         for (LdapUserSearch search : searches) {
             LdapContext ctx = null;
             try {
@@ -240,6 +241,7 @@ public class LdapUserManager extends AbstractUserManager {
                                 // update the mappings
                                 if (isManagerForUser(user)) {
                                     count++;
+                                    total++;
                                     syncMappingInfo(user, attrs);
                                 }
                                 
@@ -249,6 +251,7 @@ public class LdapUserManager extends AbstractUserManager {
                             if (count >= SAVE_INTERVAL) {
                                 count = 0;
                                 try {
+                                    log.debug("Saving {} ldap users for provider: {}", SAVE_INTERVAL, providerId);
                                     saveUsers();
                                 } catch (RepositoryException e) {
                                     log.error("Error while saving users node: " + usersPath, e);
@@ -268,11 +271,12 @@ public class LdapUserManager extends AbstractUserManager {
 
         // save remaining unsaved user nodes
         try {
+            log.debug("Saving {} ldap users for provider: {}", count, providerId);
             saveUsers();
         } catch (RepositoryException e) {
             log.error("Error while saving users node: " + usersPath, e);
         }
-        log.info("Finished synchronizing ldap users for: " + providerId);
+        log.info("Finished synchronizing {} ldap users for: {}", total, providerId);
     }
 
     /**

@@ -105,6 +105,9 @@ public class LdapUtils {
      */
     public static List<String> getAllAttributeValues(Attribute attr) throws NamingException {
         List<String> values = new ArrayList<String>();
+        if (attr == null) {
+            return values;
+        }
         for (NamingEnumeration<?> e = attr.getAll(); e.hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof String) {
