@@ -42,6 +42,7 @@ import org.hippoecm.frontend.plugins.gallery.ImageUtils;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
 
@@ -126,7 +127,7 @@ class UploadForm extends Form {
                 try {
                     Node galleryNode = uploadDialog.getGalleryNode();
                     GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog.getWorkflowCategory(), galleryNode);
-                    Document document = workflow.createGalleryItem(filename, type);
+                    Document document = workflow.createGalleryItem(NodeNameCodec.encode(filename, true), type);
                     Node node = (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
                     Item item = node.getPrimaryItem();
                     if (item.isNode()) {
