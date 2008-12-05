@@ -22,7 +22,7 @@
     <relativePath>..</relativePath>
   </parent>
 
-  <name>Addons</name>
+  <name>Archetypes</name>
   <description>Hippo ECM archetypes</description>
   <groupId>org.hippoecm</groupId>
   <artifactId>hippo-ecm-archetypes</artifactId>
