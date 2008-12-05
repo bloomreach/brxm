@@ -53,7 +53,7 @@ public class LdapGroupManager extends AbstractGroupManager {
     /**
      * On sync save every after every SAVE_INTERVAL changes
      */
-    private final static int SAVE_INTERVAL = 2500;
+    private final static int SAVE_INTERVAL = 100;
     
     /**
      * The initialized ldap context factory
@@ -268,12 +268,13 @@ public class LdapGroupManager extends AbstractGroupManager {
         NamingEnumeration<SearchResult> results = null;
         String dn = null;
         LdapContext ctx = null;
+        int count = 0;
+        int total = 0;
         try {
             ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-            int count = 0;
             for (LdapGroupSearch search : searches) {
                 if (search.getBaseDn() == null || search.getNameAttr() == null || search.getFilter() == null) {
                     // skip wrongly configured search?
@@ -299,6 +300,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                             if (isManagerForGroup(group)) {
                                 setGroup(group, dn, members, search.getMemberNameMatcher());
                                 count++;
+                                total++;
                             } else {
                                 log.debug("Not updating group {}, because it is not managed by this provider: {}", dn, providerId);
                             }
@@ -308,6 +310,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                         if (count == SAVE_INTERVAL) {
                             count = 0;
                             try {
+                                log.debug("Saving {} ldap groups for provider: {}", SAVE_INTERVAL, providerId);
                                 saveGroups();
                             } catch (RepositoryException e) {
                                 log.error("Error while saving groups node: " + groupsPath, e);
@@ -324,11 +327,12 @@ public class LdapGroupManager extends AbstractGroupManager {
 
         // save remaining unsaved group nodes
         try {
-           saveGroups();
+            log.debug("Saving {} ldap groups for provider: {}", count, providerId);
+            saveGroups();
         } catch (RepositoryException e) {
             log.error("Error while saving groups node: " + groupsPath, e);
         }
-        log.info("Finished synchronizing ldap groups for: " + providerId);
+        log.info("Finished synchronizing {} ldap groups for: {}", total, providerId);
     }
     
     /**
