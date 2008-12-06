@@ -137,6 +137,10 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         return virtualProviders.get(moduleName);
     }
 
+    public HippoVirtualProvider lookupProvider(Name nodeTypeName) {
+        return virtualNodeNames.get(nodeTypeName);
+    }
+
     void initialize(NamespaceResolver nsResolver, HierarchyManager hierMgr,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) {
@@ -145,20 +149,22 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         this.facetedEngine = facetedEngine;
         this.facetedContext = facetedContext;
 
-        LinkedHashSet<HippoVirtualProvider> providerInstances = new LinkedHashSet<HippoVirtualProvider>();
+        LinkedHashSet<DataProviderModule> providerInstances = new LinkedHashSet<DataProviderModule>();
         if (virtualLayerEnabled) {
-            Modules<HippoVirtualProvider> modules;
-            modules = new Modules<HippoVirtualProvider>(getClass().getClassLoader(), HippoVirtualProvider.class);
-            for(HippoVirtualProvider module : modules) {
+            Modules<DataProviderModule> modules;
+            modules = new Modules<DataProviderModule>(getClass().getClassLoader(), DataProviderModule.class);
+            for(DataProviderModule module : modules) {
                 log.info("Provider module "+module.toString());
                 providerInstances.add(module);
             }
         }
 
-        for(HippoVirtualProvider provider : providerInstances) {
-            registerProvider(provider.getClass().getName(), provider);
+        for(DataProviderModule provider : providerInstances) {
+	    if(provider instanceof HippoVirtualProvider) {
+                registerProvider(provider.getClass().getName(), (HippoVirtualProvider)provider);
+	    }
         }
-        for(HippoVirtualProvider provider : providerInstances) {
+        for(DataProviderModule provider : providerInstances) {
             try {
                 provider.initialize(this);
             } catch(RepositoryException ex) {
@@ -199,7 +205,9 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         edit();
         FilteredChangeLog tempChangeLog = filteredChangeLog;
         filteredChangeLog = null;
-        tempChangeLog.repopulate();
+        if(tempChangeLog != null) {
+            tempChangeLog.repopulate();
+        }
     }
 
     void refresh() throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {

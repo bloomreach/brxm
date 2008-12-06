@@ -41,3 +41,5 @@
 
 [hippo:baddocument] > hippo:document, mix:referenceable
 - hippo:x (String)
+
+[hippo:testmirror] > hippo:facetselect

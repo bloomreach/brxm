@@ -33,7 +33,9 @@ import org.hippoecm.repository.FacetedNavigationEngine.Context;
 public interface DataProviderContext {
     public HippoVirtualProvider lookupProvider(String moduleName);
 
-    public void registerProvider(Name moduleName, HippoVirtualProvider provider);
+    public HippoVirtualProvider lookupProvider(Name nodeTypeName);
+
+    public void registerProvider(Name nodeTypeName, HippoVirtualProvider provider);
 
     public void registerProviderProperty(Name propName);
 
