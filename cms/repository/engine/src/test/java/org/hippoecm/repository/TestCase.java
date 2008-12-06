@@ -194,7 +194,7 @@ public abstract class TestCase
                                                          getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
                         } else if ("hippo:docbase".equals(contents[i])) {
                             node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
-                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
+                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.STRING));
                         } else {
                             node.setProperty(contents[i], contents[i+1]);
                         }

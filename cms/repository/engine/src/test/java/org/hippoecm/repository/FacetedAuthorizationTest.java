@@ -232,6 +232,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         // create test nagivation
         testNav = session.getRootNode().addNode(TEST_NAVIGATION_NODE);
+        session.save();
 
         // search without namespace
         Node node = testNav.addNode("search", HippoNodeType.NT_FACETSEARCH);

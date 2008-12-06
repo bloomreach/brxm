@@ -33,6 +33,7 @@ public class FacetedNavigationNamespaceTest extends FacetedNavigationAbstractTes
 
     protected void commonSetup() throws RepositoryException {
         createDocuments();
+        session.save();
         createNavigation();
         session.save();
         session.refresh(false);

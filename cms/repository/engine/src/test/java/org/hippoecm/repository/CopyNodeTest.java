@@ -48,6 +48,7 @@ public class CopyNodeTest extends TestCase {
         node = node.addNode("document","hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.setProperty("aap", "noot");
+        session.save();
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
@@ -61,6 +62,7 @@ public class CopyNodeTest extends TestCase {
 
         ((HippoSession)session).copy(root.getNode("navigation"), "/test/copy");
         session.save();
+        session.refresh(false);
 
         assertTrue(root.getNode("copy").getNode("search").hasNode("documents"));
         assertTrue(root.getNode("copy").getNode("search").getNode("documents").hasNode("document"));

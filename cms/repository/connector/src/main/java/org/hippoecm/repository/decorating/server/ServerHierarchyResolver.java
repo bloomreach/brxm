@@ -56,10 +56,14 @@ public class ServerHierarchyResolver extends ServerObject implements RemoteHiera
             RemoteHierarchyResult result = new RemoteHierarchyResult();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             Item item = resolver.getItem(node, path, isProperty, last);
-            if(item.isNode()) {
-                result.item = getFactory().getRemoteNode((Node)item);
+            if(item != null) {
+                if(item.isNode()) {
+                    result.item = getFactory().getRemoteNode((Node)item);
+                } else {
+                    result.item = getFactory().getRemoteProperty((Property)item);
+                }
             } else {
-                result.item = getFactory().getRemoteProperty((Property)item);
+                result.item = null;
             }
             result.node = getFactory().getRemoteNode(node);
             result.relPath = last.relPath;
