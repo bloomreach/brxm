@@ -54,9 +54,9 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
     public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,
             NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
-            Node node = "/".equals(absPath) ? session.getRootNode() : session.getRootNode().getNode(absPath.substring(1)); 
+            Node node = (absPath == null || "/".equals(absPath)) ? session.getRootNode()
+                                                                 : session.getRootNode().getNode(absPath.substring(1)); 
             return getFactory().getRemoteNodeIterator(session.pendingChanges(node, nodeType, prune));
-
         } catch (NamespaceException ex) {
             throw getRepositoryException(ex);
         } catch (NoSuchNodeTypeException ex) {
@@ -66,8 +66,8 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         }
     }
 
-    public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse) throws IOException,
-            RepositoryException, RemoteException {
+    public byte[] exportDereferencedView(String path, boolean binaryAsLink, boolean noRecurse)
+            throws IOException, RepositoryException, RemoteException {
         try {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             session.exportDereferencedView(path, buffer, binaryAsLink, noRecurse);
@@ -80,8 +80,7 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
     public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, RepositoryException, RemoteException {
         try {
-            session.importDereferencedXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior,
-                    mergeBehavior);
+            session.importDereferencedXML(path, new ByteArrayInputStream(xml), uuidBehavior, referenceBehavior, mergeBehavior);
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }

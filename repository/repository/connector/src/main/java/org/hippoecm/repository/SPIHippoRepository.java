@@ -50,7 +50,6 @@ class SPIHippoRepository extends HippoRepositoryImpl {
                     protected org.apache.jackrabbit.rmi.remote.RemoteRepository getRemoteRepository()
                             throws RemoteException {
                         try {
-                            //return (org.apache.jackrabbit.rmi.remote.RemoteRepository) Naming.lookup(url);
                             remoteRepository = (RemoteRepository) Naming.lookup(url);
                             return remoteRepository;
                         } catch (MalformedURLException e) {

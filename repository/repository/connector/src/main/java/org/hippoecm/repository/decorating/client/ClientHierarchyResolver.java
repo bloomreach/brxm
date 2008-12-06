@@ -26,6 +26,8 @@ import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.ClientObject;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
+import org.apache.jackrabbit.rmi.remote.RemoteNode;
+
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
@@ -46,7 +48,15 @@ public class ClientHierarchyResolver extends ClientObject implements HierarchyRe
         try {
             RemoteHierarchyResolver.RemoteHierarchyResult result = remote.getItem(ancestor.getPath(), path, isProperty);
             if(last != null) {
-                last.node = (Node) getItem(session, result.node);
+                if(result.node != null) {
+                    if(result instanceof RemoteNode) {
+                        last.node = (Node) getNode(session, result.node);
+                    } else {
+                        last.node = (Node) getItem(session, result.node);
+                    }
+                } else {
+                    last.node = null;
+                }
                 last.relPath = result.relPath;
             }
             return getItem(session, result.item);
@@ -68,6 +78,11 @@ public class ClientHierarchyResolver extends ClientObject implements HierarchyRe
     }
 
     public Node getNode(Node node, String field) throws InvalidItemStateException, RepositoryException {
-        return (Node) getItem(node, field, false, null);
+        Item item = getItem(node, field, false, null);
+        if(item instanceof Node) {
+            return (Node) item;
+        } else {
+            return null;
+        }
     }
 }

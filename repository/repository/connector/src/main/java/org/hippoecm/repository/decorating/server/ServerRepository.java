@@ -48,9 +48,9 @@ public class ServerRepository extends org.apache.jackrabbit.rmi.server.ServerRep
     public RemoteRepositoryService getRepositoryService() throws RepositoryException, RemoteException {
         final ServerRepositoryService serverService = new ServerRepositoryService();
         BatchReadConfig cfg = new BatchReadConfig();
-        cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), -1);
-        cfg.setDepth(NameFactoryImpl.getInstance().create("nt", "unstructured"), -1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("internal", "root"), 1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("http://www.jcp.org/jcr/nt/1.0", "unstructured"), 1);
+        cfg.setDepth(NameFactoryImpl.getInstance().create("nt", "unstructured"), 1);
         Repository loginRepository = new Repository() {
 
             public Session login() throws LoginException, RepositoryException {

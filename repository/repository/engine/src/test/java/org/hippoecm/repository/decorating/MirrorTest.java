@@ -31,7 +31,7 @@ public class MirrorTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static String[] contents = new String[] {
+    private static String[] contents1 = new String[] {
         "/documents", "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "niet", "hier",
@@ -42,6 +42,9 @@ public class MirrorTest extends TestCase {
         "/documents/test3/test4", "nt:unstructured",
         "lachen", "zucht",
         "/documents/test3/test4/test5", "nt:unstructured",
+    };
+
+    private static String[] contents2 = new String[] {
         "/navigation", "nt:unstructured",
         "/navigation/mirror", "hippo:mirror",
         "hippo:docbase", "/documents"
@@ -56,7 +59,9 @@ public class MirrorTest extends TestCase {
         if(session.getRootNode().hasNode("navigation")) {
             session.getRootNode().getNode("navigation").remove();
         }
-        build(session, contents);
+        build(session, contents1);
+        session.save();
+        build(session, contents2);
         session.save();
     }
 

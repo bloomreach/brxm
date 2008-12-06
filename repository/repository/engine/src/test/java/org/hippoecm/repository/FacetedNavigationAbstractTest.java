@@ -103,7 +103,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
                 child = child.getNode(nodeNames[rnd.nextInt(alphabet.length())]);
             child = child.addNode(Integer.toString(docid),"hippo:testdocument");
             child.addMixin("hippo:harddocument");
-            child.setProperty("docid",docid);
+            child.setProperty("docid",Integer.toString(docid));
             if ((document.x = rnd.nextInt(3)) > 0) {
                 child.setProperty("x","x"+document.x);
             }

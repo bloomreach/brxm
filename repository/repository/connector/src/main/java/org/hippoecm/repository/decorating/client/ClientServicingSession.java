@@ -63,7 +63,8 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                                   NoSuchNodeTypeException, RepositoryException {
         try {
-            return getFactory().getNodeIterator(this, remote.pendingChanges(node.getPath(), nodeType, prune));
+            String absPath = (node != null ? node.getPath() : null);
+            return getFactory().getNodeIterator(this, remote.pendingChanges(absPath, nodeType, prune));
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
