@@ -81,7 +81,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
     }
 
     @Override
-    void initialize(DataProviderContext stateMgr) throws RepositoryException {
+    public void initialize(DataProviderContext stateMgr) throws RepositoryException {
         super.initialize(stateMgr);
         this.facetedEngine = stateMgr.getFacetedEngine();
         this.facetedContext = stateMgr.getFacetedContext();

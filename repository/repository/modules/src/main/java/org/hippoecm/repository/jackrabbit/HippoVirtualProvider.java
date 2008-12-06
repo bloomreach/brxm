@@ -21,6 +21,9 @@ import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.jackrabbit.core.ItemId;
 import org.apache.jackrabbit.core.NodeId;
 import org.apache.jackrabbit.core.PropertyId;
@@ -46,10 +49,8 @@ import org.apache.jackrabbit.spi.commons.conversion.PathParser;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class HippoVirtualProvider
+public abstract class HippoVirtualProvider implements DataProviderModule
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -99,7 +100,7 @@ public abstract class HippoVirtualProvider
     protected HippoVirtualProvider() {
     }
 
-    void initialize(DataProviderContext stateMgr) throws RepositoryException {
+    public void initialize(DataProviderContext stateMgr) throws RepositoryException {
         this.stateMgr = stateMgr;
         nameFactory = NameFactoryImpl.getInstance();
         pathFactory = PathFactoryImpl.getInstance();

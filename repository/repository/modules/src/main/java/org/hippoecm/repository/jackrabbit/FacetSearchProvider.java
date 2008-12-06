@@ -33,7 +33,7 @@ public class FacetSearchProvider extends AbstractFacetSearchProvider
     }
 
     @Override
-    protected void initialize() throws RepositoryException {
+    public void initialize() throws RepositoryException {
         super.initialize();
         subSearchProvider = (FacetSubSearchProvider) lookup("org.hippoecm.repository.jackrabbit.FacetSubSearchProvider");
         subNodesProvider  = (FacetResultSetProvider) lookup("org.hippoecm.repository.jackrabbit.FacetResultSetProvider");
