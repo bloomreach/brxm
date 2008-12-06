@@ -63,8 +63,6 @@
       <artifactId>quartz</artifactId>
       <version>[1.5.1,)</version>
     </dependency>
-<!--
--->
   </dependencies>
 
   <build>
@@ -80,7 +78,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorVirtualProvider org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.upgrade.M8Bootstrap org.hippoecm.repository.upgrade.M8Namespace org.hippoecm.repository.upgrade.M8Begin org.hippoecm.repository.upgrade.M8Process org.hippoecm.repository.upgrade.M8End</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorVirtualProvider org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider org.hippoecm.repository.upgrade.M8Bootstrap org.hippoecm.repository.upgrade.M8Namespace org.hippoecm.repository.upgrade.M8Begin org.hippoecm.repository.upgrade.M8Process org.hippoecm.repository.upgrade.M8End</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
