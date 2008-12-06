@@ -82,7 +82,7 @@ public class Utilities {
                 out.println(" } ");
             } else {
                 if (prop.getType() == PropertyType.BINARY) {
-                    out.print("<<binary>>");
+                    out.println("<<binary>>");
                 } else {
                     out.println(prop.getString());
                 }
