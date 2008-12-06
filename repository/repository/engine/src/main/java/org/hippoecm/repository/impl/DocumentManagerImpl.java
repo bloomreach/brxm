@@ -106,13 +106,17 @@ public class DocumentManagerImpl implements DocumentManager {
 
         ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(loader);
+            if (loader != null) {
+                Thread.currentThread().setContextClassLoader(loader);
+            }
             obj = pm.getObjectById(new JCROID(uuid, classname));
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
             sm.setTypes(null);
-            Thread.currentThread().setContextClassLoader(oldLoader);
+            if (loader != null) {
+                Thread.currentThread().setContextClassLoader(oldLoader);
+            }
         }
         return obj;
     }
