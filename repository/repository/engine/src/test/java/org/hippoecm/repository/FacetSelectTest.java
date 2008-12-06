@@ -59,7 +59,6 @@ public class FacetSelectTest extends TestCase {
         build(session, content);
         session.save();
         session.refresh(false);
-        Utilities.dump(System.err, session.getRootNode().getNode("test"));
         assertNotNull(traverse(session, "/test/spiegel/doc/doc"));
     }
 }
