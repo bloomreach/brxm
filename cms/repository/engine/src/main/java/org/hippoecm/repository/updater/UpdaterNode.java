@@ -166,13 +166,13 @@ final class UpdaterNode extends UpdaterItem implements Node {
         boolean nodeLocationChanged;
         boolean nodeRelinked = false;
 
-	if (origin != null) {
-	    if(origin instanceof HippoNode) {
+        if (origin != null) {
+            if(origin instanceof HippoNode) {
                 if(origin.isSame(((HippoNode)origin).getCanonicalNode())) {
-	            return;
-	        }
-	    }
-	}
+                    return;
+                }
+            }
+        }
         
         if (getInternalProperty("jcr:primaryType").length > 0)
             nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
