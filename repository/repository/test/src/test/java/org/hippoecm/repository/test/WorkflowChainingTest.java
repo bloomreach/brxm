@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -104,5 +105,23 @@ public class WorkflowChainingTest extends TestCase {
                 assertEquals(""+(i+1), ChainingImpl.result.get(i));
             ChainingImpl.result.clear();
         }
+    }
+
+    @Test
+    public void testScheduled() throws WorkflowException, MappingException, RepositoryException, RemoteException, InterruptedException {
+        Node node = session.getRootNode().getNode("test/testdocument/testdocument");
+        assertNotNull(node);
+        ChainingImpl.result.clear();
+        Chaining workflow = (Chaining)((HippoWorkspace)session.getWorkspace()).getWorkflowManager().getWorkflow("test",node);
+        Date schedule = new Date();
+        final long delay = 3L;
+        schedule.setTime(schedule.getTime()+delay*1000L);
+        assertEquals(0, ChainingImpl.result.size());
+        workflow.schedule(schedule);
+        session.save();
+        session.refresh(false);
+        assertEquals(0, ChainingImpl.result.size());
+        Thread.sleep((delay+10)*1000L);
+        assertEquals(1, ChainingImpl.result.size());
     }
 }
