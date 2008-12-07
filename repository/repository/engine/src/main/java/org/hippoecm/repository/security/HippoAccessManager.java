@@ -523,7 +523,10 @@ public class HippoAccessManager implements AccessManager {
     public boolean hasPrivileges(String absPath, String[] privileges) throws PathNotFoundException, RepositoryException {
         boolean allowed;
         NodeState nodeState;
-        
+
+        if (isSystem) {
+            return true;
+        }
         for (String priv : privileges) {
             log.debug("Checking [{}] : {}", priv, absPath); 
             allowed = false;

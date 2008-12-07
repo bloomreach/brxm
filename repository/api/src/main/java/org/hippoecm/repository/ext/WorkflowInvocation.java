@@ -13,18 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.api;
+package org.hippoecm.repository.ext;
 
+import java.io.Externalizable;
+
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-public interface WorkflowContext {
+import org.hippoecm.repository.api.WorkflowManager;
+
+public interface WorkflowInvocation extends Externalizable {
     final static String SVN_ID = "$Id$";
 
-    public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException;
+    public Object invoke(Session session) throws RepositoryException;
 
-    public Document getDocument(String category, String identifier) throws RepositoryException;
-    public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
-    public Workflow getWorkflow(String category, Document document) throws MappingException, WorkflowException,
-                                                                           RepositoryException;
-    public String getUserIdentity();
+    public Node getSubject();
+
+    public void setSubject(Node node);
 }
