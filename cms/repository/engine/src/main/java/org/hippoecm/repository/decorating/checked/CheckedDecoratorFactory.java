@@ -47,22 +47,32 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
     }
 
     public Repository getRepositoryDecorator(Repository repository) {
+        if(repository instanceof RepositoryDecorator)
+            return repository;
         return new RepositoryDecorator(this, repository);
     }
 
     public Session getSessionDecorator(Repository repository, Session session, Credentials credentials, String workspace) {
+        if(session instanceof SessionDecorator)
+            return session;
         return new SessionDecorator(this, repository, (HippoSession) session, credentials, workspace);
     }
 
     public Workspace getWorkspaceDecorator(SessionDecorator session, Workspace workspace) {
+        if(workspace instanceof WorkspaceDecorator)
+            return workspace;
         return new WorkspaceDecorator(this, session, (HippoWorkspace) workspace);
     }
 
     protected Node getBasicNodeDecorator(SessionDecorator session, Node node) {
+        if(node instanceof NodeDecorator)
+            return node;
         return new NodeDecorator(this, session, (HippoNode) node);
     }
 
     protected Item getBasicItemDecorator(SessionDecorator session, Item item) {
+        if(item instanceof ItemDecorator)
+            return item;
         return new ItemDecorator(this, session, item);
     }
 
@@ -77,22 +87,32 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
     }
 
     public Property getPropertyDecorator(SessionDecorator session, Property property) {
+        if(property instanceof PropertyDecorator)
+            return property;
         return new PropertyDecorator(this, session, property);
     }
 
     public Property getPropertyDecorator(SessionDecorator session, Property property, NodeDecorator parent) {
+        if(property instanceof PropertyDecorator)
+            return property;
         return new PropertyDecorator(this, session, property, parent);
     }
 
     public Lock getLockDecorator(SessionDecorator session, Lock lock) {
+        if(lock instanceof LockDecorator)
+            return lock;
         return new LockDecorator(this, session, lock);
     }
 
     public Version getVersionDecorator(SessionDecorator session, Version version) {
+        if(version instanceof VersionDecorator)
+            return version;
         return new VersionDecorator(this, session, version);
     }
 
     public VersionHistory getVersionHistoryDecorator(SessionDecorator session, VersionHistory versionHistory) {
+        if(versionHistory instanceof VersionHistoryDecorator)
+            return versionHistory;
         return new VersionHistoryDecorator(this, session, versionHistory);
     }
 
@@ -112,41 +132,59 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
 
     public QueryManager getQueryManagerDecorator(SessionDecorator session,
                                                  QueryManager queryManager) {
+        if(queryManager instanceof QueryManagerDecorator)
+            return queryManager;
         return new QueryManagerDecorator(this, session, queryManager);
     }
 
     public Query getQueryDecorator(SessionDecorator session, Query query) {
+        if(query instanceof QueryDecorator)
+            return query;
         return new QueryDecorator(this, session, (HippoQuery) query);
     }
 
     public Query getQueryDecorator(SessionDecorator session, Query query, Node node) {
+        if(query instanceof QueryDecorator)
+            return query;
         return new QueryDecorator(this, session, (HippoQuery) query);
     }
 
     public QueryResult getQueryResultDecorator(SessionDecorator session,
                                                QueryResult result) {
+        if(result instanceof QueryResultDecorator)
+            return result;
         return new QueryResultDecorator(this, session, result);
     }
 
     public ValueFactory getValueFactoryDecorator(SessionDecorator session,
                                                  ValueFactory valueFactory) {
+        if(valueFactory instanceof ValueFactoryDecorator)
+            return valueFactory;
         return new ValueFactoryDecorator(this, session, valueFactory);
     }
 
     public ItemVisitor getItemVisitorDecorator(SessionDecorator session,
                                                ItemVisitor visitor) {
+        if(visitor instanceof ItemVisitorDecorator)
+            return visitor;
         return new ItemVisitorDecorator(this, session, visitor);
     }
     
     public DocumentManager getDocumentManagerDecorator(SessionDecorator session, DocumentManager documentManager) {
+        if(documentManager instanceof DocumentManagerDecorator)
+            return documentManager;
         return new DocumentManagerDecorator(this, session, documentManager);
     }
 
     public WorkflowManager getWorkflowManagerDecorator(SessionDecorator session, WorkflowManager workflowManager) {
+        if(workflowManager instanceof WorkflowManagerDecorator)
+            return workflowManager;
         return new WorkflowManagerDecorator(session, workflowManager);
     }
 
     public HierarchyResolver getHierarchyResolverDecorator(SessionDecorator session, HierarchyResolver hierarchyResolver) {
+        if(hierarchyResolver instanceof HierarchyResolver)
+            return hierarchyResolver;
         return new HierarchyResolverDecorator(session, hierarchyResolver);
     }
 }
