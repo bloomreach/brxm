@@ -56,19 +56,19 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                     draft = (PublishableDocument) published.clone();
                 }
                 draft.state = PublishableDocument.DRAFT;
-                draft.setOwner(getWorkflowContext().getUsername());
+                draft.setOwner(getWorkflowContext().getUserIdentity());
                 if(unpublished != null) {
-                    unpublished.setOwner(getWorkflowContext().getUsername());
+                    unpublished.setOwner(getWorkflowContext().getUserIdentity());
                 }
                 if(published != null) {
-                    published.setOwner(getWorkflowContext().getUsername());
+                    published.setOwner(getWorkflowContext().getUserIdentity());
                 }
-                username = getWorkflowContext().getUsername();
+                username = getWorkflowContext().getUserIdentity();
             } catch(CloneNotSupportedException ex) {
                 throw new WorkflowException("document is not a publishable document");
             }
         } else {
-            if(draft.username != null && !getWorkflowContext().getUsername().equals(draft.username))
+            if(draft.username != null && !getWorkflowContext().getUserIdentity().equals(draft.username))
                 throw new WorkflowException("document already being edited");
         }
         return draft;
@@ -92,7 +92,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestDeletion() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("deletion request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUsername());
+            current = new PublicationRequest(PublicationRequest.DELETE, unpublished, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("request deletion failure");
         }
@@ -101,7 +101,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestPublication() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUsername());
+            current = new PublicationRequest(PublicationRequest.PUBLISH, unpublished, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("publication request already pending");
         }
@@ -110,13 +110,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public void requestDepublication() throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
         if(current == null) {
-            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUsername());
+            current = new PublicationRequest(PublicationRequest.DEPUBLISH, published, getWorkflowContext().getUserIdentity());
         } else {
             throw new WorkflowException("publication request already pending");
         }
     }
 
-    public void publish(Date publicationDate) throws WorkflowException {
+    public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         ReviewedActionsWorkflowImpl.log.info("publication on document ");
         throw new WorkflowException("unsupported");
     }
