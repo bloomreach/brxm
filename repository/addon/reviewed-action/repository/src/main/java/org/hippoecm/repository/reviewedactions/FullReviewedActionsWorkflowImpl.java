@@ -16,10 +16,12 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
@@ -128,4 +130,12 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             throw new WorkflowException("document is not a publishable document");
         }
     }
+
+    public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+	WorkflowContext wfCtx = getWorkflowContext();
+	wfCtx = wfCtx.getWorkflowContext(publicationDate);
+        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
+        wf.publish();
+    }
+
 }

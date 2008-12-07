@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -191,6 +193,32 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                     protected void execute() throws Exception {
                         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
                         workflow.rename(NodeNameCodec.encode(name, true));
+                    }
+                };
+            }
+        });
+
+        IModel schedulePublishLabel = new StringResourceModel("schedule-publish-label", this, null);
+        final StringResourceModel schedulePublishTitle = new StringResourceModel("schedule-publish-title", this, null);
+        final StringResourceModel schedulePublishText = new StringResourceModel("schedule-publish-text", this, null);
+        addWorkflowDialog("schedule-publish-dialog", schedulePublishLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog(IDialogService dialogService) {
+
+                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, dialogService, schedulePublishTitle, schedulePublishText, new Date()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
+                        workflow.publish(date);
                     }
                 };
             }
