@@ -73,7 +73,10 @@ public class ExportCndTest extends TestCase {
         NamespaceResolver nsRes = new SessionNamespaceResolver(session);
         Writer out = new StringWriter();
         try {
-            CompactNodeTypeDefWriter.write(nodeTypeDefs, nsRes, (SessionImpl)(org.hippoecm.repository.decorating.SessionDecorator.unwrap(org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(session))), out);
+            Session impl = session;
+            impl = org.hippoecm.repository.decorating.checked.SessionDecorator.unwrap(impl);
+            impl = org.hippoecm.repository.decorating.SessionDecorator.unwrap(impl);
+            CompactNodeTypeDefWriter.write(nodeTypeDefs, nsRes, (SessionImpl)impl, out);
         } catch (IOException e) {
             e.printStackTrace();
         }

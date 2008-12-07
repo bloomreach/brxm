@@ -75,7 +75,10 @@ public class InternalCanonicalPathTest extends TestCase {
     }
 
     private ItemId unwrappedItemId(Node node) {
-        return ((NodeImpl)(org.hippoecm.repository.decorating.NodeDecorator.unwrap(org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(node)))).getId();
+        Node impl = node;
+        impl = org.hippoecm.repository.decorating.checked.NodeDecorator.unwrap(impl);
+        impl = org.hippoecm.repository.decorating.NodeDecorator.unwrap(impl);
+        return ((NodeImpl)impl).getId();
     }
 
     /*
