@@ -74,7 +74,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return facetedEngine;
     }
 
-    protected boolean isStarted = true;
+    protected boolean isStarted = false;
 
     final boolean isStarted() {
         return isStarted;
