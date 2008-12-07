@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.test;
 
+import java.util.Date;
+
 import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
@@ -33,5 +35,8 @@ public interface Chaining extends Workflow {
     public void test4() throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void test5() throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void test6() throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    public void schedule(Date future) throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    public void later() throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
 

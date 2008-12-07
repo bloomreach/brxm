@@ -16,12 +16,14 @@
 package org.hippoecm.repository.test;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
@@ -78,5 +80,19 @@ public class ChainingImpl extends WorkflowImpl implements Chaining {
 
     public void test6() throws WorkflowException, RepositoryException {
         result.add("6");
+    }
+
+    public void schedule(Date future) throws WorkflowException, RepositoryException {
+        WorkflowContext context = getWorkflowContext().getWorkflowContext(future);
+        Chaining workflow = (Chaining) context.getWorkflow("test");
+        try {
+            workflow.later();
+        } catch(RemoteException ex) {
+            throw new WorkflowException(ex.getMessage(), ex);
+        }
+    }
+
+    public void later() throws WorkflowException, RepositoryException {
+        result.add("done");
     }
 }
