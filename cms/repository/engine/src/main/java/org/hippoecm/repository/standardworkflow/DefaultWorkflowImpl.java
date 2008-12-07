@@ -70,7 +70,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
                     return workflowManager.getWorkflow(category, subject);
                 }
 
-                public String getUsername() {
+                public String getUserIdentity() {
                     return session.getUserID();
                 }
             };

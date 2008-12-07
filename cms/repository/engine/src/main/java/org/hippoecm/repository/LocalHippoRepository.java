@@ -76,6 +76,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.checked.CheckedDecoratorFactory;
+import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.updater.UpdaterEngine;
@@ -136,6 +137,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     /** Listener for changes under /hippo:configuration/hippo:initialize node */
     private EventListener listener;
 
+    List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
+    
     protected LocalHippoRepository() throws RepositoryException {
         super();
         initialize();
@@ -281,6 +284,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
                 UpdaterEngine.migrate(jcrRootSession);
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
+            } else {
+                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
             }
 
             try {
@@ -412,6 +417,24 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             obMgr.addEventListener(listener, Event.NODE_ADDED | Event.PROPERTY_ADDED, "/"
                     + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH,
                     true, null, null, true);
+
+            for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
+
+                DecoratorFactoryImpl moduleDecoratorFactory = new DecoratorFactoryImpl();
+                javax.jcr.Repository moduleRepository = moduleDecoratorFactory.getRepositoryDecorator(repository);
+                Session moduleSession = moduleDecoratorFactory.getSessionDecorator(repository, jcrRootSession);
+                repository = new CheckedDecoratorFactory().getRepositoryDecorator(repository);
+                moduleSession = moduleSession.impersonate(new SimpleCredentials("system", new char[] {}));
+
+                // Session moduleSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
+
+                try {
+                    module.initialize(moduleSession);
+                    daemonModules.add(module);
+                } catch(RepositoryException ex) {
+                    log.error("Module "+module.toString()+" failed to initialize", ex);
+                }
+            }
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
@@ -814,6 +837,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     @Override
     public synchronized void close() {
+        for(DaemonModule module : daemonModules) {
+            module.shutdown();
+        }
+        daemonModules.clear();
+
         Session session = null;
         if (dump && repository != null) {
             try {
