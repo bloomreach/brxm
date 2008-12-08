@@ -53,7 +53,7 @@ public abstract class AbstractGroupManager implements GroupManager {
      * The path from the root containing the users
      */
     protected String providerPath;
-    
+
     /**
      * Is the class initialized
      */
@@ -68,7 +68,6 @@ public abstract class AbstractGroupManager implements GroupManager {
      * Number of dir levels: /u/s/user etc.
      */
     private int dirLevels = 0;
-    
 
     /**
      * Logger
@@ -92,22 +91,32 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        return session.getRootNode().hasNode(buildGroupPath(rawGroupId));
+        String path = buildGroupPath(rawGroupId);
+        if (session.getRootNode().hasNode(path)) {
+            Node group = session.getRootNode().getNode(path);
+            if (group.getPrimaryNodeType().isNodeType(HippoNodeType.NT_GROUP)) {
+                return true;
+            }
+        }
+        return false;
     }
-    
 
     public final Node getGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        try {
-            return session.getRootNode().getNode(buildGroupPath(rawGroupId));
-        } catch (PathNotFoundException e1) {
-            // noop
+        String path = buildGroupPath(rawGroupId);
+        if (session.getRootNode().hasNode(path)) {
+            Node group = session.getRootNode().getNode(path);
+            if (group.getPrimaryNodeType().isNodeType(HippoNodeType.NT_GROUP)) {
+                return group;
+            } else {
+                return null;
+            }
         }
         return null;
     }
-    
+
     /**
      * Create a group node. Use the getNodeType to determine the type the node 
      * should be.
@@ -166,7 +175,6 @@ public abstract class AbstractGroupManager implements GroupManager {
         return path.toString();
     }
 
-    
     /**
      * Normalize the groupId: trim and convert to lower case if needed. This
      * function does NOT encode the groupId.
@@ -180,7 +188,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             return rawGroupId.trim().toLowerCase();
         }
     }
-    
+
     private final void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_GROUPPROVIDER;
@@ -199,10 +207,10 @@ public abstract class AbstractGroupManager implements GroupManager {
             log.info("Dirlevels setting not found, using 0 for user manager for provider: " + providerId);
         }
         if (log.isDebugEnabled()) {
-            log.debug("Using dirlevels '"+dirLevels+"' for provider: " + providerId);
+            log.debug("Using dirlevels '" + dirLevels + "' for provider: " + providerId);
         }
     }
-    
+
     public final Node getOrCreateGroup(String rawGroupId) throws RepositoryException {
         if (hasGroup(rawGroupId)) {
             return getGroup(rawGroupId);
@@ -280,8 +288,8 @@ public abstract class AbstractGroupManager implements GroupManager {
             for (String groupId : repositoryMemberships) {
                 group = getGroup(groupId);
                 if (group != null) {
-                    log.debug("Remove membership of user '{}' for group '{}' by provider '{}'", 
-                            new Object[] { userId, groupId, providerId });
+                    log.debug("Remove membership of user '{}' for group '{}' by provider '{}'", new Object[] { userId,
+                            groupId, providerId });
                     removeMember(group, userId);
                 }
             }

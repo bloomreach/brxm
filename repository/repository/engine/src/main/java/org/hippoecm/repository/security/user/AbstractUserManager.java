@@ -118,7 +118,14 @@ public abstract class AbstractUserManager implements UserManager {
                 return false;
             }
         } else {
-            return session.getRootNode().hasNode(buildUserPath(rawUserId));
+            String path = buildUserPath(rawUserId);
+            if (session.getRootNode().hasNode(path)) {
+                Node user = session.getRootNode().getNode(path);
+                if (user.getPrimaryNodeType().isNodeType(HippoNodeType.NT_USER)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     
@@ -144,10 +151,11 @@ public abstract class AbstractUserManager implements UserManager {
         } else {
             String path = buildUserPath(rawUserId);
             if (session.getRootNode().hasNode(path)) {
-                try {
-                    return session.getRootNode().getNode(path);
-                } catch (PathNotFoundException e) {
-                    // noop
+                Node user = session.getRootNode().getNode(path);
+                if (user.getPrimaryNodeType().isNodeType(HippoNodeType.NT_USER)) {
+                    return user;
+                } else {
+                    return null;
                 }
             }
         }
