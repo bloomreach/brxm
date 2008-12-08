@@ -28,14 +28,14 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private IYuiContext context;
     private AjaxSettings settings;
 
     public AbstractYuiAjaxBehavior(IYuiManager manager) {
         this(manager, null);
     }
-    
+
     public AbstractYuiAjaxBehavior(IYuiManager manager, AjaxSettings settings) {
         if (manager == null) {
             throw new IllegalStateException("No root yui behavior found, unable to register module dependencies.");
@@ -43,7 +43,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
         context = manager.newContext();
         this.settings = settings;
     }
-    
+
     protected void updateAjaxSettings() {
         if(settings != null) {
             settings.setCallbackUrl(getCallbackUrl().toString());
@@ -51,7 +51,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
             settings.setCallbackParameters(getCallbackParameters());
         }
     }
-    
+
     /**
      * Wrap the callback script in a function called doCallBack*component-id*(url){}
      */
@@ -61,7 +61,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
         buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
         return buf.toString();
     }
-    
+
     /**
      * Provide custom callbackParameters
      * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
@@ -70,13 +70,13 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
         return null;
     }
 
-    
+
     @Override
     protected void onBind() {
         super.onBind();
         addHeaderContribution(context);
     }
-    
+
     /**
      * Override to implement header contrib
      * @param context
@@ -84,15 +84,15 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     public void addHeaderContribution(IYuiContext context) {
     }
 
-    
+
     /**
      * Don't call super since WicketAjax is loaded by Yui webapp behavior
-     * TODO: webapp ajax is configurable, maybe check here and still load it. 
+     * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
     public void renderHead(IHeaderResponse response) {
         updateAjaxSettings();
         context.renderHead(response);
     }
-    
+
 }

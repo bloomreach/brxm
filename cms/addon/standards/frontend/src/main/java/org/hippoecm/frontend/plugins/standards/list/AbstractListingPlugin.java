@@ -68,7 +68,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
 
         dataTable = getListDataTable("table", getTableDefinition(), getDataProvider(), this, pageSize, isOrderable());
         add(dataTable);
-        
+
         if(!isOrderable()) {
             updateSelection(getModel());
         }
@@ -80,7 +80,7 @@ public abstract class AbstractListingPlugin extends RenderPlugin implements IJcr
             TableSelectionListener selectionListener, final int rowsPerPage, final boolean triState) {
         return new ListDataTable(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);
     }
-    
+
     protected ISortableDataProvider getDataProvider() {
         return new DocumentsProvider((JcrNodeModel) getModel(), new DocumentListFilter(getPluginConfig()), getTableDefinition().getComparators());
     }

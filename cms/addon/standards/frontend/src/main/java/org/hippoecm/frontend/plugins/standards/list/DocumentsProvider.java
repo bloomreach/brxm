@@ -49,7 +49,7 @@ public class DocumentsProvider extends SortableDataProvider {
 
     public DocumentsProvider(JcrNodeModel model, DocumentListFilter filter, Map<String, Comparator<IModel>> comparators) {
         this.comparators = comparators;
-        
+
         Node node = model.getNode();
         try {
             List<IModel> documents = new ArrayList<IModel>();

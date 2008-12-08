@@ -30,9 +30,9 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private WorkflowActionComponent selected;
-    
+
     public WorkflowActionComponentDropDownChoice(String id, List<? extends WorkflowActionComponent> items) {
         super(id);
         setModel(new PropertyModel(this, "selected"));
@@ -50,7 +50,7 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
             }
         });
     }
-    
+
     private IModel createModel(final List<? extends WorkflowActionComponent> items) {
         IModel model = new IModel() {
             private static final long serialVersionUID = 1L;
@@ -74,7 +74,7 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
         };
         return model;
     }
-    
+
     private IChoiceRenderer createRenderer() {
         IChoiceRenderer renderer = new IChoiceRenderer() {
             private static final long serialVersionUID = 1L;
@@ -91,8 +91,8 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
         };
         return renderer;
     }
-   
+
 }
-    
-    
-    
+
+
+

@@ -47,7 +47,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
         }
         return null;
     }
-    
+
     protected abstract AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException;
 
 
@@ -68,7 +68,7 @@ public abstract class AbstractNodeAttributeModifier implements IListAttributeMod
     }
 
     protected abstract AttributeModifier getColumnAttributeModifier(HippoNode node) throws RepositoryException;
-    
-    
+
+
 }
 

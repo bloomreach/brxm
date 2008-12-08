@@ -54,7 +54,7 @@ public class SecurityManager {
     private String groupsPath;
     private String rolesPath;
     private String domainsPath;
-    
+
     private Session session;
     private EventListener listener;
     private final Map<String, SecurityProvider> providers = new LinkedHashMap<String, SecurityProvider>();
@@ -79,7 +79,7 @@ public class SecurityManager {
 
     /**
      * Initialize the SecurityManager. Only run the initialization if the session
-     * is no longer valid. In the initialization the observation is set on the 
+     * is no longer valid. In the initialization the observation is set on the
      * security node to detect changes to the security providers configurations.
      * @param session
      * @throws RepositoryException
@@ -107,16 +107,16 @@ public class SecurityManager {
         };
         obMgr.addEventListener(listener, Event.NODE_ADDED | Event.NODE_REMOVED, "/" + SECURITY_CONFIG_PATH, true, null,
                 new String[] { HippoNodeType.NT_SECURITYPROVIDER }, true);
-         
+
     }
 
     /**
      * Try to authenticate the user. If the user exists in the repository it will
-     * authenticate against the responsible security provider or the internal provider 
+     * authenticate against the responsible security provider or the internal provider
      * if none is set.
-     * If the user is not found in the repository it will try to authenticate against 
-     * all security providers until a successful authentication is found. It uses the 
-     * natural node order. If the authentication is successful a user node will be 
+     * If the user is not found in the repository it will try to authenticate against
+     * all security providers until a successful authentication is found. It uses the
+     * natural node order. If the authentication is successful a user node will be
      * created.
      * @param creds
      * @return true only if the authentication is successful
@@ -128,13 +128,13 @@ public class SecurityManager {
                 log.error("No security providers found: login is not possible!");
                 return false;
             }
-            
+
             Node user = providers.get(INTERNAL_PROVIDER).getUserManger().getUser(userId);
 
-            // find security provider. 
+            // find security provider.
             String providerId = null;
             if (user != null) {
-                // user exists. It either must have the provider property set or it is an internal 
+                // user exists. It either must have the provider property set or it is an internal
                 // managed user.
                 if (user.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
                     providerId = user.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString();
@@ -167,9 +167,9 @@ public class SecurityManager {
                     return false;
                 }
             }
-           
+
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
-            
+
             // internal provider doesn't need to sync
             if (INTERNAL_PROVIDER.equals(providerId)) {
                 return true;
@@ -177,8 +177,8 @@ public class SecurityManager {
 
             UserManager userMgr = providers.get(providerId).getUserManger();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
-            
-            // check if user is active            
+
+            // check if user is active
             if (!userMgr.isActive(userId)) {
                 log.debug("User not active: {}, provider: {}", userId, providerId);
                 return false;
@@ -188,11 +188,11 @@ public class SecurityManager {
             userMgr.syncUserInfo(userId);
             userMgr.updateLastLogin(userId);
             userMgr.saveUsers();
-            
+
             // sync group info
             groupMgr.syncMemberships(userMgr.getUser(userId));
             groupMgr.saveGroups();
-            
+
             // TODO: move to separate thread so it can run in background
             providers.get(providerId).sync();
 
@@ -204,8 +204,8 @@ public class SecurityManager {
     }
 
     /**
-     * Call the remove method for all providers to give them a chance to shutdown 
-     * properly. 
+     * Call the remove method for all providers to give them a chance to shutdown
+     * properly.
      */
     private void clearProviders() {
         // clear out 'old' providers
@@ -214,9 +214,9 @@ public class SecurityManager {
         }
         providers.clear();
     }
-    
-    /** 
-     * Create the security providers based on the configuration in the repository. The 
+
+    /**
+     * Create the security providers based on the configuration in the repository. The
      * providers are created by the SecurityProviderFactory.
      * @throws RepositoryException
      */
@@ -227,7 +227,7 @@ public class SecurityManager {
         rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
         domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
         SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath);
-        
+
         StringBuffer statement = new StringBuffer();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_SECURITYPROVIDER);
         statement.append(" WHERE");
@@ -268,7 +268,7 @@ public class SecurityManager {
     /**
      * Get the memberships for a user. See the AbstractUserManager.getMemberships for details.
      * @param userId
-     * @return a set of Strings with the memberships or an empty set if no memberships are found. 
+     * @return a set of Strings with the memberships or an empty set if no memberships are found.
      */
     public Set<String> getMemberships(String userId) {
         try {
@@ -278,7 +278,7 @@ public class SecurityManager {
             return new HashSet<String>(0);
         }
     }
-    
+
     /**
      * Get the domains in which the user has a role.
      * @param userId

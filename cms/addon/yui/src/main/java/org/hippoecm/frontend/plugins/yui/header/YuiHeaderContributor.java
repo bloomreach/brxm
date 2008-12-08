@@ -59,10 +59,10 @@ public class YuiHeaderContributor implements IHeaderContributor {
     final Map<String, CachedHeaderContributor> referencesCache = new HashMap<String, CachedHeaderContributor>();
     final Map<String, Module> moduleCache = new HashMap<String, Module>();
     final Map<String, ModuleSet> moduleSetsCache = new HashMap<String, ModuleSet>();
-    
+
     //final Set<ModuleSet> localModules = new LinkedHashSet<ModuleSet>();
     final YuiContext localContext = new YuiContext();
-    
+
     private boolean loadWicketAjax = false;
 
     public YuiHeaderContributor(boolean loadWicketAjax) {
@@ -164,7 +164,7 @@ public class YuiHeaderContributor implements IHeaderContributor {
             return ref;
         }
     }
-    
+
     public class YuiContext implements IYuiContext {
         private static final long serialVersionUID = 1L;
 
@@ -178,25 +178,25 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 modules = new LinkedHashSet<ModuleSet>();
             }
         }
-        
+
         private void initRefs() {
             if(refs == null) {
                 refs = new LinkedHashSet<CachedHeaderContributor>();
             }
         }
-        
+
         private void initTemplates() {
             if(templates == null) {
                 templates = new LinkedHashSet<IHeaderContributor>();
             }
         }
-        
+
         private void initOnloads() {
             if(onloads == null) {
                 onloads = new LinkedHashSet<String>();
             }
         }
-        
+
         public void addModule(String module) {
             addModule(YahooNamespace.NS, module);
         }
@@ -205,7 +205,7 @@ public class YuiHeaderContributor implements IHeaderContributor {
             initModules();
             modules.add(getDependenciesSet(ns, module));
         }
-        
+
         public void addTemplate(FinalTextTemplate template) {
             initTemplates();
             templates.add(template);
@@ -267,7 +267,7 @@ public class YuiHeaderContributor implements IHeaderContributor {
         ResourceHeaderContributor(ResourceReference reference) {
             this.reference = reference;
         }
-        
+
         public String getSharedResourceKey() {
             return reference.getSharedResourceKey();
         }
@@ -317,16 +317,16 @@ public class YuiHeaderContributor implements IHeaderContributor {
             response.renderJavascriptReference(reference);
         }
     }
-    
+
     class Module implements IClusterable {
         private static final long serialVersionUID = 1L;
-        
+
         CachedHeaderContributor file;
         CachedHeaderContributor css;
         CachedHeaderContributor coreCss;
         //String name;
         boolean rendered;
-    
+
         public Module(YuiDependency dependency) {
             if (dependency.isSourceNotFound() || dependency.getNamespace() == null) {
                 String errorMsg = "Unable to find source file for module " + dependency.getModule() + " in namespace "
@@ -335,14 +335,14 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 throw new IllegalArgumentException(errorMsg);
             } else {
                 //name = dependency.getModule();
-                
+
                 final boolean debug = log.isDebugEnabled()
                         && (debugModules.size() == 0 || debugModules.contains(dependency.getModule()));
 
                 //TODO: add minified option
                 final String path = dependency.getRealModulePath() + ((debug) ? "-debug" : "") + ".js";
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
-                
+
                 if (debug) {
                     file = getJavascriptReference(new ResourceReference(clazz, path));
                 } else {
@@ -354,7 +354,7 @@ public class YuiHeaderContributor implements IHeaderContributor {
                 }
                 if (dependency.getHasCoreCss()) {
                     coreCss = getCssReference(new CompressedResourceReference(clazz, dependency.getCoreCssPath()));
-                } 
+                }
             }
         }
 
@@ -372,16 +372,16 @@ public class YuiHeaderContributor implements IHeaderContributor {
             }
             rendered = true;
         }
-        
+
     }
-    
+
     class ModuleSet implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         Module[] modules;
         int count = 0;
         boolean rendered;
-        
+
         public ModuleSet(Set<YuiDependency> dependencies) {
             modules = new Module[dependencies.size()];
             for (YuiDependency dep : dependencies) {
@@ -408,5 +408,5 @@ public class YuiHeaderContributor implements IHeaderContributor {
             rendered = true;
         }
     }
-    
+
 }

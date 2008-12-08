@@ -42,15 +42,15 @@ public class SortState implements ISortState, IClusterable {
     public boolean isAscending() {
         return sortState == ISortState.ASCENDING;
     }
-    
+
     public boolean isDescending() {
         return sortState == ISortState.DESCENDING;
     }
-    
+
     public boolean isSorted() {
         return sortState != ISortState.NONE;
     }
-    
+
     public String getProperty() {
         return property;
     }

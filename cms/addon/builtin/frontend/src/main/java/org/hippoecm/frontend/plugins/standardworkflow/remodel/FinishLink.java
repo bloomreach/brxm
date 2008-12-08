@@ -25,7 +25,7 @@ public final class FinishLink extends AbstractWizardLink {
     public FinishLink(String id, RemodelWizard wizard) {
         super(id, wizard);
     }
-    
+
     @Override
     public boolean isVisible() {
         return !getWizardModel().isNextAvailable();

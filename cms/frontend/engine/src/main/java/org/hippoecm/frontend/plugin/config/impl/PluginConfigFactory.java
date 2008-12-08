@@ -72,7 +72,7 @@ public class PluginConfigFactory implements IClusterable {
                             baseService = new JcrConfigService(new JcrNodeModel(applicationNode), clusterNode.getName());
                         } else {
                             log.error("Application configuration '" + applicationNode.getName()+ "' contains no plugin cluster");
-                            baseService = new JavaConfigService("console");                            
+                            baseService = new JavaConfigService("console");
                         }
                     } else {
                         baseService = new JavaConfigService("console");

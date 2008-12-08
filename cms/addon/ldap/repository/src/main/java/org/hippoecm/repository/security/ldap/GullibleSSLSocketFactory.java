@@ -41,7 +41,7 @@ public class GullibleSSLSocketFactory extends SSLSocketFactory {
 
     @SuppressWarnings("unused")
     final static String SVN_ID = "$Id$";
-    
+
     static class GullibleTrustManager implements X509TrustManager {
         GullibleTrustManager() {
         }

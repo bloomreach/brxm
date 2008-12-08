@@ -21,12 +21,12 @@ import java.util.regex.Pattern;
 public class JavascriptUtil {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: JavascriptUtil.java 12789 2008-07-29 11:44:21Z abogaart $";
-    
+
     public static final String SINGLE_QUOTE = "'";
-    
+
     private static Pattern numbers = Pattern.compile("\\d*");
     //private static Pattern functions = Pattern.compile("(\\w+)\\.(\\w+)");
-    
+
     public static String serialize2JS(String value) {
         if (value == null)
             return "null";

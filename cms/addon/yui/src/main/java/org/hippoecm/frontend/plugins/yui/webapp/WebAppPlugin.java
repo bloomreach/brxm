@@ -38,7 +38,7 @@ public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorSe
 
     public WebAppPlugin(IPluginContext context, IPluginConfig config) {
         super(new WebAppSettings(config.getPluginConfig("yui.config")));
-        
+
         this.config = config;
         context.registerService(this, config.getString(ID));
     }

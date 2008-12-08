@@ -79,17 +79,17 @@ public class PermissionsDialog extends AbstractDialog {
         add(rolesLabel);
         try {
             Node subject = nodeModel.getNode();
-            
+
             // FIXME: hardcoded workflowuser
             Session privSession = subject.getSession()
                     .impersonate(new SimpleCredentials("workflowuser", new char[] {}));
-            
+
             String userID = subject.getSession().getUserID();
             String[] allRoles = getRoles(privSession);
             String[] memberships = getMemberships(privSession, userID);
             String[] actions = getAllowedActions(subject, JCR_ACTIONS);
             String[] roles = getAllowedActions(subject, allRoles);
-            
+
             usernameLabel.setModel(new Model(userID));
             membershipsLabel.setModel(new Model(StringUtils.join(memberships, ", ")));
             allActionsLabel.setModel(new Model(StringUtils.join(JCR_ACTIONS, ", ")));
@@ -132,7 +132,7 @@ public class PermissionsDialog extends AbstractDialog {
             NodeIterator nodeIter = query.execute().getNodes();
             while (nodeIter.hasNext()) {
                 Node node = nodeIter.nextNode();
-                // FIXME query should not return the hippo:prototype node, or the 
+                // FIXME query should not return the hippo:prototype node, or the
                 // prototype node should not exists at all
                 if (node != null && !"hippo:prototype".equals(node.getName())) {
                     list.add(node.getName());

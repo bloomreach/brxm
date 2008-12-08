@@ -134,7 +134,7 @@ public class FolderWorkflowTest extends TestCase {
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:folder"));
     }
-    
+
     @Test
     public void testDirectory() throws RepositoryException, WorkflowException, RemoteException {
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
@@ -167,7 +167,7 @@ public class FolderWorkflowTest extends TestCase {
         assertTrue(node.hasNode(node.getName()));
         assertTrue(node.getNode(node.getName()).isNodeType("hippostd:document"));
     }
-    
+
     @Test
     public void testReorderFolder() throws RepositoryException, WorkflowException, RemoteException {
         Node node = root.addNode("f","hippostd:folder");
@@ -187,9 +187,9 @@ public class FolderWorkflowTest extends TestCase {
         assertEquals("zorro", it.nextNode().getName());
         assertEquals("foo", it.nextNode().getName());
         assertEquals("bar", it.nextNode().getName());
-        
+
         WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
-        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);        
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
 
         /*
          * aap      aap

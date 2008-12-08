@@ -41,7 +41,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
     List<IHeaderContributor> modules = new LinkedList<IHeaderContributor>();
     List<IHeaderContributor> templates = new LinkedList<IHeaderContributor>();
     List<String> onloads = new LinkedList<String>();
-    
+
     public void renderHead(IHeaderResponse response) {
         for (IHeaderContributor contrib: modules) {
             contrib.renderHead(response);
@@ -65,7 +65,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
     public void addTemplate(Class<?> clazz, String filename, Map<String, Object> parameters ) {
         templates.add(new StaticTemplate(clazz, filename, parameters));
     }
-    
+
     public void addTemplate(DynamicTemplate template) {
         templates.add(template);
     }
@@ -74,16 +74,16 @@ public class HeaderContributorHelper implements IHeaderContributor{
         if(!onloads.contains(string))
             onloads.add(string);
     }
-    
+
     private static class StaticTemplate implements IHeaderContributor {
         private static final long serialVersionUID = 1L;
-        
+
         private TextTemplateHeaderContributor headerContributor;
-        
+
         public StaticTemplate(PackagedTextTemplate template, Map<String, Object> parameters ) {
             headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new StaticReadOnlyModel(parameters));
         }
-        
+
         public StaticTemplate(Class<?> clazz, String filename, Map<String, Object> parameters ) {
             this(new PackagedTextTemplate(clazz, filename), parameters);
         }
@@ -92,11 +92,11 @@ public class HeaderContributorHelper implements IHeaderContributor{
             headerContributor.renderHead(response);
         }
     }
-    
+
     private static class  StaticReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
         private Map<String, Object> values  = new HashMap<String, Object>();
-        
+
         public StaticReadOnlyModel(Map<String, Object> values) {
             this.values.putAll(values);
         }
@@ -109,25 +109,25 @@ public class HeaderContributorHelper implements IHeaderContributor{
 
     private static abstract class DynamicTemplate implements IHeaderContributor {
         private static final long serialVersionUID = 1L;
-        
+
         private TextTemplateHeaderContributor headerContributor;
         private Map<String, Object> variables;
-        
+
         public DynamicTemplate(Class<?> clazz, String filename) {
             this(new PackagedTextTemplate(clazz, filename));
         }
-        
+
         public DynamicTemplate(PackagedTextTemplate template) {
             headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new DynamicReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
-                
+
                 @Override
                 Map<String, Object> getVariables() {
                     return DynamicTemplate.this.getVariables();
                 }
             });
         }
-        
+
         Map<String, Object> getVariables() {
             if(variables  == null) {
                 variables = new MiniMap(5);
@@ -142,21 +142,21 @@ public class HeaderContributorHelper implements IHeaderContributor{
             headerContributor.renderHead(response);
         }
     }
-    
+
     public static abstract class HippoTemplate extends DynamicTemplate {
         private static final long serialVersionUID = 1L;
-        
+
         private String moduleClass;
-        
+
         public HippoTemplate(PackagedTextTemplate template, String moduleClass) {
             super(template);
             this.moduleClass = moduleClass;
         }
-        
+
         public HippoTemplate(Class<?> clazz, String filename, String moduleClass) {
             this(new PackagedTextTemplate(clazz, filename), moduleClass);
         }
-        
+
         @Override
         Map<String, Object> getVariables() {
             Map<String, Object> vars = super.getVariables();
@@ -164,10 +164,10 @@ public class HeaderContributorHelper implements IHeaderContributor{
             vars.put("class", moduleClass);
             return vars;
         }
-        
+
         abstract public String getId();
     }
-    
+
     private static abstract class  DynamicReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
 
@@ -175,30 +175,30 @@ public class HeaderContributorHelper implements IHeaderContributor{
         public Object getObject() {
             return getVariables();
         }
-        
+
         abstract Map<String, Object> getVariables();
     }
 
     public static class JsConfig implements IClusterable {
         private static final long serialVersionUID = 1L;
-        
+
         private static final String SINGLE_QUOTE = "'";
         private static final String SINGLE_QUOTE_ESCAPED = "\\'";
         private MiniMap map;
-        
+
         public JsConfig() {
             this(10);
         }
-        
+
         public JsConfig(int initialSize) {
             map = new MiniMap(initialSize);
         }
-        
+
         private void store(String key, Object value) {
             ensureCapacity();
             map.put(key, value);
         }
-        
+
         private void ensureCapacity() {
             if(map.isFull()) {
                 MiniMap newMap = new MiniMap(map.size()*2);
@@ -220,7 +220,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         public void put(String key, int value) {
             store(key, Integer.toString(value));
         }
-        
+
         /**
          * Store double value
          * @param key
@@ -229,7 +229,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         public void put(String key, double value) {
             store(key, Double.toString(value));
         }
-        
+
         /**
          * Convenience method, auto wraps and escapes String value
          * @param key
@@ -240,7 +240,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         }
 
         /**
-         * 
+         *
          * @param key
          * @param value
          * @param escapeAndWrap
@@ -256,7 +256,7 @@ public class HeaderContributorHelper implements IHeaderContributor{
         public void put(String key, String[] values) {
             put(key, values, true);
         }
-        
+
         public void put(String key, String[] values, boolean escapeAndWrap) {
             StringBuilder buf = new StringBuilder();
             buf.append('[');
@@ -268,29 +268,29 @@ public class HeaderContributorHelper implements IHeaderContributor{
                     if(escapeAndWrap) {
                         buf.append(escapeAndWrap(values[i]));
                     } else {
-                        buf.append(values[i]);    
+                        buf.append(values[i]);
                     }
                 }
             }
             buf.append(']');
             store(key, buf.toString());
         }
-        
+
         public void put(String key, Map<String, String> map) {
             put(key, map, true);
         }
-        
+
         public void put(String key, Map<String, String> schemaMetaFields, boolean escapeAndWrap) {
             String value = null;
             if(schemaMetaFields != null) {
                 StringBuilder buf = new StringBuilder();
                 boolean first = true;
                 for(Entry<String, String> e : schemaMetaFields.entrySet()) {
-                    //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks 
+                    //TODO: A IPluginConfig map can be passed into this method, which will results in a jcr:primaryType key-value entry, which breaks
                     //the js-object and shouldn't be present. We could just try and ignore it by wrapping the js-object key's with quotes as well.
                     if(e.getKey().startsWith("jcr:"))
                         continue;
-                    if(first) { 
+                    if(first) {
                         first = false;
                     } else {
                         buf.append(',');
@@ -309,18 +309,18 @@ public class HeaderContributorHelper implements IHeaderContributor{
             }
             store(key, value);
         }
-        
+
         public void put(String key, JsConfig values) {
             store(key, values);
         }
-        
+
         private String escapeAndWrap(String value) {
             //TODO: backslash should be escaped as well
             if(value != null)
                 value = SINGLE_QUOTE + value.replace(SINGLE_QUOTE, SINGLE_QUOTE_ESCAPED) + SINGLE_QUOTE;
             return value;
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         public String toString() {

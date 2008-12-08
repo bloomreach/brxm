@@ -61,13 +61,13 @@ public abstract class AddNodeWidget extends AjaxEditableLabel {
         setModel(new Model(""));
         super.onEdit(target);
     }
-    
+
     @Override
     protected Component newLabel(MarkupContainer parent, String componentId, IModel model)
     {
         Button but = new Button(componentId, model){
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             public IConverter getConverter(Class type) {
                 IConverter c = AddNodeWidget.this.getConverter(type);

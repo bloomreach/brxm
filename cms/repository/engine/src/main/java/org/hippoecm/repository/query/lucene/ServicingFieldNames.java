@@ -57,5 +57,5 @@ public class ServicingFieldNames {
      * for this indexed node.
      */
     public static final String FACET_PROPERTIES_SET = "_:FACET_PROPERTIES_SET".intern();
-    
+
 }

@@ -42,15 +42,15 @@ public class ScrollBehavior extends AbstractDefaultAjaxBehavior {
 
         final Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("id", getComponent().getMarkupId());
-        
+
         IModel parametersModel = new AbstractReadOnlyModel() {
             private static final long serialVersionUID = 1L;
             @Override
             public Object getObject() {
                 return parameters;
-            }            
+            }
         };
-        
+
         TextTemplateHeaderContributor.forJavaScript(INIT_SCRIPT, parametersModel).renderHead(response);
         response.renderJavascriptReference(SCRIPT);
     }

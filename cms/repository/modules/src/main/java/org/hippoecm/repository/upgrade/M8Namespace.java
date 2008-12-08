@@ -50,7 +50,7 @@ public class M8Namespace extends M8 implements UpdaterModule {
                 }
                 String nodetype = node.getProperty("jcr:primaryType").getString();
                 if(isPrefix(nodetype)) {
-                    node.setProperty("jcr:primaryType", rename(nodetype));                    
+                    node.setProperty("jcr:primaryType", rename(nodetype));
                 }
                 if (node.hasProperty("jcr:mixinTypes")) {
                     Value[] mixintypes = node.getProperty("jcr:mixinTypes").getValues();
@@ -68,7 +68,7 @@ public class M8Namespace extends M8 implements UpdaterModule {
                 if (isPrefix(node.getName())) {
                     context.setName(node, rename(node.getName()));
                 }
-            }            
+            }
 
             @Override
             protected void entering(Property prop, int level) throws RepositoryException {

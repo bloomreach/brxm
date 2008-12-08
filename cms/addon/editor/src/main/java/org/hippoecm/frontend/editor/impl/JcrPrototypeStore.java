@@ -42,7 +42,7 @@ public class JcrPrototypeStore implements IDetachable {
     private static final Logger log = LoggerFactory.getLogger(JcrPrototypeStore.class);
 
     private Map<String, JcrNodeModel> prototypes;
-    
+
     public JcrNodeModel getPrototype(String name, boolean draft) {
         if ("rep:root".equals(name)) {
             // ignore the root node

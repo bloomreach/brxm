@@ -71,7 +71,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
         this.browseService = browse;
         searchBuilder = new SearchBuilder(config.getStringArray("search.paths"));
     }
-    
+
     @Override
     public void addHeaderContribution(IYuiContext context) {
         super.addHeaderContribution(context);

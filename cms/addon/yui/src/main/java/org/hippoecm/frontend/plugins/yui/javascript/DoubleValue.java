@@ -20,7 +20,7 @@ public class DoubleValue extends Value<Double> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public DoubleValue(Double value) {
         super(value);
     }

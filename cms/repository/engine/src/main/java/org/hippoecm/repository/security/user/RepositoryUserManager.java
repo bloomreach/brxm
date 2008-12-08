@@ -38,7 +38,7 @@ public class RepositoryUserManager extends AbstractUserManager {
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }
-    
+
     /**
      * Authenticate the user against the hash stored in the user node
      */
@@ -62,18 +62,18 @@ public class RepositoryUserManager extends AbstractUserManager {
     public String getNodeType() {
         return HippoNodeType.NT_USER;
     }
-    
+
     public boolean isCaseSensitive() {
         return true;
     }
-    
+
     /**
      * The backend is the repository, no need to sync anything.
      */
     public void syncUserInfo(String userId) {
         return;
     }
-    
+
     /**
      * Get the (optionally) hashed password of the user
      * @return the password hash

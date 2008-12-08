@@ -28,8 +28,8 @@ public interface Context {
     final static String SVN_ID = "$Id$";
 
     /**
-     * The content conversion method. This method is called for each 
-     * file and the method should parse the (xml) document and create 
+     * The content conversion method. This method is called for each
+     * file and the method should parse the (xml) document and create
      * a repository document as child of parent.
      * @param context
      * @param resource

@@ -111,7 +111,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                 } else {
                     throw new UnsupportedOperationException("No decorator available for " + object);
                 }
-                
+
             } catch(RepositoryException ex) {
                 return null;
             }

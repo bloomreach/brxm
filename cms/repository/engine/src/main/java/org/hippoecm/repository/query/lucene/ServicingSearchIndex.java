@@ -144,7 +144,7 @@ public class ServicingSearchIndex extends SearchIndex {
     {
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node,
                 getContext().getItemStateManager(), nsMappings, super.getTextExtractor());
-        
+
 
         indexer.setSupportHighlighting(super.getSupportHighlighting());
         // indexer.setIndexingConfiguration(indexingConfig);
@@ -156,68 +156,68 @@ public class ServicingSearchIndex extends SearchIndex {
         return doc;
     }
 
-	private void mergeHippoStandardAggregates(NodeState state, Document doc,IndexFormatVersion indexFormatVersion) {
-		
-		if(this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
-			ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration)this.getIndexingConfig();
-			
-			List childNodeEntries = state.getChildNodeEntries();
-			
-			List<NodeState> nodeStates = new ArrayList<NodeState>();
-			for(Iterator it = childNodeEntries.iterator(); it.hasNext();) {
-				Object o = it.next();
-				if(o instanceof ChildNodeEntry) {
-					ChildNodeEntry childNodeEntry = (ChildNodeEntry)o;
-					if(childNodeEntry.getId() instanceof HippoNodeId) {
-						// do not index virtual child nodes, ever
-						continue;
-					}
-					try {
-						NodeState nodeState = (NodeState)getContext().getItemStateManager().getItemState(childNodeEntry.getId());
-						Name nodeName = nodeState.getNodeTypeName();
-						Name[] aggr = servicingIndexingConfiguration.getHippoAggregates();
-						for(int i = 0; i < aggr.length; i++) {
-							if(nodeName.equals(aggr[i]) ) {
-								nodeStates.add(nodeState);
-								// leave after first aggr match
-								break;
-							}
-						}
-					} catch (NoSuchItemStateException e) {
-						log.warn("NoSuchItemStateException while building indexing  hippo standard aggregates for " +
-		                        "node with UUID: " + state.getNodeId().getUUID(), e);
-					} catch (ItemStateException e) {
-						log.warn("ItemStateException while building indexing  hippo standard aggregates for " +
-		                        "node with UUID: " + state.getNodeId().getUUID(), e);
-					}
-				}
-				
-				NodeState[]	aggregates = (NodeState[]) nodeStates.toArray(new NodeState[nodeStates.size()]);
-				for (int j = 0; j < aggregates.length; j++) {
-					Document aDoc;
-					try {
-						aDoc = createDocument(aggregates[j],
-						        getNamespaceMappings(),
-						        indexFormatVersion);
-			            // transfer fields to doc if there are any
-			            Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
-			            if (fulltextFields != null) {
-			                for (int k = 0; k < fulltextFields.length; k++) {
-			                    doc.add(fulltextFields[k]);
-			                }
-			                // Really important to keep here for updating the aggregate when a child is removed or updated
-			                doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
-			                        aggregates[j].getNodeId().getUUID().toString(),
-			                        Field.Store.NO,
-			                        Field.Index.NO_NORMS));
-			            }
-					} catch (RepositoryException e) {
-						log.warn("RepositoryException while building indexing  hippo standard aggregates for " +
-		                        "node with UUID: " + state.getNodeId().getUUID(), e);
-					}
-				}
-			}
-		}
-	}
-	
+    private void mergeHippoStandardAggregates(NodeState state, Document doc,IndexFormatVersion indexFormatVersion) {
+
+        if(this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
+            ServicingIndexingConfiguration servicingIndexingConfiguration = (ServicingIndexingConfiguration)this.getIndexingConfig();
+
+            List childNodeEntries = state.getChildNodeEntries();
+
+            List<NodeState> nodeStates = new ArrayList<NodeState>();
+            for(Iterator it = childNodeEntries.iterator(); it.hasNext();) {
+                Object o = it.next();
+                if(o instanceof ChildNodeEntry) {
+                    ChildNodeEntry childNodeEntry = (ChildNodeEntry)o;
+                    if(childNodeEntry.getId() instanceof HippoNodeId) {
+                        // do not index virtual child nodes, ever
+                        continue;
+                    }
+                    try {
+                        NodeState nodeState = (NodeState)getContext().getItemStateManager().getItemState(childNodeEntry.getId());
+                        Name nodeName = nodeState.getNodeTypeName();
+                        Name[] aggr = servicingIndexingConfiguration.getHippoAggregates();
+                        for(int i = 0; i < aggr.length; i++) {
+                            if(nodeName.equals(aggr[i]) ) {
+                                nodeStates.add(nodeState);
+                                // leave after first aggr match
+                                break;
+                            }
+                        }
+                    } catch (NoSuchItemStateException e) {
+                        log.warn("NoSuchItemStateException while building indexing  hippo standard aggregates for " +
+                                "node with UUID: " + state.getNodeId().getUUID(), e);
+                    } catch (ItemStateException e) {
+                        log.warn("ItemStateException while building indexing  hippo standard aggregates for " +
+                                "node with UUID: " + state.getNodeId().getUUID(), e);
+                    }
+                }
+
+                NodeState[] aggregates = (NodeState[]) nodeStates.toArray(new NodeState[nodeStates.size()]);
+                for (int j = 0; j < aggregates.length; j++) {
+                    Document aDoc;
+                    try {
+                        aDoc = createDocument(aggregates[j],
+                                getNamespaceMappings(),
+                                indexFormatVersion);
+                        // transfer fields to doc if there are any
+                        Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+                        if (fulltextFields != null) {
+                            for (int k = 0; k < fulltextFields.length; k++) {
+                                doc.add(fulltextFields[k]);
+                            }
+                            // Really important to keep here for updating the aggregate when a child is removed or updated
+                            doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID,
+                                    aggregates[j].getNodeId().getUUID().toString(),
+                                    Field.Store.NO,
+                                    Field.Index.NO_NORMS));
+                        }
+                    } catch (RepositoryException e) {
+                        log.warn("RepositoryException while building indexing  hippo standard aggregates for " +
+                                "node with UUID: " + state.getNodeId().getUUID(), e);
+                    }
+                }
+            }
+        }
+    }
+
 }

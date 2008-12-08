@@ -27,12 +27,12 @@ public class CssClassAppender extends AttributeModifier {
     public CssClassAppender(IModel model) {
         super("class", true, model);
     }
-    
+
     @Override
     protected String newValue(final String currentValue, final String replacementValue) {
         if(currentValue == null) {
-            if(replacementValue == null) 
-               return ""; 
+            if(replacementValue == null)
+               return "";
             return replacementValue;
         } else if(replacementValue == null)
             return currentValue;

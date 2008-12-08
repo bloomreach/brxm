@@ -142,7 +142,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        
+
         if (session instanceof XASession) {
             ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
         } else {
@@ -180,7 +180,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             }
         }
     }
-    
+
     public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
 

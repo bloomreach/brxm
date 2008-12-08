@@ -55,7 +55,7 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
             NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
             Node node = (absPath == null || "/".equals(absPath)) ? session.getRootNode()
-                                                                 : session.getRootNode().getNode(absPath.substring(1)); 
+                                                                 : session.getRootNode().getNode(absPath.substring(1));
             return getFactory().getRemoteNodeIterator(session.pendingChanges(node, nodeType, prune));
         } catch (NamespaceException ex) {
             throw getRepositoryException(ex);

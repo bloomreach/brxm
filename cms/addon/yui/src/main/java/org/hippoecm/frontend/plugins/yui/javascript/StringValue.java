@@ -25,7 +25,7 @@ public class StringValue extends Value<String> {
     private static final String SINGLE_QUOTE_ESCAPED = "\\'";
 
     private boolean escaped;
-    
+
     public StringValue(String value, boolean escaped) {
         super(value);
         this.escaped = escaped;
@@ -37,7 +37,7 @@ public class StringValue extends Value<String> {
       }
       return value;
     }
-    
+
     static String escapeString(String value) {
         //TODO: backslash should be escaped as well
         if (value != null)

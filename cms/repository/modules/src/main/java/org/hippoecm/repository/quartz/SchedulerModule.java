@@ -97,7 +97,7 @@ public class SchedulerModule implements DaemonModule
             super(factory.props);
             this.session = session;
         }
-    
+
         @Override
         public void initialize(Properties props) throws SchedulerException {
             this.props = new Properties(props);

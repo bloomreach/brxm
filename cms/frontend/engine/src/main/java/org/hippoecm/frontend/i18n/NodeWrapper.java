@@ -63,7 +63,7 @@ public class NodeWrapper implements ITranslation<IModel> {
         try {
             Property property = node.getProperty("hippo:message");
             Value value = property.getValue();
-            
+
             return new JcrPropertyValueModel(-1, value, new JcrPropertyModel(property));
         } catch(RepositoryException ex) {
             log.error(ex.getMessage());

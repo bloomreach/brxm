@@ -56,9 +56,9 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         context.registerService(this, IJcrService.class.getName());
-        
+
         if (!(getModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("CurrentActivityPlugin needs an IDataProvider as Plugin model.");
         }

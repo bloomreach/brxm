@@ -167,7 +167,7 @@ class XinhaEditorBehavior extends AbstractHeaderContributor {
                 sb.append("  new_editors   = Xinha.makeEditors(new_editors, xinha_config);\n");
                 for (AbstractXinhaPlugin.Configuration config : configurations) {
                     sb.append("  if(new_editors.").append(config.getName()).append(" != undefined) {\n");
-                    
+
 
                     String prefix = "    new_editors." + config.getName() + ".config.";
                     appendProperties(sb, prefix, config.getProperties());

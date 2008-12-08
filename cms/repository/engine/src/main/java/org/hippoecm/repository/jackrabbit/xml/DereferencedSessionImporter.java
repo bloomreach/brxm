@@ -48,7 +48,7 @@ public class DereferencedSessionImporter implements Importer {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static Logger log = LoggerFactory.getLogger(DereferencedSessionImporter.class);
 
     private final SessionImpl session;
@@ -59,7 +59,7 @@ public class DereferencedSessionImporter implements Importer {
     private final String importPath;
 
     private boolean isRootReferenceable;
-    
+
     private long startTime;
 
     /** Keep a list of nodeId's that need revisiting for dereferencing */
@@ -90,7 +90,7 @@ public class DereferencedSessionImporter implements Importer {
         } catch (RepositoryException e) {
             // guess not..
         }
-        
+
         parents = new Stack<NodeImpl>();
         parents.push(importTargetNode);
         importPath = importTargetNode.safeGetJCRPath();
@@ -379,13 +379,13 @@ public class DereferencedSessionImporter implements Importer {
         for (Iterator<Map.Entry<NodeId, List<Reference>>> it = derefNodes.entrySet().iterator(); it.hasNext();) {
             Map.Entry<NodeId, List<Reference>> nodeRef = it.next();
             NodeImpl node = session.getNodeById(nodeRef.getKey());
-            
+
             // loop over all the references for this node
             List<Reference> references = nodeRef.getValue();
             for(Reference ref : references) {
                 ref.setBasePath(importPath);
                 ref.resolveUUIDs(session);
-                
+
                 // set the references
                 String[] uuids = ref.getUUIDs();
                 String[] paths = ref.getPaths();
@@ -402,7 +402,7 @@ public class DereferencedSessionImporter implements Importer {
                         vals.add(session.getValueFactory().createValue(uuids[i], PropertyType.REFERENCE));
                     }
                 }
-                
+
                 // set property
                 if (ref.isMulti()) {
                     node.setProperty(ref.getName(), vals.toArray(new Value[vals.size()]));
@@ -413,7 +413,7 @@ public class DereferencedSessionImporter implements Importer {
                 }
             }
         }
-        
+
         // done, cleanup
         derefNodes.clear();
         if (log.isDebugEnabled()) {

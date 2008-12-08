@@ -18,13 +18,13 @@ package org.hippoecm.repository.api;
 /**
  * WARNING: this api is not yet stable!
  * The possible actions specified by the <code>referenceBehavior</code>
- * parameter in {@link HippoSession#importDereferencedXML}, and 
+ * parameter in {@link HippoSession#importDereferencedXML}, and
  * {@link HippoSession#getDereferencedImportContentHandler}.
  */
 
 public interface ImportReferenceBehavior {
     final static String SVN_ID = "$Id$";
-    
+
     public static final int IMPORT_REFERENCE_NOT_FOUND_REMOVE = 0;
     public static final int IMPORT_REFERENCE_NOT_FOUND_TO_ROOT = 1;
     public static final int IMPORT_REFERENCE_NOT_FOUND_THROW = 2;

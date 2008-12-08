@@ -20,7 +20,7 @@ public class LdapSearch {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     // the properties don't have to be exposed through the api because they are ldap specific
     public final static String PROPERTY_BASE_DN = "hippoldap:basedn";
     public final static String PROPERTY_FILTER = "hippoldap:filter";
@@ -31,7 +31,7 @@ public class LdapSearch {
     // mandatory
     private final String baseDn;
     private final String nameAttr;
-    
+
     // defaults
     private String filter = "(objectclass=*)";
     private String memberAttr = "memberUid";

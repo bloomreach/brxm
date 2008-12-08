@@ -82,7 +82,7 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
                     enableButtons();
                 }
             });
-            
+
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
         } else if (prototypes.size() == 1) {

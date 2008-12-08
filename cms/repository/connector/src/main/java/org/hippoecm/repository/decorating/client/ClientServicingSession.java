@@ -88,7 +88,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
             throw new RemoteRepositoryException(ex);
         }
     }
-    
+
     public void importDereferencedXML(String path, InputStream xml, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,

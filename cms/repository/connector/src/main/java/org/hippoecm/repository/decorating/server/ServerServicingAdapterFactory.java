@@ -47,7 +47,7 @@ import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     public ServerServicingAdapterFactory() {
     }
 
@@ -55,7 +55,7 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     public RemoteRepository getRemoteRepository(Repository repository) throws RemoteException {
         return new ServerRepository(repository, this);
     }
- 
+
     @Override
     public RemoteSession getRemoteSession(Session session) throws RemoteException {
         if (session instanceof XASession) {

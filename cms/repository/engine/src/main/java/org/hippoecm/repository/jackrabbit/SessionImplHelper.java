@@ -127,10 +127,10 @@ abstract class SessionImplHelper {
     }
 
     /**
-     * Before this method the JackRabbiit Session.checkPermission is called. 
-     * That function checks the validity of absPath and the default JCR permissions: 
-     * read, remove, add_node and set_property. So we don't have to check for those 
-     * things again here. 
+     * Before this method the JackRabbiit Session.checkPermission is called.
+     * That function checks the validity of absPath and the default JCR permissions:
+     * read, remove, add_node and set_property. So we don't have to check for those
+     * things again here.
      * @param absPath
      * @param actions
      * @throws AccessControlException
@@ -139,7 +139,7 @@ abstract class SessionImplHelper {
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
         AccessManager accessMgr = sessionImpl.getAccessManager();
         if(accessMgr instanceof HippoAccessManager) {
-            
+
             // build the set of actions to be checked
             String[] strings = actions.split(",");
             HashSet<String> privileges = new HashSet<String>();
@@ -153,7 +153,7 @@ abstract class SessionImplHelper {
                     privileges.add(strings[i]);
                 }
             }
-            if (privileges.size() > 0) {                
+            if (privileges.size() > 0) {
                 if (!((HippoAccessManager) accessMgr).hasPrivileges(absPath, privileges.toArray(new String[privileges.size()])))
                     throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
             }
@@ -291,7 +291,7 @@ abstract class SessionImplHelper {
             }
         };
     }
-    
+
     /**
      * {@inheritDoc}
      */

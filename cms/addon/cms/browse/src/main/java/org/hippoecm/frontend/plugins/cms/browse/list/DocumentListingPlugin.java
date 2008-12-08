@@ -85,7 +85,7 @@ public class DocumentListingPlugin extends AbstractListingPlugin {
 
     class DraggebleListDataTable extends ListDataTable {
         private static final long serialVersionUID = 1L;
-        
+
         public DraggebleListDataTable(String id, TableDefinition tableDefinition, ISortableDataProvider dataProvider,
                 TableSelectionListener selectionListener, int rowsPerPage, boolean triState) {
             super(id, tableDefinition, dataProvider, selectionListener, rowsPerPage, triState);

@@ -64,7 +64,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             setContent(dialog.getComponent());
             setTitle(dialog.getTitle());
             setWindowClosedCallback(new Callback(dialog));
-    
+
             IRequestTarget target = RequestCycle.get().getRequestTarget();
             if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
                 show((AjaxRequestTarget) target);

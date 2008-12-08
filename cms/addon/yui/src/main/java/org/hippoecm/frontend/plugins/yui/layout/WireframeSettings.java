@@ -107,12 +107,12 @@ public class WireframeSettings extends Settings {
 
         @Override
         public Value<UnitSettings[]> newValue() {
-            return new SettingsArrayValue<UnitSettings>( new UnitSettings[] { 
+            return new SettingsArrayValue<UnitSettings>( new UnitSettings[] {
                 new UnitSettings(UnitSettings.TOP),
-                new UnitSettings(UnitSettings.BOTTOM), 
+                new UnitSettings(UnitSettings.BOTTOM),
                 new UnitSettings(UnitSettings.LEFT),
-                new UnitSettings(UnitSettings.RIGHT), 
-                new UnitSettings(UnitSettings.CENTER) 
+                new UnitSettings(UnitSettings.RIGHT),
+                new UnitSettings(UnitSettings.CENTER)
             });
         }
 

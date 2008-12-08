@@ -101,7 +101,7 @@ public class LdapUserManager extends AbstractUserManager {
     }
 
     /**
-     * Authenticate against the ldap server. First try to find the dn of the user 
+     * Authenticate against the ldap server. First try to find the dn of the user
      * with the system user and then try to bind to the ldap server with the password
      * as the dn.
      */
@@ -149,7 +149,7 @@ public class LdapUserManager extends AbstractUserManager {
         Node user = null;
         try {
             user = getUser(userId);
-            
+
             if (user != null) {
                 if (!isManagerForUser(user)) {
                     log.warn("Unable to sync user info. User '{}' not not managed by provider: {} ", userId,
@@ -193,7 +193,7 @@ public class LdapUserManager extends AbstractUserManager {
 
     /**
      * Synchronize all ldap users with the repository. This method can take a long time if
-     * there are a lot of users in the ldap and should run in it's own thread. It is called 
+     * there are a lot of users in the ldap and should run in it's own thread. It is called
      * from the LdapSecurityProvider.sync method.
      * The saves to the repository are done in batches of SAVE_INTERVAL size.
      */
@@ -225,7 +225,7 @@ public class LdapUserManager extends AbstractUserManager {
                             try {
                                 userId = (String) uidAttr.get();
                                 user = getUser(userId);
-                                
+
                                 // create the user if it doesn't exists
                                 if (user == null) {
                                     user = createUser(userId);
@@ -238,7 +238,7 @@ public class LdapUserManager extends AbstractUserManager {
                                     total++;
                                     syncMappingInfo(user, attrs);
                                 }
-                                
+
                             } catch (RepositoryException e) {
                                 log.warn("Unable to update user: " + userId + " by provider: " + providerId, e);
                             }

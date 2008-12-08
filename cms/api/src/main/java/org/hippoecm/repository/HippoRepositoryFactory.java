@@ -148,7 +148,7 @@ public class HippoRepositoryFactory {
                 }
             }
         }
- 
+
         if(location.startsWith("vm:")) {
             try {
                 defaultLocation = location;

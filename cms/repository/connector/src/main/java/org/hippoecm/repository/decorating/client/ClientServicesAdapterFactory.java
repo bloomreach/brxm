@@ -51,7 +51,7 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
     public Repository getRepository(org.apache.jackrabbit.rmi.remote.RemoteRepository remote) {
         return new ClientRepository((RemoteRepository)remote, this);
     }
-    
+
     @Override
     public Session getSession(Repository repository, RemoteSession remote) {
         if (remote instanceof RemoteXASession) {

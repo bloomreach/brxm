@@ -59,7 +59,7 @@ public class WorkflowDialog extends AbstractDialog {
             Session session = subject.getSession();
             WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
             Node categories = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
-                                                            
+
             for(NodeIterator iter = categories.getNodes(); iter.hasNext(); ) {
                 Node category = iter.nextNode();
                 WorkflowDescriptor descriptor = workflowManager.getWorkflowDescriptor(category.getName(), subject);

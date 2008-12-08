@@ -159,15 +159,15 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertEquals("english", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
     }
-    
+
     @Test
     public void testSimpleMirrorAfterPreferSingle() throws Exception {
         /**
          * After a prefer-single mode, a facetselects below this prefer single should inherit the prefer-single (thus correct ordening).
-         * 
+         *
          * This is a test for this scenario
          */
-        
+
         HippoNode n = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
         assertEquals("dutch", n.getProperty("language").getString());
         assertNotNull(n.getCanonicalNode());
@@ -183,5 +183,5 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString();
         assertEquals("dutch", n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString());
     }
-    
+
 }

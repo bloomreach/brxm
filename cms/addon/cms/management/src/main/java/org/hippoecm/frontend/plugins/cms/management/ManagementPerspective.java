@@ -43,7 +43,7 @@ public class ManagementPerspective extends Perspective {
         } else {
             log.error("no model service specified");
         }
-        
+
     }
 
 }

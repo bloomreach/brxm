@@ -321,7 +321,7 @@ class InternalFrozenNodeImpl extends InternalFreezeImpl implements InternalFroze
         if(src.isNodeType(HippoNodeType.NT_FACETSELECT) || src.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
             return node;
         }
-        
+
         // add the frozen children and histories
         NodeIterator niter = src.getNodes();
         while (niter.hasNext()) {

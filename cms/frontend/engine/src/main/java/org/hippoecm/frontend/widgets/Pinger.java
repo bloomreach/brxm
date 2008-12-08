@@ -33,10 +33,10 @@ public class Pinger extends Label {
         //Shortest possible timeout value in web.xml is 1 minute.
         add(new PingBehavior(Duration.seconds(59)));
     }
-       
+
     private class PingBehavior extends AbstractAjaxTimerBehavior {
         private static final long serialVersionUID = 1L;
-        
+
         public PingBehavior(Duration duration) {
             super(duration);
         }

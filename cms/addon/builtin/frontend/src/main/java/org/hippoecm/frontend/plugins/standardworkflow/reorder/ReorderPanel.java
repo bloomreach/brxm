@@ -170,7 +170,7 @@ public class ReorderPanel extends Panel implements TableSelectionListener {
             ((AjaxRequestTarget) target).addComponent(this);
         }
     }
-    
+
     public List<String> getMapping() {
         return dataProvider.getMapping();
     }

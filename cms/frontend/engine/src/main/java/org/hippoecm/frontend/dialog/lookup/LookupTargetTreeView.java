@@ -52,7 +52,7 @@ class LookupTargetTreeView extends JcrTree {
     TreeNode getSelectedNode() {
         return selectedNode;
     }
-        
+
     void setSelectedNode(JcrNodeModel selectedNode, JcrTreeModel treeModel) {
         List<JcrNodeModel> parents = new ArrayList<JcrNodeModel>();
         JcrNodeModel parent = selectedNode.getParentModel();
@@ -67,7 +67,7 @@ class LookupTargetTreeView extends JcrTree {
             for (JcrNodeModel ancestor : parents) {
                 treeState.expandNode(treeModel.lookup(ancestor));
             }
-            
+
             AbstractTreeNode treeNode= treeModel.lookup(selectedNode.getParentModel());
             treeState.selectNode(treeNode, true);
             this.selectedNode = treeNode;

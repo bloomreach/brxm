@@ -47,5 +47,5 @@ public class StringMapSetting extends Setting<Map<String, String>> {
     public void setFromString(String value, Settings settings) {
         set(new ValueMap(value), settings);
     }
-    
+
 }

@@ -39,7 +39,7 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
         super(service, settings);
         this.settings = settings;
     }
-    
+
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "autocompletemanager");

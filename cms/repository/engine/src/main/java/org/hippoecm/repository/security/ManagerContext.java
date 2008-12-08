@@ -44,7 +44,7 @@ public class ManagerContext {
      */
     private final String providerPath;
 
-    
+
     /**
      * The target path to expose information for this context eg. hippo:users, hippo:groups, etc.
      */
@@ -78,14 +78,14 @@ public class ManagerContext {
     public String getProviderId() {
         return providerId;
     }
-    
+
     /**
      * Get the path of the provider that created the context.
      */
     public String getProviderPath() {
         return providerPath;
     }
-    
+
     /**
      * Get the path to expose information for this context eg. hippo:users, hippo:groups, etc.
      * @return

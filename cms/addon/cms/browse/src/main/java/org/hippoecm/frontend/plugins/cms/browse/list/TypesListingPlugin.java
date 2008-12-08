@@ -42,17 +42,17 @@ public class TypesListingPlugin extends AbstractListingPlugin {
     public TypesListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
-    
+
     @Override
     protected TableDefinition getTableDefinition() {
         List<ListColumn> columns = new ArrayList<ListColumn>();
-        
+
         ListColumn column = new ListColumn(new Model(""), "icon");
         column.setComparator(new TypeComparator());
         column.setRenderer(new EmptyRenderer());
         column.setAttributeModifier(new IconAttributeModifier());
         columns.add(column);
-        
+
         column = new ListColumn(new StringResourceModel("typeslisting-name", this, null), "name");
         column.setComparator(new NameComparator());
         columns.add(column);
@@ -65,7 +65,7 @@ public class TypesListingPlugin extends AbstractListingPlugin {
             }
         });
         columns.add(column);
-        
+
         return new TableDefinition(columns);
     }
 

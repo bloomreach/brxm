@@ -66,7 +66,7 @@ public class ClusterConfigDecorator extends JavaClusterConfig {
                     }
                     return obj;
                 }
-                
+
                 @Override
                 public Object put(Object key, Object value) {
                     return conf.put(key, value);

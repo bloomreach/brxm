@@ -59,7 +59,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * QName Hippo Path qualified name
      */
     private Name hippoPath;
-    
+
     /**
      * QName's of all the child node that should be aggregated
      */
@@ -73,7 +73,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         NodeList indexingConfigs = config.getChildNodes();
 
         List<Name> idxHippoAggregates = new ArrayList<Name>();
-        
+
         for (int i = 0; i < indexingConfigs.getLength(); i++) {
             Node configNode = indexingConfigs.item(i);
             if (configNode.getNodeName().equals("facets")) {
@@ -102,10 +102,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
             }
         }
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
-        
+
         hippoAggregates = (Name[]) idxHippoAggregates.toArray(
                 new Name[idxHippoAggregates.size()]);
-        
+
     }
 
     public boolean isFacet(Name propertyName) {
@@ -157,8 +157,8 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return content.toString();
     }
 
-	public Name[] getHippoAggregates() {
-		return hippoAggregates;
-	}
+    public Name[] getHippoAggregates() {
+        return hippoAggregates;
+    }
 
 }

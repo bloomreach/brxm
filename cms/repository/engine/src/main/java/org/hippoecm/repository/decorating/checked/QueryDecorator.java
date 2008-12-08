@@ -53,7 +53,7 @@ public class QueryDecorator extends AbstractDecorator implements HippoQuery {
     public Session getSession() throws RepositoryException {
         return session;
     }
-    
+
     /**
      * @inheritDoc
      */

@@ -32,7 +32,7 @@ public class XinhaPlugin extends AbstractXinhaPlugin {
     public XinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
-    
+
     protected JcrPropertyValueModel getValueModel() {
         return (JcrPropertyValueModel) getModel();
     }

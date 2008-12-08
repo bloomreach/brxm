@@ -18,7 +18,7 @@ package org.hippoecm.frontend;
 public class InvalidLoginPage extends Home {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     public InvalidLoginPage() {
         super();
         info("Incorrect username or password. Please try again.");

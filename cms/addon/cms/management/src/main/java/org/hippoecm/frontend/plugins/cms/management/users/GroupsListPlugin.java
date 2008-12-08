@@ -128,7 +128,7 @@ public class GroupsListPlugin extends AbstractManagementListingPlugin {
         }
         return node;
     }
-    
+
     private class UserDropBehavior extends DropBehavior {
         private static final long serialVersionUID = 1L;
 

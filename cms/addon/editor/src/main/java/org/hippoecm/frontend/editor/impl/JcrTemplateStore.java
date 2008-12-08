@@ -46,7 +46,7 @@ public class JcrTemplateStore implements IPluginConfigService {
     public void setId(String id) {
         serviceId = id;
     }
-    
+
     public IClusterConfig getCluster(String key) {
         IClusterConfig cluster;
         String type = key;

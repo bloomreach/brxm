@@ -41,7 +41,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    
+
     Node hipDocDomain;
     Node readDomain;
     Node writeDomain;
@@ -70,7 +70,7 @@ public class FacetedAuthorizationTest extends TestCase {
     public static final String SET_PROPERTY_ACTION = "set_property";
     public static final String[] JCR_ACTIONS = new String[] { READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
         SET_PROPERTY_ACTION };
-    
+
     public void cleanup() throws RepositoryException  {
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
@@ -341,7 +341,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testSubWritesAllowed() throws RepositoryException {
         Node node;
-        
+
         userSession.checkPermission(testData.getPath() + "/" + "readdoc0/subwrite/test" , SET_PROPERTY_ACTION);
         node = testData.getNode("readdoc0/subwrite");
         node.setProperty("test", "allowed");
@@ -610,7 +610,7 @@ public class FacetedAuthorizationTest extends TestCase {
         userSession.checkPermission(testData.getPath() + "/writedoc0/subwrite", "jcrwrite");
         userSession.checkPermission(testData.getPath() + "/nothing0/subwrite", "jcrwrite");
     }
-    
+
     @Test
     public void testCheckPermissionNotRoleJcrRead() throws RepositoryException {
         try {
@@ -669,7 +669,7 @@ public class FacetedAuthorizationTest extends TestCase {
         }
     }
 
-    
+
     @Test
     public void testCheckPermissionNotRoleJcrWrite() throws RepositoryException {
         try {

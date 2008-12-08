@@ -49,7 +49,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
                 WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + nodeAbsPath);
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
-            
+
             attributes = new HashMap<String, String>();
             PropertyIterator properties = node.getProperties();
             while (properties.hasNext()) {

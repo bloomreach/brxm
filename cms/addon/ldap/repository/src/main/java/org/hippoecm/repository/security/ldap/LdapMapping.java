@@ -16,7 +16,7 @@
 package org.hippoecm.repository.security.ldap;
 
 /**
- * Class for mapping ldap attributes to repository attributes, based on a 
+ * Class for mapping ldap attributes to repository attributes, based on a
  * mapping definition node.
  */
 public class LdapMapping {

@@ -173,7 +173,7 @@ public class TemplateEditorActions implements EditmodelWorkflow, InternalWorkflo
         }
         return null;
     }
-    
+
     static void checkoutType(Node subject) throws RepositoryException {
         // copy nodetype
 

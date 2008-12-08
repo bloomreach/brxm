@@ -62,7 +62,7 @@ public class WorkspaceDecorator extends AbstractDecorator implements HippoWorksp
     protected void repair(Session upstreamSession) throws RepositoryException {
         workspace = (HippoWorkspace) upstreamSession.getWorkspace();
     }
-    
+
     public Session getSession() {
         return session;
     }

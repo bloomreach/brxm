@@ -60,7 +60,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
 
     @Override
     public NodeState populate(NodeState state) throws RepositoryException {
-        
+
         String[] docbase = getProperty(state.getNodeId(), docbaseName);
         String[] newFacets = getProperty(state.getNodeId(), facetsName);
         String[] newValues = getProperty(state.getNodeId(), valuesName);
@@ -85,7 +85,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
              * a facetselect below a facetselect. We need to take into account the view of the parent select.
              * In principle, a state of type HippoNodeId always has a parent. To be sure, check for null
              */
-            
+
             if (state.getParentId()!=null && state.getParentId() instanceof ViewNodeId) {
                ViewNodeId viewNodeId = ((ViewNodeId)state.getParentId());
                if(viewNodeId.view != null) {
@@ -136,7 +136,7 @@ public class FacetSelectProvider extends HippoVirtualProvider
                 for(int i = 0; i < childrenArray.length && (i == 0 || !singledView) ; i ++) {
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
-                
+
             } else {
                 for(Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext(); ) {
                     NodeState.ChildNodeEntry entry = (NodeState.ChildNodeEntry) iter.next();

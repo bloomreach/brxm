@@ -20,7 +20,7 @@ public class IntValue extends Value<Integer> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public IntValue(Integer value) {
         super(value);
     }

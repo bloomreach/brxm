@@ -65,7 +65,7 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     protected void repair(Session upstreamSession) throws RepositoryException {
         this.item = upstreamSession.getItem(originalPath);
     }
-    
+
     /**
      * Returns the underlying item that <code>this</code>
      * <code>ItemDecorator</code> decorates.

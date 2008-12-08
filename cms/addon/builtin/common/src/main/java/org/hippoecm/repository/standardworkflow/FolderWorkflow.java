@@ -30,7 +30,7 @@ import org.hippoecm.repository.api.WorkflowException;
 
 /**
  * FolderWorkflow API
- * This interface defines the 
+ * This interface defines the
  * FIXME: complete javadoc and add example usage
  *
  */
@@ -38,7 +38,7 @@ public interface FolderWorkflow extends Workflow {
     final static String SVN_ID = "$Id$";
 
     /**
-     * 
+     *
      * @return
      * @throws WorkflowException
      * @throws MappingException
@@ -47,9 +47,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public Map<String,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param category
      * @param type
      * @param relPath the relative path from the parent folder (including the index number)
@@ -61,7 +61,7 @@ public interface FolderWorkflow extends Workflow {
      */
     public String add(String category, String type, String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
      * FIXME: document the argument map
      * @param category
@@ -75,9 +75,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public String add(String category, String type, Map<String,String> arguments)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param relPath the relative path from the parent folder (including the index number)
      * @throws WorkflowException
      * @throws MappingException
@@ -86,9 +86,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public void archive(String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param relPath the relative path from the parent folder (including the index number)
      * @throws WorkflowException
      * @throws MappingException
@@ -97,9 +97,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public void delete(String relPath)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param offspring
      * @throws WorkflowException
      * @throws MappingException
@@ -108,9 +108,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public void delete(Document offspring)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param relPath the relative path from the parent folder (including the index number)
      * @param newName the new name excluding the index number
      * @throws WorkflowException
@@ -120,9 +120,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public void rename(String relPath, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param offspring
      * @param newName the new name excluding the index number
      * @throws WorkflowException
@@ -132,9 +132,9 @@ public interface FolderWorkflow extends Workflow {
      */
     public void rename(Document offspring, String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
-    
+
     /**
-     * 
+     *
      * @param newOrder
      * @throws WorkflowException
      * @throws MappingException

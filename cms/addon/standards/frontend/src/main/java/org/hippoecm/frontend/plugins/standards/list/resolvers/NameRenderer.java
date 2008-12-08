@@ -28,7 +28,7 @@ public class NameRenderer extends AbstractNodeRenderer {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     @Override
     protected Component getViewer(String id, HippoNode node) throws RepositoryException {
         return new Label(id, new NodeTranslator(new JcrNodeModel(node)).getNodeName());

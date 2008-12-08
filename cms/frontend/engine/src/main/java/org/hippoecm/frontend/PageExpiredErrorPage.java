@@ -21,7 +21,7 @@ public class PageExpiredErrorPage extends Home {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    
+
     public PageExpiredErrorPage() {
         super();
         info(new StringResourceModel("session-expired", this, null).getString());

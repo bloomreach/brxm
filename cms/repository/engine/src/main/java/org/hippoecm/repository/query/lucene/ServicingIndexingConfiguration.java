@@ -30,13 +30,13 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration{
      *         otherwise.
      */
     boolean isFacet(Name propertyName);
-    
+
     /**
      * Returns all the QName's of the child nodes that must be aggregated
      *
      * @return all the QName's of the child nodes that must be aggregated
      */
-    
+
     Name[] getHippoAggregates();
 
     /**

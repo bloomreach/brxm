@@ -58,11 +58,11 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
     private static boolean cacheEnabled = true;
     private static YuiDependencyResolver dependencyResolver = null;
 
-    
+
     private static final List<String> debugModules = Collections.synchronizedList(new ArrayList<String>());
 
     private List<IHeaderContributor> contributors = new ArrayList<IHeaderContributor>();
-    
+
     //TODO: use thread_local for cache to implement a more decent mechanism than this
 
     public YuiHeaderContributor() {
@@ -131,7 +131,7 @@ public class YuiHeaderContributor extends AbstractHeaderContributor {
             cacheEnabled = Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
             dependencyResolver = new YuiDependencyResolver(cacheEnabled);
         }
-        
+
         if (cacheEnabled && modulesLoaded.containsKey(dependency.getModule())) {
             return modulesLoaded.get(dependency.getModule());
         }

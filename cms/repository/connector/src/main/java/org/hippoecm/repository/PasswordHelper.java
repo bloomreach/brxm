@@ -108,7 +108,7 @@ public class PasswordHelper {
      * From a byte[] returns a base 64 representation
      * @param data byte[]
      * @return String
-     * @throws IOException 
+     * @throws IOException
      * @throws IOException
      */
     public static String byteToBase64(byte[] data) throws IOException {
@@ -138,7 +138,7 @@ public class PasswordHelper {
      * @param salt
      * @return String the base64 digest string
      * @throws NoSuchAlgorithmException
-     * @throws IOException 
+     * @throws IOException
      */
     public static String getDigest(String alogrithm, char[] plainText, byte[] salt) throws NoSuchAlgorithmException,
             IOException {
@@ -156,9 +156,9 @@ public class PasswordHelper {
         if (salt != null && salt.length > 0) {
             md.update(salt);
         }
-        
+
         digest = md.digest(new String(plainText).getBytes(FIXED_ENCODING));
-        
+
         // iterating
         for (int i = 0; i < DIGEST_ITERATIONS; i++) {
             md.reset();
@@ -177,7 +177,7 @@ public class PasswordHelper {
      * @param salt
      * @return
      * @throws NoSuchAlgorithmException
-     * @throws IOException 
+     * @throws IOException
      */
     public static String getHash(char[] plainText) throws NoSuchAlgorithmException, IOException {
 
@@ -196,7 +196,7 @@ public class PasswordHelper {
      * @param salt
      * @return String
      * @throws NoSuchAlgorithmException
-     * @throws IOException 
+     * @throws IOException
      */
     public static String buildHashString(String algorithm, char[] plainText, byte[] salt)
             throws NoSuchAlgorithmException, IOException {
@@ -213,12 +213,12 @@ public class PasswordHelper {
      */
     synchronized public static boolean checkHash(char[] password, String hash) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
-        
+
         // no hash or empty hash doesn't match anything
         if (hash == null || "".equals(hash)) {
             return false;
         }
-        
+
         // don't allow empty passwords
         if (password == null || password.length == 0) {
             throw new IllegalArgumentException("Empty passwords are not allowed");

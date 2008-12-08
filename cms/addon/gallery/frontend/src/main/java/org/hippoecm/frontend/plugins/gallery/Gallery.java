@@ -21,6 +21,6 @@ import org.slf4j.LoggerFactory;
 public interface Gallery {
     final static String SVN_ID = "$Id$";
 
-    public static final Logger log = LoggerFactory.getLogger(Gallery.class);    
+    public static final Logger log = LoggerFactory.getLogger(Gallery.class);
     public static final int DEFAULT_THUMBNAIL_SIZE = 60;
 }

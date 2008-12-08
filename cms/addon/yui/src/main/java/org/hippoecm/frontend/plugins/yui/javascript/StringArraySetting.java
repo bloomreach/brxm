@@ -26,7 +26,7 @@ public class StringArraySetting extends Setting<String[]> {
     private static final long serialVersionUID = 1L;
 
     private boolean escaped;
-    
+
     public StringArraySetting(String javascriptKey, String... defaultValue) {
         this(javascriptKey, true, defaultValue);
     }
@@ -35,7 +35,7 @@ public class StringArraySetting extends Setting<String[]> {
         super(javascriptKey, defaultValue);
         this.escaped = escaped;
     }
-    
+
     public Value<String[]> newValue() {
         return new StringArrayValue(defaultValue, escaped);
     }

@@ -24,14 +24,14 @@ import org.apache.wicket.model.Model;
 public abstract class RemoveButtonPanel extends Panel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     public RemoveButtonPanel() {
         super("extraButtons");
         AjaxButton button = new AjaxButton("removeButton"){
             private static final long serialVersionUID = 1L;
-            
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 RemoveButtonPanel.this.remove(target, form);
@@ -40,9 +40,9 @@ public abstract class RemoveButtonPanel extends Panel {
         button.setModel(new Model(getButtonValue()));
         add(button);
     }
-    
+
     abstract String getButtonValue();
     abstract void remove(AjaxRequestTarget target, Form form);
-    
-    
+
+
 }

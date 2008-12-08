@@ -52,7 +52,7 @@ public class ServerHierarchyResolver extends ServerObject implements RemoteHiera
                 node = session.getRootNode();
             } else {
                 node = session.getRootNode().getNode(ancestor.substring(1));
-            } 
+            }
             RemoteHierarchyResult result = new RemoteHierarchyResult();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             Item item = resolver.getItem(node, path, isProperty, last);

@@ -29,7 +29,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget {
 
     public TextAreaWidget(String id, IModel model) {
         super(id, model);
-        addFormField(new TextArea("widget", this.getModel()) {        
+        addFormField(new TextArea("widget", this.getModel()) {
              private static final long serialVersionUID = 1L;
 
              @Override
@@ -55,7 +55,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget {
     public void setCols(String cols) {
         this.cols=cols;
     }
-    
+
     public String getCols() {
         return cols;
     }

@@ -80,7 +80,7 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         } catch (NoSuchObjectException ex) {
             log.info("Error during rmi shutdown for address: " + bindingAddress, ex);
         }
-        
+
         // shutdown registry
         if (registryIsEmbedded) {
             try {
@@ -106,7 +106,7 @@ public class HippoRepositoryServer extends LocalHippoRepository {
         } else {
             bindingAddress = name;
         }
-        
+
         // the the remote repository
         RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
         rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository);
@@ -117,7 +117,7 @@ public class HippoRepositoryServer extends LocalHippoRepository {
             }
         });
         System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-        
+
         // Get or start registry and bind the remote repository
         try {
             registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -127,12 +127,12 @@ public class HippoRepositoryServer extends LocalHippoRepository {
             registry = LocateRegistry.createRegistry(url.getPort());
             registry.rebind(url.getName(), rmiRepository);
             log.info("Started RMI registry on port " + url.getPort());
-            registryIsEmbedded = true;   
+            registryIsEmbedded = true;
         } catch (ConnectException ex) {
             registry = LocateRegistry.createRegistry(url.getPort());
             registry.rebind(url.getName(), rmiRepository);
             log.info("Started RMI registry on port " + url.getPort());
-            registryIsEmbedded = true;   
+            registryIsEmbedded = true;
         }
         log.info("RMI Server available on " + name);
         if (!background) {
@@ -175,8 +175,8 @@ public class HippoRepositoryServer extends LocalHippoRepository {
             ex.printStackTrace(System.err);
         }
     }
-    
-    
+
+
     private class RepositoryRmiUrl {
         // defaults
         public final static String DEFAULT_RMI_NAME = "hipporepository";

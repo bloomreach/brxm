@@ -31,7 +31,7 @@ public class YuiPluginHelper {
     public static IYuiManager getManager(IPluginContext context) {
         return context.getService(SERVICE_ID, IYuiManager.class);
     }
-    
+
     public static IPluginConfig getConfig(IPluginConfig config) {
         return config.getPluginConfig(CONFIG_ID);
     }

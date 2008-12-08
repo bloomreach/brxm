@@ -30,14 +30,14 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     protected DragSettings dragSettings;
 
     public DragBehavior(IYuiManager service, DragSettings settings) {
         super(service, settings);
         dragSettings = settings;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     protected void respond(final AjaxRequestTarget target) {
@@ -47,10 +47,10 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
         final IModel draggedModel = getDragModel();
         if (draggedModel == null)
             return;
-        
+
         final String targetId = getComponent().getRequest().getParameter("targetId");
         final Map<String, String[]> parameters = getComponent().getRequest().getParameterMap();
-        
+
         getComponent().getPage().visitChildren(new DropPointVisitor() {
             @Override
             void visit(DropBehavior dropPoint) {
@@ -70,7 +70,7 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
     protected boolean lookupDropBehavior() {
         return true;
     }
-    
+
     @Override
     protected String getHeaderContributorFilename() {
         return "Drag.js";

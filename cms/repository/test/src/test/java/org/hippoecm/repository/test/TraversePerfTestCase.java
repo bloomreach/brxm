@@ -219,7 +219,7 @@ public class TraversePerfTestCase extends TestCase {
             Thread.sleep(3000);
         }
     }
-    
+
     @Ignore
     public void testSPIremoting() throws Exception {
         tearDown(true);

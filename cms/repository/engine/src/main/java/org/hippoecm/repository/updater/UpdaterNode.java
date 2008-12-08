@@ -173,7 +173,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
                 }
             }
         }
-        
+
         if (getInternalProperty("jcr:primaryType").length > 0)
             nodeTypesChanged = !((Node) origin).getPrimaryNodeType().getName().equals(getInternalProperty("jcr:primaryType")[0]);
         else
@@ -187,7 +187,7 @@ final class UpdaterNode extends UpdaterItem implements Node {
         if(UpdaterEngine.log.isDebugEnabled()) {
             UpdaterEngine.log.debug("commit node "+getPath()+" origin "+(origin!=null?origin.getPath():"null")+(nodeTypesChanged?" type changed":"")+(nodeLocationChanged?" location changed":""));
         }
-        
+
         if (!hollow && origin != null && origin.isNode()) {
             if(((Node)origin).isNodeType("jcr:versionable")) {
                 if(UpdaterEngine.log.isDebugEnabled()) {

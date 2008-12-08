@@ -47,7 +47,7 @@ public class ListNavigationToolBar extends AbstractToolbar {
     public boolean isVisible() {
         return getTable().getPageCount() > 1;
     }
-    
+
     private PagingNavigator newPagingNavigator(String navigatorId, final DataTable table) {
         return new ListPagingNavigator(navigatorId, table, new ListPagingLabelProvider()) {
             private static final long serialVersionUID = 1L;

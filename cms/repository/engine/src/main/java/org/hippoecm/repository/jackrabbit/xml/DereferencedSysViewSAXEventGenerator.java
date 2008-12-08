@@ -43,21 +43,21 @@ import org.xml.sax.helpers.AttributesImpl;
  * - virtual nodes are not exported
  * - references are rewritten to paths
  * - some auto generated properties are dropped (hippo:path)
- * 
+ *
  * Store references as: [MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+propname+REFERENCE_SEPARATOR+refpath
  */
 public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEventGenerator {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static Logger log = LoggerFactory.getLogger(DereferencedSysViewSAXEventGenerator.class);
-    
+
     /** shortcut for quick checks */
     private final static String JCR_PREFIX = "jcr:";
-    
+
     /** use one factory */
     private static final NameFactory FACTORY = NameFactoryImpl.getInstance();
-    
+
     /** base export path */
     private final String basePath;
 
@@ -67,42 +67,42 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
         super(node, noRecurse, skipBinary, contentHandler);
         // strip node name of base path
         basePath = node.getPath();
-        log.info("Starting export of '" + basePath + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);   
+        log.info("Starting export of '" + basePath + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);
     }
-    
+
     @Override
     protected void process(Property prop, int level) throws RepositoryException, SAXException {
-        
-        
+
+
         if (prop.getParent().getPrimaryNodeType().getName().equals(HippoNodeType.NT_FACETSEARCH)
                 && HippoNodeType.HIPPO_COUNT.equals(prop.getName())) {
             // this is a virtual hippo:count property
             return;
         }
-        
+
         if (isVersioningProperty(prop)) {
             // don't export version info
             return;
         }
-        
+
         if (isLockProperty(prop)) {
             // don't export lock info
         }
-        
+
         super.process(prop, level);
     }
-    
+
 
     @Override
     protected void entering(Property prop, int level)
             throws RepositoryException, SAXException {
-        
+
         if (prop.getType() == PropertyType.REFERENCE) {
             AttributesImpl attrs = new AttributesImpl();
-            
+
             // name attribute -> hippo:pathreference_propname
             addAttribute(attrs, NameConstants.SV_NAME, CDATA_TYPE, prop.getName() + Reference.REFERENCE_SUFFIX);
-            
+
             // type attribute
             try {
                 addAttribute(attrs, NameConstants.SV_TYPE, ENUMERATION_TYPE, PropertyType.TYPENAME_STRING);
@@ -114,7 +114,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
 
             // start property element
             startElement(NameConstants.SV_PROPERTY, attrs);
-            
+
             boolean multiValued = prop.getDefinition().isMultiple();
             Value[] vals;
             if (multiValued) {
@@ -124,13 +124,13 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
             }
 
             Reference ref = new Reference(basePath, vals, prop.getName());
-            Value[] derefVals = ref.getPathValues(session); 
-            
+            Value[] derefVals = ref.getPathValues(session);
+
             for (int i = 0; i < derefVals.length; i++) {
                 Value val = derefVals[i];
 
                 Attributes attributes = new AttributesImpl();
-            
+
                 // start value element
                 startElement(NameConstants.SV_VALUE, attributes);
 
@@ -175,7 +175,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
             super.entering(prop, level);
         }
     }
-    
+
     private boolean isVersioningProperty(Property prop) throws RepositoryException {
         // quick check
         if (prop.getName().startsWith(JCR_PREFIX)) {
@@ -211,7 +211,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
         }
         return false;
     }
-    
+
     private boolean isLockProperty(Property prop) throws RepositoryException{
         // quick check
         if (prop.getName().startsWith(JCR_PREFIX)) {

@@ -51,7 +51,7 @@ public class AbstractYuiBehavior extends AbstractBehavior {
 
     /**
      * Don't call super since WicketAjax is loaded by Yui webapp behavior
-     * TODO: webapp ajax is configurable, maybe check here and still load it. 
+     * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
     public void renderHead(IHeaderResponse response) {

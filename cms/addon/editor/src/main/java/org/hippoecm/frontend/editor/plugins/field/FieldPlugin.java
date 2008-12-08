@@ -213,7 +213,7 @@ public abstract class FieldPlugin<P extends IModel, C extends IModel> extends Li
                 String modelId = config.getString(RenderService.MODEL_ID);
                 ModelService modelService = new ModelService(modelId, model);
                 models.put(model, modelService);
-    
+
                 IPluginContext context = getPluginContext();
                 modelService.init(context);
                 IPluginControl plugin = context.start(config);

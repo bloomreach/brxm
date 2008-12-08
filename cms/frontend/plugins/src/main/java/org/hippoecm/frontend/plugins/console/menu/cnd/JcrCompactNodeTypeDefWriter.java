@@ -171,7 +171,7 @@ public class JcrCompactNodeTypeDefWriter {
             out.write(OnParentVersionAction.nameFromValue(nd.getOnParentVersion()).toLowerCase());
         }
     }
-    
+
     private void writeRequiredTypes(NodeType[] reqTypes) throws IOException {
         if (reqTypes != null && reqTypes.length > 0) {
             String delim = " (";
@@ -208,7 +208,7 @@ public class JcrCompactNodeTypeDefWriter {
             }
         }
     }
-    
+
     private void writeItemDefName(String name) throws IOException {
         out.write(resolve(name));
     }

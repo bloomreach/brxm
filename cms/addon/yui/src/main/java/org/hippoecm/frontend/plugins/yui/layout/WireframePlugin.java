@@ -30,7 +30,7 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private final static Logger log = LoggerFactory.getLogger(WireframePlugin.class);
 
     public static final String UNITS = "yui.units";
@@ -39,12 +39,12 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
     public static final String LINKED = "yui.linked";
     public static final String CLIENT_CLASSNAME = "yui.classname";
 
-    
+
     private IPluginConfig config;
-    
+
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
         super(YuiPluginHelper.getManager(context), new WireframeSettings(YuiPluginHelper.getConfig(config)));
-        
+
 //        String[] units = config.getStringArray(UNITS);
 //        if (units != null) {
 //            for (String unit : units) {
@@ -70,11 +70,11 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
 //        if (units == null && wrappers == null) {
 //            log.warn("No units defined");
 //        }
-        
+
         this.config = config;
         context.registerService(this, config.getString(ID));
     }
-    
+
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
     }

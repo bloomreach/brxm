@@ -106,23 +106,23 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Default config file */
     public final static String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
-    
+
     /** Query for finding initialization items
-     * TODO: move this query into the repository as query node 
+     * TODO: move this query into the repository as query node
      * */
-    public final static String GET_INITIALIZE_ITEMS = 
+    public final static String GET_INITIALIZE_ITEMS =
         "SELECT * FROM hippo:initializeitem " +
-        "WHERE (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " + 
+        "WHERE (" + HippoNodeType.HIPPO_NAMESPACE + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_NODETYPESRESOURCE + " IS NOT NULL " +
-        "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " + 
-        "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " + 
-        "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL " + 
+        "OR " + HippoNodeType.HIPPO_NODETYPES + " IS NOT NULL " +
+        "OR " + HippoNodeType.HIPPO_CONTENTRESOURCE + " IS NOT NULL " +
+        "OR " + HippoNodeType.HIPPO_CONTENT + " IS NOT NULL " +
         "OR " + HippoNodeType.HIPPO_CONTENTDELETE + " IS NOT NULL) " +
         "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
 
     /** hippo decorated root session */
     private HippoSession rootSession;
-    
+
     protected final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
 
     private JackrabbitRepository jackrabbitRepository = null;
@@ -138,7 +138,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
     private EventListener listener;
 
     List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
-    
+
     protected LocalHippoRepository() throws RepositoryException {
         super();
         initialize();
@@ -324,7 +324,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
 
             // After initializing namespaces and nodetypes switch to the decorated session.
             rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
- 
+
             if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
                 log.info("Initializing configuration content");
                 InputStream configuration = getClass().getResourceAsStream("configuration.xml");
@@ -356,7 +356,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                  *         URL configurationURL = (URL) iter.nextElement();
                  *         extensions.addend(configurationURL);
                  *     }
-                 * TODO: Use merge behavior from dereferenced import? [BvdS]    
+                 * TODO: Use merge behavior from dereferenced import? [BvdS]
                  */
                 for(Iterator iter = extensions.iterator(); iter.hasNext(); ) {
                     URL configurationURL = (URL) iter.next();
@@ -401,9 +401,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
-            
+
             refresh();
-            
+
             /* Register a listener for the initialize node.  Whenever a node
              * or property is added, refresh the tree.  Processed properties
              * are deleted, so they will not be processed more than once.
@@ -471,7 +471,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                         p.remove();
                     }
 
-                    
+
                     // Namespace
                     if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
                         if (log.isDebugEnabled()) {
@@ -752,7 +752,7 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             log.warn("Not allowed to delete rootNode from initialization.");
             return;
         }
-        
+
         String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
         try {
             if (relpath.length() > 0 && session.getRootNode().hasNode(relpath)) {
@@ -766,9 +766,9 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                 log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage());
             }
         }
-        
+
     }
-    
+
     private void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
         try {
             String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);

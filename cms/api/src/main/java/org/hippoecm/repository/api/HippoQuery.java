@@ -36,7 +36,7 @@ public interface HippoQuery extends Query {
     public static final String HIPPOQL = "HIPPOQL";
 
     public Session getSession() throws RepositoryException;
-    
+
     public Node storeAsNode(String absPath, String type) throws ItemExistsException, PathNotFoundException, VersionException,
             ConstraintViolationException, LockException, UnsupportedRepositoryOperationException, RepositoryException;
 

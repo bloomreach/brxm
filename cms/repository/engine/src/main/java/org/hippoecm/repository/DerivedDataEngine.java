@@ -144,7 +144,7 @@ public class DerivedDataEngine {
                              (System.currentTimeMillis() - start) + " ms");
             }
 
-                
+
             if(recomputeSet.size() == 0)
                 return;
 

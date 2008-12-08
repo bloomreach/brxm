@@ -58,7 +58,7 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
         });
         context.addOnload("YAHOO.hippo.DragDropManager.onLoad()");
     }
-    
+
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
@@ -74,13 +74,13 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
 
 
     /**
-     * Return a class from the same package as the javascript file you want to load 
+     * Return a class from the same package as the javascript file you want to load
      * @return Class from the same package as the javascript file you want to load
      */
     protected Class<? extends IBehavior> getHeaderContributorClass() {
         return AbstractDragDropBehavior.class;
     }
-    
+
     /**
      * Provide the name of the javascript file that should be loaded on the client
      * @return Filename of the javascript
@@ -88,7 +88,7 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
     abstract protected String getHeaderContributorFilename();
 
     /**
-     * Specify the clientside class that is used as the DragDropModel 
+     * Specify the clientside class that is used as the DragDropModel
      */
     abstract protected String getClientSideClassname();
 

@@ -105,7 +105,7 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
     }
 
     /**
-     * Create a new component that will trigger 
+     * Create a new component that will trigger
      * @param component
      * @return
      */

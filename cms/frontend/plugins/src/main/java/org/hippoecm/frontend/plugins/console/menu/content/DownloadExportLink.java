@@ -46,7 +46,7 @@ public class DownloadExportLink extends Link {
     private static final Logger log = LoggerFactory.getLogger(DownloadExportLink.class);
 
     private Model skipBinaryModel;
-    
+
     public DownloadExportLink(String id, JcrNodeModel nodeModel, Model skipBinaryModel) {
         super(id, nodeModel);
         this.skipBinaryModel = skipBinaryModel;

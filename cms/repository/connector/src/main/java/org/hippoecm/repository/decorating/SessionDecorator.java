@@ -240,7 +240,7 @@ public abstract class SessionDecorator implements XASession, HippoSession {
             InvalidSerializedDataException, LockException, RepositoryException {
         session.importXML(parentAbsPath, in, uuidBehaviour);
     }
-   
+
     public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
         session.exportSystemView(absPath, contentHandler, binaryAsLink, noRecurse);

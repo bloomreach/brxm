@@ -131,7 +131,7 @@ public class ListViewService extends RenderService {
     protected String getItemId() {
         return getPluginConfig().getString(ITEM);
     }
-    
+
     @Override
     public void render(PluginRequestTarget target) {
         view.populate();

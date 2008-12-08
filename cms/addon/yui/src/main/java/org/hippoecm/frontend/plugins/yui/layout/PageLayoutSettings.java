@@ -25,7 +25,7 @@ public class PageLayoutSettings extends AjaxSettings {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final StringSetting ROOT_ID  = new StringSetting("rootId", "doc3");
 
     private static final IntSetting HEADER_HEIGHT = new IntSetting("headerHeight");
@@ -48,5 +48,5 @@ public class PageLayoutSettings extends AjaxSettings {
     public String getRootId() {
         return ROOT_ID.get(this);
     }
-    
+
 }

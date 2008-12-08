@@ -27,7 +27,7 @@ public class DragDropSettings extends AjaxSettings {
     private static final long serialVersionUID = 1L;
 
     private static final StringArraySetting GROUPS = new StringArraySetting("groups", "default");
-    
+
     public DragDropSettings(IPluginConfig config) {
         super(config);
     }

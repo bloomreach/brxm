@@ -45,7 +45,7 @@ public interface GroupManager {
     public boolean isInitialized();
 
     /**
-     * Initialization hook for the security managers. This method gets 
+     * Initialization hook for the security managers. This method gets
      * called after the init which is handled by the {@link AbstractUserManager}
      * @param context The {@link ManagerContext} with params for the backend
      * @throws RepositoryException
@@ -86,15 +86,15 @@ public interface GroupManager {
      * @throws RepositoryException
      */
     public Node getOrCreateGroup(String groupId) throws RepositoryException;
-    
+
     /**
-     * Check if the current manager manages the group 
+     * Check if the current manager manages the group
      * @param group
      * @return true if the group is managed by the current manager
      */
     public boolean isManagerForGroup(Node group) throws RepositoryException;
-    
-    
+
+
     /**
      * Get the node type for new group nodes
      * @return the node type
@@ -106,8 +106,8 @@ public interface GroupManager {
      * @return
      */
     public boolean isCaseSensitive();
-    
-    
+
+
     /**
      * Get memberships from the repository for a user
      * @param userId
@@ -121,14 +121,14 @@ public interface GroupManager {
      * @throws RepositoryException
      */
     public Set<String> getMembers(Node group) throws RepositoryException;
-    
+
     /**
      * Set members of a group
      * @param group
      * @throws RepositoryException
      */
     public void setMembers(Node group, Set<String> members) throws RepositoryException;
-    
+
     /**
      * Make a user member of the group.
      * @param group
@@ -136,7 +136,7 @@ public interface GroupManager {
      * @throws RepositoryException
      */
     public void addMember(Node group, String userId) throws RepositoryException;
-    
+
     /**
      * Remove a user from the group.
      * @param group
@@ -150,19 +150,19 @@ public interface GroupManager {
      * @param user
      */
     public void syncMemberships(Node user) throws RepositoryException;
-    
+
     /**
      * Save current outstanding changes to the repository.
      */
     public void saveGroups() throws RepositoryException;
-    
+
     /**
      * Get the memberships of the user from the backend.
      * @param user
      * @throws RepositoryException
      */
     public Set<String> backendGetMemberships(Node user) throws RepositoryException;
-    
+
     /**
      * Add a group to the backend (optional)
      * @param groupId

@@ -31,15 +31,15 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentListFilter implements IClusterable {
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";   
+    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(DocumentListFilter.class);
-    
+
     String currentState = "";
 
     private static class FilterDefinition implements IClusterable {
         private static final long serialVersionUID = 1L;
-        
+
         String state;
         String path;
         String parent;

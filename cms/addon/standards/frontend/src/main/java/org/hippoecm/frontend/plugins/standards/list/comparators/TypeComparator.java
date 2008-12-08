@@ -48,7 +48,7 @@ public class TypeComparator extends NodeComparator {
             return 0;
         }
     }
-    
+
     private String getTypeLabel(HippoNode node) throws RepositoryException {
         String type = "";
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {

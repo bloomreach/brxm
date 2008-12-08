@@ -139,7 +139,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     public String getUserID() {
         return helper.getUserID();
     }
-    
+
     /**
      * Method to expose the authenticated users' principals
      * @return Set An unmodifiable set containing the principals
@@ -151,13 +151,13 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl {
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,                                                                      NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
     }
-    
+
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
         return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
     }
-    
+
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,

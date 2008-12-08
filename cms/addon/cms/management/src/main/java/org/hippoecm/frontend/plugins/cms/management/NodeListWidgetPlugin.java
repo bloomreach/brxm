@@ -106,7 +106,7 @@ public class NodeListWidgetPlugin extends RenderPlugin {
                 if (entry.newEntry) {
                     name += " *";
                 }
-                
+
                 final JcrNodeModel nodeModel = new JcrNodeModel(entry.path);
                 item.add(new AjaxLink("link") {
                     private static final long serialVersionUID = 1L;
