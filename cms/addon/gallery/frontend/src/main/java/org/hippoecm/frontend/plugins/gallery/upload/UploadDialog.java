@@ -37,6 +37,8 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 public class UploadDialog extends AbstractDialog {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -46,7 +48,7 @@ public class UploadDialog extends AbstractDialog {
 
     public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
             IDialogService dialogWindow) {
-        super(context, dialogWindow);
+        super(dialogWindow);
         ok.setVisible(false);
         cancel.setVisible(false);
         pluginConfig = config;

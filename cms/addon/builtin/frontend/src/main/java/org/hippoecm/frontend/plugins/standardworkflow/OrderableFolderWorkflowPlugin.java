@@ -49,16 +49,16 @@ public class OrderableFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             DialogAction action = new DialogAction(new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
-    
+
                 public AbstractDialog createDialog(IDialogService dialogService) {
                     return new ReorderDialog(OrderableFolderWorkflowPlugin.this, dialogService, jcrRef);
                 }
             }, getDialogService());
-    
+
             if (node.getNodes().getSize() < 2) {
                 action.setEnabled(false);
             }
-    
+
             addWorkflowAction(new StringResourceModel("reorder-folder", this, null), "reorder_ico", null, action);
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);

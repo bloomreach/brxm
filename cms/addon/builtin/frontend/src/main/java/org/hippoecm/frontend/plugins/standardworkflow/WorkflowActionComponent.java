@@ -21,7 +21,7 @@ import org.hippoecm.frontend.dialog.DialogAction;
 
 public class WorkflowActionComponent implements IClusterable {
     private static final long serialVersionUID = 1L;
-        
+
     private String id;
     private IModel label;
     private String icon;
@@ -37,7 +37,7 @@ public class WorkflowActionComponent implements IClusterable {
     public String getId() {
         return id;
     }
-        
+
     public IModel getLabel() {
         return label;
     }

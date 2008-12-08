@@ -20,8 +20,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.service.ITitleDecorator;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +35,8 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
 
     boolean logout;
 
-    public LogoutDialog(IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
+    public LogoutDialog(IDialogService dialogWindow) {
+        super(dialogWindow);
         setOutputMarkupId(true);
 
         Label messageLabel = new Label("message", "There are unsaved changes. Do you want to logout?");
@@ -56,4 +56,13 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
     protected void cancel() {
         logout = false;
     }
+
+    @Override
+    public void onClose() {
+        if (logout) {
+            UserSession userSession = (UserSession) getSession();
+            userSession.logout();
+        }
+    }
+
 }

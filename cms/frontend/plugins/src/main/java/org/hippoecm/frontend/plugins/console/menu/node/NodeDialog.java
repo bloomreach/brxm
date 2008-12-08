@@ -24,8 +24,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -36,22 +34,20 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
 
     private static final long serialVersionUID = 1L;
 
+    private MenuPlugin plugin;
     private String name;
     private String type = "nt:unstructured";
 
-    private IServiceReference<MenuPlugin> pluginRef;
+    public NodeDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
 
-    public NodeDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
-
+        this.plugin = plugin;
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
         add(new TextFieldWidget("type", new PropertyModel(this, "type")));
     }
 
     @Override
     public void ok() throws RepositoryException {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node node = nodeModel.getNode().addNode(getName(), getType());
 

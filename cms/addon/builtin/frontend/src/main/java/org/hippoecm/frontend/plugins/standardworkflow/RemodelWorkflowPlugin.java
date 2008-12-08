@@ -50,21 +50,23 @@ public class RemodelWorkflowPlugin extends AbstractWorkflowPlugin {
         WorkflowActionComponent choice;
 
         action = new DialogAction(new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new RemodelDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
-        choice = new WorkflowActionComponent("remodelRequest-dialog", new StringResourceModel("update-content", this,
-                null), (String) null, action);
+        choice = new WorkflowActionComponent("remodelRequest-dialog", new StringResourceModel("update-content", this, null), (String) null, action);
         actions.add(choice);
 
         action = new DialogAction(new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
             public AbstractDialog createDialog(IDialogService dialogService) {
                 return new CreateTypeDialog(RemodelWorkflowPlugin.this, getDialogService(), jcrRef);
             }
         }, getDialogService());
-        choice = new WorkflowActionComponent("createTypeRequest-dialog", new StringResourceModel("create-type", this,
-                null), (String) null, action);
+        choice = new WorkflowActionComponent("createTypeRequest-dialog", new StringResourceModel("create-type", this, null), (String) null, action);
         actions.add(choice);
 
         add(new WorkflowActionComponentDropDownChoice("actions", actions));

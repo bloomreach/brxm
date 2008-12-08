@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -74,20 +75,14 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             final List<String> prototypesList = new LinkedList<String>(prototypes);
             DropDownChoice folderChoice;
             add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), prototypesList,
-                    new TypeChoiceRenderer(this)) {
+                    new TypeChoiceRenderer(this)));
+            folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected boolean wantOnSelectionChangedNotifications() {
-                    return true;
-                }
-
-                @Override
-                protected void onSelectionChanged(Object newSelection) {
-                    super.onSelectionChanged(newSelection);
+                public void onUpdate(AjaxRequestTarget target) {
                     enableButtons();
                 }
-
             });
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
@@ -125,7 +120,15 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private void enableButtons() {
         AbstractFolderWorkflowPlugin folderWorkflowPlugin = (AbstractFolderWorkflowPlugin) getPlugin();
         WorkflowsModel model = (WorkflowsModel) folderWorkflowPlugin.getModel();
-        ok.setEnabled(model.getNodeModel().getNode() != null && prototype != null);
+        boolean enable = name != null && !"".equals(name) && model.getNodeModel().getNode() != null
+                && prototype != null;
+        if (ok.isEnabled() != enable) {
+            ok.setEnabled(enable);
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                target.addComponent(ok);
+            }
+        }
     }
 
     @Override

@@ -26,7 +26,6 @@ import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.ITranslateService;
@@ -51,45 +50,29 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
 
     private IModel title;
     private WorkflowsModel model;
-    private IServiceReference<AbstractWorkflowPlugin> pluginRef;
-    private IServiceReference<IJcrService> jcrServiceRef;
+    private AbstractWorkflowPlugin plugin;
     private ITranslateService translator;
 
     public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title) {
-        this(plugin, dialogWindow, title, null);
-    }
+        super(dialogWindow);
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title, IModel text) {
-        super(plugin.getPluginContext(), dialogWindow, text);
-
-        // title is translated by dialog
-        this.title = wrap(title);
-
+        this.title = title;
         this.model = (WorkflowsModel) plugin.getModel();
-        IPluginContext context = plugin.getPluginContext();
-        this.pluginRef = context.getReference(plugin);
-
-        IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
-        jcrServiceRef = context.getReference(service);
+        this.plugin = plugin;
 
         if (model.getNodeModel().getNode() == null) {
             ok.setVisible(false);
         }
 
         // FIXME: refactor the plugin so that we can use a service instead here 
+        IPluginContext context = plugin.getPluginContext();
         translator = new SearchingTranslatorPlugin(context, null);
     }
 
     @Override
     public void onDetach() {
         model.detach();
-        pluginRef.detach();
-        jcrServiceRef.detach();
         super.onDetach();
-    }
-
-    public IModel getTitle() {
-        return title;
     }
 
     public String getString(Map<String, String> criteria) {
@@ -97,7 +80,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
     }
 
     protected AbstractWorkflowPlugin getPlugin() {
-        return pluginRef.getService();
+        return plugin;
     }
 
     protected Workflow getWorkflow() {
@@ -110,6 +93,10 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             log.error(e.getMessage());
         }
         return null;
+    }
+
+    public IModel getTitle() {
+        return title;
     }
 
     @Override
@@ -129,7 +116,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
 
         ((UserSession) Session.get()).getJcrSession().refresh(true);
 
-        IJcrService jcrService = jcrServiceRef.getService();
+        IJcrService jcrService = plugin.getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
         if (jcrService != null) {
             jcrService.flush(handle);
         }

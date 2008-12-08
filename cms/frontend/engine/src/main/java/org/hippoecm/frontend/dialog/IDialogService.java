@@ -15,13 +15,25 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.Page;
+import org.apache.wicket.model.IModel;
 
 public interface IDialogService extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    void show(Page page);
+    final static String DIALOG_WICKET_ID = "content";
+
+    interface Dialog {
+
+        Component getComponent();
+
+        IModel getTitle();
+
+        void onClose();
+    }
+
+    void show(Dialog dialog);
 
     void close();
 }

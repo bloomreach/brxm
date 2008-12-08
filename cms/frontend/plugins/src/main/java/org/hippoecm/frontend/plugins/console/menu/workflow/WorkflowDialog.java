@@ -29,8 +29,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -42,11 +40,11 @@ public class WorkflowDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final IServiceReference<MenuPlugin> pluginRef;
+    private final MenuPlugin plugin;
 
-    public WorkflowDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+    public WorkflowDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
+        this.plugin = plugin;
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
@@ -85,7 +83,7 @@ public class WorkflowDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         String path;
         try {
             path = nodeModel.getNode().getPath();

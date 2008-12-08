@@ -20,9 +20,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public abstract class LookupDialog extends AbstractDialog {
     @SuppressWarnings("unused")
@@ -30,13 +27,11 @@ public abstract class LookupDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    protected IServiceReference<RenderPlugin> pluginRef;
     private LookupTargetTreeView tree;
     private JcrTreeModel treeModel;
 
-    protected LookupDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow, AbstractTreeNode rootNode) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+    protected LookupDialog(IDialogService dialogWindow, AbstractTreeNode rootNode) {
+        super(dialogWindow);
 
         treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);

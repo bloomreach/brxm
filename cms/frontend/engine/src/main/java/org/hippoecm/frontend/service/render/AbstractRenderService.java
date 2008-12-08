@@ -34,7 +34,6 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.util.string.PrependingStringBuffer;
 import org.hippoecm.frontend.IStringResourceProvider;
-import org.hippoecm.frontend.dialog.DialogWindow;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.IModelService;
@@ -216,13 +215,10 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
 
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
-            IDialogService dialogService = getDialogService();
             for (String skin : skins) {
                 HeaderContributor cssContributor = forCss(skin);
                 add(cssContributor);
-                if (dialogService != null && dialogService instanceof DialogWindow) {
-                    ((DialogWindow) dialogService).addDialogBehavior(cssContributor);
-                }
+                context.registerService(cssContributor, IDialogService.class.getName());
             }
         }
 

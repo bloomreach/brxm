@@ -34,13 +34,11 @@ import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.i18n.SearchingTranslatorPlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.IValidateService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -103,12 +101,16 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService dialogService) {
-                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, dialogTitle, text) {
+                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, text) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     protected void execute() throws Exception {
                         action.execute(getWorkflow());
+                    }
+
+                    public IModel getTitle() {
+                        return dialogTitle;
                     }
                 };
             }
@@ -119,15 +121,16 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         updateActions();
     }
 
-    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, 
-            final Visibility visible, IDialogFactory dialogFactory) {
+    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final Visibility visible,
+            IDialogFactory dialogFactory) {
         DialogLink link = new DialogLink(dialogName, dialogLink, dialogFactory, getDialogService());
         add(link);
         actions.put(dialogName, new Action(link, visible));
         updateActions();
     }
 
-    protected void addWorkflowAction(final String linkName, IModel linkText, Visibility visible, final WorkflowAction action) {
+    protected void addWorkflowAction(final String linkName, IModel linkText, Visibility visible,
+            final WorkflowAction action) {
         AjaxLink link = new AjaxLink(linkName) {
             private static final long serialVersionUID = 1L;
 
@@ -136,7 +139,8 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
                 List<IValidateService> validators = null;
                 IPluginConfig config = getPluginConfig();
                 if (config.getString(IValidateService.VALIDATE_ID) != null) {
-                    validators = getPluginContext().getServices(config.getString(IValidateService.VALIDATE_ID), IValidateService.class);
+                    validators = getPluginContext().getServices(config.getString(IValidateService.VALIDATE_ID),
+                            IValidateService.class);
                     if (validators != null && !action.validateSession(validators)) {
                         return;
                     }
@@ -193,7 +197,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                 IDialogService.class);
         if (dialogService != null) {
-            dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, ex));
+            dialogService.show(new ExceptionDialog(dialogService, ex));
         }
     }
 

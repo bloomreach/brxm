@@ -15,21 +15,20 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractDialog extends WebPage implements ITitleDecorator {
+public abstract class AbstractDialog extends Panel implements IDialogService.Dialog {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
@@ -37,26 +36,18 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
     protected AjaxLink ok;
     protected AjaxLink cancel;
     protected WicketAjaxIndicatorAppender indicator;
-    private IServiceReference<IDialogService> windowRef;
+    private IDialogService dialogService;
 
     private String exception = "";
 
-    public AbstractDialog(IPluginContext context, IDialogService dialogWindow) {
-        this(context, dialogWindow, null);
-    }
+    public AbstractDialog(IDialogService dialogWindow) {
+        super(IDialogService.DIALOG_WICKET_ID);
 
-    public AbstractDialog(IPluginContext context, IDialogService dialogWindow, IModel text) {
-        this.windowRef = context.getReference(dialogWindow);
+        this.dialogService = dialogWindow;
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
         add(exceptionLabel);
-
-        if (text != null) {
-            add(new Label("text", text));
-        } else {
-            add(new Label("text"));
-        }
 
         add(indicator = new WicketAjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
@@ -134,12 +125,12 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
     }
 
     protected IDialogService getDialogService() {
-        return windowRef.getService();
+        return dialogService;
     }
 
     protected final void closeDialog() {
         getDialogService().close();
-        onCloseDialog();
+        onClose();
     }
 
     protected void ok() throws Exception {
@@ -148,6 +139,11 @@ public abstract class AbstractDialog extends WebPage implements ITitleDecorator 
     protected void cancel() {
     }
 
-    protected void onCloseDialog() {
+    public Component getComponent() {
+        return this;
     }
+    
+    public void onClose() {
+    }
+
 }

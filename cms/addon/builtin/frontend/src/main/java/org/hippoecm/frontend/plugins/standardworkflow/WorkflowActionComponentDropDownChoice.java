@@ -47,11 +47,6 @@ public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
             }
         });
     }
-
-    @Override
-    protected boolean wantOnSelectionChangedNotifications() {
-        return true;
-    }
     
     private IModel createModel(final List<? extends WorkflowActionComponent> items) {
         IModel model = new IModel() {

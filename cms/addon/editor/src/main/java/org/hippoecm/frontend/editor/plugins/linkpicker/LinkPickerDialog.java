@@ -31,9 +31,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,19 +44,18 @@ public class LinkPickerDialog extends LookupDialog {
 
     static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
 
+    protected IPluginContext context;
     protected JcrPropertyValueModel valueModel;
     private List<String> nodetypes;
-    private IServiceReference<IJcrService> jcrServiceRef;
     private Label label;
 
-    public LinkPickerDialog(RenderPlugin plugin, IPluginContext context, IDialogService dialogWindow,
+    public LinkPickerDialog(IPluginContext context, IDialogService dialogWindow,
             JcrPropertyValueModel valueModel, List<String> nodetypes, AbstractTreeNode rootNode) {
-        super(plugin, context, dialogWindow, rootNode);
+        super(dialogWindow, rootNode);
+        this.context = context;
         this.nodetypes = nodetypes;
         this.valueModel = valueModel;
 
-        IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
-        jcrServiceRef = context.getReference(jcrService);
         setOutputMarkupId(true);
 
         String path = "no path selected";
@@ -136,7 +133,7 @@ public class LinkPickerDialog extends LookupDialog {
             String targetUUID = targetNodeModel.getNode().getUUID();
             valueModel.setObject(targetUUID);
 
-            IJcrService jcrService = jcrServiceRef.getService();
+            IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
             if (jcrService != null) {
                 jcrService.flush(sourceNodeModel);
             }

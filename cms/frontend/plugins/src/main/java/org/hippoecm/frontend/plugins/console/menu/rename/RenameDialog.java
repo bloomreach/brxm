@@ -25,7 +25,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -40,12 +39,12 @@ public class RenameDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(RenameDialog.class);
 
-    private IServiceReference<MenuPlugin> pluginRef;
+    private MenuPlugin plugin;
     private String name;
 
     public RenameDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+        super(dialogWindow);
+        this.plugin = plugin;
 
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         try {
@@ -63,7 +62,6 @@ public class RenameDialog extends AbstractDialog {
 
     @Override
     protected void ok() throws RepositoryException {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         if (nodeModel.getParentModel() != null) {

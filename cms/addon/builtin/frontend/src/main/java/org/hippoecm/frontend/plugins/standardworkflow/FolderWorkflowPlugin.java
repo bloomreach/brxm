@@ -18,13 +18,9 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -38,6 +34,8 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -56,13 +54,13 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
             public AbstractDialog createDialog(IDialogService dialogService) {
                 StringResourceModel text;
                 try {
-                    Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel()).getNodeModel().getNode()
-                            .getName() };
+                    Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel())
+                            .getNodeModel().getNode().getName() };
                     text = new StringResourceModel("delete-message-extended", null, null, params);
                 } catch (RepositoryException ex) {
                     text = new StringResourceModel("delete-message", (Component) null, null);
                 }
-                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, new StringResourceModel("delete-title", (Component) null, null), text) {
+                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, text) {
                     @Override
                     protected void execute() throws Exception {
                         // FIXME: this assumes that folders are always embedded in other folders
@@ -102,8 +100,8 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                 };
             }
         }, getDialogService());
-        addWorkflowAction(new StringResourceModel("rename-title", this, null), "editmodel_ico", null, renameAction);
-}
+        addWorkflowAction(renameTitle, "editmodel_ico", null, renameAction);
+    }
 
     @Override
     protected Component createDialogLinksComponent() {

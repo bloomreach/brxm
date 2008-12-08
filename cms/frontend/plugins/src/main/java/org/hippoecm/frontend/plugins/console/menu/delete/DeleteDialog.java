@@ -23,8 +23,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 
 public class DeleteDialog extends AbstractDialog {
@@ -33,17 +31,16 @@ public class DeleteDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private IServiceReference<MenuPlugin> pluginRef;
+    private MenuPlugin plugin;
 
-    public DeleteDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+    public DeleteDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
+        this.plugin = plugin;
         add(new Label("message", getTitle()));
     }
 
     @Override
     public void ok() throws RepositoryException {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         JcrNodeModel parentModel = nodeModel.getParentModel();
 
@@ -58,7 +55,6 @@ public class DeleteDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel)plugin.getModel();
         String title;
         try {

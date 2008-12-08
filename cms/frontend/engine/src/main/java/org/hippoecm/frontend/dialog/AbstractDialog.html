@@ -14,15 +14,20 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <body class="hippo-window">
-    <div class="hippo-root">
-   <span wicket:id="text"></span>
-    <wicket:child />
-    <div class="hippo-window-buttons">
-      <div class="hippo-window-exception" wicket:id="exception"></div>
-      <button wicket:id="ok"><wicket:message key="ok" /></button>
-      <button wicket:id="cancel"><wicket:message key="cancel" /></button>
+  <wicket:panel>
+    <div class="hippo-window">
+      <div class="hippo-root">
+        <wicket:child/>
+        <div class="hippo-window-buttons">
+          <div class="hippo-window-exception" wicket:id="exception"/>
+          <button wicket:id="ok">
+            <wicket:message key="ok"/>
+          </button>
+          <button wicket:id="cancel">
+            <wicket:message key="cancel"/>
+          </button>
+        </div>
+      </div>
     </div>
-    </div>
-  </body>
+  </wicket:panel>
 </html>

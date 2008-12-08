@@ -58,7 +58,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new NodeDialog(MenuPlugin.this, getPluginContext(), service);
+                return new NodeDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("node-dialog", new Model("Add Node"), dialogFactory, dialogService));
@@ -67,7 +67,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new DeleteDialog(MenuPlugin.this, getPluginContext(), service);
+                return new DeleteDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("delete-dialog", new Model("Delete Node"), dialogFactory, dialogService));
@@ -76,7 +76,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new SaveDialog(MenuPlugin.this, getPluginContext(), service);
+                return new SaveDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("save-dialog", new Model("Write changes to repository"), dialogFactory, dialogService));
@@ -94,7 +94,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new ContentExportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new ContentExportDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("content-export-dialog", new Model("Export Node"), dialogFactory, dialogService));
@@ -103,7 +103,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new ContentImportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new ContentImportDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("content-import-dialog", new Model("Import Node"), dialogFactory, dialogService));
@@ -130,7 +130,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new MoveDialog(MenuPlugin.this, getPluginContext(), service);
+                return new MoveDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("move-dialog", new Model("Move Node"), dialogFactory, dialogService));
@@ -139,7 +139,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new CopyDialog(MenuPlugin.this, getPluginContext(), service);
+                return new CopyDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("copy-dialog", new Model("Copy Node"), dialogFactory, dialogService));
@@ -148,7 +148,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new CndImportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new CndImportDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("cnd-import-dialog", new Model("CND Import"), dialogFactory, dialogService));
@@ -157,7 +157,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new CndExportDialog(MenuPlugin.this, getPluginContext(), service);
+                return new CndExportDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("cnd-export-dialog", new Model("CND Export"), dialogFactory, dialogService));
@@ -166,7 +166,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new NamespaceDialog(MenuPlugin.this, getPluginContext(), service);
+                return new NamespaceDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("namespace-dialog", new Model("Add Namespace"), dialogFactory, dialogService));
@@ -178,7 +178,7 @@ public class MenuPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog createDialog(IDialogService service) {
-                return new WorkflowDialog(MenuPlugin.this, getPluginContext(), service);
+                return new WorkflowDialog(MenuPlugin.this, service);
             }
         };
         add(new DialogLink("workflow-dialog", new Model("View Workflow"), dialogFactory, dialogService));

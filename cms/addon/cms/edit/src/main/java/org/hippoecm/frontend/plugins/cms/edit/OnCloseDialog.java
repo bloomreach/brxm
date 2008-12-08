@@ -52,7 +52,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     private IServiceReference<IEditService> editor;
 
     public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, IEditorManager mgr, IEditService editor) {
-        super(context, dialogWindow);
+        super(dialogWindow);
 
         this.model = model;
         this.factory = context.getReference(mgr);

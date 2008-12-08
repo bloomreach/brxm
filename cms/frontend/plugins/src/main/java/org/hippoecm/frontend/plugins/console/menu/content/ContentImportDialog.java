@@ -44,8 +44,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
@@ -63,9 +61,9 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
     static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
-    private final IServiceReference<MenuPlugin> pluginRef;
     private final JcrNodeModel nodeModel;
-    
+    MenuPlugin plugin;
+
     Component message;
     Model msgText;
 
@@ -108,10 +106,10 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     }
     
 
-    public ContentImportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
+    public ContentImportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
         InitMaps();
-        pluginRef = context.getReference(plugin);
+        this.plugin = plugin;
         nodeModel = (JcrNodeModel) plugin.getModel();
         
         final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
@@ -132,6 +130,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         return new Model("Import content from file");
     }
 
+    @Override
+    protected void ok() throws Exception {
+        plugin.setModel(nodeModel);
+        plugin.flushNodeModel(nodeModel);
+    }
 
     /**
      * Form the upload.
@@ -235,10 +238,4 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         }
     }
 
-    @Override
-    protected void ok() throws Exception {
-        MenuPlugin plugin = pluginRef.getService();
-        plugin.setModel(nodeModel);
-        plugin.flushNodeModel(nodeModel);
-    }
 }

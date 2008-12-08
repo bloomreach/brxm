@@ -31,7 +31,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
@@ -50,8 +49,8 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
     Component message;
     Model msgText;
 
-    public CndImportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
+    public CndImportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
         
         final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
         add(simpleUploadForm);

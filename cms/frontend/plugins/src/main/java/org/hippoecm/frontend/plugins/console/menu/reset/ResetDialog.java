@@ -28,7 +28,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -38,11 +37,11 @@ public class ResetDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     protected boolean hasPendingChanges;
-    protected IServiceReference<MenuPlugin> pluginRef;
+    protected MenuPlugin plugin;
 
     public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+        super(dialogWindow);
+        this.plugin = plugin;
 
         Component message;
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
@@ -73,7 +72,6 @@ public class ResetDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node rootNode = nodeModel.getNode().getSession().getRootNode();
         // always refresh regardless of the local changes, so external changes
