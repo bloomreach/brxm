@@ -20,5 +20,5 @@ import org.apache.wicket.IClusterable;
 public interface IDialogFactory extends IClusterable {
     final static String SVN_ID = "$Id$";
 
-    public AbstractDialog createDialog(IDialogService dialogService);
+    public IDialogService.Dialog createDialog(IDialogService dialogService);
 }

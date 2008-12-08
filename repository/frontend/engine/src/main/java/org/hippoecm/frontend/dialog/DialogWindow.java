@@ -15,52 +15,60 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow.PageCreator;
-import org.hippoecm.frontend.service.ITitleDecorator;
 
-public class DialogWindow extends ModalWindow implements PageCreator, IDialogService {
+public class DialogWindow extends ModalWindow implements IDialogService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
-    protected Page page;
-    private List<IBehavior> dialogBehaviors;
+    private class Callback implements ModalWindow.WindowClosedCallback {
+        private static final long serialVersionUID = 1L;
+
+        Dialog dialog;
+
+        Callback(Dialog dialog) {
+            this.dialog = dialog;
+        }
+
+        public void onClose(AjaxRequestTarget target) {
+            dialog.onClose();
+            if (pending.size() > 0) {
+                Dialog dialog = pending.remove(0);
+                setContent(dialog.getComponent());
+                setTitle(dialog.getTitle());
+                setWindowClosedCallback(new Callback(dialog));
+                show(target);
+            }
+        }
+    }
+
+    private List<Dialog> pending;
 
     public DialogWindow(String id) {
         super(id);
-        setPageCreator(this);
-        dialogBehaviors = new ArrayList<IBehavior>();
+
+        pending = new LinkedList<Dialog>();
     }
 
-    public Page createPage() {
-        return page;
-    }
-
-    public void show(Page aPage) {
-        this.page = aPage;
-        setCookieName(aPage.getClass().getName());
-        if (page instanceof ITitleDecorator) {
-            setTitle(((ITitleDecorator) page).getTitle());
-        }
-
-        if (dialogBehaviors != null) {
-            for (IBehavior behavior : dialogBehaviors) {
-                page.add(behavior);
+    public void show(Dialog dialog) {
+        if (isShown()) {
+            pending.add(dialog);
+        } else {
+            setContent(dialog.getComponent());
+            setTitle(dialog.getTitle());
+            setWindowClosedCallback(new Callback(dialog));
+    
+            IRequestTarget target = RequestCycle.get().getRequestTarget();
+            if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
+                show((AjaxRequestTarget) target);
             }
-        }
-
-        IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-            show((AjaxRequestTarget) target);
         }
     }
 
@@ -69,12 +77,7 @@ public class DialogWindow extends ModalWindow implements PageCreator, IDialogSer
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             close((AjaxRequestTarget) target);
         }
+        remove(getContentId());
     }
 
-    public void addDialogBehavior(IBehavior behavior) {
-        if (dialogBehaviors == null) {
-            dialogBehaviors = new ArrayList<IBehavior>();
-        }
-        dialogBehaviors.add(behavior);
-    }
 }

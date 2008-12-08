@@ -30,7 +30,6 @@ import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -44,13 +43,16 @@ public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
+    private MenuPlugin plugin;
     private String name;
     @SuppressWarnings("unused")
     private String target;
     private Label targetLabel;
 
-    public CopyDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(plugin, context, dialogWindow, new JcrTreeNode(new JcrNodeModel("/")));
+    public CopyDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow, new JcrTreeNode(new JcrNodeModel("/")));
+
+        this.plugin = plugin;
         JcrNodeModel model = (JcrNodeModel) plugin.getModel();
         setSelectedNode(model);
         try {
@@ -107,7 +109,6 @@ public class CopyDialog extends LookupDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        MenuPlugin plugin = (MenuPlugin) pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         JcrNodeModel selectedNode = getSelectedNode().getNodeModel();

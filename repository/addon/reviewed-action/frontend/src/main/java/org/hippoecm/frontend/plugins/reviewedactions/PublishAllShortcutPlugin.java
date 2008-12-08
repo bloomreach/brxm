@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.rmi.RemoteException;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -27,16 +27,12 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -51,6 +47,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PublishAllShortcutPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
@@ -74,17 +72,18 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
         AjaxLink link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
-                dialogService.show(new PublishAllShortcutPlugin.Dialog(dialogService, context, config));
+                dialogService.show(new PublishAllShortcutPlugin.Dialog(dialogService, config));
             }
         };
         link.setModel(new StringResourceModel(config.getString("label.link"), this, null));
         add(link);
-	Label label = new Label("label");
-	label.setModel(new StringResourceModel(config.getString("label.link"), this, null));
-	link.add(label);
+        Label label = new Label("label");
+        label.setModel(new StringResourceModel(config.getString("label.link"), this, null));
+        link.add(label);
     }
 
     public static class Dialog extends AbstractDialog {
@@ -95,12 +94,12 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
         private Set<String> documents = new HashSet<String>();
         private String mode = MODE_PUBLISH;
-	private IPluginConfig config;
+        private IPluginConfig config;
 
-        public Dialog(IDialogService dialogWindow, IPluginContext context, IPluginConfig config) {
-            super(context, dialogWindow);
+        public Dialog(IDialogService dialogWindow, IPluginConfig config) {
+            super(dialogWindow);
             ok.setModel(new Model("Execute"));
-	    this.config = config;
+            this.config = config;
 
             if (config.containsKey("mode")) {
                 mode = config.getString("mode", MODE_PUBLISH);
@@ -132,7 +131,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
 
             Label countLabel = new Label("count");
             countLabel.setModel(new Model(Integer.toString(documents.size())));
-	    add(countLabel);
+            add(countLabel);
         }
 
         public IModel getTitle() {
@@ -150,7 +149,8 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
                         if (document.getDepth() > 0) {
                             Node handle = document.getParent();
                             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter.hasNext();) {
+                                for (NodeIterator requestIter = handle.getNodes(HippoNodeType.NT_REQUEST); requestIter
+                                        .hasNext();) {
                                     Node request = requestIter.nextNode();
                                     if (request != null) {
                                         Workflow workflow = wfMgr.getWorkflow(WORKFLOW_CATEGORY, request);

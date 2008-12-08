@@ -69,6 +69,6 @@ public class ReorderDialog extends AbstractWorkflowDialog {
         if (pluginModel instanceof JcrNodeModel) {
             jcrServiceRef.getService().flush((JcrNodeModel) pluginModel);
         }
-
     }
+
 }

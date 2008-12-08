@@ -33,7 +33,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
@@ -53,12 +52,12 @@ public class PropertyDialog extends AbstractDialog {
     private String value;
     private Boolean isMultiple = Boolean.FALSE;
     private String type;
-
-    private IServiceReference<MenuPlugin> pluginRef;
+    private MenuPlugin plugin;
 
     public PropertyDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+        super(dialogWindow);
+
+        this.plugin = plugin;
 
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {
             private static final long serialVersionUID = 1L;
@@ -95,14 +94,14 @@ public class PropertyDialog extends AbstractDialog {
 
     @Override
     public void ok() throws RepositoryException {
-        MenuPlugin plugin = pluginRef.getService();
         JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Node node = nodeModel.getNode();
 
         Value jcrValue = getJcrValue();
         if (isMultiple.booleanValue()) {
             if (jcrValue == null || value.equals("")) {
-                jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...", PropertyType.STRING);
+                jcrValue = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue("...",
+                        PropertyType.STRING);
             }
             node.setProperty(name, new Value[] { jcrValue });
         } else {
@@ -116,7 +115,6 @@ public class PropertyDialog extends AbstractDialog {
     public IModel getTitle() {
         return new Model("Add a new Property");
     }
-
 
     public String getName() {
         return name;
@@ -166,21 +164,29 @@ public class PropertyDialog extends AbstractDialog {
     private Value getJcrValue() {
         try {
             if (type.equals(PropertyType.TYPENAME_BOOLEAN)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.BOOLEAN);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.BOOLEAN);
             } else if (type.equals(PropertyType.TYPENAME_DATE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.DATE);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.DATE);
             } else if (type.equals(PropertyType.TYPENAME_DOUBLE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.DOUBLE);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.DOUBLE);
             } else if (type.equals(PropertyType.TYPENAME_LONG)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.LONG);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.LONG);
             } else if (type.equals(PropertyType.TYPENAME_NAME)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.NAME);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.NAME);
             } else if (type.equals(PropertyType.TYPENAME_PATH)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.PATH);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.PATH);
             } else if (type.equals(PropertyType.TYPENAME_REFERENCE)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.REFERENCE);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.REFERENCE);
             } else if (type.equals(PropertyType.TYPENAME_STRING)) {
-                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value, PropertyType.STRING);
+                return ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(value,
+                        PropertyType.STRING);
             }
             log.info("Unsupported type " + type);
             return null;

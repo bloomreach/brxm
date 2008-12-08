@@ -160,7 +160,7 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         map.put("hippo:workflow", FolderWorkflow.class.getName());
         return super.getString(map);
     }
-    
+
     @SuppressWarnings("unchecked")
     public void select(JcrNodeModel nodeModel) {
         IBrowseService<JcrNodeModel> browser = getPluginContext().getService(
@@ -257,7 +257,7 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
 
     protected FolderWorkflowActionComponent createWorkflowActionComponent(final String category,
             final Set<String> prototypes) {
-        final IModel title = new StringResourceModel("add-category", (Component) null, null,
+        final IModel title = new StringResourceModel("add-category", (Component) this, null,
                 new Object[] { new StringResourceModel(category, this, null) });
 
         DialogAction action = new DialogAction(new IDialogFactory() {

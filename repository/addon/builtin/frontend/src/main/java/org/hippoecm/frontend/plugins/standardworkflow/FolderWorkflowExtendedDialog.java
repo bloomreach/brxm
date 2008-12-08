@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
@@ -73,20 +74,16 @@ public class FolderWorkflowExtendedDialog extends AbstractWorkflowDialog {
         if (prototypes.size() > 1) {
             DropDownChoice folderChoice;
             add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"),
-                    new LinkedList<String>(prototypes)) {
+                    new LinkedList<String>(prototypes)));
+            folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected boolean wantOnSelectionChangedNotifications() {
-                    return true;
-                }
-
-                @Override
-                protected void onSelectionChanged(Object newSelection) {
-                    super.onSelectionChanged();
+                public void onUpdate(AjaxRequestTarget target) {
                     enableButtons();
                 }
             });
+            
             folderChoice.setNullValid(false);
             folderChoice.setRequired(true);
         } else if (prototypes.size() == 1) {

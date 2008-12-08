@@ -38,8 +38,6 @@ import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoSession;
 import org.w3c.dom.Document;
@@ -50,13 +48,11 @@ public class ContentExportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final IServiceReference<MenuPlugin> pluginRef;
-
     private boolean skipBinary = true;
     
-    public ContentExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+    public ContentExportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
+        setModel(plugin.getModel());
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         Model skipBinaryModel = new Model(skipBinary);
@@ -111,7 +107,7 @@ public class ContentExportDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         String path;
         try {
             path = nodeModel.getNode().getPath();

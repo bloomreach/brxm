@@ -31,6 +31,8 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -40,7 +42,6 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,13 +62,13 @@ public class CndExportDialog extends AbstractDialog {
 
     String selectedNs;
 
-    public CndExportDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
+    public CndExportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         Model selectedNsModel = new Model(selectedNs);
-        
+
         List<String> nsPrefixes = null;
         try {
             nsPrefixes = getNsPrefixes(nodeModel.getNode().getSession());
@@ -85,32 +86,6 @@ public class CndExportDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected boolean wantOnSelectionChangedNotifications() {
-                return true;
-            }
-
-            @Override
-            protected void onSelectionChanged(Object newSelection) {
-                selectedNs = ((String) newSelection);
-                String export;
-                try {
-                    Node node = nodeModel.getNode();
-                    Session session = node.getSession();
-                    LinkedHashSet<NodeType> types = sort(getNodeTypes(session, selectedNs.concat(":")));
-                    Writer out = new JcrCompactNodeTypeDefWriter(session).write(types, true);
-                    export = out.toString();
-                } catch (RepositoryException e) {
-                    log.error("RepositoryException while exporting NodeType Definitions of namespace : " + selectedNs, e);
-                    export = e.getMessage();
-                } catch (IOException e) {
-                    log.error("IOException while exporting NodeType Definitions of namespace : " + selectedNs, e);
-                    export = e.getMessage();
-                }
-                dump.setModel(new Model(export));
-
-            }
-
-            @Override
             public boolean isNullValid() {
                 return false;
             }
@@ -121,6 +96,30 @@ public class CndExportDialog extends AbstractDialog {
             }
         };
         add(dropdown);
+        dropdown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                String export;
+                try {
+                    Node node = nodeModel.getNode();
+                    Session session = node.getSession();
+                    LinkedHashSet<NodeType> types = sort(getNodeTypes(session, selectedNs.concat(":")));
+                    Writer out = new JcrCompactNodeTypeDefWriter(session).write(types, true);
+                    export = out.toString();
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException while exporting NodeType Definitions of namespace : " + selectedNs,
+                            e);
+                    export = e.getMessage();
+                } catch (IOException e) {
+                    log.error("IOException while exporting NodeType Definitions of namespace : " + selectedNs, e);
+                    export = e.getMessage();
+                }
+                dump.setModel(new Model(export));
+
+            }
+        });
 
         // Add download link
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, selectedNsModel);

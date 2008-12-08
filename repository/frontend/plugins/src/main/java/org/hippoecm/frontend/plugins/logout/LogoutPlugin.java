@@ -39,9 +39,8 @@ public class LogoutPlugin extends RenderPlugin {
         ValueMap credentials = session.getCredentials();
         username = credentials.getString("username");
 
-        String dialogId = context.getReference(this).getServiceId() + ".dialog";
         add(new Label("username", new PropertyModel(this, "username")));
-        add(new LogoutLink("logout-link", context, dialogId));
+        add(new LogoutLink("logout-link", context));
     }
 
 }

@@ -43,7 +43,6 @@ public class ServiceReference<T extends IClusterable> implements IServiceReferen
     }
 
     public void detach() {
-        page.detach();
     }
 
 }

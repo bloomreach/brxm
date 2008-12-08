@@ -24,7 +24,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
@@ -44,8 +43,8 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
     private String namespaceName;
     private String namespaceUri;
 
-    public NamespaceDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
+    public NamespaceDialog(MenuPlugin plugin, IDialogService dialogWindow) {
+        super(dialogWindow);
         add(new TextFieldWidget("name", new PropertyModel(this, "namespaceName")));
         add(new TextFieldWidget("uri", new PropertyModel(this, "namespaceUri")));
     }

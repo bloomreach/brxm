@@ -175,7 +175,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             target.addComponent(incorrectqueryLabel);
             IDialogService dialogService = getDialogService();
             if (dialogService != null) {
-                dialogService.show(new ExceptionDialog(getPluginContext(), dialogService, new IllegalArgumentException(incorrectquery)));
+                dialogService.show(new ExceptionDialog(dialogService, new IllegalArgumentException(incorrectquery)));
             }
         }
         log.debug(e.getMessage());

@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
@@ -207,7 +206,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                     stopCluster();
                 }
                 IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new TooManyEditorsWarningDialog(context, dialogService));
+                dialogService.show(new TooManyEditorsWarningDialog(dialogService));
                 pending.add(nodeModel);
             }
         } else if (editors.contains(nodeModel)) {
@@ -218,7 +217,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             }
         } else {
             IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(new TooManyEditorsWarningDialog(context, dialogService));
+            dialogService.show(new TooManyEditorsWarningDialog(dialogService));
         }
     }
 
@@ -339,14 +338,15 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     }
 
     private class TooManyEditorsWarningDialog extends AbstractDialog {
+        private static final long serialVersionUID = 1L;
 
-        TooManyEditorsWarningDialog(IPluginContext context, IDialogService dialogService) {
-            super(context, dialogService, new StringResourceModel("too-many-editors", (Component) null, null));
+        TooManyEditorsWarningDialog(IDialogService dialogService) {
+            super(dialogService);
             cancel.setVisible(false);
         }
 
         public IModel getTitle() {
-            return new StringResourceModel("warning", this, null);
+            return new StringResourceModel("too-many-editors", this, null);
         }
     }
 }

@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -189,7 +190,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         public Dialog(IDialogService dialogWindow, IPluginContext context, IPluginConfig config, Node folder,
                 String defaultFolder) {
-            super(context, dialogWindow);
+            super(dialogWindow);
             ok.setModel(new Model("Create"));
 
             if (config.containsKey("option.first"))
@@ -273,17 +274,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
             List<String> emptyList = new LinkedList<String>();
             emptyList.add("");
 
-            add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), emptyList) {
+            add(folderChoice = new DropDownChoice("prototype", new PropertyModel(this, "prototype"), emptyList));
+            folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected boolean wantOnSelectionChangedNotifications() {
-                    return true;
-                }
-
-                @Override
-                protected void onSelectionChanged(Object newSelection) {
-                    super.onSelectionChanged(newSelection);
+                protected void onUpdate(AjaxRequestTarget target) {
                     evaluateChoices();
                 }
             });
@@ -291,17 +287,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
             folderChoice.setRequired(true);
             folderChoice.setOutputMarkupId(true);
 
-            add(categoryChoice = new DropDownChoice("template", new PropertyModel(this, "templateCategory"), emptyList) {
+            add(categoryChoice = new DropDownChoice("template", new PropertyModel(this, "templateCategory"), emptyList));
+            categoryChoice.add( new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected boolean wantOnSelectionChangedNotifications() {
-                    return true;
-                }
-
-                @Override
-                protected void onSelectionChanged(Object newSelection) {
-                    super.onSelectionChanged(newSelection);
+                protected void onUpdate(AjaxRequestTarget target) {
                     prototype = null;
                     evaluateChoices();
                 }

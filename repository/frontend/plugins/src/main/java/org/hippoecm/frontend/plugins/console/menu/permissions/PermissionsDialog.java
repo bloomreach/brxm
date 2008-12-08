@@ -35,7 +35,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +56,14 @@ public class PermissionsDialog extends AbstractDialog {
     public static final String[] JCR_ACTIONS = new String[] { READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
             SET_PROPERTY_ACTION };
 
-    private final IServiceReference<MenuPlugin> pluginRef;
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(context, dialogWindow);
-        this.pluginRef = context.getReference(plugin);
+        super(dialogWindow);
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
+        setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
         final Label membershipsLabel = new Label("memberships", "None");
@@ -178,7 +176,7 @@ public class PermissionsDialog extends AbstractDialog {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) pluginRef.getService().getModel();
+        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         String path;
         try {
             path = nodeModel.getNode().getPath();
