@@ -44,8 +44,9 @@ import org.apache.jackrabbit.core.version.InternalVersionItem;
 /**
  * Implements a <code>InternalVersionHistory</code>
  */
-class InternalVersionHistoryImpl extends InternalVersionItemImpl
-        implements InternalVersionHistory {
+class InternalVersionHistoryImpl extends InternalVersionItemImpl implements InternalVersionHistory {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * default logger

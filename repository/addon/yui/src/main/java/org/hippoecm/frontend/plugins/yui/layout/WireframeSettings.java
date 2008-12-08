@@ -11,6 +11,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.Value;
 
 public class WireframeSettings extends Settings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final StringSetting ROOT_ID = new StringSetting("rootId", "");

@@ -31,6 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeWrapper implements ITranslation<IModel> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     final static Logger log = LoggerFactory.getLogger(NodeWrapper.class);

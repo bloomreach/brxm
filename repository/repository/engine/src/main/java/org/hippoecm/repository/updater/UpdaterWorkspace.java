@@ -40,6 +40,9 @@ import javax.jcr.version.VersionException;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterWorkspace implements Workspace {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Workspace upstream;
     UpdaterSession session;
 

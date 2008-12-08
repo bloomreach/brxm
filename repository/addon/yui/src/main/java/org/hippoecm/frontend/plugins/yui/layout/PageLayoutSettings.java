@@ -6,6 +6,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.IntSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 
 public class PageLayoutSettings extends AjaxSettings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private static final StringSetting ROOT_ID  = new StringSetting("rootId", "doc3");

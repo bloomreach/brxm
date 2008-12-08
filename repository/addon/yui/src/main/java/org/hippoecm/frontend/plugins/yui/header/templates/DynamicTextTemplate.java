@@ -27,6 +27,8 @@ import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 
 public abstract class DynamicTextTemplate implements IHeaderContributor {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

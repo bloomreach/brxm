@@ -36,6 +36,9 @@ import org.hippoecm.repository.gallery.GalleryWorkflow;
 
 public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
 {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private Session rootSession;
     private Node subject;
 

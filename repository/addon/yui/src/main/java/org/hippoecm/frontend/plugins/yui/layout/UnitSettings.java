@@ -8,6 +8,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 
 public class UnitSettings extends Settings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private static final StringSetting POSITION = new StringSetting("position");

@@ -33,6 +33,9 @@ import org.hippoecm.frontend.plugins.yui.YuiHeaderContributor;
 import org.onehippo.yui.YuiNamespace;
 
 public class HeaderContributorHelper implements IHeaderContributor{
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     List<IHeaderContributor> modules = new LinkedList<IHeaderContributor>();

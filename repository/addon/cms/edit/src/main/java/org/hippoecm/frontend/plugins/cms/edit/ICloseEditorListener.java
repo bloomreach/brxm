@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
-interface ICloseEditorListener extends IClusterable {
+public interface ICloseEditorListener extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void onClose(IModel model);
 }

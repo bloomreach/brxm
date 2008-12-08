@@ -35,6 +35,8 @@ import org.apache.jackrabbit.core.version.InternalVersion;
  * would produce a  ConcurrentModificationException.
  */
 class VersionIteratorImpl implements VersionIterator {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * the id's of the versions to return

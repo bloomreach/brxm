@@ -3,6 +3,9 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 public abstract class Value<K> implements IValue<K> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     K value;

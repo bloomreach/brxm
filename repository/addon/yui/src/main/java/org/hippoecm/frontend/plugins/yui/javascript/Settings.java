@@ -8,6 +8,9 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public abstract class Settings implements IClusterable {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private Map<Setting<?>, Value<?>> settings;

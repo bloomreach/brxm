@@ -5,6 +5,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public abstract class Setting<K> implements ISetting<K> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     K defaultValue;

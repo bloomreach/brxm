@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GalleryConverter extends AbstractConverter {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(GalleryConverter.class);
 

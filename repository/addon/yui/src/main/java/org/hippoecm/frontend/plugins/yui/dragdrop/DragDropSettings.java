@@ -21,6 +21,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 import org.hippoecm.frontend.plugins.yui.javascript.StringArraySetting;
 
 public class DragDropSettings extends AjaxSettings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final StringArraySetting GROUPS = new StringArraySetting("groups", "default");

@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 
 public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService, IDetachable,
         IYuiManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private final static Logger log = LoggerFactory.getLogger(WebAppPlugin.class);

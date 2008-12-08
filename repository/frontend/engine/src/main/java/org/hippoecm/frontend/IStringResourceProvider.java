@@ -20,6 +20,8 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 
 public interface IStringResourceProvider extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String getString(Map<String, String> keys);
 

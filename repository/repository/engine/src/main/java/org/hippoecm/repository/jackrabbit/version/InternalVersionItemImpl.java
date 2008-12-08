@@ -22,6 +22,8 @@ import org.apache.jackrabbit.core.version.InternalVersionItem;
  * Implements a <code>InternalVersionItem</code>.
  */
 abstract class InternalVersionItemImpl implements InternalVersionItem {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * the underlying persistance node

@@ -30,6 +30,9 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.impl.QueryDecorator;
 
 public class DirectPath implements QueryDecorator.HardcodedQuery {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public List<Node> execute(Session session, HippoQuery query, Map<String, Value> arguments)
             throws RepositoryException {
         String path = query.getStatement();

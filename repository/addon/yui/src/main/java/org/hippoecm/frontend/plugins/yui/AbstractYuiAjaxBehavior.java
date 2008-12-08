@@ -9,6 +9,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavior {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private IYuiContext context;

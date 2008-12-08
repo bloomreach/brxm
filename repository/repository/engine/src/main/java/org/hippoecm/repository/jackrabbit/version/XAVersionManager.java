@@ -72,6 +72,8 @@ import org.apache.jackrabbit.core.version.VersionManager;
  */
 public class XAVersionManager extends org.apache.jackrabbit.core.version.XAVersionManager
         implements EventStateCollectionFactory, VirtualItemStateProvider, InternalXAResource, AbstractVersionManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Attribute name for associated change log.

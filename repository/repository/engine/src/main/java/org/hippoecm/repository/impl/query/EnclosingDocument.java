@@ -32,6 +32,9 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.impl.QueryDecorator;
 
 public class EnclosingDocument implements QueryDecorator.HardcodedQuery {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public List<Node> execute(Session session, HippoQuery query, Map<String,Value> arguments) throws RepositoryException {
         Vector results = new Vector<Node>();
         String uuid = arguments.get("id").getString();

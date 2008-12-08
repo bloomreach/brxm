@@ -17,8 +17,9 @@ package org.hippoecm.tools.importer.api;
 
 import org.apache.commons.configuration.Configuration;
 
-
 public interface Mapper {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void setup(Configuration config) throws ImportException;
 

@@ -31,6 +31,9 @@ import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.ext.WorkflowModule;
 
 public class SchedulerWorkflowModule implements WorkflowModule {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     Date timestamp;
 
     public SchedulerWorkflowModule(Date timestamp) {
@@ -60,10 +63,8 @@ public class SchedulerWorkflowModule implements WorkflowModule {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (RepositoryException ex) {
             SchedulerModule.log.error("failure storing scheduled workflow", ex);
-System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
         } catch (SchedulerException ex) {
             SchedulerModule.log.error("failure storing scheduled workflow", ex);
-System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }

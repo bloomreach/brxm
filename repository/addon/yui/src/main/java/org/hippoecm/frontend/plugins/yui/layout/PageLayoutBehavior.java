@@ -10,6 +10,8 @@ import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class PageLayoutBehavior extends AbstractYuiAjaxBehavior implements IWireframeService  {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
         

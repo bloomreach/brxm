@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 public class ExternalContentImportMain {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static final String DEFAULT_CONFIG = "import.properties";
     private static Configuration config;

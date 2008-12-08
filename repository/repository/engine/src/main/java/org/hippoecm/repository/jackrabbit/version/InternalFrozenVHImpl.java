@@ -29,8 +29,9 @@ import org.apache.jackrabbit.core.version.InternalVersionItem;
 /**
  * Implements a <code>InternalFrozenVersionHistory</code>
  */
-class InternalFrozenVHImpl extends InternalFreezeImpl
-        implements InternalFrozenVersionHistory {
+class InternalFrozenVHImpl extends InternalFreezeImpl implements InternalFrozenVersionHistory {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * Creates a new frozen version history.

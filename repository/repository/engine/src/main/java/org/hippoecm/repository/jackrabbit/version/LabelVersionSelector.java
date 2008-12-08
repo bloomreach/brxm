@@ -34,6 +34,8 @@ import org.apache.jackrabbit.core.version.VersionSelector;
  * </xmp>
  */
 public class LabelVersionSelector implements VersionSelector {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * a versionlabel hint

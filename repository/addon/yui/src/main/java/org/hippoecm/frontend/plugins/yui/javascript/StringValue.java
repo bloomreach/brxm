@@ -1,6 +1,9 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
 public class StringValue extends Value<String> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final String SINGLE_QUOTE = "'";

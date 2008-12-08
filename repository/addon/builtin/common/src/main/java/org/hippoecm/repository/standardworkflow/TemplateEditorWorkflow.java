@@ -26,6 +26,9 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface TemplateEditorWorkflow extends Workflow {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
+
     public final static class TypeUpdate implements Serializable {
         private static final long serialVersionUID = 1L;
 

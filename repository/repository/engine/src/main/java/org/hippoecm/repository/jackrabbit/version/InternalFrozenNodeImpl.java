@@ -46,8 +46,9 @@ import org.hippoecm.repository.api.HippoNodeType;
 /**
  * Implements a <code>InternalFrozenNode</code>
  */
-class InternalFrozenNodeImpl extends InternalFreezeImpl
-        implements InternalFrozenNode {
+class InternalFrozenNodeImpl extends InternalFreezeImpl implements InternalFrozenNode {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * checkin mode version.

@@ -1,6 +1,9 @@
 package org.hippoecm.frontend.plugins.yui.javascript;
 
 public class SettingsArrayValue<K extends Settings> extends Value<K[]> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public SettingsArrayValue(K[] value) {

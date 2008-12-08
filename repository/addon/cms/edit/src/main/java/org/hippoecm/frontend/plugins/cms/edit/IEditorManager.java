@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.cms.edit;
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.service.IEditService;
 
-interface IEditorManager extends IClusterable {
+public interface IEditorManager extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     void deleteEditor(IEditService service);
 }

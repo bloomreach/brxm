@@ -24,6 +24,9 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRender
 import org.hippoecm.repository.api.HippoNode;
 
 public class StateRenderer extends AbstractNodeRenderer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     @Override

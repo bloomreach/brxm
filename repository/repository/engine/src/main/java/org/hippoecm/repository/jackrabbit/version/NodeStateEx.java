@@ -46,6 +46,8 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
  * This Class provides some basic node operations directly on the node state.
  */
 public class NodeStateEx {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * the underlying persistent state

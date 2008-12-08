@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  * File resource for the content importers.
  */
 public class FileContent implements Content {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(FileContent.class);
 
