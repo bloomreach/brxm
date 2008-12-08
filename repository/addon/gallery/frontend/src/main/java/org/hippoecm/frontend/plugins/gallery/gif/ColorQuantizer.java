@@ -188,9 +188,6 @@ import java.awt.image.IndexColorModel;
 </pre>
 */
 public class ColorQuantizer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
     public static final int MAX_NODES = 266817;
     public static final int MAX_TREE_DEPTH = 8;
     public static final int MAX_CHILDREN = 16;

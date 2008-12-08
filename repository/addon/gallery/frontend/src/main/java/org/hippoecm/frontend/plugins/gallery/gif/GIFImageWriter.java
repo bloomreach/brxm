@@ -29,9 +29,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 
 public class GIFImageWriter extends ImageWriter {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    
     GIFEncoder encoder;
 
     public GIFImageWriter(GIFImageWriterSpi originatingProvider) {

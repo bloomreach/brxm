@@ -27,9 +27,6 @@ import java.awt.geom.*;
 import java.awt.image.*;
 
 public class DiffusionFilterOp implements BufferedImageOp {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
     protected final static int[] diffusionMatrix = {
          0, 0, 0,
          0, 0, 7,

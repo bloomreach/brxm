@@ -32,9 +32,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class GIFEncoder {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    
     private boolean interlace = false;
 
     private int width, height;
