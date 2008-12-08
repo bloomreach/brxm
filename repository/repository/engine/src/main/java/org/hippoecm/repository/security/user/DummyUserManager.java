@@ -43,12 +43,16 @@ public class DummyUserManager extends AbstractUserManager {
     public boolean authenticate(SimpleCredentials creds) throws RepositoryException {
         return false;
     }
-    
+
     public void syncUserInfo(String userId) {
         return;
     }
 
     public String getNodeType() {
         return HippoNodeType.NT_USER;
+    }
+
+    public boolean isCaseSensitive() {
+        return true;
     }
 }

@@ -37,7 +37,7 @@ public class DummyGroupManager extends AbstractGroupManager {
     public DummyGroupManager() {
         providerId = PROVIDER_ID;
     }
-    
+
     public void initManager(ManagerContext context) {
         initialized = true;
     }
@@ -48,5 +48,9 @@ public class DummyGroupManager extends AbstractGroupManager {
 
     public String getNodeType() {
         return HippoNodeType.NT_GROUP;
+    }
+
+    public boolean isCaseSensitive() {
+        return true;
     }
 }
