@@ -165,9 +165,13 @@ public abstract class AbstractUserManager implements UserManager {
         String userId = normalizeUserId(rawUserId);
         log.trace("Creating node for user: {} in path: {}", userId, usersPath);
         int length = userId.length();
+        int pos = 0;
         Node usersNode = session.getRootNode().getNode(usersPath);
-        for (int i = 0; i < dirLevels && i < length; i++) {
-            String c = NodeNameCodec.encode(Character.toLowerCase(userId.charAt(i)));
+        for (int i = 0; i < dirLevels; i++) {
+            if (i < length) {
+                pos = i;
+            }
+            String c = NodeNameCodec.encode(Character.toLowerCase(userId.charAt(pos)));
             if (!usersNode.hasNode(c)) {
                 usersNode = usersNode.addNode(c, HippoNodeType.NT_USERFOLDER);
             } else {
@@ -195,9 +199,13 @@ public abstract class AbstractUserManager implements UserManager {
             return usersPath + "/" + NodeNameCodec.encode(userId, true);
         }
         int length = userId.length();
+        int pos = 0;
         StringBuilder path = new StringBuilder(usersPath);
-        for (int i = 0; i < dirLevels && i < length; i++) {
-            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(userId.charAt(i))));
+        for (int i = 0; i < dirLevels; i++) {
+            if (i < length) {
+                pos = i;
+            }
+            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(userId.charAt(pos))));
         }
         path.append('/').append(NodeNameCodec.encode(userId, true));
         return path.toString();

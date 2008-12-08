@@ -119,9 +119,13 @@ public abstract class AbstractGroupManager implements GroupManager {
         String groupId = normalizeGroupId(rawGroupId);
         log.trace("Creating node for group: {} in path: {}", groupId, groupsPath);
         int length = groupId.length();
+        int pos = 0;
         Node groupsNode = session.getRootNode().getNode(groupsPath);
-        for (int i = 0; i < dirLevels && i < length; i++) {
-            String c = NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(i)));
+        for (int i = 0; i < dirLevels; i++) {
+            if (i < length) {
+                pos = i;
+            }
+            String c = NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(pos)));
             if (!groupsNode.hasNode(c)) {
                 groupsNode = groupsNode.addNode(c, HippoNodeType.NT_GROUPFOLDER);
             } else {
@@ -150,9 +154,13 @@ public abstract class AbstractGroupManager implements GroupManager {
             return groupsPath + "/" + NodeNameCodec.encode(groupId, true);
         }
         int length = groupId.length();
+        int pos = 0;
         StringBuilder path = new StringBuilder(groupsPath);
-        for (int i = 0; i < dirLevels && i < length; i++) {
-            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(i))));
+        for (int i = 0; i < dirLevels; i++) {
+            if (i < length) {
+                pos = i;
+            }
+            path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(pos))));
         }
         path.append('/').append(NodeNameCodec.encode(groupId, true));
         return path.toString();
