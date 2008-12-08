@@ -91,7 +91,7 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
-	  <include>**/*.properties</include>
+      <include>**/*.properties</include>
         </includes>
       </resource>
       <resource>

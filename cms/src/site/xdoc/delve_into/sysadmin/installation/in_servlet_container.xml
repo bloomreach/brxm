@@ -50,16 +50,16 @@
         <tr> 
          <td>
             Download 
-	 </td>
+     </td>
          <td> 
           <span class='download-48 icon-48'/>
-	 </td>
+     </td>
         <td> 
          <a href="http://repo1.maven.org/maven/geronimo-spec/jars/geronimo-spec-jta-1.0-M1.jar">geronimo-spec-jta</a> jar file
             to <code>$TOMCATDIR/lib</code>.
-	</td>
+    </td>
 
-	</tr>
+    </tr>
        </table>
       </blockquote>
 
@@ -70,10 +70,10 @@
           <tr>
          <td>
             Download 
-	 </td>
+     </td>
          <td> 
           <span class='download-48 icon-48'/>
-	 </td>
+     </td>
    <td>          
      Download the <a href='http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-war/2.01.00.14160/hippo-ecm-quickstart-war-2.01.00.14160.war'>Hippo CMS package WAR</a>
      to the <code>$TOMCATDIR/webapps/</code> folder with the package file <a href='help_renamed.html'>renamed to</a> <code>cms.war</code>.

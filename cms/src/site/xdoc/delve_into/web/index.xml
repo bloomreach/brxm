@@ -36,7 +36,7 @@
           <tr>
            <td>
             <a href="toolkits/index.html">Toolkits</a>
-	   </td>
+       </td>
            <td>
             Using one of the available toolkits is the recommended way to 
             develop websites for publishing 
@@ -44,18 +44,18 @@
             The toolkits help you create websites and portals using the
             technology of your choice.
            </td>
-	  </tr>
+      </tr>
           <tr>
            <td>
             <a href="add-ons/index.html">Add-ons</a>
-	   </td>
+       </td>
            <td>
             Extend Hippo CMS with simple add-ons to add functionality to
             use with your website.
            </td>
-	  </tr>
-	 </table>
-	</blockquote>
+      </tr>
+     </table>
+    </blockquote>
 
    <subsection name='Need more functionality?'>
 

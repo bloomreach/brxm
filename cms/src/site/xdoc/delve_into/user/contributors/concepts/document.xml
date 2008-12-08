@@ -35,7 +35,7 @@
              it is suggested that they are mutally exclusive. A definition in accordance with this use would be that
              only user files that contain information that Hippo CMS can read are documents. Other files are images and just files.
              E.g., Hippo can store PDF documents, but can not read them, so to Hippo PDF documents are no documents, just files.  
-	  </p>
+      </p>
           <p>That Hippo CMS can read documents means that Hippo CMS can help perform advanced searches on those documents and can help 
              you generate such documents, telling you what information in your company should
              be stored in a document of a particular type.
@@ -43,8 +43,8 @@
 
          <h4>Etymology</h4>
           <p>From latin <i>docere</i>: to teach.
-	 </p>
+     </p>
 
-	</section>
+    </section>
     </body>
 </document>

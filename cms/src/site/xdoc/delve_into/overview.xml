@@ -64,24 +64,24 @@
          <tr>
           <td>   
            <a href="user/index.html"><span class='user-48 icon-48'/></a>
-	  </td>
+      </td>
           <td>
             <a href="user/index.html"><em>User Guide</em></a>
           </td>
           <td>
                 For users who have Hippo CMS available.
-	  </td>
-	 </tr>
+      </td>
+     </tr>
          <tr>
           <td>
            <a href="sysadmin/index.html"><span class='admin-48 icon-48'/></a>  
-	  </td>
+      </td>
           <td>
            <a href="sysadmin/index.html"><em>Admin Guide</em></a>
-	  </td>
+      </td>
           <td>
                For system administrators, for installing and configuring to integrate in your system.           
-	  </td>
+      </td>
                <!--
                 Configuration of Hippo CMS is often as simple as 
                 adding the path to your companies data base server. Without this path, Hippo CMS will use
@@ -91,18 +91,18 @@
                 settings that ensure that the example content is not used and not recreated on your data base server.
                -->
 
-	 </tr>
+     </tr>
          <tr>
           <td>         
            <a href="web/index.html"><em><span class='web-48 icon-48'/></em>
-	   </a>
-	  </td>
+       </a>
+      </td>
           <td>
            <a href="web/index.html"><em>Website Development</em></a>
-	  </td>
+      </td>
           <td>
              Hippo ECM is designed to make your own website development easy. 
-	  </td>
+      </td>
               <!--
                <p>
                 The Hippo ECM can be tailored to your needs, augmented with your own website-design, 
@@ -110,22 +110,22 @@
                </p>
                <p>
                 This guides describes the CMS related aspects of the Hippo ECM implementation.
-	       </p>
+           </p>
               -->
-	 </tr>
+     </tr>
      <tr>
           <td>         
            <a href="core/index.html"><span class='hippo-core-48 icon-48'/></a>
-	  </td>
+      </td>
           <td>
            <a href="core/index.html"><em>Hacking the core</em></a>
-	  </td>
+      </td>
           <td>
              For Hippo CMS core developers, who develop the CMS core engines and the CMS core plugins and
              the CMS standard package, containing the CMS core engines and a selection of the CMS core plugins.
-	  </td>
-	 </tr>
-	</table>
+      </td>
+     </tr>
+    </table>
      </blockquote>
 
     </section>

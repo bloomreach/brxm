@@ -41,50 +41,50 @@
         <tr>
           <td>
              <img src='../../images/tomcat_icon.png' alt='tomcat logo'/>
-	  </td>
+      </td>
           <td>
             <a href='http://tomcat.apache.org/'>Apache Tomcat</a>
-	  </td>
+      </td>
           <td>
             <a href='in_servlet_container.html#Deploying_in_Tomcat'>Deploying Hippo</a>
-	  </td>
-	</tr>
+      </td>
+    </tr>
         <tr>
           <td>
            <img src='http://jetty.mortbay.com/jetty/images/jetty_banner.gif' alt='jetty logo'/>
-	  </td>
+      </td>
           <td>
             <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>
-	  </td>
+      </td>
           <td>
             <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
-	  </td>
-	</tr>
+      </td>
+    </tr>
         <tr><th colspan='0'>Compatible Java application servers:</th></tr>
         <tr>
           <td>
             <img src='../../images/glassfish_icon.png' alt='glassfish logo'/>
-	  </td>
+      </td>
           <td>
             <a href='https://glassfish.dev.java.net/'>Sun Glassfish</a>
-	  </td>
+      </td>
           <td>
             <a href='in_application_server.html#Deploying_in_Glassfish'>Deploying Hippo</a> 
-	  </td>
-	</tr>
+      </td>
+    </tr>
 
         <tr>
           <td>
             <img src='../../images/jboss_icon.png' alt='JBoss logo'/>
-	  </td>
+      </td>
           <td>
             <a href='http://www.jboss.org/'>JBoss</a>
-	  </td>
+      </td>
           <td>
             <a href='in_application_server.html#Deploying_in_JBoss'>Deploying Hippo</a> 
-	  </td>
-	</tr>
-	</table>
+      </td>
+    </tr>
+    </table>
             <!--
             <li><a href='http://www.ibm.com/software/webservers/appserv/was/'>IBM WebSphere Application Server</a></li>
             <li><a href='http://www.bea.com/framework.jsp?CNT=index.htm&amp;FP=/content/products/weblogic/server'>Oracle Bea WebLogic Server</a></li>

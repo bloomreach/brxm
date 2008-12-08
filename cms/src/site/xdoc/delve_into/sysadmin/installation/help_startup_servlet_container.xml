@@ -32,18 +32,18 @@
         <li>
          <p>
            You may have configured your servlet container to run on a non-default port.
-	 </p>
+     </p>
          <p>The examples in the documentation assume default values. You must adapt the examples to
             your own customized port number. 
         </p>
-	</li>
+    </li>
         <li><p>You may be deploying the application on a machine other than your local
                machine.</p>
              <p>The examples in the documentation assume that you deploy the application on the same machine
                 as you are working. If you are deploying the application on a remote machine, you  
                 have to use the name of that remote machine everywhere that the documenation refers to &quot;localhost&quot;.
              </p>
-	</li>
+    </li>
        </ul>
 
       <subsection name='The browser window of the CMS is an empty page'>
@@ -65,7 +65,7 @@
        </p>
          <sample>
            Configuration file syntax error.: Premature end of file.
-	 </sample>
+     </sample>
         <p>
            This can be resolved by adding the following two jars to the Tomcat 
            endorsed lib folder in common:
