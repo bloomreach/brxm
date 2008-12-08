@@ -132,8 +132,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-	WorkflowContext wfCtx = getWorkflowContext();
-	wfCtx = wfCtx.getWorkflowContext(publicationDate);
+        WorkflowContext wfCtx = getWorkflowContext();
+        wfCtx = wfCtx.getWorkflowContext(publicationDate);
         FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
         wf.publish();
     }
