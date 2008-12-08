@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class StringMapValue extends Value<Map<String, String>> {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private boolean escaped = true;//TODO: make configurable

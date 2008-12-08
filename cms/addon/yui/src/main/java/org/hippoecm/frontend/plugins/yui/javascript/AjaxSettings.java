@@ -5,6 +5,9 @@ import java.util.Map;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class AjaxSettings extends Settings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     protected static final StringSetting CALLBACK_URL = new StringSetting("callbackUrl", "");

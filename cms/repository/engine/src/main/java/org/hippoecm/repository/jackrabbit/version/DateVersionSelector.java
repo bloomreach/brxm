@@ -41,6 +41,8 @@ import org.apache.jackrabbit.core.version.VersionSelector;
  * </xmp>
  */
 public class DateVersionSelector implements VersionSelector {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * a version date hint

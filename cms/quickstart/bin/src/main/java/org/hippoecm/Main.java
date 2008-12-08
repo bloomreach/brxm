@@ -27,6 +27,9 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 public class Main extends Server {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     static private void delete(File path) {
         if (path.exists()) {
             if (path.isDirectory()) {

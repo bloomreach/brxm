@@ -36,6 +36,8 @@ import org.apache.jackrabbit.core.version.VersionItemStateManager;
  * This Class implements a virtual item state provider.
  */
 class VersionItemStateProvider implements VirtualItemStateProvider, ItemStateListener {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The root node UUID for the version storage

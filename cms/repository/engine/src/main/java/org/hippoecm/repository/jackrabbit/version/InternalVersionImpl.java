@@ -36,8 +36,9 @@ import org.apache.jackrabbit.core.version.InternalVersionItem;
 /**
  * Implements a <code>InternalVersion</code>
  */
-class InternalVersionImpl extends InternalVersionItemImpl
-        implements InternalVersion {
+class InternalVersionImpl extends InternalVersionItemImpl implements InternalVersion {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * the date when this version was created

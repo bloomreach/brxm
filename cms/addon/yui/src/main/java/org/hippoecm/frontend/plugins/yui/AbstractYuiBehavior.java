@@ -7,6 +7,9 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class AbstractYuiBehavior extends AbstractBehavior {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private IYuiContext _helper;

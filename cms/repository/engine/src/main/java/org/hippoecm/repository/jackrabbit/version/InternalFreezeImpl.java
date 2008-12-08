@@ -21,8 +21,9 @@ import org.apache.jackrabbit.core.version.InternalVersionItem;
 /**
  * Implements a <code>InternalFreeze</code>
  */
-abstract class InternalFreezeImpl extends InternalVersionItemImpl
-        implements InternalFreeze {
+abstract class InternalFreezeImpl extends InternalVersionItemImpl implements InternalFreeze {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The parent item

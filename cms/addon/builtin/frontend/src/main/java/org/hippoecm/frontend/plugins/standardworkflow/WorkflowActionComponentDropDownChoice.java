@@ -26,6 +26,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 public class WorkflowActionComponentDropDownChoice extends DropDownChoice {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
     
     private WorkflowActionComponent selected;

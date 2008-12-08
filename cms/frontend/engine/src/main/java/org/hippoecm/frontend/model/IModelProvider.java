@@ -21,6 +21,8 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IModelProvider<T extends IModel> extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     T getModel(Map<String, String> criteria);
 

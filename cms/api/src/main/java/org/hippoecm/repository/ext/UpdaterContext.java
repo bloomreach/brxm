@@ -24,6 +24,9 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 public interface UpdaterContext {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
+
     /**
      * The registerName method MUST be called EXACTLY ONCE by every class
      * that implements the UpdaterModule abstract base class.

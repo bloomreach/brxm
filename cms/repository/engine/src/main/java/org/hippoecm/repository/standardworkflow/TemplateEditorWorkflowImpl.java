@@ -27,6 +27,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class TemplateEditorWorkflowImpl extends WorkflowImpl implements TemplateEditorWorkflow {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public TemplateEditorWorkflowImpl() throws RemoteException {
         super();

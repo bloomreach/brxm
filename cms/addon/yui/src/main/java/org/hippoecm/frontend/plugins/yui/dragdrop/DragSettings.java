@@ -21,6 +21,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.BooleanSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 
 public class DragSettings extends DragDropSettings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final BooleanSetting CENTER_FRAME = new BooleanSetting("centerFrame", true);

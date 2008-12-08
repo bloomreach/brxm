@@ -48,7 +48,9 @@ import org.apache.jackrabbit.core.version.VersionManager;
  * All read operations must aquire the read lock before reading, all write
  * operations must aquire the write lock.
  */
-interface AbstractVersionManager extends VersionManager {
+public interface AbstractVersionManager extends VersionManager {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     public InternalVersion getVersion(NodeId id) throws RepositoryException;
     public InternalVersionHistory getVersionHistory(NodeId id) throws RepositoryException;

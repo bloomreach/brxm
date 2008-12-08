@@ -47,6 +47,9 @@ import org.quartz.spi.SchedulerSignaler;
 import org.quartz.spi.TriggerFiredBundle;
 
 public class JCRJobStore implements JobStore {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
         signaler.signalSchedulingChange();
     }

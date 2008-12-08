@@ -23,6 +23,8 @@ import java.util.Iterator;
  * Interface for the content importers.
  */
 public interface Content {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String getName();
 

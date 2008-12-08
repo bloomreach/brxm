@@ -9,6 +9,8 @@ import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
 import org.onehippo.yui.YuiNamespace;
 
 public interface IYuiContext extends IHeaderContributor {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
     
     /**
      * Add a YUI module from the YAHOO namespace 

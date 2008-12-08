@@ -81,6 +81,8 @@ import org.apache.jackrabbit.core.version.VersionManager;
  * This Class implements a VersionManager.
  */
 public class VersionManagerImpl extends org.apache.jackrabbit.core.version.VersionManagerImpl implements ItemStateListener, UpdateEventListener, AbstractVersionManager {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     /**
      * the default logger

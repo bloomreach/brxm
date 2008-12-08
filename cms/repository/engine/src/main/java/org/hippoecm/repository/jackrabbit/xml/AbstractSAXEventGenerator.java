@@ -58,6 +58,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * for every item it encounters.
  */
 abstract class AbstractSAXEventGenerator {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(AbstractSAXEventGenerator.class);
 

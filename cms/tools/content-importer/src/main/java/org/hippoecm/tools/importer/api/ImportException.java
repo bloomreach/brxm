@@ -16,6 +16,9 @@
 package org.hippoecm.tools.importer.api;
 
 public class ImportException extends Exception {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public ImportException(String message) {

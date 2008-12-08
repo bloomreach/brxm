@@ -18,6 +18,8 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.IClusterable;
 
 public interface IValidateService extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String VALIDATE_ID = "validator.id";
 

@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 public final class PathHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     public static String getParent(String path) {
         if (path.lastIndexOf('/') >= 0) {

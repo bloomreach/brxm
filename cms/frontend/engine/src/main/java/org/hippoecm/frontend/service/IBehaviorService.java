@@ -18,6 +18,8 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.behavior.IBehavior;
 
 public interface IBehaviorService extends IBehavior {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String ID = "behavior.id";
     String PATH = "behavior.path";

@@ -6,6 +6,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.Settings;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 public class YuiPluginHelper {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
 
     private static final String SERVICE_ID = "service.behavior.yui";
     private static final String CONFIG_ID = "yui.config";

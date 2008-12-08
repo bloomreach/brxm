@@ -20,6 +20,8 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 public interface IYuiManager extends IClusterable {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
     
     IYuiContext newContext();
 }

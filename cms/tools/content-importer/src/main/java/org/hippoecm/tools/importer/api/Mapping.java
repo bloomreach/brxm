@@ -15,8 +15,9 @@
  */
 package org.hippoecm.tools.importer.api;
 
-
 public interface Mapping {
+    @SuppressWarnings("unused")
+    final static String SVN_ID = "$Id$";
 
     String getNodeType();
 

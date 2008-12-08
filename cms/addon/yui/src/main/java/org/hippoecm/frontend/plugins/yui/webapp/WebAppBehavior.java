@@ -9,6 +9,9 @@ import org.hippoecm.frontend.plugins.yui.header.YuiHeaderContributor.YuiContext;
 import org.onehippo.yui.YahooNamespace;
 
 public class WebAppBehavior extends AbstractBehavior {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final CompressedResourceReference RESET_CSS = new CompressedResourceReference(YahooNamespace.class,

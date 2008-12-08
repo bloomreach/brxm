@@ -36,6 +36,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 public class TabbedPanel extends WebMarkupContainer {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     public static final String TAB_PANEL_ID = "panel";

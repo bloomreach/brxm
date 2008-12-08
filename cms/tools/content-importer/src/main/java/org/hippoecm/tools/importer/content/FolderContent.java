@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
  * File resource for the content importers.
  */
 public class FolderContent extends FileContent {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(FolderContent.class);
 

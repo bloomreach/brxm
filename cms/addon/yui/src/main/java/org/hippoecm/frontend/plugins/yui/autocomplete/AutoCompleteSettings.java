@@ -32,6 +32,9 @@ import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
  */
 
 public final class AutoCompleteSettings extends AjaxSettings {
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
 
     private static final StringSetting CONTAINER_ID = new StringSetting("containerId");

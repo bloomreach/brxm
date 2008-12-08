@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugins.yui.dragdrop.NodeDragBehavior;
 public class AssetGalleryPlugin extends AbstractListingPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id: $";
+
     private static final long serialVersionUID = 1L;
 
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
