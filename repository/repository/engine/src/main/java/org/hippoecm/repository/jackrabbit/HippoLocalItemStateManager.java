@@ -160,9 +160,9 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
         }
 
         for(DataProviderModule provider : providerInstances) {
-	    if(provider instanceof HippoVirtualProvider) {
+            if(provider instanceof HippoVirtualProvider) {
                 registerProvider(provider.getClass().getName(), (HippoVirtualProvider)provider);
-	    }
+            }
         }
         for(DataProviderModule provider : providerInstances) {
             try {
