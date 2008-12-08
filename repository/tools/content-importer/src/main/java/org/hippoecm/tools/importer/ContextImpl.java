@@ -144,13 +144,7 @@ public class ContextImpl implements Context {
     protected Node createFolderNode(Node parent, String name, String type) throws RepositoryException {
         String encoded = NodeNameCodec.encode(name);
         if (parent.hasNode(encoded)) {
-            if (overwrite) {
-                log.info("Removing folder: " + buildPath(encoded));
-                parent.getNode(encoded).remove();
-            } else {
-                log.info("Skipping folder: " + buildPath(encoded));
-                return parent.getNode(encoded);
-            }
+            return parent.getNode(encoded);
         }
         log.info("Creating folder: " + buildPath(encoded));
         Node folder = parent.addNode(encoded, type);
