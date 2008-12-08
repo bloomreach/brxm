@@ -63,6 +63,10 @@ public class RepositoryUserManager extends AbstractUserManager {
         return HippoNodeType.NT_USER;
     }
     
+    public boolean isCaseSensitive() {
+        return true;
+    }
+    
     /**
      * The backend is the repository, no need to sync anything.
      */

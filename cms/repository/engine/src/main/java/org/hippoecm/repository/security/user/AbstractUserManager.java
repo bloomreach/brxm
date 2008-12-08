@@ -98,17 +98,18 @@ public abstract class AbstractUserManager implements UserManager {
         return initialized;
     }
 
-    public final boolean hasUser(String userId) throws RepositoryException {
+    public final boolean hasUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
         if (useQueries) {
+            String userId = normalizeUserId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
             statement.append("//element");
             statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-            statement.append('[').append("fn:name() = ").append("'").append(userId).append("'").append(']');
+            statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
             if (result.getNodes().hasNext()) {
@@ -117,62 +118,51 @@ public abstract class AbstractUserManager implements UserManager {
                 return false;
             }
         } else {
-            // dirLevels 0, common case and default users
-            if (session.getRootNode().hasNode(usersPath + "/" + userId)) {
-                return true;
-            }
-            if (dirLevels > 0) {
-                return session.getRootNode().hasNode(buildUserPath(userId, dirLevels));
-            }
-            return false;
+            return session.getRootNode().hasNode(buildUserPath(rawUserId));
         }
     }
     
-    public final Node getUser(String userId) throws RepositoryException {
+    public final Node getUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
         
         if (useQueries) {
+            String userId = normalizeUserId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
             statement.append("//element");
             statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-            statement.append('[').append("fn:name() = ").append("'").append(userId).append("'").append(']');
+            statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator nodeIter = result.getNodes();
             if (nodeIter.hasNext()) {
                 return nodeIter.nextNode();
-            } else {
-                return null;
             }
         } else {
-            // dirLevels 0, common case
-            try {
-                return session.getRootNode().getNode(usersPath + "/" + userId);
-            } catch (PathNotFoundException e) {
-                if (dirLevels > 0) {
-                    try {
-                        return session.getRootNode().getNode(buildUserPath(userId, dirLevels));
-                    } catch (PathNotFoundException e1) {
-                        // noop
-                    }
+            String path = buildUserPath(rawUserId);
+            if (session.getRootNode().hasNode(path)) {
+                try {
+                    return session.getRootNode().getNode(path);
+                } catch (PathNotFoundException e) {
+                    // noop
                 }
             }
-            return null;
         }
+        return null;
     }
     
     /**
      * Create a new user in the repository. Use getNodeType to determine the 
      * node's node type.
      */
-    public final Node createUser(String userId) throws RepositoryException {
+    public final Node createUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
+        String userId = normalizeUserId(rawUserId);
         log.trace("Creating node for user: {} in path: {}", userId, usersPath);
         int length = userId.length();
         Node usersNode = session.getRootNode().getNode(usersPath);
@@ -184,7 +174,7 @@ public abstract class AbstractUserManager implements UserManager {
                 usersNode = usersNode.getNode(c);
             }
         }
-        Node user = usersNode.addNode(userId, getNodeType());
+        Node user = usersNode.addNode(NodeNameCodec.encode(userId, true), getNodeType());
         if (!org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
             user.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
         }
@@ -192,16 +182,41 @@ public abstract class AbstractUserManager implements UserManager {
         return user;
     }
     
-    private String buildUserPath(String userId, int dirLevels) {
+    /**
+     * Helper for building user path including the username itself. Takes care of the encoding
+     * of the path AND the userId (the eventual node name)
+     * @param rawUserId unencoded userId
+     * @param dirLevels
+     * @return the fully encoded normalized path
+     */
+    private String buildUserPath(String rawUserId) {
+        String userId = normalizeUserId(rawUserId);
+        if (dirLevels == 0) {
+            return usersPath + "/" + NodeNameCodec.encode(userId, true);
+        }
         int length = userId.length();
         StringBuilder path = new StringBuilder(usersPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
             path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(userId.charAt(i))));
         }
-        path.append('/').append(userId);
+        path.append('/').append(NodeNameCodec.encode(userId, true));
         return path.toString();
     }
 
+    /**
+     * Normalize the userId: trim and convert to lowercase if needed. This
+     * function does NOT encode the userId.
+     * @param rawUserId
+     * @return the trimmed and if needed converted to lowercase userId
+     */
+    private String normalizeUserId(String rawUserId) {
+        if (isCaseSensitive()) {
+            return rawUserId.trim();
+        } else {
+            return rawUserId.trim().toLowerCase();
+        }
+    }
+    
     private final void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_USERPROVIDER;
@@ -262,21 +277,21 @@ public abstract class AbstractUserManager implements UserManager {
     /**
      * Only last login date for external users.
      */
-    public void updateLastLogin(String userId) {
+    public void updateLastLogin(String rawUserId) {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
         try {
-            Node user = getUser(userId);
+            Node user = getUser(rawUserId);
             if (user != null) {
                 if (user.isNodeType(HippoNodeType.NT_EXTERNALUSER)) {
                     user.setProperty(HippoNodeType.HIPPO_LASTLOGIN, Calendar.getInstance());
                 }
             } else {
-                log.debug("Unable to set lastlogin for user, user not found: " + userId);
+                log.debug("Unable to set lastlogin for user, user not found: " + normalizeUserId(rawUserId));
             }
         } catch (RepositoryException e) {
-            log.info("Unable to set lastlogin for user: " + userId);
+            log.info("Unable to set lastlogin for user: {}", normalizeUserId(rawUserId));
         }
     }
 

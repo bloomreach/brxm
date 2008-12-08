@@ -145,9 +145,6 @@ public class LdapUserManager extends AbstractUserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized: " + providerId);
         }
-        if (!isCaseSensitive) {
-            userId = userId.toLowerCase();
-        }
         String dn = null;
         Node user = null;
         try {
@@ -227,9 +224,6 @@ public class LdapUserManager extends AbstractUserManager {
                         } else {
                             try {
                                 userId = (String) uidAttr.get();
-                                if (!isCaseSensitive) {
-                                    userId = userId.toLowerCase();
-                                }
                                 user = getUser(userId);
                                 
                                 // create the user if it doesn't exists
@@ -408,5 +402,9 @@ public class LdapUserManager extends AbstractUserManager {
      */
     public String getNodeType() {
         return HippoNodeType.NT_EXTERNALUSER;
+    }
+
+    public boolean isCaseSensitive() {
+        return isCaseSensitive;
     }
 }

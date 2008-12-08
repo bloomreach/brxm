@@ -101,6 +101,11 @@ public interface GroupManager {
      */
     public String getNodeType();
 
+    /**
+     * Checks if the backend is case aware (ie, ldap usually isn't, the internal provider is)
+     * @return
+     */
+    public boolean isCaseSensitive();
     
     
     /**

@@ -76,6 +76,12 @@ public class LdapGroupManager extends AbstractGroupManager {
     private final static Logger log = LoggerFactory.getLogger(LdapGroupManager.class);
 
     /**
+     * Use case sensitive group matching
+     * TODO: make configurable
+     */
+    private boolean isCaseSensitive = false;
+    
+    /**
      * initialize
      */
     public void initManager(ManagerContext context) throws RepositoryException {
@@ -402,6 +408,10 @@ public class LdapGroupManager extends AbstractGroupManager {
 
     public String getNodeType() {
         return HippoNodeType.NT_EXTERNALGROUP;
+    }
+
+    public boolean isCaseSensitive() {
+        return isCaseSensitive;
     }
     
     public String buildGroupName(LdapGroupSearch search, SearchResult sr) {
