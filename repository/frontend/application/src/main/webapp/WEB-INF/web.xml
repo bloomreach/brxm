@@ -37,7 +37,7 @@
         <init-param>
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
-		</init-param>
+        </init-param>
     </servlet>
 
     <!--Builtin console-->
@@ -55,7 +55,7 @@
         <init-param>
             <param-name>configuration</param-name>
             <param-value>deployment</param-value>
-		</init-param>
+        </init-param>
     </servlet>
 
     <servlet-mapping>

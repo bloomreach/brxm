@@ -19,6 +19,6 @@
     xmlns:hippostd="http://www.hippoecm.org/hippostd/nt/1.1">
     <!-- hippo aggregates -->
     <aggregates>
-    	<nodetype>hippostd:html</nodetype>
+        <nodetype>hippostd:html</nodetype>
     </aggregates>
 </configuration>

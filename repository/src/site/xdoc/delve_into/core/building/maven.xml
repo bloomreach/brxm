@@ -113,11 +113,11 @@
           Open a web browser and go to <a href="http://localhost:8080/cms/">http://localhost:8080/cms/</a>,
           login as admin/admin.
         </p>
-	<p>
-	  Note that in the sample application started from the command line is a quickstart version of
-	  the Hippo ECM suite.  If you require a production build, want to extend Hippo ECM or just
-	  want a clean start you should use the hippo-ecm/package/war of hippo-ecm/package/ear project.
-	</p>
+    <p>
+      Note that in the sample application started from the command line is a quickstart version of
+      the Hippo ECM suite.  If you require a production build, want to extend Hippo ECM or just
+      want a clean start you should use the hippo-ecm/package/war of hippo-ecm/package/ear project.
+    </p>
       </subsection>
 
     </section>

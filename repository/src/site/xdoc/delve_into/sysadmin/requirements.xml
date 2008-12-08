@@ -191,12 +191,12 @@
          <tr>
           <td>Site<br/>toolkit</td>
           <td colspan='0'>Hippo JSP toolkit</td>  
-	 </tr>
+     </tr>
 
          <tr>
           <td>CMS</td>
           <th colspan='0'>Hippo CMS 7</th>           
-	 </tr>
+     </tr>
 
          <tr>
           <td>Database</td>          
@@ -205,31 +205,31 @@
              <tr>
               <td>
                <img src='../../images/logo_mysql_sun_a.gif' alt='MySQL logo'/>
-	      </td>
+          </td>
               <td>
                <img src='../../images/oracle_icon.png' alt='oracle logo'/>
-	      </td>
+          </td>
               <td>
                <img src='../../images/derby_logo.png' alt='derby logo'/>
-	      </td>
-	     </tr>
+          </td>
+         </tr>
              <tr>
               <td>
                MySQL
-	      </td>
+          </td>
               <td>
                Oracle
-	      </td>
+          </td>
               <td>
                Derby &gt; 10.0
-	      </td>
-	     </tr>
-	    </table>
-	  </td>
+          </td>
+         </tr>
+        </table>
+      </td>
           <td>
            MS SQLserver
           </td>
-	 </tr>
+     </tr>
 
          <tr>
           <td>Java<br/>container</td>
@@ -238,28 +238,28 @@
              <tr>
               <td>
                <img src='../../images/tomcat_icon.png' alt='tomcat logo'/>
-	      </td>
+          </td>
               <td>
                <img src='../../images/glassfish_icon.png' alt='glassfish logo'/>
-	      </td>
+          </td>
               <td>
                <img src='../../images/jboss_icon.png' alt='JBoss logo'/>
-	      </td>
-	     </tr>
+          </td>
+         </tr>
              <tr>
               <td>
                Tomcat 6.0 or 5.5
-	      </td>
+          </td>
               <td>
                glassfish 2UR2 aka<br/>Sun Java<br/>Application Server 9.1 
-	      </td>
+          </td>
               <td>
                JBoss
-	      </td>
-	     </tr>
-	    </table>
-	  </td>
-	 </tr>
+          </td>
+         </tr>
+        </table>
+      </td>
+     </tr>
 
          <tr>
           <td>Java</td>
@@ -267,7 +267,7 @@
            <img src='http://java.sun.com/im/logo_sun_small_sdn.gif' alt='Sun logo'/><br/>
            Sun's JVM 6 or 5
           </td>    
-	 </tr>
+     </tr>
 
          <tr>
           <td>OS</td>
@@ -276,33 +276,33 @@
              <tr>
                <td>
                 <img src='../../images/Tux_icon.png' alt='linux logo'/>
-	      </td>
+          </td>
                <td>
                 <img src='../../images/solaris_icon.png' alt='Solaris logo'/>
-	      </td>
+          </td>
                <td>
                 <img src='../../images/solaris_icon.png' alt='Unix logo'/>
-	      </td>
-	     </tr>
+          </td>
+         </tr>
              <tr>
               <td>
                    Linux with kernel 2.6
-	      </td>
+          </td>
               <td>
                    Solaris
-	      </td>
+          </td>
               <td>
                    Unix
-	      </td>
-	     </tr>
-	    </table>
-	  </td>
+          </td>
+         </tr>
+        </table>
+      </td>
           <td>
             MS XP
-	  </td>
-	 </tr>
+      </td>
+     </tr>
 
-	</table>
+    </table>
        </div>
 
       </subsection>
@@ -384,7 +384,7 @@
              </li>
              <li>Support for other systems is also possible.
              </li>
-	    </ul>
+        </ul>
           </td>
     </tr>
     </table>
@@ -474,14 +474,14 @@
              <ul> 
               <li> 
                 <a href='http://jetty.mortbay.com/jetty/'>Jetty</a> 6.1,
-	      </li>
+          </li>
               <li>
                 <a href='http://tomcat.apache.org/'>Tomcat</a> 6. and 5.5                and 
-	      </li>
+          </li>
               <li>
                <a href='https://glassfish.dev.java.net/public/users.html'>Sun GlassFish</a> V2.
-	      </li>
-	     </ul>
+          </li>
+         </ul>
           </td>
      </tr>
 
@@ -550,11 +550,11 @@
            <ul>
             <li> 
               <a href="http://db.apache.org/derby/">Apache Derby</a>               and 
-	    </li>
+        </li>
             <li>
               <a href="http://www.mysql.com">MySQL</a>.
-	    </li>
-	   </ul>
+        </li>
+       </ul>
           </td>
     </tr>
 

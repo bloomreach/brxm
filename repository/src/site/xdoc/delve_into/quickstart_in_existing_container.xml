@@ -134,13 +134,13 @@ http://localhost:8080/
             
  </subsection>
  <subsection name="Deploy the binary distribution">
- 	      <p>
- 	      Start either the <code>startup.sh</code> (when running on
- 	      a Unix-like environment) or the <code>startup.bat</code>
- 	      (when running on Microsoft Windows XP or better) script
- 	      from your command line.
- 	      </p>
- 	    </subsection>
+          <p>
+          Start either the <code>startup.sh</code> (when running on
+          a Unix-like environment) or the <code>startup.bat</code>
+          (when running on Microsoft Windows XP or better) script
+          from your command line.
+          </p>
+        </subsection>
  </section>
 
     </body>
