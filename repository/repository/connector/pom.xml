@@ -123,12 +123,12 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr2spi</artifactId>
-      <version>[1.4,1.5)</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-spi2jcr</artifactId>
-      <version>[1.4,1.5)</version>
+      <version>1.4</version>
     </dependency>
   </dependencies>
 
