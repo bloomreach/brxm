@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * GroupManager backend that fetches users from LDAP and stores the users inside the JCR repository
+ * GroupManager backend that fetches groups from LDAP and stores the groups inside the JCR repository
  */
 public class LdapGroupManager extends AbstractGroupManager {
 
@@ -256,7 +256,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                 }
             }
         } catch (NamingException e) {
-            log.error("Error while trying fetching users from ldap", e);
+            log.error("Error while trying fetching groups from ldap", e);
         } finally {
             lcf.close(ctx);
         }
@@ -326,7 +326,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                 }
             }
         } catch (NamingException e) {
-            log.error("Error while trying fetching users from ldap", e);
+            log.error("Error while trying fetching groups from ldap", e);
         } finally {
             lcf.close(ctx);
         }
