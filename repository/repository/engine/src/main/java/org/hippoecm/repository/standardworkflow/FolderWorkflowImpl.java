@@ -252,7 +252,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
             folder.save();
         }
     }
-    
+
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
@@ -345,7 +345,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         } else {
             target = target.addNode(name);
         }
-        
+
         if(source.hasProperty("jcr:mixinTypes")) {
             Value[] mixins = source.getProperty("jcr:mixinTypes").getValues();
             for(int i=0; i<mixins.length; i++) {
@@ -396,7 +396,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                 for(int i=0; i<nodeTypes.length; i++) {
                     if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValues())) {
                         isProtected = false;
-                        break; 
+                        break;
                     }
                 }
                 for(int i=0; i<nodeTypes.length; i++) {
@@ -418,7 +418,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
                 for(int i=0; i<nodeTypes.length; i++) {
                     if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
                         isProtected = false;
-                        break; 
+                        break;
                     }
                 }
                 for(int i=0; i<nodeTypes.length; i++) {

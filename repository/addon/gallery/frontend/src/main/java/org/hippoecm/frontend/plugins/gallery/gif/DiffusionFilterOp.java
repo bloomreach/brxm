@@ -1,23 +1,23 @@
 /*
  * Copyright 1998-2003 Helma Software. All Rights Reserved.
- * 
+ *
  * Licensed under the Helma License (the "License"); you may not use this
  * file except in compliance with the License. A copy of the License is
  * available at http://dev.helma.org/license/
- * 
+ *
  * DiffusionFilter code from com.jhlabs.image.DiffusionFilter, Java Image Processing
  * Copyright (C) Jerry Huxtable 1998
  * http://www.jhlabs.com/ip/
  *
  * Conversion to a BufferedImageOp inspired by:
  * http://www.peter-cockerell.net:8080/java/FloydSteinberg/FloydSteinbergFilterOp.java
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * See NOTICE.txt for licensing information
  */
 package org.hippoecm.frontend.plugins.gallery.gif;

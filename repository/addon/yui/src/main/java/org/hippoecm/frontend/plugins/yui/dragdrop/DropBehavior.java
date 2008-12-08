@@ -30,7 +30,7 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     public DropBehavior(IYuiManager service, DragDropSettings settings) {
         super(service, settings);
     }
-    
+
     @Override
     protected String getHeaderContributorFilename() {
         return "Drop.js";
@@ -39,16 +39,16 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
     public String getComponentMarkupId() {
         return getComponent().getMarkupId();
     }
-    
+
     @Override
     protected void respond(AjaxRequestTarget target) {
     }
-    
+
     @Override
     protected String getClientSideClassname() {
         return "YAHOO.hippo.DDDropModel";
     }
-    
+
     public abstract void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target);
 
 }

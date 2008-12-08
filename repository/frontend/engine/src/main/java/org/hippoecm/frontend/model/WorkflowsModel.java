@@ -112,7 +112,7 @@ public class WorkflowsModel extends NodeModelWrapper implements IDataProvider {
                 WorkflowDescriptor workflowDescriptor = manager.getWorkflowDescriptor(category, handle);
                 if (workflowDescriptor != null) {
                         String workflowRenderer = workflowDescriptor.getAttribute(FrontendNodeTypes.WORKFLOW_RENDERER);
-                        if (workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {                
+                        if (workflowRenderer != null && (renderer == null || renderer.equals(workflowRenderer))) {
                       if (!workflows.containsKey(new Entry(workflowRenderer))) {
                         workflows.put(new Entry(workflowRenderer, sequence++), new Vector<WorkflowDescriptor>());
                       }

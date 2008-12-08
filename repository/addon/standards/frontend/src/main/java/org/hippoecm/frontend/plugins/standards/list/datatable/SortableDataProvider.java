@@ -22,7 +22,7 @@ public abstract class SortableDataProvider implements ISortableDataProvider {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+
     private SortState state = new SortState();
 
     public void setSortState(ISortState state) {

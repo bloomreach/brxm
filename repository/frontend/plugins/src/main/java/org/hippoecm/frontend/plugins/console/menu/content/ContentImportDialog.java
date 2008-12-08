@@ -82,11 +82,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             return null;
         }
     }
-    
+
     private final LookupHashMap<Integer, String> uuidOpts = new LookupHashMap<Integer, String>();
     private final LookupHashMap<Integer, String> mergeOpts = new LookupHashMap<Integer, String>();
     private final LookupHashMap<Integer, String> derefOpts = new LookupHashMap<Integer, String>();
-    
+
     private final void InitMaps() {
         uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
         uuidOpts.put(new Integer(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
@@ -102,16 +102,16 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
         derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
         derefOpts.put(new Integer(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT), "Add reference to root node when not found");
-        
+
     }
-    
+
 
     public ContentImportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
         super(dialogWindow);
         InitMaps();
         this.plugin = plugin;
         nodeModel = (JcrNodeModel) plugin.getModel();
-        
+
         final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
         add(simpleUploadForm);
         try {
@@ -119,7 +119,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             message = new Label("message", msgText);
             cancel.setVisible(false);
             add(message);
-            
+
         } catch (RepositoryException e) {
             log.error("Error getting node from model for contant import",e);
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
@@ -144,13 +144,13 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
 
         private FileUploadField fileUploadField;
 
-        
+
         private String uuidBehavior = uuidOpts.get(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
         private String mergeBehavior = mergeOpts.get(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
         private String derefBehavior = derefOpts.get(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE);
-        
+
         public FileUploadForm(String name) {
-            
+
             super(name);
 
             DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
@@ -160,11 +160,11 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             add(uuid.setNullValid(false).setRequired(true));
             add(merge.setNullValid(false).setRequired(true));
             add(reference.setNullValid(false).setRequired(true));
-            
+
             // file upload
             setMultiPart(true);
             add(fileUploadField = new FileUploadField("fileInput"));
-            
+
         }
 
         @Override
@@ -174,7 +174,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
             int uuidOpt = uuidOpts.getFirstKey(uuidBehavior).intValue();
             int mergeOpt = mergeOpts.getFirstKey(mergeBehavior).intValue();
             int derefOpt = derefOpts.getFirstKey(derefBehavior).intValue();
-            
+
             if (upload != null) {
                 msgText.setObject("File uploaded. Start import..");
 
@@ -183,7 +183,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
                     InputStream contentStream = new BufferedInputStream(upload.getInputStream());
                     String absPath = nodeModel.getNode().getPath();
                     log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," +derefBehavior);
-                    
+
                     ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
                     msgText.setObject("Import done.");
                 } catch (PathNotFoundException ex) {
@@ -228,7 +228,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
         public String getDerefBehavior() {
             return derefBehavior;
         }
-        
+
 
         public void setUuidBehavior(String uuidBehavior) {
             this.uuidBehavior = uuidBehavior;

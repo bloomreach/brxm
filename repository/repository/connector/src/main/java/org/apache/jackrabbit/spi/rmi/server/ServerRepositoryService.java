@@ -112,7 +112,7 @@ public class ServerRepositoryService extends ServerObject implements RemoteRepos
 
     public ServerRepositoryService() throws RemoteException {
     }
-    
+
     public void setRepositoryService(RepositoryService service) {
         this.service = service;
     }

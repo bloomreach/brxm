@@ -72,7 +72,7 @@ public class RepositoryServlet extends HttpServlet {
 
     /** Parameter name of the repository storage directory */
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
-    
+
     /** Parameter name of the binging address */
     public final static String REPOSITORY_BINDING_PARAM = "repository-address";
 
@@ -81,7 +81,7 @@ public class RepositoryServlet extends HttpServlet {
 
     /** Default repository storage directory */
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
-    
+
     /** Default binding address for server */
     public final static String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
 
@@ -99,12 +99,12 @@ public class RepositoryServlet extends HttpServlet {
     private boolean registryIsEmbedded = false;
 
     private static Remote rmiRepository;
-    
+
     HippoRepository repository;
     String bindingAddress;
     String storageLocation;
     String repositoryConfig;
-    
+
     public RepositoryServlet() {
         storageLocation = null;
     }
@@ -122,9 +122,9 @@ public class RepositoryServlet extends HttpServlet {
                 throw new ServletException("Cannot determin repository location "
                         + config.getInitParameter(REPOSITORY_DIRECTORY_PARAM));
             }
-        }   
+        }
     }
-    
+
     public String getConfigurationParameter(String parameterName, String defaultValue) {
         String result = getInitParameter(parameterName);
         if (result == null || result.equals("")) {
@@ -146,12 +146,12 @@ public class RepositoryServlet extends HttpServlet {
             // get the local embedded repository
             repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
             HippoRepositoryFactory.setDefaultRepository(repository);
-            
+
             // the the remote repository
             RepositoryRmiUrl url = new RepositoryRmiUrl(bindingAddress);
             rmiRepository = new ServerServicingAdapterFactory().getRemoteRepository(repository.getRepository());
             System.setProperty("java.rmi.server.useCodebaseOnly", "true");
-            
+
             // Get or start registry and bind the remote repository
             try {
                 registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
@@ -161,7 +161,7 @@ public class RepositoryServlet extends HttpServlet {
                 registry = LocateRegistry.createRegistry(url.getPort());
                 registry.rebind(url.getName(), rmiRepository);
                 log.warn("Started an RMI registry on port " + url.getPort());
-                registryIsEmbedded = true;   
+                registryIsEmbedded = true;
             }
         } catch (MalformedURLException ex) {
             log.error("MalformedURLException exception: " + bindingAddress, ex);
@@ -172,9 +172,9 @@ public class RepositoryServlet extends HttpServlet {
         } catch (RepositoryException ex) {
             log.error("Error while setting up JCR repository: ", ex);
             throw new ServletException("RepositoryException: " + ex.getMessage());
-        } 
+        }
     }
-    
+
 
 
     @Override
@@ -202,7 +202,7 @@ public class RepositoryServlet extends HttpServlet {
         } catch (NoSuchObjectException e) {
             log.error("Error during rmi shutdown for address: " + bindingAddress, e);
         }
-        
+
         // shutdown registry
         if (registryIsEmbedded) {
             try {
@@ -212,12 +212,12 @@ public class RepositoryServlet extends HttpServlet {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
             }
         }
-        
+
         // close repository
         log.info("Closing repository.");
         repository.close();
         repository = null;
-        
+
         // done
         log.info("Repository stopped.");
     }
@@ -421,7 +421,7 @@ public class RepositoryServlet extends HttpServlet {
                     //Map.Entry entry = (Map.Entry)e;
                     //String key = entry.getKey().toString();
                     //Object value = entry.getValue().toString();
-                    
+
                     String key = (String) iter.next();
                     Object value = map.get(key);
                     if (value instanceof Map) {
@@ -506,7 +506,7 @@ public class RepositoryServlet extends HttpServlet {
         }
         writer.println("</body></html>");
     }
-    
+
     private class RepositoryRmiUrl {
         // defaults
         public final static String DEFAULT_RMI_NAME = "hipporepository";

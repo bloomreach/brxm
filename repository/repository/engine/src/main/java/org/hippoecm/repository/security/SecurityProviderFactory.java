@@ -44,7 +44,7 @@ public class SecurityProviderFactory {
 
     /**
      * Create and initialize a new security provider base on the providerNode.
-     * The providerNode has a property hippo:classname which defines the class 
+     * The providerNode has a property hippo:classname which defines the class
      * to be instantiated.
      * @param providerNode the provider jcr node with the configuration
      * @return SecurityProvider
@@ -60,7 +60,7 @@ public class SecurityProviderFactory {
         Node providerNode = session.getRootNode().getNode(securityPath + "/" + providerId);
         Class clazz = Class.forName(providerNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString());
         SecurityProvider sp = (SecurityProvider) clazz.newInstance();
-        
+
         // create new session for each provider
         Session providerSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
         SecurityProviderContext context = new SecurityProviderContext(providerSession, providerId, securityPath, usersPath, groupsPath, rolesPath, domainsPath);

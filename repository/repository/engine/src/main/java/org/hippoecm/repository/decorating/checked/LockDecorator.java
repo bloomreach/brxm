@@ -29,7 +29,7 @@ public class LockDecorator extends AbstractDecorator implements Lock {
     private final static String SVN_ID = "$Id$";
 
     protected Lock lock;
-    
+
     protected LockDecorator(DecoratorFactory factory, SessionDecorator session, Lock lock) {
         super(factory, session);
         this.lock = lock;
@@ -39,7 +39,7 @@ public class LockDecorator extends AbstractDecorator implements Lock {
     protected void repair(Session upstreamSession) throws RepositoryException {
         throw new RepositoryException("lock invalidated");
     }
-    
+
     /**
      * @inheritDoc
      */

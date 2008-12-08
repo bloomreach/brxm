@@ -22,7 +22,7 @@ public class HippoNamespace implements YuiNamespace {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final HippoNamespace NS = new HippoNamespace();
 
     private HippoNamespace() {

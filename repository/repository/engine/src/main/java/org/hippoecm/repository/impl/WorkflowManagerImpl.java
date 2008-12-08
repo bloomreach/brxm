@@ -113,7 +113,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             if (log.isDebugEnabled()) {
                 log.debug("looking for workflow in category "+category+" for node "+(item==null ? "<none>" : item.getPath()));
             }
-            
+
             // if the user session has not yet been saved, no workflow is possible
             // as the root session will not be able to find it.  (ItemNotFoundException)
             if (!item.isNodeType("mix:referenceable") && !item.isNodeType("rep:root")) {
@@ -471,7 +471,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     EventLoggerImpl eventLogger = new EventLoggerImpl(rootSession);
                     eventLogger.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                             targetMethod.getName(), args, returnObject, path);
-    
+
                     while (!invocationChain.isEmpty()) {
                         WorkflowInvocationImpl current = (WorkflowInvocationImpl) invocationChain.remove(0);
                         invocationIndex = invocationChain.listIterator();
@@ -781,7 +781,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         public Workflow getWorkflow(String category, final Document document) throws MappingException, WorkflowException, RepositoryException {
             Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, document, documentManager.getSession());
             if (workflowNode != null) {
-                return WorkflowManagerImpl.this.getWorkflow(workflowNode, 
+                return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
                            @Override
                            public void invoke(Method method, Object[] args) throws RepositoryException {

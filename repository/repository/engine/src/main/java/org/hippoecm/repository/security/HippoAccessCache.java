@@ -23,7 +23,7 @@ import org.apache.jackrabbit.core.ItemId;
 
 /**
  * Cache access permissions for the HippoAccessManager
- * User <code>HippoAccessCache.getInstance(userId)<code> to 
+ * User <code>HippoAccessCache.getInstance(userId)<code> to
  * get a cache for the given userId. The cache is thread safe.
  */
 public class HippoAccessCache {
@@ -45,21 +45,21 @@ public class HippoAccessCache {
      * The max size of the current cache
      */
     private volatile int currentMaxSize;
-    
+
     /**
      * Counters
      */
     private long accesses = 0L;
     private long hits = 0L;
     private long misses = 0L;
-    
-    
+
+
     /**
      * The caches per repository service instance
      */
     private static final Map<String, HippoAccessCache> caches = new WeakHashMap<String, HippoAccessCache>();
 
-    
+
     /**
      * @param userId  the userId. If <code>null</code> this method will return a
      *                new cache instance for each such call.
@@ -93,7 +93,7 @@ public class HippoAccessCache {
     }
 
     /**
-     * Set the maximum size for creating new caches. Set the cache size to zero 
+     * Set the maximum size for creating new caches. Set the cache size to zero
      * or something negative to disable the cache.
      * @param maxSize
      */
@@ -236,7 +236,7 @@ public class HippoAccessCache {
         /**
          * Constructs an empty <tt>LRUCache</tt> instance with the specified
          * initial capacity, maximumCacheSize,load factor and ordering mode.
-         * 
+         *
          * @param initialCapacity the initial capacity.
          * @param maximumCacheSize
          * @throws IllegalArgumentException if the initial capacity is negative or

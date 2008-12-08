@@ -95,7 +95,7 @@ public class JCRHelper {
             if (!current.hasNode(nodeName)) {
                 Node n ;
                 if(documentConverter.getNodeType(nodeName) != null ) {
-                    n = current.addNode(nodeName, documentConverter.getNodeType(nodeName));  
+                    n = current.addNode(nodeName, documentConverter.getNodeType(nodeName));
                 } else {
                 n = current.addNode(nodeName);
                 }

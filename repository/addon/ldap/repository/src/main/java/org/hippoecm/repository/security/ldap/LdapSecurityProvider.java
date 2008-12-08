@@ -83,7 +83,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     public void init(SecurityProviderContext context) throws RepositoryException {
         log.info("Initializing security provider: '{}'.", context.getProviderId());
         this.context = context;
-        
+
         /* Register a listener for the provider node.  Whenever a node
          * or property is added, refresh the security provider.
          */

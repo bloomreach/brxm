@@ -28,13 +28,13 @@ public abstract class Setting<K> implements ISetting<K> {
     K defaultValue;
     String configKey;
     String javascriptKey;
-    
+
     public Setting(String javascriptKey, K defaultValue) {
         this.javascriptKey = javascriptKey;
         this.configKey = toConfigKey(javascriptKey);
         this.defaultValue = defaultValue;
     }
-    
+
     public final K get(Settings settings) {
         return getValue(settings).get();
     }
@@ -42,25 +42,25 @@ public abstract class Setting<K> implements ISetting<K> {
     public final void set(K value, Settings settings) {
         getValue(settings).set(value);
     }
-    
+
     public void setFromConfig(IPluginConfig config, Settings settings) {
         if(config.containsKey(configKey)) {
             set(getValueFromConfig(config, settings), settings);
         }
     }
-    
+
     public String getKey() {
         return javascriptKey;
     }
 
     abstract protected K getValueFromConfig(IPluginConfig config, Settings settings);
-    
+
     @SuppressWarnings("unchecked")
     Value<K> getValue(Settings settings) {
         return (Value<K>) settings.get(this);
     }
-    
-    private String toConfigKey(String camelKey) {        
+
+    private String toConfigKey(String camelKey) {
         StringBuilder b = new StringBuilder(camelKey.length()+4);
         for(char ch : camelKey.toCharArray()) {
             if(Character.isUpperCase(ch)) {
@@ -71,7 +71,7 @@ public abstract class Setting<K> implements ISetting<K> {
         }
         return b.toString();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if(o != null && o instanceof Setting) {
@@ -80,12 +80,12 @@ public abstract class Setting<K> implements ISetting<K> {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("key", javascriptKey).toString();
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 13).append(javascriptKey).toHashCode();

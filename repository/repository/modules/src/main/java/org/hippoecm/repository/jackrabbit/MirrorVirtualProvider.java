@@ -39,9 +39,9 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     private final static String SVN_ID = "$Id$";
 
     protected class MirrorNodeId extends HippoNodeId {
-        
+
         private static final long serialVersionUID = 1L;
-        
+
         NodeId upstream;
 
         protected MirrorNodeId(HippoVirtualProvider provider, NodeId parent, Name name, NodeId upstream) {
@@ -64,7 +64,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     Name softDocumentName;
     Name mixinReferenceableName;
     Name mixinVersionableName;
-    
+
     PropDef hippoUUIDPropDef;
 
     @Override
@@ -80,7 +80,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         mixinReferenceableName = resolveName("mix:referenceable");
         mixinVersionableName = resolveName("mix:versionable");
-        
+
         hippoUUIDPropDef = lookupPropDef(softDocumentName, hippoUUIDName);
     }
 
@@ -88,7 +88,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         super();
     }
 
-    @Override 
+    @Override
     public NodeState populate(NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
         String docbase = getProperty(nodeId, docbaseName)[0];
@@ -143,7 +143,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
             } else {
                 propState.setValues(upstreamPropState.getValues());
             }
-            
+
             propState.setMultiValued(upstreamPropState.isMultiValued());
         }
 

@@ -59,8 +59,8 @@ public class DomainRule implements Serializable {
 
     /**
      * Instantiate the domain rule with the given configuration node. If
-     * a FacetRule of this DomainRule fails, the complete DomainRule must 
-     * fail to prevent widening the authorization on misconfiguration. 
+     * a FacetRule of this DomainRule fails, the complete DomainRule must
+     * fail to prevent widening the authorization on misconfiguration.
      * @param node the node folding the domain rule configuration
      * @throws RepositoryException
      */

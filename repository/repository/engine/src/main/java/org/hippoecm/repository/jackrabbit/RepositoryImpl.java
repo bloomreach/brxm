@@ -180,7 +180,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
                 fs,
                 vConfig.getPersistenceManagerConfig(), getRootNodeId(), getNamespaceRegistry(),
                 getNodeTypeRegistry(),
-                getDataStore()); 
+                getDataStore());
         ISMLocking ismLocking = vConfig.getISMLockingConfig().createISMLocking();
 
         return new VersionManagerImpl(pm, fs, getNodeTypeRegistry(), delegatingDispatcher,
@@ -269,7 +269,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     public Session login() throws LoginException, RepositoryException {
         return login(null, null);
     }
-    
+
     protected VersionManager getVersionManager() {
         return super.getVersionManager();
     }

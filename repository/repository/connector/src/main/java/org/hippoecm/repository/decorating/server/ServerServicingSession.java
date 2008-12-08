@@ -55,7 +55,7 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
                                                                  NoSuchNodeTypeException, RepositoryException, RemoteException {
         try {
             Node node = (absPath == null || "/".equals(absPath)) ? session.getRootNode()
-                                                                 : session.getRootNode().getNode(absPath.substring(1)); 
+                                                                 : session.getRootNode().getNode(absPath.substring(1));
             return getFactory().getRemoteNodeIterator(session.pendingChanges(node, nodeType, prune));
         } catch (NamespaceException ex) {
             throw getRepositoryException(ex);
@@ -76,7 +76,7 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
             throw getRepositoryException(ex);
         }
     }
-    
+
     public void importDereferencedXML(String path, byte[] xml, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, RepositoryException, RemoteException {
         try {

@@ -43,5 +43,5 @@ public class IntSetting extends Setting<Integer> {
     public void setFromString(String value, Settings settings) {
         set(Integer.valueOf(value), settings);
     }
-    
+
 }

@@ -52,7 +52,7 @@ class NodeTypesEditor extends CheckGroup {
     NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
         super(id, nodeTypes);
         this.nodeModel = nodeModel;
-        
+
         add(new ListView("type", getAllNodeTypes()) {
             private static final long serialVersionUID = 1L;
 

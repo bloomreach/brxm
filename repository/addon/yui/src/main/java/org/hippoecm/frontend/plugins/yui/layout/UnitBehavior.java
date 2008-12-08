@@ -28,11 +28,11 @@ public class UnitBehavior extends AbstractBehavior {
     private static final long serialVersionUID = 1L;
 
     private UnitSettings settings;
-    
+
     public UnitBehavior(UnitSettings settings) {
         this.settings = settings;
     }
-    
+
     /**
      * Configure a LayoutUnit
      * @param position  Position in the wireframe
@@ -46,9 +46,9 @@ public class UnitBehavior extends AbstractBehavior {
         settings = new UnitSettings(position);
         settings.updateValues(options);
     }
-    
+
     public UnitSettings getSettings() {
         return settings;
     }
- 
+
 }

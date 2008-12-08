@@ -17,7 +17,7 @@ package org.hippoecm.frontend.model;
 
 public interface FrontendNodeTypes {
     final static String SVN_ID = "$Id$";
-    
+
     // NodeTypes
     public static final String NT_FRONTEND_WORKFLOW = "frontend:workflow";
 

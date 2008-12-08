@@ -27,7 +27,7 @@ import org.apache.jackrabbit.uuid.UUID;
 
 public class HippoNodeId extends NodeId
 {
-    
+
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")

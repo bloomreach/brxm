@@ -49,7 +49,7 @@ public abstract class LookupDialog extends AbstractDialog {
     public AbstractTreeNode getSelectedNode() {
         return (AbstractTreeNode) tree.getSelectedNode();
     }
-    
+
     public void setSelectedNode(JcrNodeModel selectedNode) {
         tree.setSelectedNode(selectedNode, treeModel);
     }

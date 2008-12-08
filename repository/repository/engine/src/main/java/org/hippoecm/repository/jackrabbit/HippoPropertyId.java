@@ -23,9 +23,9 @@ public class HippoPropertyId extends PropertyId
 {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
- 
+
     NodeId virtualParentId;
- 
+
     public HippoPropertyId(NodeId upstreamParentId, NodeId virtualParentId, Name propName) {
         super(upstreamParentId, propName);
         this.virtualParentId = virtualParentId;

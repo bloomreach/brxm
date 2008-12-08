@@ -215,7 +215,7 @@ public interface DecoratorFactory {
      * @return item visitor decorator.
      */
     ItemVisitor getItemVisitorDecorator(SessionDecorator session, ItemVisitor visitor);
-    
+
     DocumentManager getDocumentManagerDecorator(SessionDecorator session, DocumentManager documentMgr);
 
     WorkflowManager getWorkflowManagerDecorator(SessionDecorator session, WorkflowManager workflowMgr);

@@ -35,7 +35,7 @@ public class WorkflowManagerDecorator implements WorkflowManager {
         this.session = session;
         this.workflowManager = workflowManager;
     }
-        
+
     protected void check() throws RepositoryException {
         if(!SessionDecorator.unwrap(session).isLive()) {
             this.workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();

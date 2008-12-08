@@ -28,11 +28,11 @@ public class LdapGroupSearch extends LdapUserSearch {
     public final static String DN_MATCHER = "<dn>"; // get's replaced with full dn: cn=username,dc=mycompany,dc=com
     public final static String COMPACT_DN_MATCHER = "<compact-dn>"; // implode attr values: username.mycompany.com
     public final static String REVERSE_COMPACT_DN_MATCHER = "<reverse-compact-dn>"; // implode attr values in rev. order: com.mycompany.username
-    
+
     // defaults
     private String memberAttr = "memberUid";
     private String memberNameMatcher = UID_MATCHER;
-    
+
     private static final String DEFAULT_FILTER = "(objectclass=posixGroup)";
 
     public LdapGroupSearch(String baseDn, String nameAttr) {

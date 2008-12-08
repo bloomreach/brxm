@@ -23,5 +23,5 @@ public interface IListCellRenderer extends IClusterable {
     final static String SVN_ID = "$Id$";
 
     public Component getRenderer(String id, IModel model);
-    
+
 }

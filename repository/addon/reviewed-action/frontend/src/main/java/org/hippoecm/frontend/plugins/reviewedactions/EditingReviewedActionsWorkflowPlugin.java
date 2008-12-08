@@ -70,7 +70,7 @@ public class EditingReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin
         });
         addWorkflowAction("revert", new StringResourceModel("revert", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
-                       
+
             @Override
             protected boolean validateSession(List<IValidateService> validators) {
                 return true;

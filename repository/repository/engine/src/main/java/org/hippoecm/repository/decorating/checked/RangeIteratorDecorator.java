@@ -66,7 +66,7 @@ public class RangeIteratorDecorator extends AbstractDecorator implements RangeIt
     protected void repair(Session upstreamSession) throws RepositoryException {
         throw new RepositoryException("iterator no longer valid");
     }
-    
+
     /**
      * Advances the underlying iterator.
      *

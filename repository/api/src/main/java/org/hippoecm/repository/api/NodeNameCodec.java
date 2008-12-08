@@ -22,16 +22,16 @@ import java.util.regex.Pattern;
  * <h2>Helper class for encoding and decoding node names</h2>
  *
  * <p>
- * Implements the encode and decode routines based on ISO 9075-14:2003 for 
- * node names.It encodes and decode the minimal set to garanty the node names 
+ * Implements the encode and decode routines based on ISO 9075-14:2003 for
+ * node names.It encodes and decode the minimal set to garanty the node names
  * are jcr valid.<br/>
- * If a character <code>c</code> is not valid in the node name it is encoded 
+ * If a character <code>c</code> is not valid in the node name it is encoded
  * in the form: '_x' + hexValueOf(c) + '_' (UTF-16). It only
  * </p>
  * <p>
- * If a node name string is encoded twice or decoded twice it should return the 
- * same string. If a node name string doesn't contain invalid characters the 
- * encode functions should return the string itself. If a string doesn't contain 
+ * If a node name string is encoded twice or decoded twice it should return the
+ * same string. If a node name string doesn't contain invalid characters the
+ * encode functions should return the string itself. If a string doesn't contain
  * any encoded chars it should return the string itself. Eg:<br/>
  * <ul>
  *   <li>decode(encode(x)) = x</li>
@@ -89,11 +89,11 @@ public final class NodeNameCodec {
     private static final char[] PADDING = new char[] {'0', '0', '0'};
 
     /**
-     * <p>Encode the name to a valid JCR name. If the name is prefixed with a 
+     * <p>Encode the name to a valid JCR name. If the name is prefixed with a
      * namespace, the prefix is not encoded but returned as-is.</p>
-     * <p>Calling encode multiple times on the same string will return 
+     * <p>Calling encode multiple times on the same string will return
      * the same result as encoding the string once.</p>
-     * @param name the name to encode 
+     * @param name the name to encode
      * @return the encoded name
      */
     public final static String encode(final String name) {
@@ -102,9 +102,9 @@ public final class NodeNameCodec {
 
     /**
      * <p>Encode the char to a valid JCR string.</p>
-     * <p>Calling encode multiple times on the same string will return 
+     * <p>Calling encode multiple times on the same string will return
      * the same result as encoding the string once.</p>
-     * @param c the char to encode 
+     * @param c the char to encode
      * @return the encoded char as string
      */
     public final static String encode(final char c) {
@@ -112,17 +112,17 @@ public final class NodeNameCodec {
     }
 
     /**
-     * <p>Encode the name to a valid JCR name. If the name is prefixed with a 
-     * namespace, the prefix is not encoded but returned as-is. The force 
-     * simple name option, forces the codec to encode the name as simple name by 
+     * <p>Encode the name to a valid JCR name. If the name is prefixed with a
+     * namespace, the prefix is not encoded but returned as-is. The force
+     * simple name option, forces the codec to encode the name as simple name by
      * encoding colons.</p>
-     * <p>Calling encode multiple times on the same string will return 
+     * <p>Calling encode multiple times on the same string will return
      * the same result as encoding the string once.</p>
      * @param name the name to encode
-     * @param forceSimpleName force the name to be interpreted as a simple (non prefixed) name 
+     * @param forceSimpleName force the name to be interpreted as a simple (non prefixed) name
      * @return the encoded name
      */
-    
+
     public final static String encode(final String name, final boolean forceSimpleName) {
         if (name == null) {
             throw new IllegalArgumentException("Node name can not be null.");
@@ -148,7 +148,7 @@ public final class NodeNameCodec {
 
     /**
      * Decode the name string with the ISO9075 coding standard.
-     * <p>Calling decode multiple times on the same string will return 
+     * <p>Calling decode multiple times on the same string will return
      * the same result as decoding the string once.</p>
      * @param name the name to decode
      * @return the decoded name

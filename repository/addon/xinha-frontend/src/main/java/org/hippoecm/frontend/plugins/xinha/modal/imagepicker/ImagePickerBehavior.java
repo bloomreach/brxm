@@ -44,7 +44,7 @@ public class ImagePickerBehavior extends XinhaModalBehavior {
         }
         return new ImagePickerContentPanel(modalWindow, enums, imageItemDAO);
     }
-    
+
     public ImageItemDAO getImageItemDAO() {
         return imageItemDAO;
     }

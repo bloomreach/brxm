@@ -19,7 +19,7 @@ import java.util.Map;
 
 public interface ValueMap extends Map {
     public final static String SVN_ID = "$Id$";
-        
+
     public String getString(Object key, String defaultValue);
 
     public int getInt(Object key, int defaultValue);

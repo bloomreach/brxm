@@ -44,7 +44,7 @@ public class LinkPickerBehavior extends XinhaModalBehavior {
         }
         return new LinkPickerContentPanel(modalWindow, enums, dao);
     }
-    
+
     public InternalLinkDAO getInternalLinkDAO() {
         return dao;
     }

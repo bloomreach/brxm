@@ -34,7 +34,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private boolean immutable = false;
@@ -260,7 +260,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
      * Adds the value to this <code>ValueMap</code> with the given key. If the key already is in
      * the <code>ValueMap</code> it will combine the values into a <code>String</code> array,
      * else it will just store the value itself.
-     * 
+     *
      * @param key
      *            the key to store the value under
      * @param value
@@ -322,7 +322,7 @@ public class JavaPluginConfig extends LinkedHashMap implements IPluginConfig {
 
     /**
      * Generates a <code>String</code> representation of this object.
-     * 
+     *
      * @return <code>String</code> representation of this <code>ValueMap</code> consistent with
      *         the tag-attribute style of markup elements. For example:
      *         <code>a="x" b="y" c="z"</code>.

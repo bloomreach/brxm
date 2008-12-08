@@ -134,7 +134,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
     protected org.apache.jackrabbit.core.ItemManager createItemManager(SessionItemStateManager itemStateMgr, HierarchyManager hierMgr) {
         return new ItemManager(itemStateMgr, hierMgr, this, ntMgr.getRootNodeDefinition(), ((RepositoryImpl)rep).getRootNodeId());
     }
-    
+
     @Override
     public String getUserID() {
         return helper.getUserID();
@@ -148,13 +148,13 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl {
                                                                                          NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
     }
-    
+
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
         return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
     }
-    
+
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,

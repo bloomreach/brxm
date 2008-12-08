@@ -31,17 +31,17 @@ public class WebAppBehavior extends AbstractBehavior {
 
     private static final CompressedResourceReference RESET_CSS = new CompressedResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "reset/reset-min.css");
-    private static final CompressedResourceReference FONTS_CSS = new CompressedResourceReference(YahooNamespace.class, 
+    private static final CompressedResourceReference FONTS_CSS = new CompressedResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "fonts/fonts-min.css");
-    private static final CompressedResourceReference GRIDS_CSS = new CompressedResourceReference(YahooNamespace.class, 
+    private static final CompressedResourceReference GRIDS_CSS = new CompressedResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "grids/grids-min.css");
 
-    private static final CompressedResourceReference BASE_CSS = new CompressedResourceReference(YahooNamespace.class, 
+    private static final CompressedResourceReference BASE_CSS = new CompressedResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "base/base-min.css");
     private static final CompressedResourceReference RESET_FONTS_GRIDS_CSS = new CompressedResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "reset-fonts-grids/reset-fonts-grids.css");
 
-    
+
     YuiHeaderContributor headerContributor;
     YuiContext helper;
 
@@ -118,7 +118,7 @@ class WebAppSettings {
     public void setLoadBase(boolean loadBase) {
         this.loadBase = loadBase;
     }
-    
+
     public boolean isLoadReset() {
         return loadReset;
     }
@@ -126,7 +126,7 @@ class WebAppSettings {
     public void setLoadReset(boolean loadReset) {
         this.loadReset = loadReset;
     }
-    
+
     public boolean isLoadFonts() {
         return loadFonts;
     }
@@ -142,5 +142,5 @@ class WebAppSettings {
     public void setLoadGrids(boolean loadGrids) {
         this.loadGrids = loadGrids;
     }
-    
+
 }

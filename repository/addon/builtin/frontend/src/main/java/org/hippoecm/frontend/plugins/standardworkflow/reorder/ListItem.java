@@ -66,7 +66,7 @@ public class ListItem extends AbstractReadOnlyModel {
     public AttributeModifier getColumnModifier() {
         return columnModifier;
     }
-    
+
     public void detach() {
         nodeModel.detach();
     }
@@ -75,7 +75,7 @@ public class ListItem extends AbstractReadOnlyModel {
     public Object getObject() {
         return this;
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof ListItem) {

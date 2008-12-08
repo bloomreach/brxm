@@ -29,7 +29,7 @@ public final class PathHelper {
             return null;
         }
     }
-    
+
     public static String encodePath(String path) {
         String[] elements = StringUtils.split(path, '/');
         String[] replacements = new String[elements.length];

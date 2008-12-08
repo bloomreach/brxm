@@ -64,7 +64,7 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelList
     private String pluginsQuery = "";
 
     public ShortcutsPlugin(IPluginContext context, IPluginConfig config) {
-        super("id"); 
+        super("id");
 
         this.context = context;
         this.config = config;

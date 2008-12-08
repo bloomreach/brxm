@@ -56,7 +56,7 @@ public class DownloadExportLink extends Link {
         if (selectedModel.getObject() == null || "".equals(selectedModel.getObject())) {
             return;
         }
-        
+
         JcrNodeModel model = (JcrNodeModel) getModel();
         JcrExportRequestTarget rsrt = new JcrExportRequestTarget(model.getNode());
         RequestCycle.get().setRequestTarget(rsrt);
@@ -78,7 +78,7 @@ public class DownloadExportLink extends Link {
 
             // get namespace
             String selectedNs = (String) selectedModel.getObject();
-            
+
             final Application app = Application.get();
 
             // Determine encoding
@@ -112,7 +112,7 @@ public class DownloadExportLink extends Link {
         }
 
         public void detach(RequestCycle requestCycle) {
-            
+
         }
     }
 }

@@ -49,7 +49,7 @@ public class ContentExportDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private boolean skipBinary = true;
-    
+
     public ContentExportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
         super(dialogWindow);
         setModel(plugin.getModel());
@@ -69,10 +69,10 @@ public class ContentExportDialog extends AbstractDialog {
             protected void onSelectionChanged(Object newSelection) {
                 skipBinary = ((Boolean)newSelection).booleanValue();
             }
-            
+
         };
         add(includeBinaries);
-        
+
         DownloadExportLink link = new DownloadExportLink("download-link", nodeModel, skipBinaryModel);
         link.add(new Label("download-link-text", "Download"));
         add(link);

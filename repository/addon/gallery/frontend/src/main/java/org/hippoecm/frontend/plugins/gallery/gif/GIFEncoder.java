@@ -8,19 +8,19 @@
  * The GIF encoding routines are based on the Acme libary
  * Visit the ACME Labs Java page for up-to-date versions of this and other
  * fine Java utilities: http://www.acme.com/java/
- * 
+ *
  * Various optimizations by Juerg Lehni
  *
  * GifEncoder is adapted from ppmtogif, which is based on GIFENCOD by David
  * Rowley <mgardi@watdscu.waterloo.edu>.  Lempel-Zim compression
  * based on "compress".
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * See NOTICE.txt for licensing information
  */
 package org.hippoecm.frontend.plugins.gallery.gif;

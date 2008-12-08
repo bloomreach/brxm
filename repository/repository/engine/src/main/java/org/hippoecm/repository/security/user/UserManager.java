@@ -40,7 +40,7 @@ public interface UserManager {
     public void init(ManagerContext context) throws RepositoryException;
 
     /**
-     * Initialization hook for the security managers. This method gets 
+     * Initialization hook for the security managers. This method gets
      * called after the init which is handled by the {@link AbstractUserManager}
      * @param context The {@link ManagerContext} with params for the backend
      * @throws RepositoryException
@@ -80,7 +80,7 @@ public interface UserManager {
 
     public NodeIterator listUsers(String providerId) throws RepositoryException;
     public NodeIterator listUsers() throws RepositoryException;
-    
+
     /**
      * Create a (skeleton) node for the user in the repository
      * @param userId
@@ -90,7 +90,7 @@ public interface UserManager {
     public Node createUser(String userId) throws RepositoryException;
 
     /**
-     * Check if the current manager manages the user 
+     * Check if the current manager manages the user
      * @param group
      * @return true if the group is managed by the current user
      */
@@ -101,7 +101,7 @@ public interface UserManager {
      * @return the node type
      */
     public String getNodeType();
-    
+
     /**
      * Checks if the backend is case aware (ie, ldap usually isn't, the internal provider is)
      * @return
@@ -129,7 +129,7 @@ public interface UserManager {
      */
     public boolean isActive(String userId) throws RepositoryException;
 
-    
+
     /**
      * Save current outstanding changes to the repository.
      */
@@ -143,7 +143,7 @@ public interface UserManager {
      * @throws RepositoryException
      */
     public void backendSetPassword(String userId, char[] password) throws NotSupportedException, RepositoryException;
-    
+
     /**
      * Try to add a user to the backend
      * @param user the user to add

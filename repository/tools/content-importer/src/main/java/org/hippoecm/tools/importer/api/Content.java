@@ -39,5 +39,5 @@ public interface Content {
     boolean isFolder();
 
     Iterator<Content> getChildren();
-    
+
 }

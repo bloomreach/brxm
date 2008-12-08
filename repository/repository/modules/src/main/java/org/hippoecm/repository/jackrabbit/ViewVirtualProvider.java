@@ -73,7 +73,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                 for(Map.Entry<Name,String> entry : order.entrySet()) {
                     Name facet = entry.getKey();
                     String value = entry.getValue();
-                    
+
                     int thisFacetValueIndex = -1;
                     String[] thisFacetValues = getProperty(upstream, facet);
                     if(thisFacetValues != null) {
@@ -84,7 +84,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                             }
                         }
                     }
-                    
+
                     int otherFacetValueIndex = -1;
                     String[] otherFacetValues = getProperty(o.getValue().upstream, facet);
                     if(otherFacetValues != null) {
@@ -95,7 +95,7 @@ public class ViewVirtualProvider extends MirrorVirtualProvider
                             }
                         }
                     }
-                    
+
                     if(thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
                         return -1;
                     } else if(thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {

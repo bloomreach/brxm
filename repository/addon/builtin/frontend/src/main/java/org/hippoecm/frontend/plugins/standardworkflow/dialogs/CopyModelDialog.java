@@ -74,7 +74,7 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
 
                 IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
                 jcrService.flush(nodeModel.getParentModel());
-                
+
                 IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID), IEditService.class);
                 viewService.edit(nodeModel);
             } else {

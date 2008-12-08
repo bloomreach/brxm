@@ -32,11 +32,11 @@ public class TableDefinition implements IClusterable {
     private List<ListColumn> columns;
     private Map<String, Comparator<IModel>> comparators;
     private boolean showColumnHeaders;
-     
+
     public TableDefinition(List<ListColumn> columnList) {
         this(columnList, true);
     }
-    
+
     public TableDefinition(List<ListColumn> columnList, boolean showColumnHeaders) {
         columns = new ArrayList<ListColumn>();
         comparators = new HashMap<String, Comparator<IModel>>();
@@ -46,7 +46,7 @@ public class TableDefinition implements IClusterable {
         }
         this.showColumnHeaders = showColumnHeaders;
     }
-    
+
     public Map<String, Comparator<IModel>> getComparators() {
         return comparators;
     }
@@ -54,7 +54,7 @@ public class TableDefinition implements IClusterable {
     public ListColumn[] getColumns() {
         return (columns.toArray(new ListColumn[columns.size()]));
     }
-        
+
     public boolean showColumnHeaders() {
         return showColumnHeaders;
     }

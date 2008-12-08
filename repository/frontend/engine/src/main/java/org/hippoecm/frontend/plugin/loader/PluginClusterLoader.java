@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Plugin loads all the plugins from a specified cluster
- * 
+ *
  */
 public class PluginClusterLoader implements IPlugin {
     @SuppressWarnings("unused")

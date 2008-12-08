@@ -50,8 +50,8 @@ public class ExternalContentImportMain {
 
     /**
      * @param args
-     * @throws RepositoryException 
-     * @throws IOException 
+     * @throws RepositoryException
+     * @throws IOException
      */
     public static void main(String[] args) throws ImportException {
 
@@ -72,7 +72,7 @@ public class ExternalContentImportMain {
         log.info("Content import finished.");
     }
 
-    
+
 
     /**
      * Parse the commandline arguments.
@@ -93,7 +93,7 @@ public class ExternalContentImportMain {
             CommandLine cmd = parser.parse(options, args);
 
             List argList= cmd.getArgList();
-            
+
             boolean valid = true;
 
             String configFile = cmd.getOptionValue("c", DEFAULT_CONFIG);
@@ -108,7 +108,7 @@ public class ExternalContentImportMain {
                     log.error("Invalid confuration file: " + configFile);
                     valid = false;
                 }
-            }            
+            }
             if (!valid || cmd.hasOption("h")) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp(ExternalContentImportMain.class.getName()+ " ", options, true);

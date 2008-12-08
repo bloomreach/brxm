@@ -45,7 +45,7 @@ public abstract class JcrTree extends Tree {
     }
 
     protected abstract void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode);
-    
+
     @Override
     public void onDetach() {
         treeModel.detach();

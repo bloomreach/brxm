@@ -22,7 +22,7 @@ public class BooleanSetting extends Setting<Boolean> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public BooleanSetting(String javascriptKey) {
         this(javascriptKey, false);
     }
@@ -30,7 +30,7 @@ public class BooleanSetting extends Setting<Boolean> {
     public BooleanSetting(String javascriptKey, Boolean defaultValue) {
         super(javascriptKey, defaultValue);
     }
-    
+
     public Value<Boolean> newValue() {
         return new BooleanValue(defaultValue);
     }

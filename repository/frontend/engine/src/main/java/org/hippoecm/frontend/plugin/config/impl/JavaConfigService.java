@@ -55,7 +55,7 @@ class JavaConfigService implements IPluginConfigService {
 
     private IClusterConfig initLogin() {
         JavaClusterConfig plugins = new JavaClusterConfig();
-       
+
         IPluginConfig config = new JavaPluginConfig();
         config.put("plugin.class", "org.hippoecm.frontend.plugins.login.LoginPlugin");
         //FIXME: Hardcoded LoginPlugin skin, should be made configurable
@@ -74,10 +74,10 @@ class JavaConfigService implements IPluginConfigService {
         config.put("wicket.id", "service.root");
         config.put("wicket.dialog", "service.dialog");
         config.put("wicket.model", "service.model");
-        
+
         String[] extensions = new String[] { "extension.browser", "extension.breadcrumb", "extension.editor", "extension.logout", "extension.menu" };
         config.put("wicket.extensions", extensions);
-        
+
         config.put("extension.browser", "service.browser");
         config.put("extension.breadcrumb", "service.breadcrumb");
         config.put("extension.editor", "service.editor");

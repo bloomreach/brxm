@@ -68,7 +68,7 @@ public abstract class Settings implements IClusterable {
             this.settings.get(setting).setSkip(true);
         }
     }
-    
+
     Value<?> get(Setting<?> key) {
         return settings.get(key);
     }
@@ -94,7 +94,7 @@ public abstract class Settings implements IClusterable {
         sb.append('}');
         return sb.toString();
     }
-    
+
     public boolean isValid() {
         return true;
     }

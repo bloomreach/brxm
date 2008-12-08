@@ -68,14 +68,14 @@ public class Sorter extends Panel {
                         for (int i = 0; i < position - 1; i++) {
                             placedBefore = siblings.nextNode();
                         }
-                        
+
                         String srcChildRelPath = StringUtils.substringAfterLast(node.getPath(), "/");
                         String destChildRelPath = placedBefore == null ? null : StringUtils.substringAfterLast(placedBefore.getPath(), "/");
                         parentNode.orderBefore(srcChildRelPath, destChildRelPath);
 
                         up.setEnabled(position > 2);
                         down.setEnabled(true);
-                        
+
                         MenuPlugin menu = (MenuPlugin) findParent(MenuPlugin.class);
                         menu.redraw();
                         menu.flushNodeModel(nodeModel.getParentModel());

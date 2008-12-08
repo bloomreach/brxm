@@ -196,10 +196,10 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
     public VirtualItemStateProvider getVirtualItemStateProvider() {
         return versProvider;
     }
-    
+
     /**
      * Return the persistence manager.
-     * 
+     *
      * @return the persistence manager
      */
     public PersistenceManager getPersistenceManager() {
@@ -227,7 +227,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
     public DynamicESCFactory getHippoEscFactory() {
         return escFactory;
     }
-    
+
     @Override
     public VersionHistory createVersionHistory(Session session, final NodeState node)
             throws RepositoryException {
@@ -279,7 +279,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
             releaseReadLock();
         }
     }
-    
+
     @Override
     public Version checkin(final NodeImpl node) throws RepositoryException {
         InternalVersion version = (InternalVersion)
@@ -323,7 +323,7 @@ public class VersionManagerImpl extends org.apache.jackrabbit.core.version.Versi
         }
         return history;
     }
-    
+
     @Override
     public Version setVersionLabel(final VersionHistory history,
                                    final Name version, final Name label,

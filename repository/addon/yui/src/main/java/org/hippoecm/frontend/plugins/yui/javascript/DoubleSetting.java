@@ -23,11 +23,11 @@ public class DoubleSetting extends Setting<Double> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public DoubleSetting(String javascriptKey) {
         this(javascriptKey, null);
     }
-    
+
     public DoubleSetting(String javascriptKey, Double defaultValue) {
         super(javascriptKey, defaultValue);
     }

@@ -53,7 +53,7 @@ public class PropInfo {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /**
      * Logger instance.
      */
@@ -73,7 +73,7 @@ public class PropInfo {
      * True if the property being imported is a path reference.
      */
     private boolean isPathReference = false;
-    
+
     /**
      * Value(s) of the property being imported.
      */
@@ -124,7 +124,7 @@ public class PropInfo {
 
     private PropDef getApplicablePropertyDef(EffectiveNodeType ent)
             throws ConstraintViolationException {
-        
+
         // The eventual target type has to be checked not the current in between type.
         // This is relevant for dereferenced Reference's, because they are exported as String's.
         int checkType = type;
@@ -143,7 +143,7 @@ public class PropInfo {
     public void apply(
             NodeImpl node, NamePathResolver resolver,
             Map<NodeId, List<Reference>> derefNodes, String basePath, int referenceBehavior) throws RepositoryException {
-        
+
         // find applicable definition
         PropDef def = getApplicablePropertyDef(node.getEffectiveNodeType());
         if (def.isProtected()) {
@@ -188,11 +188,11 @@ public class PropInfo {
             // 2. if prop == mandatory
             // 2.1 if prop is multi => set empty
             // 2.2 if prop is single => set ref to root
-            
+
             if (!def.isMandatory()) {
                 return;
             }
-            
+
             if (def.isMultiple()) {
                 node.setProperty(name, new Value[] {}, type);
                 return;
@@ -201,11 +201,11 @@ public class PropInfo {
             // single value mandatory property, temporary set ref to rootNode
             Value rootRef = node.getSession().getValueFactory().createValue(node.getSession().getRootNode().getUUID(), PropertyType.REFERENCE);
             node.setProperty(name, rootRef);
-            
+
             return;
         }
-        
-        
+
+
         // multi- or single-valued property?
         if (va.length == 1 && !def.isMultiple()) {
             Exception e = null;

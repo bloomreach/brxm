@@ -293,7 +293,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
         if (config.getString(VARIANT_ID) != null) {
             return config.getString(VARIANT_ID);
         }
-        // don't inherit variation from Wicket ancestor 
+        // don't inherit variation from Wicket ancestor
         return null;
     }
 

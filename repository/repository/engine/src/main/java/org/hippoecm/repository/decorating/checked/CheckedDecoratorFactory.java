@@ -169,7 +169,7 @@ public class CheckedDecoratorFactory implements DecoratorFactory {
             return visitor;
         return new ItemVisitorDecorator(this, session, visitor);
     }
-    
+
     public DocumentManager getDocumentManagerDecorator(SessionDecorator session, DocumentManager documentManager) {
         if(documentManager instanceof DocumentManagerDecorator)
             return documentManager;

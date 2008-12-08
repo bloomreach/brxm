@@ -64,7 +64,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
             ok.setVisible(false);
         }
 
-        // FIXME: refactor the plugin so that we can use a service instead here 
+        // FIXME: refactor the plugin so that we can use a service instead here
         IPluginContext context = plugin.getPluginContext();
         translator = new SearchingTranslatorPlugin(context, null);
     }

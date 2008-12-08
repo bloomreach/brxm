@@ -21,8 +21,8 @@ import org.apache.wicket.model.IModel;
 
 public interface IListAttributeModifier extends IClusterable {
     final static String SVN_ID = "$Id$";
-    
+
     public AttributeModifier getCellAttributeModifier(IModel model);
-    
+
     public AttributeModifier getColumnAttributeModifier(IModel model);
 }

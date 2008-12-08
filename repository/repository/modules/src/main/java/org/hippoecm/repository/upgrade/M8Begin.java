@@ -42,7 +42,7 @@ public class M8Begin extends M8 implements UpdaterModule {
                     NamespaceRegistry nsReg = node.getSession().getWorkspace().getNamespaceRegistry();
                     for(NamespaceMapping mapping : mappings) {
                         ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix, mapping.prefix+"_"+mapping.oldVersion, mapping.oldNamespaceURI);
-                        ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix+"_"+mapping.oldVersion, mapping.prefix, mapping.newNamespaceURI); 
+                        ((NamespaceRegistryImpl)nsReg).externalRemap(mapping.prefix+"_"+mapping.oldVersion, mapping.prefix, mapping.newNamespaceURI);
                     }
             }
         });

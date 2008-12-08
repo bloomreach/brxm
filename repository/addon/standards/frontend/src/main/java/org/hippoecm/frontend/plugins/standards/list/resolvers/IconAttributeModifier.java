@@ -34,7 +34,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
     public AttributeModifier getCellAttributeModifier(HippoNode node) throws RepositoryException {
         String cssClass = null;
         String type = node.getPrimaryNodeType().getName();
-        
+
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             NodeIterator nodeIt = node.getNodes();
             while (nodeIt.hasNext()) {

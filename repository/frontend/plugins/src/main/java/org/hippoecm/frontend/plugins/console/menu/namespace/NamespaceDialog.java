@@ -58,9 +58,9 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
             throw new IllegalArgumentException("Namespace uri cannot be empty.");
         }
         log.info("Trying to add namespace initialization node: " + namespaceName + " => " + namespaceUri);
-        
+
         // TODO: add some basic checking on namespace name and uri
-        
+
         // create initialize node
         try {
             Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
@@ -72,12 +72,12 @@ public class NamespaceDialog  extends AbstractDialog implements ITitleDecorator 
             node.setProperty(HippoNodeType.HIPPO_NAMESPACE, namespaceUri);
             rootNode.getSession().save();
             log.info("Added namespace initialization node: " + namespaceName + " => " + namespaceUri);
-            
+
         } catch (RepositoryException e) {
             log.error("Error while creating namespace initialization node: ", e);
             throw new RuntimeException(e.getMessage());
         }
-        
+
     }
 
     public IModel getTitle() {

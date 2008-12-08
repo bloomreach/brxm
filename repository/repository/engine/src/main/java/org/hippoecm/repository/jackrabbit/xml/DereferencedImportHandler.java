@@ -36,7 +36,7 @@ public class DereferencedImportHandler extends ImportHandler {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static Logger log = LoggerFactory.getLogger(DereferencedImportHandler.class);
 
     protected final Importer importer;
@@ -50,9 +50,9 @@ public class DereferencedImportHandler extends ImportHandler {
      * {@link #startElement(String, String, String, Attributes)}.
      */
     private Map<String, String> localNamespaceMappings;
-    
+
     private DereferencedSysViewImportHandler targetHandler;
-    
+
     public DereferencedImportHandler(Importer importer, NamespaceResolver nsResolver,
                          NamespaceRegistryImpl nsReg) {
         super(importer, nsResolver, nsReg);
@@ -60,7 +60,7 @@ public class DereferencedImportHandler extends ImportHandler {
         this.nsResolver = nsResolver;
         this.nsReg = nsReg;
     }
-    
+
     //---------------------------------------------------------< ErrorHandler >
     /**
      * {@inheritDoc}
@@ -202,5 +202,5 @@ public class DereferencedImportHandler extends ImportHandler {
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
-    
+
 }

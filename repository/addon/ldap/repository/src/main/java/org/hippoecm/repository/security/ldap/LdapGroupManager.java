@@ -54,7 +54,7 @@ public class LdapGroupManager extends AbstractGroupManager {
      * On sync save every after every SAVE_INTERVAL changes
      */
     private final static int SAVE_INTERVAL = 100;
-    
+
     /**
      * The initialized ldap context factory
      */
@@ -80,7 +80,7 @@ public class LdapGroupManager extends AbstractGroupManager {
      * TODO: make configurable
      */
     private boolean isCaseSensitive = false;
-    
+
     /**
      * initialize
      */
@@ -103,8 +103,8 @@ public class LdapGroupManager extends AbstractGroupManager {
     }
 
     /**
-     * Update the group info in the repository. It parses the members as they are found in 
-     * the ldap server with the memberNameMatcher to find the corresponding uids in the 
+     * Update the group info in the repository. It parses the members as they are found in
+     * the ldap server with the memberNameMatcher to find the corresponding uids in the
      * repository.
      * @param dn the dn of the group
      * @param members the members as they are found in the ldap
@@ -186,7 +186,7 @@ public class LdapGroupManager extends AbstractGroupManager {
         if (mappings.size() == 0) {
             return;
         }
-        
+
         LdapContext ctx = null;
         try {
             ctx = lcf.getSystemLdapContext();
@@ -214,11 +214,11 @@ public class LdapGroupManager extends AbstractGroupManager {
             lcf.close(ctx);
         }
     }
-    
+
     /**
-     * Get a set of the memberships of the user from the ldap server. For each search 
-     * configured in the repository a filter is created in with the MemberAttr and 
-     * the MemberNameMatcher. In the Membername matcher the uid and the dn are 
+     * Get a set of the memberships of the user from the ldap server. For each search
+     * configured in the repository a filter is created in with the MemberAttr and
+     * the MemberNameMatcher. In the Membername matcher the uid and the dn are
      * substituted.
      */
     public Set<String> backendGetMemberships(Node user) throws RepositoryException {
@@ -231,7 +231,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            for (LdapGroupSearch search : searches) { 
+            for (LdapGroupSearch search : searches) {
                 if (search.getBaseDn() == null || search.getNameAttr() == null || search.getFilter() == null) {
                     // skip wrongly configured search
                     log.warn("Skipping search base dn: " + search.getBaseDn() + " name attr: " + search.getNameAttr());
@@ -265,7 +265,7 @@ public class LdapGroupManager extends AbstractGroupManager {
 
     /**
      * Synchronize all ldap groups with the repository. This method can take a long time if
-     * there are a lot of groups with a lot of members in the ldap and should run in it's 
+     * there are a lot of groups with a lot of members in the ldap and should run in it's
      * own thread. It is called from the LdapSecurityProvider.sync method.
      * The saves to the repository are done in batches of SAVE_INTERVAL size.
      */
@@ -287,13 +287,13 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.warn("Skipping search base dn: " + search.getBaseDn() + " name attr: " + search.getNameAttr());
                     continue;
                 }
-                
+
                 results = ctx.search(search.getBaseDn(), search.getFilter(), ctls);
                 if (log.isDebugEnabled()) {
                     log.debug("Searching for groups in '"+search.getBaseDn()+"' with filter '"+search.getFilter()+"'");
                 }
                 String groupId = null;
-                
+
                 while (results.hasMore()) {
                     SearchResult sr = results.next();
                     Attributes attrs = sr.getAttributes();
@@ -340,7 +340,7 @@ public class LdapGroupManager extends AbstractGroupManager {
         }
         log.info("Finished synchronizing {} ldap groups for: {}", total, providerId);
     }
-    
+
     /**
      * Load and parse the search configurations from the repository.
      * @param providerNode
@@ -377,7 +377,7 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         }
     }
-    
+
     /**
      * Load and parse the mapping configurations from the repository.
      * @param providerNode
@@ -413,7 +413,7 @@ public class LdapGroupManager extends AbstractGroupManager {
     public boolean isCaseSensitive() {
         return isCaseSensitive;
     }
-    
+
     public String buildGroupName(LdapGroupSearch search, SearchResult sr) {
         String groupId = null;
         Attributes attrs = sr.getAttributes();

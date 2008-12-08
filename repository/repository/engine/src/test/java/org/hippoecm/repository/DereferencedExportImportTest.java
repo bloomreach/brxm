@@ -56,7 +56,7 @@ public class DereferencedExportImportTest extends TestCase {
     Node testImport;
 
     int uuidBehavior = ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
-    
+
     // nodes that have to be cleaned up
     private static final String TEST_DATA_NODE = "testdata";
     private static final String TEST_EXPORT_NODE = "testexport";
@@ -88,7 +88,7 @@ public class DereferencedExportImportTest extends TestCase {
         testExport.addNode("doc3",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc4",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc5",  "hippo:document").addMixin("hippo:harddocument");
-        
+
         // references between doc1 and doc2
         Value uuidDoc1 = session.getValueFactory().createValue(testExport.getNode("doc1").getUUID(), PropertyType.REFERENCE);
         Value uuidDoc2 = session.getValueFactory().createValue(testExport.getNode("doc2").getUUID(), PropertyType.REFERENCE);
@@ -97,11 +97,11 @@ public class DereferencedExportImportTest extends TestCase {
 
         // one single
         testExport.getNode("doc1").setProperty("ref-to-2", uuidDoc2);
-        
+
         // two single
         testExport.getNode("doc2").setProperty("ref-to-1", uuidDoc1);
         testExport.getNode("doc2").setProperty("ref-to-3", uuidDoc3);
-        
+
         // one multi
         testExport.getNode("doc3").setProperty("ref-to-12", new Value[]{uuidDoc1, uuidDoc2});
 
@@ -113,7 +113,7 @@ public class DereferencedExportImportTest extends TestCase {
 
         // create import node
         testImport = testData.addNode(TEST_IMPORT_NODE,  "hippo:ntunstructured");
-        
+
         // expose data to user session
         session.save();
     }
@@ -139,7 +139,7 @@ public class DereferencedExportImportTest extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
@@ -152,17 +152,17 @@ public class DereferencedExportImportTest extends TestCase {
         testExport.addNode("node with space",  "hippo:ntunstructured");
         testExport.addNode("node_x0020_with_x0020_encoded",  "hippo:ntunstructured");
         testExport.save();
-        
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         session.save();
         assertTrue("Import node not found", testImport.hasNode(TEST_EXPORT_NODE));
-        
+
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertTrue("Import of node with spaces failed", node.hasNode("node with space"));
         assertTrue("Import of node with encoded spaces failed", node.hasNode("node_x0020_with_x0020_encoded"));
@@ -177,13 +177,13 @@ public class DereferencedExportImportTest extends TestCase {
         encode.setProperty("property with space", "dummy");
         encode.setProperty("property_with_xml_<xml>", "dummy");
         encode.setProperty("property_x0020_with_x0020_encoded space", "dummy");
-        
+
         testExport.save();
-        
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior,
@@ -208,17 +208,17 @@ public class DereferencedExportImportTest extends TestCase {
         assertEquals("dummy", encode.getProperty("property_with_xml_<xml>").getString());
         assertEquals("dummy", encode.getProperty("property_x0020_with_x0020_encoded space").getString());
     }
-    
+
 
     @Test
     public void testReferenceFailImport() throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         // remove referenced node
         testData.getNode("ref1").remove();
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         try {
@@ -229,51 +229,51 @@ public class DereferencedExportImportTest extends TestCase {
         }
         assertFalse(testImport.hasNode(TEST_EXPORT_NODE));
     }
-    
+
     @Test
     public void testReferenceSkipImport() throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         // remove referenced node
         testData.getNode("ref1").remove();
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
-        
+
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
         assertFalse(node.getNode("doc4").hasProperty("ref-to-extern"));
     }
-    
+
     @Test
     public void testReferenceRootImport() throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         // remove referenced node
         testData.getNode("ref1").remove();
         session.getRootNode().addMixin("mix:referenceable");
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
-        
+
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
         assertEquals(session.getRootNode().getUUID(), node.getNode("doc4").getProperty("ref-to-extern").getString());
     }
 
-    
+
     @Test
     public void testMergeFailImport() throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
@@ -291,29 +291,29 @@ public class DereferencedExportImportTest extends TestCase {
             // expected
         }
     }
-    
+
     @Test
     public void testMergeAddImport() throws RepositoryException, IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         InputStream in = new ByteArrayInputStream(out.toByteArray());
-        
+
         int referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         int mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_OVERWRITE;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
         session.save();
-        
+
         out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView(testExport.getPath(), out, false, false);
         in = new ByteArrayInputStream(out.toByteArray());
         referenceBehavior = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
         mergeBehavior = ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
         ((HippoSession) session).importDereferencedXML(testImport.getPath(), in, uuidBehavior, referenceBehavior, mergeBehavior);
-        
+
         assertTrue(testImport.hasNode(TEST_EXPORT_NODE));
-        assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());        
+        assertEquals(10L, testImport.getNode(TEST_EXPORT_NODE).getNodes().getSize());
     }
-    
+
     private void prettyPrint(byte[] bytes, OutputStream out) throws Exception {
         Source source = new StreamSource(new ByteArrayInputStream(bytes));
         DOMResult result = new DOMResult();

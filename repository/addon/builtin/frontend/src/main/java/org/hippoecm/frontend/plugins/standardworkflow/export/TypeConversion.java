@@ -32,10 +32,10 @@ public class TypeConversion implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private TypeUpdate update;
-    
+
     public TypeConversion(ITypeStore currentConfig, ITypeStore draftConfig, ITypeDescriptor current, ITypeDescriptor draft) {
         update = new TypeUpdate();
-        
+
         if (draft != null) {
             update.newName = draft.getName();
         } else {

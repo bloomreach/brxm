@@ -128,12 +128,12 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
 
     public synchronized ItemImpl getItem(ItemId id)
             throws ItemNotFoundException, AccessDeniedException, RepositoryException {
-        
+
         // check if node is in parent cache
         if(inParentCache(id)) {
             return super.getItem(id);
         }
-        
+
         if (id.denotesNode()) {
             // Create instance of node locally
             if (!session.getAccessManager().isGranted(id, AccessManager.READ)) {
@@ -150,11 +150,11 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
         }
     }
 
-    
+
     public synchronized ItemImpl getItem(ItemState state)
             throws ItemNotFoundException, AccessDeniedException, RepositoryException {
         ItemId id = state.getId();
-        
+
         // check if node is in parent cache
         if(inParentCache(id)) {
             return super.getItem(id);
@@ -170,11 +170,11 @@ public class ItemManager extends org.apache.jackrabbit.core.ItemManager {
             // create instance of item
             return  createItemInstance(id);
         } else {
-            // Create instance of property by parent 
+            // Create instance of property by parent
             return super.getItem(id);
         }
     }
-    
+
 
     //-------------------------------------------------< item factory methods >
     private ItemImpl createItemInstance(ItemId id)

@@ -118,7 +118,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Create a group node. Use the getNodeType to determine the type the node 
+     * Create a group node. Use the getNodeType to determine the type the node
      * should be.
      */
     public final Node createGroup(String rawGroupId) throws RepositoryException {

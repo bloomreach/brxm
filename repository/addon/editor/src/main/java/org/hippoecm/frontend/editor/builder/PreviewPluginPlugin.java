@@ -160,7 +160,7 @@ public class PreviewPluginPlugin extends RenderPlugin {
             protected void onEvent(AjaxRequestTarget target) {
                 PreviewPluginPlugin.this.setModel(pluginNodeModel);
             }
-            
+
         });
         addExtensionPoint("preview");
     }

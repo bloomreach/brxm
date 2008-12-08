@@ -33,7 +33,7 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
     public TemplateEditorWorkflowImpl() throws RemoteException {
         super();
     }
-    
+
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
         Document root = getWorkflowContext().getDocument("root","root");

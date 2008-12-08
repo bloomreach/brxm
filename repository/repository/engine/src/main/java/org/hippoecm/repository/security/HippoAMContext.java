@@ -50,7 +50,7 @@ public class HippoAMContext extends AMContext {
      */
     private final SessionItemStateManager itemMgr;
 
-    /** 
+    /**
      * NamePathResolver
      */
     private final NamePathResolver npResolver;
@@ -96,7 +96,7 @@ public class HippoAMContext extends AMContext {
     public SessionItemStateManager getSessionItemStateManager() {
         return itemMgr;
     }
-    
+
     public NamePathResolver getNamePathResolver() {
         return npResolver;
     }

@@ -45,11 +45,11 @@ public class FinalTextTemplate implements IHeaderContributor {
     public void renderHead(IHeaderResponse response) {
         headerContributor.renderHead(response);
     }
-    
+
     private static class ReadOnlyModel extends AbstractReadOnlyModel {
         private static final long serialVersionUID = 1L;
         private Map<String, Object> values  = new HashMap<String, Object>();
-        
+
         public ReadOnlyModel(Map<String, Object> values) {
             this.values.putAll(values);
         }

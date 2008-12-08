@@ -244,7 +244,7 @@ public class CndSerializer implements IClusterable {
         if (typeDescriptor.isMixin()) {
             output.append(" mixin");
         }
-        
+
         for (IFieldDescriptor field : typeDescriptor.getFields().values()) {
             if (field.isOrdered()) {
                 output.append(" orderable");

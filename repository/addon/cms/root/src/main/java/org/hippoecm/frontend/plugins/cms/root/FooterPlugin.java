@@ -24,10 +24,10 @@ public class FooterPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public FooterPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
     }
 
 }

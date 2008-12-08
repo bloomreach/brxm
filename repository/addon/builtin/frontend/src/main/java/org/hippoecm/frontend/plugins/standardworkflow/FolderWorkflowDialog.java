@@ -102,7 +102,7 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
             typelabel.setVisible(false);
         } else {
             // if the folderWorkflowPlugin.templates.get(category).size() = 0 you cannot add this
-            // category currently. 
+            // category currently.
             Component component;
             add(component = new EmptyPanel("prototype"));
             component.setVisible(false);

@@ -20,7 +20,7 @@ public class BooleanValue extends Value<Boolean> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public BooleanValue(Boolean defaultValue) {
         super(defaultValue);
     }

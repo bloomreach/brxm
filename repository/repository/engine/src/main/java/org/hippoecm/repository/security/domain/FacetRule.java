@@ -101,7 +101,7 @@ public class FacetRule implements Serializable {
         if (node == null) {
             throw new IllegalArgumentException("FacetRule node cannot be null");
         }
-        
+
 
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
@@ -110,7 +110,7 @@ public class FacetRule implements Serializable {
 
         int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPO_TYPE).getString());
         String tmpValue = node.getProperty(HippoNodeType.HIPPO_VALUE).getString();
-        
+
         //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
         // if it's a name property set valueName
         Name tmpName = null;
@@ -121,7 +121,7 @@ public class FacetRule implements Serializable {
             tmpType = PropertyType.STRING;
             tmpValue = parseReferenceTypeValue(node);
         }
-        
+
 
         // Set the JCR Name for the facet (string)
         facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
@@ -131,9 +131,9 @@ public class FacetRule implements Serializable {
         value = tmpValue;
         valueName = tmpName;
     }
-    
+
     /**
-     * Parse the facet rule of type Reference. Try to find the UUID of the 
+     * Parse the facet rule of type Reference. Try to find the UUID of the
      * value of the FacetRule.
      * @param facetNode the node of the FacetRule
      * @return String the String representation of the UUID
@@ -181,7 +181,7 @@ public class FacetRule implements Serializable {
             }
         }
         return uuid;
-        
+
     }
 
     /**

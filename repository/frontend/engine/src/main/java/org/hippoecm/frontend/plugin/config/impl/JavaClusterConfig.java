@@ -57,7 +57,7 @@ public class JavaClusterConfig extends JavaPluginConfig implements IClusterConfi
     public Set<IPluginConfig> getPluginConfigSet() {
         return new TreeSet(configs);
     }
-    
+
     public IPluginConfig getPluginConfig(Object key) {
         return new JavaPluginConfig();
     }

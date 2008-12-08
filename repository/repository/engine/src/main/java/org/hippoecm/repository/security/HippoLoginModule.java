@@ -135,7 +135,7 @@ public class HippoLoginModule implements LoginModule {
                     log.info("Denied Anymous impersonating as {}", creds.getUserID());
                     return false;
                 }
-                
+
                 // system session impersonate
                 if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
                     log.debug("SystemSession impersonating to new SystemSession");
@@ -158,7 +158,7 @@ public class HippoLoginModule implements LoginModule {
                 // get securityManager
                 securityManager = SecurityManager.getInstance();
                 securityManager.init(rootSession);
-                
+
                 setUserPrincipals(creds.getUserID());
                 setGroupPrincipals(creds.getUserID());
                 setFacetAuthPrincipals(creds.getUserID());

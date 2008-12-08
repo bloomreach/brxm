@@ -75,7 +75,7 @@ public class StatusServlet extends HttpServlet {
         writer.println("</head>");
         writer.println("<body>");
         writer.println("  <h2>Hippo Repository Status</h2>");
-        
+
         writer.println("  <h3>Version</h3>");
         try {
             InputStream istream = null;

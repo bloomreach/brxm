@@ -38,13 +38,13 @@ import org.slf4j.LoggerFactory;
 public class ImageItemDAO implements IClusterable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private final static Logger log = LoggerFactory.getLogger(ImageItemDAO.class);
 
     private final static String GALLERY_SEARCH_PATH = "/content/gallery-search";
-    
+
     private ImageItemFactory imageItemFactory;
     private JcrNodeModel nodeModel;
 
@@ -52,7 +52,7 @@ public class ImageItemDAO implements IClusterable {
         this.nodeModel = nodeModel;
         imageItemFactory = new ImageItemFactory(nodeModel);
     }
-    
+
     public ImageItem attach(JcrNodeModel imageModel) {
         try {
             ImageItem item = imageItemFactory.createImageItem(imageModel.getNode());
@@ -94,7 +94,7 @@ public class ImageItemDAO implements IClusterable {
 
     public List<ImageItem> getItems() {
         List<ImageItem> items = new ArrayList<ImageItem>();
-        
+
         try {
             Session session = nodeModel.getNode().getSession();
             Node gallerySearchNode = (Node) session.getItem(GALLERY_SEARCH_PATH);

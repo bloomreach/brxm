@@ -27,11 +27,11 @@ import org.apache.commons.configuration.Configuration;
  * Interface for the content importers.
  */
 public interface ContentImporter {
-    
+
     final static String SVN_ID = "$Id$";
 
     /**
-     * Setup and configure the converter. The import.properties file is 
+     * Setup and configure the converter. The import.properties file is
      * passed as config.
      * @param config
      * @throws RepositoryException
@@ -39,8 +39,8 @@ public interface ContentImporter {
     void setup(Configuration config) throws RepositoryException;
 
     /**
-     * The content conversion method. This method is called for each 
-     * file and the method should parse the (xml) doucment and create 
+     * The content conversion method. This method is called for each
+     * file and the method should parse the (xml) doucment and create
      * a repository document as child of parent.
      * @param parent
      * @param fileName
@@ -50,11 +50,11 @@ public interface ContentImporter {
      */
     void convertDocToJCR(Node parent, String fileName, InputStream content)
             throws RepositoryException, IOException;
-    
+
 
     /**
-     * Create a document as child of the parent (folder) of type with name. 
-     * The method should handle encoding and create the handle as well as 
+     * Create a document as child of the parent (folder) of type with name.
+     * The method should handle encoding and create the handle as well as
      * setting the initial properties for the workflow.
      * @param parent
      * @param name
@@ -63,7 +63,7 @@ public interface ContentImporter {
      * @throws RepositoryException
      */
     public Node createDocument(Node parent, String name, String type) throws RepositoryException;
-    
+
     /**
      * Create a repository folder.
      * @param parent
@@ -73,12 +73,12 @@ public interface ContentImporter {
      */
     Node createFolder(Node parent, String name) throws  RepositoryException ;
 
-    /** 
+    /**
      * Creates the full path as folders
      */
     Node createPath(Node rootNode, String path) throws  RepositoryException ;
-    
-    /** 
+
+    /**
      * getNodeType for some name name
      */
     String getNodeType(String name);

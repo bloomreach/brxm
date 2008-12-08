@@ -50,7 +50,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
                             cssClass = "application-opendocument";
                         }
                     } else {
-                        cssClass = StringUtils.substringBefore(mimeType, "/");    
+                        cssClass = StringUtils.substringBefore(mimeType, "/");
                     }
                     cssClass = "mimetype-" + cssClass + "-16";
                 } else {

@@ -142,7 +142,7 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
     public Component getComponent() {
         return this;
     }
-    
+
     public void onClose() {
     }
 

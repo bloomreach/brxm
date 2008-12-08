@@ -161,7 +161,7 @@ public interface RemoteRepositoryService extends Remote {
     public QPropertyDefinition getPropertyDefinition(RemoteSessionInfo sessionInfo,
                                                      PropertyId propertyId)
             throws RepositoryException, RemoteException;
-    
+
     /**
      * @param sessionInfo
      * @param nodeId
@@ -359,7 +359,7 @@ public interface RemoteRepositoryService extends Remote {
     /**
      * @param sessionInfo
      * @param nodeId
-     * @return 
+     * @return
      * @throws javax.jcr.RepositoryException
      * @throws RemoteException if an error occurs.
      * @see org.apache.jackrabbit.spi.RepositoryService#checkin(org.apache.jackrabbit.spi.SessionInfo, org.apache.jackrabbit.spi.NodeId)
@@ -653,6 +653,6 @@ public interface RemoteRepositoryService extends Remote {
      * @see org.apache.jackrabbit.spi.RepositoryService#getQNodeTypeDefinitions(SessionInfo, Name[])
      */
     public RemoteIterator getQNodeTypeDefinitions(RemoteSessionInfo sessionInfo, Name[] ntNames) throws RepositoryException, RemoteException;
-    
+
     public RemoteSession getRemoteSession() throws RemoteException, RepositoryException;
 }

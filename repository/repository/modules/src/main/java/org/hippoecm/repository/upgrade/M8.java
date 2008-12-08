@@ -374,7 +374,7 @@ public class M8 {
         protected String getPrefixNamespaceURI(String prefix) throws RepositoryException {
             return workspace.getNamespaceRegistry().getURI(prefix);
         }
-        
+
         public void writeTo(PrintWriter out) throws RepositoryException {
             for (String prefix : namespaces) {
                 out.print("<");

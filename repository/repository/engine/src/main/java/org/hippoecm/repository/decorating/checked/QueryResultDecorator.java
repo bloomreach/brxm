@@ -38,7 +38,7 @@ public class QueryResultDecorator extends AbstractDecorator implements QueryResu
     protected void repair(Session upstreamSession) throws RepositoryException {
         throw new RepositoryException("query result is no longer valid");
     }
-    
+
     /**
      * @inheritDoc
      */

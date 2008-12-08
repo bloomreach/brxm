@@ -50,7 +50,7 @@ public class SaveDialog extends AbstractDialog {
                 hasPendingChanges = true;
                 StringBuffer buf;
                 buf = new StringBuffer("Pending changes:\n");
-               
+
                 NodeIterator it = rootNode.pendingChanges();
                 if (it.hasNext()) {
                     while (it.hasNext()) {

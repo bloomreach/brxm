@@ -149,7 +149,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             } else {
                 query.storeAsNode(parentNode.getPath() + "/" + nodeName);
             }
-            
+
             incorrectquery = "";
             target.addComponent(incorrectqueryLabel);
 

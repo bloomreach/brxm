@@ -39,15 +39,15 @@ public class InternalLinkDAO  implements IClusterable {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     static final Logger log = LoggerFactory.getLogger(InternalLinkDAO.class);
-    
+
     private JcrNodeModel model;
-    
+
     public InternalLinkDAO(JcrNodeModel model) {
         this.model = model;
     }
-    
+
     public String create(String name, String uuid) {
         if (uuid == null) {
             log.error("uuid is null. Should never be possible for internal link");
@@ -58,7 +58,7 @@ public class InternalLinkDAO  implements IClusterable {
 
         /* test whether link is already present as facetselect. If true then:
          * 1) if uuid also same, use this link
-         * 2) if uuid is different, create a new link 
+         * 2) if uuid is different, create a new link
          */
 
         HtmlLinkValidator htmlLinkValidator = new HtmlLinkValidator(node, name, uuid);
@@ -80,7 +80,7 @@ public class InternalLinkDAO  implements IClusterable {
         }
         return validLink;
     }
-    
+
     public boolean remove(String initialHref) {
         try {
             Node node = model.getNode();
@@ -97,7 +97,7 @@ public class InternalLinkDAO  implements IClusterable {
         }
         return false;
     }
-    
+
     public String getUUID(String currentLink) throws RepositoryException {
         if (model.getNode().hasNode(currentLink)) {
             Node currentLinkNode = model.getNode().getNode(currentLink);
@@ -140,7 +140,7 @@ public class InternalLinkDAO  implements IClusterable {
         return items;
     }
 
-    
+
     private static class HtmlLinkValidator {
 
         private String validLink;

@@ -24,7 +24,7 @@ public class AjaxSettings extends Settings {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     protected static final StringSetting CALLBACK_URL = new StringSetting("callbackUrl", "");
     protected static final StringSetting CALLBACK_FUNCTION = new StringSetting("callbackFunction", "", false);
     protected static final StringMapSetting CALLBACK_PARAMETERS = new StringMapSetting("callbackParameters", null);
@@ -32,16 +32,16 @@ public class AjaxSettings extends Settings {
     public AjaxSettings() {
         super();
     }
-    
+
     public AjaxSettings(IPluginConfig config) {
         super(config);
     }
-    
+
     @Override
     protected void initValues() {
         add(CALLBACK_URL, CALLBACK_FUNCTION, CALLBACK_PARAMETERS);
     }
-    
+
     public void setCallbackUrl(String url) {
         CALLBACK_URL.set(url, this);
     }

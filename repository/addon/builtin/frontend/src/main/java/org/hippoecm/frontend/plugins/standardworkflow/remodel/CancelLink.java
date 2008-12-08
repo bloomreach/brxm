@@ -30,7 +30,7 @@ public final class CancelLink extends AbstractWizardLink {
     public void onClick(AjaxRequestTarget target) {
         getWizardModel().cancel();
     }
-    
+
     @Override
     public final boolean isVisible() {
         return getWizardModel().isNextAvailable();

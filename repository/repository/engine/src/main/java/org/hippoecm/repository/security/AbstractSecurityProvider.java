@@ -44,7 +44,7 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
     public void remove() {
         // shutdown hook for things like listeners
     }
-    
+
     /**
      * {@inheritDoc}
      */

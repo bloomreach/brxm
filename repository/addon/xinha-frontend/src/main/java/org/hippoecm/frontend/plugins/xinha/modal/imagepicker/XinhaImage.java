@@ -33,7 +33,7 @@ public enum XinhaImage {
     XinhaImage(String val) {
         this.value = val;
     }
-    
+
     public String getValue() {
         return value;
     }

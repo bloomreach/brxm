@@ -121,7 +121,7 @@ public class HippoAccessManager implements AccessManager {
      */
     private NamespaceResolver nsRes;
 
-    /** 
+    /**
      * NamePathResolver
      */
     private NamePathResolver npRes;
@@ -130,7 +130,7 @@ public class HippoAccessManager implements AccessManager {
      * NameResolver
      */
     private NameResolver nRes;
-    
+
     /**
      * Name of hippo:handle, needed for document model checking
      */
@@ -167,7 +167,7 @@ public class HippoAccessManager implements AccessManager {
      * Cache for determining if a type is a instance of another type
      */
     private final NodeTypeInstanceOfCache ntIOCache = NodeTypeInstanceOfCache.getInstance();
-    
+
     /**
      * Flag whether current user is anonymous
      */
@@ -193,7 +193,7 @@ public class HippoAccessManager implements AccessManager {
 
     /**
      * A ItemId->ItemState cache that is only valid during a single isGranted.
-     * Some property states are resolved many times and this can be expensive 
+     * Some property states are resolved many times and this can be expensive
      * especially for states from the attic.
      */
     private final HashMap<ItemId, ItemState> requestItemStateCache = new HashMap<ItemId, ItemState>();
@@ -280,13 +280,13 @@ public class HippoAccessManager implements AccessManager {
             throw new IllegalStateException("not initialized");
         }
         initialized = false;
-        
+
         // clear out all caches
         readAccessCache.clear();
         requestItemStateCache.clear();
         groupIds.clear();
         currentDomainRoleIds.clear();
-        
+
         // Aggressively nullify
         subject = null;
         hierMgr = null;
@@ -447,14 +447,14 @@ public class HippoAccessManager implements AccessManager {
     }
 
 
-    
+
     /**
      * Check if a node matches the current FacetRule
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
      * @return true if the node matches the facet rule
-     * @throws RepositoryException 
-     * @throws NoSuchItemStateException 
+     * @throws RepositoryException
+     * @throws NoSuchItemStateException
      * @see FacetRule
      */
     protected boolean matchFacetRule(NodeState nodeState, FacetRule facetRule) throws NoSuchItemStateException, RepositoryException {
@@ -528,7 +528,7 @@ public class HippoAccessManager implements AccessManager {
             return true;
         }
         for (String priv : privileges) {
-            log.debug("Checking [{}] : {}", priv, absPath); 
+            log.debug("Checking [{}] : {}", priv, absPath);
             allowed = false;
             nodeState = null;
             for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
@@ -638,7 +638,7 @@ public class HippoAccessManager implements AccessManager {
 
 
     /**
-     * Get the <code>NodeState</code> for the absolute path. If the absolute path points 
+     * Get the <code>NodeState</code> for the absolute path. If the absolute path points
      * to a property get the NodeState the property belongs to.
      * @param absPath the absolute path
      * @return the NodeState of the node (holding the property)
@@ -657,7 +657,7 @@ public class HippoAccessManager implements AccessManager {
         if (!targetPath.isAbsolute()) {
             throw new RepositoryException("not an absolute path: " + absPath);
         }
-        
+
         NodeId id = hierMgr.resolveNodePath(targetPath);
         if (id == null) {
             // id could be a property
@@ -673,7 +673,7 @@ public class HippoAccessManager implements AccessManager {
             throw new PathNotFoundException("Unable to find path: " + absPath);
         }
     }
-    
+
     /**
      * Try to get a state from the item manager by first checking the normal states,
      * then checking the transient states and last checking the attic state.
@@ -792,7 +792,7 @@ public class HippoAccessManager implements AccessManager {
         if (isInstance != null) {
             return isInstance.booleanValue();
         }
-        
+
         // get iterator over all types
         NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
         NodeType nodeStateNodeType = ntMgr.getNodeType(nodeStateType);
@@ -823,13 +823,13 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
      * @return true if the node matches the facet rule
-     * @throws RepositoryException 
+     * @throws RepositoryException
      * @see FacetRule
      */
     private boolean matchPropertyWithFacetRule(NodeState nodeState, FacetRule rule) throws NoSuchItemStateException, RepositoryException {
 
         boolean match = false;
-        
+
         // jcr:primaryType isn't really a property
         if (rule.getFacetName().equals(NameConstants.JCR_PRIMARYTYPE)) {
             // WILDCARD match, jcr:primaryType == *
@@ -853,12 +853,12 @@ public class HippoAccessManager implements AccessManager {
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName()) && !nodeState.getRemovedPropertyNames().contains(rule.getFacetName())) {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
-            
+
             // if this is a filter facet rule the property doesn't have to be set
             if (rule.isFilter()) {
                 return true;
             }
-            
+
             if(FacetAuthConstants.WILDCARD.equals(rule.getValue()) && !rule.isEqual()) {
                 return true;
             } else {
@@ -937,7 +937,7 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the node to check
      * @param value the mixin type to check for. This is the String representation of the Name
      * @return true if the node has the mixin type
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     private boolean hasMixinWithValue(NodeState nodeState, String value) throws NoSuchItemStateException, RepositoryException {
         if (!nodeState.hasPropertyName(NameConstants.JCR_MIXINTYPES)) {
@@ -973,8 +973,8 @@ public class HippoAccessManager implements AccessManager {
      * @param nodeState the node of which to check the parents
      * @return NodeState the parent node state or null
      * @throws NoSuchItemStateException
-     * @throws RepositoryException 
-     * @throws NamespaceException 
+     * @throws RepositoryException
+     * @throws NamespaceException
      */
     private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, NamespaceException, RepositoryException {
 
@@ -1025,7 +1025,7 @@ public class HippoAccessManager implements AccessManager {
      * Simple Cache for <String, <String,Boolean>> key-value pairs
      */
     private static class NodeTypeInstanceOfCache {
- 
+
         /**
          * The cache map
          */
@@ -1036,16 +1036,16 @@ public class HippoAccessManager implements AccessManager {
          * Create a new LRU cache
          * @param size max number of cache objects
          */
-        private NodeTypeInstanceOfCache() {            
+        private NodeTypeInstanceOfCache() {
         }
-        
+
         private static NodeTypeInstanceOfCache getInstance() {
             return cache;
         }
 
         /**
          * Fetch cache value
-         * @param 
+         * @param
          * @return cached value or null when not in cache
          */
         synchronized public Boolean get(String type, String instanceOfType) {
@@ -1080,7 +1080,7 @@ public class HippoAccessManager implements AccessManager {
             if (typeMap == null) {
                 return;
             }
-            
+
             if (typeMap.containsKey(type)) {
                 map.remove(type);
             }
@@ -1093,6 +1093,6 @@ public class HippoAccessManager implements AccessManager {
             map.clear();
         }
     }
-    
-    
+
+
 }

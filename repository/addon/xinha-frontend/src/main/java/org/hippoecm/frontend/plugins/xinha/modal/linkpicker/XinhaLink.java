@@ -28,7 +28,7 @@ public enum XinhaLink {
     XinhaLink(String val) {
         this.value = val;
     }
-    
+
     public String getValue() {
         return value;
     }

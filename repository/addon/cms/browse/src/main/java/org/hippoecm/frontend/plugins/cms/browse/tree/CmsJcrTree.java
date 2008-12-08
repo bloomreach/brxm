@@ -35,7 +35,7 @@ public abstract class CmsJcrTree extends JcrTree {
     private final static String SVN_ID = "$Id$";
     static final Logger log = LoggerFactory.getLogger(CmsJcrTree.class);
     private static final long serialVersionUID = 1L;
-    
+
     public CmsJcrTree(String id, JcrTreeModel treeModel) {
         super(id, treeModel);
     }

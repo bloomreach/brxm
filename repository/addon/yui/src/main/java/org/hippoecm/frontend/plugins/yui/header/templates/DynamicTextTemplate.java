@@ -61,7 +61,7 @@ public abstract class DynamicTextTemplate implements IHeaderContributor {
         variables.put("config", getSettings().toScript());
         return variables;
     }
-    
+
     abstract public Settings getSettings();
 
 

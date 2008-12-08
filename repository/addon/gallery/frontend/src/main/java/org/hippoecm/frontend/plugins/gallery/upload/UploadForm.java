@@ -114,7 +114,7 @@ class UploadForm extends Form {
     public String getDescription() {
         return description;
     }
-    
+
     @Override
     protected void onSubmit() {
         final FileUpload upload = uploadField.getFileUpload();

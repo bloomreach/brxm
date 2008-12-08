@@ -121,7 +121,7 @@ public class PathsTest extends TestCase {
                 for(int i=0; i<nodeTypes.length; i++) {
                     if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValues())) {
                         isProtected = false;
-                        break; 
+                        break;
                     }
                 }
                 if (!isProtected) {
@@ -132,7 +132,7 @@ public class PathsTest extends TestCase {
                 for(int i=0; i<nodeTypes.length; i++) {
                     if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
                         isProtected = false;
-                        break; 
+                        break;
                     }
                 }
                 if (!isProtected) {

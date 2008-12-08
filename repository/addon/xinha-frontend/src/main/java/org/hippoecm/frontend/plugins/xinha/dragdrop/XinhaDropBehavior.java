@@ -54,7 +54,7 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     public void addHeaderContribution(IYuiContext context) {
         super.addHeaderContribution(context);
         context.addModule(XinhaNamespace.NS, "xinhadropmodel");
-    }    
+    }
 
     @Override
     public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {

@@ -156,8 +156,8 @@ public class Main extends WebApplication {
                 }
             }
         });
-        
-        // replace current loaders with own list, starting with component-specific 
+
+        // replace current loaders with own list, starting with component-specific
         List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings
                 .getStringResourceLoaders());
         resourceSettings.addStringResourceLoader(new IStringResourceLoader() {

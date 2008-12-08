@@ -158,7 +158,7 @@ public class ExternalContentImport {
     /**
      * Recursively import from the current file
      * @param file
-     * @throws RepositoryException 
+     * @throws RepositoryException
      */
     private void contentImport(Content content) throws IOException, RepositoryException, ImportException {
         Mapping mapping = mapper.map(content);

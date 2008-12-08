@@ -70,12 +70,12 @@ public abstract class AbstractUserManager implements UserManager {
      * Number of dir levels: /u/s/user etc.
      */
     private int dirLevels = 0;
-    
+
     /**
      * Don't use queries for now. It's too slow :(
      */
     private final boolean useQueries = false;
-    
+
     /**
      * Logger
      */
@@ -83,7 +83,7 @@ public abstract class AbstractUserManager implements UserManager {
 
     /**
      * Don't override. This is the general init. Use managerInit for implementation
-     * specific initialization. 
+     * specific initialization.
      */
     public final void init(ManagerContext context) throws RepositoryException {
         this.session = context.getSession();
@@ -128,12 +128,12 @@ public abstract class AbstractUserManager implements UserManager {
             return false;
         }
     }
-    
+
     public final Node getUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        
+
         if (useQueries) {
             String userId = normalizeUserId(rawUserId);
             StringBuilder statement = new StringBuilder();
@@ -161,9 +161,9 @@ public abstract class AbstractUserManager implements UserManager {
         }
         return null;
     }
-    
+
     /**
-     * Create a new user in the repository. Use getNodeType to determine the 
+     * Create a new user in the repository. Use getNodeType to determine the
      * node's node type.
      */
     public final Node createUser(String rawUserId) throws RepositoryException {
@@ -193,7 +193,7 @@ public abstract class AbstractUserManager implements UserManager {
         log.debug("User: {} created by {} ", userId, providerId);
         return user;
     }
-    
+
     /**
      * Helper for building user path including the username itself. Takes care of the encoding
      * of the path AND the userId (the eventual node name)
@@ -232,7 +232,7 @@ public abstract class AbstractUserManager implements UserManager {
             return rawUserId.trim().toLowerCase();
         }
     }
-    
+
     private final void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_USERPROVIDER;
@@ -253,13 +253,13 @@ public abstract class AbstractUserManager implements UserManager {
         if (log.isDebugEnabled()) {
             log.debug("Using dirlevels '"+dirLevels+"' for provider: " + providerId);
         }
-        
+
     }
-    
+
     public final NodeIterator listUsers() throws RepositoryException {
         return listUsers(null);
     }
-    
+
     public final NodeIterator listUsers(String providerId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
@@ -275,13 +275,13 @@ public abstract class AbstractUserManager implements UserManager {
             statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
             statement.append(']');
         }
-        
+
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
         QueryResult result = q.execute();
         return result.getNodes();
     }
 
-    
+
     public final boolean isManagerForUser(Node user) throws RepositoryException {
         if (user.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
             return providerId.equals(user.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString());
@@ -289,7 +289,7 @@ public abstract class AbstractUserManager implements UserManager {
             return org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId);
         }
     }
-    
+
     /**
      * Only last login date for external users.
      */

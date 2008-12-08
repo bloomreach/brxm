@@ -28,13 +28,13 @@ public class Reference {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /** this implementation requires a property that can be set on a parent node.  Because this
      * node isn't actually persisted, there will be no constraint violation, but this property
      * may not clash with any property in the parent node. (FIXME)
      */
     static final String REFERENCE_SUFFIX = "___pathreference";
-    
+
     /**
      * sv:value
      */
@@ -51,9 +51,9 @@ public class Reference {
     private final boolean isMulti;
 
     private String propName;
-    
+
     private Name name;
-    
+
     private String basePath;
 
     private final String[] paths;
@@ -71,7 +71,7 @@ public class Reference {
         }
         this.isMulti = true;
     }
-    
+
     Reference(Name name, Value[] paths, boolean isMulti) throws RepositoryException {
         this.name = name;
         this.isMulti = isMulti;
@@ -107,7 +107,7 @@ public class Reference {
     void setBasePath(String path) {
         basePath = path;
     }
-    
+
 
     Value[] getPathValues(Session session) throws RepositoryException  {
         Value[] vals = new Value[paths.length];

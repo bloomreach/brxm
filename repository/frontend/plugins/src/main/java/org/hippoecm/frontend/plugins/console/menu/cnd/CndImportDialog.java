@@ -45,13 +45,13 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(CndImportDialog.class);
-    
+
     Component message;
     Model msgText;
 
     public CndImportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
         super(dialogWindow);
-        
+
         final FileUploadForm simpleUploadForm = new FileUploadForm("simpleUpload");
         add(simpleUploadForm);
         msgText = new Model("Import a CND file.");
@@ -84,24 +84,24 @@ public class CndImportDialog extends AbstractDialog implements ITitleDecorator {
             final FileUpload upload = fileUploadField.getFileUpload();
             if (upload != null) {
                 msgText.setObject("File uploaded.");
-                
+
                 // create initialize node
                 try {
                     Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
                     Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
-                    
+
                     if (initNode.hasNode("import-cnd")) {
                         initNode.getNode("import-cnd").remove();
                     }
                     Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
-                    
+
                     try {
                         node.setProperty(HippoNodeType.HIPPO_NODETYPES, new BufferedInputStream(upload.getInputStream()));
                         rootNode.getSession().save();
                         msgText.setObject("initialize node saved.");
                     } catch (IOException e) {
                         msgText.setObject("initialize node saved.");
-                        
+
                     }
                 } catch (RepositoryException e) {
                     log.error("Error while creating nodetypes initialization node: ", e);

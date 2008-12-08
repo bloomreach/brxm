@@ -168,10 +168,10 @@ public class TemplateListPlugin extends RenderPlugin {
         if(editedType != null) {
             try {
                 String name = editedType.addField(typeDescriptor.getName());
-    
+
                 // add item to template
                 Node templateNode = templateNodeModel.getNode();
-    
+
                 String pluginName = UUID.randomUUID().toString();
                 Node itemNode = templateNode.addNode(pluginName, "frontend:plugin");
                 if (typeDescriptor.isNode()) {
@@ -185,13 +185,13 @@ public class TemplateListPlugin extends RenderPlugin {
                 itemNode.setProperty("engine", "${engine}");
                 itemNode.setProperty("field", name);
                 itemNode.setProperty("caption", new String[] { typeDescriptor.getName() });
-    
+
                 IJcrService jcrService = getPluginContext().getService(IJcrService.class.getName(), IJcrService.class);
                 jcrService.flush((JcrNodeModel) getModel());
-    
+
                 // update helper model
                 select(new JcrNodeModel(itemNode));
-    
+
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }

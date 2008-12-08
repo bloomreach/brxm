@@ -32,7 +32,7 @@ public class FullRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-        
+
         addWorkflowAction("acceptRequest-dialog", new StringResourceModel("accept-request", this, null), new WorkflowAction() {
             private static final long serialVersionUID = 1L;
 

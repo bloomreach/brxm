@@ -51,7 +51,7 @@ public class TranslationSelectionStrategy<T extends IModel> implements Comparato
             public T getModel() {
                 return null;
             }
-            
+
         };
     }
 

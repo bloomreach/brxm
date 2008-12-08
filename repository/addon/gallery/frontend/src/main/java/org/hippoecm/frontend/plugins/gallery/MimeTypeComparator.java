@@ -55,5 +55,5 @@ public class MimeTypeComparator extends NodeComparator {
             return 0;
         }
     }
-    
+
 }

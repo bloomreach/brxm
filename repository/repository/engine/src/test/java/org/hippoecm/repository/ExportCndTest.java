@@ -83,7 +83,7 @@ public class ExportCndTest extends TestCase {
         /*
          * this horrible line is because CompactNodeTypeDefWriter returns _x002a_ for something like:
          * - * (String)
-         * 
+         *
          * For nodes, thus + * (nt:base) it works :S
          */
         String cnd = out.toString().replaceAll("_x002a_", "*");
@@ -104,11 +104,11 @@ public class ExportCndTest extends TestCase {
         /*
          * this horrible line is because CompactNodeTypeDefWriter returns _x002a_ for something like:
          * - * (String)
-         * 
+         *
          * For nodes, thus + * (nt:base) it works :S
          */
-        String cnd = out.toString(); 
-       
+        String cnd = out.toString();
+
     }
 
     class HippoCompactNodeTypeDefWriter {
@@ -246,7 +246,7 @@ public class ExportCndTest extends TestCase {
                 out.write(OnParentVersionAction.nameFromValue(nd.getOnParentVersion()).toLowerCase());
             }
         }
-        
+
         private void writeRequiredTypes(NodeType[] reqTypes) throws IOException {
             if (reqTypes != null && reqTypes.length > 0) {
                 String delim = " (";
@@ -283,7 +283,7 @@ public class ExportCndTest extends TestCase {
                 }
             }
         }
-        
+
         private void writeItemDefName(String name) throws IOException {
             out.write(resolve(name));
         }

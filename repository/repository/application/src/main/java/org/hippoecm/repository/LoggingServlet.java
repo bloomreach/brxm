@@ -38,25 +38,25 @@ import org.slf4j.LoggerFactory;
 
 
 public class LoggingServlet extends HttpServlet {
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private final static Logger log = LoggerFactory.getLogger(LoggingServlet.class);
-    
+
     private final static boolean isLog4jLog = "org.slf4j.impl.Log4jLoggerAdapter".equals(log.getClass().getName());
     private final static boolean isJDK14Log = "org.slf4j.impl.JDK14LoggerAdapter".equals(log.getClass().getName());
-    
+
     private final static Level[] levels = new Level[] { Level.OFF, Level.SEVERE, Level.WARNING, Level.INFO, Level.CONFIG, Level.FINE, Level.FINER, Level.FINEST, Level.ALL };
 
-    private final static String[] log4jLevels = new String[] { 
+    private final static String[] log4jLevels = new String[] {
         "OFF", "SEVERE", "ERROR", "WARN", "INFO", "DEBUG", "TRACE", "ALL"
     };
 
-    private final static String[] jdk14Levels = new String[] { 
+    private final static String[] jdk14Levels = new String[] {
         "OFF", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE", "FINER", "FINEST", "ALL"
     };
-    
+
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
     }
@@ -146,7 +146,7 @@ public class LoggingServlet extends HttpServlet {
         }
         writer.println("    </table>");
     }
-    
+
     public void destroy() {
     }
 
@@ -235,14 +235,14 @@ public class LoggingServlet extends HttpServlet {
             return last;
         }
     }
-    
+
     /**
      * Get a sorted map with sets "logger name" => "logger level"
      * @return SortedMap<String, String>
      */
     private SortedMap<String, String> getLoggerLevelMap() {
         SortedMap<String, String> logLevelMap = new TreeMap<String, String>();
-        
+
         if (isJDK14Log) {
             java.util.logging.LogManager manager = java.util.logging.LogManager.getLogManager();
             for(Enumeration<String> namesIter = manager.getLoggerNames(); namesIter.hasMoreElements(); ) {
@@ -250,7 +250,7 @@ public class LoggingServlet extends HttpServlet {
                 java.util.logging.Logger logger = manager.getLogger(loggerName);
                 java.util.logging.Level level = logger.getLevel();
                 java.util.logging.Level effectiveLevel = level;
-                
+
                 // try to find effective level
                 if (level == null) {
                     for(java.util.logging.Logger l = logger; l != null; l=l.getParent()) {
@@ -268,13 +268,13 @@ public class LoggingServlet extends HttpServlet {
                 // Log4j Classes
                 Class<?> loggerClass = Class.forName("org.apache.log4j.Logger");
                 Class<?> managerClass = Class.forName("org.apache.log4j.LogManager");
-                
+
                 // Log4j Methods
                 Method getName = loggerClass.getMethod("getName", null);
                 Method getLevel = loggerClass.getMethod("getLevel", null);
                 Method getEffectiveLevel = loggerClass.getMethod("getEffectiveLevel", null);
                 Method getLoggers = managerClass.getMethod("getCurrentLoggers", null);
-    
+
                 // get and sort loggers and log levels
                 Enumeration loggers = (Enumeration) getLoggers.invoke(null, null);
                 while (loggers.hasMoreElements()) {
@@ -295,8 +295,8 @@ public class LoggingServlet extends HttpServlet {
         }
         return logLevelMap;
     }
-    
-    
+
+
     /**
      * Set the logger's log level through reflection
      * @param name String the name of the logger to change

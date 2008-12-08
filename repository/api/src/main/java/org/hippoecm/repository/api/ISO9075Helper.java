@@ -191,7 +191,7 @@ public class ISO9075Helper {
             return false;
         }
     }
-    
+
     private static final byte[] CHARS = new byte[1 << 16];
 
     private static final int MASK_NAME_START = 0x04;

@@ -22,7 +22,7 @@ public class StringSetting extends Setting<String> {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private boolean escape = true;
 
     public StringSetting(String javascriptKey) {

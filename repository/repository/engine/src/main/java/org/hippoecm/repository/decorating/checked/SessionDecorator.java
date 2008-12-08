@@ -442,7 +442,7 @@ public class SessionDecorator implements XASession, HippoSession {
             repair();
         }
     }
-    
+
     private void repair() throws RepositoryException {
         // FIXME: this assumes that an impersonated() session can also login()
         session = (HippoSession) repository.login(credentials, workspaceName);

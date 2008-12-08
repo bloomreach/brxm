@@ -23,9 +23,9 @@ public class SearchNamespace implements YuiNamespace {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final SearchNamespace NS = new SearchNamespace();
-    
+
     private SearchNamespace() {
     }
 

@@ -51,7 +51,7 @@ public class UpdaterEngine {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);    
+    protected final static Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
 
     Session session;
     UpdaterSession updaterSession;
@@ -153,7 +153,7 @@ public class UpdaterEngine {
                 Node child = iter.nextNode();
                 if(child.getName().startsWith("hippo_") && child.getName().endsWith(":initialize")) {
                     initializeNode = child;
-                }                
+                }
             }
         } else {
             initializeNode = configurationNode.getNode("hippo:initialize");
@@ -168,7 +168,7 @@ public class UpdaterEngine {
                 if((child.getName().startsWith("hippo_") && child.getName().endsWith(":version")) ||
                    child.getName().equals("hippo:version")) {
                     versionProperty = child;
-                }                
+                }
             }
         } else {
             versionProperty = initializeNode.getProperty("hippo:version");

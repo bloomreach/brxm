@@ -38,7 +38,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     public XinhaNodePlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
-    
+
     protected JcrPropertyValueModel getValueModel() {
         JcrNodeModel nodeModel = (JcrNodeModel) getModel();
         try {

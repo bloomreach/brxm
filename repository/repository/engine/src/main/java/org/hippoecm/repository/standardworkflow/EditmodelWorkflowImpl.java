@@ -173,7 +173,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         }
         return null;
     }
-    
+
     static void checkoutType(Node subject) throws RepositoryException {
         // copy nodetype
 
@@ -240,7 +240,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 }
                 draft = current.getParent().addNode(HippoNodeType.HIPPO_PROTOTYPE, "nt:unstructured");
                 draft.addMixin("mix:referenceable");
-    
+
                 PropertyIterator propIter = current.getProperties();
                 while (propIter.hasNext()) {
                     Property prop = propIter.nextProperty();
@@ -253,7 +253,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                         }
                     }
                 }
-    
+
                 NodeIterator nodeIter = current.getNodes();
                 while (nodeIter.hasNext()) {
                     Node child = nodeIter.nextNode();

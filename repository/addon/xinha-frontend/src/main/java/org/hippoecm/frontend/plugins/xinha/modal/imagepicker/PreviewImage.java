@@ -24,7 +24,7 @@ import org.apache.wicket.model.Model;
 public class PreviewImage extends WebComponent {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     private static final long serialVersionUID = 1L;
 
     private String width;
@@ -44,7 +44,7 @@ public class PreviewImage extends WebComponent {
     protected void onComponentTag(ComponentTag tag) {
         checkComponentTag(tag, "img");
         super.onComponentTag(tag);
-        
+
         tag.put("src", getRequest().getRelativePathPrefixToWicketHandler() + getModelObjectAsString());
 
         if (width != null)

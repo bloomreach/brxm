@@ -43,10 +43,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class DereferencedSysViewImportHandler extends DefaultHandler {
-    
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
+
     /**
      * stack of ImportState instances; an instance is pushed onto the stack
      * in the startElement method every time a sv:node element is encountered;
@@ -65,7 +65,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     private BufferedStringValue currentPropValue;
 
     protected final Importer importer;
-    
+
     protected Name referencePropName;
 
     /**

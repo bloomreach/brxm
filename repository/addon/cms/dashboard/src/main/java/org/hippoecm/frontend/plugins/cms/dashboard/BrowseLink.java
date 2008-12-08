@@ -78,7 +78,7 @@ public class BrowseLink extends Panel {
             String nodeName = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
             link.add(new Label("label", nodeName));
             link.add(new SimpleAttributeModifier("title", path));
-            
+
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
             link.add(new Label("label", e.getMessage()));

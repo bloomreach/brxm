@@ -69,7 +69,7 @@ public class RemodelDialog extends AbstractWorkflowDialog {
         ok.setVisible(false);
         cancel.setVisible(false);
     }
-    
+
     void remodel() throws Exception {
         ok();
     }

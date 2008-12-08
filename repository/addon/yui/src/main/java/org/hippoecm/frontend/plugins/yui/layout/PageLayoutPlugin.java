@@ -29,7 +29,7 @@ public class PageLayoutPlugin extends PageLayoutBehavior implements IPlugin, IBe
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-    
+
     private final static Logger log = LoggerFactory.getLogger(PageLayoutPlugin.class);
 
     private IPluginConfig config;
@@ -40,7 +40,7 @@ public class PageLayoutPlugin extends PageLayoutBehavior implements IPlugin, IBe
         this.config = config;
         context.registerService(this, config.getString(ID));
     }
-    
+
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
     }

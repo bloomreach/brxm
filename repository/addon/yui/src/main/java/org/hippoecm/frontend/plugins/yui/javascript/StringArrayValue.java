@@ -22,7 +22,7 @@ public class StringArrayValue extends Value<String[]> {
     private static final long serialVersionUID = 1L;
 
     private boolean escaped;
-    
+
     public StringArrayValue(String[] value, boolean escaped) {
         super(value);
         this.escaped = escaped;

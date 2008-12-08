@@ -43,7 +43,7 @@ public class ImageUtils {
 
     private static Map<String, ImageReader> readersMap = new HashMap<String, ImageReader>();
     private static Map<String, ImageWriter> writersMap = new HashMap<String, ImageWriter>();
-    
+
     public static ImageReader getImageReader(String mimeType) {
         if (readersMap.containsKey(mimeType)) {
             return readersMap.get(mimeType);

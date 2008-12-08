@@ -59,7 +59,7 @@ public class ClientQuery extends org.apache.jackrabbit.rmi.client.ClientQuery im
             if(path != null && path.length() > 0) {
                 if(path.equals("/"))
                     return session.getRootNode();
-                else 
+                else
                     return session.getRootNode().getNode(path.substring(1));
             } else
                 return null;
