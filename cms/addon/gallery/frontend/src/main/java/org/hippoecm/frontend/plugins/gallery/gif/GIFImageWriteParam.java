@@ -23,9 +23,6 @@ import java.util.Properties;
 import javax.imageio.ImageWriteParam;
 
 public class GIFImageWriteParam extends ImageWriteParam {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
     private boolean quantizeColors;
     private String quantizeMode;
 
