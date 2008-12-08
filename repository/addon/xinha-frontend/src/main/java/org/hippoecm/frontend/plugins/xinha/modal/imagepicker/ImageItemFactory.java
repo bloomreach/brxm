@@ -29,6 +29,7 @@ import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.xinha.XinhaUtil;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,12 +130,8 @@ public class ImageItemFactory implements IClusterable {
             return uuid;
         }
 
-        public String getPath() {
-            return path;
-        }
-
         public String getPrimaryUrl() {
-            return "binaries" + path + "/" + primaryItemName;
+            return XinhaUtil.encode("binaries" + path + "/" + primaryItemName);
         }
 
         public List<String> getResourceDefinitions() {
@@ -156,15 +153,14 @@ public class ImageItemFactory implements IClusterable {
         public String getUrl() {
             String url = "binaries" + parentPath + "/" + nodeName;
             if (selectedResourceDefinition != null) {
-                return url + "/" + nodeName + "/" + selectedResourceDefinition;
+                return XinhaUtil.encode(url + "/" + nodeName + "/" + selectedResourceDefinition);
             }
-            return url;
+            return XinhaUtil.encode(url);
         }
 
         public boolean isValid() {
             return path != null && uuid != null
                     && !(resourceDefinitions.size() > 1 && selectedResourceDefinition == null);
         }
-
     }
 }
