@@ -133,7 +133,7 @@ public class SecurityManager {
 
                 // check the password
                 if (!providers.get(providerId).getUserManger().authenticate(creds)) {
-                    log.debug("Invalid username and password: {}, provider: ", userId, providerId);
+                    log.debug("Invalid username and password: {}, provider: {}", userId, providerId);
                     return false;
                 }
             } else {
