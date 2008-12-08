@@ -101,6 +101,12 @@ public interface UserManager {
      * @return the node type
      */
     public String getNodeType();
+    
+    /**
+     * Checks if the backend is case aware (ie, ldap usually isn't, the internal provider is)
+     * @return
+     */
+    public boolean isCaseSensitive();
 
     /**
      * Update last login timestamp. This is handled by the {@link AbstractUserManager}.
@@ -123,6 +129,7 @@ public interface UserManager {
      */
     public boolean isActive(String userId) throws RepositoryException;
 
+    
     /**
      * Save current outstanding changes to the repository.
      */

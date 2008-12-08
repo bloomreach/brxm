@@ -46,4 +46,8 @@ public class RepositoryGroupManager extends AbstractGroupManager {
     public String getNodeType() {
         return HippoNodeType.NT_GROUP;
     }
+
+    public boolean isCaseSensitive() {
+        return true;
+    }
 }

@@ -88,49 +88,35 @@ public abstract class AbstractGroupManager implements GroupManager {
         return initialized;
     }
 
-    public final boolean hasGroup(String groupId) throws RepositoryException {
+    public final boolean hasGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-
-        // dirLevels 0, common case and default users
-        if (session.getRootNode().hasNode(groupsPath + "/" + groupId)) {
-            return true;
-        }
-        if (dirLevels > 0) {
-            return session.getRootNode().hasNode(buildGroupPath(groupId, dirLevels));
-        }
-        return false;
+        return session.getRootNode().hasNode(buildGroupPath(rawGroupId));
     }
     
 
-    public final Node getGroup(String groupId) throws RepositoryException {
+    public final Node getGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        // dirLevels 0, common case
         try {
-            return session.getRootNode().getNode(groupsPath + "/" + groupId);
-        } catch (PathNotFoundException e) {
-            if (dirLevels > 0) {
-                try {
-                    return session.getRootNode().getNode(buildGroupPath(groupId, dirLevels));
-                } catch (PathNotFoundException e1) {
-                    // noop
-                }
-            }
+            return session.getRootNode().getNode(buildGroupPath(rawGroupId));
+        } catch (PathNotFoundException e1) {
+            // noop
         }
         return null;
     }
-
+    
     /**
      * Create a group node. Use the getNodeType to determine the type the node 
      * should be.
      */
-    public final Node createGroup(String groupId) throws RepositoryException {
+    public final Node createGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
+        String groupId = normalizeGroupId(rawGroupId);
         log.trace("Creating node for group: {} in path: {}", groupId, groupsPath);
         int length = groupId.length();
         Node groupsNode = session.getRootNode().getNode(groupsPath);
@@ -142,7 +128,7 @@ public abstract class AbstractGroupManager implements GroupManager {
                 groupsNode = groupsNode.getNode(c);
             }
         }
-        Node group = groupsNode.addNode(groupId, getNodeType());
+        Node group = groupsNode.addNode(NodeNameCodec.encode(groupId, true), getNodeType());
         group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
         if (!org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
             group.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
@@ -151,18 +137,42 @@ public abstract class AbstractGroupManager implements GroupManager {
         return group;
     }
 
-
-    private String buildGroupPath(String groupId, int dirLevels) {
+    /**
+     * Helper for building group path including the groupname itself. Takes care of the encoding
+     * of the path AND the groupId (the eventual node name)
+     * @param rawGroupId unencoded groupId
+     * @param dirLevels
+     * @return the fully encoded normalized path
+     */
+    private String buildGroupPath(String rawGroupId) {
+        String groupId = normalizeGroupId(rawGroupId);
+        if (dirLevels == 0) {
+            return groupsPath + "/" + NodeNameCodec.encode(groupId, true);
+        }
         int length = groupId.length();
         StringBuilder path = new StringBuilder(groupsPath);
         for (int i = 0; i < dirLevels && i < length; i++) {
             path.append('/').append(NodeNameCodec.encode(Character.toLowerCase(groupId.charAt(i))));
         }
-        path.append('/').append(groupId);
+        path.append('/').append(NodeNameCodec.encode(groupId, true));
         return path.toString();
     }
-    
 
+    
+    /**
+     * Normalize the groupId: trim and convert to lower case if needed. This
+     * function does NOT encode the groupId.
+     * @param rawGroupId
+     * @return the trimmed and if needed converted to lower case groupId
+     */
+    private String normalizeGroupId(String rawGroupId) {
+        if (isCaseSensitive()) {
+            return rawGroupId.trim();
+        } else {
+            return rawGroupId.trim().toLowerCase();
+        }
+    }
+    
     private final void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_GROUPPROVIDER;
@@ -185,11 +195,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
     
-    public final Node getOrCreateGroup(String groupId) throws RepositoryException {
-        if (hasGroup(groupId)) {
-            return getGroup(groupId);
+    public final Node getOrCreateGroup(String rawGroupId) throws RepositoryException {
+        if (hasGroup(rawGroupId)) {
+            return getGroup(rawGroupId);
         }
-        return createGroup(groupId);
+        return createGroup(rawGroupId);
     }
 
     public final boolean isManagerForGroup(Node group) throws RepositoryException {
@@ -200,11 +210,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    public final Set<String> getMemberships(String userId) {
-        return getMemberships(userId, null);
+    public final Set<String> getMemberships(String rawUserId) {
+        return getMemberships(rawUserId, null);
     }
 
-    public final Set<String> getMemberships(String userId, String providerId) {
+    public final Set<String> getMemberships(String rawUserId, String providerId) {
         Set<String> memberships = new HashSet<String>();
 
         StringBuffer statement = new StringBuffer();
@@ -213,7 +223,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         statement.append("//element");
         statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
         statement.append('[');
-        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId).append("'");
+        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(rawUserId).append("'");
         statement.append(" or @").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*')");
         if (providerId != null) {
             statement.append(" and @");
@@ -229,7 +239,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             NodeIterator groupsIter = result.getNodes();
             while (groupsIter.hasNext()) {
                 String groupId = groupsIter.nextNode().getName();
-                log.debug("User '{}' is member of group: {}", userId, groupId);
+                log.debug("User '{}' is member of group: {}", rawUserId, groupId);
                 memberships.add(groupId);
             }
             return memberships;
