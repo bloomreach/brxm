@@ -14,6 +14,11 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:head>
+    <script type="text/javascript" language="JavaScript">
+      Wicket.Window.unloadConfirmation = false;
+    </script>
+  </wicket:head>
   <wicket:extend>
     <div wicket:id="message">[message]</div>
   </wicket:extend>

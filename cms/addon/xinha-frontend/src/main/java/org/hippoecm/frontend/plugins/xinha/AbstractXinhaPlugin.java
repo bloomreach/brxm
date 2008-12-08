@@ -44,6 +44,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -92,7 +93,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
     public AbstractXinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        
+
         mode = config.getString("mode", "view");
         Fragment fragment = new Fragment("fragment", mode, this);
         add(fragment);
@@ -119,8 +120,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                     if (item != null) {
                         boolean openModal = item.getResourceDefinitions().size() > 1;
                         String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.InsertImage.instance.insertImage({f_url: '" + item.getUrl() + "'}, " + openModal
-                                + ");";
+                                + ".plugins.InsertImage.instance.insertImage({f_url: '" + item.getUrl() + "'}, "
+                                + openModal + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     }
                 }
@@ -143,7 +144,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                         //but probably in the dao.
                         //new Xinha CreateLink default methods require the f_target parameter
                         String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.CreateLink.instance.createLink({f_href: '" + link + "', f_target: ''}, " + openModal + ");";
+                                + ".plugins.CreateLink.instance.createLink({f_href: '" + link + "', f_target: ''}, "
+                                + openModal + ");";
                         target.getHeaderResponse().renderOnDomReadyJavascript(script);
                     } catch (RepositoryException e) {
                         log.error("Failed to create internal link", e);
@@ -165,8 +167,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                     String text = (String) getModelObject();
                     if (text != null) {
                         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getValueModel();
-                        String prefix = BINARIES_PREFIX
-                                + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath()
+                        String prefix = XinhaUtil.encode(BINARIES_PREFIX
+                                + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath())
                                 + "/";
 
                         StringBuffer processed = new StringBuffer();
@@ -186,13 +188,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                                     link = link.substring(0, link.length() - 1);
                                 }
                                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                                    s.appendReplacement(newImg, "src=\"" + prefix + link + "\"");
+                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("$", "\\$"));
                                 } else {
-                                    s.appendReplacement(newImg, src);
+                                    s.appendReplacement(newImg, src.replace("$", "\\$"));
                                 }
                             }
                             s.appendTail(newImg);
-                            m.appendReplacement(processed, newImg.toString());
+                            m.appendReplacement(processed, newImg.toString().replace("$", "\\$"));
                         }
                         m.appendTail(processed);
                         getResponse().write(processed);
@@ -226,7 +228,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
             JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
-            configuration.addProperty("jcrNodePath", BINARIES_PREFIX + nodePath);
+            configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
 
             IPluginContext context = getPluginContext();
             XinhaEditorBehavior sharedBehavior = context.getService(XinhaEditorBehavior.class.getName(),

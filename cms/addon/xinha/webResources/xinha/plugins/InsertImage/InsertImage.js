@@ -90,7 +90,7 @@ InsertImage.prototype.inwardHtml = function(html) {
         m = m.replace(_this.srcRE, function(n) {
             var url = n.substring(5, n.length - 1);
             if(_this.shouldPrefix(url)) {
-                return 'src="' + prefix + encodeURI(url) + '"';
+                return 'src="' + prefix + url + '"';
             }
             return n;
         });
@@ -109,7 +109,7 @@ InsertImage.prototype.outwardHtml = function(html) {
         m = m.replace(_this.srcRE, function(n) {
             var idx = n.indexOf(prefix);
             if (idx > -1) {
-                return 'src="' + decodeURI(n.substr(prefix.length + idx));
+                return 'src="' + n.substr(prefix.length + idx) + '"';
             }
             return n;
         });
@@ -120,12 +120,11 @@ InsertImage.prototype.outwardHtml = function(html) {
 
 InsertImage.prototype.getPrefix = function() {
     if (this.prefix == null) {
-        this.prefix = this.editor.config.jcrNodePath;
+        this.prefix = this.editor.config.prefix;
         if (this.prefix.charAt(this.prefix.length - 1) != '/') {
             this.prefix += '/';
         }
     }
-    //return encodeURI(this.prefix);
     return this.prefix;
 }
 
