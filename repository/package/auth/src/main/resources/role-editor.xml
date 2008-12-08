@@ -31,9 +31,9 @@
         <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:jcrwrite" sv:type="Boolean">
-        <sv:value>false</sv:value>
+        <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:jcrremove" sv:type="Boolean">
-        <sv:value>false</sv:value>
+        <sv:value>true</sv:value>
     </sv:property>
 </sv:node>
