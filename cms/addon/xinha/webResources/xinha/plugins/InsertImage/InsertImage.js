@@ -109,7 +109,7 @@ InsertImage.prototype.outwardHtml = function(html) {
         m = m.replace(_this.srcRE, function(n) {
             var idx = n.indexOf(prefix);
             if (idx > -1) {
-                return 'src="' + n.substr(prefix.length + idx) + '"';
+                return 'src="' + n.substr(prefix.length + idx);
             }
             return n;
         });
