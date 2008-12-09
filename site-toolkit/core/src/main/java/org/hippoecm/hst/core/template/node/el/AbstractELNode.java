@@ -34,7 +34,7 @@ import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -328,7 +328,7 @@ public abstract class AbstractELNode implements ELNode {
 
     public String getDecodedName() {
         try {
-            return ISO9075Helper.decodeLocalName(jcrNode.getName());
+            return NodeNameCodec.decode(jcrNode.getName());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return "";
