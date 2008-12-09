@@ -71,7 +71,8 @@
       </subsection>
       <subsection name="Configure the WAR overlay">
         <p>
-          Add the following to the plugins section of pom.xml. It tells Maven to use the Quickstart WAR as an overlay.
+          Add the following to the plugins section of pom.xml. It tells Maven to use the Quickstart WAR as an 
+          <a href='http://maven.apache.org/plugins/maven-war-plugin/overlays.html'>overlay</a>.
         </p>
         <source>
 &lt;plugin&gt;

@@ -383,7 +383,7 @@
    <img>tomcat logo</img>
    <img>jetty logo</img>
    <img>glassfish logo</img>
-   <img>jboss logo</img>
+   <img>JBoss logo</img>
   </document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container
    <section>Deploying in Servlet Container</section>
    <shortdesc>Get Hippo CMS up and running 
@@ -879,7 +879,7 @@
    
    <folder>howto
    
-   <document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
+   <document ext="html#" filename="#editing_template" relpath="delve_into/web/add-ons/howto"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
    <section>Create an Editing Template Add-on</section>
    <shortdesc>Learn how to create an add-on for a namespace.</shortdesc>
    <img>Fancy Document</img>
@@ -890,7 +890,7 @@
   </document><document ext="xml" filename="index" relpath="delve_into/web/add-ons/howto">Howto
    <section>Howto</section>
    <shortdesc>Learn how to make your own content add-ons.</shortdesc>
-  </document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
+  </document><document ext="html#" filename="#packaging" relpath="delve_into/web/add-ons/howto"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
    <section>Creating your own WAR package</section>
    <shortdesc>Package Hippo CMS with your own add-on.</shortdesc>
    <section>Your own POM file</section>

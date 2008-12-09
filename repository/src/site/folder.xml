@@ -717,6 +717,10 @@
    <folder>web
     <folder>add-ons
      <folder>howto
+      <file ext='html#' mimetype='text/html'
+   fullname='delve_into/web/add-ons/howto/#editing_template.html#'
+   relpath='delve_into/web/add-ons/howto'
+  >#editing_template</file>
       <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/web/add-ons/howto/editing_template.xml'
    relpath='delve_into/web/add-ons/howto'
@@ -725,6 +729,10 @@
    fullname='delve_into/web/add-ons/howto/index.xml'
    relpath='delve_into/web/add-ons/howto'
   >index</file>
+      <file ext='html#' mimetype='text/html'
+   fullname='delve_into/web/add-ons/howto/#packaging.html#'
+   relpath='delve_into/web/add-ons/howto'
+  >#packaging</file>
       <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/web/add-ons/howto/packaging.xml'
    relpath='delve_into/web/add-ons/howto'
