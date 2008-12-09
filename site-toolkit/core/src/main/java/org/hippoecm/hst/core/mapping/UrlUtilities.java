@@ -19,113 +19,146 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Helper class to encode and decode node from and to urls
+ * TODO: Add test cases: without them it's very tricky to get this exactly right
+ */
 public class UrlUtilities {
-    
+
     private static final Logger log = LoggerFactory.getLogger(UrlUtilities.class);
-    public static final String HTML_POSTFIX = ".html";
-    
-    public static String encodeUrl(String contextPath, int uriLevels, String rewrite){
-        if(rewrite.startsWith("/")) {
-            rewrite = rewrite.substring(1);
+    private static final String HTML_SUFFIX = ".html";
+    private static final String SLASH_ENCODED = "__slash__";
+
+    /**
+     * Encode the url:
+     * <ul>
+     *   <li>split url in url parts on '/'</li>
+     *   <li>decode the jcr node name</li>
+     *   <li>url encode the decoded name using utf-8</li>
+     *   <li>append '.html' to the last url part</li>
+     * </ul>
+     * @param contextPath
+     * @param uriLevels
+     * @param rewrite
+     * @return the encoded url
+     */
+    public static String encodeUrl(String contextPath, int uriLevels, String rewrite) {
+        int start = 0;
+        if (rewrite.startsWith("/")) {
+            // skip first part when starting with '/'
+            start = 1;
         }
         String[] uriParts = rewrite.split("/");
-        int nrParts = uriParts.length;
-        StringBuffer encodedUrl = new StringBuffer(contextPath);
-        boolean replaceDup = false;
-        if(nrParts > uriLevels) {
-            /*
-             * When the link is to a hippo document, the name coincides with the handle. 
-             * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
-             */
-            if(uriParts[nrParts-1].equals(uriParts[nrParts-2]) && !uriParts[nrParts-1].contains(".")) {
-                replaceDup = true; 
-            }
+        StringBuilder encodedUrl = new StringBuilder(contextPath);
+        for (int i = start; i < uriParts.length - 1; i++) {
+            encodedUrl.append("/").append(encodePart(uriParts[i]));
         }
-        for(int i = 0; i < nrParts; i++) {
-            if(replaceDup && i == nrParts-1) {
-                encodedUrl.append(HTML_POSTFIX);
-            } else {
-                // for encoding a url, you have to decode the jcr node paths :-)
-                String decodedLocalName = ISO9075Helper.decodeLocalName(uriParts[i]);
-                try {
-                    decodedLocalName = URLEncoder.encode(decodedLocalName, "utf-8");
-                } catch (UnsupportedEncodingException e) {
-                   // utf-8 is supported
-                }
-                encodedUrl.append("/"+decodedLocalName);
-            }
+
+        int last = uriParts.length - 1;
+        if (uriParts[last].indexOf('/') > 0) {
+            // the slash is the delimiter, needs extra care
+            uriParts[last] = uriParts[last].replaceAll("\\/", SLASH_ENCODED);
+        }
+        /*
+         * When the link is to a hippo document, the name coincides with the handle. 
+         * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
+         */
+        if (last > 1 && last >= uriLevels && uriParts[last].equals(uriParts[last - 1]) && !uriParts[last].contains(".")) {
+            encodedUrl.append(HTML_SUFFIX);
+        } else {
+            // for encoding a url, you have to decode the jcr node paths
+            encodedUrl.append("/").append(encodePart(uriParts[last]));
         }
         return encodedUrl.toString();
     }
-    
-    public static String decodeUrl(String url){
-        try {
-            url =  URLDecoder.decode(url,"utf-8");
-        } catch (UnsupportedEncodingException e) {
-            log.warn("url not utf-8 encoded.");
+
+    /**
+     * 
+     * Decode the url:
+     * <ul>
+     *   <li>split url in url parts on '/'</li>
+     *   <li>url decode the url parts with utf-8</li>
+     *   <li>jcr encode the decoded node name using utf-8</li>
+     *   <li>append last url part twice for handle in document model</li>
+     * </ul>
+     * @param url
+     * @return
+     */
+    public static String decodeUrl(String url) {
+        StringBuilder decodedUrl = new StringBuilder();
+
+        int start = 0;
+        if (url.startsWith("/")) {
+            // skip first empty uriPart
+            start = 1;
         }
-        StringBuffer decodedUrl = new StringBuffer();
-        if(url.startsWith("/")) {
-            url = url.substring(1);
-        }
-        
-        // TODO for the cms tag '2.01.00.13171' we have an issue regarding not encoded date nodes (for example 2008/09/23)
-        // therefor for now, a hardcoded fix for nodes below /content/gallery and /content/assets
-        boolean isBinary = false;
-        if(url.startsWith("content/gallery") || url.startsWith("content/assets")) {
-            isBinary = true;
-        }
-        
+
         String[] uriParts = url.split("/");
-        int nrParts = uriParts.length;
-        for(int i = 0 ; i < nrParts ; i++) {
-            if(i == nrParts -1) {
-                 /*
-                  * if it ends with the html postfix and uriPart[i] != uriParts[i-1], it means we have to expand the request to
-                  *  /handle/document concept
-                  */  
-                 if(uriParts[i].endsWith(HTML_POSTFIX) && !uriParts[i].equals(uriParts[i-1])) {
-                     String lastPart = uriParts[i].substring(0,uriParts[i].length()-HTML_POSTFIX.length());
-                     lastPart = ISO9075Helper.encodeLocalName(lastPart);
-                     decodedUrl.append("/"+lastPart+ "/"+lastPart);
-                 } else {
-                     // TODO currently the last path part can contain a colon (for hippo:resources), which should not be encoded. This might need some
-                     // changing when cms changes this behavior.
-                     
-                     String uriPart = uriParts[i];
-                     if(uriPart.contains(":")) {
-                         // do not encode
-                     }
-                     else if(isBinary && isInteger(uriPart)) {
-                         // do not encode
-                     } else {
-                         uriPart = ISO9075Helper.encodeLocalName(uriPart);
-                     }
-                     decodedUrl.append("/"+uriPart);
-                 }
-            } else {
-                String uriPart = uriParts[i];
-                if(isBinary && isInteger(uriPart)) {
-                    // do not encode
-                } else {
-                    uriPart = ISO9075Helper.encodeLocalName(uriPart);
-                }
-                decodedUrl.append("/"+uriPart);
-            }
+        for (int i = start; i < uriParts.length - 1; i++) {
+            decodedUrl.append("/").append(decodePart(uriParts[i]));
+        }
+
+        /*
+         * if it ends with the html postfix and uriPart[i] != uriParts[i-1], it means we have to expand the request to
+         *  /handle/document concept
+         */
+        int last = uriParts.length - 1;
+        String lastPart = uriParts[last];
+        if (lastPart.contains(SLASH_ENCODED)) {
+            lastPart = lastPart.replaceAll(SLASH_ENCODED, "/");
+        }
+        if (last > 1 && lastPart.endsWith(HTML_SUFFIX) && !lastPart.equals(uriParts[last - 1])) {
+            String name = decodePart(lastPart.substring(0, lastPart.length() - HTML_SUFFIX.length()));
+            // add twice for handle
+            decodedUrl.append("/").append(name);
+            decodedUrl.append("/").append(name);
+        } else {
+            decodedUrl.append("/").append(decodePart(lastPart));
         }
         return decodedUrl.toString();
     }
 
-    private static boolean isInteger(String uriPart) {
+    /**
+     * Helper method for encoding a single uri part
+     * @param part
+     * @return the jcr decoded and url encoded name
+     */
+    private static String encodePart(String part) {
+        String name = NodeNameCodec.decode(part);
         try {
-            Integer.parseInt(uriPart);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
+            if (name.indexOf('/') > 0) {
+                // the slash is the delimiter, needs extra care
+                return URLEncoder.encode(name.replaceAll("\\/", SLASH_ENCODED), "utf-8");
+            } else {
+                return URLEncoder.encode(name, "utf-8");
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("Missing utf-8 codec?", e);
+            return "";
         }
     }
+
+    /**
+     * Helper method for decoding a single uri part
+     * @param part
+     * @return the url decoded and jcr encoded part
+     */
+    private static String decodePart(String part) {
+        try {
+            String name = URLDecoder.decode(part, "utf-8");
+            if (name.contains(SLASH_ENCODED)) {
+                return NodeNameCodec.encode(name.replaceAll(SLASH_ENCODED, "/"));
+            } else {
+                return NodeNameCodec.encode(name);
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("Missing utf-8 codec?", e);
+            return "";
+        }
+    }
+
 }
