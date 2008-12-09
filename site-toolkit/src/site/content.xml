@@ -62,6 +62,11 @@
    <img>screenshot</img>
    <subsection>Browse your facebook!</subsection>
    <img>screenshot</img>
+  </document><document ext="xml" filename="form" relpath="delve_into/howto">Form Handling
+   <section>Form Handling</section>
+   <shortdesc>Adding a form to a web page, and processing the submitted form.</shortdesc>
+   <subsection>The module class</subsection>
+   <subsection>The module view</subsection>
   </document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
    <section>Free Meta Search</section>
    <shortdesc>How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</shortdesc>
@@ -72,15 +77,14 @@
    <h4>First subsubsection title</h4>
    <h4>First subsubsection title</h4>
    <subsection>Second subsection title</subsection>
-  </document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free text Search
-   <section>Free text Search</section>
-   <shortdesc>How to add text search functionality to a website so that the user can perform text searches on all documents?</shortdesc>
+  </document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search
+   <section>Free Text Search</section>
+   <shortdesc>Add text search functionality to a website.</shortdesc>
    <index>Search, free text</index>
-   <subsection>First subsection title</subsection>
-   <index>index word</index>
-   <h4>First subsubsection title</h4>
-   <h4>First subsubsection title</h4>
-   <subsection>Second subsection title</subsection>
+   <subsection>Search form module</subsection>
+   <subsection>Search results module</subsection>
+   <subsection>Search results page</subsection>
+   <subsection>Search!</subsection>
   </document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
    <section>Hello World</section>
    <shortdesc>Adding a simple page to your website saying hello to the world.</shortdesc>
@@ -178,18 +182,14 @@
   </document></folder><document ext="xml" filename="url-mapping" relpath="delve_into/reference/components">URL mapping
    <section>URL mapping</section>
    <subsection>What is it?</subsection>
-  </document></folder><folder>concepts
-   
-   <document ext="xml" filename="index" relpath="delve_into/reference/concepts">Concepts
-   <section>Concepts</section>
-   <subsection>Sitemap</subsection>
-   <subsection>Modules</subsection>
-   <subsection>Layouts</subsection>
   </document></folder><document ext="xml" filename="concepts" relpath="delve_into/reference">Concepts
    <section>Concepts</section>
-   <subsection>Sitemap</subsection>
+   <shortdesc> The concepts of the site toolkit explained. </shortdesc>
    <subsection>Modules</subsection>
    <subsection>Layouts</subsection>
+   <img>3-column layout</img>
+   <subsection>Sitemap</subsection>
+   <img>sitemap</img>
   </document><folder>configuration
    
    <document ext="xml" filename="configuration" relpath="delve_into/reference/configuration">HST Configuration

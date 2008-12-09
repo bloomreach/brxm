@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 155 terms</span>
+      <span class="shortdesc">Term index, 157 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -41,15 +41,39 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/reference/concepts.html#_The_concepts_of_the_site_toolkit_explained__"> The concepts of the site toolkit explained. </a>
+            </td>
+            <td>Concepts</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/reference/concepts.html#3-column_layout">3-column layout</a>
+            </td>
+            <td>Concepts</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/howto/facebook.html#Add_people">Add people</a>
             </td>
             <td>Howto: Create a Facebook</td>
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/howto/free_text_search.html#Add_text_search_functionality_to_a_website_">Add text search functionality to a website.</a>
+            </td>
+            <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/howto/hello_world.html#Add_the_document">Add the document</a>
             </td>
             <td>Howto: Hello World</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/form.html#Adding_a_form_to_a_web_page,_and_processing_the_submitted_form_">Adding a form to a web page, and processing the submitted form.</a>
+            </td>
+            <td>Howto: Form Handling</td>
           </tr>
           <tr>
             <td>
@@ -110,12 +134,6 @@
               <a href="../delve_into/reference/components/index.html#Components">Components</a>
             </td>
             <td>Welcome: Components</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/reference/concepts/index.html#Concepts">Concepts</a>
-            </td>
-            <td>Welcome: Concepts</td>
           </tr>
           <tr>
             <td>
@@ -275,12 +293,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/free_text_search.html#First_subsection_title">First subsection title</a>
-            </td>
-            <td>Howto: Free text Search</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/components/el-queries.html#First_subsection_title">First subsection title</a>
             </td>
             <td>Change to the document title</td>
@@ -335,18 +347,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/free_text_search.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Howto: Free text Search</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/howto/free_text_search.html#First_subsubsection_title">First subsubsection title</a>
-            </td>
-            <td>Howto: Free text Search</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/components/el-queries.html#First_subsubsection_title">First subsubsection title</a>
             </td>
             <td>Change to the document title</td>
@@ -356,6 +356,12 @@
               <a href="../delve_into/reference/components/el-queries.html#First_subsubsection_title">First subsubsection title</a>
             </td>
             <td>Change to the document title</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/form.html#Form_Handling">Form Handling</a>
+            </td>
+            <td>Howto: Form Handling</td>
           </tr>
           <tr>
             <td>
@@ -365,9 +371,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/free_text_search.html#Free_text_Search">Free text Search</a>
+              <a href="../delve_into/howto/free_text_search.html#Free_Text_Search">Free Text Search</a>
             </td>
-            <td>Howto: Free text Search</td>
+            <td>Howto: Free Text Search</td>
           </tr>
           <tr>
             <td>
@@ -398,12 +404,6 @@
               <a href="../delve_into/howto/free_meta_search.html#How_to_add_free_meta_search_functionality_to_a_website_so_that_the_user_can_perform_searches_within_meta_data_on_all_documents_">How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</a>
             </td>
             <td>Howto: Free Meta Search</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/howto/free_text_search.html#How_to_add_text_search_functionality_to_a_website_so_that_the_user_can_perform_text_searches_on_all_documents_">How to add text search functionality to a website so that the user can perform text searches on all documents?</a>
-            </td>
-            <td>Howto: Free text Search</td>
           </tr>
           <tr>
             <td>
@@ -527,21 +527,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/free_text_search.html#index_word">index word</a>
-            </td>
-            <td>Howto: Free text Search</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/components/el-queries.html#index_word">index word</a>
             </td>
             <td>Change to the document title</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/reference/concepts/index.html#Layouts">Layouts</a>
-            </td>
-            <td>Welcome: Concepts</td>
           </tr>
           <tr>
             <td>
@@ -579,12 +567,6 @@
               <a href="../delve_into/reference/components/modules.html#Modules">Modules</a>
             </td>
             <td>Modules</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/reference/concepts/index.html#Modules">Modules</a>
-            </td>
-            <td>Welcome: Concepts</td>
           </tr>
           <tr>
             <td>
@@ -744,6 +726,30 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/howto/free_text_search.html#Search_form_module">Search form module</a>
+            </td>
+            <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/free_text_search.html#Search_results_module">Search results module</a>
+            </td>
+            <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/free_text_search.html#Search_results_page">Search results page</a>
+            </td>
+            <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/free_text_search.html#Search_">Search!</a>
+            </td>
+            <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/howto/free_meta_search.html#Search,_advanced">Search, advanced</a>
             </td>
             <td>Howto: Free Meta Search</td>
@@ -752,7 +758,7 @@
             <td>
               <a href="../delve_into/howto/free_text_search.html#Search,_free_text">Search, free text</a>
             </td>
-            <td>Howto: Free text Search</td>
+            <td>Howto: Free Text Search</td>
           </tr>
           <tr>
             <td>
@@ -786,12 +792,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/howto/free_text_search.html#Second_subsection_title">Second subsection title</a>
-            </td>
-            <td>Howto: Free text Search</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/reference/components/el-queries.html#Second_subsection_title">Second subsection title</a>
             </td>
             <td>Change to the document title</td>
@@ -810,13 +810,13 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/reference/concepts/index.html#Sitemap">Sitemap</a>
+              <a href="../delve_into/reference/concepts.html#Sitemap">Sitemap</a>
             </td>
-            <td>Welcome: Concepts</td>
+            <td>Concepts</td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/reference/concepts.html#Sitemap">Sitemap</a>
+              <a href="../delve_into/reference/concepts.html#sitemap">sitemap</a>
             </td>
             <td>Concepts</td>
           </tr>
@@ -909,6 +909,18 @@
               <a href="../delve_into/reference/components/jsp-taglib.html#The_JSP_tag_library">The JSP tag library</a>
             </td>
             <td>The JSP tag library</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/form.html#The_module_class">The module class</a>
+            </td>
+            <td>Howto: Form Handling</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/howto/form.html#The_module_view">The module view</a>
+            </td>
+            <td>Howto: Form Handling</td>
           </tr>
           <tr>
             <td>

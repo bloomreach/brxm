@@ -33,11 +33,15 @@
    fullname='delve_into/howto/facebook.xml'
    relpath='delve_into/howto'
   >facebook</file>
+    <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/howto/form.xml'
+   relpath='delve_into/howto'
+  >form</file>
     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/howto/free_meta_search.xml'
    relpath='delve_into/howto'
   >free_meta_search</file>
-    <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+    <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/howto/free_text_search.xml'
    relpath='delve_into/howto'
   >free_text_search</file>
@@ -154,12 +158,6 @@
    fullname='delve_into/reference/components/url-mapping.xml'
    relpath='delve_into/reference/components'
   >url-mapping</file>
-    </folder>
-    <folder>concepts
-     <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/reference/concepts/index.xml'
-   relpath='delve_into/reference/concepts'
-  >index</file>
     </folder>
     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/reference/concepts.xml'
