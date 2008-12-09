@@ -15,7 +15,7 @@
   </issueManagement>
 
   <properties>
-    <hippoecm.version>2.01.01</hippoecm.version>
+    <hippoecm.version>2.01.04</hippoecm.version>
   </properties>
   
   <scm>
