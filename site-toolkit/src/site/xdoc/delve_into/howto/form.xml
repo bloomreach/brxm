@@ -155,6 +155,25 @@ ${myvar}
 ]]>
 </source>
             </subsection>
+            
+            <subsection name="Configure and test your module">
+                <p>
+                    Using the console, create an <code>hst:module</code> node 'mymodule', and add a
+                    property <code>hst:template</code> to it. The value of the <code>hst:template</code>
+                    property should be the location of the JSP in your project, e.g. <code>modules/mymodule.jsp</code>.
+                </p>
+                <p>
+                    Now add your module to a page in the sitemap, and view your website to test the module.
+                    You should see a message "Hello World!", and a form field and submit button:
+                </p>
+                <img src="../../images/tutorials/mymodule1.png" alt="Form module"/>
+                <p>
+                    When you submit the form by clicking on the button, the module shows the
+                    text you filled in in the form field (or "Hello again!!" if you didn't change
+                    the default text):
+                </p>
+                <img src="../../images/tutorials/mymodule2.png" alt="Module shows the submitted text"/>
+            </subsection>
 
         </section>
 
