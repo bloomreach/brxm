@@ -188,13 +188,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                                     link = link.substring(0, link.length() - 1);
                                 }
                                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("$", "\\$"));
+                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\").replace("$", "\\$"));
                                 } else {
-                                    s.appendReplacement(newImg, src.replace("$", "\\$"));
+                                    s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
                                 }
                             }
                             s.appendTail(newImg);
-                            m.appendReplacement(processed, newImg.toString().replace("$", "\\$"));
+                            m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
                         }
                         m.appendTail(processed);
                         getResponse().write(processed);
