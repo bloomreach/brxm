@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">118 errors and/or todos in 71 out of 173 documents (41%).</span>
+      <span class="shortdesc">143 errors and/or todos in 79 out of 175 documents (45%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -46,9 +46,11 @@
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
-        <li>11 multisection documents.
+        <li>4 invalid documents.
      </li>
-        <li>2 invalid documents.
+        <li>13 documents with bad text.
+     </li>
+        <li>11 multisection documents.
      </li>
       </ul>
       <subsection name="Documents with dummy references: 1">
@@ -744,10 +746,114 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="invalid documents: 2">
+      <subsection name="badtext documents: 13">
+        <ol>
+          <li>
+            <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
+            <ul>
+              <li>an be run inside the Tomcat container included with Netbeans. If you want to run several projects con<span xmlns="" class="bad"> current </span>ly, each should get a separate context path. You can e.g. run the frontend application and the repository inside the same container. This can be achieved as [project right-click] -&gt; Properties -&gt; Run</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
+            <ul>
+              <li>Certain events may trigger a copy of the then<span xmlns="" class="bad"> current </span>document to be made. This copy is read-only and stored in a different section. Additional information, such as the date the copy was made helps keeping a time-line of the document over time. These cop</li>
+              <li> This happens for the reviewed-actions workflow. Upon publication of a document a version of the then<span xmlns="" class="bad"> current </span>published document is created. However, if the document is depublished, there is no longer a published version of the document. The ability of the Hippo ECM suite is to be able to deal with this and i</li>
+              <li>sionWorkflow) getWorkflowContext().getWorkflow("versioning"); workflow.version(); // this commits the<span xmlns="" class="bad"> current </span>document as a version } }</li>
+              <li>voking the workflow step directly, it schedules the called workflow to be executed directly after the<span xmlns="" class="bad"> current </span>workflow and within the same transaction. This means that it is not possible to use the return values.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/howto/extend_dashboard.html">extend_dashboard: Giving our plugin a place on the dashboard</a>
+            <ul>
+              <li>. Under wicket.extensions you will see the<span xmlns="" class="bad"> current </span>plugins shown on the dashboard. Add an entry "extension.helloworld". Next add a property called "extension.helloworld" and give it the value "service.helloworld". Now the dashboard knows where to find</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/jcr/examples.html">examples: JCR Examples</a>
+            <ul>
+              <li>rkflow which is available in a dedicated category and then restores earliest published version as the<span xmlns="" class="bad"> current </span>unpublished version.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/reference/repository/repository_plugins.html">repository_plugins: Repository Plugins</a>
+            <ul>
+              <li>e repository functionality is not static, but one can extend the repository functionalities. The only<span xmlns="" class="bad"> current </span>repository functionality that can be extended (but sufficient flexible to do everything needed at the moment) is the workflow. Which workflow is active for which type(s) of documents and what the work</li>
+              <li>which defines how plugins can be loaded into the application. This is subject to change, as<span xmlns="" class="bad"> current </span>ly the only supported way of adding plugins is by adding the JAR to the quickstart or package based ear or war artifacts. One of the ways is by adding the plugin jar directly to the ear or war using t</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/configuration/repository/searchindex.html">searchindex: SearchIndex configuration</a>
+            <ul>
+              <li>getting indexing_configuration from a jar classpath instead of the<span xmlns="" class="bad"> current </span>JackRabbit implementation which can only fetch an indexing_configuration from filesystem.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/versioning.html">versioning: Versioning</a>
+            <ul>
+              <li>, to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/browsing_history_of_document.html">browsing_history_of_document: Browsing history of a document</a>
+            <ul>
+              <li>Initially the<span xmlns="" class="bad"> current </span>version is show. With the "Older" link you can browse back into previous versions of the document, or back again towards the most current version using the "Newer" link.</li>
+              <li>the version is shown. The name of the article is shown (which is constant over all versions, only the<span xmlns="" class="bad"> current </span>name is shown, renaming or moving a document is not part of the document history of the document itself but --if available-- part of the document in which a document is embedded).</li>
+              <li>on number is indicated, which counts from 1, the first version of a document created towards the most<span xmlns="" class="bad"> current </span>document, which does not have a version number yet. It will show the date and time, when a historic version of the document was created and until when that version of the document was the most current</li>
+              <li>Note that this is not the same as when the next<span xmlns="" class="bad"> current </span>document was created, as it may be that there was no current document in the document history.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/index.html">index: CMS Contributor Howto</a>
+            <ul>
+              <li>How to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past?</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/howto/restore_previous_version.html">restore_previous_version: Restoring a previous version of a document</a>
+            <ul>
+              <li>How to replace the<span xmlns="" class="bad"> current </span>content of a document with content the document had sometime in the past?</li>
+              <li>Finally the "Restore" button allows the user to replace the<span xmlns="" class="bad"> current </span>document with the content of a historic document. Note that this does not mean that the historic version of the document becomes the current version of the document. Only the content is restored, and </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/web/add-ons/howto/editing_template.html">editing_template: Create an Editing Template Add-on</a>
+            <ul>
+              <li>, use "CND Export" to download the fancy.cnd file. This will give you the types as<span xmlns="" class="bad"> current </span>ly used by the repository.</li>
+              <li>Note: due to a bug in the<span xmlns="" class="bad"> current </span>milestone, you need to remove any occurence of</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./releasing.html">releasing: Performing a release of the Hippo-ECM suite</a>
+            <ul>
+              <li>The first formally released version must be 2.01.01 because of the<span xmlns="" class="bad"> current </span>numbering scheme</li>
+              <li>followed by the SVN revision number of the then<span xmlns="" class="bad"> current </span>trunk. For example a version might be</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/community_support.html">community_support: Community Support</a>
+            <ul>
+              <li>: Read here what issues the developers of Hippo CMS have been and are<span xmlns="" class="bad"> current </span>ly working on. Only Hippo developers and some partners can open issues in the issue tracker, but anyone can contact the developers by email. They are listed as administrators of the Hippo issue tracke</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="invalid documents: 4">
         <ol>
           <li>
             <a href="./delve_into/sysadmin/installation/help_startup_servlet_container.html">help_startup_servlet_container: </a>
+            <ul>
+              <li>Document is invalid XML.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/web/add-ons/howto/#editing_template.html">#editing_template: </a>
+            <ul>
+              <li>Document is invalid XML.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/web/add-ons/howto/#packaging.html">#packaging: </a>
             <ul>
               <li>Document is invalid XML.</li>
             </ul>

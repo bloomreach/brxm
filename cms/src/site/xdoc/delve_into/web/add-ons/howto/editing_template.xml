@@ -44,7 +44,7 @@
         
         <subsection name="Create a new project">
           <p>
-            Create a Maven project with the following structure:
+            In the following we will create a Maven project with the following structure:
           </p>
 <source><![CDATA[
 ./pom.xml
@@ -52,6 +52,7 @@
 ./src/main/resources/fancy.cnd
 ./src/main/resources/fancy-namespace.xml
 ]]></source>
+          To do so we create each of the listed files:
           <dl>
             <dt>pom.xml</dt>
             <dd>
