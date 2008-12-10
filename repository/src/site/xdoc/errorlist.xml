@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">143 errors and/or todos in 79 out of 175 documents (45%).</span>
+      <span class="shortdesc">144 errors and/or todos in 80 out of 175 documents (45%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
@@ -46,9 +46,9 @@
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
-        <li>4 invalid documents.
+        <li>3 invalid documents.
      </li>
-        <li>13 documents with bad text.
+        <li>12 documents with bad text.
      </li>
         <li>11 multisection documents.
      </li>
@@ -96,7 +96,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with empty elements: 10">
+      <subsection name="Documents with empty elements: 12">
         <ol>
           <li>
             <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
@@ -122,9 +122,31 @@
             </ul>
           </li>
           <li>
+            <a href="./delve_into/quickstart.html">quickstart: Quickstart Steps</a>
+            <ul>
+              <li>...&lt;span class='to_index' id='localhost'/&gt; 
+   in your (this) webbrowser.
+   A window `Sign In, Hippo CMS 7' will open.
+   As username use `admin' and as password use also `admin'.
+  .../&lt;td&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
+              <li>...&lt;span class='to_index' id='number_8080'/&gt; 
+   in your (this) webbrowser.
+   A window `Sign In, Hippo CMS 7' will open.
+   As username use `admin' and as password use also `admin'.
+  .../&lt;td&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/sysadmin/installation/index.html">index: Installation</a>
             <ul>
               <li>&lt;td/&gt;</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/sysadmin/installation/install_tomcat.html">install_tomcat: Install Tomcat</a>
+            <ul>
+              <li>...&lt;span class='to_index' id='tomcat_5.5'/&gt;.
+     .../&lt;td&gt;<br xmlns=""/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</li>
             </ul>
           </li>
           <li>
@@ -746,14 +768,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 13">
+      <subsection name="badtext documents: 12">
         <ol>
-          <li>
-            <a href="./delve_into/core/building/netbeans.html">netbeans: Building with Netbeans</a>
-            <ul>
-              <li>an be run inside the Tomcat container included with Netbeans. If you want to run several projects con<span xmlns="" class="bad"> current </span>ly, each should get a separate context path. You can e.g. run the frontend application and the repository inside the same container. This can be achieved as [project right-click] -&gt; Properties -&gt; Run</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/custom/howto/customize_versioning.html">customize_versioning: Customize versioning</a>
             <ul>
@@ -838,14 +854,8 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="invalid documents: 4">
+      <subsection name="invalid documents: 3">
         <ol>
-          <li>
-            <a href="./delve_into/sysadmin/installation/help_startup_servlet_container.html">help_startup_servlet_container: </a>
-            <ul>
-              <li>Document is invalid XML.</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/web/add-ons/howto/#editing_template.html">#editing_template: </a>
             <ul>

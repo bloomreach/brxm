@@ -46,6 +46,7 @@
     </li>
        </ul>
 
+      </subsection>
       <subsection name='The browser window of the CMS is an empty page'>
 
         <p>You maybe trying to run more than one CMS without configuring the <a href='http://en.wikipedia.org/wiki/Java_remote_method_invocation'>RMI</a> ports appriopiately.
@@ -56,7 +57,7 @@
            run more than one CMS at the same time, you must configure one of them to use another port for
            the RMI connection.   
         </p>
-
+      </subsection>
    
       <subsection name='Configuration file syntax error'>
     

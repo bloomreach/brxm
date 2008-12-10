@@ -276,8 +276,12 @@
    fullname='delve_into/sysadmin/installation/help_renamed.xml'
    relpath='delve_into/sysadmin/installation'
   >help_renamed</file>
-     <file ext='xml' mimetype='text/xml' valid='no'
+     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/sysadmin/installation/help_startup_servlet_container.xml'
+   relpath='delve_into/sysadmin/installation'
+  >help_startup_servlet_container</file>
+     <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/sysadmin/installation/help_startup_servlet_container.xml~'
    relpath='delve_into/sysadmin/installation'
   >help_startup_servlet_container</file>
      <file ext='xml' mimetype='text/xml' valid='yes'

@@ -284,8 +284,6 @@
    <shortdesc>Quickly install and use standard Hippo CMS with example content.</shortdesc>
    <subsection>Install standard Hippo CMS with example content</subsection>
    <subsection>Using standard Hippo CMS with example content</subsection>
-   <index>localhost</index>
-   <index>number_8080</index>
    <subsection>Alternatives</subsection>
    <subsection>Next</subsection>
   </document><folder>sysadmin
@@ -356,7 +354,13 @@
    <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed
    <section>help renamed</section>
    <shortdesc>How to download a file into a folder renamed to some name?</shortdesc>
-  </document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
+  </document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container
+   <section>Help startup in Servlet Container</section>
+   <shortdesc>Help for when you have problems starting up Hippo in a servlet container.</shortdesc>
+   <subsection>Failed to Connect. Firefox can't establish a connection to the server at localhost:8080.</subsection>
+   <subsection>The browser window of the CMS is an empty page</subsection>
+   <subsection>Configuration file syntax error</subsection>
+  </document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
    <section>Help web Servlet Container</section>
    <subsection>Empty page after login to Hippo CMS</subsection>
   </document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server
@@ -395,9 +399,7 @@
   </document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
    <section>Install Tomcat</section>
    <shortdesc>Learn how to install Apache Tomcat</shortdesc>
-   <index>Tomcat, install</index>
    <index>Tomcat 6.0</index>
-   <index>tomcat_5.5</index>
   </document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
    <section>Installing plugins from the Hippo forge</section>
    <subsection>Download the Plugin</subsection>

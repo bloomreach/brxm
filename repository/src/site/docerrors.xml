@@ -33,7 +33,6 @@
     <multisection>Has 6 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/core/building">Building Hippo ECM
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="maven" relpath="delve_into/core/building">Building with Maven
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="netbeans" relpath="delve_into/core/building">Building with Netbeans
-    <badtext>an be run inside the Tomcat container included with Netbeans. If you want to run several projects con<span class="bad"> current </span>ly, each should get a separate context path. You can e.g. run the frontend application and the repository inside the same container. This can be achieved as [project right-click] -&gt; Properties -&gt; Run</badtext>
     <empty_elem>&lt;section name='Building with Netbeans'/&gt;</empty_elem>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <multisection>Has 4 sections.</multisection></document></folder><folder>concepts
@@ -128,7 +127,17 @@ repository is;
     <rewrite>This text contains much that is admin information and is mostly redundant.
                         Merge this document into the admin guide and leave the new version very small, 
                         mainly refering to the necessary admin documents. 
-  </rewrite></document><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart Steps</document><folder>sysadmin
+  </rewrite></document><document ext="xml" filename="quickstart" relpath="delve_into">Quickstart Steps
+    <empty_elem>...&lt;span class='to_index' id='localhost'/&gt; 
+   in your (this) webbrowser.
+   A window `Sign In, Hippo CMS 7' will open.
+   As username use `admin' and as password use also `admin'.
+  .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem>
+    <empty_elem>...&lt;span class='to_index' id='number_8080'/&gt; 
+   in your (this) webbrowser.
+   A window `Sign In, Hippo CMS 7' will open.
+   As username use `admin' and as password use also `admin'.
+  .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><folder>sysadmin
    
    <folder>configuration
    
@@ -155,9 +164,11 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="workspace" relpath="delve_into/sysadmin/configuration/repository">Workspace configuration
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="index" relpath="delve_into/sysadmin">System Administration Guide</document><folder>installation
    
-   <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed</document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
+   <document ext="xml" filename="help_renamed" relpath="delve_into/sysadmin/installation">help renamed</document><document ext="xml" filename="help_startup_servlet_container" relpath="delve_into/sysadmin/installation">Help startup in Servlet Container</document><document ext="xml" filename="help_web_servlet_container" relpath="delve_into/sysadmin/installation">Help web Servlet Container
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="in_application_server" relpath="delve_into/sysadmin/installation">Deploying in Application Server</document><document ext="xml" filename="index" relpath="delve_into/sysadmin/installation">Installation
-    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat</document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
+    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="in_servlet_container" relpath="delve_into/sysadmin/installation">Deploying in Servlet Container</document><document ext="xml" filename="install_tomcat" relpath="delve_into/sysadmin/installation">Install Tomcat
+    <empty_elem>...&lt;span class='to_index' id='tomcat_5.5'/&gt;.
+     .../&lt;td&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="plugins" relpath="delve_into/sysadmin/installation">Installing plugins from the Hippo forge
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="requirements" relpath="delve_into/sysadmin">Requirements
     <empty_elem>&lt;th colspan='2'/&gt;</empty_elem></document></folder><folder>user
    
