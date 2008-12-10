@@ -38,8 +38,7 @@
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/form.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/free_meta_search.html is never referenced in the site, not even from the menu.</unlinked>
     <rewrite>this whole document.</rewrite></document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/free_text_search.html is never referenced in the site, not even from the menu.</unlinked>
-    <badtext>lt;&lt;/a&gt; &amp;nbsp; &lt;/c:if&gt; &lt;c:forEach var="page" items="${items.pages}"&gt; &lt;c:choose&gt; &lt;c:when test="${page.<span class="bad"> current </span>}"&gt; &lt;b&gt;${page.number}&amp;nbsp;&lt;/b&gt; &lt;/c:when&gt; &lt;c:otherwise&gt; &lt;a href="${page.link}"&gt;${page.number}&lt;/a&gt;&amp;nbsp; &lt;/c:otherwise&gt; &lt;/c:choose&gt; &lt;/c:forEach&gt; &lt;c:if test="${nextpage.exists}"&gt; &lt;a href="${nextpage.lin</badtext></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/free_text_search.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="hello_world" relpath="delve_into/howto">Hello World
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/hello_world.html is never referenced in the site, not even from the menu.</unlinked>
     <multisection>Has 2 sections.</multisection></document><document ext="xml" filename="index" relpath="delve_into/howto">Howto
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/howto/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="start_project" relpath="delve_into/howto">Start a project
@@ -121,18 +120,19 @@
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="concepts" relpath="delve_into/reference">Concepts
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/concepts.html is never referenced in the site, not even from the menu.</unlinked></document><folder>configuration
    
-   <document ext="xml" filename="configuration" relpath="delve_into/reference/configuration">HST Configuration
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/configuration.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
+   <document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/hstproperties.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="repository" relpath="delve_into/reference/configuration">Configuration in Repository
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/repository.html is never referenced in the site, not even from the menu.</unlinked>
-    <badtext> in the figure above. The sitemap item with the name 'home' is going to represent the homepage of our<span class="bad"> current </span>website. The sitemap item has 2 properties; the hst:urlmapping and hst:pageLayout property.</badtext>
-    <badtext> instance http://localhost:8080/context/home hits the application, the urlmapping determines that the<span class="bad"> current </span>'home' sitemap item is read based on the urlmapping defined in the node. It then knows that by reading the hst:pageLayout property, that is has to take the threepane layout which is configured in the </badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="index" relpath="delve_into/reference/configuration">Configuration
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="website" relpath="delve_into/reference/configuration">Website Configuration
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/website.html is never referenced in the site, not even from the menu.</unlinked>
+    <todo><span class="bad"> TODO </span></todo>
+    <empty_elem>&lt;td/&gt;</empty_elem>
+    <empty_elem>&lt;td/&gt;</empty_elem>
+    <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/webxml.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml#" filename="#synonyms" relpath="delve_into/reference"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/synonyms.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
     <unlinked> The file file:///home/rita/werk/hst/target/site/errorlist.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?

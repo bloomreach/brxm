@@ -45,7 +45,7 @@
    fullname='delve_into/howto/free_text_search.xml'
    relpath='delve_into/howto'
   >free_text_search</file>
-    <file ext='xml~' mimetype='text/xml' note='todo'
+    <file ext='xml~' mimetype='text/xml'
    fullname='delve_into/howto/free_text_search.xml~'
    relpath='delve_into/howto'
   >free_text_search</file>
@@ -102,6 +102,10 @@
   >jsp-taglib</file>
      <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
    fullname='delve_into/reference/components/modules.xml'
+   relpath='delve_into/reference/components'
+  >modules</file>
+     <file ext='xml~' mimetype='text/xml' note='todo'
+   fullname='delve_into/reference/components/modules.xml~'
    relpath='delve_into/reference/components'
   >modules</file>
      <folder>tag
@@ -165,17 +169,17 @@
   >concepts</file>
     <folder>configuration
      <file ext='xml' mimetype='text/xml' valid='yes'
-   fullname='delve_into/reference/configuration/configuration.xml'
-   relpath='delve_into/reference/configuration'
-  >configuration</file>
-     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/reference/configuration/hstproperties.xml'
    relpath='delve_into/reference/configuration'
   >hstproperties</file>
-     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
-   fullname='delve_into/reference/configuration/repository.xml'
+     <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/reference/configuration/index.xml'
    relpath='delve_into/reference/configuration'
-  >repository</file>
+  >index</file>
+     <file ext='xml' mimetype='text/xml' valid='yes' note='todo'
+   fullname='delve_into/reference/configuration/website.xml'
+   relpath='delve_into/reference/configuration'
+  >website</file>
      <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/reference/configuration/webxml.xml'
    relpath='delve_into/reference/configuration'
@@ -185,6 +189,18 @@
    fullname='delve_into/reference/index.xml'
    relpath='delve_into/reference'
   >index</file>
+    <file ext='xml#' mimetype='text/xml'
+   fullname='delve_into/reference/#synonyms.xml#'
+   relpath='delve_into/reference'
+  >#synonyms</file>
+    <file ext='xml' mimetype='text/xml' valid='yes'
+   fullname='delve_into/reference/synonyms.xml'
+   relpath='delve_into/reference'
+  >synonyms</file>
+    <file ext='xml~' mimetype='text/xml'
+   fullname='delve_into/reference/synonyms.xml~'
+   relpath='delve_into/reference'
+  >synonyms</file>
    </folder>
   </folder>
   <file ext='xml' mimetype='text/xml' valid='yes' note='todo'

@@ -67,11 +67,12 @@
    <shortdesc>Adding a form to a web page, and processing the submitted form.</shortdesc>
    <subsection>The module class</subsection>
    <subsection>The module view</subsection>
+   <subsection>Configure and test your module</subsection>
+   <img>Form module</img>
+   <img>Module shows the submitted text</img>
   </document><document ext="xml" filename="free_meta_search" relpath="delve_into/howto">Free Meta Search
    <section>Free Meta Search</section>
    <shortdesc>How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</shortdesc>
-   <index>Search, advanced</index>
-   <index>Search, on metadata</index>
    <subsection>First subsection title</subsection>
    <index>index word</index>
    <h4>First subsubsection title</h4>
@@ -80,7 +81,6 @@
   </document><document ext="xml" filename="free_text_search" relpath="delve_into/howto">Free Text Search
    <section>Free Text Search</section>
    <shortdesc>Add text search functionality to a website.</shortdesc>
-   <index>Search, free text</index>
    <subsection>Search form module</subsection>
    <subsection>Search results module</subsection>
    <subsection>Search results page</subsection>
@@ -192,23 +192,27 @@
    <img>sitemap</img>
   </document><folder>configuration
    
-   <document ext="xml" filename="configuration" relpath="delve_into/reference/configuration">HST Configuration
-   <section>HST Configuration</section>
-   <subsection>General configuration file(s)</subsection>
-   <subsection>Configuration of the servlet for binaries</subsection>
-  </document><document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
+   <document ext="xml" filename="hstproperties" relpath="delve_into/reference/configuration">HST Configuration in hst.properties
    <section>HST Configuration in hst.properties</section>
-  </document><document ext="xml" filename="repository" relpath="delve_into/reference/configuration">Configuration in Repository
-   <section>Configuration in Repository</section>
-   <img>HST2 configuration nodes</img>
-   <subsection>hst:sitemap</subsection>
-   <img>HST2 sitemap configuration</img>
-   <img>HST2 sitemap configuration</img>
-   <subsection>hst:layouts</subsection>
-   <img>HST2 layouts configuration</img>
+  </document><document ext="xml" filename="index" relpath="delve_into/reference/configuration">Configuration
+   <section>Configuration</section>
+   <shortdesc>Learn how to configure the site toolkit.</shortdesc>
+  </document><document ext="xml" filename="website" relpath="delve_into/reference/configuration">Website Configuration
+   <section>Website Configuration</section>
+   <shortdesc>How to configure a website's modules, layouts and sitemap.</shortdesc>
+   <img>The hst:configuration node in the repository</img>
    <subsection>hst:modules</subsection>
-   <img>HST2 modules configuration</img>
+   <img>The hst:modules node in the repository</img>
+   <h4>Properties for node type hst:module</h4>
+   <subsection>hst:sitemap</subsection>
+   <img>The hst:sitemap node in the repository</img>
+   <h4>Properties for node type hst:sitemapitem</h4>
+   <h4>Properties for node type hst:sitemaplayout</h4>
+   <h4>Properties for node type hst:sitemapmodule</h4>
    <subsection>hst:navigation</subsection>
+   <subsection>hst:layouts</subsection>
+   <img>The hst:layouts node in the repository</img>
+   <h4>Properties for node type hst:layout</h4>
   </document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
    <section>HST Configuration in web.xml</section>
   </document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference
@@ -216,6 +220,12 @@
    <shortdesc>
           The concepts and technical details of the Hippo Site Toolkit.
         </shortdesc>
+  </document><document ext="xml#" filename="#synonyms" relpath="delve_into/reference"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
+   <section>Synonyms</section>
+   <shortdesc>List of synonyms used in discussions of the HST.</shortdesc>
+   <subsection>Document type</subsection>
+   <index>Backend template</index>
+   <index>Editing template</index>
   </document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
   </document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?
    <section>What is Hippo Site Toolkit 2?</section>

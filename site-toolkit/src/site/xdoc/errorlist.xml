@@ -24,19 +24,19 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">113 errors and/or todos in 41 out of 41 documents (100%).</span>
+      <span class="shortdesc">114 errors and/or todos in 43 out of 43 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
         <li>0 documents using dummy references.
      </li>
-        <li>41 unlinked documents.
+        <li>42 unlinked documents.
        </li>
         <li>0 documents with typo's.
      </li>
         <li>0 documents to review.
      </li>
-        <li>28 documents missing required info.
+        <li>26 documents missing required info.
      </li>
         <li>4 empty documents.
      </li>
@@ -44,16 +44,16 @@
      </li>
         <li>2 documents requiring additions.
      </li>
-        <li>2 documents with unidentified TODO strings.
+        <li>3 documents with unidentified TODO strings.
      </li>
-        <li>0 invalid documents.
+        <li>1 invalid documents.
      </li>
-        <li>12 documents with bad text.
+        <li>10 documents with bad text.
      </li>
         <li>2 multisection documents.
      </li>
       </ul>
-      <subsection name="Unlinked documents (compared to previous linkreport): 41">
+      <subsection name="Unlinked documents (compared to previous linkreport): 42">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Change to the document title</a>
@@ -260,21 +260,21 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
-            <ul>
-              <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/configuration.html is never referenced in the site, not even from the menu.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/reference/configuration/hstproperties.html">hstproperties: HST Configuration in hst.properties</a>
             <ul>
               <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/hstproperties.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
           <li>
-            <a href="./delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
+            <a href="./delve_into/reference/configuration/index.html">index: Configuration</a>
             <ul>
-              <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/repository.html is never referenced in the site, not even from the menu.</li>
+              <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/index.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/website.html">website: Website Configuration</a>
+            <ul>
+              <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/website.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
           <li>
@@ -287,6 +287,12 @@
             <a href="./delve_into/reference/index.html">index: Reference</a>
             <ul>
               <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/synonyms.html">synonyms: Synonyms</a>
+            <ul>
+              <li> The file file:///home/rita/werk/hst/target/site/delve_into/reference/synonyms.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
           <li>
@@ -303,7 +309,19 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 28">
+      <subsection name="Documents with empty elements: 1">
+        <ol>
+          <li>
+            <a href="./delve_into/reference/configuration/website.html">website: Website Configuration</a>
+            <ul>
+              <li>&lt;td/&gt;</li>
+              <li>&lt;td/&gt;</li>
+              <li>&lt;td/&gt;</li>
+            </ul>
+          </li>
+        </ol>
+      </subsection>
+      <subsection name="Documents lacking some information: 26">
         <ol>
           <li>
             <a href="./about/term_index.html">term_index: </a>
@@ -439,19 +457,7 @@
             </ul>
           </li>
           <li>
-            <a href="./delve_into/reference/configuration/configuration.html">configuration: HST Configuration</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
             <a href="./delve_into/reference/configuration/hstproperties.html">hstproperties: HST Configuration in hst.properties</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -572,7 +578,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents with unidentified TODO strings: 2">
+      <subsection name="Documents with unidentified TODO strings: 3">
         <ol>
           <li>
             <a href="./delve_into/reference/components/index.html">index: Components</a>
@@ -588,6 +594,14 @@
           </li>
           <li>
             <a href="./delve_into/reference/components/modules.html">modules: Modules</a>
+            <ul>
+              <li>
+                <span xmlns="" class="bad"> TODO </span>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/reference/configuration/website.html">website: Website Configuration</a>
             <ul>
               <li>
                 <span xmlns="" class="bad"> TODO </span>
@@ -612,14 +626,8 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 12">
+      <subsection name="badtext documents: 10">
         <ol>
-          <li>
-            <a href="./delve_into/howto/free_text_search.html">free_text_search: Free Text Search</a>
-            <ul>
-              <li>lt;&lt;/a&gt; &amp;nbsp; &lt;/c:if&gt; &lt;c:forEach var="page" items="${items.pages}"&gt; &lt;c:choose&gt; &lt;c:when test="${page.<span xmlns="" class="bad"> current </span>}"&gt; &lt;b&gt;${page.number}&amp;nbsp;&lt;/b&gt; &lt;/c:when&gt; &lt;c:otherwise&gt; &lt;a href="${page.link}"&gt;${page.number}&lt;/a&gt;&amp;nbsp; &lt;/c:otherwise&gt; &lt;/c:choose&gt; &lt;/c:forEach&gt; &lt;c:if test="${nextpage.exists}"&gt; &lt;a href="${nextpage.lin</li>
-            </ul>
-          </li>
           <li>
             <a href="./delve_into/quickstart.html">quickstart: Quickstart</a>
             <ul>
@@ -682,11 +690,14 @@
               <li>exposes the<span xmlns="" class="bad"> current </span>pageNode to the current JSP pageContext. Within the JSP you can use the pageNode to retrieve the content of the selected document.</li>
             </ul>
           </li>
+        </ol>
+      </subsection>
+      <subsection name="invalid documents: 1">
+        <ol>
           <li>
-            <a href="./delve_into/reference/configuration/repository.html">repository: Configuration in Repository</a>
+            <a href="./delve_into/reference/#synonyms.html">#synonyms: </a>
             <ul>
-              <li> in the figure above. The sitemap item with the name 'home' is going to represent the homepage of our<span xmlns="" class="bad"> current </span>website. The sitemap item has 2 properties; the hst:urlmapping and hst:pageLayout property.</li>
-              <li> instance http://localhost:8080/context/home hits the application, the urlmapping determines that the<span xmlns="" class="bad"> current </span>'home' sitemap item is read based on the urlmapping defined in the node. It then knows that by reading the hst:pageLayout property, that is has to take the threepane layout which is configured in the </li>
+              <li>Document is invalid XML.</li>
             </ul>
           </li>
         </ol>
