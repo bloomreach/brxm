@@ -20,7 +20,9 @@
   <version>2.02.00-SNAPSHOT</version>
 
   <name>Hippo ECM</name>
-  <description>Hippo ECM suite</description>
+  <description>The core of the Hippo ECM, i.e. repository 2, plus a advanced webbased userinterface for content management: CMS, 
+    plus a simple webbased userinterface to access the repository: console.
+  </description>
   <packaging>pom</packaging>
 
   <url>http://docs.onehippo.org/cms7/</url>
@@ -82,6 +84,10 @@
     </license>
   </licenses>
 
+  <!-- 
+     Software configuration management (scm): where to find and how to get acces to the source repository 
+     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
+  -->
   <scm>
     <connection>scm:svn:http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</connection>
     <developerConnection>scm:svn:https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</developerConnection>
@@ -156,16 +162,6 @@
       <timezone>+1</timezone>
     </developer>
     <developer>
-      <name>Wander Grevink</name>
-      <id>wgrevink</id>
-      <email>w.grevink@onehippo.com</email>
-      <organization>Hippo</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
       <name>Bart van der Schans</name>
       <id>bvdschans</id>
       <email>schans@onehippo.com</email>
@@ -183,7 +179,7 @@
       <roles>
         <role>Doctator</role>
       </roles>
-      <timezone>+1</timezone>
+      <timezone>-8</timezone>
     </developer>
     <developer>
       <name>Frank van Lankvelt</name>
@@ -215,15 +211,27 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <name>Rita Bijlsma</name>
+      <id>rbijlsma</id>
+      <email>r.bijlsma@onehippo.com</email>
+      <organization>Hippo</organization>
+      <roles>
+        <role>Doctator</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
   </developers>
 
   <mailingLists>
     <mailingList>
       <name>Hippo Repository 2 Dev List</name>
-      <subscribe>hipporepos-dev-subscribe@lists.hippocms.org</subscribe>
-      <unsubscribe>hipporepos-dev-unsubscribe@lists.hippocms.org</unsubscribe>
-      <post>hipporepos-dev@lists.hippoforge.org</post>
-      <archive>http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/</archive>
+      <subscribe>hipporepos-dev-subscribe@lists.onehippo.org</subscribe>
+      <unsubscribe>hipporepos-dev-unsubscribe@lists.onehippo.org</unsubscribe>
+      <post>hipporepos-dev@lists.onehippo.org</post>
+      <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
+
+      <!--  http://lists.hippoforge.org/mailman/listinfo/hipporepos-dev/ -->
     </mailingList>
   </mailingLists>
 
@@ -311,6 +319,10 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshots</id>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -608,13 +620,23 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>      
+
+ <!--
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <aggregate>true</aggregate>
-          <source>1.5</source>
+          <source>2.5</source>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://www.day.com/maven/jsr170/javadocs/jcr-1.0/</link>
@@ -628,6 +650,8 @@
           </reportSet>
         </reportSets>
       </plugin>
+ -->
+
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -651,6 +675,7 @@
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-8-SNAPSHOT</version>
         <configuration>
           <aggregate>true</aggregate>
         </configuration>
