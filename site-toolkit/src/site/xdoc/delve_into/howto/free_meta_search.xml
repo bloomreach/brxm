@@ -28,8 +28,8 @@ ________________________________________________________________________________
   <body>
     <section name="Free Meta Search">
       <span class="shortdesc">How to add free meta search functionality to a website so that the user can perform searches within meta data on all documents?</span>
-      <span class='hidden_index'>Search, advanced</span>
-      <span class='hidden_index'>Search, on metadata</span>
+      <span class='to_index'>Search, advanced</span>
+      <span class='to_index'>Search, on metadata</span>
 
        <span class='rewrite'>this whole document.</span>
 
