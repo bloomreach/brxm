@@ -59,19 +59,21 @@ public class UrlUtilities {
         }
 
         int last = uriParts.length - 1;
-        if (uriParts[last].indexOf('/') > 0) {
-            // the slash is the delimiter, needs extra care
-            uriParts[last] = uriParts[last].replaceAll("\\/", SLASH_ENCODED);
-        }
-        /*
-         * When the link is to a hippo document, the name coincides with the handle. 
-         * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
-         */
-        if (last > 1 && last >= uriLevels && uriParts[last].equals(uriParts[last - 1]) && !uriParts[last].contains(".")) {
-            encodedUrl.append(HTML_SUFFIX);
-        } else {
-            // for encoding a url, you have to decode the jcr node paths
-            encodedUrl.append("/").append(encodePart(uriParts[last]));
+        if (last > 0) {
+            if (uriParts[last].indexOf('/') > 0) {
+                // the slash is the delimiter, needs extra care
+                uriParts[last] = uriParts[last].replaceAll("\\/", SLASH_ENCODED);
+            }
+            /*
+             * When the link is to a hippo document, the name coincides with the handle. 
+             * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
+             */
+            if (last >= uriLevels && uriParts[last].equals(uriParts[last - 1]) && !uriParts[last].contains(".")) {
+                encodedUrl.append(HTML_SUFFIX);
+            } else {
+                // for encoding a url, you have to decode the jcr node paths
+                encodedUrl.append("/").append(encodePart(uriParts[last]));
+            }
         }
         return encodedUrl.toString();
     }
@@ -85,12 +87,16 @@ public class UrlUtilities {
      *   <li>jcr encode the decoded node name using utf-8</li>
      *   <li>append last url part twice for handle in document model</li>
      * </ul>
+     * Always return at least a single slash
      * @param url
-     * @return
+     * @return the decoded url starting with a slash
      */
     public static String decodeUrl(String url) {
-        StringBuilder decodedUrl = new StringBuilder();
-
+        // quick handler for default cases
+        if (url == null || "".equals(url) || "/".equals(url)) {
+            return "/";
+        }
+        
         int start = 0;
         if (url.startsWith("/")) {
             // skip first empty uriPart
@@ -98,6 +104,7 @@ public class UrlUtilities {
         }
 
         String[] uriParts = url.split("/");
+        StringBuilder decodedUrl = new StringBuilder();
         for (int i = start; i < uriParts.length - 1; i++) {
             decodedUrl.append("/").append(decodePart(uriParts[i]));
         }
@@ -107,17 +114,19 @@ public class UrlUtilities {
          *  /handle/document concept
          */
         int last = uriParts.length - 1;
-        String lastPart = uriParts[last];
-        if (lastPart.contains(SLASH_ENCODED)) {
-            lastPart = lastPart.replaceAll(SLASH_ENCODED, "/");
-        }
-        if (last > 1 && lastPart.endsWith(HTML_SUFFIX) && !lastPart.equals(uriParts[last - 1])) {
-            String name = decodePart(lastPart.substring(0, lastPart.length() - HTML_SUFFIX.length()));
-            // add twice for handle
-            decodedUrl.append("/").append(name);
-            decodedUrl.append("/").append(name);
-        } else {
-            decodedUrl.append("/").append(decodePart(lastPart));
+        if (last > 0) {
+            String lastPart = uriParts[last];
+            if (lastPart.contains(SLASH_ENCODED)) {
+                lastPart = lastPart.replaceAll(SLASH_ENCODED, "/");
+            }
+            if (lastPart.endsWith(HTML_SUFFIX) && !lastPart.equals(uriParts[last - 1])) {
+                String name = decodePart(lastPart.substring(0, lastPart.length() - HTML_SUFFIX.length()));
+                // add twice for handle
+                decodedUrl.append("/").append(name);
+                decodedUrl.append("/").append(name);
+            } else {
+                decodedUrl.append("/").append(decodePart(lastPart));
+            }
         }
         return decodedUrl.toString();
     }
