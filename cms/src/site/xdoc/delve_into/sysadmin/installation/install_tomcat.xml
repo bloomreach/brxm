@@ -24,7 +24,7 @@
     <body>
      <section name="Install Tomcat">
       <span class='shortdesc'>Learn how to install Apache Tomcat</span>
-      <span class='hidden_index' id='Tomcat, install'/>
+      <span class='to_index' id='Tomcat, install'/>
 
      <p>
       If you do not have Tomcat
@@ -44,7 +44,7 @@
      </td>
          <td>Download <span class='index' id='tomcat_6.0'>Tomcat 6.0</span> 
            from the <a href="http://tomcat.apache.org/download-60.cgi">Apache Tomcat</a> website,
-           or if you prefer, download <span class='hidden_index' id='tomcat_5.5'/><a href="http://tomcat.apache.org/download-55.cgi">Tomcat 5.5</a>.
+           or if you prefer, download <span class='to_index' id='tomcat_5.5'/><a href="http://tomcat.apache.org/download-55.cgi">Tomcat 5.5</a>.
      </td>
     </tr>
   <tr>
