@@ -55,10 +55,10 @@
       </item>
       <item name="Reference" href="/delve_into/reference/index.html" collapse="true">
         <item name="Concepts" href="/delve_into/reference/concepts.html"/>
-        <item name="Configuration" href="/delve_into/reference/configuration/configuration.html" collapse="true">
-          <item name="hst.properties" href="/delve_into/reference/configuration/hstproperties.html"/>
-          <item name="web.xml" href="/delve_into/reference/configuration/webxml.html"/>
-          <item name="Repository" href="/delve_into/reference/configuration/repository.html"/>
+        <item name="Configuration" href="/delve_into/reference/configuration/index.html" collapse="true">
+          <item name="Application" href="/delve_into/reference/configuration/hstproperties.html"/>
+          <item name="Servlet" href="/delve_into/reference/configuration/webxml.html"/>
+          <item name="Website" href="/delve_into/reference/configuration/website.html"/>
         </item>
         <item name="Components" href="/delve_into/reference/components/index.html" collapse="true">
           <item name="Filters" href="/delve_into/reference/components/filters.html"/>

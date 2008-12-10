@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC
+  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
+  "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<!--
+  Copyright 2008 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+    
+____________________________________________________________________________________________
+
+-->
+<document>
+  <properties>
+    <title>Modules, Layouts and Sitemap Configuration</title>
+  </properties>
+
+  <body>
+    <section name="Modules, Layouts and Sitemap Configuration">
+      <span class="shortdesc">How to configure a website's modules, layouts and sitemap.</span>
+
+      <p> 
+        A website's <a href="../concepts.html">modules, layouts and sitemap</a> are configured through the 
+        <a href="http://docs.onehippo.org/cms7/delve_into/sysadmin/configuration/console.html">Console application</a>.
+        The Console application provides direct access to the contents of Hippo
+        Repository. Among that content is the website's configuration. The screenshot below shows
+        the repository contents for a typical project. The website configuration is under the
+        hst:configuration node (highlighted in the screenshot). 
+      </p>
+      <p>
+        <img src="../../../images/reference/configuration/hst_configuration.png" alt="The hst:configuration node in the repository"/>
+      </p>
+      <p>
+        Under the second hst:configuration node, you will find four nodes:
+      </p>
+      <ul>
+        <li>
+          <a href="#hst:modules">hst:modules</a>
+        </li>
+        <li>
+          <a href="#hst:sitemap">hst:sitemap</a>
+        </li>
+        <li>
+          <a href="#hst:navigation">hst:navigation</a>
+        </li>
+        <li>
+          <a href="#hst:layouts">hst:layouts</a>
+        </li>
+      </ul>
+      <p>
+        Each of these nodes will be explained in detail in the following subsections.
+      </p>
+      
+      <subsection name="hst:modules">
+
+        <p>
+          The hst:modules node contains child nodes that represent <a href="../concepts.html#Modules">modules</a>.
+          Each child node defines
+          for a module the location of its JSP, and possibly other parameters that this particular
+          modules accepts (e.g. the location of a document in the repository).
+        </p>
+        <p>
+          <img src="../../../images/reference/configuration/hst_modules.png" alt="The hst:modules node in the repository"/>
+        </p>
+        <p>
+          When you want to add a module to your website, add a new child node to hst:modules.
+          The node type should be <code>hst:module</code>. Add at least the required properties
+          in the following list:
+        </p>
+        <h4>Properties for node type hst:module</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Required</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>hst:template</td>
+            <td>yes</td>
+            <td>The location of the module's JSP file, e.g. <code>modules/newslist.jsp</code></td>
+          </tr>
+          <tr>
+            <td>hst:contentlocation</td>
+            <td>no</td>
+            <td>The repository path to the content this module displays, e.g. <code>/content/news</code></td>
+          </tr>
+        </table>
+        
+      </subsection>
+
+      <subsection name="hst:sitemap">
+
+        <p>
+          The hst:sitemap node contains child nodes that represent <a href="../concepts.html#Sitemap">sitemap items</a>.
+          Each child node defines for a sitemap item which URL(s) it is mapped to, which <a href="#hst:layouts">layout</a>
+          it uses, and which <a href="#hst:modules">modules</a> are placed in the layout's containers.
+        </p>
+        <p>
+          <img src="../../../images/reference/configuration/hst_sitemap.png" alt="The hst:sitemap node in the repository"/>
+        </p>
+        <p>
+          When you want to add a sitemap item, add a new child node to hst:sitemap. The node type should
+          be <code>hst:sitemapitem</code>. Add at least the required properties
+          in the following list:
+        </p>
+        
+        <h4>Properties for node type hst:sitemapitem</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Required</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>hst:urlmapping</td>
+            <td>yes</td>
+            <td>A URL, e.g. <code>/home</code>, or a group of URLs covered by a regular expression, e.g. <code>/news/(.*?)$</code></td>
+          </tr>
+          <tr>
+            <td>hst:pageLayout</td>
+            <td>yes</td>
+            <td>
+              The layout this sitemap item uses. Refers to a layout node under <a href="#hst:layouts">hst:layouts</a>, 
+              e.g. <code>hst:layouts/homepage</code>.
+            </td>
+          </tr>
+          <tr>
+            <td>hst:prefixlinkrewrite</td>
+            <td>no</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>hst:nodepath</td>
+            <td>no</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>hst:nodetype</td>
+            <td>no</td>
+            <td></td>
+          </tr>
+        </table>
+        
+        <p>
+          The sitemap item must define for each container in its layout, one or modules.
+          Therefore the sitemap item node must have a child node of type <code>hst:sitemaplayout</code>
+          for each of the layout's containers (as defined for that layout under
+          <a href="#hst:layouts">hst:layouts</a>). Each node must have a property
+          <code>hst:layoutAttribute</code>, that refers to a container.
+        </p>
+
+        <h4>Properties for node type hst:sitemaplayout</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Required</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>hst:layoutAttribute</td>
+            <td>yes</td>
+            <td>Refers to a container in the used layout, e.g. <code>leftcolumn</code>.</td>
+          </tr>
+        </table>
+        
+        <p>
+          To place a module inside a container, add a child node of type <code>hst:sitemapmodule</code>
+          to the sitemaplayout node. The module to use is specified in the property
+          <code>hst:module</code>:
+        </p>
+
+        <h4>Properties for node type hst:sitemapmodule</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Required</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>hst:module</td>
+            <td>yes</td>
+            <td>
+              The module to place in the container defined by the parent node. Refers to a module node
+              under <a href="#hst:modules">hst:modules</a>.
+            </td>
+          </tr>
+        </table>
+        
+      </subsection>
+
+      <subsection name="hst:navigation">
+        
+        <p>
+          TODO
+        </p>
+        
+      </subsection>
+
+      <subsection name="hst:layouts">
+        
+        <p>
+          The hst:layouts node contains child nodes that represent <a href="../concepts.html#Layouts">layouts</a>.
+          Each child node defines for a layout the location of its corresponding JSP file, and its containers
+          (placeholders for modules).
+        </p>
+        <p>
+          <img src="../../../images/reference/configuration/hst_layouts.png" alt="The hst:layouts node in the repository"/>
+        </p>
+        <p>
+          When you want to add a layout, add a new child node to hst:layouts. The node type should
+          be <code>hst:layout</code>. Specify the location of the layout's JSP file in the property
+          <code>hst:template</code>:
+        </p>
+        
+        <h4>Properties for node type hst:layout</h4>
+        <table>
+          <tr>
+            <th>Property</th>
+            <th>Required</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>hst:template</td>
+            <td>yes</td>
+            <td>The location of the template's JSP file, e.g. <code>templates/threecolumn.jsp</code></td>
+          </tr>
+        </table>
+        
+        <p>
+          A layout node (of type <code>hst:layout</code>), has a child node of type <code>hst:layoutitem</code>
+          for each of its containers. These child nodes have no properties, but each of them must have
+          a corresponding <a href="../components/tag/container-tag.html">hst-tmpl:container</a> tag in the layout's JSP file.
+        </p>
+
+      </subsection>
+      
+    </section>
+  </body>
+</document>
