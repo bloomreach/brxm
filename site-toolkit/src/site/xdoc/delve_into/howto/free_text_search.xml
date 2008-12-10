@@ -28,7 +28,7 @@ ________________________________________________________________________________
   <body>
     <section name="Free Text Search">
       <span class="shortdesc">Add text search functionality to a website.</span>
-      <span class='hidden_index'>Search, free text</span>
+      <span class='to_index' id='Search, free text'/>
 
         <p>
             This howto lets you add a simple free text search to your website. We are going to
