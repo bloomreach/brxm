@@ -88,7 +88,7 @@
      <span class='web-48 icon-48'/> 
    </td>
   <td>
-   Open <span class='hidden_index' id='localhost'/><span class='hidden_index' id='number_8080'/><a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> 
+   Open <span class='to_index' id='localhost'/><span class='to_index' id='number_8080'/><a href='http://localhost:8080/cms/'>http://localhost:8080/cms/</a> 
    in your (this) webbrowser.
    A window `Sign In, Hippo CMS 7' will open.
    As username use `admin' and as password use also `admin'.
