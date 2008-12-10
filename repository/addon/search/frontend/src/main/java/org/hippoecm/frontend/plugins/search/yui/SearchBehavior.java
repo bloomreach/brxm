@@ -201,14 +201,18 @@ public class SearchBehavior extends AutoCompleteBehavior {
             final String queryType = "xpath";
             QueryResult result = null;
 
-            log.info("Executing search query: " + queryString);
-
             javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             try {
                 QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
                 HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(queryString, queryType);
                 session.refresh(true);
+                hippoQuery.setLimit(10);
+                
+                long start = System.currentTimeMillis();
                 result = hippoQuery.execute();
+                long end = System.currentTimeMillis();
+                log.info("Executing search query: " + queryString + " took " + (end-start) + "ms");
+                
             } catch (RepositoryException e) {
                 log.error("Error executing query[" + queryString + "]", e);
             }
