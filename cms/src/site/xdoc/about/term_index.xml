@@ -633,6 +633,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Configuration_file_syntax_error">Configuration file syntax error</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/configuration/nodes/index.html#Configuration_nodes">Configuration nodes</a>
             </td>
             <td>Welcome: Configuration nodes</td>
@@ -1065,12 +1071,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Document_is_invalid_XML_">Document is invalid XML.</a>
-            </td>
-            <td/>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/web/add-ons/howto/#editing_template.html#Document_is_invalid_XML_">Document is invalid XML.</a>
             </td>
             <td>Howto: </td>
@@ -1278,6 +1278,12 @@
               <a href="../delve_into/custom/jcr/reference/derived_data.html#Facility_offered">Facility offered</a>
             </td>
             <td>Derived Data</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Failed_to_Connect__Firefox_can't_establish_a_connection_to_the_server_at_localhost:8080_">Failed to Connect. Firefox can't establish a connection to the server at localhost:8080.</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -1738,9 +1744,21 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Help_for_when_you_have_problems_starting_up_Hippo_in_a_servlet_container_">Help for when you have problems starting up Hippo in a servlet container.</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/sysadmin/installation/help_renamed.html#help_renamed">help renamed</a>
             </td>
             <td>help renamed</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#Help_startup_in_Servlet_Container">Help startup in Servlet Container</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
           </tr>
           <tr>
             <td>
@@ -2527,12 +2545,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/quickstart.html#localhost">localhost</a>
-            </td>
-            <td>Quickstart Steps</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/information_architects/howto/login.html#Login">Login</a>
             </td>
             <td>Howto: Login</td>
@@ -3076,12 +3088,6 @@
               <a href="../delve_into/sysadmin/configuration/nodes/users.html#Nodes">Nodes</a>
             </td>
             <td>Users Configuration</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/quickstart.html#number_8080">number_8080</a>
-            </td>
-            <td>Quickstart Steps</td>
           </tr>
           <tr>
             <td>
@@ -3685,6 +3691,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/sysadmin/installation/help_startup_servlet_container.html#The_browser_window_of_the_CMS_is_an_empty_page">The browser window of the CMS is an empty page</a>
+            </td>
+            <td>Help startup in Servlet Container</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/jcr/jcr_dropbox_example.html#The_Demo">The Demo</a>
             </td>
             <td>Demo on interfacing with Hippo ECM Repository</td>
@@ -3737,18 +3749,6 @@
               <a href="../delve_into/sysadmin/requirements.html#tomcat_logo">tomcat logo</a>
             </td>
             <td>Requirements</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/installation/install_tomcat.html#Tomcat,_install">Tomcat, install</a>
-            </td>
-            <td>Install Tomcat</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/sysadmin/installation/install_tomcat.html#tomcat_5_5">tomcat_5.5</a>
-            </td>
-            <td>Install Tomcat</td>
           </tr>
           <tr>
             <td>
