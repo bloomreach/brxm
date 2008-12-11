@@ -101,7 +101,17 @@ public class LdapContextFactory {
     public void setSearchBase(String searchBase) {
         this.searchBase = searchBase;
     }
-
+    
+    /**
+     * The search base for the search to perform in the LDAP server.
+     * (e.g. OU=OrganizationName,DC=MyDomain,DC=local)
+     *
+     * @return searchBase the search base.
+     */
+    public String getSearchBase() {
+        return searchBase;
+    }
+    
     /**
      * The context factory to use. This defaults to the SUN LDAP JNDI implementation
      * but can be overridden to use custom LDAP factories.

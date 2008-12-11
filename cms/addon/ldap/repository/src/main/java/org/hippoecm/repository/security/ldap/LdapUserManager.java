@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.security.ldap;
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -330,7 +329,7 @@ public class LdapUserManager extends AbstractUserManager {
                             + mapping.getTarget() + " : " + e.getMessage());
                 }
             }
-            user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
+            updateSyncDate(user);
         } catch (RepositoryException e) {
             log.error("RepositoryException while updating ldap mappings for provider: " + providerId, e);
         }
