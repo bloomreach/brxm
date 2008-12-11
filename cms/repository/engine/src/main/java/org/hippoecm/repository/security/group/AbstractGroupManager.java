@@ -15,17 +15,21 @@
  */
 package org.hippoecm.repository.security.group;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionException;
 import javax.transaction.NotSupportedException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,10 +38,17 @@ import org.hippoecm.repository.security.ManagerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Abstract group manager for managing groups. 
+ * 
+* The rawGroupId's are the id's as provided by the backend. The groupId's 
+* are the normalized id's. All id's MUST be normalized before they are
+* stored in the database.
+*/
 public abstract class AbstractGroupManager implements GroupManager {
 
     @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
+    private final static String SVN_ID = "$Id$";
 
     /**
      * The system/root session
@@ -125,7 +136,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        String groupId = normalizeGroupId(rawGroupId);
+        String groupId = normalizeId(rawGroupId);
         log.trace("Creating node for group: {} in path: {}", groupId, groupsPath);
         int length = groupId.length();
         int pos = 0;
@@ -158,7 +169,7 @@ public abstract class AbstractGroupManager implements GroupManager {
      * @return the fully encoded normalized path
      */
     private String buildGroupPath(String rawGroupId) {
-        String groupId = normalizeGroupId(rawGroupId);
+        String groupId = normalizeId(rawGroupId);
         if (dirLevels == 0) {
             return groupsPath + "/" + NodeNameCodec.encode(groupId, true);
         }
@@ -176,16 +187,20 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Normalize the groupId: trim and convert to lower case if needed. This
+     * Normalize the rawId: trim and convert to lower case if needed. This
      * function does NOT encode the groupId.
-     * @param rawGroupId
+     * @param rawId
      * @return the trimmed and if needed converted to lower case groupId
      */
-    private String normalizeGroupId(String rawGroupId) {
+    private String normalizeId(String rawId) {
+        if (rawId == null) {
+            // anonymous
+            return null;
+        }
         if (isCaseSensitive()) {
-            return rawGroupId.trim();
+            return rawId.trim();
         } else {
-            return rawGroupId.trim().toLowerCase();
+            return rawId.trim().toLowerCase();
         }
     }
 
@@ -217,6 +232,12 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         return createGroup(rawGroupId);
     }
+    
+    protected final void updateSyncDate(Node group) throws RepositoryException {
+        if (group.isNodeType(HippoNodeType.NT_EXTERNALUSER)) {
+            group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
+        }
+    }
 
     public final boolean isManagerForGroup(Node group) throws RepositoryException {
         if (group.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
@@ -231,6 +252,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     public final Set<String> getMemberships(String rawUserId, String providerId) {
+        String userId = normalizeId(rawUserId);
         Set<String> memberships = new HashSet<String>();
 
         StringBuffer statement = new StringBuffer();
@@ -239,7 +261,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         statement.append("//element");
         statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
         statement.append('[');
-        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(rawUserId).append("'");
+        statement.append("(@").append(HippoNodeType.HIPPO_MEMBERS).append(" = '").append(userId).append("'");
         statement.append(" or @").append(HippoNodeType.HIPPO_MEMBERS).append(" = '*')");
         if (providerId != null) {
             statement.append(" and @");
@@ -255,7 +277,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             NodeIterator groupsIter = result.getNodes();
             while (groupsIter.hasNext()) {
                 String groupId = groupsIter.nextNode().getName();
-                log.debug("User '{}' is member of group: {}", rawUserId, groupId);
+                log.debug("User '{}' is member of group: {}", userId, groupId);
                 memberships.add(groupId);
             }
             return memberships;
@@ -272,7 +294,10 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         String userId = user.getName();
         Set<String> repositoryMemberships = getMemberships(userId, providerId);
-        Set<String> backendMemberships = backendGetMemberships(user);
+        Set<String> backendMemberships = new HashSet<String>();
+        for (String groupId : backendGetMemberships(user)) {
+            backendMemberships.add(normalizeId(groupId));
+        }
         Set<String> inSync = new HashSet<String>();
         for (String groupId : repositoryMemberships) {
             if (backendMemberships.contains(groupId)) {
@@ -320,10 +345,17 @@ public abstract class AbstractGroupManager implements GroupManager {
                     + "' skipping setMembers");
             return;
         }
-        group.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
+        String[] normalizedMembers = new String[members.size()];
+        int i = 0;
+        for (String member : members) {
+            normalizedMembers[i] = normalizeId(member);
+            i++;
+        }
+        group.setProperty(HippoNodeType.HIPPO_MEMBERS, normalizedMembers);
     }
 
-    public final void addMember(Node group, String userId) throws RepositoryException {
+    public final void addMember(Node group, String rawUserId) throws RepositoryException {
+        String userId = normalizeId(rawUserId);
         if (!isManagerForGroup(group)) {
             log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
                     + "' skipping addMember '" + userId + "'");
@@ -336,7 +368,8 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    public final void removeMember(Node group, String userId) throws RepositoryException {
+    public final void removeMember(Node group, String rawUserId) throws RepositoryException {
+        String userId = normalizeId(rawUserId);
         if (!isManagerForGroup(group)) {
             log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
                     + "' skipping removeMember '" + userId + "'");

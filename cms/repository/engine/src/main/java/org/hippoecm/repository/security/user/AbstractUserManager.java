@@ -19,7 +19,6 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -34,10 +33,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * UserManager provider that stores the users inside the JCR repository
+ * 
+ * The rawUserId's are the id's as provided by the backend. The userId's 
+ * are the normalized id's. All id's MUST be normalized before they are
+ * stored in the database.
  */
 public abstract class AbstractUserManager implements UserManager {
 
-    /** SVN id placeholder */
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -103,7 +105,7 @@ public abstract class AbstractUserManager implements UserManager {
             throw new IllegalStateException("Not initialized.");
         }
         if (useQueries) {
-            String userId = normalizeUserId(rawUserId);
+            String userId = normalizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
@@ -135,7 +137,7 @@ public abstract class AbstractUserManager implements UserManager {
         }
 
         if (useQueries) {
-            String userId = normalizeUserId(rawUserId);
+            String userId = normalizeId(rawUserId);
             StringBuilder statement = new StringBuilder();
             // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
             //statement.append("//").append(usersPath).append("//element");
@@ -170,7 +172,7 @@ public abstract class AbstractUserManager implements UserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
-        String userId = normalizeUserId(rawUserId);
+        String userId = normalizeId(rawUserId);
         log.trace("Creating node for user: {} in path: {}", userId, usersPath);
         int length = userId.length();
         int pos = 0;
@@ -202,7 +204,7 @@ public abstract class AbstractUserManager implements UserManager {
      * @return the fully encoded normalized path
      */
     private String buildUserPath(String rawUserId) {
-        String userId = normalizeUserId(rawUserId);
+        String userId = normalizeId(rawUserId);
         if (dirLevels == 0) {
             return usersPath + "/" + NodeNameCodec.encode(userId, true);
         }
@@ -220,16 +222,20 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     /**
-     * Normalize the userId: trim and convert to lowercase if needed. This
+     * Normalize the rawId: trim and convert to lowercase if needed. This
      * function does NOT encode the userId.
-     * @param rawUserId
+     * @param rawId
      * @return the trimmed and if needed converted to lowercase userId
      */
-    private String normalizeUserId(String rawUserId) {
+    private String normalizeId(String rawId) {
+        if (rawId == null) {
+            // anonymous
+            return null;
+        }
         if (isCaseSensitive()) {
-            return rawUserId.trim();
+            return rawId.trim();
         } else {
-            return rawUserId.trim().toLowerCase();
+            return rawId.trim().toLowerCase();
         }
     }
 
@@ -254,6 +260,12 @@ public abstract class AbstractUserManager implements UserManager {
             log.debug("Using dirlevels '"+dirLevels+"' for provider: " + providerId);
         }
 
+    }
+
+    public final void updateSyncDate(Node user) throws RepositoryException {
+        if (user.isNodeType(HippoNodeType.NT_EXTERNALUSER)) {
+            user.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
+        }
     }
 
     public final NodeIterator listUsers() throws RepositoryException {
@@ -304,10 +316,10 @@ public abstract class AbstractUserManager implements UserManager {
                     user.setProperty(HippoNodeType.HIPPO_LASTLOGIN, Calendar.getInstance());
                 }
             } else {
-                log.debug("Unable to set lastlogin for user, user not found: " + normalizeUserId(rawUserId));
+                log.debug("Unable to set lastlogin for user, user not found: " + normalizeId(rawUserId));
             }
         } catch (RepositoryException e) {
-            log.info("Unable to set lastlogin for user: {}", normalizeUserId(rawUserId));
+            log.info("Unable to set lastlogin for user: {}", normalizeId(rawUserId));
         }
     }
 
