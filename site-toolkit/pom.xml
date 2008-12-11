@@ -15,6 +15,7 @@
   </issueManagement>
 
   <properties>
+    <wagon.ftp.version>1.0-alpha-6</wagon.ftp.version>
     <hippoecm.version>2.01.04</hippoecm.version>
   </properties>
   
@@ -199,6 +200,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ftp</artifactId>
+        <version>${wagon.ftp.version}</version>
       </extension>
     </extensions>
     <plugins>
