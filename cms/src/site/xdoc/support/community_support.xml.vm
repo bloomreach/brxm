@@ -27,11 +27,17 @@
       Apart from <a href="../index.html">this documentation</a> and <a href="http://www.onehippo.com/en/support">commercial support</a>,
       support can be obtained from the Hippo community:
 
-      <ul>
-       <li><a href="../mail-lists.html">Hippo ECM mailing list</a>Subscribe to our
+<blockquote>
+ <table>
+  <tr>
+   <td>Mail</td>
+   <td>
+     <span class='mail-48 icon-48'/> 
+   </td>
+   <td>
+         <a href="../mail-lists.html">Hippo mailing list</a>Subscribe to our
           mailing list to get answers to your questions from
-          many other users and Hippo ECM developers.  
-
+          many other users and Hippo developers.  
          <p>
           Allow for a few hours or days to receive answers. Allthough many questions
           are answered in the mailing list, no guarantees can be given.
@@ -40,29 +46,47 @@
           Note that it is general mailing list etiquete to ask only after you checked
           that your question was not answered before, see the archive, below.
          </p>
-       </li>
-       <li>
-        <a href="../mail-lists.html">CMS mailing list archive</a>: 
+   </td>
+  </tr>
+  <tr>
+   <td>Mail archive</td>
+   <td>
+     <span class='archive-48 icon-48'/> 
+   </td>
+   <td>
+        <a href="../mail-lists.html">Mailing list archive</a>: 
             The archive of all previously asked questions and their responses. 
-       </li>
-
-       <li>
-          <a href="../issue-tracking.html">Hippo CMS issue tracker</a>:
-          Read here what issues the developers of Hippo CMS have been and are currently working on.
+   </td>
+  </tr>
+  <tr>
+   <td>Issue Tracker</td>
+   <td>
+     <span class='issue-48 icon-48'/> 
+   </td>
+   <td> 
+          <a href="../issue-tracking.html">${product_name} issue tracker</a>:
+          Read here what issues the developers of ${product_name} have been and are currently working on.
          <p>  
           Only Hippo developers and some partners can open issues in the issue tracker, but 
           anyone can contact the developers by email. They are listed as administrators of the Hippo issue
           tracker at the <a href="http://issues.hippo.nl">Hippo issue tracker homepage</a>, with their
           email adresses (see the bottom of the Login box).            
 	 </p>
-       </li>
-
-       <li>
-        <a href="http://wiki.hippo.nl/display/CMS/Hippo+CMS+Home">Hippo CMS wiki</a>:  
+   </td>
+  </tr>
+  <tr>
+   <td>Wiki</td>
+   <td>
+     <span class='wiki-48 icon-48'/> 
+   </td>
+   <td> 
+        <a href="http://${public_project_wiki}">${product_name} wiki</a>:  
            
-          Here, you will find documentation contributed by other users and by Hippo developers.
-       </li>
-      </ul>
+        Here, you will find documentation contributed by other users and by Hippo developers.
+   </td>
+  </tr>
+ </table>
+</blockquote>
 
   </section>
  </body>

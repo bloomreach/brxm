@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+   <properties>
+      <title>Hotel Database tutorial application</title>
+      <author email="duke@wakaleo.com">Duke Java</author>
+   </properties>
+   <body>
+      <release version="current" description="Current work version">    
+           <action dev="Duke Java" type="add">
+               A new cool feature.
+           </action>         
+         </release>
+      <release version="1.0.1" date="2005-11-18" description="Release fix">   
+           <action dev="Duke Java" type="add">
+               Added a cool feature.
+           </action>                      
+           <action dev="Duke Java" type="fix" issue="1254">
+               Fixed a nasty bug.
+           </action>        
+           <action dev="Duke Java" type="delete">
+               Removed a feature that nobody liked.
+           </action>        
+         </release>         
+   </body>
+</document>
