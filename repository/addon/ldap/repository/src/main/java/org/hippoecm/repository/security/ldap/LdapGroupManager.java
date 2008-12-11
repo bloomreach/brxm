@@ -16,8 +16,6 @@
 package org.hippoecm.repository.security.ldap;
 
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -43,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * GroupManager backend that fetches groups from LDAP and stores the groups inside the JCR repository
+ * 
  */
 public class LdapGroupManager extends AbstractGroupManager {
 
@@ -106,6 +106,7 @@ public class LdapGroupManager extends AbstractGroupManager {
      * Update the group info in the repository. It parses the members as they are found in
      * the ldap server with the memberNameMatcher to find the corresponding uids in the
      * repository.
+     * TODO: needs refactoring
      * @param dn the dn of the group
      * @param members the members as they are found in the ldap
      * @param memberNameMatcher match the ldap member strings with this pattern to find the uids
@@ -118,26 +119,48 @@ public class LdapGroupManager extends AbstractGroupManager {
             if (log.isTraceEnabled()) {
                 log.trace("Found " + members.size() + " members for group: " + dn);
             }
-            List<String> uids = new ArrayList<String>();
+            Set<String> uids = new HashSet<String>();
+            
+            // do lookups
+            if (memberNameMatcher.startsWith("<dn>:")) {
+                for (String member : members) {
+                    if (member != null) {
+                        // do a ldap lookup to find userId
+                        String uidAttr = memberNameMatcher.substring(5);
+                        // do lookup
+                        String uid = getAttrForDn(member, uidAttr);
+                        if (uid != null) {
+                            log.trace("Found uid '{}' for lookup '{}'", uid, member);
+                            uids.add(uid);
+                        } else {
+                            log.debug("Unable to find '{}' with attribute '{}'", member, uidAttr);
+                        }
+                    }
+                }
+            }
+            
+
+            // parse matcher
+            String prefix = "";
+            String suffix = "";
+            int pos = -1;
+            int len = -1;
+            boolean dnMatch = false;
+            if (memberNameMatcher.contains(LdapGroupSearch.UID_MATCHER)) {
+                pos = memberNameMatcher.indexOf(LdapGroupSearch.UID_MATCHER);
+                len = LdapGroupSearch.UID_MATCHER.length();
+            } else if (memberNameMatcher.contains(LdapGroupSearch.DN_MATCHER)) {
+                pos = memberNameMatcher.indexOf(LdapGroupSearch.DN_MATCHER);
+                len = LdapGroupSearch.DN_MATCHER.length();
+                dnMatch = true;
+            }
+            prefix = memberNameMatcher.substring(0, pos);
+            suffix = memberNameMatcher.substring(pos + len);
+                
+                
             // parse member dn string
             for (String member : members) {
                 if (member != null) {
-                    // parse matcher
-                    String prefix = "";
-                    String suffix = "";
-                    int pos = -1;
-                    int len = -1;
-                    boolean dnMatch = false;
-                    if (memberNameMatcher.contains(LdapGroupSearch.UID_MATCHER)) {
-                        pos = memberNameMatcher.indexOf(LdapGroupSearch.UID_MATCHER);
-                        len = LdapGroupSearch.UID_MATCHER.length();
-                    } else if (memberNameMatcher.contains(LdapGroupSearch.DN_MATCHER)) {
-                        pos = memberNameMatcher.indexOf(LdapGroupSearch.DN_MATCHER);
-                        len = LdapGroupSearch.DN_MATCHER.length();
-                        dnMatch = true;
-                    }
-                    prefix = memberNameMatcher.substring(0, pos);
-                    suffix = memberNameMatcher.substring(pos + len);
 
                     if (!"".equals(prefix)) {
                         // strip prefix
@@ -160,6 +183,7 @@ public class LdapGroupManager extends AbstractGroupManager {
                     }
 
                     if (dnMatch) {
+                        // just parse
                         // format: uid=user,ou=People,dc=onehippo,dc=org
                         int equalPos = member.indexOf('=');
                         int commaPos = member.indexOf(',');
@@ -176,11 +200,12 @@ public class LdapGroupManager extends AbstractGroupManager {
                 }
             }
             group.setProperty(LdapSecurityProvider.PROPERTY_LDAP_DN, dn);
-            group.setProperty(HippoNodeType.HIPPO_MEMBERS, uids.toArray(new String[uids.size()]));
-            group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
-            log.debug("Updated {} members of for group: {}", uids.size(), dn);
+            setMembers(group, uids);
+            updateSyncDate(group);
+            log.trace("Updated {} members of for group: {}", uids.size(), dn);
         } catch (RepositoryException e) {
             log.warn("Unable to update members of group {} : {}", dn, e.getMessage());
+            log.debug("Unable to update members of group", e);
         }
 
         if (mappings.size() == 0) {
@@ -237,8 +262,11 @@ public class LdapGroupManager extends AbstractGroupManager {
                     log.warn("Skipping search base dn: " + search.getBaseDn() + " name attr: " + search.getNameAttr());
                     continue;
                 }
-
-                String filter = "(&(" + search.getFilter() + ")(" + search.getMemberAttr() + "=" + search.getMemberNameMatcher() + "))";
+                String memberNameMatcher = search.getMemberNameMatcher(); 
+                if (memberNameMatcher.contains(":")) {
+                    memberNameMatcher = memberNameMatcher.substring(0, memberNameMatcher.indexOf(":"));
+                }
+                String filter = "(&(" + search.getFilter() + ")(" + search.getMemberAttr() + "=" + memberNameMatcher + "))";
                 filter = filter.replaceFirst(LdapGroupSearch.UID_MATCHER, userId);
                 filter = filter.replaceFirst(LdapGroupSearch.DN_MATCHER, dn);
                 if (log.isDebugEnabled()) {
@@ -460,5 +488,34 @@ public class LdapGroupManager extends AbstractGroupManager {
             }
         }
         return groupId;
+    }
+    
+    /** 
+     * Get an attribute from a dn
+     * @param dn
+     * @param attrName
+     * @return the string representation of the attribute or null when the dn or attribute is not found
+     * @throws RepositoryException
+     */
+    private String getAttrForDn(String dn, String attrName) throws RepositoryException {
+        // Try to find the user in the ldap server.
+        LdapContext ctx = null;
+        try {
+            ctx = lcf.getSystemLdapContext();
+            Attributes attrs = ctx.getAttributes(dn, new String[] { attrName });
+            if (attrs != null) {
+                Attribute attr = attrs.get(attrName);
+                if (attr != null) {
+                    return (String) attr.get();
+                }
+            }
+        } catch (NameNotFoundException e) {
+            log.debug("DN {} not found: {}", dn, e.getMessage());
+        } catch (NamingException e) {
+            log.error("Error while trying fetching dn from ldap: " + providerId, e);
+        } finally {
+            lcf.close(ctx);
+        }
+        return null;
     }
 }
