@@ -47,11 +47,19 @@
   </modules>
 
   <properties>
+    <!-- Documentation properties (variables).
+         May not contain dots as they are processed by Apache velocity.
+         Can be used in xdoc files with the extension .xml.vm
+    -->
+    <public_project_wiki>wiki.hippo.nl/display/CMS/Hippo+CMS+Home</public_project_wiki>
+    <product_name>Hippo CMS</product_name>
+    <product_abr>CMS</product_abr>
+
     <!-- Test dependencies  -->
     <easymock.version>1.1</easymock.version>
     <selenium.version>0.9.2</selenium.version>
     <atomikos.version>3.1.4</atomikos.version>
-
+   
     <!-- Project Dependencies -->
     <commons-collections.version>3.1</commons-collections.version>
     <commons-httpclient.version>3.0</commons-httpclient.version>
@@ -94,6 +102,7 @@
     <url>http://svn.hippocms.org/repos/hippo/hippo-ecm/trunk</url>
   </scm>
 
+  <!-- Where to publish the project data, especially the documentation site -->
   <distributionManagement>
     <site>
       <id>repodocs.hippocms.org</id>
@@ -109,15 +118,23 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <!-- 
+   Contineous integration managament.
+   Used in the documentation at target/site/integration.html
+  -->
   <ciManagement>
     <system>Bamboo</system>
     <url>http://bamboo-intern.hippocms.org/</url>
   </ciManagement>
 
+  <!-- Where issues (bugs reports and improvement requests) are handled. 
+       Used in the documentation at target/site/issue-tracking.html 
+  -->
   <issueManagement>
     <system>Jira</system>
     <url>http://issues.hippo.nl/browse/HREPTWO</url>
   </issueManagement>
+
   <inceptionYear>2007</inceptionYear>
 
   <developers>
@@ -622,7 +639,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
       </plugin>
-
 <!--
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -632,7 +648,6 @@
         <artifactId>jxr-maven-plugin</artifactId>
       </plugin>      
 -->
-
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -654,6 +669,11 @@
         </reportSets>
       </plugin>
 
+      <!-- Autogenerate reports with change counts of files and on developers doing the changes. 
+           target/site/changelog.html
+           target/site/dev-activity.html
+           target/site/file-activity.html
+      -->
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -663,11 +683,27 @@
           <range>31</range>
         </configuration>
       </plugin>
+
+      <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>changes-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Autogenerate todo list from @todo and TODO tags -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+      </plugin>
+
+
+      <!--  -->
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
+
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
