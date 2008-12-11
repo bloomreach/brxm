@@ -27,7 +27,7 @@
       Apart from <a href="../index.html">this documentation</a> and <a href="http://www.onehippo.com/en/support">commercial support</a>,
       support can be obtained from the Hippo community:
 
-<blockquote>
+<div class='nav'>
  <table>
   <tr>
    <td>Mail</td>
@@ -86,7 +86,7 @@
    </td>
   </tr>
  </table>
-</blockquote>
+</div>
 
   </section>
  </body>
