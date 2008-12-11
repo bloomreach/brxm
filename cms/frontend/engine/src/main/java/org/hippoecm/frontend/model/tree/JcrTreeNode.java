@@ -58,6 +58,30 @@ public class JcrTreeNode extends AbstractTreeNode {
         return null;
     }
 
+    /**
+     * Checks if the wrappen jcr node is a virtual node
+     * @return true if the node is virtual else false
+     */
+    public boolean isVirtual() {
+        if (nodeModel == null) {
+            return false;
+        }
+        HippoNode jcrNode = nodeModel.getNode();
+        if (jcrNode == null) {
+            return false;
+        }
+        try {
+            Node canonical = jcrNode.getCanonicalNode();
+            if (canonical == null) {
+                return true;
+            }
+            return !jcrNode.getCanonicalNode().isSame(jcrNode);
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
     @Override
     protected int loadChildcount() throws RepositoryException {
         int result;
