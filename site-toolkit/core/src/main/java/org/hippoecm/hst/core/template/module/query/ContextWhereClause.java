@@ -20,7 +20,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.hst.core.Timer;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -118,7 +117,7 @@ public class ContextWhereClause {
             contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         }
         contextClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
-        Timer.log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
         return contextClauses.toString();
     }
 }

@@ -35,6 +35,10 @@ public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
         String urlPrefix = (String) request.getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);
 
     	//TODO:Re-enable this once the original requestURI is available from the request.
+        
+        /*
+         * TODO take it from the hstRequestContext.getRepositoryMapping
+         */
         String originalRequest = (String) request.getAttribute(HSTHttpAttributes.ORIGINAL_REQUEST_URI_REQ_ATTRIBUTE);
         String selectedLocation= originalRequest.substring(urlPrefix.length());        
     	

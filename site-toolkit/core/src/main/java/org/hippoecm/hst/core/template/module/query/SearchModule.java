@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.mapping.URLMapping;
@@ -289,7 +288,7 @@ public class SearchModule extends ModuleBase implements Search {
         statement = statementPath + where + statementOrderBy;
         log.debug("xpath statement = " + statement);
         setStatement(statement); 
-        Timer.log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("Preparing search statement took " + (System.currentTimeMillis() - start) + " ms.");
     }
 
     /**
@@ -329,7 +328,7 @@ public class SearchModule extends ModuleBase implements Search {
             long start = System.currentTimeMillis();
             QueryResult queryResult = q.execute();
             //  important debug info in case of performance bottlenecks:
-            Timer.log.debug("query took " + (System.currentTimeMillis() - start) + " ms for q = " + q.getStatement());
+            log.debug("query took " + (System.currentTimeMillis() - start) + " ms for q = " + q.getStatement());
 
             start = System.currentTimeMillis();
             RowIterator rows = queryResult.getRows();
@@ -393,7 +392,7 @@ public class SearchModule extends ModuleBase implements Search {
                     Value v = queryMngr.createQuery(
                             "/jcr:root[rep:spellcheck('" + querytext + "')]/(rep:spellcheck())", Query.XPATH).execute()
                             .getRows().nextRow().getValue("rep:spellcheck()");
-                    Timer.log.debug("Getting 'didyoumean' took " + (System.currentTimeMillis() - didyoumeanstart) + " ms to complete.");
+                    log.debug("Getting 'didyoumean' took " + (System.currentTimeMillis() - didyoumeanstart) + " ms to complete.");
                     if (v != null) {
                         searchResult.setDidyoumean(v.getString());
                     }
@@ -403,7 +402,7 @@ public class SearchModule extends ModuleBase implements Search {
 
             }
             // important debug info in case of performance bottlenecks:
-            Timer.log.debug("fetching " + hits.size() + " searchresults took " + (System.currentTimeMillis() - start)
+            log.debug("fetching " + hits.size() + " searchresults took " + (System.currentTimeMillis() - start)
                     + " ms to complete.");
             
             // TODO add similarity search

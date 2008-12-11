@@ -99,10 +99,10 @@ public class JcrSessionPool {
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             jcrSession = repository.login(simpleCredentials);
         } catch (LoginException e) {
-            throw new JCRConnectionException("Cannot login with credentials");
+            throw new JcrConnectionException("Cannot login with credentials");
         } catch (RepositoryException e) {
             e.printStackTrace();
-            throw new JCRConnectionException("Failed to initialize repository");
+            throw new JcrConnectionException("Failed to initialize repository");
         }
         session = new ReadOnlyPooledSession(jcrSession, this);
         synchronized (this.activeSessions) {
@@ -118,10 +118,10 @@ public class JcrSessionPool {
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             jcrSession = repository.login(simpleCredentials);
         } catch (LoginException e) {
-            throw new JCRConnectionException("Cannot login with credentials");
+            throw new JcrConnectionException("Cannot login with credentials");
         } catch (RepositoryException e) {
             e.printStackTrace();
-            throw new JCRConnectionException("Failed to initialize repository");
+            throw new JcrConnectionException("Failed to initialize repository");
         }
         return jcrSession;
     }

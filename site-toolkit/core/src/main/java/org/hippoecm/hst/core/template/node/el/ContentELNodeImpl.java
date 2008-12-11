@@ -32,6 +32,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.content.SourceRewriter;
 import org.hippoecm.hst.core.template.node.content.SourceRewriterImpl;
@@ -45,6 +46,8 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     private final Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
 
     private final SourceRewriter sourceRewriter;
+    
+    private boolean rewriteSources = true;
 
     /*
      * If you want a custom source rewriter, use this constructor
@@ -71,9 +74,13 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         this.sourceRewriter = new SourceRewriterImpl(urlMapping);
     }
 
+    public ELNode newInstance(Node jcrNode, SourceRewriter sourceRewriter){
+        return new ContentELNodeImpl(jcrNode, sourceRewriter);
+    }
+    
     @Override
     public ELNode getParent(){
-		return new ContentELNodeImpl(super.getParent().getJcrNode(),sourceRewriter);
+		return newInstance(super.getParent().getJcrNode(),sourceRewriter);
     }
     
     
@@ -87,17 +94,21 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             @Override
             public Object get(Object nodeName) {
             	String name = (String) nodeName;
+            	if(name == null || "".equals(name)) {
+            	    log.warn("Cannot get relative node '\"\"' Return null ");
+            	    return null;
+            	}
             	 try {
                      if (!jcrNode.hasNode(name)) {
                          log.debug("Node '{}' not found. Return empty string", name);
                          return null;
                      } else{
-                    	 return new ContentELNodeImpl(jcrNode.getNode(name),sourceRewriter);
+                    	 return newInstance(jcrNode.getNode(name),sourceRewriter);
                      }
                  } catch (PathNotFoundException e) {
                      log.debug("PathNotFoundException: {}", e.getMessage());
                  } catch (RepositoryException e) {
-                     log.error("RepositoryException: {}", e.getMessage());
+                     log.warn("RepositoryException: {}", e.getMessage());
                      log.debug("RepositoryException:", e);
                  }
                  return null;
@@ -121,7 +132,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                      for(NodeIterator it = jcrNode.getNodes(name); it.hasNext();) {
                          Node n = it.nextNode();
                          if(n!=null) {
-                             wrappedNodes.add(new ContentELNodeImpl(n, sourceRewriter));
+                             wrappedNodes.add(newInstance(n, sourceRewriter));
                          }
                      }
                      return wrappedNodes;
@@ -139,7 +150,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                     for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
                         Node n = it.nextNode();
                         if(n!=null) {
-                            s.add(new ContentELNodeImpl(n, sourceRewriter));
+                            s.add(newInstance(n, sourceRewriter));
                         }
                     }
                 } catch (RepositoryException e) {
@@ -166,7 +177,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                      for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
                          Node n = it.nextNode();
                          if(n!=null && n.isNodeType(nodetype)) {
-                             wrappedNodes.add(new ContentELNodeImpl(n, sourceRewriter));
+                             wrappedNodes.add(newInstance(n, sourceRewriter));
                          }
                      }
                      return wrappedNodes;
@@ -218,7 +229,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         };
     }
 
-    private Object value2Object(Node node, String prop, Value val) {
+    public Object value2Object(Node node, String prop, Value val) {
         try {
             switch (val.getType()) {
             case PropertyType.BINARY:
@@ -248,7 +259,12 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                     return val.getString();
                 } else {
                     log.debug("parsing string property for source rewriting for property: {}", prop);
-                    return sourceRewriter.replace(node, val.getString());
+                    // only rewrite sources if isRewriteSources(). Default true
+                    if(isRewriteSources()) {
+                        return sourceRewriter.replace(node, val.getString());
+                    } else {
+                        return val.getString();
+                    }
                 }
 
             case PropertyType.NAME:
@@ -352,7 +368,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                         String uuid = jcrNode.getProperty(propertyName).getString();
                         try {
                             Node deref = jcrNode.getSession().getNodeByUUID(uuid);
-                            return new ContentELNodeImpl(deref, sourceRewriter);
+                            return newInstance(deref, sourceRewriter);
                         } catch (ItemNotFoundException e) {
                             log.warn("Node with uuid '"+uuid+"' cannot be found. Cannot deref property");
                             return null;
@@ -381,7 +397,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
        	  log.debug("facetedNodeName: " + facetedNodeName);
        	  	if(facetedNodeName!=null && !facetedNodeName.equals("") && facetedNode.hasNode(facetedNodeName)){           			  
        	  		Node childFacetNode = facetedNode.getNode(facetedNode.getName());
-       	  		return new ContentELNodeImpl(childFacetNode,sourceRewriter);
+       	  		return newInstance(childFacetNode,sourceRewriter);
        	  	}
        	  	else {
        	  		return null;
@@ -410,15 +426,17 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             return null;
         }
         URLMapping urlMapping = sourceRewriter.getUrlMapping();
-        String contextPrefixPath = urlMapping.getContextPrefix();
-        if(contextPrefixPath == null || "".equals(contextPrefixPath)) {
-            log.warn("no contextprefix path. Cannot get relpath");
+        
+        String repositoryPath   = urlMapping.getRepositoryMapping().getPath();
+        
+        if(repositoryPath == null || "".equals(repositoryPath)) {
+            log.warn("no prefix path. Cannot get relpath");
             return null;
         }
         try {
             String path = jcrNode.getPath();
-            if(path.startsWith(contextPrefixPath)) {
-                String relPath = path.substring(contextPrefixPath.length());
+            if(path.startsWith(repositoryPath)) {
+                String relPath = path.substring(repositoryPath.length());
                 if(relPath.startsWith("/")) {
                     relPath = relPath.substring(1);
                 }
@@ -436,4 +454,9 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     public SourceRewriter getSourceRewriter() {
         return this.sourceRewriter;
     }
+
+    public boolean isRewriteSources() {
+        return rewriteSources;
+    }
+
 }

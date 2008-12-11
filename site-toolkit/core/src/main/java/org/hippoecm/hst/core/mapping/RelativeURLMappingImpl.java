@@ -19,9 +19,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,37 +30,37 @@ public class RelativeURLMappingImpl implements URLMapping{
     
     private static final Logger log = LoggerFactory.getLogger(URLMapping.class);
     
-    private String currentRequestUri;
+    private String requestUriToWrap;
     private URLMapping delegatee;
     
     
-    public RelativeURLMappingImpl(String currentRequestUri, URLMapping mapping){
+    public RelativeURLMappingImpl(String requestUriToWrap, URLMapping mapping){
         this.delegatee = mapping;
-        this.currentRequestUri = currentRequestUri;
+        this.requestUriToWrap = requestUriToWrap;
     }
     
     public List<String> getCanonicalPathsConfiguration() {
         return delegatee.getCanonicalPathsConfiguration();
     }
 
-    public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase) {
-        return delegatee.getMatchingPageNode(request, contextBase);
+    public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext) {
+        return delegatee.getMatchingPageNode(requestURI, hstRequestContext);
     }
 
     public String rewriteLocation(Node node) {
         String absoluteLocation = delegatee.rewriteLocation(node);
-        return computeRelativeUrl(absoluteLocation, currentRequestUri);
+        return computeRelativeUrl(absoluteLocation, requestUriToWrap);
     }
 
 
     public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
         String absoluteLocation = delegatee.rewriteLocation(sitemapNodeName, jcrSession);
-        return computeRelativeUrl(absoluteLocation, currentRequestUri);
+        return computeRelativeUrl(absoluteLocation, requestUriToWrap);
     }
     
     public String getLocation(String path) {
         path = delegatee.getLocation(path);
-        return computeRelativeUrl(path, currentRequestUri);
+        return computeRelativeUrl(path, requestUriToWrap);
     }
   
     public static String computeRelativeUrl(String absoluteLocation, String currentRequestUri) {
@@ -148,12 +148,9 @@ public class RelativeURLMappingImpl implements URLMapping{
         return relativeUrl.toString();
     }
 
-    public String getContextPath() {
-        return delegatee.getContextPath();
+    public RepositoryMapping getRepositoryMapping() {
+        return delegatee.getRepositoryMapping();
     }
 
-    public String getContextPrefix() {
-        return delegatee.getContextPrefix();
-    }
 
 }

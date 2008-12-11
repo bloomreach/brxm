@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core;
+package org.hippoecm.hst.core.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.caching.Cache;
-import org.hippoecm.hst.caching.CacheManager;
+import org.hippoecm.hst.caching.CacheManagerImpl;
 
 public class StatusServlet extends HttpServlet {
    
@@ -115,13 +115,13 @@ public class StatusServlet extends HttpServlet {
             boolean enableAll = Boolean.parseBoolean(req.getParameter("enableall"));
             
             if(disableAll) {
-                CacheManager.setNewCacheIsEnabled(false);
+                CacheManagerImpl.setNewCacheIsEnabled(false);
             }
             if(enableAll) {
-                CacheManager.setNewCacheIsEnabled(true);
+                CacheManagerImpl.setNewCacheIsEnabled(true);
             }
             
-            for(Iterator<Entry<String, Cache>> it = CacheManager.getCaches().entrySet().iterator(); it.hasNext(); ){
+            for(Iterator<Entry<String, Cache>> it = CacheManagerImpl.getCaches().entrySet().iterator(); it.hasNext(); ){
                 i = (++i % 2);
                 Entry<String, Cache> entry = it.next();
                 tdStart(writer, "Cache name", getColor(i,entry.getValue().isActive())); 

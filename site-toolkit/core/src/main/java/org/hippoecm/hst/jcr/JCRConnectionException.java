@@ -19,14 +19,14 @@ package org.hippoecm.hst.jcr;
  * Runtime exception thrown when the JJcrSessionFactory cannot get a session from the 
  * repository.   
  */
-public class JCRConnectionException extends RuntimeException {
+public class JcrConnectionException extends RuntimeException {
 
     private static final long serialVersionUID = 2013464181234807485L;
 
     /**
      * Constructor.
      */
-    public JCRConnectionException(String message) {
+    public JcrConnectionException(String message) {
         super(message);
     }
 }

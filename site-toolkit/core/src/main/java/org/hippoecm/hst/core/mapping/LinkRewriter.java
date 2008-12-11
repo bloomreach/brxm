@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.mapping;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +37,12 @@ public class LinkRewriter {
     private String contextPrefix;
    
 
-    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, String contextPrefix) {
+    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, RepositoryMapping repositoryMapping) {
         this.linkRewrite = linkRewrite;
         this.nodeTypeName = nodeTypeName;
         this.virtualEntryName = virtualEntryName;
         this.physicalEntryPath = physicalEntryPath;
-        this.contextPrefix = contextPrefix;
+        this.contextPrefix = repositoryMapping.getPath();
         this.isPrefix = isPrefix;
         if (!path2.startsWith("/")) {
             log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");

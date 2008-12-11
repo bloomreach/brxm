@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +29,7 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.hst.caching.Cache;
-import org.hippoecm.hst.caching.CacheManager;
+import org.hippoecm.hst.caching.CacheManagerImpl;
 import org.hippoecm.hst.caching.EventCache;
 import org.hippoecm.hst.caching.NamedEvent;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ public class EventListenerImpl implements EventListener, Serializable{
         }
         
         // get the list of Event Caches first (to minimize the synchronized time):
-        Map<String, Cache> caches = CacheManager.getCaches();
+        Map<String, Cache> caches = CacheManagerImpl.getCaches();
         List<EventCache> eventCaches = new ArrayList<EventCache>();
         synchronized(caches) {
             for (Cache cache : caches.values()) {

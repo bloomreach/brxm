@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,13 +33,11 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.map.LRUMap;
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.Timer;
-import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.filters.HstBaseFilter;
+import org.hippoecm.hst.core.filters.base.HstBaseFilter;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -52,27 +51,25 @@ public class URLMappingImpl implements URLMapping {
     private final RewriteLRUCache rewriteLRUCache;
     private final List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
     private final Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
-    private final String contextPrefix;
-    private final String contextPath;
+    private final RepositoryMapping repositoryMapping;
     
     // a list containing all canonical paths which are used in the url mapping. These paths are used to create named events
     // on which the cache is invalidated
     private final List<String> canonicalPathConfiguration;
     
     private String siteMapRootNodePath;
-    private final int uriLevels;
 
-    public URLMappingImpl(Session session, String contextPath, String contextPrefix, String confPath, int uriLevels) {
-        this.contextPrefix = contextPrefix;
-        this.contextPath = contextPath;
-        this.uriLevels = uriLevels;
+    public URLMappingImpl(HstRequestContext hstRequestContext) {
+        this.repositoryMapping = hstRequestContext.getRepositoryMapping();
         this.rewriteLRUCache = new RewriteLRUCache(500);
         this.canonicalPathConfiguration = new ArrayList<String>();
+        
         try {
             long start = System.currentTimeMillis();
             String virtualEntryName = null;
             String physicalEntryPath = null;
-            HippoNode hstConf = (HippoNode) session.getItem(confPath);
+            Session session = hstRequestContext.getJcrSession();
+            HippoNode hstConf = (HippoNode) session.getItem(repositoryMapping.getHstConfigPath());
             Node canonical = hstConf.getCanonicalNode();
             if(canonical != null ) {
                 this.canonicalPathConfiguration.add(canonical.getPath());
@@ -165,8 +162,7 @@ public class URLMappingImpl implements URLMapping {
                             Value[] nodepaths = subNode.getProperty("hst:nodepath").getValues();
                             for (int i = 0; i < nodepaths.length; i++) {
                                 LinkRewriter linkRewriter = new LinkRewriter(linkRewrite, isPrefix , nodetypes[i]
-                                        .getString(), nodepaths[i].getString(), virtualEntryName, physicalEntryPath,
-                                        contextPrefix);
+                                        .getString(), nodepaths[i].getString(), virtualEntryName, physicalEntryPath, repositoryMapping);
                                 linkRewriters.add(linkRewriter);
                             }
                         } else {
@@ -187,7 +183,7 @@ public class URLMappingImpl implements URLMapping {
                     		"(hst:prefixlinkrewrite|hst:linkrewriteprefix) OR hst:linkrewrite");
                 }
             }
-            Timer.log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
+            log.debug("URLMappingImpl constructor took " + (System.currentTimeMillis() - start) + " ms.");
         } catch (PathNotFoundException e) {
             log.warn("URLMapping cannot be build: PathNotFoundException " + e.getMessage());
         } catch (RepositoryException e) {
@@ -196,10 +192,10 @@ public class URLMappingImpl implements URLMapping {
 
     }
 
-    public PageNode getMatchingPageNode(HttpServletRequest request, ContextBase contextBase) {
-        Session session =  (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
+    // TODO this method shouldn't be part of the url mapping
+    public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext) {
+        Session session =  hstRequestContext.getJcrSession();
         Iterator<String> patternIter = siteMapNodes.keySet().iterator();
-        String requestURI = request.getRequestURI();
         PageNode pageNode = null;
         String matchNodePath = null;
         while (patternIter.hasNext() && matchNodePath == null) {
@@ -222,7 +218,7 @@ public class URLMappingImpl implements URLMapping {
                 } 
                 parameterMatcher.reset();
                 try {
-                    pageNode = new PageNode(contextBase, matchNode);
+                    pageNode = new PageNode(hstRequestContext.getHstConfigurationContextBase(), matchNode);
                 } catch (RepositoryException e) {
                     log.error("RepositoryException " + e.getMessage());
                 }
@@ -301,7 +297,7 @@ public class URLMappingImpl implements URLMapping {
                     log.debug("found a match but already had a better match");
                 }
             }
-            Timer.log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
+            log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
             if (bestRewriter == null) {
                 log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
             } else {
@@ -315,15 +311,15 @@ public class URLMappingImpl implements URLMapping {
         	log.debug("PathNotFoundException during link rewriting {}. Return node path.", e.getMessage());
         } catch (AccessDeniedException e) {
         	log.debug("AccessDeniedException during link rewriting {} Return node path.", e.getMessage());
-		} catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             log.error("RepositoryException during link rewriting {}. Return node path.", e.getMessage());
         }
-        Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
 
         if (rewrite == null) {
-            rewrite = contextPrefix + path;
+            rewrite = repositoryMapping.getPath() + path;
         }
-        rewrite = UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        rewrite = UrlUtilities.encodeUrl(repositoryMapping.getPath(), rewrite);
         if (origPath != null) {
             this.rewriteLRUCache.put(origPath, rewrite);
         }
@@ -331,11 +327,12 @@ public class URLMappingImpl implements URLMapping {
     }
 
     public String getLocation(String path){
-        if(getContextPath()!= null && !getContextPath().equals("")) {
-            if(getContextPath().endsWith("/") || path.startsWith("/")) {
-                path = getContextPath()+path;
+        String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
+        if(contextPath!= null && !contextPath.equals("")) {
+            if(contextPath.endsWith("/") || path.startsWith("/")) {
+                path = contextPath+path;
             } else {
-                path = getContextPath()+"/"+path;
+                path = contextPath+"/"+path;
             } 
         }
         return path;
@@ -362,7 +359,7 @@ public class URLMappingImpl implements URLMapping {
                 sitemapNodeName = sitemapNodeName.substring(1);
                 if (sitemapNodeName.length() == 0) {
                     log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
-                    rewrite = contextPrefix;
+                    rewrite = repositoryMapping.getPath();
                 }
             }
             try {
@@ -395,7 +392,7 @@ public class URLMappingImpl implements URLMapping {
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
-                        rewrite = contextPrefix + newLink;
+                        rewrite = repositoryMapping.getPath() + newLink;
                     }
                 } else {
                     log.warn("'{}' does not exist in sitemap node '{}'. Prefixing path with context, but no rewrite.",
@@ -409,23 +406,23 @@ public class URLMappingImpl implements URLMapping {
                 log.debug("RepositoryException:", e);
             }
         }
-        Timer.log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         if (rewrite == null) {
-            rewrite = contextPrefix + "/" + sitemapNodeName;
+            rewrite = repositoryMapping.getPath() + "/" + sitemapNodeName;
         }
-        rewrite = UrlUtilities.encodeUrl(contextPath, uriLevels, rewrite);
+        rewrite = UrlUtilities.encodeUrl(repositoryMapping.getPath(), rewrite);
         this.rewriteLRUCache.put(sitemapNodeName, rewrite);
         return rewrite;
     }
 
     private class RewriteLRUCache {
 
-        private final LRUMap cache;
+        private final Map cache;
         private int miss;
         private int hit;
 
         private RewriteLRUCache(int size) {
-            this.cache = new LRUMap(size);
+            this.cache =  Collections.synchronizedMap(new LRUMap(size));
         }
 
         private String get(String key) {
@@ -447,12 +444,8 @@ public class URLMappingImpl implements URLMapping {
         return this.canonicalPathConfiguration;
     }
 
-    public String getContextPath() {
-        return this.contextPath;
-    }
-    
-    public String getContextPrefix() {
-        return this.contextPrefix;
+    public RepositoryMapping getRepositoryMapping() {
+        return repositoryMapping;
     }
 
 }

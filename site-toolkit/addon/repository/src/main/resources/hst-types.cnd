@@ -71,6 +71,15 @@
 + hst:navigation (hst:navigation) = hst:navigation  
 + hst:layouts (hst:layouts) = hst:layouts 
 
+[hst:redirectmapping]
+- hst:redirect (string) mandatory
+
+[hst:domainmapping]
++ * (hst:domainmapping)
++ * (hst:redirectmapping)
+- hst:repositorypath (string) multiple 
+
+[hst:primarydomain] mixin
 
 [hst:reaction] mixin
 - hst:reactionto (String) mandatory

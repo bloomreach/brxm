@@ -21,6 +21,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.caching.validity.ExpiresValidity;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 
 public class CacheTag extends BodyTagSupport {
 
@@ -37,7 +38,13 @@ public class CacheTag extends BodyTagSupport {
     @Override
     public int doStartTag() throws JspException {
         key = new CacheKey(nameExpr, CacheTag.class);
-        this.cache = CacheManager.getCache(pageContext);
+        HstRequestContext hstRequestContext = (HstRequestContext)pageContext.getAttribute(HstRequestContext.class.getName());
+        if(hstRequestContext == null) {
+           // log.warn("hstRequestContext is null");
+            return EVAL_BODY_BUFFERED;
+        }
+        
+        this.cache = CacheManagerImpl.getCache(hstRequestContext.getJcrSession().getUserID());
         this.cachedResponse = this.cache.get(this.key);
         if (this.cachedResponse != null) {
             return SKIP_BODY;

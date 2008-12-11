@@ -13,14 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.hippoecm.hst.core.filters.base;
 
 /**
- * Interface only for logging time spent in methods / classes
- * 
+ * Marker interface for requests that can be ignored by the hst filters and servlets
  */
-public interface Timer {
-    public static final Logger log = LoggerFactory.getLogger(Timer.class);
+
+public interface IgnorableRequest {
+
 }

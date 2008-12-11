@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.template.node.content;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.Timer;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +145,7 @@ public class SourceRewriterImpl implements SourceRewriter {
             globalOffset = offset;
         }
         
-        Timer.log.debug("Parsing content and linkrewriting took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("Parsing content and linkrewriting took " + (System.currentTimeMillis() - start) + " ms.");
         
         if (sb == null) {
             return content;

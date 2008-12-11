@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -27,8 +26,6 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.filters.HstBaseFilter;
-import org.hippoecm.hst.core.filters.URLMappingTemplateContextFilter;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
@@ -39,8 +36,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Expose a node with EL stuff to the pageContext. For now only the current PageNode!
  * 
- * @author mmeijnhard
- *
  */
 public class ExposeNodeTag extends  SimpleTagSupport {
 	private static final Logger log = LoggerFactory.getLogger(ExposeNodeTag.class);

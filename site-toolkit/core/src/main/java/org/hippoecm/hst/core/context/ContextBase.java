@@ -19,40 +19,35 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.exception.ContextBaseException;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.slf4j.LoggerFactory;
 
 public class ContextBase {
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(ContextBase.class);
-	private static final String DEFAULT_CONTEXT_NAME = "content";
-	private static final String DEFAULT_CONTENT_LOCATION = "/content";
 	
-	private final String contextName;
 	private Node contextRootNode;
 	private final Session jcrSession;
 	
-	public ContextBase(String contextName, String repositoryPath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-		this(contextName, repositoryPath, request, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
-	}
-	
-	public ContextBase (String contextName, String repositoryPath, HttpServletRequest request, Session session) throws PathNotFoundException, RepositoryException {
-		this.contextName = contextName;	
-		this.jcrSession = session;
-    		
-		String relativePath = stripFirstSlash(repositoryPath);
-		
-		log.info("constructor() with repositoryPath= " + relativePath);
-		if (relativePath.trim().length() == 0) {
-			this.contextRootNode = session.getRootNode();
-		} else {
-			this.contextRootNode = session.getRootNode().getNode(relativePath);
-		}
-	}
-
-	public String getContextName() {
-		return contextName;
+	public ContextBase(String repositoryPath, Session jcrSession) throws ContextBaseException{
+        String relativePath = stripFirstSlash(repositoryPath);
+        this.jcrSession = jcrSession;
+        if(relativePath == null || "".equals(relativePath)) {
+            log.warn("Cannot instantiate a ContextBase because repositoryPath is empty");
+            throw new ContextBaseException("Cannot instantiate a ContextBase because repositoryPath is empty");
+        } else {
+            try {
+                this.contextRootNode = jcrSession.getRootNode().getNode(relativePath);
+            } catch (PathNotFoundException e) {
+                log.warn("PathNotFoundException while instantiating ContextBase for repository path '{}'", repositoryPath);
+                throw new ContextBaseException("PathNotFoundException while instantiating ContextBase for repository path '"+repositoryPath+"'");
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException while instantiating ContextBase for repository path '{}'", repositoryPath);
+                throw new ContextBaseException("RepositoryException while instantiating ContextBase for repository path '"+repositoryPath+"'");
+            }
+        }
+        
 	}
 
 	public Node getContextRootNode() {
@@ -63,32 +58,16 @@ public class ContextBase {
 		return jcrSession;
 	}
 	 
-	public ContextBase getRelativeContextBase(String name, String relativePath, HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-	    String contextRootPath = stripFirstSlash(contextRootNode.getPath());
-	    String relativeContextRootPath = contextRootPath + (contextRootPath.endsWith("/") ? "" : "/") + stripFirstSlash(relativePath);
-	    log.info("create relativeContextBase with path=" + relativeContextRootPath);
-	    if (relativeContextRootPath.trim().length() == 0) {
-	    	return new ContextBase(name, relativeContextRootPath, request);
-	    } else {
-		    return new ContextBase(name, contextRootPath, request);
-	    }  
-	}
-	
 	public Node getRelativeNode(String path){
 	    String strPath = "";
 	    String relativePath = stripFirstSlash(path);
 	    
-	    if (relativePath == null) {
+	    if (relativePath == null || relativePath.length() == 0) {
 	        log.debug("Relative path is null, return null");
 	        return null;
 	    }
-	    if (relativePath.length() == 0) {
-            log.debug("Relative path is empty, return null");
-            return null;
-	    }
 		try {
-		    strPath = contextRootNode.getPath();
-		    log.debug("Get RelativeNode with rootNode '{}' path={}", strPath, relativePath);
+		    log.debug("Get RelativeNode with rootNode '{}' path={}", contextRootNode.getPath(), relativePath);
             return contextRootNode.getNode(relativePath);
         } catch (PathNotFoundException e) {
             log.debug("Node '{}' cannot be found in the repository below '{}'. Returning null", relativePath, strPath);
@@ -97,10 +76,7 @@ public class ContextBase {
         }
         return null;
 	}
-	
-	public static ContextBase getDefaultContextBase(HttpServletRequest request) throws PathNotFoundException, RepositoryException {
-		return new ContextBase(DEFAULT_CONTEXT_NAME, DEFAULT_CONTENT_LOCATION, request);
-	}
+
 	
 	public static String stripFirstSlash(String s) {
 	    if (s == null || "".equals(s)) {
@@ -113,7 +89,6 @@ public class ContextBase {
     public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("(").append(this.getClass().getName()).append(":[");
-		sb.append("contextName=").append(contextName);
 		try {
 			sb.append(",contextRootNode=").append(contextRootNode.getPath());
 		} catch (RepositoryException e) {

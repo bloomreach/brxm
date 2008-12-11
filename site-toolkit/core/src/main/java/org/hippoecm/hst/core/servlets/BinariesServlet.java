@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core;
+package org.hippoecm.hst.core.servlets;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +27,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -57,7 +58,6 @@ public class BinariesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
         String relativeURL = req.getRequestURI();
-
         // simply remove the contextpath, servletpath and end /
         String path = relativeURL;
 

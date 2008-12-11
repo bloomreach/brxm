@@ -29,7 +29,7 @@ import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationM
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.filters.HstBaseFilter;
+import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNodeType;

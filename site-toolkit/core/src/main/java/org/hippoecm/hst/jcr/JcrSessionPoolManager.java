@@ -42,7 +42,6 @@ public class JcrSessionPoolManager {
     public ReadOnlyPooledSession getSession(HttpServletRequest request){
         
         // TODO improve speed of getting a session from the pool. 
-        
         ServletContext sc = request.getSession().getServletContext();
         String repositoryLocation = HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_ADRESS);
         String username = HSTConfiguration.get(sc, HSTConfiguration.KEY_REPOSITORY_USERNAME);

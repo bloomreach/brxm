@@ -20,32 +20,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
-
-import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheManager {
+public class CacheManagerImpl {
     
-    private static final Logger log = LoggerFactory.getLogger(CacheManager.class);
+    private static final Logger log = LoggerFactory.getLogger(CacheManagerImpl.class);
     private static final Map<String,Cache> caches = new HashMap<String, Cache>();
     private static boolean newCacheIsEnabled = true;
     
-    public static Cache getCache(PageContext ctx) {
-       return getCache(ctx, null);
-    }
-    public static Cache getCache(PageContext ctx, String clazz) {
-        HttpServletRequest request = (HttpServletRequest)ctx.getRequest();
-        return getCache(request, clazz);
-    }
-    
-    
-    public static Cache getCache(HttpServletRequest request) {
-        return getCache(request, null);
-    }
 
     public static Map<String,Cache> getCaches(){
         return caches;
@@ -55,12 +38,14 @@ public class CacheManager {
         return newCacheIsEnabled;
     }
     public static void setNewCacheIsEnabled(boolean newCacheIsEnabled) {
-        CacheManager.newCacheIsEnabled = newCacheIsEnabled;
+        CacheManagerImpl.newCacheIsEnabled = newCacheIsEnabled;
     }
     
-    public static Cache getCache(HttpServletRequest request, String clazz) {
-        Session session = (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR);
-        String cacheName = session.getUserID();
+    public static Cache getCache(String cacheName){
+        return getCache(cacheName,null);
+    }
+    
+    public static Cache getCache(String cacheName, String clazz) {
         if(cacheName == null) {
             cacheName = "anonymous";
         }

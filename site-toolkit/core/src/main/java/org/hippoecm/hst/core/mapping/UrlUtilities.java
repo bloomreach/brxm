@@ -46,7 +46,7 @@ public class UrlUtilities {
      * @param rewrite
      * @return the encoded url
      */
-    public static String encodeUrl(String contextPath, int uriLevels, String rewrite) {
+    public static String encodeUrl(String contextPath,String rewrite) {
         int start = 0;
         if (rewrite.startsWith("/")) {
             // skip first part when starting with '/'
@@ -68,7 +68,7 @@ public class UrlUtilities {
              * When the link is to a hippo document, the name coincides with the handle. 
              * If they do not contain a "." already, replace them by one part, and extend it by .html for nice urls
              */
-            if (last >= uriLevels && uriParts[last].equals(uriParts[last - 1]) && !uriParts[last].contains(".")) {
+            if (uriParts[last].equals(uriParts[last - 1]) && !uriParts[last].contains(".")) {
                 encodedUrl.append(HTML_SUFFIX);
             } else {
                 // for encoding a url, you have to decode the jcr node paths
