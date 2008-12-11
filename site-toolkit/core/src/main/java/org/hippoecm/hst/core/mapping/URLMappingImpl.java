@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -308,8 +309,14 @@ public class URLMappingImpl implements URLMapping {
                 rewrite = url;
             }
 
-        } catch (RepositoryException e) {
-            log.error("RepositoryException during link rewriting " + e.getMessage() + " Return node path.");
+        } catch (ItemNotFoundException e) {
+        	log.debug("ItemNotFoundException during link rewriting {} Return node path.", e.getMessage());
+        } catch (PathNotFoundException e) {
+        	log.debug("PathNotFoundException during link rewriting {}. Return node path.", e.getMessage());
+        } catch (AccessDeniedException e) {
+        	log.debug("AccessDeniedException during link rewriting {} Return node path.", e.getMessage());
+		} catch (RepositoryException e) {
+            log.error("RepositoryException during link rewriting {}. Return node path.", e.getMessage());
         }
         Timer.log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
 
