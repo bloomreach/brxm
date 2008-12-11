@@ -12,7 +12,7 @@ public class DomainMappingRequestWrapper  extends HttpServletRequestWrapper{
     private static final Logger log = LoggerFactory.getLogger(DomainMappingRequestWrapper.class);
     
     private RepositoryMapping repositoryMapping;
-    private String transformerUri;
+    private String transformedUri;
     
     public DomainMappingRequestWrapper(HttpServletRequest request, RepositoryMapping repositoryMapping) {
         super(request);
@@ -22,9 +22,9 @@ public class DomainMappingRequestWrapper  extends HttpServletRequestWrapper{
 
     @Override
     public String getRequestURI() {
-        if(transformerUri != null) {
+        if(transformedUri != null) {
             // within one requests, only go ones through the transformer below
-            return transformerUri;
+            return transformedUri;
         }
         if(repositoryMapping == null ) {
             log.warn("No repository mapping found for request uri '{}'. Try to process request without mapping", super.getRequestURI());
@@ -43,8 +43,8 @@ public class DomainMappingRequestWrapper  extends HttpServletRequestWrapper{
              */  
             uri = UrlUtilities.decodeUrl(uri);
             log.debug("wrapped request uri to internal uri '{}' --> '{}'", super.getRequestURI(), uri);
-            transformerUri = uri;
-            return transformerUri;   
+            transformedUri = uri;
+            return transformedUri;   
         }
         
     }

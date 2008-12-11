@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.exception.ContextBaseException;
-import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.slf4j.LoggerFactory;
 
 public class ContextBase {
