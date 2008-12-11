@@ -17,11 +17,13 @@ package org.hippoecm.frontend.widgets;
 
 import javax.swing.tree.TreeNode;
 
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +31,19 @@ public abstract class JcrTree extends Tree {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
+
+    /** Reference to the icon of open tree folder */
+    private static final ResourceReference VIRTUAL_FOLDER_OPEN = new ResourceReference(JcrTree.class,
+            "icons/folder-open-virtual.gif");
+
+    private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new ResourceReference(JcrTree.class,
+            "icons/folder-closed-virtual.gif");
+    
+    /** Reference to the icon of tree item (not a folder) */
+    private static final ResourceReference VIRTUAL_ITEM = new ResourceReference(JcrTree.class,
+            "icons/item-virtual.gif");
+
+
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 
     private JcrTreeModel treeModel;
@@ -51,11 +66,62 @@ public abstract class JcrTree extends Tree {
         treeModel.detach();
         super.onDetach();
     }
-
+    
     @Override
     protected String renderNode(TreeNode treeNode) {
         AbstractTreeNode treeNodeModel = (AbstractTreeNode) treeNode;
         return treeNodeModel.renderNode();
     }
+
+    /**
+     * Returns the resource reference for icon of specified tree node.
+     * 
+     * @param node
+     *            The node
+     * @return The package resource reference
+     */
+    protected ResourceReference getNodeIcon(TreeNode node) {
+        if (node instanceof JcrTreeNode && ((JcrTreeNode) node).isVirtual()) {
+            if (node.isLeaf()) {
+                return getVirtualItem();
+            } else {
+                if (isNodeExpanded(node)) {
+                    return getVirtualFolderOpen();
+                } else {
+                    return getVirtualFolderClosed();
+                }
+            }
+        } else {
+            return super.getNodeIcon(node);
+        }
+    }
+
+    /**
+     * Returns the resource reference of default closed tree folder.
+     * 
+     * @return The package resource reference
+     */
+    protected ResourceReference getVirtualFolderClosed() {
+        return VIRTUAL_FOLDER_CLOSED;
+    }
+
+    /**
+     * Returns the resource reference of default open tree folder.
+     * 
+     * @return The package resource reference
+     */
+    protected ResourceReference getVirtualFolderOpen() {
+        return VIRTUAL_FOLDER_OPEN;
+    };
+
+    /**
+     * Returns the resource reference of default tree item (not folder).
+     * 
+     * @return The package resource reference
+     */
+    protected ResourceReference getVirtualItem() {
+        return VIRTUAL_ITEM;
+    }
+
 
 }
