@@ -1,51 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE document PUBLIC
-  "-//Apache Software Foundation//DTD XDOC 1.0//EN"
-  "http://maven.apache.org/dtd/xdoc_1_0.dtd"
->
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE document PUBLIC "-//Apache Software Foundation//DTD XDOC 1.0//EN" "http://maven.apache.org/dtd/xdoc_1_0.dtd">
+<document xmlns="http://www.w3.org/1999/xhtml">
+  <!--
+    Copyright 2008 Hippo
+  
+    Licensed under the Apache License, Version 2.0 (the  "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 
-
-<!--
-  Copyright 2008 Hippo
-
-  Licensed under the Apache License, Version 2.0 (the  "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS"
-  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-
-[
-  <!ENTITY folderview SYSTEM "folderview.xml">
-]
-
- <escapeXml>&folderview;</escapeXml>
-    
-____________________________________________________________________________________________
-
--->
-<document>
+  -->
+  <!--
+    Do not edit! This xdoc file is automatically generated from an XML file
+    content2view.xsl, using (if supplied) .mapinfo.xml. 
+   -->
   <properties>
     <title>CMS Contributor Concepts</title>
   </properties>
-
   <body>
-    <section name="CMS Contributor Concepts">
-      <span class="shortdesc">A collection of concepts a CMS contributor may want to know.</span>
-
-  <span class='add'>Concepts</span>
-
- <subsection name='Alternative'>
+    <section name="CMS Contributor Concepts"><span class="shortdesc">A collection of concepts a CMS contributor may want to know.</span><table><tr><td><a href="./document.html">Document</a></td><td>What is a document.</td></tr><tr><td><a href="./folder.html">Folder</a></td><td>Wat is a Folder.</td></tr><tr><td><a href="./versioning.html">Versioning</a></td><td>What is versioning to a content contributor.</td></tr></table>  
+  <subsection xmlns="" name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.
      </p>
- </subsection>
-
-    </section>
+  </subsection>
+ </section>
   </body>
 </document>
