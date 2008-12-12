@@ -19,7 +19,7 @@
   <skin>
     <groupId>org.onehippo.ecm.skin</groupId>
     <artifactId>maven-skin</artifactId>
-    <version>1.01.04</version>
+    <version>1.01.04-SNAPSHOT</version>
   </skin>
 
   <publishDate position="navigation-bottom" format="MM-dd-yy"/>
@@ -42,7 +42,14 @@
      -->
       <item name="Term Index" href="about/term_index.html"/>
    </menu>
-    <menu name="Delve into HST2">
+
+    <menu name="HST Support">
+      <item name="Commercial support" href="http://www.onehippo.com/en/support"/>
+      <item name="Community support" href="/support/community.html"/>
+      <item name="Contributing" href="/support/contributing.html"/>
+    </menu>
+
+   <menu name="Delve into HST2">
       <item name="How does HST2 work?" href="/delve_into/how_does_hst2_work.html"/>
       <item name="Quickstart" href="/delve_into/quickstart.html"/>
       <item name="Howto" href="/delve_into/howto/index.html" collapse="true">
