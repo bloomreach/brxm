@@ -41,19 +41,19 @@ public class UrlUtilities {
      *   <li>url encode the decoded name using utf-8</li>
      *   <li>append '.html' to the last url part</li>
      * </ul>
-     * @param contextPath
+     * @param prefix
      * @param uriLevels
      * @param rewrite
      * @return the encoded url
      */
-    public static String encodeUrl(String contextPath,String rewrite) {
+    public static String encodeUrl(String rewrite) {
         int start = 0;
         if (rewrite.startsWith("/")) {
             // skip first part when starting with '/'
             start = 1;
         }
         String[] uriParts = rewrite.split("/");
-        StringBuilder encodedUrl = new StringBuilder(contextPath);
+        StringBuilder encodedUrl = new StringBuilder();
         for (int i = start; i < uriParts.length - 1; i++) {
             encodedUrl.append("/").append(encodePart(uriParts[i]));
         }

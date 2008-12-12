@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
@@ -61,10 +62,12 @@ public void doTag() throws JspException, IOException {
 }
 
 private ContentELNodeImpl getContentNode(HttpServletRequest request) throws RepositoryException {
-	 PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
+     HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
+    
+	 PageNode pageNode = hstRequestContext.getPageNode();
+	 ContextBase contentContextBase = hstRequestContext.getContentContextBase();
+	 URLMapping urlMapping = hstRequestContext.getUrlMapping();
 	 
-	 ContextBase contentContextBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-	 URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
 	 if (pageNode != null && contentContextBase != null) {
 		 String relPath = null;
 	     if(location != null) {
@@ -73,10 +76,10 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 		 } else {
 		     relPath = pageNode.getRelativeContentPath();
 		 }
-	     log.debug("Fetching relative node '" + relPath + "' from context base " + contentContextBase.getContextRootNode().getPath() );
+	     log.debug("Fetching relative node '{}' from context base '{}'",relPath , contentContextBase.getContextRootNode().getPath() );
 	     Node currentJcrNode = contentContextBase.getRelativeNode(relPath);		
 	     if(currentJcrNode == null) {
-	         log.warn("jcr node not found at '" +  contentContextBase.getContextRootNode().getPath() +"/"+relPath +"'");
+	         log.warn("jcr node not found at '{}'", contentContextBase.getContextRootNode().getPath() +"/"+relPath);
 	     }
 		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, urlMapping);
 	 }

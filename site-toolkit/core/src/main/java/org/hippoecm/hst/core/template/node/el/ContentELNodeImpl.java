@@ -74,122 +74,15 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         this.sourceRewriter = new SourceRewriterImpl(urlMapping);
     }
 
-    public ELNode newInstance(Node jcrNode, SourceRewriter sourceRewriter){
-        return new ContentELNodeImpl(jcrNode, sourceRewriter);
-    }
-    
-    @Override
-    public ELNode getParent(){
-		return newInstance(super.getParent().getJcrNode(),sourceRewriter);
-    }
-    
-    
-    @Override
-    public Map getNode(){
-        if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
-            return Collections.EMPTY_MAP;
+    public ELNode newInstance(Node jcrNode, ELNode elNode){
+        if(elNode instanceof ContentELNodeImpl) {
+            return new ContentELNodeImpl(jcrNode, ((ContentELNodeImpl)elNode).sourceRewriter );
+        } else {
+            return new ContentELNodeImpl(jcrNode, (SourceRewriter)null);
         }
-        return new ELPseudoMap() {
-            @Override
-            public Object get(Object nodeName) {
-            	String name = (String) nodeName;
-            	if(name == null || "".equals(name)) {
-            	    log.warn("Cannot get relative node '\"\"' Return null ");
-            	    return null;
-            	}
-            	 try {
-                     if (!jcrNode.hasNode(name)) {
-                         log.debug("Node '{}' not found. Return empty string", name);
-                         return null;
-                     } else{
-                    	 return newInstance(jcrNode.getNode(name),sourceRewriter);
-                     }
-                 } catch (PathNotFoundException e) {
-                     log.debug("PathNotFoundException: {}", e.getMessage());
-                 } catch (RepositoryException e) {
-                     log.warn("RepositoryException: {}", e.getMessage());
-                     log.debug("RepositoryException:", e);
-                 }
-                 return null;
-            }
-        };
-    }
-   
-    
-    @Override
-    public Map getNodes(){
-        if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
-            return Collections.EMPTY_MAP;
-        }
-        return new ELPseudoMap() {
-            @Override
-            public Object get(Object nodeName) {
-                String name = (String) nodeName;
-                 try {
-                     List<ELNode> wrappedNodes = new ArrayList<ELNode>();
-                     for(NodeIterator it = jcrNode.getNodes(name); it.hasNext();) {
-                         Node n = it.nextNode();
-                         if(n!=null) {
-                             wrappedNodes.add(newInstance(n, sourceRewriter));
-                         }
-                     }
-                     return wrappedNodes;
-                 } catch (RepositoryException e) {
-                     log.error("RepositoryException: {}", e.getMessage());
-                     log.debug("RepositoryException:", e);
-                 }
-                 return null;
-            }
-            
-            @Override 
-            public Set<ELNode> entrySet() {
-                Set<ELNode> s = new HashSet<ELNode>();
-                try {
-                    for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
-                        Node n = it.nextNode();
-                        if(n!=null) {
-                            s.add(newInstance(n, sourceRewriter));
-                        }
-                    }
-                } catch (RepositoryException e) {
-                    log.error("RepositoryException: {}", e.getMessage());
-                    log.debug("RepositoryException:", e);
-                }
-                return  s;
-            }
-        };  
     }
     
-    @Override
-    public Map getNodesoftype(){
-        if (jcrNode == null) {
-            log.error("jcrNode is null. Return empty map");
-            return Collections.EMPTY_MAP;
-        }
-        return new ELPseudoMap() {
-            @Override
-            public Object get(Object nodeName) {
-                String nodetype = (String) nodeName;
-                 try {
-                     List<ELNode> wrappedNodes = new ArrayList<ELNode>();
-                     for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
-                         Node n = it.nextNode();
-                         if(n!=null && n.isNodeType(nodetype)) {
-                             wrappedNodes.add(newInstance(n, sourceRewriter));
-                         }
-                     }
-                     return wrappedNodes;
-                 } catch (RepositoryException e) {
-                     log.error("RepositoryException: {}", e.getMessage());
-                     log.debug("RepositoryException:", e);
-                 }
-                 return null;
-            }
-        };
-    }
-    
+ 
     @Override
     public Map getProperty() {
         if (jcrNode == null) {
@@ -368,7 +261,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                         String uuid = jcrNode.getProperty(propertyName).getString();
                         try {
                             Node deref = jcrNode.getSession().getNodeByUUID(uuid);
-                            return newInstance(deref, sourceRewriter);
+                            return newInstance(deref, ContentELNodeImpl.this);
                         } catch (ItemNotFoundException e) {
                             log.warn("Node with uuid '"+uuid+"' cannot be found. Cannot deref property");
                             return null;
@@ -397,7 +290,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
        	  log.debug("facetedNodeName: " + facetedNodeName);
        	  	if(facetedNodeName!=null && !facetedNodeName.equals("") && facetedNode.hasNode(facetedNodeName)){           			  
        	  		Node childFacetNode = facetedNode.getNode(facetedNode.getName());
-       	  		return newInstance(childFacetNode,sourceRewriter);
+       	  		return newInstance(childFacetNode,this);
        	  	}
        	  	else {
        	  		return null;
@@ -427,7 +320,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         }
         URLMapping urlMapping = sourceRewriter.getUrlMapping();
         
-        String repositoryPath   = urlMapping.getRepositoryMapping().getPath();
+        String repositoryPath   = urlMapping.getRepositoryMapping().getContentPath();
         
         if(repositoryPath == null || "".equals(repositoryPath)) {
             log.warn("no prefix path. Cannot get relpath");

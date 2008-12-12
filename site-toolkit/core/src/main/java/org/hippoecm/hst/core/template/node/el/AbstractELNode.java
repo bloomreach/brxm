@@ -33,6 +33,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.context.ContextBase;
+import org.hippoecm.hst.core.template.node.content.SourceRewriter;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -61,14 +62,18 @@ public abstract class AbstractELNode implements ELNode {
         }
     }
 
+    public ELNode newInstance(Node jcrNode, ELNode elNode){
+        return new AbstractELNode(jcrNode){
+        };
+    }
+    
     public Node getJcrNode() {
         return jcrNode;
     }
     
     public ELNode getParent() {
     	try {
-			return new AbstractELNode(this.jcrNode.getParent()){
-			};
+			return newInstance(this.jcrNode.getParent(), this);
         } catch (ItemNotFoundException e) {
             log.error("ItemNotFoundException while getting parent node: " + e.getMessage() +". Return null");           
         } catch (AccessDeniedException e) {
@@ -129,7 +134,6 @@ public abstract class AbstractELNode implements ELNode {
     }
 
     
-    
     public Map getNode(){
         if (jcrNode == null) {
             log.error("jcrNode is null. Return empty map");
@@ -144,8 +148,7 @@ public abstract class AbstractELNode implements ELNode {
                          log.debug("Node '{}' not found. Return empty string", name);
                          return null;
                      } else{
-                         return  new AbstractELNode(jcrNode.getNode(name)){
-                         };
+                         return newInstance(jcrNode.getNode(name), AbstractELNode.this);
                      }
                  } catch (PathNotFoundException e) {
                      log.debug("PathNotFoundException: {}", e.getMessage());
@@ -172,7 +175,7 @@ public abstract class AbstractELNode implements ELNode {
                      for(NodeIterator it = jcrNode.getNodes(name); it.hasNext();) {
                          Node n = it.nextNode();
                          if(n!=null) {
-                             wrappedNodes.add(new AbstractELNode(n){});
+                             wrappedNodes.add(newInstance(n, AbstractELNode.this));
                          }
                      }
                      return wrappedNodes;
@@ -190,7 +193,7 @@ public abstract class AbstractELNode implements ELNode {
                     for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
                         Node n = it.nextNode();
                         if(n!=null) {
-                            s.add(new AbstractELNode(n){});
+                            s.add(newInstance(n, AbstractELNode.this));
                         }
                     }
                 } catch (RepositoryException e) {
@@ -216,7 +219,7 @@ public abstract class AbstractELNode implements ELNode {
                      for(NodeIterator it = jcrNode.getNodes(); it.hasNext();) {
                          Node n = it.nextNode();
                          if(n!=null && n.isNodeType(nodetype)) {
-                             wrappedNodes.add(new AbstractELNode(n){});
+                             wrappedNodes.add(newInstance(n, AbstractELNode.this));
                          }
                      }
                      return wrappedNodes;

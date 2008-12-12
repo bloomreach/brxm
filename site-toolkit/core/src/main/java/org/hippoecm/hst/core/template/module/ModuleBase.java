@@ -36,7 +36,7 @@ public abstract class ModuleBase implements Module {
 	}
 	
 	public final String getPropertyValueFromModuleNode(String propertyName) throws TemplateException {		
-			return pageContainerModule.getPropertyValue(propertyName);	
+	    return pageContainerModule.getPropertyValue(propertyName);	
 	}
 
 	public String getVar() {

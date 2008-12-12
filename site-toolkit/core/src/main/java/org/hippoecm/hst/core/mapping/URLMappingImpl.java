@@ -162,7 +162,7 @@ public class URLMappingImpl implements URLMapping {
                             Value[] nodepaths = subNode.getProperty("hst:nodepath").getValues();
                             for (int i = 0; i < nodepaths.length; i++) {
                                 LinkRewriter linkRewriter = new LinkRewriter(linkRewrite, isPrefix , nodetypes[i]
-                                        .getString(), nodepaths[i].getString(), virtualEntryName, physicalEntryPath, repositoryMapping);
+                                        .getString(), nodepaths[i].getString() , physicalEntryPath, repositoryMapping);
                                 linkRewriters.add(linkRewriter);
                             }
                         } else {
@@ -244,12 +244,12 @@ public class URLMappingImpl implements URLMapping {
 
     public String rewriteLocation(Node node) {
         long start = System.currentTimeMillis();
-        String origPath = null;
+        String rewritePath = null;
         String path = "";
-        String rewrite = null;
+        StringBuffer rewrite = null;
         try {
-            origPath = node.getPath();
-            String rewritten = this.rewriteLRUCache.get(origPath);
+            rewritePath = node.getPath();
+            String rewritten = this.rewriteLRUCache.get(rewritePath);
             if (rewritten != null) {
                 return rewritten;
             }
@@ -302,7 +302,7 @@ public class URLMappingImpl implements URLMapping {
                 log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
             } else {
                 String url = bestRewriter.getLocation(node);
-                rewrite = url;
+                rewrite = new StringBuffer(url);
             }
 
         } catch (ItemNotFoundException e) {
@@ -317,23 +317,45 @@ public class URLMappingImpl implements URLMapping {
         log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
 
         if (rewrite == null) {
-            rewrite = repositoryMapping.getPath() + path;
+            rewrite = (new StringBuffer(repositoryMapping.getPath())).append(path);
         }
-        rewrite = UrlUtilities.encodeUrl(repositoryMapping.getPath(), rewrite);
-        if (origPath != null) {
-            this.rewriteLRUCache.put(origPath, rewrite);
+        System.out.println(repositoryMapping.getDomainMapping().getServletContextPath());
+        if(repositoryMapping.getPrefix()!=null) {
+            rewrite.insert(0,repositoryMapping.getPrefix());
         }
-        return rewrite;
+        
+        if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+            rewrite.insert(0, repositoryMapping.getDomainMapping().getServletContextPath());
+        }
+        
+        String rewriteString = rewrite.toString();
+        
+        rewriteString = UrlUtilities.encodeUrl(rewriteString);
+        if (rewritePath != null) {
+            this.rewriteLRUCache.put(rewritePath, rewriteString);
+        }
+        return rewriteString;
     }
 
     public String getLocation(String path){
-        String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
-        if(contextPath!= null && !contextPath.equals("")) {
-            if(contextPath.endsWith("/") || path.startsWith("/")) {
-                path = contextPath+path;
-            } else {
-                path = contextPath+"/"+path;
-            } 
+        if(repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+            String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
+            if(contextPath!= null && !contextPath.equals("")) {
+                if(contextPath.endsWith("/")) {
+                    if(path.startsWith("/")) {
+                        path = contextPath + path.substring(1);
+                    } else {
+                        path = contextPath+path;
+                    }
+                } else {
+                    if(path.startsWith("/")) {
+                        path = contextPath+path;
+                    } else {
+                        path = contextPath+"/"+path;
+                    }
+                    
+                } 
+            }
         }
         return path;
     }
@@ -353,13 +375,14 @@ public class URLMappingImpl implements URLMapping {
                 log.warn("RepositoryException fetching '" + siteMapRootNodePath +"' not found. Cannot rewrite link");
             }
         }
-        String rewrite = null;
+        StringBuffer rewrite = null;
         if (siteMapRootNode != null && sitemapNodeName != null && !"".equals(sitemapNodeName)) {
             if (sitemapNodeName.startsWith("/")) {
                 sitemapNodeName = sitemapNodeName.substring(1);
                 if (sitemapNodeName.length() == 0) {
-                    log.warn("Unable to rewrite link for path = '/' .  Prefixing path with context, but no rewrite");
-                    rewrite = repositoryMapping.getPath();
+                    log.warn("Unable to rewrite link for sitemap nodename = '/' or ''.");
+                    this.rewriteLRUCache.put(sitemapNodeName, "");
+                    return "";
                 }
             }
             try {
@@ -392,7 +415,7 @@ public class URLMappingImpl implements URLMapping {
                         if (!"".equals(newLink) && !newLink.startsWith("/")) {
                             newLink = "/" + newLink;
                         }
-                        rewrite = repositoryMapping.getPath() + newLink;
+                        rewrite = new StringBuffer(repositoryMapping.getPrefix()).append(newLink);
                     }
                 } else {
                     log.warn("'{}' does not exist in sitemap node '{}'. Prefixing path with context, but no rewrite.",
@@ -408,11 +431,19 @@ public class URLMappingImpl implements URLMapping {
         }
         log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         if (rewrite == null) {
-            rewrite = repositoryMapping.getPath() + "/" + sitemapNodeName;
+            log.warn("Unable to rewrite '{}' to a sitemap item link", sitemapNodeName);
+            this.rewriteLRUCache.put(sitemapNodeName, "");
+            return "";
         }
-        rewrite = UrlUtilities.encodeUrl(repositoryMapping.getPath(), rewrite);
-        this.rewriteLRUCache.put(sitemapNodeName, rewrite);
-        return rewrite;
+        
+        if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+            rewrite.insert(0, repositoryMapping.getDomainMapping().getServletContextPath());
+        }
+        
+        String rewriteString = rewrite.toString();
+        rewriteString = UrlUtilities.encodeUrl(rewriteString);
+        this.rewriteLRUCache.put(sitemapNodeName, rewriteString);
+        return rewriteString;
     }
 
     private class RewriteLRUCache {

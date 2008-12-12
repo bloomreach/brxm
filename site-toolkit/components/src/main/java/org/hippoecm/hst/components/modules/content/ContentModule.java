@@ -62,7 +62,6 @@ public class ContentModule extends ModuleBase {
         }
 		ContentModuleNode contentModuleNode = null;
 		Node node=null;
-		
 		if(path!=null && !path.equals("")){
 			node = ctxBase.getRelativeNode(path);	
 		}

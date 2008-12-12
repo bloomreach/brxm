@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.query.ContextWhereClause;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 import org.hippoecm.hst.core.template.node.el.ELNode;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class DocumentsOfTypeModule extends ModuleBase {
       this.docType=type;	
     }
 	
-	private List<ELNode> getDocuments(Session jcrSession, URLMapping urlMapping, Node contextNode){
+	private List<ELNode> getDocuments(Session jcrSession, URLMapping urlMapping, HippoNode contextNode){
 		List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 		if(docType!=null || !docType.equals("")) {
 	        try {

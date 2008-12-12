@@ -72,7 +72,8 @@ private Logger log = LoggerFactory.getLogger(PageContainerModuleNode.class);
 	}
 	
 	public String getPropertyValue(String propertyName) throws TemplateException {
-		   try {
+		
+	    try {
 			   if (jcrNode.hasProperty(propertyName)) {
 				  return super.getPropertyValue(propertyName);			
 			   } else {

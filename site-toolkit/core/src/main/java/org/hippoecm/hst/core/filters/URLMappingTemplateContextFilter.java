@@ -85,7 +85,7 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
                 //set attributes
                 hstRequestContext.setPageNode(matchPageNode);
                 
-                // below deprecated
+                // below deprecated: take it from the hstRequestContext
                 request.setAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE, matchPageNode);
                 
                 dispatcher.forward(request, response);

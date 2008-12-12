@@ -32,17 +32,13 @@ public class LinkRewriter {
     private int depth;
     private boolean isExactMatch;
     private boolean isPrefix;
-    private String virtualEntryName;
     private String physicalEntryPath;
-    private String contextPrefix;
    
 
-    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String virtualEntryName, String physicalEntryPath, RepositoryMapping repositoryMapping) {
+    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String physicalEntryPath, RepositoryMapping repositoryMapping) {
         this.linkRewrite = linkRewrite;
         this.nodeTypeName = nodeTypeName;
-        this.virtualEntryName = virtualEntryName;
         this.physicalEntryPath = physicalEntryPath;
-        this.contextPrefix = repositoryMapping.getPath();
         this.isPrefix = isPrefix;
         if (!path2.startsWith("/")) {
             log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");
@@ -58,21 +54,22 @@ public class LinkRewriter {
     }
 
     public String getLocation(Node node) throws RepositoryException{
+        System.out.println(" linkRewrite = " + linkRewrite);
         if(isExactMatch || !isPrefix) {
-            return contextPrefix + linkRewrite;
+            return linkRewrite;
         } 
         String path = node.getPath();
-        if(virtualEntryName != null && physicalEntryPath != null) {
+        if(physicalEntryPath != null) {
             if(path.startsWith(physicalEntryPath)) {
                 
-                String newLocation = contextPrefix+ linkRewrite + "/" + virtualEntryName + path.substring(physicalEntryPath.length());
-                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual entry path '" + newLocation + "'");
+                String newLocation = linkRewrite + path.substring(physicalEntryPath.length());
+                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual relative path '" + newLocation + "'");
                 return newLocation;
             } else {
                 log.debug("node path ('" +path+ "')  does not start with the physicalEntryPath ('"+physicalEntryPath+"') so no rewriting.");
             }
         }
-        return contextPrefix + linkRewrite + path;
+        return linkRewrite + path;
     }
     
     /**

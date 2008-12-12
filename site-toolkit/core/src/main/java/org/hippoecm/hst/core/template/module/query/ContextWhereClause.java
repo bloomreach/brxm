@@ -29,53 +29,61 @@ public class ContextWhereClause {
     
     public static final Logger log = LoggerFactory.getLogger(ContextWhereClause.class);
     
-    private final Node contextNode;
+    private final HippoNode contentContextNode;
     private final String target;
     
-    public ContextWhereClause(Node contextNode, String target) {
-        this.contextNode = contextNode;
+    public ContextWhereClause(HippoNode contentContextNode, String target) {
+        this.contentContextNode = contentContextNode;
         this.target = target;
     }
     
     public String getWhereClause(){
-        HippoNode contentBaseNode = null;
-        String contextBasePath = null;
+        HippoNode searchFromNode = null;
         String contentBaseUuid = null;
         StringBuffer contextClauses = new StringBuffer();
         long start = System.currentTimeMillis();
         try {
-            contextBasePath = contextNode.getPath();
-            try {
-                contentBaseNode = (HippoNode) contextNode.getNode(target);
-            } catch (PathNotFoundException e) {
-                log.warn("target '" + target + "' is not a subnode of '" + contextBasePath + "'.");
-                return null;
+            searchFromNode = contentContextNode;
+            if(target != null && !"".equals(target)) {
+                if(target.startsWith("/")) {
+                    log.debug("Target is absolute path '{}'. Search will be done below /{} in the repository", target, target);
+                    // TODO have to do a search with the target absolute. We only need to create a context where clause that
+                    // accounts for the current filter && the absolute target path
+                } else {
+                    try {
+                        searchFromNode = (HippoNode) contentContextNode.getNode(target);
+                    } catch (PathNotFoundException e) {
+                        log.warn("target '{}' is not a subnode of '{}'.", target , searchFromNode.getPath());
+                        return null;
+                    }
+                }
             }
+            
             /*
              * find all facetselects in the contentBaseNode and up untill we are at the contextNode. For every facetselect found
              * add the filter as a query
              */
-            Node rootNode = contentBaseNode.getSession().getRootNode();
-            
-            while (!contentBaseNode.isSame(contextNode) && !contentBaseNode.isSame(rootNode)) {
+            Node rootNode = searchFromNode.getSession().getRootNode();
+            Node parentOfContentContextNode = contentContextNode.getParent();
+            while (!searchFromNode.isSame(parentOfContentContextNode) && !searchFromNode.isSame(rootNode)) {
                 
                 // the contentBaseUuid will be the uuid of the first 'referenceable node' or docbase of a facetselect
                 if(contentBaseUuid == null) {
-                    if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        contentBaseUuid = contentBaseNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    if (searchFromNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                        contentBaseUuid = searchFromNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                         
-                    } else if (contentBaseNode.getCanonicalNode() != null
-                            && contentBaseNode.getCanonicalNode().isNodeType("mix:referenceable")) {
-                        contentBaseUuid = contentBaseNode.getCanonicalNode().getUUID();
+                    } else if (searchFromNode.getCanonicalNode() != null
+                            && searchFromNode.getCanonicalNode().isNodeType("mix:referenceable")) {
+                        contentBaseUuid = searchFromNode.getCanonicalNode().getUUID();
                     } else {
                         log.warn("Target '"+target+"' is not pointing to a referenceable node or facetselect. Trying to search from the parent");
                     }
                 }
-                if (contentBaseNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                if (searchFromNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     // below all mandatory multivalued props
-                    Value[] modes = contentBaseNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
-                    Value[] facets = contentBaseNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
-                    Value[] values = contentBaseNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
+                    Value[] modes = searchFromNode.getProperty(HippoNodeType.HIPPO_MODES).getValues();
+                    Value[] facets = searchFromNode.getProperty(HippoNodeType.HIPPO_FACETS).getValues();
+                    Value[] values = searchFromNode.getProperty(HippoNodeType.HIPPO_VALUES).getValues();
                     if (modes.length == facets.length && facets.length == values.length) {
                         for (int i = 0; i < modes.length; i++) {
                             String mode = modes[i].getString();
@@ -102,7 +110,7 @@ public class ContextWhereClause {
                                 .warn("invalid facetselect encoutered where there are an unequal number of 'modes', 'facets' and 'values'");
                     }
                 }
-                contentBaseNode = (HippoNode) contentBaseNode.getParent();
+                searchFromNode = (HippoNode) searchFromNode.getParent();
             }
 
         } catch (RepositoryException e) {
@@ -117,7 +125,7 @@ public class ContextWhereClause {
             contextClauses.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(contentBaseUuid).append("'");
         }
         contextClauses.append(" and not(@jcr:primaryType='nt:frozenNode')");
-        log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms.");
+        log.debug("creating search context where clauses took " + (System.currentTimeMillis() - start) + " ms for clause '{}'", contextClauses.toString());
         return contextClauses.toString();
     }
 }

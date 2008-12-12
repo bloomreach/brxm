@@ -33,11 +33,12 @@ import javax.jcr.query.RowIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
+import org.hippoecm.repository.api.HippoNode;
 
 public class SearchModule extends ModuleBase implements Search {
 
@@ -85,9 +86,7 @@ public class SearchModule extends ModuleBase implements Search {
             }
         }
         if (target == null) {
-            log.warn("Target is not allowed to be null: skipping search");
-            validStatement = false;
-            return;
+           log.debug("target is null. Using the content context path as the path to search from.");
         }
 
         // nodetype 
@@ -221,8 +220,8 @@ public class SearchModule extends ModuleBase implements Search {
             return;
         }
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-        Node contextNode = ctxBase.getContextRootNode();
+        HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
+        HippoNode contentContextNode = hstRequestContext.getContentContextBase().getContextRootNode();
         
         /*
          * if the contextNode is a facetselect node --> take the uuid
@@ -237,7 +236,7 @@ public class SearchModule extends ModuleBase implements Search {
         String contextWhereClauses = "";
         String statementOrderBy = "";
         
-        ContextWhereClause ctxWhereClause = new ContextWhereClause(contextNode, target);
+        ContextWhereClause ctxWhereClause = new ContextWhereClause(contentContextNode, target);
         contextWhereClauses = ctxWhereClause.getWhereClause();
         
         if (this.where != null) {

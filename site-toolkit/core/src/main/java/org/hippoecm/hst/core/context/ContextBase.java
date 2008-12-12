@@ -21,12 +21,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.core.exception.ContextBaseException;
+import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.LoggerFactory;
 
 public class ContextBase {
 	private static final org.slf4j.Logger log = LoggerFactory.getLogger(ContextBase.class);
 	
-	private Node contextRootNode;
+	private HippoNode contextRootNode;
 	private final Session jcrSession;
 	
 	public ContextBase(String repositoryPath, Session jcrSession) throws ContextBaseException{
@@ -37,7 +38,7 @@ public class ContextBase {
             throw new ContextBaseException("Cannot instantiate a ContextBase because repositoryPath is empty");
         } else {
             try {
-                this.contextRootNode = jcrSession.getRootNode().getNode(relativePath);
+                this.contextRootNode = (HippoNode)jcrSession.getRootNode().getNode(relativePath);
             } catch (PathNotFoundException e) {
                 log.warn("PathNotFoundException while instantiating ContextBase for repository path '{}'", repositoryPath);
                 throw new ContextBaseException("PathNotFoundException while instantiating ContextBase for repository path '"+repositoryPath+"'");
@@ -49,7 +50,7 @@ public class ContextBase {
         
 	}
 
-	public Node getContextRootNode() {
+	public HippoNode getContextRootNode() {
 		return contextRootNode;
 	}
 	
