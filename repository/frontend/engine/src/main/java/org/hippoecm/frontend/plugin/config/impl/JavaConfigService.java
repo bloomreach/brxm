@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -118,6 +120,10 @@ class JavaConfigService implements IPluginConfigService {
         plugins.addPlugin(config);
 
         return plugins;
+    }
+
+    public List<String> listClusters(String folder) {
+        return new ArrayList();
     }
 
 }

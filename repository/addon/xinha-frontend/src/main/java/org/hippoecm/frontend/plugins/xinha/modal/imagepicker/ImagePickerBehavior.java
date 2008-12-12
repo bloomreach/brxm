@@ -15,37 +15,41 @@
  */
 package org.hippoecm.frontend.plugins.xinha.modal.imagepicker;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalBehavior;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaDialogService;
+import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
 
-public class ImagePickerBehavior extends XinhaModalBehavior {
+public class ImagePickerBehavior extends XinhaDialogBehavior<XinhaImage> {
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private ImageItemDAO imageItemDAO;
-
-    public ImagePickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel nodeModel) {
-        super(modalWindow);
-        imageItemDAO = new ImageItemDAO(nodeModel);
+    public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId, JcrNodeModel nodeModel) {
+        super(context, config, serviceId);
     }
 
     @Override
-    protected XinhaContentPanel<XinhaImage> createContentPanel(Map<String, String> params) {
-        EnumMap<XinhaImage, String> enums = new EnumMap<XinhaImage, String>(XinhaImage.class);
-        for (XinhaImage p : XinhaImage.values()) {
-            enums.put(p, params.get(p.getValue()));
-        }
-        return new ImagePickerContentPanel(modalWindow, enums, imageItemDAO);
+    protected String getServiceId() {
+        return "cms-pickers/image";
     }
 
-    public ImageItemDAO getImageItemDAO() {
-        return imageItemDAO;
+    @Override
+    protected XinhaDialogService<XinhaImage> createXinhaDialogService() {
+        return new XinhaImageDialogService();
     }
+
+    public String onDialogOk() {
+        return "{f_url: 'http://farm4.static.flickr.com/3239/3101529499_a7b22359bf_b.jpg'}";
+    }
+
+    public ImageItem insertImage(JcrNodeModel model) {
+        return null;//dao.insertImageFromNodeModel(model);
+    }
+
+    
 }

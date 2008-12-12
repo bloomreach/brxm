@@ -797,7 +797,7 @@
       <sv:value>BrowserPerspective</sv:value>
     </sv:property>
     <sv:property sv:name="browser.viewers" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/cms-folder-views</sv:value>
+      <sv:value>cms-folder-views</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
       <sv:value>extension.navigator</sv:value>

@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.editor.impl;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -67,6 +70,10 @@ public class JcrTemplateStore implements IPluginConfigService {
             cluster = null;
         }
         return cluster;
+    }
+
+    public List<String> listClusters(String folder) {
+        return new ArrayList();
     }
 
     public IClusterConfig getDefaultCluster() {

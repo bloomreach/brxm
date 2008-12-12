@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugin.config;
 
+import java.util.List;
+
 import org.apache.wicket.model.IDetachable;
 
 public interface IPluginConfigService extends IDetachable {
     final static String SVN_ID = "$Id$";
 
-    public IClusterConfig getDefaultCluster();
+    IClusterConfig getDefaultCluster();
 
-    public IClusterConfig getCluster(String key);
+    IClusterConfig getCluster(String key);
+
+    List<String> listClusters(String folder);
 }

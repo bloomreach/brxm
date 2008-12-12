@@ -18,34 +18,36 @@ package org.hippoecm.frontend.plugins.xinha.modal.linkpicker;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaContentPanel;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalBehavior;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaModalWindow;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.modal.XinhaDialogService;
 
-public class LinkPickerBehavior extends XinhaModalBehavior {
+public class LinkPickerBehavior extends XinhaDialogBehavior<XinhaLink> {
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private InternalLinkDAO dao;
-
-    public LinkPickerBehavior(XinhaModalWindow modalWindow, JcrNodeModel model) {
-        super(modalWindow);
-        dao = new InternalLinkDAO(model);
+    public LinkPickerBehavior(IPluginContext context, IPluginConfig config, String modalWindowServiceId) {
+        super(context, config, modalWindowServiceId);
     }
 
     @Override
-    protected XinhaContentPanel<XinhaLink> createContentPanel(Map<String, String> params) {
-        EnumMap<XinhaLink, String> enums = new EnumMap<XinhaLink, String>(XinhaLink.class);
-        for (XinhaLink xl : XinhaLink.values()) {
-            enums.put(xl, params.get(xl.getValue()));
-        }
-        return new LinkPickerContentPanel(modalWindow, enums, dao);
+    protected String getServiceId() {
+        return "xinha-external-link-picker";
     }
 
-    public InternalLinkDAO getInternalLinkDAO() {
-        return dao;
+    public String onDialogOk() {
+        // TODO Auto-generated method stub
+        return null;
     }
+
+    @Override
+    protected XinhaDialogService<XinhaLink> createXinhaDialogService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
