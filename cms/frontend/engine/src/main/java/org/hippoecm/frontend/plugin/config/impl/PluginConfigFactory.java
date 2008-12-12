@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -111,9 +113,14 @@ public class PluginConfigFactory implements IClusterable {
             return null;
         }
 
+        public List<String> listClusters(String folder) {
+            return decoratedService.listClusters(folder);
+        }
+
         public void detach() {
             decoratedService.detach();
         }
+
     }
 
 }

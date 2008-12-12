@@ -108,7 +108,8 @@ public class ImageItemFactory implements IClusterable {
         private String primaryItemName;
         private List<String> resourceDefinitions;
         private String selectedResourceDefinition;
-
+        private String alt;
+        
         private ImageItem() {
             this.resourceDefinitions = new ArrayList<String>();
         }
@@ -162,5 +163,9 @@ public class ImageItemFactory implements IClusterable {
             return path != null && uuid != null
                     && !(resourceDefinitions.size() > 1 && selectedResourceDefinition == null);
         }
+        public String getAlt() {
+            return alt;
+        }
+
     }
 }

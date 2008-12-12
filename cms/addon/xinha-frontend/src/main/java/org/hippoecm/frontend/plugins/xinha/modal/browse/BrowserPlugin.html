@@ -14,15 +14,15 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <form wicket:id="form">
-    <p class="hippo-window-status">
-      <span wicket:id="feedback2">[ Feedback panel ]</span>
-    </p>
+  <div>
     <wicket:child/>
-    <div class="hippo-window-buttons">
+  </div>
+  <div class="hippo-window-buttons">
+    <form wicket:id="form">
+      <span wicket:id="dialog.feedback">[ Feedback panel ]</span>
       <input type="button" wicket:id="ok" value = "OK"/>
       <input type="button" wicket:id="close" value="Close" />
-      <span wicket:id="extraButtons">[ Extra buttons ]</span>
-    </div>  
-  </form>
+    </form>
+  </div>  
 </wicket:panel>
+

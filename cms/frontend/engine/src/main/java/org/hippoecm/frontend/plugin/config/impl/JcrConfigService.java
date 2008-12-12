@@ -15,7 +15,11 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -54,6 +58,23 @@ public class JcrConfigService implements IPluginConfigService {
             cluster = getDefaultCluster();
         }
         return cluster;
+    }
+
+    public List<String> listClusters(String folder) {
+        List<String> results = new LinkedList<String>();
+        try {
+            Node node = model.getNode().getNode(folder);
+            NodeIterator iter = node.getNodes();
+            while (iter.hasNext()) {
+                Node child = iter.nextNode();
+                if (child.isNodeType("frontend:plugincluster")) {
+                    results.add(child.getName());
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return results;
     }
 
     public IClusterConfig getDefaultCluster() {
