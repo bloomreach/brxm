@@ -64,6 +64,7 @@ public class RenderService extends AbstractRenderService {
         public void onServiceAdded(IRenderService service, String name) {
             service.bind(RenderService.this, extension);
             replace(service.getComponent());
+            redraw();
             super.onServiceAdded(service, name);
         }
 
@@ -71,6 +72,7 @@ public class RenderService extends AbstractRenderService {
         public void onRemoveService(IRenderService service, String name) {
             replace(new EmptyPanel(extension));
             service.unbind();
+            redraw();
             super.onRemoveService(service, name);
         }
 

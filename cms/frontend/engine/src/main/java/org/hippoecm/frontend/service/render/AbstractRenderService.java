@@ -406,6 +406,7 @@ public abstract class AbstractRenderService extends Panel implements IModelListe
 
     @Override
     protected void onDetach() {
+        redraw = false;
         config.detach();
         super.onDetach();
     }
