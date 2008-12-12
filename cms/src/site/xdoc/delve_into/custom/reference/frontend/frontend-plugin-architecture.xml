@@ -34,7 +34,7 @@
         components are written as plugins. The Hippo CMS application offers a
         default configuration for these plugins.  Customizing Hippo CMS comes
         down to editing this configuration, extending it with extra plugins
-        from <a href="http://forge.hippo-ecm.org/">the forge</a> or writing
+        <a href="../../../sysadmin/installation/plugins.html">from the forge</a> or writing
         your own.
       </p>
 
