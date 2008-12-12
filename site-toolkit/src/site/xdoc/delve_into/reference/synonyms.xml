@@ -29,7 +29,8 @@
 
           <ul>
            <li>
-            <span class='index' id='Backend_template'>Backend template</span>
+            <span class='index' id='Backend_template'>Backend template</span>: The Hippo repository and its content is a
+                                                                               backend to the HST.
 	   </li>
            <li>
             <span class='index' id='Editing_template'>Editing template</span>
