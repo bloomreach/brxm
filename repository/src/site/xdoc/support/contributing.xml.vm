@@ -23,7 +23,7 @@
  </properties>
   <body>
    <section name="Contributing">
-    <span class='shortdesc'>Contribute to Hippo CMS, either in code, documentation, support, bug reports, improvement requests
+    <span class='shortdesc'>Contribute to ${product_name}, either in code, documentation, support, bug reports, improvement requests
      or whatever form you think is useful.</span>
 
     <p>
@@ -39,7 +39,7 @@
    </td>
    <td>
          <a href="../mail-lists.html">Hippo mailing list</a>:
-            The Hippo ECM developers will gladly discuss your
+            The Hippo developers will gladly discuss your
             proposals on the developers mailing list.
    </td>
   </tr>
