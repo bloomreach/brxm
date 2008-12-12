@@ -73,11 +73,12 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
     public void handleRequestForThisFilter(HttpServletRequest req, ServletResponse response, FilterChain chain,
             HstRequestContext hstRequestContext) throws IOException, ServletException {
       
-        if(!this.domainMapping.isInitialized() || true ) {
+        if(!this.domainMapping.isInitialized()) {
             try {
                 domainMapping.init();
                 domainMapping.setServletContextPath(req.getContextPath());
-                domainMapping.setServletContextPathInUrl(true);
+                // TODO try to find from the original request headers whether the context path should be kept
+                domainMapping.setServletContextPathInUrl(false);
             } catch (DomainMappingException e) {
                 log.warn("Exception during initializing domainMapping", e.getMessage());
                 log.debug("Exception during initializing domainMapping", e);
