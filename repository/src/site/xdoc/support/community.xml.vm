@@ -23,39 +23,35 @@
   </properties>
   <body>
     <section name="Community Support">
-  
-      Apart from <a href="../index.html">this documentation</a> and <a href="http://www.onehippo.com/en/support">commercial support</a>,
-      support can be obtained from the Hippo community:
 
+       <span class='shortdesc'>Get support from the Hippo community:</span>
+  
 <div class='nav'>
  <table>
-  <tr>
-   <td>Mail</td>
-   <td>
-     <span class='mail-48 icon-48'/> 
-   </td>
-   <td>
-         <a href="../mail-lists.html">Hippo mailing list</a>Subscribe to our
-          mailing list to get answers to your questions from
-          many other users and Hippo developers.  
-         <p>
-          Allow for a few hours or days to receive answers. Allthough many questions
-          are answered in the mailing list, no guarantees can be given.
-	 </p>
-         <p>
-          Note that it is general mailing list etiquete to ask only after you checked
-          that your question was not answered before, see the archive, below.
-         </p>
-   </td>
-  </tr>
   <tr>
    <td>Mail archive</td>
    <td>
      <span class='archive-48 icon-48'/> 
    </td>
    <td>
-        <a href="../mail-lists.html">Mailing list archive</a>: 
-            The archive of all previously asked questions and their responses. 
+    <a href="../mail-lists.html">Mailing list archive</a>: 
+    The archive of all previously asked questions and their responses. 
+    Note that it is general mailing list etiquete to mail questions only after you 
+    searched the archive. The archive may give you instant help.
+   </td>
+  </tr>
+  <tr>
+   <td>Mail</td>
+   <td>
+     <span class='mail-48 icon-48'/> 
+   </td>
+   <td>
+         <a href="../mail-lists.html">Hippo mailing list</a>: Subscribe to our
+          mailing list to get answers to your questions from
+          many other users and Hippo developers.  
+         <br/>
+          Allow for a few hours or days to receive answers. Allthough many questions
+          are answered in the mailing list, no guarantees can be given. 
    </td>
   </tr>
   <tr>
@@ -66,12 +62,6 @@
    <td> 
           <a href="../issue-tracking.html">${product_name} issue tracker</a>:
           Read here what issues the developers of ${product_name} have been and are currently working on.
-         <p>  
-          Only Hippo developers and some partners can open issues in the issue tracker, but 
-          anyone can contact the developers by email. They are listed as administrators of the Hippo issue
-          tracker at the <a href="http://issues.hippo.nl">Hippo issue tracker homepage</a>, with their
-          email adresses (see the bottom of the Login box).            
-	 </p>
    </td>
   </tr>
   <tr>
@@ -82,11 +72,30 @@
    <td> 
         <a href="http://${public_project_wiki}">${product_name} wiki</a>:  
            
-        Here, you will find documentation contributed by other users and by Hippo developers.
+        Find documentation contributed by other users and by Hippo developers.
+   </td>
+  </tr>
+  <tr>
+   <td><a name='forge'/>Forge</td>
+   <td>
+     <span class='forge-48 icon-48'/> 
+   </td>
+   <td>
+     <a href="http://forge.hippo-ecm.org/">Hippo Forge</a>         
+     is a repository filled with all kinds of useful frontend and repository
+     plugins, which you can 
+     <a href="../delve_into/sysadmin/installation/plugins.html">install</a>
+     and use.
    </td>
   </tr>
  </table>
 </div>
+
+ <subsection name='Alternatives'>
+   You may also consult <a href="../index.html">this documentation</a>, acquire 
+   <a href="http://www.onehippo.com/en/support">commercial support</a> or
+   <a href='./contributing.html'>contribute yourself</a>.
+ </subsection>
 
   </section>
  </body>
