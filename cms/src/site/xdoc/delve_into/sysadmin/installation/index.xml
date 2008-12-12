@@ -3,7 +3,7 @@
   "-//Apache Software Foundation//DTD XDOC 1.0//EN"
   "http://maven.apache.org/dtd/xdoc_1_0.dtd">
 <!--
-  Copyright 2007 Hippo
+  Copyright 2008 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -36,11 +36,12 @@
           a <span class='index' id='EAR'>EAR</span> package to deploy in Java application servers. 
         </p>
 
+        <!-- TODO use colspan=0 for the title, as soon as that is possible. -->  
         <table>
-        <tr><th class='title'>Compatible Java servlet containers:</th></tr>
+        <tr><th class='title'>Compatible</th><th> Java servlet</th><th> containers:</th></tr>
         <tr>
           <td>
-             <img src='../../images/tomcat_icon.png' alt='tomcat logo'/>
+             <img src='../../../images/tomcat_icon.png' alt='tomcat logo'/>
       </td>
           <td>
             <a href='http://tomcat.apache.org/'>Apache Tomcat</a>
@@ -51,7 +52,7 @@
     </tr>
         <tr>
           <td>
-           <img src='http://jetty.mortbay.com/jetty/images/jetty_banner.gif' alt='jetty logo'/>
+           <img src='../../../images/jetty_icon.png' alt='jetty logo'/>
       </td>
           <td>
             <a href='http://jetty.mortbay.com/jetty/'>Jetty</a>
@@ -60,10 +61,10 @@
             <!-- <a href='in_servlet_container.html'>Deploying Hippo</a> -->
       </td>
     </tr>
-        <tr><th colspan='0'>Compatible Java application servers:</th></tr>
+        <tr><th colspan='0'>Compatible</th><th> Java application</th><th> servers:</th></tr>
         <tr>
           <td>
-            <img src='../../images/glassfish_icon.png' alt='glassfish logo'/>
+            <img src='../../../images/glassfish_icon.png' alt='glassfish logo'/>
       </td>
           <td>
             <a href='https://glassfish.dev.java.net/'>Sun Glassfish</a>
@@ -75,7 +76,7 @@
 
         <tr>
           <td>
-            <img src='../../images/jboss_icon.png' alt='JBoss logo'/>
+            <img src='../../../images/jboss_icon.png' alt='JBoss logo'/>
       </td>
           <td>
             <a href='http://www.jboss.org/'>JBoss</a>

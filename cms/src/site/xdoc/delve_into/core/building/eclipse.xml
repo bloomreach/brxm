@@ -46,12 +46,13 @@
       
       <p>Download and install <a href="http://www.eclipse.org/">Eclipse</a> version >= 3.3.2</p>
             
-      <p>Add some memory flags to the Eclipse -vmargs startup argument:</p>
+      <p>Start eclipse with some memory flags to the Eclipse -vmargs startup argument:</p>
+      <source>eclipse -vmargs '-Xms512M -Xmx512M -XX:MaxPermSize=128M'</source>
       <ul>
-        <li>Set the heap size to at least 512M by adding something like -Xms512m -Xmx512m</li>
+        <li>Set the heap size to at least 512M by adding something like -Xms512M -Xmx512M</li>
         <li>Set the permSpace size to at least 128M by adding something like -XX:MaxPermSize=128M</li>
       </ul>
-      
+ 
       <p>
         Start Eclipse, it is strongly advised to start with a clean workspace.
         <br/><br/>
