@@ -114,12 +114,13 @@ public class WorkflowChainingTest extends TestCase {
         ChainingImpl.result.clear();
         Chaining workflow = (Chaining)((HippoWorkspace)session.getWorkspace()).getWorkflowManager().getWorkflow("test",node);
         Date schedule = new Date();
-        final long delay = 3L;
+        final long delay = 10L;
         schedule.setTime(schedule.getTime()+delay*1000L);
         assertEquals(0, ChainingImpl.result.size());
         workflow.schedule(schedule);
         session.save();
         session.refresh(false);
+        Thread.sleep(delay*1000L/2);
         assertEquals(0, ChainingImpl.result.size());
         Thread.sleep((delay+10)*1000L);
         assertEquals(1, ChainingImpl.result.size());
