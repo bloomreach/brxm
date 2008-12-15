@@ -203,7 +203,6 @@ public class WorkflowPlugin implements IPlugin, IModelListener, IJcrNodeModelLis
     }
 
     public void detach() {
-        config.detach();
         model.detach();
     }
 }

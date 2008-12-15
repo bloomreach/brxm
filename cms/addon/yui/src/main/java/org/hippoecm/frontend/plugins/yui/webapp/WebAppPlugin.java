@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.yui.webapp;
 
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -25,8 +24,7 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService, IDetachable,
-        IYuiManager {
+public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorService, IYuiManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -45,10 +43,6 @@ public class WebAppPlugin extends WebAppBehavior implements IPlugin, IBehaviorSe
 
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
-    }
-
-    public void detach() {
-        config.detach();
     }
 
     public IYuiContext newContext() {

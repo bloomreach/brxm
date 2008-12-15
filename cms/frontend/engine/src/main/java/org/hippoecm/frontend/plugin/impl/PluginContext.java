@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IPluginControl;
@@ -28,11 +29,12 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginContext implements IPluginContext, IClusterable {
+public class PluginContext implements IPluginContext, IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -40,9 +42,10 @@ public class PluginContext implements IPluginContext, IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(PluginContext.class);
 
-    private class PluginControl implements IPluginControl {
+    private class PluginControl implements IPluginControl, IDetachable {
         private static final long serialVersionUID = 1L;
 
+        boolean running = true;
         String controlId;
         PluginContext[] contexts;
         IServiceTracker tracker;
@@ -70,27 +73,39 @@ public class PluginContext implements IPluginContext, IClusterable {
         }
 
         public void stopPlugin() {
-            for (PluginContext context : contexts) {
-                if (context != null) {
-                    context.stop();
+            if (running) {
+                for (PluginContext context : contexts) {
+                    if (context != null) {
+                        context.stop();
+                    }
                 }
+                children.remove(this);
+
+                manager.unregisterTracker(tracker, controlId);
+
+                manager.unregisterService(this, "clusters");
+
+                running = false;
             }
-            children.remove(this);
+        }
 
-            manager.unregisterTracker(tracker, controlId);
-
-            manager.unregisterService(this, "clusters");
+        public void detach() {
+            for (PluginContext context : contexts) {
+                context.detach();
+            }
         }
     }
 
     private String controlId;
+    private IPluginConfig config;
     private Map<String, List<IClusterable>> services;
     private Map<String, List<IServiceTracker>> listeners;
     private List<PluginControl> children;
     private boolean initializing = true;
+    private boolean running = false;
     private PluginManager manager;
 
-    public PluginContext(PluginManager manager, String controlId) {
+    public PluginContext(PluginManager manager, String controlId, IPluginConfig config) {
         this.controlId = controlId;
         this.manager = manager;
 
@@ -147,7 +162,7 @@ public class PluginContext implements IPluginContext, IClusterable {
             list.remove(service);
             manager.unregisterService(service, controlId);
             manager.unregisterService(service, name);
-        } else {
+        } else if (running) {
             log.warn("unregistering service that wasn't registered.");
         }
     }
@@ -174,6 +189,8 @@ public class PluginContext implements IPluginContext, IClusterable {
             if (!initializing) {
                 manager.unregisterTracker(listener, name);
             }
+        } else if (running) {
+            log.warn("unregistering tracker that wasn't registered.");
         }
     }
 
@@ -190,9 +207,12 @@ public class PluginContext implements IPluginContext, IClusterable {
         } else {
             log.warn("context was already initialized");
         }
+        running = true;
     }
 
     void stop() {
+        running = false;
+
         if (!initializing) {
             for (Map.Entry<String, List<IServiceTracker>> entry : listeners.entrySet()) {
                 for (IServiceTracker service : entry.getValue()) {
@@ -214,6 +234,26 @@ public class PluginContext implements IPluginContext, IClusterable {
         PluginControl[] controls = children.toArray(new PluginControl[children.size()]);
         for (PluginControl control : controls) {
             control.stopPlugin();
+        }
+    }
+
+    public void detach() {
+        for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+            for (IClusterable service : entry.getValue()) {
+                // FIXME: ugly!
+                // should all services be IDetachable?
+                if ((service instanceof IDetachable) && !(service instanceof IRenderService)) {
+                    ((IDetachable) service).detach();
+                }
+            }
+        }
+
+        for (PluginControl control : children) {
+            control.detach();
+        }
+
+        if (config != null) {
+            config.detach();
         }
     }
 

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -25,7 +23,7 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WireframePlugin extends WireframeBehavior implements IPlugin, IBehaviorService, IDetachable {
+public class WireframePlugin extends WireframeBehavior implements IPlugin, IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -77,10 +75,6 @@ public class WireframePlugin extends WireframeBehavior implements IPlugin, IBeha
 
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
-    }
-
-    public void detach() {
-        config.detach();
     }
 
 }

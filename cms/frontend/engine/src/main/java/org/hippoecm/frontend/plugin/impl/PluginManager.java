@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -32,7 +31,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginManager implements IDetachable {
+public class PluginManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -78,20 +77,8 @@ public class PluginManager implements IDetachable {
         nextReferenceId = 0;
     }
 
-    public void detach() {
-        for(Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
-            for(IClusterable service : entry.getValue()) {
-                // FIXME: ugly!
-                // should all services be IDetachable?
-                if(service instanceof IDetachable) {
-                    ((IDetachable) service).detach();
-                }
-            }
-        }
-    }
-
     public PluginContext start(IPluginConfig config, String controlId) {
-        final PluginContext context = new PluginContext(this, controlId);
+        final PluginContext context = new PluginContext(this, controlId, config);
         IPlugin plugin = factory.createPlugin(context, config);
         if (plugin != null) {
             context.connect(plugin);

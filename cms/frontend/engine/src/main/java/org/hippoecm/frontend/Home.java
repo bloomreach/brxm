@@ -46,6 +46,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
     private static final long serialVersionUID = 1L;
 
     private PluginManager mgr;
+    private PluginContext context;
     private IRenderService root;
     private IPluginConfigService pluginConfigService;
 
@@ -53,7 +54,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
-        PluginContext context = new PluginContext(mgr, "home");
+        context = new PluginContext(mgr, "home", null);
         context.connect(null);
 
         context.registerTracker(this, "service.root");
@@ -159,7 +160,7 @@ public class Home extends WebPage implements IServiceTracker<IRenderService>, IR
 
     @Override
     public void onDetach() {
-        mgr.detach();
+        context.detach();
         super.onDetach();
     }
 
