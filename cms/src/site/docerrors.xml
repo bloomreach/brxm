@@ -122,8 +122,7 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="schemas" relpath="delve_into/custom">
     <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="synonyms" relpath="delve_into/custom">Synonyms
-    <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/synonyms.html is never referenced in the site, not even from the menu.</unlinked></document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="synonyms" relpath="delve_into/custom">Synonyms</document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
     <add>Enlighting and attractive diagram.</add></document><document ext="xml" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
     <rewrite>This text contains much that is admin information and is mostly redundant.
                         Merge this document into the admin guide and leave the new version very small, 
@@ -289,6 +288,5 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
    
    <document ext="xml.vm" filename="community" relpath="support">Community Support
-    <unlinked> The file file:///home/rita/werk/cms/target/site/support/community.html is never referenced in the site, not even from the menu.</unlinked>
     <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing</document></folder></folder>
 </document_list>
