@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Calendar;
@@ -346,43 +347,42 @@ public class JCRJobStore implements JobStore {
         if(SchedulerModule.log.isDebugEnabled()) {
             SchedulerModule.log.trace("acquireNextTrigger({})",noLaterThan);
         }
-        synchronized(this) { // FIXME
-            try {
-                Session session = getSession(ctxt);
-                QueryManager qMgr = session.getWorkspace().getQueryManager();
-                Query query = qMgr.createQuery("SELECT * FROM hipposched:trigger ORDER BY hipposched:nextFireTime", Query.SQL);
-                QueryResult result = query.execute();
-                Node triggerNode = null;
-                for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-                    triggerNode = iter.nextNode();
-                    if(triggerNode != null && triggerNode.hasProperty("hipposched:nextFireTime")) {
-                        break;
-                    } else {
-                        triggerNode = null;
-                    }
+        try {
+            Session session = getSession(ctxt);
+            session.refresh(true);
+            QueryManager qMgr = session.getWorkspace().getQueryManager();
+            Query query = qMgr.createQuery("SELECT * FROM hipposched:trigger ORDER BY hipposched:nextFireTime", Query.SQL);
+            QueryResult result = query.execute();
+            Node triggerNode = null;
+            for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
+                triggerNode = iter.nextNode();
+                if(triggerNode != null && triggerNode.hasProperty("hipposched:nextFireTime")) {
+                    break;
+                } else {
+                    triggerNode = null;
                 }
-                if(triggerNode != null) {
-                    if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
-                        triggerNode.checkout();
-                    }
-                    Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
-                    Trigger trigger = (Trigger) o;
-                    trigger.setName(triggerNode.getPath());
-                    trigger.setJobName(triggerNode.getParent().getParent().getPath());
-                    triggerNode.getProperty("hipposched:nextFireTime").remove();
-                    triggerNode.save();
-                    return (Trigger) o;
-                }
-            } catch(RepositoryException ex) {
-                SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("error acquiring next trigger", ex);
-            } catch(IOException ex) {
-                SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
-            } catch(ClassNotFoundException ex) {
-                SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("cannot recreate trigger", ex);
             }
+            if(triggerNode != null) {
+                if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
+                    triggerNode.checkout();
+                }
+                Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
+                Trigger trigger = (Trigger) o;
+                trigger.setName(triggerNode.getPath());
+                trigger.setJobName(triggerNode.getParent().getParent().getPath());
+                triggerNode.getProperty("hipposched:nextFireTime").remove();
+                triggerNode.save();
+                return (Trigger) o;
+            }
+        } catch(RepositoryException ex) {
+            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw new JobPersistenceException("error acquiring next trigger", ex);
+        } catch(IOException ex) {
+            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
+        } catch(ClassNotFoundException ex) {
+            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            throw new JobPersistenceException("cannot recreate trigger", ex);
         }
         return null;
     }
@@ -397,24 +397,10 @@ public class JCRJobStore implements JobStore {
         if(SchedulerModule.log.isDebugEnabled()) {
             SchedulerModule.log.trace("trace");
         }
-        try {
-            Session session = getSession(ctxt);
-            Node triggerNode = session.getRootNode().getNode(trigger.getName().substring(1));
-            if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
-                triggerNode.checkout();
-            }
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(trigger.getNextFireTime());
-            triggerNode.setProperty("hipposched:nextFireTime", cal);
-            triggerNode.save();
-            return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
-                                          trigger, null, false,
-                                          trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
-                                          trigger.getPreviousFireTime(), trigger.getNextFireTime());
-        } catch(RepositoryException ex) {
-            SchedulerModule.log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("error while marking trigger fired", ex);
-        }
+        return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
+                                      trigger, null, false,
+                                      trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
+                                      trigger.getPreviousFireTime(), trigger.getNextFireTime());
     }
 
     public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode)
@@ -426,13 +412,25 @@ public class JCRJobStore implements JobStore {
             Session session = getSession(ctxt);
             String jobName = jobDetail.getName();
             Node jobNode = session.getRootNode().getNode(jobName.substring(1));
-            if(jobNode != null) {
-                Node handle = jobNode.getParent();
-                if(handle.isNodeType("mix:versionable") && !handle.isCheckedOut()) {
-                    handle.checkout();
+            Node triggerNode = session.getRootNode().getNode(trigger.getName().substring(1));
+            Date nextFire = trigger.getFireTimeAfter(new Date());
+            if(nextFire != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(nextFire);
+                if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
+                    triggerNode.checkout();
                 }
-                jobNode.remove();
-                handle.save();
+                triggerNode.setProperty("hipposched:nextFireTime", cal);
+                triggerNode.save();
+            } else {
+                if(jobNode != null) {
+                    Node handle = jobNode.getParent();
+                    if(handle.isNodeType("mix:versionable") && !handle.isCheckedOut()) {
+                        handle.checkout();
+                    }
+                    jobNode.remove();
+                    handle.save();
+                }
             }
         } catch(PathNotFoundException ex) {
             // deliberate ignore
