@@ -132,7 +132,6 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     }
 
     public void detach() {
-        config.detach();
         if (model != null) {
             model.detach();
         }

@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -42,7 +41,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager, IDetachable {
+public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -200,10 +199,6 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager,
             }
         }
         return null;
-    }
-
-    public void detach() {
-        config.detach();
     }
 
 }

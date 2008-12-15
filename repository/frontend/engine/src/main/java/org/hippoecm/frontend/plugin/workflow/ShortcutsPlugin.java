@@ -140,10 +140,4 @@ public class ShortcutsPlugin extends Panel implements IPlugin, IJcrNodeModelList
         refresh();
     }
 
-    @Override
-    public void onDetach() {
-        config.detach();
-        super.onDetach();
-    }
-
 }

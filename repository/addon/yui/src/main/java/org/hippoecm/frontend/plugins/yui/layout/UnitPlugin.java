@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -25,7 +24,7 @@ import org.hippoecm.frontend.service.IBehaviorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorService, IDetachable {
+public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorService {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -44,10 +43,6 @@ public class UnitPlugin extends UnitBehavior implements IPlugin, IBehaviorServic
 
     public String getComponentPath() {
         return config.getString(IBehaviorService.PATH);
-    }
-
-    public void detach() {
-        config.detach();
     }
 
     static UnitSettings createSettings(IPluginConfig config) {
