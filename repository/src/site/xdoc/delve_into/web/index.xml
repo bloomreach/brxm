@@ -63,11 +63,11 @@
      If you need even more advanced functionality to use with your website, 
      the toolkits and/or the Hippo CMS can be extended by plugin 
      developers. The extra functionality then becomes available for
-     the webdevelopmers in a transparent way. 
+     the web developers in a transparent way. 
     </p>
     <p>Information for plugin developers can be found at        
 
-     <a href="http://docs.onehippo.org/hst2/addons/index.html">HST Customization</a>
+     <a href="http://www.onehippo.org/site-toolkit/delve_into/howto/index.html">Site Toolkit Howto</a>
      and 
      <a href="../custom/index.html">CMS Customization</a>, in particular
      the use of the standard 
