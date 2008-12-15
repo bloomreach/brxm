@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 675 terms</span>
+      <span class="shortdesc">Term index, 678 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -36,30 +36,6 @@
               <a href="../delve_into/sysadmin/installation/plugins.html#/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin">/hippo:configuration/hippo:frontend/cms/cms-static/logoutPlugin</a>
             </td>
             <td>Installing plugins from the Hippo forge</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/cms_admins/concepts/index.html#A_collection_of_concepts_a_CMS_admin_may_want_to_know_">A collection of concepts a CMS admin may want to know.</a>
-            </td>
-            <td>Welcome: CMS admin Concepts</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/contributors/concepts/index.html#A_collection_of_concepts_a_CMS_contributor_may_want_to_know_">A collection of concepts a CMS contributor may want to know.</a>
-            </td>
-            <td>Welcome: CMS Contributor Concepts</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/editors/concepts/index.html#A_collection_of_concepts_a_CMS_editor_may_want_to_know_">A collection of concepts a CMS editor may want to know.</a>
-            </td>
-            <td>Welcome: CMS Editor Concepts</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/concepts/index.html#A_collection_of_concepts_a_CMS_information_architect_may_want_to_know_">A collection of concepts a CMS information architect may want to know.</a>
-            </td>
-            <td>Welcome: CMS Information Architects Concepts</td>
           </tr>
           <tr>
             <td>
@@ -221,7 +197,7 @@
             <td>
               <a href="../delve_into/user/cms_admins/concepts/index.html#Alternative">Alternative</a>
             </td>
-            <td>Welcome: CMS admin Concepts</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
@@ -245,25 +221,37 @@
             <td>
               <a href="../delve_into/user/contributors/concepts/index.html#Alternative">Alternative</a>
             </td>
-            <td>Welcome: CMS Contributor Concepts</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/editors/concepts/index.html#Alternative">Alternative</a>
             </td>
-            <td>Welcome: CMS Editor Concepts</td>
+            <td>Welcome: </td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/user/information_architects/concepts/index.html#Alternative">Alternative</a>
             </td>
-            <td>Welcome: CMS Information Architects Concepts</td>
+            <td>Welcome: </td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/contributing.html#Alternative">Alternative</a>
+            </td>
+            <td>Contributing</td>
           </tr>
           <tr>
             <td>
               <a href="../delve_into/quickstart.html#Alternatives">Alternatives</a>
             </td>
             <td>Quickstart Steps</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/community.html#Alternatives">Alternatives</a>
+            </td>
+            <td>Community Support</td>
           </tr>
           <tr>
             <td>
@@ -354,6 +342,12 @@
               <a href="../delve_into/custom/reference/frontend/frontend-plugin-communication.html#Available_Services">Available Services</a>
             </td>
             <td>Frontend Plugin Communication</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Backend_template">Backend template</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -537,12 +531,6 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/cms_admins/concepts/index.html#CMS_admin_Concepts">CMS admin Concepts</a>
-            </td>
-            <td>Welcome: CMS admin Concepts</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/cms_admins/index.html#CMS_Admin_Guide">CMS Admin Guide</a>
             </td>
             <td>Welcome: CMS Admin Guide</td>
@@ -555,21 +543,9 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/user/contributors/concepts/index.html#CMS_Contributor_Concepts">CMS Contributor Concepts</a>
-            </td>
-            <td>Welcome: CMS Contributor Concepts</td>
-          </tr>
-          <tr>
-            <td>
               <a href="../delve_into/user/contributors/howto/index.html#CMS_Contributor_Howto">CMS Contributor Howto</a>
             </td>
             <td>Welcome: CMS Contributor Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/editors/concepts/index.html#CMS_Editor_Concepts">CMS Editor Concepts</a>
-            </td>
-            <td>Welcome: CMS Editor Concepts</td>
           </tr>
           <tr>
             <td>
@@ -582,12 +558,6 @@
               <a href="../delve_into/user/information_architects/howto/index.html#CMS_Information_Architect_Howto">CMS Information Architect Howto</a>
             </td>
             <td>Welcome: CMS Information Architect Howto</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/user/information_architects/concepts/index.html#CMS_Information_Architects_Concepts">CMS Information Architects Concepts</a>
-            </td>
-            <td>Welcome: CMS Information Architects Concepts</td>
           </tr>
           <tr>
             <td>
@@ -609,7 +579,7 @@
           </tr>
           <tr>
             <td>
-              <a href="../support/community_support.html#Community_Support">Community Support</a>
+              <a href="../support/community.html#Community_Support">Community Support</a>
             </td>
             <td>Community Support</td>
           </tr>
@@ -711,13 +681,14 @@
           </tr>
           <tr>
             <td>
-              <a href="../support/contributing.html#Contributing">Contributing</a>
+              <a href="../support/contributing.html#Contribute_to_${product_name},_either_in_code,_documentation,_support,_bug_reports,_improvement_requests&#10;_____or_whatever_form_you_think_is_useful_">Contribute to ${product_name}, either in code, documentation, support, bug reports, improvement requests
+     or whatever form you think is useful.</a>
             </td>
             <td>Contributing</td>
           </tr>
           <tr>
             <td>
-              <a href="../support/contributing.html#Contributing_to_Hippo_CMS_">Contributing to Hippo CMS.</a>
+              <a href="../support/contributing.html#Contributing">Contributing</a>
             </td>
             <td>Contributing</td>
           </tr>
@@ -1071,19 +1042,19 @@
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/web/add-ons/howto/#editing_template.html#Document_is_invalid_XML_">Document is invalid XML.</a>
+              <a href="../delve_into/web/add-ons/howto/#editing_template.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td>Howto: </td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/web/add-ons/howto/#packaging.html#Document_is_invalid_XML_">Document is invalid XML.</a>
+              <a href="../delve_into/web/add-ons/howto/#packaging.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td>Howto: </td>
           </tr>
           <tr>
             <td>
-              <a href="../delve_into/web/jcr/*.html#Document_is_invalid_XML_">Document is invalid XML.</a>
+              <a href="../delve_into/web/jcr/*.html#Document_is_not_a_valid_XML_document_">Document is not a valid XML document.</a>
             </td>
             <td/>
           </tr>
@@ -1092,6 +1063,12 @@
               <a href="../delve_into/user/contributors/howto/goto_document_tab.html#document_tab_screenshot">document tab screenshot</a>
             </td>
             <td>Howto: Goto a Document</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Document_type">Document type</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -1104,6 +1081,12 @@
               <a href="../delve_into/user/information_architects/howto/document_types/index.html#Document_Types">Document Types</a>
             </td>
             <td>Welcome: Document Types</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Documenttype">Documenttype</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -1146,6 +1129,12 @@
               <a href="../delve_into/user/cms_admins/howto/type_in_editing_region.html#Editing_region_screenshot">Editing region screenshot</a>
             </td>
             <td>Howto: Type in editing region</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Editing_template">Editing template</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -1467,6 +1456,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../delve_into/custom/synonyms.html#Frontend_plugin">Frontend plugin</a>
+            </td>
+            <td>Synonyms</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/custom/reference/frontend/frontend-plugin-architecture.html#Frontend_Plugin_Architecture">Frontend Plugin Architecture</a>
             </td>
             <td>Frontend Plugin Architecture</td>
@@ -1519,6 +1514,12 @@
               <a href="../delve_into/sysadmin/installation/in_application_server.html#Get_Hippo_CMS_up_and_running_in_a_Java_application_server_">Get Hippo CMS up and running in a Java application server.</a>
             </td>
             <td>Deploying in Application Server</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/community.html#Get_support_from_the_Hippo_community:">Get support from the Hippo community:</a>
+            </td>
+            <td>Community Support</td>
           </tr>
           <tr>
             <td>
@@ -1795,6 +1796,12 @@
               <a href="../delve_into/user/editors/tour.html#Hippo_CMS_Editor_Tour">Hippo CMS Editor Tour</a>
             </td>
             <td>Hippo CMS Editor Tour</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Hippo_CMS_plugin">Hippo CMS plugin</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -2542,6 +2549,12 @@
               <a href="../delve_into/sysadmin/requirements.html#linux_logo">linux logo</a>
             </td>
             <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#List_of_synonyms_used_in_discussions_of_the_Hippo_CMS_">List of synonyms used in discussions of the Hippo CMS.</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
@@ -3652,6 +3665,12 @@
               <a href="../delve_into/sysadmin/requirements.html#Supported_Stacks">Supported Stacks</a>
             </td>
             <td>Requirements</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../delve_into/custom/synonyms.html#Synonyms">Synonyms</a>
+            </td>
+            <td>Synonyms</td>
           </tr>
           <tr>
             <td>
