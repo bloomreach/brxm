@@ -36,11 +36,27 @@ public interface ELNode {
     public String getDecodedName();
     public String getName();
     public String getNodetype();
-    /*
+    
+    /**
      * Return the uuid of the canonical (!!) node or null when the node is not referenceable 
      */
     public String getUuid(); 
     public String getPath();
     public String getRelpath();
+    
+    /**
+     * Method for checking whether the node is the jcr root node. Note that if the node is a mirror of the 
+     * jcr root, also true is returned.
+     * 
+     * @return true when the node is the root node *or* a mirror of the root node
+     */
+    public boolean getIsRootNode();
+    
+    /**
+     * Method for checking whether the node is a hippo:node
+     * 
+     * @return true when the node is a 'hippo:handle' 
+     */
+    public boolean getIsHandle();
     
 }

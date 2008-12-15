@@ -33,7 +33,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.template.node.content.SourceRewriter;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
@@ -142,7 +142,11 @@ public abstract class AbstractELNode implements ELNode {
         return new ELPseudoMap() {
             @Override
             public Object get(Object nodeName) {
-                String name = (String) nodeName;
+                 String name = (String) nodeName;
+                 if(name == null || "".equals(name)) {
+                     log.warn("Cannot fetch node with node name 'empty'. (the jcr root node has an empty name)");
+                     return null;
+                 }
                  try {
                      if (!jcrNode.hasNode(name)) {
                          log.debug("Node '{}' not found. Return empty string", name);
@@ -153,7 +157,7 @@ public abstract class AbstractELNode implements ELNode {
                  } catch (PathNotFoundException e) {
                      log.debug("PathNotFoundException: {}", e.getMessage());
                  } catch (RepositoryException e) {
-                     log.error("RepositoryException: {}", e.getMessage());
+                     log.warn("RepositoryException: {}", e.getMessage());
                      log.debug("RepositoryException:", e);
                  }
                  return null;
@@ -364,5 +368,31 @@ public abstract class AbstractELNode implements ELNode {
             log.error(e.getMessage(), e);
             return null;
         }
+    }
+    
+    public boolean getIsRootNode(){
+        try {
+            if(this.jcrNode.isSame(this.jcrNode.getSession().getRootNode())) {
+                // the node is the root node
+                return true;
+            } else if(((HippoNode)this.jcrNode).getCanonicalNode() != null  && ((HippoNode)this.jcrNode).getCanonicalNode().isSame(this.jcrNode.getSession().getRootNode())) {
+                // the node is a mirror of the root node
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException during check if node is root node", e.getMessage());
+        }
+        return false;
+    }
+    
+    public boolean getIsHandle(){
+        try {
+            if(this.getJcrNode().isNodeType(HippoNodeType.NT_HANDLE)) {
+                return true;
+            }
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException during node type check", e.getMessage());
+        } 
+        return false;
     }
 }
