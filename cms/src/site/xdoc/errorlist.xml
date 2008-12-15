@@ -24,29 +24,29 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">144 errors and/or todos in 80 out of 175 documents (45%).</span>
+      <span class="shortdesc">148 errors and/or todos in 80 out of 176 documents (45%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
         <li>1 documents using dummy references.
      </li>
-        <li>3 unlinked documents.
+        <li>5 unlinked documents.
        </li>
         <li>1 documents with typo's.
      </li>
         <li>3 documents to review.
      </li>
-        <li>43 documents missing required info.
+        <li>46 documents missing required info.
      </li>
         <li>3 empty documents.
      </li>
         <li>5 documents to rewrite.
      </li>
-        <li>7 documents requiring additions.
+        <li>2 documents requiring additions.
      </li>
         <li>10 documents with unidentified TODO strings.
      </li>
-        <li>3 invalid documents.
+        <li>3 not valid XML documents.
      </li>
         <li>12 documents with bad text.
      </li>
@@ -64,12 +64,18 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="Unlinked documents (compared to previous linkreport): 3">
+      <subsection name="Unlinked documents (compared to previous linkreport): 5">
         <ol>
           <li>
             <a href="./delve_into/custom/schemas.html">schemas: </a>
             <ul>
               <li> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/custom/synonyms.html">synonyms: Synonyms</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/delve_into/custom/synonyms.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
           <li>
@@ -82,6 +88,12 @@
             <a href="./errorlist.html">errorlist: </a>
             <ul>
               <li> The file file:///home/rita/werk/cms/target/site/errorlist.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/community.html">community: Community Support</a>
+            <ul>
+              <li> The file file:///home/rita/werk/cms/target/site/support/community.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
         </ol>
@@ -234,7 +246,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Documents lacking some information: 43">
+      <subsection name="Documents lacking some information: 46">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Architecture</a>
@@ -443,7 +455,35 @@ repository is;
             </ul>
           </li>
           <li>
+            <a href="./delve_into/user/cms_admins/concepts/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
             <a href="./delve_into/user/cms_admins/howto/schemas.html">schemas: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/contributors/concepts/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/editors/concepts/index.html">index: </a>
+            <ul>
+              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
+              <li>Missing section. Add &lt;section name='...'&gt;.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./delve_into/user/information_architects/concepts/index.html">index: </a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
               <li>Missing section. Add &lt;section name='...'&gt;.</li>
@@ -488,12 +528,6 @@ repository is;
           </li>
           <li>
             <a href="./releasing.html">releasing: Performing a release of the Hippo-ECM suite</a>
-            <ul>
-              <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./support/community_support.html">community_support: Community Support</a>
             <ul>
               <li>Missing short description. Add &lt;span class='shortdesc'&gt;.</li>
             </ul>
@@ -565,7 +599,7 @@ repository is;
           </li>
         </ol>
       </subsection>
-      <subsection name="Add something to documents: 7">
+      <subsection name="Add something to documents: 2">
         <ol>
           <li>
             <a href="./delve_into/overview.html">overview: Delve into Hippo CMS</a>
@@ -574,39 +608,9 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./delve_into/user/cms_admins/concepts/index.html">index: CMS admin Concepts</a>
-            <ul>
-              <li>Concepts</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/contributors/concepts/index.html">index: CMS Contributor Concepts</a>
-            <ul>
-              <li>Concepts</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/editors/concepts/index.html">index: CMS Editor Concepts</a>
-            <ul>
-              <li>Concepts</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./delve_into/user/information_architects/concepts/index.html">index: CMS Information Architects Concepts</a>
-            <ul>
-              <li>Concepts</li>
-            </ul>
-          </li>
-          <li>
             <a href="./index.html">index: What is Hippo CMS?</a>
             <ul>
               <li>Enlightning diagram?</li>
-            </ul>
-          </li>
-          <li>
-            <a href="./support/contributing.html">contributing: Contributing</a>
-            <ul>
-              <li>information about Hippo Forge</li>
             </ul>
           </li>
         </ol>
@@ -847,31 +851,31 @@ repository is;
             </ul>
           </li>
           <li>
-            <a href="./support/community_support.html">community_support: Community Support</a>
+            <a href="./support/community.html">community: Community Support</a>
             <ul>
-              <li>: Read here what issues the developers of Hippo CMS have been and are<span xmlns="" class="bad"> current </span>ly working on. Only Hippo developers and some partners can open issues in the issue tracker, but anyone can contact the developers by email. They are listed as administrators of the Hippo issue tracke</li>
+              <li>: Read here what issues the developers of ${product_name} have been and are<span xmlns="" class="bad"> current </span>ly working on.</li>
             </ul>
           </li>
         </ol>
       </subsection>
-      <subsection name="invalid documents: 3">
+      <subsection name="notvalid documents: 3">
         <ol>
           <li>
             <a href="./delve_into/web/add-ons/howto/#editing_template.html">#editing_template: </a>
             <ul>
-              <li>Document is invalid XML.</li>
+              <li>Document is not a valid XML document.</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/web/add-ons/howto/#packaging.html">#packaging: </a>
             <ul>
-              <li>Document is invalid XML.</li>
+              <li>Document is not a valid XML document.</li>
             </ul>
           </li>
           <li>
             <a href="./delve_into/web/jcr/*.html">*: </a>
             <ul>
-              <li>Document is invalid XML.</li>
+              <li>Document is not a valid XML document.</li>
             </ul>
           </li>
         </ol>

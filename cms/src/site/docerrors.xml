@@ -122,7 +122,8 @@ repository is;
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder></folder><document ext="xml" filename="schemas" relpath="delve_into/custom">
     <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/schemas.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
-    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="synonyms" relpath="delve_into/custom">Synonyms
+    <unlinked> The file file:///home/rita/werk/cms/target/site/delve_into/custom/synonyms.html is never referenced in the site, not even from the menu.</unlinked></document></folder><document ext="xml" filename="overview" relpath="delve_into">Delve into Hippo CMS
     <add>Enlighting and attractive diagram.</add></document><document ext="xml" filename="quickstart_in_existing_container" relpath="delve_into">Your own Quickstart
     <rewrite>This text contains much that is admin information and is mostly redundant.
                         Merge this document into the admin guide and leave the new version very small, 
@@ -175,9 +176,16 @@ repository is;
    <folder>cms_admins
    
    <folder>concepts
-   
-   <document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">CMS admin Concepts
-    <add>Concepts</add></document></folder><folder>howto
+   <title>CMS Admins Concepts</title><shortdesc>A collection of concepts a CMS administrators may want to know.</shortdesc><afterlist>  
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+   <document ext="xml" filename="index" relpath="delve_into/user/cms_admins/concepts">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document></folder><folder>howto
    
    <document ext="xml" filename="add_group" relpath="delve_into/user/cms_admins/howto">Add Group</document><document ext="xml" filename="add_user" relpath="delve_into/user/cms_admins/howto">Add User</document><document ext="xml" filename="assign_user_to_group" relpath="delve_into/user/cms_admins/howto">Assign user to group</document><document ext="xml" filename="change_group_properties" relpath="delve_into/user/cms_admins/howto">Change group properties</document><document ext="xml" filename="change_password" relpath="delve_into/user/cms_admins/howto">Change password</document><document ext="xml" filename="change_user_properties" relpath="delve_into/user/cms_admins/howto">Change user properties</document><document ext="xml" filename="deactivate_account" relpath="delve_into/user/cms_admins/howto">Deactivate account</document><document ext="xml" filename="goto_group_properties" relpath="delve_into/user/cms_admins/howto">Goto Group Properties</document><document ext="xml" filename="goto_user_management_tab" relpath="delve_into/user/cms_admins/howto">Goto User Management Tab
     <empty_elem>...&lt;span class='usermanagement_16'/&gt;,
@@ -188,9 +196,16 @@ repository is;
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="start_CMS" relpath="delve_into/user/cms_admins/howto">Start CMS</document><document ext="xml" filename="type_in_editing_region" relpath="delve_into/user/cms_admins/howto">Type in editing region</document></folder><document ext="xml" filename="index" relpath="delve_into/user/cms_admins">CMS Admin Guide</document><document ext="xml" filename="tour" relpath="delve_into/user/cms_admins">Hippo CMS Admin Tour</document></folder><folder>contributors
    
    <folder>concepts
-   
-   <document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document</document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder</document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts">CMS Contributor Concepts
-    <add>Concepts</add></document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
+   <title>CMS Contributor Concepts</title><shortdesc>A collection of concepts a CMS contributor may want to know.</shortdesc><afterlist>  
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+   <document ext="xml" filename="document" relpath="delve_into/user/contributors/concepts">Document</document><document ext="xml" filename="folder" relpath="delve_into/user/contributors/concepts">Folder</document><document ext="xml" filename="index" relpath="delve_into/user/contributors/concepts">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="versioning" relpath="delve_into/user/contributors/concepts">Versioning
     <badtext>, to replace the<span class="bad"> current </span>content of a document with content the document had sometime in the past.</badtext></document></folder><folder>howto
    
    <document ext="xml" filename="browsing_history_of_document" relpath="delve_into/user/contributors/howto">Browsing history of a document
@@ -208,9 +223,16 @@ repository is;
     <empty_elem>&lt;section name='Restoring a previous version of a document'/&gt;</empty_elem></document><document ext="xml" filename="save_document" relpath="delve_into/user/contributors/howto">Save Document</document><document ext="xml" filename="start_CMS" relpath="delve_into/user/contributors/howto">Start CMS</document></folder><document ext="xml" filename="index" relpath="delve_into/user/contributors">Contributors Guide</document><document ext="xml" filename="tour" relpath="delve_into/user/contributors">Hippo CMS Contributor Tour</document></folder><folder>editors
    
    <folder>concepts
-   
-   <document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder</document><document ext="xml" filename="index" relpath="delve_into/user/editors/concepts">CMS Editor Concepts
-    <add>Concepts</add></document><document ext="xml" filename="request" relpath="delve_into/user/editors/concepts">Request</document></folder><folder>howto
+   <title>CMS Editor Concepts</title><shortdesc>A collection of concepts a CMS editor may want to know.</shortdesc><afterlist>  
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+   <document ext="xml" filename="folder" relpath="delve_into/user/editors/concepts">Folder</document><document ext="xml" filename="index" relpath="delve_into/user/editors/concepts">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="request" relpath="delve_into/user/editors/concepts">Request</document></folder><folder>howto
    
    <document ext="xml" filename="check_for_requests" relpath="delve_into/user/editors/howto">Check for requests</document><document ext="xml" filename="create_folder" relpath="delve_into/user/editors/howto">Create Folder</document><document ext="xml" filename="goto_content_browse_tab" relpath="delve_into/user/editors/howto">Goto Content Browse Tab
     <empty_elem>...&lt;span class='content_browse-16'/&gt;,
@@ -218,9 +240,16 @@ repository is;
     .../&lt;p&gt;<br/>This may cause the markup of this span element to spill in the following text. This is due to Doxia not closing empty elements. It does not generate correct XHTML.</empty_elem></document><document ext="xml" filename="handle_request" relpath="delve_into/user/editors/howto">Handle request</document><document ext="xml" filename="index" relpath="delve_into/user/editors/howto">CMS Editor Howto</document><document ext="xml" filename="login" relpath="delve_into/user/editors/howto">Login as Editor</document><document ext="xml" filename="logout" relpath="delve_into/user/editors/howto">Logout</document><document ext="xml" filename="start_CMS" relpath="delve_into/user/editors/howto">Start CMS</document></folder><document ext="xml" filename="index" relpath="delve_into/user/editors">Editors Guide</document><document ext="xml" filename="tour" relpath="delve_into/user/editors">Hippo CMS Editor Tour</document></folder><document ext="xml" filename="index" relpath="delve_into/user">User Guide</document><folder>information_architects
    
    <folder>concepts
-   
-   <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean</document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Documenttype</document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">CMS Information Architects Concepts
-    <add>Concepts</add></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field</document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace</document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string</document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL</document></folder><folder>howto
+   <title>CMS Information Architects Concepts</title><shortdesc>A collection of concepts a CMS information architect may want to know.</shortdesc><afterlist>  
+  <subsection name="Alternative">
+     <p>
+      If you do not know where to start, take the <a href="../tour.html">Tour</a>.
+     </p>
+  </subsection>
+ </afterlist>
+   <document ext="xml" filename="boolean" relpath="delve_into/user/information_architects/concepts">Boolean</document><document ext="xml" filename="documenttype" relpath="delve_into/user/information_architects/concepts">Documenttype</document><document ext="xml" filename="index" relpath="delve_into/user/information_architects/concepts">
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
+    <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="mandatory_or_optional" relpath="delve_into/user/information_architects/concepts">Mandatory or optional field</document><document ext="xml" filename="namespace" relpath="delve_into/user/information_architects/concepts">namespace</document><document ext="xml" filename="string" relpath="delve_into/user/information_architects/concepts">string</document><document ext="xml" filename="URL" relpath="delve_into/user/information_architects/concepts">URL</document></folder><folder>howto
    
    <document ext="xml" filename="add_boolean_to_documenttype" relpath="delve_into/user/information_architects/howto">Add boolean to Documentttype</document><document ext="xml" filename="add_date_to_documenttype" relpath="delve_into/user/information_architects/howto">Add date to Documentttype</document><document ext="xml" filename="add_markuped_text_to_documenttype" relpath="delve_into/user/information_architects/howto">Add markuped text field to Documentttype</document><document ext="xml" filename="add_string_to_documenttype" relpath="delve_into/user/information_architects/howto">Add string to Documentttype</document><document ext="xml" filename="change_field_in_documenttype" relpath="delve_into/user/information_architects/howto">Change field in documenttype</document><document ext="xml" filename="create_documenttype" relpath="delve_into/user/information_architects/howto">Create Documentttype</document><document ext="xml" filename="create_namespace" relpath="delve_into/user/information_architects/howto">Create Namespace</document><folder>document_types
    
@@ -242,12 +271,12 @@ repository is;
    
    <folder>howto
    
-   <document ext="html#" filename="#editing_template" relpath="delve_into/web/add-ons/howto"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
+   <document ext="html#" filename="#editing_template" relpath="delve_into/web/add-ons/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="editing_template" relpath="delve_into/web/add-ons/howto">Create an Editing Template Add-on
     <badtext>, use "CND Export" to download the fancy.cnd file. This will give you the types as<span class="bad"> current </span>ly used by the repository.</badtext>
-    <badtext>Note: due to a bug in the<span class="bad"> current </span>milestone, you need to remove any occurence of</badtext></document><document ext="xml" filename="index" relpath="delve_into/web/add-ons/howto">Howto</document><document ext="html#" filename="#packaging" relpath="delve_into/web/add-ons/howto"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
+    <badtext>Note: due to a bug in the<span class="bad"> current </span>milestone, you need to remove any occurence of</badtext></document><document ext="xml" filename="index" relpath="delve_into/web/add-ons/howto">Howto</document><document ext="html#" filename="#packaging" relpath="delve_into/web/add-ons/howto"><notvalid>Document is not a valid XML document.</notvalid></document><document ext="xml" filename="packaging" relpath="delve_into/web/add-ons/howto">Creating your own WAR package
     <multisection>Has 4 sections.</multisection></document></folder><document ext="xml" filename="index" relpath="delve_into/web/add-ons">Hippo CMS Add-ons</document><document ext="xml" filename="introduction" relpath="delve_into/web/add-ons">Introduction to content add-on development</document></folder><document ext="xml" filename="index" relpath="delve_into/web">Website Development</document><folder>jcr
    
-   <document ext="" filename="*" relpath="delve_into/web/jcr"><invalid>Document is invalid XML.</invalid></document></folder><folder>toolkits
+   <document ext="" filename="*" relpath="delve_into/web/jcr"><notvalid>Document is not a valid XML document.</notvalid></document></folder><folder>toolkits
    
    <document ext="xml" filename="index" relpath="delve_into/web/toolkits">Toolkits</document></folder></folder></folder><document ext="xml" filename="errorlist" relpath=".">
     <unlinked> The file file:///home/rita/werk/cms/target/site/errorlist.html is never referenced in the site, not even from the menu.</unlinked>
@@ -259,8 +288,7 @@ repository is;
     <badtext>followed by the SVN revision number of the then<span class="bad"> current </span>trunk. For example a version might be</badtext>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
    
-   <document ext="xml" filename="community_support" relpath="support">Community Support
-    <badtext>: Read here what issues the developers of Hippo CMS have been and are<span class="bad"> current </span>ly working on. Only Hippo developers and some partners can open issues in the issue tracker, but anyone can contact the developers by email. They are listed as administrators of the Hippo issue tracke</badtext>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><document ext="xml" filename="contributing" relpath="support">Contributing
-    <add>information about Hippo Forge</add></document></folder></folder>
+   <document ext="xml.vm" filename="community" relpath="support">Community Support
+    <unlinked> The file file:///home/rita/werk/cms/target/site/support/community.html is never referenced in the site, not even from the menu.</unlinked>
+    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing</document></folder></folder>
 </document_list>
