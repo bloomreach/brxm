@@ -47,7 +47,7 @@ public class TabsPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
     public static final String TAB_ID = "tabs";
-    public static final int MAX_TAB_TITLE_LENGTH = 9;
+    public static final int MAX_TAB_TITLE_LENGTH = 18;
 
     private TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
