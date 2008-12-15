@@ -131,11 +131,16 @@
     <empty_elem>&lt;td/&gt;</empty_elem></document><document ext="xml" filename="webxml" relpath="delve_into/reference/configuration">HST Configuration in web.xml
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/configuration/webxml.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder><document ext="xml" filename="index" relpath="delve_into/reference">Reference
-    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml#" filename="#synonyms" relpath="delve_into/reference"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
+    <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/index.html is never referenced in the site, not even from the menu.</unlinked></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
     <unlinked> The file file:///home/rita/werk/hst/target/site/delve_into/reference/synonyms.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder><document ext="xml" filename="errorlist" relpath=".">
     <unlinked> The file file:///home/rita/werk/hst/target/site/errorlist.html is never referenced in the site, not even from the menu.</unlinked>
     <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing>
     <missing>Missing section. Add &lt;section name='...'&gt;.</missing></document><document ext="xml" filename="index" relpath=".">What is Hippo Site Toolkit 2?
     <unlinked> The file file:///home/rita/werk/hst/target/site/index.html is never referenced in the site, not even from the menu.</unlinked>
-    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document></folder>
+    <missing>Missing short description. Add &lt;span class='shortdesc'&gt;.</missing></document><folder>support
+   
+   <document ext="xml.vm" filename="community" relpath="support">Community Support
+    <unlinked> The file file:///home/rita/werk/hst/target/site/support/community.html is never referenced in the site, not even from the menu.</unlinked>
+    <badtext>: Read here what issues the developers of ${product_name} have been and are<span class="bad"> current </span>ly working on.</badtext></document><document ext="xml.vm" filename="contributing" relpath="support">Contributing
+    <unlinked> The file file:///home/rita/werk/hst/target/site/support/contributing.html is never referenced in the site, not even from the menu.</unlinked></document></folder></folder>
 </document_list>

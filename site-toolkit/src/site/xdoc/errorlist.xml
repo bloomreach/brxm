@@ -24,13 +24,13 @@
   </properties>
   <body>
     <section name="Error and/or todo list">
-      <span class="shortdesc">114 errors and/or todos in 43 out of 43 documents (100%).</span>
+      <span class="shortdesc">116 errors and/or todos in 44 out of 44 documents (100%).</span>
       <ul>
         <li>0 documents referencing password protected sites.
      </li>
         <li>0 documents using dummy references.
      </li>
-        <li>42 unlinked documents.
+        <li>44 unlinked documents.
        </li>
         <li>0 documents with typo's.
      </li>
@@ -46,14 +46,14 @@
      </li>
         <li>3 documents with unidentified TODO strings.
      </li>
-        <li>1 invalid documents.
+        <li>0 not valid XML documents.
      </li>
-        <li>10 documents with bad text.
+        <li>11 documents with bad text.
      </li>
         <li>2 multisection documents.
      </li>
       </ul>
-      <subsection name="Unlinked documents (compared to previous linkreport): 42">
+      <subsection name="Unlinked documents (compared to previous linkreport): 44">
         <ol>
           <li>
             <a href="./about/architecture.html">architecture: Change to the document title</a>
@@ -305,6 +305,18 @@
             <a href="./index.html">index: What is Hippo Site Toolkit 2?</a>
             <ul>
               <li> The file file:///home/rita/werk/hst/target/site/index.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/community.html">community: Community Support</a>
+            <ul>
+              <li> The file file:///home/rita/werk/hst/target/site/support/community.html is never referenced in the site, not even from the menu.</li>
+            </ul>
+          </li>
+          <li>
+            <a href="./support/contributing.html">contributing: Contributing</a>
+            <ul>
+              <li> The file file:///home/rita/werk/hst/target/site/support/contributing.html is never referenced in the site, not even from the menu.</li>
             </ul>
           </li>
         </ol>
@@ -626,7 +638,7 @@
           </li>
         </ol>
       </subsection>
-      <subsection name="badtext documents: 10">
+      <subsection name="badtext documents: 11">
         <ol>
           <li>
             <a href="./delve_into/quickstart.html">quickstart: Quickstart</a>
@@ -690,14 +702,10 @@
               <li>exposes the<span xmlns="" class="bad"> current </span>pageNode to the current JSP pageContext. Within the JSP you can use the pageNode to retrieve the content of the selected document.</li>
             </ul>
           </li>
-        </ol>
-      </subsection>
-      <subsection name="invalid documents: 1">
-        <ol>
           <li>
-            <a href="./delve_into/reference/#synonyms.html">#synonyms: </a>
+            <a href="./support/community.html">community: Community Support</a>
             <ul>
-              <li>Document is invalid XML.</li>
+              <li>: Read here what issues the developers of ${product_name} have been and are<span xmlns="" class="bad"> current </span>ly working on.</li>
             </ul>
           </li>
         </ol>

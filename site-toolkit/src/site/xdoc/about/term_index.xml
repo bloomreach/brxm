@@ -24,7 +24,7 @@
   </properties>
   <body>
     <section name="Term index">
-      <span class="shortdesc">Term index, 167 terms</span>
+      <span class="shortdesc">Term index, 172 terms</span>
       <div class="eventable">
         <table>
           <tr>
@@ -83,6 +83,18 @@
           </tr>
           <tr>
             <td>
+              <a href="../support/contributing.html#Alternative">Alternative</a>
+            </td>
+            <td>Contributing</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/community.html#Alternatives">Alternatives</a>
+            </td>
+            <td>Community Support</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/reference/synonyms.html#Backend_template">Backend template</a>
             </td>
             <td>Synonyms</td>
@@ -137,6 +149,12 @@
           </tr>
           <tr>
             <td>
+              <a href="../support/community.html#Community_Support">Community Support</a>
+            </td>
+            <td>Community Support</td>
+          </tr>
+          <tr>
+            <td>
               <a href="../delve_into/reference/components/index.html#Components">Components</a>
             </td>
             <td>Welcome: Components</td>
@@ -170,6 +188,19 @@
               <a href="../delve_into/howto/facebook.html#Configure_the_sitemap">Configure the sitemap</a>
             </td>
             <td>Howto: Create a Facebook</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/contributing.html#Contribute_to_${product_name},_either_in_code,_documentation,_support,_bug_reports,_improvement_requests&#10;_____or_whatever_form_you_think_is_useful_">Contribute to ${product_name}, either in code, documentation, support, bug reports, improvement requests
+     or whatever form you think is useful.</a>
+            </td>
+            <td>Contributing</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/contributing.html#Contributing">Contributing</a>
+            </td>
+            <td>Contributing</td>
           </tr>
           <tr>
             <td>
@@ -248,12 +279,6 @@
               <a href="../delve_into/howto/start_project.html#Deploying_your_project_in_Tomcat">Deploying your project in Tomcat</a>
             </td>
             <td>Howto: Start a project</td>
-          </tr>
-          <tr>
-            <td>
-              <a href="../delve_into/reference/#synonyms.html#Document_is_invalid_XML_">Document is invalid XML.</a>
-            </td>
-            <td/>
           </tr>
           <tr>
             <td>
@@ -404,6 +429,12 @@
               <a href="../delve_into/howto/free_text_search.html#Free_Text_Search">Free Text Search</a>
             </td>
             <td>Howto: Free Text Search</td>
+          </tr>
+          <tr>
+            <td>
+              <a href="../support/community.html#Get_support_from_the_Hippo_community:">Get support from the Hippo community:</a>
+            </td>
+            <td>Community Support</td>
           </tr>
           <tr>
             <td>

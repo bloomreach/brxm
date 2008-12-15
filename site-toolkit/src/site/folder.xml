@@ -189,10 +189,6 @@
    fullname='delve_into/reference/index.xml'
    relpath='delve_into/reference'
   >index</file>
-    <file ext='xml#' mimetype='text/xml'
-   fullname='delve_into/reference/#synonyms.xml#'
-   relpath='delve_into/reference'
-  >#synonyms</file>
     <file ext='xml' mimetype='text/xml' valid='yes'
    fullname='delve_into/reference/synonyms.xml'
    relpath='delve_into/reference'
@@ -211,4 +207,14 @@
    fullname='index.xml'
    relpath='.'
   >index</file>
+  <folder>support
+   <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   fullname='support/community.xml.vm'
+   relpath='support'
+  >community</file>
+   <file ext='xml.vm' mimetype='text/xml' valid='yes'
+   fullname='support/contributing.xml.vm'
+   relpath='support'
+  >contributing</file>
+  </folder>
  </folder>

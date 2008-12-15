@@ -220,7 +220,7 @@
    <shortdesc>
           The concepts and technical details of the Hippo Site Toolkit.
         </shortdesc>
-  </document><document ext="xml#" filename="#synonyms" relpath="delve_into/reference"><invalid>Document is invalid XML.</invalid></document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
+  </document><document ext="xml" filename="synonyms" relpath="delve_into/reference">Synonyms
    <section>Synonyms</section>
    <shortdesc>List of synonyms used in discussions of the HST.</shortdesc>
    <subsection>Document type</subsection>
@@ -231,5 +231,16 @@
    <section>What is Hippo Site Toolkit 2?</section>
    <subsection>Learn more</subsection>
    <subsection>Delve into Hippo Site Toolkit</subsection>
-  </document></folder>
+  </document><folder>support
+   
+   <document ext="xml.vm" filename="community" relpath="support">Community Support
+   <section>Community Support</section>
+   <shortdesc>Get support from the Hippo community:</shortdesc>
+   <subsection>Alternatives</subsection>
+  </document><document ext="xml.vm" filename="contributing" relpath="support">Contributing
+   <section>Contributing</section>
+   <shortdesc>Contribute to ${product_name}, either in code, documentation, support, bug reports, improvement requests
+     or whatever form you think is useful.</shortdesc>
+   <subsection>Alternative</subsection>
+  </document></folder></folder>
 </document_list>
