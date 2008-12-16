@@ -29,5 +29,17 @@ public interface DomainMapping {
     public void setServletContextPath(String servletContextPath);
     
     public void setServletContextPathInUrl(boolean isServletContextPathInUrl);
+   
+    public void setScheme(String scheme);
+    
+    public String getScheme();
+    
+    public void setPortInUrl(boolean isPortInUrl);
+
+    public boolean isPortInUrl();
+    
+    public void setPort(int portNumber);
+    
+    public int getPort();
     
 }

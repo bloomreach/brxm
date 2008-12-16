@@ -76,9 +76,14 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
         if(!this.domainMapping.isInitialized()) {
             try {
                 domainMapping.init();
-                domainMapping.setServletContextPath(req.getContextPath());
+
                 // TODO try to find from the original request headers whether the context path should be kept
+                domainMapping.setServletContextPath(req.getContextPath());
                 domainMapping.setServletContextPathInUrl(true);
+                domainMapping.setScheme("http");
+                domainMapping.setPortInUrl(true);
+                domainMapping.setPort(8085);
+                
             } catch (DomainMappingException e) {
                 log.warn("Exception during initializing domainMapping", e.getMessage());
                 log.debug("Exception during initializing domainMapping", e);
@@ -88,7 +93,10 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
         if(matchingDomain == null) {
             if(domainMapping.getPrimaryDomain() != null) {
                 log.warn("No domain matched. Redirecting to primary domain '{}'", domainMapping.getPrimaryDomain().getPattern());
-                String redirect = req.getScheme()+"://"+domainMapping.getPrimaryDomain().getPattern();
+                String redirect = domainMapping.getScheme()+"://"+domainMapping.getPrimaryDomain().getPattern();
+                if(domainMapping.isPortInUrl()) {
+                    redirect = redirect + ":"+domainMapping.getPort();
+                }
                 ((HttpServletResponse)response).sendRedirect(redirect);
                 return;
             } else {

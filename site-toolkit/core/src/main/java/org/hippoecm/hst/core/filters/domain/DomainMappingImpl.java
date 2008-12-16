@@ -31,6 +31,9 @@ public class DomainMappingImpl implements DomainMapping{
     
     private String servletContextPath;
     private boolean isServletContextPathInUrl;
+    private String scheme;
+    private boolean isPortInUrl;
+    private int port;
     
     // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
     private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
@@ -225,11 +228,10 @@ public class DomainMappingImpl implements DomainMapping{
         }
         
         for(Domain domain : orderedDomains) {
-            // we are not interested in domains with a wildcard in them because we can rewrite to exact hosts
-            
+            // we are not interested in domains with a wildcard in them because we can only rewrite to exact hosts
             if(domain.isExactHost() && !domain.isRedirect()) {
                 for(RepositoryMapping repositoryMapping : domain.getRepositoryMappings()) {
-                    if(repositoryPath.equals(repositoryMapping.getPath())) {
+                    if(repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
                         log.debug("found a domain for repository path '{}' --> '{}' ", repositoryPath, domain.getPattern());
                         return repositoryMapping;
                     }
@@ -260,7 +262,15 @@ public class DomainMappingImpl implements DomainMapping{
     public void setServletContextPathInUrl(boolean isServletContextPathInUrl) {
         this.isServletContextPathInUrl = isServletContextPathInUrl;
     }
+    
+    public String getScheme() {
+        return scheme;
+    }
 
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+    
     @Override
     public String toString() {
         StringBuffer stringRepresentation = new StringBuffer();
@@ -282,6 +292,24 @@ public class DomainMappingImpl implements DomainMapping{
         stringRepresentation.append("\n-------End Domain Mapping--------");
         return stringRepresentation.toString();
     }
+
+    public boolean isPortInUrl() {
+        return isPortInUrl;
+    }
+
+    public void setPortInUrl(boolean isPortInUrl) {
+        this.isPortInUrl = isPortInUrl;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+ 
 
 
    
