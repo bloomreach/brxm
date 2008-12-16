@@ -117,14 +117,14 @@ public class MultiEditorPlugin implements IPlugin, IEditService, IEditorManager 
                                 Node node = nodeModel.getNode();
                                 HippoSession session = (HippoSession) node.getSession();
                                 if (dialogService != null && session.pendingChanges(node, "nt:base").hasNext()) {
-                                    dialogService.show(new OnCloseDialog(context, dialogService, (JcrNodeModel) entry
-                                            .getKey(), MultiEditorPlugin.this, viewer));
+                                    dialogService.show(new OnCloseDialog(context, (JcrNodeModel) entry.getKey(),
+                                            MultiEditorPlugin.this, viewer));
                                 } else {
                                     deleteEditor(viewer);
                                 }
                             } catch (RepositoryException e) {
                                 if (dialogService != null) {
-                                    dialogService.show(new ExceptionDialog(dialogService, e));
+                                    dialogService.show(new ExceptionDialog(e));
                                     log.error(e.getClass().getName() + ": " + e.getMessage());
                                 } else {
                                     log.error(e.getMessage());

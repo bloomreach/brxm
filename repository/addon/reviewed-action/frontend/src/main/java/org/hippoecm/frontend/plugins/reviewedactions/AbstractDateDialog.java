@@ -20,9 +20,7 @@ import java.util.Date;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
 import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 
@@ -34,9 +32,8 @@ public abstract class AbstractDateDialog extends AbstractWorkflowDialog {
 
     protected Date date;
 
-    public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IDialogService dialogWindow,
-                              IModel title, IModel question, Date date) {
-        super(workflowPlugin, dialogWindow, title);
+    public AbstractDateDialog(AbstractWorkflowPlugin workflowPlugin, IModel title, IModel question, Date date) {
+        super(workflowPlugin, title);
         this.date = date;
         add(new Label("question", question));
         add(new AjaxDateTimeField("value", new PropertyModel(this, "date")));

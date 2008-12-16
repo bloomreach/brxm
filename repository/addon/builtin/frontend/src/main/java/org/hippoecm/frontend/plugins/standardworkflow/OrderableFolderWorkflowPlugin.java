@@ -23,7 +23,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -50,8 +49,8 @@ public class OrderableFolderWorkflowPlugin extends FolderWorkflowPlugin {
             DialogAction action = new DialogAction(new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
 
-                public AbstractDialog createDialog(IDialogService dialogService) {
-                    return new ReorderDialog(OrderableFolderWorkflowPlugin.this, dialogService, jcrRef);
+                public AbstractDialog createDialog() {
+                    return new ReorderDialog(OrderableFolderWorkflowPlugin.this, jcrRef);
                 }
             }, getDialogService());
 

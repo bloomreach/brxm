@@ -21,7 +21,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 
@@ -33,8 +32,7 @@ public class DeleteDialog extends AbstractDialog {
 
     private MenuPlugin plugin;
 
-    public DeleteDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public DeleteDialog(MenuPlugin plugin) {
         this.plugin = plugin;
         add(new Label("message", getTitle()));
     }

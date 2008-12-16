@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -49,8 +48,8 @@ public class CopyDialog extends LookupDialog {
     private String target;
     private Label targetLabel;
 
-    public CopyDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow, new JcrTreeNode(new JcrNodeModel("/")));
+    public CopyDialog(MenuPlugin plugin) {
+        super(new JcrTreeNode(new JcrNodeModel("/")));
 
         this.plugin = plugin;
         JcrNodeModel model = (JcrNodeModel) plugin.getModel();

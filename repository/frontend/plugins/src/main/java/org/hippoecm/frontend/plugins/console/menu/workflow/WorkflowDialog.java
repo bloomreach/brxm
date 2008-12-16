@@ -27,7 +27,6 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -42,8 +41,7 @@ public class WorkflowDialog extends AbstractDialog {
 
     private final MenuPlugin plugin;
 
-    public WorkflowDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public WorkflowDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();

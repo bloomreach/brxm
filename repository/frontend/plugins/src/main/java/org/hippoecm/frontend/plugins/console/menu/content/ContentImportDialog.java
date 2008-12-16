@@ -42,7 +42,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -106,8 +105,7 @@ public class ContentImportDialog  extends AbstractDialog implements ITitleDecora
     }
 
 
-    public ContentImportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public ContentImportDialog(MenuPlugin plugin) {
         InitMaps();
         this.plugin = plugin;
         nodeModel = (JcrNodeModel) plugin.getModel();

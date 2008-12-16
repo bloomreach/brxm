@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoNode;
@@ -38,8 +37,7 @@ public class SaveDialog extends AbstractDialog {
     protected boolean hasPendingChanges;
     protected MenuPlugin plugin;
 
-    public SaveDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public SaveDialog(MenuPlugin plugin) {
         this.plugin = plugin;
 
         Component message;

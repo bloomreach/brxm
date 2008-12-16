@@ -84,7 +84,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
                 JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getModel();
-                dialogService.show(new FolderShortcutPlugin.Dialog(dialogService, context, config,
+                dialogService.show(new FolderShortcutPlugin.Dialog(context, config,
                         (model != null ? model.getNode() : null), defaultDropLocation));
             }
         };
@@ -188,9 +188,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private String optionSelectOnly = null;
         private boolean optionSelectFirst = false;
 
-        public Dialog(IDialogService dialogWindow, IPluginContext context, IPluginConfig config, Node folder,
-                String defaultFolder) {
-            super(dialogWindow);
+        public Dialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
             ok.setModel(new Model("Create"));
 
             if (config.containsKey("option.first"))
@@ -288,7 +286,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             folderChoice.setOutputMarkupId(true);
 
             add(categoryChoice = new DropDownChoice("template", new PropertyModel(this, "templateCategory"), emptyList));
-            categoryChoice.add( new AjaxFormComponentUpdatingBehavior("onchange") {
+            categoryChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 @Override

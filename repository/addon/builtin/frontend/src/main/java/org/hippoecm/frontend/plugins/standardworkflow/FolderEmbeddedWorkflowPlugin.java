@@ -25,7 +25,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -50,8 +49,8 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
         add(new DialogLink("delete-dialog", new StringResourceModel("delete", this, null), new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                return new DeleteDialog(FolderEmbeddedWorkflowPlugin.this, dialogService);
+            public AbstractDialog createDialog() {
+                return new DeleteDialog(FolderEmbeddedWorkflowPlugin.this);
             }
         }, getDialogService()));
 
@@ -75,8 +74,8 @@ public class FolderEmbeddedWorkflowPlugin extends AbstractWorkflowPlugin {
     class DeleteDialog extends AbstractWorkflowDialog {
         private static final long serialVersionUID = 1L;
 
-        public DeleteDialog(FolderEmbeddedWorkflowPlugin plugin, IDialogService dialogWindow) {
-            super(plugin, dialogWindow, new StringResourceModel("delete-label", (Component) null, null));
+        public DeleteDialog(FolderEmbeddedWorkflowPlugin plugin) {
+            super(plugin, new StringResourceModel("delete-label", (Component) null, null));
 
             WorkflowsModel wflModel = (WorkflowsModel) plugin.getModel();
             if (wflModel.getNodeModel().getNode() == null) {

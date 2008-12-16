@@ -36,7 +36,6 @@ import org.apache.wicket.model.Model;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.repository.api.HippoSession;
@@ -50,8 +49,7 @@ public class ContentExportDialog extends AbstractDialog {
 
     private boolean skipBinary = true;
 
-    public ContentExportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public ContentExportDialog(MenuPlugin plugin) {
         setModel(plugin.getModel());
 
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();

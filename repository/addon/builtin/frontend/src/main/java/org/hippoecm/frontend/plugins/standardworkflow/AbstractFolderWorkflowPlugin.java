@@ -44,7 +44,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -263,13 +262,12 @@ public abstract class AbstractFolderWorkflowPlugin extends AbstractWorkflowPlugi
         DialogAction action = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
+            public AbstractDialog createDialog() {
                 if (category.contains("New Smart Folder")) // FIXME very bad check on name
-                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, dialogService, title,
-                            category, prototypes);
-                else
-                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, dialogService, title, category,
+                    return new FolderWorkflowExtendedDialog(AbstractFolderWorkflowPlugin.this, title, category,
                             prototypes);
+                else
+                    return new FolderWorkflowDialog(AbstractFolderWorkflowPlugin.this, title, category, prototypes);
             }
         }, getDialogService());
 

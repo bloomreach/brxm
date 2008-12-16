@@ -29,7 +29,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -50,9 +49,9 @@ public class FolderWorkflowDialog extends AbstractWorkflowDialog {
     private String prototype;
     private String name;
 
-    public FolderWorkflowDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, IDialogService dialogWindow,
+    public FolderWorkflowDialog(AbstractFolderWorkflowPlugin folderWorkflowPlugin, 
             IModel title, String category, Set<String> prototypes) {
-        super(folderWorkflowPlugin, dialogWindow, title);
+        super(folderWorkflowPlugin, title);
         this.category = category;
         this.prototypes = prototypes;
 

@@ -46,9 +46,7 @@ public class UploadDialog extends AbstractDialog {
     private IServiceReference<IJcrService> jcrServiceRef;
     private IPluginConfig pluginConfig;
 
-    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config,
-            IDialogService dialogWindow) {
-        super(dialogWindow);
+    public UploadDialog(GalleryShortcutPlugin plugin, IPluginContext context, IPluginConfig config) {
         ok.setVisible(false);
         cancel.setVisible(false);
         pluginConfig = config;
@@ -57,8 +55,14 @@ public class UploadDialog extends AbstractDialog {
         IJcrService service = context.getService(IJcrService.class.getName(), IJcrService.class);
         jcrServiceRef = context.getReference(service);
 
-        wizard = new UploadWizard("wizard", dialogWindow, this);
+        wizard = new UploadWizard("wizard", this);
         add(wizard);
+    }
+
+    @Override
+    public void setDialogService(IDialogService dialogService) {
+        super.setDialogService(dialogService);
+        wizard.setDialogService(dialogService);
     }
 
     public String getWorkflowCategory() {

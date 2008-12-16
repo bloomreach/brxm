@@ -22,7 +22,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.service.ITitleDecorator;
@@ -38,9 +37,7 @@ public class NodeDialog extends AbstractDialog implements ITitleDecorator {
     private String name;
     private String type = "nt:unstructured";
 
-    public NodeDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
-
+    public NodeDialog(MenuPlugin plugin) {
         this.plugin = plugin;
         add(new TextFieldWidget("name", new PropertyModel(this, "name")));
         add(new TextFieldWidget("type", new PropertyModel(this, "type")));

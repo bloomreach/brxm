@@ -40,15 +40,18 @@ public class UploadWizard extends Wizard {
     private IDialogService dialogService;
     private UploadDialog uploadDialog;
 
-    public UploadWizard(String id, IDialogService dialogService, UploadDialog uploadDialog) {
+    public UploadWizard(String id, UploadDialog uploadDialog) {
         super(id, false);
         setOutputMarkupId(true);
-        this.dialogService = dialogService;
         this.uploadDialog = uploadDialog;
         WizardModel wizardModel = new WizardModel();
         wizardModel.add(new Step1());
         wizardModel.add(new Step2());
         init(wizardModel);
+    }
+
+    void setDialogService(IDialogService dialogService) {
+        this.dialogService = dialogService;
     }
 
     @Override

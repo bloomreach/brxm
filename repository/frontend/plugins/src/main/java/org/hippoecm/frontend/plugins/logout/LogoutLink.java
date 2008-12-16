@@ -51,7 +51,7 @@ public class LogoutLink extends Panel {
                 try {
                     Node rootNode = userSession.getRootNode();
                     if (rootNode != null && rootNode.getSession().hasPendingChanges()) {
-                        final LogoutDialog dialog = new LogoutDialog(dialogWindow);
+                        final LogoutDialog dialog = new LogoutDialog();
                         dialogWindow.show(dialog);
                     } else {
                         userSession.logout();

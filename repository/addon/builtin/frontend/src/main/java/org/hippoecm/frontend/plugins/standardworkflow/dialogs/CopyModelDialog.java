@@ -21,7 +21,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -45,8 +44,8 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
 
     private String name;
 
-    public CopyModelDialog(EditmodelWorkflowPlugin plugin, IDialogService dialogWindow) {
-        super(plugin, dialogWindow, new StringResourceModel("copy-model", (Component) null, null));
+    public CopyModelDialog(EditmodelWorkflowPlugin plugin) {
+        super(plugin, new StringResourceModel("copy-model", (Component) null, null));
 
         WorkflowsModel wflModel = (WorkflowsModel) getPlugin().getModel();
         if (wflModel.getNodeModel().getNode() == null) {
@@ -75,7 +74,8 @@ public class CopyModelDialog extends AbstractWorkflowDialog {
                 IJcrService jcrService = context.getService(IJcrService.class.getName(), IJcrService.class);
                 jcrService.flush(nodeModel.getParentModel());
 
-                IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID), IEditService.class);
+                IEditService viewService = context.getService(config.getString(IEditService.EDITOR_ID),
+                        IEditService.class);
                 viewService.edit(nodeModel);
             } else {
                 log.error("no model found to edit");

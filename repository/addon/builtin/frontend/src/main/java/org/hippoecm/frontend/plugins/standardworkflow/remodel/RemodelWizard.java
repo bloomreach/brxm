@@ -36,14 +36,17 @@ public class RemodelWizard extends Wizard {
 
     private IDialogService dialogService;
 
-    public RemodelWizard(String id, IDialogService dialogService) {
+    public RemodelWizard(String id) {
         super(id, false);
         setOutputMarkupId(true);
-        this.dialogService = dialogService;
         WizardModel model = new WizardModel();
         model.add(new Step1());
         model.add(new Step2());
         init(model);
+    }
+
+    void setDialogService(IDialogService service) {
+        this.dialogService = service;
     }
 
     @Override
@@ -77,7 +80,7 @@ public class RemodelWizard extends Wizard {
                 public Component getLazyLoadComponent(String id) {
                     Label result;
                     try {
-                        RemodelDialog dialog = (RemodelDialog)findParent(RemodelDialog.class);
+                        RemodelDialog dialog = (RemodelDialog) findParent(RemodelDialog.class);
                         dialog.remodel();
                         result = new Label(id, new StringResourceModel("success", this, null));
                     } catch (Exception e) {
