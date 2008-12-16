@@ -42,7 +42,7 @@ public class LinkTag extends SimpleTagSupport {
     private String location;
     private String staticattr;
     private ELNode item;
-    private String precedence;
+    private String sitemap;
     
 
     @Override
@@ -58,7 +58,7 @@ public class LinkTag extends SimpleTagSupport {
             }
         } else {
             if(item!= null) {
-                href = urlMapping.rewriteLocation(item.getJcrNode(), precedence);
+                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap);
             } else if(location != null ) {
             	// location must be a sitemapNodeName
                 href = urlMapping.rewriteLocation(location, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
@@ -109,12 +109,12 @@ public class LinkTag extends SimpleTagSupport {
         this.location = location;
     }
     
-    public String getPrecedence() {
-        return precedence;
+    public String getSitemap() {
+        return sitemap;
     }
 
-    public void setPrecedence(String precedence) {
-        this.precedence = precedence;
+    public void setSitemap(String sitemap) {
+        this.sitemap = sitemap;
     }
     
     public class Link {
