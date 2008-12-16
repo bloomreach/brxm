@@ -2236,7 +2236,7 @@
         <sv:value>top</sv:value>
       </sv:property>
       <sv:property sv:name="options" sv:type="String">
-        <sv:value>height=24,gutter=0px 0px 0px 0px</sv:value>
+        <sv:value>height=25,gutter=0px 0px 0px 0px</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

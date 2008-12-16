@@ -15,19 +15,16 @@
 -->
 <wicket:panel>
   <wicket:extend>
-    <div style="height:200px;">
-      <div style="width: 200px;float:left;">
-        <div wicket:id="extension.shortcuts">[ Doclisting ]</div>
-      </div>
-      <div style="float:left;width: 200px;">
-        <div wicket:id="dialog.list">[ Doclisting ]</div>
-      </div>
-    </div>
-    <div style="position:absolute;bottom: 20px;left:15px;">
+        <div class="hippo-picker">
+        <div class="hippo-picker-tree" wicket:id="extension.shortcuts">[ Doclisting ]</div>
+          <div class="hippo-picker-breadcrumbs">&nbsp;</div>
+          <div class="hippo-list-details hippo-picker-list-details" wicket:id="dialog.list">[ Doclisting ]</div>
+        </div>
+     <div class="hippo-picker-properties">
       <form wicket:id="form1">
-        <label>Alt: </label><div wicket:id="alt">[Alt text box]</div>
+        <label>Alternative text: </label><div wicket:id="alt">[Alt text box]</div>
       </form>
-    </div>
+     </div>
   </wicket:extend>
 </wicket:panel>
 
