@@ -419,15 +419,11 @@ class LocalHippoRepository extends HippoRepositoryImpl {
                     true, null, null, true);
 
             for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
-
                 DecoratorFactoryImpl moduleDecoratorFactory = new DecoratorFactoryImpl();
                 javax.jcr.Repository moduleRepository = moduleDecoratorFactory.getRepositoryDecorator(repository);
                 Session moduleSession = moduleDecoratorFactory.getSessionDecorator(repository, jcrRootSession);
                 repository = new CheckedDecoratorFactory().getRepositoryDecorator(repository);
                 moduleSession = moduleSession.impersonate(new SimpleCredentials("system", new char[] {}));
-
-                // Session moduleSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
-
                 try {
                     module.initialize(moduleSession);
                     daemonModules.add(module);
