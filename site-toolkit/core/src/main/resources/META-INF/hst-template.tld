@@ -149,6 +149,14 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <description>You can give here the name of the sitemap item you would like to have precedence for linkrewriting.
+            If you have multiple sitemap nodes to first test, you can use a "|" as seperator. There is no precendence in the order.
+            </description>
+            <name>sitemap</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
     <tag>

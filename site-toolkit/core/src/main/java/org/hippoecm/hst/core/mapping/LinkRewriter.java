@@ -33,9 +33,11 @@ public class LinkRewriter {
     private boolean isExactMatch;
     private boolean isPrefix;
     private RepositoryMapping repositoryMapping;
+    private String siteMapItemName;
    
 
-    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path, RepositoryMapping repositoryMapping) {
+    public LinkRewriter(String siteMapItemName, String linkRewrite, boolean isPrefix, String nodeTypeName, String path, RepositoryMapping repositoryMapping) {
+        this.siteMapItemName = siteMapItemName;
         this.linkRewrite = linkRewrite;
         this.nodeTypeName = nodeTypeName;
         this.repositoryMapping = repositoryMapping;
@@ -136,5 +138,9 @@ public class LinkRewriter {
             return 0;
         }
         return 0;
+    }
+
+    public String getSiteMapItemName() {
+        return siteMapItemName;
     }
 }

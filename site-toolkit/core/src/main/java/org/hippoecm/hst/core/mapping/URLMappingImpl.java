@@ -16,11 +16,14 @@
 package org.hippoecm.hst.core.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +43,6 @@ import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.filters.domain.DomainMapping;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
-import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -130,7 +132,7 @@ public class URLMappingImpl implements URLMapping {
                             Value[] nodetypes = subNode.getProperty("hst:nodetype").getValues();
                             Value[] nodepaths = subNode.getProperty("hst:nodepath").getValues();
                             for (int i = 0; i < nodepaths.length; i++) {
-                                LinkRewriter linkRewriter = new LinkRewriter(linkRewrite, isPrefix, nodetypes[i]
+                                LinkRewriter linkRewriter = new LinkRewriter(subNode.getName(), linkRewrite, isPrefix, nodetypes[i]
                                         .getString(), nodepaths[i].getString(), repositoryMapping);
                                 linkRewriters.add(linkRewriter);
                             }
@@ -212,10 +214,14 @@ public class URLMappingImpl implements URLMapping {
     }
 
     public String rewriteLocation(Node node) {
-        return rewriteLocation(node,false, false);
+        return rewriteLocation(node, null, false, false);
+    }
+    
+    public String rewriteLocation(Node node, String sitemap) {
+        return rewriteLocation(node, sitemap, false, false);
     }
 
-    private String rewriteLocation(Node node,boolean externalize, boolean secondTry) {
+    private String rewriteLocation(Node node, String sitemap,boolean externalize, boolean secondTry) {
         long start = System.currentTimeMillis();
         String rewritePath = null;
         String path = "";
@@ -223,7 +229,7 @@ public class URLMappingImpl implements URLMapping {
         String cacheKey = null;
         try {
             rewritePath = node.getPath();
-            cacheKey = computeCacheKey(rewritePath, externalize, secondTry);
+            cacheKey = computeCacheKey(rewritePath, externalize, secondTry, sitemap);
             String rewritten = this.rewriteLRUCache.get(cacheKey);
             if (rewritten != null) {
                 return rewritten;
@@ -285,7 +291,7 @@ public class URLMappingImpl implements URLMapping {
                         }
                         
                         // set second try to true to avoid recusive possible loop
-                        return newUrlMapping.rewriteLocation(node,isExternalLink, true);
+                        return newUrlMapping.rewriteLocation(node, sitemap,isExternalLink, true);
                     } catch (URLMappingException e) {
                         log.warn("Exception while getting url mapping for '{}' : {}", matchingRepositoryMapping.getHstConfigPath(), e.getMessage());
                     }
@@ -294,26 +300,57 @@ public class URLMappingImpl implements URLMapping {
                     log.warn("Cannot rewrite a link to '{}' because no repository mapping at all links to one of its ancestors", path);
                 }
             } else {
+                
                 LinkRewriter bestRewriter = null;
                 int highestScore = 0;
-                long linkScoreStart = System.currentTimeMillis();
-                for (LinkRewriter lrw : linkRewriters) {
-                    int score = lrw.score(node);
-                    if (score > highestScore) {
-                        if (log.isDebugEnabled()) {
-                            if (highestScore == 0) {
-                                log.debug("found a match for linkrewriting");
-                            } else if (highestScore > 0) {
-                                log.debug("found a better match for linkrewriting");
+                
+                Set<String> precedenceSet = null;
+                // if there is a precendence set, first try if a precedence sitemap name can rewrite the link
+                if(sitemap != null) {
+                    precedenceSet = new HashSet<String>();
+                    precedenceSet.addAll(Arrays.asList(sitemap.split("\\|")));
+                    for (LinkRewriter lrw : linkRewriters) {
+                        if(precedenceSet.contains(lrw.getSiteMapItemName())) {
+                            int score = lrw.score(node);
+                            if (score > highestScore) {
+                                if (log.isDebugEnabled()) {
+                                    if (highestScore == 0) {
+                                        log.debug("found a match for linkrewriting");
+                                    } else if (highestScore > 0) {
+                                        log.debug("found a better match for linkrewriting");
+                                    }
+                                }
+                                highestScore = score;
+                                bestRewriter = lrw;
+                            } else if (score > 0 && log.isDebugEnabled()) {
+                                log.debug("found a match but already had a better match");
                             }
                         }
-                        highestScore = score;
-                        bestRewriter = lrw;
-                    } else if (score > 0 && log.isDebugEnabled()) {
-                        log.debug("found a match but already had a better match");
+                    }
+                    if(bestRewriter != null) {
+                        log.debug("Found a matching linkrewriter for a 'preferred' sitemap node '{}'", bestRewriter.getSiteMapItemName());
                     }
                 }
-                log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
+                
+                highestScore = 0;
+                if(bestRewriter == null) {
+                    for (LinkRewriter lrw : linkRewriters) {
+                        int score = lrw.score(node);
+                        if (score > highestScore) {
+                            if (log.isDebugEnabled()) {
+                                if (highestScore == 0) {
+                                    log.debug("found a match for linkrewriting");
+                                } else if (highestScore > 0) {
+                                    log.debug("found a better match for linkrewriting");
+                                }
+                            }
+                            highestScore = score;
+                            bestRewriter = lrw;
+                        } else if (score > 0 && log.isDebugEnabled()) {
+                            log.debug("found a match but already had a better match");
+                        }
+                    }
+                }
                 if (bestRewriter == null) {
                     log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
                 } else {
@@ -357,7 +394,7 @@ public class URLMappingImpl implements URLMapping {
 
     public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
         long start = System.currentTimeMillis();
-        String cacheKey = computeCacheKey(sitemapNodeName, false, false);
+        String cacheKey = computeCacheKey(sitemapNodeName, false, false, null);
         String rewritten = this.rewriteLRUCache.get(cacheKey);
         if (rewritten != null) {
             return rewritten;
@@ -459,13 +496,14 @@ public class URLMappingImpl implements URLMapping {
      * translated into different links. For now we consider the pattern from the matching domain to be enough to add to the cachekey
      */
 
-    private String computeCacheKey(String name, boolean externalize, boolean secondTry) {
+    private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence) {
         StringBuffer key = new StringBuffer();
         key.append(this.repositoryMapping.getDomain().getPattern());
         key.append("_");
         key.append(name);
         key.append("_").append(externalize);
         key.append("_").append(secondTry);
+        key.append("_").append(precedence);
         log.debug("Cachekey = {}", key.toString());
         return key.toString();
     }

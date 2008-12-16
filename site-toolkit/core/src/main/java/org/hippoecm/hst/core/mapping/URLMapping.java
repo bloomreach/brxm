@@ -26,7 +26,8 @@ import org.hippoecm.hst.core.template.node.PageNode;
 
 public interface URLMapping {
     
-    public String rewriteLocation(Node node);;
+    public String rewriteLocation(Node node);
+    public String rewriteLocation(Node node, String sitemap);
     public String rewriteLocation(String sitemapNodeName, Session jcrSession);
     public String getLocation(String path);
     public List<String> getCanonicalPathsConfiguration();

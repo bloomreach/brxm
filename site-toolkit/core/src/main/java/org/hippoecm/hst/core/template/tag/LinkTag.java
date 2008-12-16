@@ -42,6 +42,8 @@ public class LinkTag extends SimpleTagSupport {
     private String location;
     private String staticattr;
     private ELNode item;
+    private String precedence;
+    
 
     @Override
     public void doTag() throws JspException, IOException {
@@ -56,7 +58,7 @@ public class LinkTag extends SimpleTagSupport {
             }
         } else {
             if(item!= null) {
-                href = urlMapping.rewriteLocation(item.getJcrNode());
+                href = urlMapping.rewriteLocation(item.getJcrNode(), precedence);
             } else if(location != null ) {
             	// location must be a sitemapNodeName
                 href = urlMapping.rewriteLocation(location, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
@@ -93,6 +95,7 @@ public class LinkTag extends SimpleTagSupport {
     public String getLocation() {
         return location;
     }
+    
 
     public void setStatic(String staticattr) {
         this.staticattr = staticattr;
@@ -104,6 +107,14 @@ public class LinkTag extends SimpleTagSupport {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+    
+    public String getPrecedence() {
+        return precedence;
+    }
+
+    public void setPrecedence(String precedence) {
+        this.precedence = precedence;
     }
     
     public class Link {
