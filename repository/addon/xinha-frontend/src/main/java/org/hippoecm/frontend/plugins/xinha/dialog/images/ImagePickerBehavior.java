@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
 import java.util.HashMap;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.XinhaImageService;
@@ -35,11 +36,16 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
         super(context, config, serviceId);
         imagesServiceId = serviceId + ".images";
         
-        dialog.getModal().setInitialWidth(500);
-        dialog.getModal().setInitialHeight(300);
+        dialog.getModal().setInitialWidth(805);
+        dialog.getModal().setInitialHeight(420);
         dialog.getModal().setResizable(false);
     }
-
+    
+    @Override
+    protected String createTitle() {
+        return new StringResourceModel("imagepicker-dialog-title", getComponent(), null).getString();
+    }
+    
     @Override
     protected String getServiceId() {
         return "cms-pickers/image";

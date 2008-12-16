@@ -20,11 +20,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.browse.BrowserPlugin;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +40,22 @@ public class DocumentBrowserPlugin extends BrowserPlugin {
 
     static final Logger log = LoggerFactory.getLogger(DocumentBrowserPlugin.class);
     
+    private final Form form;
+    
     public DocumentBrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        
+        add(form = new Form("form1"));
+        form.add(new TextFieldWidget("title", getBean().getPropertyModel(XinhaLink.TITLE)) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onUpdate(AjaxRequestTarget target) {
+                if (!ok.isEnabled() && getBean().getNodeModel() != null) {
+                    enableOk(true);
+                }
+            }
+        });
     }
 
     @Override

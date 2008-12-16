@@ -114,7 +114,7 @@ public class XinhaLinkService implements IClusterable {
     }
 
     private JcrNodeModel findModel(String relPath) {
-        if (relPath != null) {
+        if (relPath != null && !"".equals(relPath)) {
             relPath = XinhaUtil.decode(relPath);
             try {
                 Node node = nodeModel.getNode();
