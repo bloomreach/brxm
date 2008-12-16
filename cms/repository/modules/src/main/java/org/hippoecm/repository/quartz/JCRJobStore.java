@@ -136,11 +136,16 @@ public class JCRJobStore implements JobStore {
         }
         try {
             Session session = getSession(ctxt);
-            Node jobNode = session.getRootNode().getNode(jobName.substring(1));
+            Node jobNode = null;
+            if (jobName.startsWith("/")) {
+                jobNode = session.getRootNode().getNode(jobName.substring(1));
+            } else {
+                jobNode = session.getNodeByUUID(jobName);
+            }
             if(jobNode != null) {
                 Object o = new ObjectInputStream(jobNode.getProperty("hipposched:data").getStream()).readObject();
                 JobDetail job = (JobDetail) o;
-                job.setName(jobNode.getPath());
+                job.setName(jobNode.getUUID());
                 return job;
             }
         } catch(RepositoryException ex) {
@@ -368,8 +373,8 @@ public class JCRJobStore implements JobStore {
                 }
                 Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
                 Trigger trigger = (Trigger) o;
-                trigger.setName(triggerNode.getPath());
-                trigger.setJobName(triggerNode.getParent().getParent().getPath());
+                trigger.setName(triggerNode.getUUID());
+                trigger.setJobName(triggerNode.getParent().getParent().getUUID());
                 triggerNode.getProperty("hipposched:nextFireTime").remove();
                 triggerNode.save();
                 return (Trigger) o;
@@ -411,8 +416,20 @@ public class JCRJobStore implements JobStore {
         try {
             Session session = getSession(ctxt);
             String jobName = jobDetail.getName();
-            Node jobNode = session.getRootNode().getNode(jobName.substring(1));
-            Node triggerNode = session.getRootNode().getNode(trigger.getName().substring(1));
+            String triggerName = trigger.getName();
+            Node jobNode;
+            Node triggerNode;
+            if (jobName.startsWith("/")) {
+                jobNode = session.getRootNode().getNode(jobName.substring(1));
+            } else {
+                jobNode = session.getNodeByUUID(jobName);
+            }
+            if (triggerName.startsWith("/")) {
+                triggerNode = session.getRootNode().getNode(triggerName.substring(1));
+            } else {
+                triggerNode = session.getNodeByUUID(triggerName);
+            }
+
             Date nextFire = trigger.getFireTimeAfter(new Date());
             if(nextFire != null) {
                 Calendar cal = Calendar.getInstance();
