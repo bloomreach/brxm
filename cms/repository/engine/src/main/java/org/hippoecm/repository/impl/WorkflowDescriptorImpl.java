@@ -77,14 +77,10 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
-                    System.err.println("BERRY#x "+serviceName);
         Class impl = Class.forName(serviceName);
         List<Class<Workflow>> interfaces = new LinkedList<Class<Workflow>>();
-            System.err.println("BERRY#y "+impl.getInterfaces().length);
         for(Class cls : impl.getInterfaces()) {
-            System.err.println("BERRY#z "+cls.getName());
             if(Workflow.class.isAssignableFrom(cls)) {
-                            System.err.println("BERRY#zz");
                 interfaces.add(cls);
             }
         }

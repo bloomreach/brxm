@@ -128,7 +128,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        System.err.println("BERRY publication request on document "+publicationDate);
         if(current == null) {
             current = new PublicationRequest(PublicationRequest.SCHEDPUBLISH, unpublished, getWorkflowContext().getUserIdentity(), publicationDate);
         } else {
