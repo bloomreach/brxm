@@ -85,7 +85,6 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
             }
         }
         Domain matchingDomain = domainMapping.match(req.getServerName());
-        
         if(matchingDomain == null) {
             if(domainMapping.getPrimaryDomain() != null) {
                 log.warn("No domain matched. Redirecting to primary domain '{}'", domainMapping.getPrimaryDomain().getPattern());
@@ -106,6 +105,11 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                 log.debug("Matching domain found. Wrapping the request.");
                 String ctxStrippedUri =  req.getRequestURI().replaceFirst(req.getContextPath(), "");
                 RepositoryMapping repositoryMapping = matchingDomain.getRepositoryMapping(ctxStrippedUri);
+                
+                if(repositoryMapping == null) {
+                    log.warn("repositoryMapping is null. Cannot process request further");
+                    ((HttpServletResponse)response).sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
                 // set the repositoryMapping on the hstRequestContext. This repositoryMapping gives access to the entire domain + domainMapping
                 hstRequestContext.setRepositoryMapping(repositoryMapping);
                 

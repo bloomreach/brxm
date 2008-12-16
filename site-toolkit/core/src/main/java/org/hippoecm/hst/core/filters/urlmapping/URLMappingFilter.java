@@ -17,7 +17,10 @@ import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.mapping.URLMappingException;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
+import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
+import org.hippoecm.hst.jcr.JcrSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +36,7 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
     
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        this.urlMappingManager = new URLMappingManager();
+        this.urlMappingManager = new URLMappingManagerImpl(new JcrSessionFactory(filterConfig));
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
@@ -51,6 +54,8 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
             return;
         }
         
+        hstRequestContext.setURLMappingManager(this.urlMappingManager);
+        
         Session session = hstRequestContext.getJcrSession();
         HttpServletResponse response = (HttpServletResponse)res;
         
@@ -60,7 +65,13 @@ public class URLMappingFilter extends HstBaseFilter implements Filter{
             return;
         }
         
-        URLMapping urlMapping = this.urlMappingManager.getUrlMapping(hstRequestContext);
+        URLMapping urlMapping = null;
+        try {
+            urlMapping = this.urlMappingManager.getUrlMapping(hstRequestContext);
+        } catch (URLMappingException e) {
+            log.error("Failure initialize urlMapping. Request cannot be processed. {}", e.getMessage());
+            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
 
         hstRequestContext.setAbsoluteUrlMapping(urlMapping);
         URLMapping relativeURLMapping = new RelativeURLMappingImpl(request.getRequestURI(), urlMapping);

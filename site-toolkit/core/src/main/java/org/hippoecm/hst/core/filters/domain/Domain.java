@@ -8,12 +8,17 @@ public interface Domain extends Comparable<Domain>{
     public static final String WILDCARD = "_default_";
     
     public DomainMapping getDomainMapping();
+    
     public String getPattern();
+    
     public RepositoryMapping getRepositoryMapping(String ctxStippedUri);
-    public RepositoryMapping[] getRepositoryMapping();
-    public Domain getDomainByRepositoryPath(String repositoryPath);
+    
+    public RepositoryMapping[] getRepositoryMappings();
+    
     public boolean isExactHost();
+    
     public boolean isRedirect();
+    
     public String getRedirect();
     /**
      * Return whether a host pattern matches or not

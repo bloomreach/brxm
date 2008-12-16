@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jcr.Session;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DomainImpl implements Domain {
     
-    private static final Logger log = LoggerFactory.getLogger(Domain.class);
+    private static final Logger log = LoggerFactory.getLogger(DomainImpl.class);
   
     private DomainMapping domainMapping;
     private String pattern;
@@ -18,28 +20,35 @@ public class DomainImpl implements Domain {
     private boolean exactHost;
     private String redirect;
 
-    public DomainImpl(String pattern, String[] repositoryPaths, DomainMapping domainMapping, String redirect) throws DomainException{
+    public DomainImpl(Session session, String pattern, String[] repositoryPaths, DomainMapping domainMapping, String redirect) throws DomainException{
         if(pattern == null || "".equals(pattern)) {
-            throw new DomainException("Not allowed to have an empty pattern.");
+            throw new DomainException("Not allowed to have an empty pattern. Skipping domain");
         }
         this.domainMapping = domainMapping;
         this.segments = pattern.split(DELIMITER);
         this.pattern = pattern;
         this.exactHost = !pattern.contains(Domain.WILDCARD);
         this.redirect = redirect;
-        this.repositoryMappings = createRepositoryMappings(repositoryPaths);
+        this.repositoryMappings = createRepositoryMappings(session, repositoryPaths);
     }
 
     
-    private RepositoryMapping[] createRepositoryMappings(String[] repositoryPaths) {
+    private RepositoryMapping[] createRepositoryMappings(Session session, String[] repositoryPaths) throws DomainException{
         List<RepositoryMapping> repoMappings = new ArrayList<RepositoryMapping>();
         for(String repositoryPath : repositoryPaths) {
             int index = repositoryPath.indexOf(":");
-            if(index > -1) {
-                repoMappings.add(new RepositoryMappingImpl(domainMapping,this, repositoryPath.substring(0,index), repositoryPath.substring(index+1, repositoryPath.length())));
-            } else {
-                repoMappings.add(new RepositoryMappingImpl(domainMapping, this, "",repositoryPath));
+            try {
+                if(index > -1) {
+                    repoMappings.add(new RepositoryMappingImpl(session, domainMapping,this, repositoryPath.substring(0,index), repositoryPath.substring(index+1, repositoryPath.length())));
+                } else {
+                    repoMappings.add(new RepositoryMappingImpl(session, domainMapping, this, "",repositoryPath));
+                }
+            } catch (RepositoryMappingException e) {
+               log.warn("Skipping Repository Mapping for pattern '{}' because {}", pattern, e.getMessage());
             }
+        }
+        if(repoMappings.isEmpty() && redirect == null) {
+            throw new DomainException("Skipping domain with pattern '"+this.pattern+"' because failed to initialize at least one repository mapping and the Domain is not a redirect.");
         }
         RepositoryMapping[] repoMappingsArr = repoMappings.toArray(new RepositoryMapping[repoMappings.size()]);
         Arrays.sort(repoMappingsArr);
@@ -107,7 +116,7 @@ public class DomainImpl implements Domain {
         return null;
     }
 
-    public RepositoryMapping[] getRepositoryMapping() {
+    public RepositoryMapping[] getRepositoryMappings() {
         return this.repositoryMappings;
     }
 
@@ -147,29 +156,6 @@ public class DomainImpl implements Domain {
         return 0;
     }
 
-
-    /**
-     * Method that return you the best matching domain for a repository path. For example, /preview/mysite repository path
-     * can belong to multiple domains. First, the current domain is checked. If the current domain does not have a RepositoryMapping with this
-     * repository path, the entire DomainMapping will be scanned, and the best (domain with most specific serverName) is returned.
-     * 
-     */
-    public Domain getDomainByRepositoryPath(String repositoryPath) {
-        if(repositoryPath == null) {
-            log.warn("Cannot find a Domain belonging to repositoryPath which is null");
-            return null;
-        }
-        for(RepositoryMapping repositoryMapping : this.repositoryMappings) {
-            if(repositoryPath.equals(repositoryMapping.getPath())) {
-                log.debug("The current Domain also has a mapping for repository path '{}'. Returning current domain", repositoryPath);
-                return this;
-            }
-        }
-        log.debug("The current Domain does not have a mapping for repository path '{}'. Searching for a matching domain in all Domains", repositoryPath);
-        return this.domainMapping.getDomainByRepositoryPath(repositoryPath);
-    }
-
-
     public boolean isExactHost() {
        return this.exactHost;
     }
@@ -194,7 +180,7 @@ public class DomainImpl implements Domain {
         if(this.isRedirect()) {
             stringRepr.append("\n\t\t redirect --> \t").append(this.redirect);
         } else {
-            for(RepositoryMapping repoMapping : getRepositoryMapping()) {
+            for(RepositoryMapping repoMapping : getRepositoryMappings()) {
                 stringRepr.append("\n\t\t ").append(repoMapping.getPath());
                 if(repoMapping.getPrefix() != null && !"".equals(repoMapping.getPrefix())) {
                     stringRepr.append("\t (").append(repoMapping.getPrefix()).append(")");

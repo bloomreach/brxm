@@ -37,8 +37,10 @@ import javax.jcr.Value;
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.filters.domain.DomainMapping;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
+import org.hippoecm.hst.jcr.ReadOnlyPooledSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -52,6 +54,7 @@ public class URLMappingImpl implements URLMapping {
     private final List<LinkRewriter> linkRewriters = new ArrayList<LinkRewriter>();
     private final Map<String, String> siteMapNodes = new LinkedHashMap<String, String>();
     private final RepositoryMapping repositoryMapping;
+    private final URLMappingManager urlMappingManager;
     
     // a list containing all canonical paths which are used in the url mapping. These paths are used to create named events
     // on which the cache is invalidated
@@ -59,17 +62,16 @@ public class URLMappingImpl implements URLMapping {
     
     private String siteMapRootNodePath;
 
-    public URLMappingImpl(HstRequestContext hstRequestContext) {
-        this.repositoryMapping = hstRequestContext.getRepositoryMapping();
+
+    public URLMappingImpl(RepositoryMapping repositoryMapping, URLMappingManager urlMappingManager, Session jcrSession) throws URLMappingException{
+        this.urlMappingManager = urlMappingManager;
+        this.repositoryMapping = repositoryMapping;
         this.rewriteLRUCache = new RewriteLRUCache(500);
         this.canonicalPathConfiguration = new ArrayList<String>();
-        
         try {
             long start = System.currentTimeMillis();
-            String virtualEntryName = null;
-            String physicalEntryPath = null;
-            Session session = hstRequestContext.getJcrSession();
-            HippoNode hstConf = (HippoNode) session.getItem(repositoryMapping.getHstConfigPath());
+           
+            HippoNode hstConf = (HippoNode) jcrSession.getItem(repositoryMapping.getHstConfigPath());
             Node canonical = hstConf.getCanonicalNode();
             if(canonical != null ) {
                 this.canonicalPathConfiguration.add(canonical.getPath());
@@ -80,41 +82,7 @@ public class URLMappingImpl implements URLMapping {
             
             Node siteMapRootNode = hstConf.getNode(HstBaseFilter.SITEMAP_RELATIVE_LOCATION);
             siteMapRootNodePath = siteMapRootNode.getPath();
-            try {
-                if (siteMapRootNode.hasProperty("hst:entrypointid")
-                        && !"".equals(siteMapRootNode.getProperty("hst:entrypointid").getString())) {
-                    Node entryPointNode = session.getNodeByUUID(siteMapRootNode.getProperty("hst:entrypointid")
-                            .getString());
-                    virtualEntryName = entryPointNode.getName();
-                    log.debug("virtual entry name = '" + virtualEntryName + "'");
-                    try {
-                        if (entryPointNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                            Node physicalPointNode = session.getNodeByUUID(entryPointNode.getProperty(
-                                    HippoNodeType.HIPPO_DOCBASE).getString());
-                            physicalEntryPath = physicalPointNode.getPath();
-                            log.debug("physical entry path = '" + physicalEntryPath + "'");
-                        }
-                    } catch (ItemNotFoundException e) {
-                        log
-                                .warn("physical entry cannot be found because the entry point node does not have a valid docbase");
-                    }
-                } else {
-                    log
-                            .debug("'hst:sitemap' does not contain property 'hst:entrypointid', hence discarding entry node path replacement in linkrewriting");
-                }
-            } catch (ItemNotFoundException e) {
-                log
-                        .warn("hst:entrypointid in the hst:sitemap node does not have the uuid of an existing node. Discarding entry node path replacements in linkrewriting. "
-                                + e.getMessage());
-            } catch (PathNotFoundException e) {
-                log
-                        .warn("hst:entrypointid in the hst:sitemap does not exist. Discarding entry node path replacements in linkrewriting. "
-                                + e.getMessage());
-            } catch (RepositoryException e) {
-                log.warn("RepositoryException: Discarding entry node path replacements in linkrewriting. "
-                        + e.getMessage());
-            }
-
+            
             NodeIterator subNodes;
             subNodes = siteMapRootNode.getNodes();
             while (subNodes.hasNext()) {
@@ -162,7 +130,7 @@ public class URLMappingImpl implements URLMapping {
                             Value[] nodepaths = subNode.getProperty("hst:nodepath").getValues();
                             for (int i = 0; i < nodepaths.length; i++) {
                                 LinkRewriter linkRewriter = new LinkRewriter(linkRewrite, isPrefix , nodetypes[i]
-                                        .getString(), nodepaths[i].getString() , physicalEntryPath, repositoryMapping);
+                                        .getString(), nodepaths[i].getString(), repositoryMapping);
                                 linkRewriters.add(linkRewriter);
                             }
                         } else {
@@ -189,8 +157,8 @@ public class URLMappingImpl implements URLMapping {
         } catch (RepositoryException e) {
             log.warn("URLMapping cannot be build:  RepositoryException " + e.getMessage());
         }
-
     }
+
 
     // TODO this method shouldn't be part of the url mapping
     public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext) {
@@ -243,66 +211,108 @@ public class URLMappingImpl implements URLMapping {
     }
 
     public String rewriteLocation(Node node) {
+        return rewriteLocation(node, false);
+    }
+    
+    
+    public String rewriteLocation(Node node, boolean secondTry) {
         long start = System.currentTimeMillis();
         String rewritePath = null;
         String path = "";
-        StringBuffer rewrite = null;
+        String rewrite = null;
+        String cacheKey = null;
         try {
             rewritePath = node.getPath();
-            String rewritten = this.rewriteLRUCache.get(rewritePath);
+            cacheKey = computeCacheKey(rewritePath);
+            String rewritten = this.rewriteLRUCache.get(cacheKey);
             if (rewritten != null) {
                 return rewritten;
             }
-            if (node instanceof HippoNode) {
-                HippoNode hippoNode = (HippoNode) node;
-                if (hippoNode.getCanonicalNode() != null && !hippoNode.getCanonicalNode().isSame(node)) {
-                    // take canonical node because virtual node found
-                    node = hippoNode.getCanonicalNode();
-                    
-                }
-            }
-            /*
-             * if the parent is handle, we might have the wrong location because for example below the virtual /preview the 
-             * nodepath is x/y/z/Foo but below the handle it might be x/y/z/Foo[2]. Therefor, use the path + name of the handle 
-             * to get the link and not the location of the hippo document if the parent is a handle
-             */  
-            boolean isHandle = false;
-            if(!node.getPath().equals("/") && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                node = node.getParent();
-                isHandle = true;
-            } else if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                isHandle = true;
-            }
-            path = node.getPath();
-            if(isHandle) {
-                path = path + "/"+node.getName();
-                node = node.getNode(node.getName());
-            }
-            LinkRewriter bestRewriter = null;
-            int highestScore = 0;
-            long linkScoreStart = System.currentTimeMillis();
-            for (LinkRewriter lrw : linkRewriters) {
-                int score = lrw.score(node);
-                if (score > highestScore) {
-                    if (log.isDebugEnabled()) {
-                        if (highestScore == 0) {
-                            log.debug("found a match for linkrewriting");
-                        } else if (highestScore > 0) {
-                            log.debug("found a better match for linkrewriting");
-                        }
+            
+            if(!secondTry) {
+                if (node instanceof HippoNode) {
+                    HippoNode hippoNode = (HippoNode) node;
+                    if (hippoNode.getCanonicalNode() != null && !hippoNode.getCanonicalNode().isSame(node)) {
+                        // take canonical node because virtual node found
+                        node = hippoNode.getCanonicalNode();
+                        
                     }
-                    highestScore = score;
-                    bestRewriter = lrw;
-                } else if (score > 0 && log.isDebugEnabled()) {
-                    log.debug("found a match but already had a better match");
+                }
+                /*
+                 * if the parent is handle, we might have the wrong location because for example below the virtual /preview the 
+                 * nodepath is x/y/z/Foo but below the handle it might be x/y/z/Foo[2]. Therefor, use the path + name of the handle 
+                 * to get the link and not the location of the hippo document if the parent is a handle
+                 */  
+                boolean isHandle = false;
+                if(!node.getPath().equals("/") && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    node = node.getParent();
+                    isHandle = true;
+                } else if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    isHandle = true;
+                }
+                path = node.getPath();
+                if(isHandle) {
+                    path = path + "/"+node.getName();
+                    node = node.getNode(node.getName());
                 }
             }
-            log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
-            if (bestRewriter == null) {
-                log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
-            } else {
-                String url = bestRewriter.getLocation(node);
-                rewrite = new StringBuffer(url);
+            
+            boolean isBinary = false;
+            if(this.repositoryMapping.getDomainMapping().isBinary(path)) {
+                isBinary = true;
+            }
+            
+            // first test for 'isBinary' because all subsites/domains share the asset location at,
+            if(!secondTry && !isBinary && !path.startsWith(this.repositoryMapping.getCanonicalContentPath())) {
+               /*
+                * we have a node outside the scope of the current repository mapping / urlmapping. This means we need to
+                * 1) find the correct (= the best) repository mapping
+                * 2) get the URLMapping for this repository mapping through the URLMappingManager
+                * 3) translate the url to an external link with the help of the found URLMapping + the global DomainMapping, where
+                * the latter has info about displaying the ContextPath, Port number, Scheme, etc
+                */ 
+                DomainMapping domainMapping = this.repositoryMapping.getDomainMapping();
+                RepositoryMapping repositoryMapping = domainMapping.getRepositoryMapping(path, this.repositoryMapping.getDomain());
+                if(repositoryMapping != null) {
+                    
+                    // TODO ask the urlmapping manager for the url mapping of this repository mapping
+                    try {
+                       URLMappingImpl newUrlMapping =  (URLMappingImpl)this.urlMappingManager.getUrlMapping(repositoryMapping, this.urlMappingManager, node.getSession());
+                       // set second try to true to avoid recusive possible loop
+                       return newUrlMapping.rewriteLocation(node, true);
+                    } catch (URLMappingException e) {
+                        log.warn("Exception while getting url mapping for '{}' : {}", repositoryMapping.getHstConfigPath(), e.getMessage());
+                    }
+                    
+                } else {
+                    log.warn("Cannot rewrite a link to '{}' because no repository mapping at all links to one of its ancestors", path);
+                }
+            }  else {
+                LinkRewriter bestRewriter = null;
+                int highestScore = 0;
+                long linkScoreStart = System.currentTimeMillis();
+                for (LinkRewriter lrw : linkRewriters) {
+                    int score = lrw.score(node);
+                    if (score > highestScore) {
+                        if (log.isDebugEnabled()) {
+                            if (highestScore == 0) {
+                                log.debug("found a match for linkrewriting");
+                            } else if (highestScore > 0) {
+                                log.debug("found a better match for linkrewriting");
+                            }
+                        }
+                        highestScore = score;
+                        bestRewriter = lrw;
+                    } else if (score > 0 && log.isDebugEnabled()) {
+                        log.debug("found a match but already had a better match");
+                    }
+                }
+                log.debug("Find best score took " + (System.currentTimeMillis() - linkScoreStart));
+                if (bestRewriter == null) {
+                    log.warn("No matching linkrewriter found for path '" + path + "'. Return node path.");
+                } else {
+                    rewrite = bestRewriter.getLocation(node);
+                }
             }
 
         } catch (ItemNotFoundException e) {
@@ -312,56 +322,25 @@ public class URLMappingImpl implements URLMapping {
         } catch (AccessDeniedException e) {
         	log.debug("AccessDeniedException during link rewriting {} Return node path.", e.getMessage());
         } catch (RepositoryException e) {
-            log.error("RepositoryException during link rewriting {}. Return node path.", e.getMessage());
-        }
-        log.debug("rewriteLocation for node took " + (System.currentTimeMillis() - start) + " ms.");
-
-        if (rewrite == null) {
-            rewrite = (new StringBuffer(repositoryMapping.getPath())).append(path);
-        }
-        System.out.println(repositoryMapping.getDomainMapping().getServletContextPath());
-        if(repositoryMapping.getPrefix()!=null) {
-            rewrite.insert(0,repositoryMapping.getPrefix());
+            log.warn("RepositoryException during link rewriting {}. Return node path.", e.getMessage());
         }
         
-        if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
-            rewrite.insert(0, repositoryMapping.getDomainMapping().getServletContextPath());
+        if(rewrite == null) {
+            log.warn("rewrite failed: Return ''");
+            rewrite = "";
         }
+        rewrite = UrlUtilities.encodeUrl(rewrite);
         
-        String rewriteString = rewrite.toString();
-        
-        rewriteString = UrlUtilities.encodeUrl(rewriteString);
-        if (rewritePath != null) {
-            this.rewriteLRUCache.put(rewritePath, rewriteString);
+        if (rewritePath != null && cacheKey != null) {
+            this.rewriteLRUCache.put(cacheKey, rewrite);
         }
-        return rewriteString;
+        return rewrite;
     }
 
-    public String getLocation(String path){
-        if(repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
-            String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
-            if(contextPath!= null && !contextPath.equals("")) {
-                if(contextPath.endsWith("/")) {
-                    if(path.startsWith("/")) {
-                        path = contextPath + path.substring(1);
-                    } else {
-                        path = contextPath+path;
-                    }
-                } else {
-                    if(path.startsWith("/")) {
-                        path = contextPath+path;
-                    } else {
-                        path = contextPath+"/"+path;
-                    }
-                    
-                } 
-            }
-        }
-        return path;
-    }
     public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
         long start = System.currentTimeMillis();
-        String rewritten = this.rewriteLRUCache.get(sitemapNodeName);
+        String cacheKey = computeCacheKey(sitemapNodeName);
+        String rewritten = this.rewriteLRUCache.get(cacheKey);
         if (rewritten != null) {
             return rewritten;
         }
@@ -381,7 +360,9 @@ public class URLMappingImpl implements URLMapping {
                 sitemapNodeName = sitemapNodeName.substring(1);
                 if (sitemapNodeName.length() == 0) {
                     log.warn("Unable to rewrite link for sitemap nodename = '/' or ''.");
-                    this.rewriteLRUCache.put(sitemapNodeName, "");
+                    if( cacheKey != null) {
+                        this.rewriteLRUCache.put(cacheKey, "");
+                    }
                     return "";
                 }
             }
@@ -432,7 +413,9 @@ public class URLMappingImpl implements URLMapping {
         log.debug("rewriteLocation for path took " + (System.currentTimeMillis() - start) + " ms.");
         if (rewrite == null) {
             log.warn("Unable to rewrite '{}' to a sitemap item link", sitemapNodeName);
-            this.rewriteLRUCache.put(sitemapNodeName, "");
+            if(cacheKey != null) {
+                this.rewriteLRUCache.put(cacheKey, "");
+            }
             return "";
         }
         
@@ -442,10 +425,49 @@ public class URLMappingImpl implements URLMapping {
         
         String rewriteString = rewrite.toString();
         rewriteString = UrlUtilities.encodeUrl(rewriteString);
-        this.rewriteLRUCache.put(sitemapNodeName, rewriteString);
+        if(cacheKey != null) {
+            this.rewriteLRUCache.put(cacheKey, rewriteString);
+        }
         return rewriteString;
     }
 
+    /*
+     * we need to account for the current repository mapping in the cachekey, because one and the same repository node can be 
+     * translated into different links. For now we consider the pattern from the matching domain to be enough to add to the cachekey
+     */  
+    
+    private String computeCacheKey(String name) {
+        StringBuffer key = new StringBuffer();
+        key.append(this.repositoryMapping.getDomain().getPattern());
+        key.append("_");
+        key.append(name);
+        log.debug("Cachekey = {}", key.toString());
+        return key.toString();
+    }
+
+    public String getLocation(String path){
+        if(repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+            String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
+            if(contextPath!= null && !contextPath.equals("")) {
+                if(contextPath.endsWith("/")) {
+                    if(path.startsWith("/")) {
+                        path = contextPath + path.substring(1);
+                    } else {
+                        path = contextPath+path;
+                    }
+                } else {
+                    if(path.startsWith("/")) {
+                        path = contextPath+path;
+                    } else {
+                        path = contextPath+"/"+path;
+                    }
+                    
+                } 
+            }
+        }
+        return path;
+    }
+    
     private class RewriteLRUCache {
 
         private final Map cache;
@@ -467,7 +489,8 @@ public class URLMappingImpl implements URLMapping {
         }
 
         private void put(String key, String rewrite) {
-            cache.put(key, rewrite);
+            // TODO enable this
+            //cache.put(key, rewrite);
         }
     }
 

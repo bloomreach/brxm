@@ -20,6 +20,8 @@ import javax.jcr.Session;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.mapping.URLMappingManager;
+import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
 import org.hippoecm.hst.core.template.node.PageNode;
 
 public class HstRequestContext {
@@ -31,6 +33,7 @@ public class HstRequestContext {
     private URLMapping relativeUrlMapping;
     private PageNode pageNode;
     private RepositoryMapping repositoryMapping;
+    private URLMappingManager urlMappingManager;
   
     public HstRequestContext() {
     }
@@ -45,6 +48,10 @@ public class HstRequestContext {
     
     public Session getJcrSession(){
         return this.jcrSession;
+    }
+    
+    public URLMappingManager getURLMappingManager(){
+        return this.urlMappingManager;
     }
     
     public URLMapping getUrlMapping() {
@@ -95,6 +102,10 @@ public class HstRequestContext {
 
     public void setHstConfigurationContextBase(ContextBase hstConfigurationContextBase) {
         this.hstConfigurationContextBase = hstConfigurationContextBase;
+    }
+
+    public void setURLMappingManager(URLMappingManager urlMappingManager) {
+        this.urlMappingManager = urlMappingManager;
     }
 
 

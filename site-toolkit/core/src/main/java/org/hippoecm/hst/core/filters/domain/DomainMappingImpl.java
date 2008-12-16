@@ -31,6 +31,9 @@ public class DomainMappingImpl implements DomainMapping{
     
     private String servletContextPath;
     private boolean isServletContextPathInUrl;
+    
+    // TODO for now hardcoded paths to binary location. This information is needed to rewrite urls to subsites with another domain
+    private String[] binaryLocations = new String[]{"/content/gallery", "/content/assets"};
      
   
     public DomainMappingImpl(String domainMappingLocation, FilterConfig filterConfig){
@@ -126,15 +129,15 @@ public class DomainMappingImpl implements DomainMapping{
                     if(mappingNode.isNodeType("hst:redirectmapping")) {
                         if(mappingNode.hasProperty("hst:redirect")) {
                             String redirect = mappingNode.getProperty("hst:redirect").getString();
-                            domain = new DomainImpl(newPattern, new String[0], this, redirect);
+                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, new String[0], this, redirect);
                         } else {
                             log.warn("Skipping redirect mapping node '{}' because does not have mandatory 'hst:redirect' property", mappingNode.getPath());
                         }
                     } else {
                         if(newRepositoryPaths == null) {
-                            domain = new DomainImpl(newPattern, repositorypaths.toArray(new String[repositorypaths.size()]), this, null);
+                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, repositorypaths.toArray(new String[repositorypaths.size()]), this, null);
                         } else {
-                            domain = new DomainImpl(newPattern, newRepositoryPaths.toArray(new String[newRepositoryPaths.size()]), this, null);
+                            domain = new DomainImpl(domainMappingNode.getSession(), newPattern, newRepositoryPaths.toArray(new String[newRepositoryPaths.size()]), this, null);
                         }
                     }
                     if(mappingNode.isNodeType("hst:primarydomain")) {
@@ -185,18 +188,55 @@ public class DomainMappingImpl implements DomainMapping{
         this.initialized = initialized;
     }
 
-    public Domain getDomainByRepositoryPath(String repositoryPath) {
+    public boolean isBinary(String path) {
+        if(path == null) {
+            return false;
+        }
+        for(String binaryLoc : binaryLocations) {
+            if(path.startsWith(binaryLoc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Method that returns you the best matching repository mapping for a repository path. For example, /preview/mysite repository path
+     * can occur in multiple domains. First, the current domain is checked. If the current domain does not have a RepositoryMapping with this
+     * repository path, the entire DomainMapping will be scanned, and 'the best' domain is returned. Only domains with an exact host, thus no 
+     * wildcards are taken into account. The best match is computed by how good the current domain pattern matches. For each segment that matches,
+     * the score is +1. So, www.mysite.com and subsite.mysite.com have 2 segments in common.
+     * 
+     */
+    
+    public RepositoryMapping getRepositoryMapping(String repositoryPath, Domain currentDomain) {
+        if(repositoryPath == null) {
+            log.warn("Cannot find a Domain belonging to repositoryPath which is null");
+            return null;
+        }
+        if(currentDomain != null) {
+            for(RepositoryMapping repositoryMapping : currentDomain.getRepositoryMappings()) {
+                if(repositoryMapping.getCanonicalContentPath()!=null && repositoryPath.startsWith(repositoryMapping.getCanonicalContentPath())) {
+                    log.debug("The current Domain also has a mapping for repository path '{}'. Returning the matching repository mapping from the current domain", repositoryPath);
+                    return repositoryMapping;
+                }
+            }
+            log.debug("The current Domain does not have a mapping for repository path '{}'. Searching for a matching domain in all Domains", repositoryPath);
+        }
+        
         for(Domain domain : orderedDomains) {
-            // we are not interested in domains with a wildcard in them
+            // we are not interested in domains with a wildcard in them because we can rewrite to exact hosts
+            
             if(domain.isExactHost() && !domain.isRedirect()) {
-                for(RepositoryMapping repositoryMapping : domain.getRepositoryMapping()) {
+                for(RepositoryMapping repositoryMapping : domain.getRepositoryMappings()) {
                     if(repositoryPath.equals(repositoryMapping.getPath())) {
                         log.debug("found a domain for repository path '{}' --> '{}' ", repositoryPath, domain.getPattern());
-                        return domain;
+                        return repositoryMapping;
                     }
                 }
             }
         }
+        log.warn("No repository mapping with a host without wildcards can be found for '{}'", repositoryPath);
         return null;
     }
     
@@ -231,7 +271,7 @@ public class DomainMappingImpl implements DomainMapping{
             if(domain.isRedirect()) {
                 stringRepresentation.append("\n\t\t redirect --> \t").append(domain.getRedirect());
             } else {
-                for(RepositoryMapping repoMapping : domain.getRepositoryMapping()) {
+                for(RepositoryMapping repoMapping : domain.getRepositoryMappings()) {
                     stringRepresentation.append("\n\t\t ").append(repoMapping.getPath());
                     if(repoMapping.getPrefix() != null && !"".equals(repoMapping.getPrefix())) {
                         stringRepresentation.append("\t (").append(repoMapping.getPrefix()).append(")");

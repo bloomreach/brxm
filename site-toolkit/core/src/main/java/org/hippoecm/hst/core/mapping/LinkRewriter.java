@@ -32,41 +32,51 @@ public class LinkRewriter {
     private int depth;
     private boolean isExactMatch;
     private boolean isPrefix;
-    private String physicalEntryPath;
+    private RepositoryMapping repositoryMapping;
    
 
-    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path2, String physicalEntryPath, RepositoryMapping repositoryMapping) {
+    public LinkRewriter(String linkRewrite, boolean isPrefix, String nodeTypeName, String path, RepositoryMapping repositoryMapping) {
         this.linkRewrite = linkRewrite;
         this.nodeTypeName = nodeTypeName;
-        this.physicalEntryPath = physicalEntryPath;
+        this.repositoryMapping = repositoryMapping;
         this.isPrefix = isPrefix;
-        if (!path2.startsWith("/")) {
+        if (!path.startsWith("/")) {
             log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");
-            path2 = "/" + path2;
+            path = "/" + path;
         }
-        if (path2.endsWith("/*")) {
-            this.path = path2.substring(0, path2.length() - 1);
+        if (path.endsWith("/*")) {
+            this.path = path.substring(0, path.length() - 1);
             depth = path.split("/").length;
         } else {
             this.isExactMatch = true;
-            this.path = path2;
+            this.path = path;
         }
     }
 
     public String getLocation(Node node) throws RepositoryException{
-        System.out.println(" linkRewrite = " + linkRewrite);
         if(isExactMatch || !isPrefix) {
-            return linkRewrite;
+            StringBuffer newLocation = new StringBuffer(repositoryMapping.getPrefix());
+            if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+                newLocation.insert(0, repositoryMapping.getDomainMapping().getServletContextPath());
+            }
+            newLocation.append(linkRewrite);
+            return newLocation.toString();
         } 
         String path = node.getPath();
-        if(physicalEntryPath != null) {
-            if(path.startsWith(physicalEntryPath)) {
+        String pathPrefix = repositoryMapping.getCanonicalContentPath();
+        if(pathPrefix != null) {
+            if(path.startsWith(pathPrefix)) {
                 
-                String newLocation = linkRewrite + path.substring(physicalEntryPath.length());
-                log.debug("Translated phyiscal entry path '" +node.getPath() + "' into virtual relative path '" + newLocation + "'");
-                return newLocation;
+                StringBuffer newLocation = new StringBuffer(repositoryMapping.getPrefix());
+                if(this.repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
+                    newLocation.insert(0, repositoryMapping.getDomainMapping().getServletContextPath());
+                }
+                newLocation.append(linkRewrite).append(path.substring(pathPrefix.length()));
+                
+                log.debug("Translated canonical path '{}' into virtual relative path '{}'", node.getPath(), newLocation);
+                return newLocation.toString();
             } else {
-                log.debug("node path ('" +path+ "')  does not start with the physicalEntryPath ('"+physicalEntryPath+"') so no rewriting.");
+                log.debug("node path ('{}')  does not start with the canonical path of repository mapping ('{}') so no rewriting.", path, pathPrefix);
             }
         }
         return linkRewrite + path;

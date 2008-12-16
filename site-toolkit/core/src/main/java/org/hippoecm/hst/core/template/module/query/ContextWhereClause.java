@@ -15,9 +15,12 @@
  */
 package org.hippoecm.hst.core.template.module.query;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNode;
@@ -46,14 +49,44 @@ public class ContextWhereClause {
             searchFromNode = contentContextNode;
             if(target != null && !"".equals(target)) {
                 if(target.startsWith("/")) {
-                    log.debug("Target is absolute path '{}'. Search will be done below /{} in the repository", target, target);
-                    // TODO have to do a search with the target absolute. We only need to create a context where clause that
-                    // accounts for the current filter && the absolute target path
+                    log.debug("Target is absolute path '{}'. Target will be taken relative to the jcr repository root node instead of the current content context base '{}'. The current content context base still is used for the where clauses regarding 'preview / live / language etc'",target, searchFromNode.getPath());
+                    /*
+                     * The target is absolute. We need to find out the following parts and account for it:
+                     * 1) Find the context where clauses regarding the current 'contentContextNode', like are we in 'preview/live'
+                     * 2) Does the target point to an existing node. If this node is virtual, take its canonical version.
+                     */
+                    
+                    Session session = contentContextNode.getSession();
+                    if(session.itemExists(target)) {
+                        Item item = session.getItem(target);
+                        if(item.isNode()) {
+                            HippoNode targetNode = (HippoNode)item;
+                            if( targetNode.getCanonicalNode() != null ) {
+                                try {
+                                    contentBaseUuid  = targetNode.getCanonicalNode().getUUID();
+                                } catch (UnsupportedRepositoryOperationException e) {
+                                    log.warn("Absolute target '{}' points to a non referenceable node. Searching can only be done wrt a referenceable node", target);
+                                }
+                            } else {
+                                log.warn("Absolute target '{}' seems to point to a non referenceable node. Cannot search below this node.",target);
+                                return null;
+                            }
+                        } else {
+                            log.warn("Absolute target '{}' point to a property. Searching can only be done on node scope.", target);
+                            return null;
+                        }
+                    } else {
+                        log.warn("Absolute target '{}' does not exist in the repository. Search cannot be processed.", target);
+                        return null;
+                    }
                 } else {
                     try {
                         searchFromNode = (HippoNode) contentContextNode.getNode(target);
                     } catch (PathNotFoundException e) {
-                        log.warn("target '{}' is not a subnode of '{}'.", target , searchFromNode.getPath());
+                        log.warn("target '{}' is not a subnode of '{}'. Search cannot be processed." , target , searchFromNode.getPath());
+                        return null;
+                    } catch (RepositoryException e) {
+                        log.warn("RepositoryException for target '{}' as a subnode of '{}'. Search cannot be processed.", target , searchFromNode.getPath());
                         return null;
                     }
                 }
@@ -67,7 +100,11 @@ public class ContextWhereClause {
             Node parentOfContentContextNode = contentContextNode.getParent();
             while (!searchFromNode.isSame(parentOfContentContextNode) && !searchFromNode.isSame(rootNode)) {
                 
-                // the contentBaseUuid will be the uuid of the first 'referenceable node' or docbase of a facetselect
+                /*
+                 * the contentBaseUuid will be the uuid of the first 'referenceable node' or docbase of a facetselect. 
+                 * if the target is pointing to a non referenceable node the search cannot be processed. If the target 
+                 * is absolute, we already have a 'contentBaseUuid'.
+                 */ 
                 if(contentBaseUuid == null) {
                     if (searchFromNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         contentBaseUuid = searchFromNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
@@ -76,7 +113,8 @@ public class ContextWhereClause {
                             && searchFromNode.getCanonicalNode().isNodeType("mix:referenceable")) {
                         contentBaseUuid = searchFromNode.getCanonicalNode().getUUID();
                     } else {
-                        log.warn("Target '"+target+"' is not pointing to a referenceable node or facetselect. Trying to search from the parent");
+                        log.warn("Target '{}' is not pointing to a referenceable node or facetselect. You cannot search with this target", target);
+                        return null;
                     }
                 }
                 if (searchFromNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
