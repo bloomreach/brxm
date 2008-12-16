@@ -26,6 +26,8 @@ caption,th { text-align : left; }
 
 .hippo-window #wicketDebugLink{ display: none; }
 
+.hippo-window #wicketDebugLink{
+display: none;}
 
 /* Hippo Global CSS tools */
 /* ================================================ */
@@ -37,20 +39,10 @@ caption,th { text-align : left; }
 .hippo-global-hideme {display:none;}
 .hippo-global-floatleft {float: left}
 .hippo-global-align-bottom{vertical-align: bottom}
- 
-.hippo-global-roundedcorner-topleft,
-.hippo-global-roundedcorner-topright,
-.hippo-global-roundedcorner-bottomleft,
-.hippo-global-roundedcorner-bottomright{
-background: url("images/roundcorners-blue.gif") no-repeat; width: 6px; height: 6px; position: absolute;}
-.hippo-global-roundedcorner-topleft{left: 0px; top: 0px; background-position: 0px 0px; }
-.hippo-global-roundedcorner-topright{right: 0px; right: 0px; background-position: -8px 0px;}
-.hippo-global-roundedcorner-bottomleft{bottom: 0px; left: 0px; background-position: 0px -8px;}
-.hippo-global-roundedcorner-bottomright{bottom: 0px; right: 0px; background-position: -8px -8px;}
- 
+
 /* Auke's hippo skin global css */
 /* ================================================ */
-.hippo-root{background: url("images/headerBack.png") repeat-x}
+.hippo-root{background: url("images/headerBack.png") repeat-x top left; background-attachment: scroll}
 /* remove the background in dialog windows */
 .hippo-window {background: none}
 /* Global font setting */
@@ -150,7 +142,6 @@ padding-top: 8px;
 .hippo-header-home{background: url("images/hippologo.png") no-repeat; text-indent: -9999px; display: block; width: 29px; height: 24px; margin-left: 5px; }
 .hippo-logout-username{position: absolute; left: 40px; top: 5px; color: white;  font-weight: bold; text-transform: capitalize}
 
-
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
 .tabbed-panel-layout-left{background: url("images/tabs-vertical-back.png") repeat-y}
@@ -168,8 +159,8 @@ padding-top: 8px;
 
 /* TabsPlugin Document switcher */
 /* ================================================ */
-.hippo-tabs-documents-top {background: url("images/editor-tabpanel-back.png") repeat-x left bottom; width: auto; position: relative; text-align :left;}
-.hippo-tabs-documents-top ul{margin-top: 2px}
+.hippo-tabs-documents-top {width: auto; position: relative; text-align :left;}
+.hippo-tabs-documents-top ul{margin-top: 3px; height: 25px;margin-left: 5px;}
 .hippo-tabs-documents-top ul li{display: block; float: left;}
 .hippo-tabs-documents-top .hippo-tabs-close {position: absolute; right: 40px; top: 1px; background: url('images/close.png') no-repeat center center; padding: 6px; padding-right: 11px; height: 14px; text-indent: -9999px}
 .hippo-tabs-documents-top .selected .hippo-tabs-documents-tab{font-weight: bold; text-decoration: none; color: black }
@@ -181,7 +172,8 @@ display: block;
 float: left; 
 height: 14px;
 width: 130px;
-background: url("images/documenttabs.png") no-repeat;
+background: red;
+background: url("images/documenttabs.png") no-repeat; 
 margin-right: 2px; padding: 4px;
 color: #999999;
 }
@@ -267,17 +259,22 @@ padding-right: 9px;
 .hippo-list-details tr td{border-bottom: 1px solid #f4f4f4; padding: 4px 2px 5px 4px; border-right: none;}
 .hippo-list-details tr td:hover{cursor: pointer}
 .hippo-list-details th a {color: #666666;}
-.hippo-list-details tr.odd td{}
-.hippo-list-details tr.even td{}
+
+.hippo-list-details tr.even td{background: none}
+.hippo-list-details tr.even.hippo-list-selected td{background: #fff6e0}
+.hippo-list-details tr.odd td{background: none}
+.hippo-list-details tr.odd.hippo-list-selected td{background: #fff6e0}
+
 .hippo-list-details .hippo-list-order-ascending{background: url('images/icons/arrow-sort-down-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-none{}
 
-.hippo-list-paging{position: absolute; bottom: 0px; left: 18px;}
-.hippo-list-paging td{padding: 10px; text-align: center; }
-.hippo-list-paging td div{margin-bottom: 5px; color: #32629b }
-.hippo-list-paging td a{padding: 5px; color: #32629b }
-.hippo-list-paging td a:hover{background: #f2f2f2}
+.hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
+.hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
+.hippo-list-paging td div{margin-top: 20px; margin-bottom: 2px; width: 100%;}
+.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
+.hippo-list-paging td span{padding: 3px;}
+.hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
 .hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
 
 /* Dashboard */
@@ -330,7 +327,7 @@ padding-right: 9px;
 .hippo-window{padding: 25px; background: none}
 .hippo-window .hippo-root{background: none}
 .hippo-window h1, .hippo-window h1{margin-bottom: 10px; font-size: 16px;}
-.hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 15px; }
+.hippo-window-buttons{text-align: right; position: absolute; right: 15px; bottom: 22px; }
 .hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar{}
 
 .hippo-window-buttons input{} 
@@ -343,7 +340,7 @@ padding-right: 9px;
 .hippo-window-dialog-title{font-size: 11px;}
 .hippo-window-dialog-question{font-weight: bold}
 
-/* Wicket Modal windows overwrite 
+/* Wicket Modal windows overwrite */
 .hippo-root div.wicket-modal div.w_blue div.w_top, 
 .hippo-root div.wicket-modal div.w_blue div.w_bottom,
 .hippo-root div.wicket-modal div.w_blue div.w_topLeft,
@@ -357,8 +354,9 @@ background-image: url(images/box-blue.png);}
 .hippo-root div.wicket-modal div.w_blue div.w_right {
 background-image:url(images/box-blue2.png);}
 
-.hippo-root div.wicket-modal div.w_caption{background: url("images/box-blue-caption.png") repeat-x; height: 20px; padding: 6px;}
-.hippo-root div.wicket-modal div.w_caption span{color: #32629b; font-size: 18px; margin: 0px; padding: 0px; left: 6px; font-weight: normal; font-family: arial, helvetica, sans-serif; top: 8px;}
+/* .hippo-root div.wicket-modal div.w_caption{background: url("images/box-blue-caption.png") repeat-x; height: 20px; padding: 6px;} */
+.hippo-root div.wicket-modal div.w_caption{height: 24px; background: #999999; text-align: center; color: #f2f2f2}
+.hippo-root div.wicket-modal div.w_caption span{color: white; font-size: 11px; font-weight: bold; margin: 0px; padding: 0px; position: relative;}
 .hippo-root div.w_blue a.w_close{width: 44px; height: 18px; background-position: -154px -48px;}
 .hippo-root div.w_blue a.w_close:hover{background-position: -154px -66px; width: 44px; height: 18px;}
 .hippo-root div.wicket-modal div.w_content {background: white url("images/box-blue-back.png") repeat-x bottom left} 
@@ -366,7 +364,26 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-modal div.w_content_2 {padding-top: 0px}
 .hippo-root div.wicket-modal div.w_content_1{margin-right: 7px;}
 .hippo-root div.wicket-modal div.w_right_1 {margin-left:7px;}
-*/
+
+/* xinha window actions buttons */
+.hippo-root div.wicket-modal div.w_content #_wicket_window_3{background: white url("images/hippo-window-buttons-back.png") repeat-x bottom}
+
+/* Overlay on full application on popup styling */
+.hippo-root div.wicket-mask-dark{opacity: 0.5; background-image:url("images/transparent-back.png"); filter:alpha(opacity=0.5)}
+
+/* Picker General Styling */
+.hippo-picker{height: 300px; background: url("images/picker-back.png") repeat-y; width: 400px}
+.hippo-picker-tree{width: 193px; height: 300px; float: left;}
+.hippo-picker-list-details{height: 300px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: 597px}
+.hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
+.hippo-picker-breadcrumbs{background: url("images/silver4.png") repeat-x; height: 24px; width: 597px; border-bottom: 1px solid #afafaf; margin-left: 194px;}
+
+/* Image Picker */
+.hippo-picker-tree .hippo-accordion-unit h2 a{width: auto}
+.hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 16px;}
+body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat;}
+.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
+
 
 /* Wizard */
 /* ================================================ */
@@ -399,23 +416,17 @@ background-image:url(images/box-blue2.png);}
 
 /* Image Gallery */
 /* ================================================ */
-.hippo-gallery-images {margin-top: 20px; border-collapse: separate}
+.hippo-gallery-images {}
 .hippo-gallery-asset{width: 100%}
-.hippo-browser-documents-small .hippo-list-details .hippo-gallery-images tr td{vertical-align: middle;  border-bottom: 1px solid #f2f2f2; text-align: left;}
-.hippo-gallery-images tr th{display: none}
-.hippo-gallery-images .icon-48{text-align: center; padding: 4px;}
-.hippo-gallery-images .icon-48 span{display: block; background-repeat: no-repeat; background-position: center center; width: 48px; height: 48px;}
-
-/* Image gallery Popup */
-/* ================================================ */
-.hippo-window-picker{width: 100%;}
-.hippo-window-picker tr td{padding: 5px; border: 1px solid #666666}
-.hippo-window-picker{margin-bottom: 15px}
-.hippo-list-thumbnails{width: 100%; overflow: auto; white-space: nowrap; height: 300px;}
-.hippo-thumbnail{width: 80px; height: 80px; text-align: center; float: left; border: 1px solid #cccccc; padding: 2px; margin: 2px;}
-
+.hippo-gallery-images tr th{}
+.hippo-browser-documents-small .hippo-list-details .hippo-gallery-images td.icon-48 {background: url("images/hippo-gallery-folder.png") no-repeat 4px center;}
+.hippo-gallery-images .icon-48 span.folder-48 {background: transparent}
+.hippo-gallery-images .icon-48 span.folder-48 span{background: transparent}
+.hippo-gallery-images .icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
+.hippo-gallery-images .icon-48 span span img{height: 60px; width: auto}
 /* Paging */
 /* ================================================ */
+.hippo-list-paging{}
 .hippo-list-paging a.hippo-list-paging-previous{background: url("images/icons/go-previous-16.png") no-repeat center left; padding: 8px; padding-left: 20px;}
 .hippo-list-paging a.hippo-list-paging-next{background: url("images/icons/go-next-16.png") no-repeat center right; padding: 8px; padding-right: 20px}
 
@@ -427,8 +438,6 @@ background-image:url(images/box-blue2.png);}
  
 .hippo-browser-documents-small .hippo-list-details{border-left: 1px solid #afafaf; background: white;}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #f4f4f4; border-left: 1px solid #afafaf; border-bottom: 0px; border-top: 0px }
-.hippo-browser-documents-small .hippo-list-details tr.even td{background: none}
-.hippo-browser-documents-small .hippo-list-details tr.even.hippo-list-selected td{background: #fff6e0}
 
 /* fix for shifting up and down */
 .hippo-browser-documents-small .hippo-tree table tr td{}
@@ -508,15 +517,17 @@ font-weight: bold;
 
 /* Editor Plugin */
 /* ================================================ */
-.hippo-editor{padding:0px; background: white; border: 1px solid #afafaf; border-top: 0px;}
+.hippo-editor{padding:0px; background: white; border: 1px solid #afafaf; border-top: none;}
 .hippo-editor-top{background: url("images/editor-back.png") repeat-x}
 .hippo-editor-top .hippo-toolbar{padding-left: 4px}
-
+.hippo-editor .odd .hippo-editor-field{background-color: #f0feff}
+.hippo-editor .even .hippo-editor-field{background-color: #d2ebf1}
 /* field styling */
-.hippo-editor-field{padding: 8px; margin-bottom: 0px; position: static; background: #f0feff;}
+.hippo-editor-field{padding: 8px; margin-bottom: 0px; position: static;}
 .hippo-editor-field-title{font-size: 11px; font-weight: bold; color: #666666; margin-bottom: 8px;}
 
 /* Text Input elements */
+.hippo-picker-properties input,
 .hippo-editor-field textarea,
 .hippo-editor-field select,
 .hippo-editor-field input,
@@ -620,8 +631,6 @@ background-image:url("images/icons/groups-16.png")}
 background-image:url("images/icons/domain-16.png")} 
 .hippo-perspective-management-left div.hippo-perspective-management-list-roles ul li a{
 background-image:url("images/icons/permissions-16.png")}
-
-
         
 .hippo-editor-users-groups{
 height: 188px;
@@ -679,10 +688,11 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .users-48{background-image:url("images/icons/groups-48.png")}
 .groups-48{background-image:url("images/icons/groups-48.png")}
 
-.state-review-16{background-image:url("images/icons/state-review-16.png")}
-.state-changed-16{background-image:url("images/icons/state-changed-16.png")}
-.state-new-16{background-image:url("images/icons/state-new-16.png")}
-.state-live-16{background-image:url("images/icons/state-live-16.png")}
+.state-review-16{background-image:url("images/icons/state-review-16.gif")}
+.state-changed-16{background-image:url("images/icons/state-changed-16.gif")}
+.state-new-16{background-image:url("images/icons/state-new-16.gif")}
+.state-live-16{background-image:url("images/icons/state-live-16.gif")}
+
 
 .arrow-sort-down-16{background-image:url("images/icons/arrow-sort-down-16.png")}
 .arrow-sort-up-16{background-image:url("images/icons/arrow-sort-up-16.png")}

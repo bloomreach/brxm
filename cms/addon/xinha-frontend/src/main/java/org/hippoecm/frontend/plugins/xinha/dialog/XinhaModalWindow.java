@@ -37,7 +37,7 @@ public class XinhaModalWindow extends ModalWindow {
         setInitialWidth(450);
         setInitialHeight(300);
         setCookieName("XinhaModalWindow");
-        setResizable(true);
+        setResizable(false);
 
         setTitle("ModalWindow");
         setContent(new Panel(this.getContentId()));
