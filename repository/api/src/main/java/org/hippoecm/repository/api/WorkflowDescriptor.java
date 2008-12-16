@@ -28,6 +28,11 @@ public interface WorkflowDescriptor {
     public String getDisplayName() throws RepositoryException;
 
     /**
+     * Obtain the workflow interfaces implemented by this workflow.
+     */
+    public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException;
+
+    /**
      * Method to access extra information that might be associated with this workflow.
      * An example is the plugin class name to be used by a frontend application to access the workflow.
      *

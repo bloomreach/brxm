@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -26,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 final class WorkflowDescriptorImpl implements WorkflowDescriptor {
@@ -70,6 +74,21 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
 
     public String getAttribute(String key) throws RepositoryException {
         return attributes.get(key);
+    }
+
+    public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
+                    System.err.println("BERRY#x "+serviceName);
+        Class impl = Class.forName(serviceName);
+        List<Class<Workflow>> interfaces = new LinkedList<Class<Workflow>>();
+            System.err.println("BERRY#y "+impl.getInterfaces().length);
+        for(Class cls : impl.getInterfaces()) {
+            System.err.println("BERRY#z "+cls.getName());
+            if(Workflow.class.isAssignableFrom(cls)) {
+                            System.err.println("BERRY#zz");
+                interfaces.add(cls);
+            }
+        }
+        return interfaces.toArray((Class<Workflow>[]) Array.newInstance(Class.class, interfaces.size()));
     }
 
     public String toString() {

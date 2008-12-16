@@ -15,12 +15,14 @@
  */
 package org.hippoecm.repository.decorating.client;
 
+import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowDescriptor;
 
@@ -46,6 +48,23 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
     public String getAttribute(String name) throws RepositoryException {
         try {
             return remote.getAttribute(name);
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
+    }
+
+    public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
+        try {
+            System.err.println("BERRY#A");
+            String[] classes = remote.getInterfaces();
+            System.err.println("BERRY#B");
+            Class<Workflow>[] interfaces = (Class<Workflow>[]) Array.newInstance(Class.class, classes.length);
+            System.err.println("BERRY#C "+classes.length);
+            for(int i=0; i<classes.length; i++) {
+            System.err.println("BERRY#D "+classes[i]);
+                interfaces[i] = (Class<Workflow>) Class.forName(classes[i]);
+            }
+            return interfaces;
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }

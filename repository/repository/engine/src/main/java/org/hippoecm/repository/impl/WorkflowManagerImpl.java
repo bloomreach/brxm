@@ -770,8 +770,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
         public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
             if(specification instanceof java.util.Date) {
                 return new WorkflowContextImpl(subject, new SchedulerWorkflowModule((java.util.Date)specification));
+            } else if(specification instanceof Document) {
+                String uuid = ((Document)specification).getIdentity();
+                Node node = subject.getSession().getNodeByUUID(uuid);
+                return new WorkflowContextImpl(node);
             }
-            throw new MappingException("No context defined for class "+specification.getClass().getName());
+            throw new MappingException("No context defined for class "+(specification!=null?specification.getClass().getName():"none"));
         }
 
         public Document getDocument(String category, String identifier) throws RepositoryException {
