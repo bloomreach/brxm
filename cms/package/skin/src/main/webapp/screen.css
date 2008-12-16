@@ -18,23 +18,13 @@ caption,th { text-align : left; }
 /* ======================================== */
 
 
-#hd {
-  text-align: left;
-}
-#bd {
-  text-align: left;
-}
+#hd { text-align: left; }
+#bd { text-align: left; }
+.wicket-modal { text-align:left }
+#doc3 { margin: 0; }
+#wicketAjaxDebugWindow{ text-align: left; }
 
-#doc3 {
-  margin: 0;
-}
-
-#wicketAjaxDebugWindow{
-text-align: left;
-}
-
-.hippo-window #wicketDebugLink{
-display: none;}
+.hippo-window #wicketDebugLink{ display: none; }
 
 
 /* Hippo Global CSS tools */
@@ -562,9 +552,11 @@ font-size: 12px; line-height: 18px; background: transparent; border: none; color
 .hippo-editor-field-html .htmlarea .toolbar div{margin-bottom:0px;padding:0px;margin: 0px;}
 
 /* Xinha modal windows */
-div.wicket-modal div.link-picker select { margin-bottom:10px;}
+/*div.wicket-modal div.link-picker select { margin-bottom:10px;}
 div.wicket-modal div.link-picker div.internal-link-label {margin-bottom: 10px;}
 div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
+*/
+div.wicket-modal div.wicket-tree {border: 0px;}
 
 /* field template editing */
 .hippo-editor .hippo-editor-template-field{width: 100%;}

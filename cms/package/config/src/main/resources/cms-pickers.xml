@@ -38,13 +38,19 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.xinha.modal.browse.ImageBrowserPlugin</sv:value>
+      <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.images.ImageBrowserPlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.modal.content</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${model.id}</sv:value>
+    </sv:property>
     <sv:property sv:name="model.folder" sv:type="String">
       <sv:value>${cluster.id}.model.folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="model.folder.root" sv:type="String">
+      <sv:value>/content/gallery</sv:value>
     </sv:property>
     <sv:property sv:name="model.document" sv:type="String">
       <sv:value>${cluster.id}.model.document</sv:value>
@@ -55,79 +61,18 @@
     <sv:property sv:name="service.dialog.id" sv:type="String">
       <sv:value>${service.dialog.id}</sv:value>
     </sv:property>
+    <sv:property sv:name="service.dialog.images" sv:type="String">
+      <sv:value>${service.dialog.images}</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.extensions" sv:type="String">
-      <!-- <sv:value>extension.shortcuts</sv:value>-->
+      <sv:value>extension.shortcuts</sv:value>
       <sv:value>dialog.list</sv:value>
     </sv:property>
     <sv:property sv:name="dialog.list" sv:type="String">
       <sv:value>dialog.browse.list</sv:value>
     </sv:property>
-    <sv:property sv:name="model.folder.root" sv:type="String">
-      <sv:value>/content/gallery</sv:value>
-    </sv:property>
-    
-
-    <!-- 
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.navigator</sv:value>
-      <sv:value>extension.editor</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.navigator" sv:type="String">
-      <sv:value>service.browse.navigator</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.editor" sv:type="String">
-      <sv:value>service.browse.editor</sv:value>
-    </sv:property>
-    
-     -->
-  </sv:node>
-  
-  <!-- 
-  <sv:node sv:name="imagePickerPanel">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.xinha.modal.ContentPanel</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.modal.content.old</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${cluster.id}.model</sv:value>
-    </sv:property>
-    <sv:property sv:name="modal.title" sv:type="String">
-      <sv:value>modal-title</sv:value>
-    </sv:property>
-    
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.footer</sv:value>
-      <sv:value>extension.shortcuts</sv:value>
-      <sv:value>extension.doclisting</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.footer" sv:type="String">
-      <sv:value>service.modal.footer</sv:value>
-    </sv:property>
     <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.modal.shortcuts</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.browser" sv:type="String">
-      <sv:value>service.modal.browse.images</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  <sv:node sv:name="modalFooter">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.xinha.modal.ModalFooterPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.modal.footer</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${cluster.id}.model</sv:value>
+      <sv:value>service.dialog.shortcuts</sv:value>
     </sv:property>
   </sv:node>
   
@@ -139,7 +84,7 @@
       <sv:value>org.hippoecm.frontend.plugins.cms.browse.tree.SectionTreePlugin</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.modal.shortcuts</sv:value>
+      <sv:value>service.dialog.shortcuts</sv:value>
     </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.config</sv:value>
@@ -158,7 +103,7 @@
     </sv:property>
   </sv:node>
   
-   <sv:node sv:name="imagesTree">
+  <sv:node sv:name="imagesTree">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
@@ -169,7 +114,7 @@
       <sv:value>service.modal.tree.images</sv:value>
     </sv:property>
     <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>model.browse.folder</sv:value>
+      <sv:value>${cluster.id}.model.folder</sv:value>
     </sv:property>
     <sv:property sv:name="path" sv:type="String">
       <sv:value>/content/gallery</sv:value>
@@ -339,200 +284,7 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  
-  <sv:node sv:name="imageBrowser">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.modal.browse.images</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.model" sv:type="String">
-      <sv:value>${model.folder}</sv:value>
-    </sv:property>
-    <sv:property sv:name="model.document" sv:type="String">
-      <sv:value>${model.document}</sv:value>
-    </sv:property>
-    <sv:property sv:name="list.page.size" sv:type="String">
-      <sv:value>5</sv:value>
-    </sv:property>
-    <sv:property sv:name="gallery.thumbnail.size" sv:type="String">
-      <sv:value>60</sv:value>
-    </sv:property>
-    <sv:node sv:name="yui.config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="groups" sv:type="String">
-        <sv:value>drop-on-xinha</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="filters">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:node sv:name="showGalleryType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippostd:gallery</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="showHandleType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>true</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="hideFacetSearchType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippo:facetsearch</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="hideFolderType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippostd:folder</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="hideDirectoryType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>hippostd:directory</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="hideUnstructuredType">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="state" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="path" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="parent" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="child" sv:type="String">
-          <sv:value>nt:unstructured</sv:value>
-        </sv:property>
-        <sv:property sv:name="target" sv:type="String">
-          <sv:value/>
-        </sv:property>
-        <sv:property sv:name="display" sv:type="Boolean">
-          <sv:value>false</sv:value>
-        </sv:property>
-        <sv:property sv:name="name" sv:type="String">
-          <sv:value/>
-        </sv:property>
-      </sv:node>
-    </sv:node>
-  </sv:node>
-  -->
+
 </sv:node> 
   
 </sv:node>

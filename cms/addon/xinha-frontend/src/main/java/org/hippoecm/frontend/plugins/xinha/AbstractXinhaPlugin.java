@@ -44,17 +44,15 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.xinha.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
-import org.hippoecm.frontend.plugins.xinha.modal.XinhaDialog;
-import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.xinha.modal.imagepicker.ImageItemFactory.ImageItem;
-import org.hippoecm.frontend.plugins.xinha.modal.linkpicker.LinkPickerBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -90,6 +88,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private XinhaDialog dialog;
     private LinkPickerBehavior linkPickerBehavior;
     private ImagePickerBehavior imagePickerBehavior;
+    private XinhaImageService imageService;
 
     public AbstractXinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -111,10 +110,13 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             dialog = new XinhaDialog("modalwindow");
             fragment.add(dialog.getModal());
 
-            String serviceId = context.getReference(this).getServiceId() + ".modal";
-            context.registerService(dialog, serviceId);
-            
-            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId, nodeModel));
+            String serviceId = context.getReference(this).getServiceId();
+            context.registerService(dialog, serviceId + ".dialog");
+
+            imageService = new XinhaImageService(configuration.getName(), nodeModel);
+            context.registerService(imageService, serviceId + ".images");
+
+            fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId));
             //AB - test
             //fragment.add(linkPickerBehavior = new LinkPickerBehavior(context, config, nodeModel, serviceId));
 
@@ -123,13 +125,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
                 @Override
                 protected void insertImage(JcrNodeModel model, AjaxRequestTarget target) {
-                    ImageItem item = imagePickerBehavior.insertImage(model);
-                    if (item != null) {
-                        boolean openModal = item.getResourceDefinitions().size() > 1;
-                        String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.InsertImage.instance.insertImage({f_url: '" + item.getUrl() + "'}, "
-                                + openModal + ");";
-                        target.getHeaderResponse().renderOnDomReadyJavascript(script);
+                    String returnScript = imageService.attach(model);
+                    if (returnScript != null) {
+                        target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
                     }
                 }
 
@@ -175,7 +173,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
                     String text = (String) getModelObject();
                     if (text != null) {
-                        JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getValueModel();
+                        JcrPropertyValueModel propertyValueModel = getValueModel();
                         String prefix = XinhaUtil.encode(BINARIES_PREFIX
                                 + propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath())
                                 + "/";
@@ -197,7 +195,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                                     link = link.substring(0, link.length() - 1);
                                 }
                                 if (!link.startsWith("http:") && !link.startsWith("https:")) {
-                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\").replace("$", "\\$"));
+                                    s.appendReplacement(newImg, ("src=\"" + prefix + link + "\"").replace("\\", "\\\\")
+                                            .replace("$", "\\$"));
                                 } else {
                                     s.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
                                 }
@@ -226,18 +225,18 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
             configuration.addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
-//AB - test!            
+            //AB - test!            
             if (configuration.getPluginConfiguration("InsertImage") != null) {
                 configuration.getPluginConfiguration("InsertImage").addProperty("callbackUrl",
                         imagePickerBehavior.getCallbackUrl().toString());
             }
 
-//            if (configuration.getPluginConfiguration("CreateLink") != null) {
-//                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
-//                        linkPickerBehavior.getCallbackUrl().toString());
-//            }
+            //            if (configuration.getPluginConfiguration("CreateLink") != null) {
+            //                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
+            //                        linkPickerBehavior.getCallbackUrl().toString());
+            //            }
 
-            JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getValueModel();
+            JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
 
@@ -261,13 +260,20 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             Page page = (Page) findParent(Page.class);
             if (page == null) {
                 configuration.setName(null);
+            } else {
+                if (imagePickerBehavior != null) {
+                    imagePickerBehavior.render(target);
+                }
+                if (linkPickerBehavior != null) {
+                    linkPickerBehavior.render(target);
+                }
             }
         }
         super.render(target);
     }
 
     private Component createEditor(final IPluginConfig config) {
-        JcrPropertyValueModel valueModel = (JcrPropertyValueModel) getValueModel();
+        JcrPropertyValueModel valueModel = getValueModel();
         editor = new TextArea("value", valueModel) {
             private static final long serialVersionUID = 1L;
 
