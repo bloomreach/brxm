@@ -89,6 +89,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private LinkPickerBehavior linkPickerBehavior;
     private ImagePickerBehavior imagePickerBehavior;
     private XinhaImageService imageService;
+    private XinhaLinkService linkService;
 
     public AbstractXinhaPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -113,12 +114,14 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             String serviceId = context.getReference(this).getServiceId();
             context.registerService(dialog, serviceId + ".dialog");
 
-            imageService = new XinhaImageService(configuration.getName(), nodeModel);
+            imageService = new XinhaImageService(configuration, nodeModel);
             context.registerService(imageService, serviceId + ".images");
 
+            linkService = new XinhaLinkService(configuration, nodeModel);
+            context.registerService(linkService, serviceId + ".links");
+
             fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId));
-            //AB - test
-            //fragment.add(linkPickerBehavior = new LinkPickerBehavior(context, config, nodeModel, serviceId));
+            fragment.add(linkPickerBehavior = new LinkPickerBehavior(context, config, serviceId));
 
             add(new XinhaDropBehavior(context, config) {
                 private static final long serialVersionUID = 1L;
@@ -139,23 +142,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
 
                 @Override
                 protected void insertLink(JcrNodeModel model, AjaxRequestTarget target) {
-                    HippoNode node = model.getNode();
-                    try {
-                        String name = node.getDisplayName();
-                        String uuid = node.getUUID();
-                        //AB TEST
-                        //String link = linkPickerBehavior.getInternalLinkDAO().create(name, uuid);
-                        String link = "";
-                        boolean openModal = false;
-                        //TODO: refactor XinhaContenPanel + dao since the javascript object shouldn't be constructed here
-                        //but probably in the dao.
-                        //new Xinha CreateLink default methods require the f_target parameter
-                        String script = "xinha_editors." + configuration.getName()
-                                + ".plugins.CreateLink.instance.createLink({f_href: '" + link + "', f_target: ''}, "
-                                + openModal + ");";
-                        target.getHeaderResponse().renderOnDomReadyJavascript(script);
-                    } catch (RepositoryException e) {
-                        log.error("Failed to create internal link", e);
+                    String returnScript = linkService.attach(model);
+                    if (returnScript != null) {
+                        target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
                     }
                 }
 
@@ -225,16 +214,15 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             configuration.addProperty("saveSuccessFlag", XINHA_SAVED_FLAG);
             configuration.addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
-            //AB - test!            
             if (configuration.getPluginConfiguration("InsertImage") != null) {
                 configuration.getPluginConfiguration("InsertImage").addProperty("callbackUrl",
                         imagePickerBehavior.getCallbackUrl().toString());
             }
 
-            //            if (configuration.getPluginConfiguration("CreateLink") != null) {
-            //                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
-            //                        linkPickerBehavior.getCallbackUrl().toString());
-            //            }
+            if (configuration.getPluginConfiguration("CreateLink") != null) {
+                configuration.getPluginConfiguration("CreateLink").addProperty("callbackUrl",
+                        linkPickerBehavior.getCallbackUrl().toString());
+            }
 
             JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();

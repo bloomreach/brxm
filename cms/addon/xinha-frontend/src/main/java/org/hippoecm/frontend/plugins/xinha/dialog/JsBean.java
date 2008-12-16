@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class JsBean implements IClusterable {
     private static final long serialVersionUID = 1L;
@@ -29,9 +30,18 @@ public class JsBean implements IClusterable {
     private final static String SVN_ID = "$Id$";
 
     protected Map<String, String> values;
+    private JcrNodeModel nodeModel;
 
     public JsBean(Map<String, String> values) {
         this.values = values;
+    }
+
+    public JcrNodeModel getNodeModel() {
+        return nodeModel;
+    }
+
+    public void setNodeModel(JcrNodeModel nodeModel) {
+        this.nodeModel = nodeModel;
     }
 
     public String toJsString() {

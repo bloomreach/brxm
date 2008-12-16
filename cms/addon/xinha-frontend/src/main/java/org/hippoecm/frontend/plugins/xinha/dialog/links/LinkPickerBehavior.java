@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.xinha.XinhaLinkService;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 
@@ -28,22 +29,34 @@ public class LinkPickerBehavior extends XinhaDialogBehavior {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    public LinkPickerBehavior(IPluginContext context, IPluginConfig config, String modalWindowServiceId) {
-        super(context, config, modalWindowServiceId);
+    
+    private String linkServiceId;
+    
+    public LinkPickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
+        super(context, config, serviceId);
+        linkServiceId = serviceId + ".links";
     }
 
     @Override
     protected String getServiceId() {
-        return "xinha-external-link-picker";
+        return "cms-pickers/links-internal";
     }
 
     @Override
     protected JsBean newDialogModelObject(HashMap<String, String> p) {
-        return null;
+        return getLinkService().create(p);
     }
 
     @Override
     protected void onOk(JsBean bean) {
+        XinhaLink link = (XinhaLink) bean;
+        String url = getLinkService().attach(link);
+        if (url != null) {
+            link.setHref(url);
+        }
+    }
+
+    private XinhaLinkService getLinkService() {
+        return context.getService(linkServiceId, XinhaLinkService.class);
     }
 }

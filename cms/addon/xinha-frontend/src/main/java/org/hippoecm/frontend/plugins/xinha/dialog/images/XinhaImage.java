@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.xinha.dialog.images;
 
 import java.util.Map;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 
 public class XinhaImage extends JsBean {
@@ -35,18 +34,8 @@ public class XinhaImage extends JsBean {
     public static final String WIDTH = "f_width";
     public static final String HEIGHT = "f_height";
 
-    private JcrNodeModel nodeModel;
-
     public XinhaImage(Map<String, String> values) {
         super(values);
-    }
-
-    public JcrNodeModel getNodeModel() {
-        return nodeModel;
-    }
-
-    public void setNodeModel(JcrNodeModel nodeModel) {
-        this.nodeModel = nodeModel;
     }
 
     public void setUrl(String url) {

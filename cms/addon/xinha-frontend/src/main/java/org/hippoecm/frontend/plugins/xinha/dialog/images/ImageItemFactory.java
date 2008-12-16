@@ -80,9 +80,7 @@ public class ImageItemFactory implements IClusterable {
             AccessDeniedException, RepositoryException {
 
         NodeType nodetype = node.getPrimaryNodeType();
-        String name = nodetype.getName();
-
-        if (node.getPrimaryNodeType().getName().equals("hippo:handle")) {
+        if (nodetype.getName().equals("hippo:handle")) {
             node = node.getNode(node.getName());
         }
 
@@ -99,17 +97,7 @@ public class ImageItemFactory implements IClusterable {
 
     public static class ImageItem implements IClusterable {
         private static final long serialVersionUID = 1L;
-
-        public static final String DEFAULT_EMPTY_THUMBNAIL = "skin/images/empty.gif";
-        public static final ImageItem DEFAULT = new ImageItem() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public String getPrimaryUrl() {
-                return DEFAULT_EMPTY_THUMBNAIL;
-            }
-        };
-
+      
         private String parentPath;
         private String path;
         private String uuid;
@@ -117,10 +105,6 @@ public class ImageItemFactory implements IClusterable {
         private String primaryItemName;
         private List<String> resourceDefinitions;
         private String selectedResourceDefinition;
-
-        private ImageItem() {
-            this.resourceDefinitions = new ArrayList<String>();
-        }
 
         public ImageItem(String path, String uuid, String primaryItemName, String nodeName,
                 List<String> resourceDefinitions, String nodePath) {
