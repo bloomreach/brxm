@@ -51,7 +51,6 @@ public class PublicationRequest extends Document {
         if(document != null)
             reference = document.getIdentity();
         reqdate = scheduledDate.getTime();
-        System.err.println("BERRY REQUEST "+scheduledDate+" "+reqdate);
     }
 
     String getType() {

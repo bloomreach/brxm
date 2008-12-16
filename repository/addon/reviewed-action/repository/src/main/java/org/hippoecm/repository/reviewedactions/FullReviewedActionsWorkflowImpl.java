@@ -144,17 +144,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         WorkflowContext wfCtx = getWorkflowContext();
         wfCtx = wfCtx.getWorkflowContext(publicationDate);
 
-        Workflow w =  wfCtx.getWorkflow("default");
-        if(w instanceof FullReviewedActionsWorkflow) {
-            FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) w;
-            wf.publish();
-        } else if(w instanceof BasicReviewedActionsWorkflow) {
-            System.err.println("BERRY JUST BASIC");
-        } else if(w instanceof FullRequestWorkflow) {
-            System.err.println("BERRY FULL REQUEST");
-        } else if(w instanceof BasicRequestWorkflow) {
-            System.err.println("BERRY BASIC REQUEST");
-        }
+        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
+        wf.publish();
     }
 
     void doSchedDepublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {

@@ -47,13 +47,10 @@ public class ServerWorkflowDescriptor extends UnicastRemoteObject implements Rem
     }
 
     public String[] getInterfaces() throws ClassNotFoundException, RepositoryException, RemoteException {
-            System.err.println("BERRY#a ");
         Class<Workflow>[] interfaces = descriptor.getInterfaces();
-            System.err.println("BERRY#b "+interfaces.length);
         String[] classes = new String[interfaces.length];
         for(int i=0; i<interfaces.length; i++) {
             classes[i] = interfaces[i].getName();
-                        System.err.println("BERRY#c "+classes[i]);
         }
         return classes;
     }

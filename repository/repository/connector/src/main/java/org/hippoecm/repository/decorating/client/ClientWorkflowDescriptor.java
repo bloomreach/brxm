@@ -55,13 +55,9 @@ public class ClientWorkflowDescriptor extends UnicastRemoteObject implements Wor
 
     public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
         try {
-            System.err.println("BERRY#A");
             String[] classes = remote.getInterfaces();
-            System.err.println("BERRY#B");
             Class<Workflow>[] interfaces = (Class<Workflow>[]) Array.newInstance(Class.class, classes.length);
-            System.err.println("BERRY#C "+classes.length);
             for(int i=0; i<classes.length; i++) {
-            System.err.println("BERRY#D "+classes[i]);
                 interfaces[i] = (Class<Workflow>) Class.forName(classes[i]);
             }
             return interfaces;
