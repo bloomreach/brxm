@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.hippoecm.repository.Modules;
-import org.hippoecm.repository.Utilities;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
