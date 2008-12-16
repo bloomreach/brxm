@@ -61,6 +61,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (isShown()) {
             pending.add(dialog);
         } else {
+            dialog.setDialogService(this);
             setContent(dialog.getComponent());
             setTitle(dialog.getTitle());
             setWindowClosedCallback(new Callback(dialog));

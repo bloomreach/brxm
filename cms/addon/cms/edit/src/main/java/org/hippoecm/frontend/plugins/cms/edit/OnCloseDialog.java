@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -51,9 +50,7 @@ public class OnCloseDialog extends AbstractDialog implements ITitleDecorator {
     private IServiceReference<IEditorManager> factory;
     private IServiceReference<IEditService> editor;
 
-    public OnCloseDialog(IPluginContext context, IDialogService dialogWindow, JcrNodeModel model, IEditorManager mgr, IEditService editor) {
-        super(dialogWindow);
-
+    public OnCloseDialog(IPluginContext context, JcrNodeModel model, IEditorManager mgr, IEditService editor) {
         this.model = model;
         this.factory = context.getReference(mgr);
         this.editor = context.getReference(editor);

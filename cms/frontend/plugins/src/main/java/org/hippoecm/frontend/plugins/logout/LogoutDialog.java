@@ -19,7 +19,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -35,8 +34,7 @@ public class LogoutDialog extends AbstractDialog implements ITitleDecorator {
 
     boolean logout;
 
-    public LogoutDialog(IDialogService dialogWindow) {
-        super(dialogWindow);
+    public LogoutDialog() {
         setOutputMarkupId(true);
 
         Label messageLabel = new Label("message", "There are unsaved changes. Do you want to logout?");

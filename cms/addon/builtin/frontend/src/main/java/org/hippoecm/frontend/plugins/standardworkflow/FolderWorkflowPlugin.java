@@ -26,7 +26,6 @@ import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.WorkflowsModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -51,7 +50,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
         DialogAction deleteAction = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
+            public AbstractDialog createDialog() {
                 StringResourceModel text;
                 try {
                     Object[] params = new Object[] { ((WorkflowsModel) FolderWorkflowPlugin.this.getModel())
@@ -60,7 +59,7 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     text = new StringResourceModel("delete-message", (Component) null, null);
                 }
-                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, dialogService, text) {
+                return new AbstractWorkflowDialog(FolderWorkflowPlugin.this, text) {
                     @Override
                     protected void execute() throws Exception {
                         // FIXME: this assumes that folders are always embedded in other folders
@@ -82,8 +81,8 @@ public class FolderWorkflowPlugin extends AbstractFolderWorkflowPlugin {
         DialogAction renameAction = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                return new AbstractNameDialog(FolderWorkflowPlugin.this, dialogService, renameTitle, renameText, "") {
+            public AbstractDialog createDialog() {
+                return new AbstractNameDialog(FolderWorkflowPlugin.this, renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override

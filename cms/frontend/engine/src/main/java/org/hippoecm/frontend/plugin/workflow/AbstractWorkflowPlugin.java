@@ -100,8 +100,8 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         DialogLink link = new DialogLink(dialogName, dialogLink, new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, dialogService, text) {
+            public AbstractDialog createDialog() {
+                return new AbstractWorkflowDialog(AbstractWorkflowPlugin.this, text) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -197,7 +197,7 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
         IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                 IDialogService.class);
         if (dialogService != null) {
-            dialogService.show(new ExceptionDialog(dialogService, ex));
+            dialogService.show(new ExceptionDialog(ex));
         }
     }
 

@@ -26,8 +26,7 @@ public class ExceptionDialog extends AbstractDialog {
 
     private Exception exception;
 
-    public ExceptionDialog(IDialogService dialogService, Exception exception) {
-        super(dialogService);
+    public ExceptionDialog(Exception exception) {
         this.exception = exception;
         cancel.setVisible(false);
         add(new Label("message", exception.getLocalizedMessage()));

@@ -30,7 +30,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -54,9 +53,7 @@ public class PropertyDialog extends AbstractDialog {
     private String type;
     private MenuPlugin plugin;
 
-    public PropertyDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(dialogWindow);
-
+    public PropertyDialog(MenuPlugin plugin, IPluginContext context) {
         this.plugin = plugin;
 
         add(new CheckBox("isMultiple", new PropertyModel(this, "isMultiple")) {

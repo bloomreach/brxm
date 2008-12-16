@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
-import org.apache.wicket.extensions.wizard.Wizard;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractWorkflowDialog;
@@ -52,22 +51,28 @@ public class RemodelDialog extends AbstractWorkflowDialog {
     private static final Logger log = LoggerFactory.getLogger(RemodelDialog.class);
 
     private IServiceReference<IJcrService> jcrServiceRef;
+    private RemodelWizard wizard;
 
-    public RemodelDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow,
-            IServiceReference<IJcrService> jcrService) {
-        super(plugin, dialogWindow, new StringResourceModel("update-content", (Component) null, null));
+    public RemodelDialog(AbstractWorkflowPlugin plugin, IServiceReference<IJcrService> jcrService) {
+        super(plugin, new StringResourceModel("update-content", (Component) null, null));
 
         this.jcrServiceRef = jcrService;
 
         if (plugin.getModel() == null || ((WorkflowsModel) plugin.getModel()).getNodeModel().getNode() == null) {
             add(new Label("wizard"));
         } else {
-            Wizard wizard = new RemodelWizard("wizard", dialogWindow);
+            wizard = new RemodelWizard("wizard");
             add(wizard);
         }
 
         ok.setVisible(false);
         cancel.setVisible(false);
+    }
+
+    @Override
+    public void setDialogService(IDialogService dialogService) {
+        super.setDialogService(dialogService);
+        wizard.setDialogService(dialogService);
     }
 
     void remodel() throws Exception {

@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.dialog.lookup;
 
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
@@ -30,9 +29,7 @@ public abstract class LookupDialog extends AbstractDialog {
     private LookupTargetTreeView tree;
     private JcrTreeModel treeModel;
 
-    protected LookupDialog(IDialogService dialogWindow, AbstractTreeNode rootNode) {
-        super(dialogWindow);
-
+    protected LookupDialog(AbstractTreeNode rootNode) {
         treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);

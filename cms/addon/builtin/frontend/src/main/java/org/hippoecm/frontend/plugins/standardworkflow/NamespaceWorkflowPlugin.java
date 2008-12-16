@@ -22,7 +22,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.workflow.AbstractWorkflowPlugin;
@@ -42,8 +41,8 @@ public class NamespaceWorkflowPlugin extends AbstractWorkflowPlugin {
         DialogAction action = new DialogAction(new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
-                return new NamespaceDialog(NamespaceWorkflowPlugin.this, dialogService);
+            public AbstractDialog createDialog() {
+                return new NamespaceDialog(NamespaceWorkflowPlugin.this);
             }
         }, getDialogService());
         WorkflowActionComponent choice = new WorkflowActionComponent("createNamespaceRequest-dialog",

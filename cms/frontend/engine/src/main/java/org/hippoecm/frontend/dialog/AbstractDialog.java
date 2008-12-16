@@ -40,10 +40,8 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
 
     private String exception = "";
 
-    public AbstractDialog(IDialogService dialogWindow) {
+    public AbstractDialog() {
         super(IDialogService.DIALOG_WICKET_ID);
-
-        this.dialogService = dialogWindow;
 
         final Label exceptionLabel = new Label("exception", new PropertyModel(this, "exception"));
         exceptionLabel.setOutputMarkupId(true);
@@ -122,6 +120,10 @@ public abstract class AbstractDialog extends Panel implements IDialogService.Dia
 
     public String getException() {
         return exception;
+    }
+
+    public void setDialogService(IDialogService dialogService) {
+        this.dialogService = dialogService;
     }
 
     protected IDialogService getDialogService() {

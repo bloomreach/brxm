@@ -47,8 +47,9 @@ public class TabsPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
 
     public static final String TAB_ID = "tabs";
-    public static final int MAX_TAB_TITLE_LENGTH = 18;
+    public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
 
+    private int maxTabLength;
     private TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
     private List<Tab> tabs;
@@ -57,6 +58,8 @@ public class TabsPlugin extends RenderPlugin {
 
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
+
+        maxTabLength = properties.getInt(MAX_TAB_TITLE_LENGTH, 9);
 
         tabs = new ArrayList<Tab>();
         add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs));
@@ -193,8 +196,8 @@ public class TabsPlugin extends RenderPlugin {
                 IModel titleModel = decorator.getTitle();
                 String fulltitle = (String) titleModel.getObject();
                 int length = fulltitle.length();
-                String appendix = (length < (MAX_TAB_TITLE_LENGTH + 1) ? "" : "..");
-                length = (length < MAX_TAB_TITLE_LENGTH ? length : MAX_TAB_TITLE_LENGTH);
+                String appendix = (length < (maxTabLength + 1) ? "" : "..");
+                length = (length < maxTabLength ? length : maxTabLength);
                 String title = fulltitle.substring(0, length) + appendix;
                 return new Model(title);
             }

@@ -26,6 +26,8 @@ public interface IDialogService extends IClusterable {
 
     interface Dialog {
 
+        void setDialogService(IDialogService service);
+        
         Component getComponent();
 
         IModel getTitle();

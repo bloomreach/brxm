@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.lookup.LookupDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -49,9 +48,9 @@ public class LinkPickerDialog extends LookupDialog {
     private List<String> nodetypes;
     private Label label;
 
-    public LinkPickerDialog(IPluginContext context, IDialogService dialogWindow,
+    public LinkPickerDialog(IPluginContext context, 
             JcrPropertyValueModel valueModel, List<String> nodetypes, AbstractTreeNode rootNode) {
-        super(dialogWindow, rootNode);
+        super(rootNode);
         this.context = context;
         this.nodetypes = nodetypes;
         this.valueModel = valueModel;

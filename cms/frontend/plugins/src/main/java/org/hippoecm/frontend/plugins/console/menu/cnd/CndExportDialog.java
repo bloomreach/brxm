@@ -40,7 +40,6 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
@@ -62,9 +61,7 @@ public class CndExportDialog extends AbstractDialog {
 
     String selectedNs;
 
-    public CndExportDialog(MenuPlugin plugin, IDialogService dialogWindow) {
-        super(dialogWindow);
-
+    public CndExportDialog(MenuPlugin plugin) {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
 
         Model selectedNsModel = new Model(selectedNs);

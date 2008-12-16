@@ -32,7 +32,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -59,9 +58,7 @@ public class PermissionsDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
-    public PermissionsDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(dialogWindow);
-
+    public PermissionsDialog(MenuPlugin plugin, IPluginContext context) {
         final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getModel();
         setModel(nodeModel);
 

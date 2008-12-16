@@ -76,7 +76,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IDialogService dialogService = getDialogService();
-                dialogService.show(new PublishAllShortcutPlugin.Dialog(dialogService, config));
+                dialogService.show(new PublishAllShortcutPlugin.Dialog(config));
             }
         };
         link.setModel(new StringResourceModel(config.getString("label.link"), this, null));
@@ -96,8 +96,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         private String mode = MODE_PUBLISH;
         private IPluginConfig config;
 
-        public Dialog(IDialogService dialogWindow, IPluginConfig config) {
-            super(dialogWindow);
+        public Dialog(IPluginConfig config) {
             ok.setModel(new Model("Execute"));
             this.config = config;
 

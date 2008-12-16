@@ -208,7 +208,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
                     stopCluster();
                 }
                 IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new TooManyEditorsWarningDialog(dialogService));
+                dialogService.show(new TooManyEditorsWarningDialog());
                 pending.add(nodeModel);
             }
         } else if (editors.contains(nodeModel)) {
@@ -219,7 +219,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
             }
         } else {
             IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(new TooManyEditorsWarningDialog(dialogService));
+            dialogService.show(new TooManyEditorsWarningDialog());
         }
     }
 
@@ -342,8 +342,7 @@ public class PreviewPlugin implements IPlugin, IModelListener, IJcrNodeModelList
     private class TooManyEditorsWarningDialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
 
-        TooManyEditorsWarningDialog(IDialogService dialogService) {
-            super(dialogService);
+        TooManyEditorsWarningDialog() {
             cancel.setVisible(false);
         }
 

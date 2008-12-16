@@ -21,19 +21,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -50,6 +45,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     @SuppressWarnings("unused")
@@ -184,9 +181,9 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }}, new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
+            public AbstractDialog createDialog() {
 
-                return new AbstractNameDialog(FullReviewedActionsWorkflowPlugin.this, dialogService, renameTitle, renameText, "") {
+                return new AbstractNameDialog(FullReviewedActionsWorkflowPlugin.this, renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -210,9 +207,9 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }}, new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
+            public AbstractDialog createDialog() {
 
-                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, dialogService, schedulePublishTitle, schedulePublishText, new Date()) {
+                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, schedulePublishTitle, schedulePublishText, new Date()) {
                     private static final long serialVersionUID = 1L;
 
                     @Override

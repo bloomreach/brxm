@@ -29,9 +29,8 @@ public abstract class AbstractNameDialog extends AbstractWorkflowDialog {
 
     protected String name;
 
-    public AbstractNameDialog(AbstractWorkflowPlugin workflowPlugin, IDialogService dialogWindow,
-            IModel title, IModel question, String name) {
-        super(workflowPlugin, dialogWindow, title);
+    public AbstractNameDialog(AbstractWorkflowPlugin workflowPlugin, IModel title, IModel question, String name) {
+        super(workflowPlugin, title);
         this.name = name;
         add(new Label("question", question));
         add(new TextFieldWidget("value", new PropertyModel(this, "name")));

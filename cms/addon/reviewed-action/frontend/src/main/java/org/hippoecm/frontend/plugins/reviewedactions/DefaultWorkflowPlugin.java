@@ -23,7 +23,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.AbstractNameDialog;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.WorkflowsModel;
@@ -91,9 +90,9 @@ public class DefaultWorkflowPlugin extends AbstractWorkflowPlugin {
             }}, new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService dialogService) {
+            public AbstractDialog createDialog() {
 
-                return new AbstractNameDialog(DefaultWorkflowPlugin.this, dialogService, renameTitle, renameText, "") {
+                return new AbstractNameDialog(DefaultWorkflowPlugin.this, renameTitle, renameText, "") {
                     private static final long serialVersionUID = 1L;
 
                     @Override

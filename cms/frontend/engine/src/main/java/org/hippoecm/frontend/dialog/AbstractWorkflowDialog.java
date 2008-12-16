@@ -53,9 +53,7 @@ public abstract class AbstractWorkflowDialog extends AbstractDialog implements I
     private AbstractWorkflowPlugin plugin;
     private ITranslateService translator;
 
-    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IDialogService dialogWindow, IModel title) {
-        super(dialogWindow);
-
+    public AbstractWorkflowDialog(AbstractWorkflowPlugin plugin, IModel title) {
         this.title = title;
         this.model = (WorkflowsModel) plugin.getModel();
         this.plugin = plugin;

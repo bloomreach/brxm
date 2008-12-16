@@ -77,8 +77,8 @@ public class LinkPickerPlugin extends RenderPlugin implements IJcrNodeModelListe
         IDialogFactory dialogFactory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
 
-            public AbstractDialog createDialog(IDialogService service) {
-                return new LinkPickerDialog(context, service, valueModel, nodetypes, rootNode);
+            public AbstractDialog createDialog() {
+                return new LinkPickerDialog(context, valueModel, nodetypes, rootNode);
             }
         };
         add(link = new DialogLink("value", linkText, dialogFactory, dialogService));

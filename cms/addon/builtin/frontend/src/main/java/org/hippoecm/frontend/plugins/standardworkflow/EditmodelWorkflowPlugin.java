@@ -23,7 +23,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -85,8 +84,8 @@ public class EditmodelWorkflowPlugin extends AbstractWorkflowPlugin {
                 new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
 
-                    public AbstractDialog createDialog(IDialogService dialogService) {
-                        return new CopyModelDialog(EditmodelWorkflowPlugin.this, dialogService);
+                    public AbstractDialog createDialog() {
+                        return new CopyModelDialog(EditmodelWorkflowPlugin.this);
                     }
                 }, getDialogService()));
     }

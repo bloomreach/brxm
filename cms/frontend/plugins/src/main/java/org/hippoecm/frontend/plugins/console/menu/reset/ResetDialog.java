@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
@@ -39,8 +38,7 @@ public class ResetDialog extends AbstractDialog {
     protected boolean hasPendingChanges;
     protected MenuPlugin plugin;
 
-    public ResetDialog(MenuPlugin plugin, IPluginContext context, IDialogService dialogWindow) {
-        super(dialogWindow);
+    public ResetDialog(MenuPlugin plugin, IPluginContext context) {
         this.plugin = plugin;
 
         Component message;
