@@ -49,6 +49,7 @@
       <datastore-identity strategy="native"/>
       <field name="type" column="type"/>
       <field name="reason" column="reason"/>
+      <field name="reqdate" column="reqdate"/>
       <field name="username" column="username"/>
       <field name="reference" column="document"/>
     </class>

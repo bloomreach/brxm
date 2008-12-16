@@ -21,6 +21,7 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
@@ -132,10 +133,34 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        WorkflowContext wfCtx = getWorkflowContext();
-        wfCtx = wfCtx.getWorkflowContext(publicationDate);
-        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
-        wf.publish();
+        doSchedPublish(publicationDate);
     }
 
+    public void depublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        doSchedDepublish(depublicationDate);
+    }
+
+    void doSchedPublish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        WorkflowContext wfCtx = getWorkflowContext();
+        wfCtx = wfCtx.getWorkflowContext(publicationDate);
+
+        Workflow w =  wfCtx.getWorkflow("default");
+        if(w instanceof FullReviewedActionsWorkflow) {
+            FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) w;
+            wf.publish();
+        } else if(w instanceof BasicReviewedActionsWorkflow) {
+            System.err.println("BERRY JUST BASIC");
+        } else if(w instanceof FullRequestWorkflow) {
+            System.err.println("BERRY FULL REQUEST");
+        } else if(w instanceof BasicRequestWorkflow) {
+            System.err.println("BERRY BASIC REQUEST");
+        }
+    }
+
+    void doSchedDepublish(Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        WorkflowContext wfCtx = getWorkflowContext();
+        wfCtx = wfCtx.getWorkflowContext(depublicationDate);
+        FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
+        wf.depublish();
+    }
 }

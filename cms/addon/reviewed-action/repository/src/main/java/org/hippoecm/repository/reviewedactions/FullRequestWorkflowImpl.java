@@ -28,9 +28,9 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     private static final long serialVersionUID = 1L;
 
-    protected FullReviewedActionsWorkflowImpl publishedWorkflow;;
-    protected FullReviewedActionsWorkflowImpl unpublishedWorkflow;;
-    protected FullReviewedActionsWorkflowImpl draftWorkflow;;
+    protected FullReviewedActionsWorkflowImpl publishedWorkflow;
+    protected FullReviewedActionsWorkflowImpl unpublishedWorkflow;
+    protected FullReviewedActionsWorkflowImpl draftWorkflow;
 
     public FullRequestWorkflowImpl() throws RemoteException {
     }
@@ -61,6 +61,20 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             }
             publishedWorkflow.setWorkflowContext(getWorkflowContext()); // FIXME; should use workflow chaining
             publishedWorkflow.doDepublish();
+            request = null;
+        } else if(PublicationRequest.SCHEDPUBLISH.equals(requestType)) {
+            if (publishedWorkflow == null) {
+                throw new WorkflowException("cannot depublish document when not published");
+            }
+            publishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
+            publishedWorkflow.doSchedPublish(request.getScheduledDate());
+            request = null;
+        } else if(PublicationRequest.SCHEDDEPUBLISH.equals(requestType)) {
+            if (publishedWorkflow == null) {
+                throw new WorkflowException("cannot depublish document when not published");
+            }
+            publishedWorkflow.setWorkflowContext(getWorkflowContext().getWorkflowContext(document)); // FIXME; should use workflow chaining
+            publishedWorkflow.doSchedDepublish(request.getScheduledDate());
             request = null;
         } else if(PublicationRequest.REJECTED.equals(requestType)) {
             throw new WorkflowException("request has already been rejected");

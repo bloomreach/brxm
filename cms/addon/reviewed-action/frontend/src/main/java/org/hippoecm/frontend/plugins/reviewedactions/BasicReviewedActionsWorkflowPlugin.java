@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -24,6 +25,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -159,6 +163,58 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 workflow.requestDeletion();
             }
         });
+
+        IModel schedulePublishLabel = new StringResourceModel("schedule-publish-label", this, null);
+        final StringResourceModel schedulePublishTitle = new StringResourceModel("schedule-publish-title", this, null);
+        final StringResourceModel schedulePublishText = new StringResourceModel("schedule-publish-text", this, null);
+        addWorkflowDialog("schedule-publish-dialog", schedulePublishLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public IDialogService.Dialog createDialog() {
+
+                return new AbstractDateDialog(BasicReviewedActionsWorkflowPlugin.this, schedulePublishTitle, schedulePublishText, new Date()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
+                        workflow.requestPublication(date);
+                    }
+                };
+            }
+        });
+
+        IModel scheduleDePublishLabel = new StringResourceModel("schedule-depublish-label", this, null);
+        final StringResourceModel scheduleDePublishTitle = new StringResourceModel("schedule-depublish-title", this, null);
+        final StringResourceModel scheduleDePublishText = new StringResourceModel("schedule-depublish-text", this, null);
+        addWorkflowDialog("schedule-depublish-dialog", scheduleDePublishLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+
+                return new AbstractDateDialog(BasicReviewedActionsWorkflowPlugin.this, scheduleDePublishTitle, scheduleDePublishText, new Date()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow();
+                        workflow.requestDepublication(date);
+                    }
+                };
+            }
+        });
     }
 
     // FIXME: same implementation as in FullviewedActionsWorkflowPlugin
@@ -201,6 +257,5 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
             log.info(ex.getClass().getName()+": "+ex.getMessage());
         }
-
     }
 }

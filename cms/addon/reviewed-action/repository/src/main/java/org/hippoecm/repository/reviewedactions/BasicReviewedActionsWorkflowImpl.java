@@ -128,7 +128,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     public void requestPublication(Date publicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("publication request on document ");
-        throw new WorkflowException("unsupported");
+        System.err.println("BERRY publication request on document "+publicationDate);
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.SCHEDPUBLISH, unpublished, getWorkflowContext().getUserIdentity(), publicationDate);
+        } else {
+            throw new WorkflowException("publication request already pending");
+        }
     }
 
     public void requestPublication(Date publicationDate, Date depublicationDate) throws WorkflowException {
@@ -136,9 +141,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         throw new WorkflowException("unsupported");
     }
 
-    public void requestDepublication(Date publicationDate) throws WorkflowException {
+    public void requestDepublication(Date depublicationDate) throws WorkflowException {
         ReviewedActionsWorkflowImpl.log.info("depublication request on document ");
-        throw new WorkflowException("Unsupported operation");
+        if(current == null) {
+            current = new PublicationRequest(PublicationRequest.SCHEDDEPUBLISH, published, getWorkflowContext().getUserIdentity(), depublicationDate);
+        } else {
+            throw new WorkflowException("publication request already pending");
+        }
     }
 
     PublishableDocument getRejectedDocument() throws WorkflowException {

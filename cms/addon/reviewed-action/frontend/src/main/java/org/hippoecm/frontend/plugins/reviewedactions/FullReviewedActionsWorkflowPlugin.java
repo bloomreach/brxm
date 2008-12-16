@@ -220,6 +220,32 @@ public class FullReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
                 };
             }
         });
+
+        IModel scheduleDePublishLabel = new StringResourceModel("schedule-depublish-label", this, null);
+        final StringResourceModel scheduleDePublishTitle = new StringResourceModel("schedule-depublish-title", this, null);
+        final StringResourceModel scheduleDePublishText = new StringResourceModel("schedule-depublish-text", this, null);
+        addWorkflowDialog("schedule-depublish-dialog", scheduleDePublishLabel, new Visibility() {
+            private static final long serialVersionUID = 1L;
+
+            public boolean isVisible() {
+                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+
+            }}, new IDialogFactory() {
+                    private static final long serialVersionUID = 1L;
+
+            public AbstractDialog createDialog() {
+
+                return new AbstractDateDialog(FullReviewedActionsWorkflowPlugin.this, scheduleDePublishTitle, scheduleDePublishText, new Date()) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void execute() throws Exception {
+                        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow();
+                        workflow.depublish(date);
+                    }
+                };
+            }
+        });
     }
 
     @Override
