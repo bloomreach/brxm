@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.apache.wicket.protocol.http.WicketURLEncoder;
 
 public class XinhaUtil {
@@ -24,6 +25,14 @@ public class XinhaUtil {
         String[] elements = StringUtils.split(path, '/');
         for (int i = 0; i < elements.length; i++) {
             elements[i] = WicketURLEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
+        }
+        return StringUtils.join(elements, '/');
+    }
+
+    public static final String decode(String path) {
+        String[] elements = StringUtils.split(path, '/');
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = WicketURLDecoder.PATH_INSTANCE.decode(elements[i], "UTF-8");
         }
         return StringUtils.join(elements, '/');
     }
