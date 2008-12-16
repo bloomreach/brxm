@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.render;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -63,6 +64,19 @@ public class ListViewService extends RenderService {
         }
     }
 
+    private static class EvenOddModel extends Model {
+        private static final long serialVersionUID = 1L;
+
+        public EvenOddModel(int index) {
+            if (index % 2 == 0) {
+                setObject("even");
+            } else {
+                setObject("odd");
+            }
+        }
+
+    }
+
     private List<IRenderService> services;
     private ServiceTracker<IRenderService> tracker;
     private AbstractView view;
@@ -89,6 +103,7 @@ public class ListViewService extends RenderService {
                 renderer.bind(ListViewService.this, "item");
                 item.add(renderer.getComponent());
                 ListViewService.this.onAddRenderService(item, renderer);
+                item.add(new AttributeAppender("class", new EvenOddModel(item.getIndex()), " "));
             }
 
             @Override
