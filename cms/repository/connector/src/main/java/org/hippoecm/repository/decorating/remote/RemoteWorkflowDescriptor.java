@@ -30,4 +30,6 @@ public interface RemoteWorkflowDescriptor extends Remote {
     public String getAttribute(String name) throws RepositoryException, RemoteException;
 
     public Workflow getWorkflow() throws RepositoryException, RemoteException;
+
+    public String[] getInterfaces() throws ClassNotFoundException, RepositoryException, RemoteException;
 }
