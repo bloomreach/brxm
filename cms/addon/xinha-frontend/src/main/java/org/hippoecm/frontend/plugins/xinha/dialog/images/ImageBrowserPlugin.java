@@ -49,7 +49,7 @@ public class ImageBrowserPlugin extends BrowserPlugin {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                if (!ok.isEnabled()) {
+                if (!ok.isEnabled() && getBean().getNodeModel() != null) {
                     enableOk(true);
                 }
             }

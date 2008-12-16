@@ -117,9 +117,9 @@ public abstract class BrowserPlugin extends RenderPlugin {
         if (initialModel == null && currentModel == null) {
             bean.setNodeModel(newModel);
             enableOk(true);
-        } else if (!currentModel.equals(newModel)) {
+        } else if (!newModel.equals(currentModel)) {
             bean.setNodeModel(newModel);
-            if (!initialModel.equals(newModel)) {
+            if (!newModel.equals(initialModel)) {
                 enableOk(true);
             } else {
                 enableOk(false);

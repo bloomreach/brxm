@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import java.util.HashMap;
 
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.XinhaLinkService;
@@ -35,6 +36,11 @@ public class LinkPickerBehavior extends XinhaDialogBehavior {
     public LinkPickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
         linkServiceId = serviceId + ".links";
+    }
+
+    @Override
+    protected String createTitle() {
+        return new StringResourceModel("linkpicker-dialog-title", getComponent(), null).getString();
     }
 
     @Override
