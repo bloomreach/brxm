@@ -22,12 +22,16 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
 import org.hippoecm.frontend.plugins.xinha.dialog.DialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.IDialog;
+import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BrowserPlugin extends RenderPlugin {
     private static final long serialVersionUID = 1L;
@@ -35,13 +39,17 @@ public abstract class BrowserPlugin extends RenderPlugin {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
+    
     final protected BrowseView browseView;
 
     final private Form form;
     final protected AjaxButton ok;
     final protected AjaxButton cancel;
     final protected FeedbackPanel feedback;
-
+    
+    protected final JcrNodeModel initialModel;
+    
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -54,7 +62,17 @@ public abstract class BrowserPlugin extends RenderPlugin {
             }
 
         };
-
+        
+        JsBean bean = getBean();
+        if(bean == null) {
+            initialModel = null;
+        } else {
+            initialModel = bean.getNodeModel();
+            if (initialModel != null) {
+                browseView.browse(initialModel);
+            }
+        }
+        
         add(form = new Form("form"));
 
         form.add(ok = new AjaxButton("ok", form) {
@@ -80,15 +98,47 @@ public abstract class BrowserPlugin extends RenderPlugin {
         //TODO: feedback is written in the page feedbackpanel, not this one in the modalwindow
         form.add(feedback = new FeedbackPanel("dialog.feedback"));
         feedback.setOutputMarkupId(true);
+        
     }
 
     private IDialog getDialog() {
         String id = getPluginConfig().getString(DialogBehavior.DIALOG_SERVICE_ID);
         return getPluginContext().getService(id, IDialog.class);
     }
+    
+    protected void onDocumentChanged(IModel model) {
+        JcrNodeModel newModel = findNewModel(model);
+        JsBean bean = getBean();
+        if (newModel == null || bean == null) {
+            return;
+        }
+        
+        JcrNodeModel currentModel = bean.getNodeModel();
+        if (initialModel == null && currentModel == null) {
+            bean.setNodeModel(newModel);
+            enableOk(true);
+        } else if (!currentModel.equals(newModel)) {
+            bean.setNodeModel(newModel);
+            if (!initialModel.equals(newModel)) {
+                enableOk(true);
+            } else {
+                enableOk(false);
+            }
+        } else {
+            enableOk(false);
+        }
+    }
 
-    protected abstract void onDocumentChanged(IModel model);
-
+    protected JsBean getBean() {
+        return (JsBean) getModelObject();
+    }
+    
+    protected void enableOk(boolean state) {
+        AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
+    }
+    
+    protected abstract JcrNodeModel findNewModel(IModel model);
+    
     abstract public class BrowseView extends AbstractBrowseView {
         private static final long serialVersionUID = 1L;
 

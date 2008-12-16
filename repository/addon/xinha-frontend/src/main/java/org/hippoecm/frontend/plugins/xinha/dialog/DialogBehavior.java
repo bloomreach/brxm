@@ -58,7 +58,6 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
         this.clusterServiceId = serviceId;
         
         dialog = context.getService(serviceId + ".dialog", IDialog.class);
-        dialog.setListener(this);
     }
 
     protected String createTitle() {
@@ -67,10 +66,9 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
 
     @Override
     protected void respond(AjaxRequestTarget target) {
+        dialog.setListener(this);
         dialog.getModal().setTitle(createTitle());
-
         String contentId = dialog.getModal().getContentId();
-
         dialog.getModal().setContent(createContentPanel(contentId, newDialogModel()));
         dialog.show(target);
     }
@@ -90,7 +88,6 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
         modelService = new ModelService<IModel>(modelServiceId, model);
         modelService.init(context);
 
-        setupClusterConfig(config);
         control = context.start(config);
 
         dialogRenderer = context.getService(CONTENT_PANEL_SERVICE_ID, IRenderService.class);
@@ -104,9 +101,6 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
         }
     }
     
-    protected void setupClusterConfig(IClusterConfig config) {
-    }
-
     public void onDialogClose() {
         dialogRenderer = null;
         control.stopPlugin();

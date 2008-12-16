@@ -31,6 +31,10 @@ public abstract class Dialog implements IDialog {
 
     private IDialogListener listener;
     private ModalWindow modal;
+    
+    private int defaultWidth = 450;
+    private int defaultHeight = 300;
+    private boolean defaultResizable = true;
 
     public Dialog(String id) {
         modal = createModal(id);
@@ -43,20 +47,20 @@ public abstract class Dialog implements IDialog {
             }
             
         });
-        configureModal(id);
-        listener = EMPTY_LISTENER;
-    }
-
-    protected ModalWindow createModal(String id) {
-        return new ModalWindow(id);
-    }
-
-    protected void configureModal(String id) {
-        modal.setInitialWidth(450);
-        modal.setInitialHeight(300);
+        
+        modal.setInitialWidth(defaultWidth);
+        modal.setInitialHeight(defaultHeight);
+        modal.setResizable(defaultResizable);
+        
         modal.setCookieName("Dialog" + id); //TODO: test of +id is ok
         modal.setTitle("Dialog[" + id + "]");
         modal.setContent(new Panel(modal.getContentId()));
+
+        listener = EMPTY_LISTENER;
+    }
+    
+    protected ModalWindow createModal(String id) {
+        return new ModalWindow(id);
     }
 
     public ModalWindow getModal() {
@@ -75,13 +79,9 @@ public abstract class Dialog implements IDialog {
         close(target, getCloseScript(returnValue));
     }
 
-    protected abstract String getCloseScript(String returnValue);
-
     public void cancel(AjaxRequestTarget target) {
         close(target, getCancelScript());
     }
-
-    protected abstract String getCancelScript();
     
     private void close(AjaxRequestTarget target, String closeScript) {
         target.getHeaderResponse().renderOnDomReadyJavascript(closeScript);
@@ -92,4 +92,10 @@ public abstract class Dialog implements IDialog {
     public void show(AjaxRequestTarget target) {
         modal.show(target);
     }
+    
+    
+    protected abstract String getCloseScript(String returnValue);
+
+    protected abstract String getCancelScript();
+
 }

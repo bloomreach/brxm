@@ -34,6 +34,10 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
         imagesServiceId = serviceId + ".images";
+        
+        dialog.getModal().setInitialWidth(500);
+        dialog.getModal().setInitialHeight(300);
+        dialog.getModal().setResizable(false);
     }
 
     @Override
@@ -49,7 +53,10 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
     @Override
     protected void onOk(JsBean bean) {
         XinhaImage xi = (XinhaImage) bean;
-        getImageService().attach(xi);
+        String url = getImageService().attach(xi);
+        if (url != null) {
+            xi.setUrl(url);
+        }
     }
 
     private XinhaImageService getImageService() {

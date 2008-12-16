@@ -30,6 +30,7 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin.Configuration;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImageItemFactory;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.XinhaImage;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImageItemFactory.ImageItem;
@@ -49,12 +50,12 @@ public class XinhaImageService implements IClusterable {
 
     final static String BINARIES_PREFIX = "binaries";
 
-    ImageItemFactory factory;
-    JcrNodeModel nodeModel;
-    String name;
+    private ImageItemFactory factory;
+    private JcrNodeModel nodeModel;
+    private Configuration configuration;
 
-    public XinhaImageService(String name, JcrNodeModel nodeModel) {
-        this.name = name;
+    public XinhaImageService(Configuration configuration, JcrNodeModel nodeModel) {
+        this.configuration = configuration;
         this.nodeModel = nodeModel;
         factory = new ImageItemFactory(nodeModel);
     }
@@ -108,20 +109,20 @@ public class XinhaImageService implements IClusterable {
         ImageItem item = createImageItem(model);
         if (attachImageItem(item)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("xinha_editors.").append(name).append(".plugins.InsertImage.instance.insertImage(").append('{')
-                    .append(XinhaImage.URL).append(": '").append(item.getUrl()).append("'}, false)");
+            sb.append("xinha_editors.").append(configuration.getName()).append(
+                    ".plugins.InsertImage.instance.insertImage(").append('{').append(XinhaImage.URL).append(": '")
+                    .append(item.getUrl()).append("'}, false)");
             return sb.toString();
         }
         return null;
     }
 
-    public boolean attach(XinhaImage xi) {
+    public String attach(XinhaImage xi) {
         ImageItem item = createImageItem(xi.getNodeModel());
         if (attachImageItem(item)) {
-            xi.setUrl(item.getUrl());
-            return true;
+            return item.getUrl();
         }
-        return false;
+        return null;
     }
 
     public XinhaImage createXinhaImage(HashMap<String, String> p) {

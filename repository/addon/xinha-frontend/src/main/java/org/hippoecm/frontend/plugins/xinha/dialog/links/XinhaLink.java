@@ -15,21 +15,31 @@
  */
 package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
-public enum XinhaLink {
-    HREF ("f_href"),
-    TITLE ("f_title"),
-    TARGET ("f_target"),
-    OTHER_TARGET ("f_other_target");
+import java.util.Map;
+
+import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
+
+public class XinhaLink extends JsBean {
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private String value;
-    XinhaLink(String val) {
-        this.value = val;
+    public static final String HREF = "f_href";
+    public static final String TITLE = "f_title";
+    public static final String TARGET = "f_target";
+    public static final String OTHER_TARGET = "f_other_target";
+
+    public XinhaLink(Map<String, String> values) {
+        super(values);
+    }
+    
+    public String getHref() {
+        return values.get(HREF);
     }
 
-    public String getValue() {
-        return value;
+    public void setHref(String href) {
+        values.put(HREF, href);
     }
+    
 }
