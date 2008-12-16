@@ -29,7 +29,7 @@
 + * (hipposched:trigger) = hipposched:trigger
 
 [hipposched:job] > hippo:request
-+ hipposched:triggers (hipposched:triggers) = hipposched:triggers autocreated
++ hipposched:triggers (hipposched:triggers) = hipposched:triggers
 - hipposched:data (binary) mandatory
 
 /*
