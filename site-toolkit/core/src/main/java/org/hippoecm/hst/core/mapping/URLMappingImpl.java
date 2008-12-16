@@ -118,8 +118,7 @@ public class URLMappingImpl implements URLMapping {
                 }
                 if (subNode.hasProperty("hst:linkrewrite")) {
                     if (isPrefix) {
-                        log
-                                .warn("Unambigous linkrewriting configuration because sitemap node contains both 'hst:linkrewriteprefix|hst:prefixlinkrewrite'"
+                        log.warn("Ambiguous linkrewriting configuration because sitemap node contains both 'hst:linkrewriteprefix|hst:prefixlinkrewrite'"
                                         + "and 'hst:linkrewrite'. Using 'hst:linkrewriteprefix|hst:prefixlinkrewrite' property. If links are incorrect rewritten, remove 'hst:prefixlinkrewrite' property");
                     } else {
                         linkRewrite = subNode.getProperty("hst:linkrewrite").getString();
@@ -144,9 +143,7 @@ public class URLMappingImpl implements URLMapping {
                                             + " of multivalued property 'hst:nodetype' is not equal to the length of 'hst:nodepath'. This is mandatory for a proper working linkrewriting item");
                         }
                     } else {
-                        log.warn("For sitemapitem '" + subNode.getName()
-                                + "' skipping linkrewriting because one of the following properties is missing:"
-                                + "\n hst:nodetype" + "\n hst:nodepath");
+                        log.debug("sitemapitem is not used for linkrewriting but might be used to link directly to (hst:linkrewrite is used in that casse)");
 
                     }
                 } else {
