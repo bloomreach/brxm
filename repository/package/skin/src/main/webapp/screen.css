@@ -343,7 +343,7 @@ padding-right: 9px;
 .hippo-window-dialog-title{font-size: 11px;}
 .hippo-window-dialog-question{font-weight: bold}
 
-/* Wicket Modal windows overwrite */
+/* Wicket Modal windows overwrite 
 .hippo-root div.wicket-modal div.w_blue div.w_top, 
 .hippo-root div.wicket-modal div.w_blue div.w_bottom,
 .hippo-root div.wicket-modal div.w_blue div.w_topLeft,
@@ -366,6 +366,7 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-modal div.w_content_2 {padding-top: 0px}
 .hippo-root div.wicket-modal div.w_content_1{margin-right: 7px;}
 .hippo-root div.wicket-modal div.w_right_1 {margin-left:7px;}
+*/
 
 /* Wizard */
 /* ================================================ */
@@ -739,6 +740,8 @@ table tr.selected span.folder-open-16, .folder-open-16{background-image:url("ima
 .reqdelete_ico{background-image:url("images/icons/workflow-requestdelete-16.png")}
 .reqpublish_ico{background-image:url("images/icons/workflow-requestpublish-16.png")}
 .reqdepublish_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
+.reqschedpublish_ico{background-image:url("images/icons/workflow-requestpublish-16.png")}
+.reqscheddepublish_ico{background-image:url("images/icons/workflow-requestunpublish-16.png")}
 .publish-16, .publish_ico{background-image:url("images/icons/publish-16.png")}
 .depublish-16, .depublish_ico{background-image:url("images/icons/unplublish-16.png")}
 .publish-schedule-16{background-image:url("images/icons/publish-schedule-16.png")}

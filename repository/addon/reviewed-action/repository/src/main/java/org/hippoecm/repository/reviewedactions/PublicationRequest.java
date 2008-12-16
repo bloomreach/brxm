@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.util.Date;
+
 import org.hippoecm.repository.api.Document;
 
 public class PublicationRequest extends Document {
@@ -24,11 +26,16 @@ public class PublicationRequest extends Document {
     final public static String REJECTED = "rejected"; // zombie
     final public static String PUBLISH = "publish";
     final public static String DEPUBLISH = "depublish";
+    final public static String SCHEDPUBLISH = "scheduledpublish";
+    final public static String SCHEDDEPUBLISH = "scheduleddepublish";
     final public static String DELETE = "delete";
+
     public String type;
     public String reason;
     public String username;
     public String reference;
+    public long reqdate;
+
     public PublicationRequest(String type, PublishableDocument document, String username) {
         this.username = username;
         this.type = type;
@@ -37,8 +44,22 @@ public class PublicationRequest extends Document {
             reference = document.getIdentity();
     }
 
+    public PublicationRequest(String type, PublishableDocument document, String username, Date scheduledDate) {
+        this.username = username;
+        this.type = type;
+        reason = "";
+        if(document != null)
+            reference = document.getIdentity();
+        reqdate = scheduledDate.getTime();
+        System.err.println("BERRY REQUEST "+scheduledDate+" "+reqdate);
+    }
+
     String getType() {
         return type;
+    }
+
+    Date getScheduledDate() {
+        return new Date(reqdate);
     }
 
     void setRejected(PublishableDocument stale, String reason) {

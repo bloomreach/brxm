@@ -16,6 +16,7 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 
 import javax.jcr.RepositoryException;
 

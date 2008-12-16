@@ -37,7 +37,7 @@ public class BasicRequestWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
     private boolean cancelable = true;
 

@@ -91,11 +91,6 @@ public abstract class AbstractWorkflowPlugin extends RenderPlugin {
     }
 
     protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
-            final Visibility visible, final WorkflowAction action) {
-        addWorkflowDialog(dialogName, dialogLink, dialogTitle, visible, action);
-    }
-
-    protected void addWorkflowDialog(final String dialogName, final IModel dialogLink, final IModel dialogTitle,
             final IModel text, final Visibility visible, final WorkflowAction action) {
         DialogLink link = new DialogLink(dialogName, dialogLink, new IDialogFactory() {
             private static final long serialVersionUID = 1L;
