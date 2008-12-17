@@ -22,23 +22,23 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Add boolean to Documenttype</title>
+    <title>Add boolean to document type</title>
   </properties>
 
   <body>
-    <section name="Add boolean to Documentttype">
-      <span class="shortdesc">How to add a boolean to a documenttype.</span>
+    <section name="Add boolean to document type">
+      <span class="shortdesc">How to add a boolean to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_boolean_to_documenttype.png" alt='Add boolean to documenttype screenshot'/> 
+     <img src="../../../../images/inars/add_boolean_to_documenttype.png" alt='Add boolean to document type screenshot'/> 
      <p>
       Adding mandatory <a href='../concepts/boolean.html'>boolean</a> field sar:indoors with caption 'Indoors?' 
-      to documenttype `upcoming'.      
+      to document type `upcoming'.      
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>documenttype</a> for editing. 
+    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
     In the list of possible fields, 
     click on '<a href='../concepts/boolean.html'>Boolean</a>' (far right, almost at the top, 
     Below 'Date' and Above 'hippo:resource'). 
@@ -60,12 +60,12 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a documenttype</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a documenttype</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a document type</a>.</li>
    </ul>       
   </subsection>
 

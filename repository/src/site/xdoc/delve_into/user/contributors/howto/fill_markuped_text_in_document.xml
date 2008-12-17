@@ -22,15 +22,15 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Fill markuped text in Document</title>
+    <title>Fill marked-up text in Document</title>
   </properties>
 
   <body>
-    <section name="Fill markuped text in Document">
-      <span class="shortdesc">How to write markuped text in a document.</span>
+    <section name="Fill marked-up text in Document">
+      <span class="shortdesc">How to write marked-up text in a document.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/contribs/fill_markuped_text.png" alt='Fill markuped text screenshot'/> 
+     <img src="../../../../images/contribs/fill_markuped_text.png" alt='Fill marked-up text screenshot'/> 
      <p>
        Wrote the description for the document 'multibazaar2008'. The description contains the boldfaced 
        titles: 'Food', 'Music', 'More' and 'Address', which is an example of markup.

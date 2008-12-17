@@ -22,37 +22,37 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Remove field from documenttype</title>
+    <title>Remove field from document type</title>
   </properties>
 
   <body>
-    <section name="Remove field from documenttype">
-      <span class="shortdesc">How to remove a field from a documenttype.</span>
+    <section name="Remove field from document type">
+      <span class="shortdesc">How to remove a field from a document type.</span>
 
    <div class='screenshot'>
      <img src="../../../../images/inars/remove_field_from_documenttype.png" alt='remove field screenshot'/> 
      <p>
-      In a documenttype, fields can be removed by clicking on the remove buttons.
+      In a document type, fields can be removed by clicking on the remove buttons.
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>documenttype</a> for editing. 
-    Click on the remove button at the upper right of a field of the documenttype to remove it.    
+    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
+    Click on the remove button at the upper right of a field of the document type to remove it.    
    </p>
    <div class='alert-48 icon-text-48'>
-     If you remove a field from a documenttype, while documents of that type
+     If you remove a field from a document type, while documents of that type
      already exists, all information in that field from all those documents will be lost!     
    </div>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a documenttype</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a documenttype</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
    </ul>       
   </subsection>
 

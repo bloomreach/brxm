@@ -30,14 +30,14 @@
            readable by humans. It may for example be electronic. However, any physical representation of information can be transformed to another
            physical representation of the same information, so can be made readable by humans.  
           </p>
-          <p>Hippo CMS is fully configurable and any company can define concepts like document and use Hippo CMS accordingly.
+          <p>Hippo CMS is fully configurable and any organization can define concepts like document and use Hippo CMS accordingly.
              The Hippo CMS default content is an example of such a choice. Here, 'documents', 'images' and 'files' are presented such that
              it is suggested that they are mutally exclusive. A definition in accordance with this use would be that
              only user files that contain information that Hippo CMS can read are documents. Other files are images and just files.
              E.g., Hippo can store PDF documents, but can not read them, so to Hippo PDF documents are no documents, just files.  
       </p>
           <p>That Hippo CMS can read documents means that Hippo CMS can help perform advanced searches on those documents and can help 
-             you generate such documents, telling you what information in your company should
+             you generate such documents, telling you what information in your organization should
              be stored in a document of a particular type.
           </p> 
 

@@ -22,33 +22,33 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto a Namespace</title>
+    <title>Go to a namespace</title>
   </properties>
 
   <body>
-    <section name="Goto a Namespace">
-      <span class="shortdesc">How to get to a namespace, to view the documenttypes in it.</span>
+    <section name="Go to a namespace">
+      <span class="shortdesc">How to get to a namespace, to view the document types in it.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/namespace_tab.png" alt='Goto namespace screenshot'/> 
+     <img src="../../../../images/inars/namespace_tab.png" alt='Go to namespace screenshot'/> 
      <p>
       Opened list of documenttypes in <a href='../concepts/namespace.html'>namespace</a> 'sar'.
-      The namespace 'sar' contains te documenttypes 'myhobby' and 'upcoming'.
+      The namespace 'sar' contains te document types 'myhobby' and 'upcoming'.
      </p>
    </div>
 
    <p>
     In the list of namespaces
     (in the tree view, below the documenttypes folder, in 
-    the <a href='./goto_documenttypes_tab.html'>documenttypes tab</a>, at middle-left), 
+    the <a href='./goto_documenttypes_tab.html'>document types tab</a>, at middle-left), 
     click on namespace you want to open. 
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./create_documenttype.html'>Create documenttype</a>.</li>
-    <li><a href='./goto_documenttype_tab.html'>Goto documenttype tab</a>.</li>
-    <li><a href='./goto_namespace.html'>Goto another namespace</a>.</li>
+    <li><a href='./create_documenttype.html'>Create document type</a>.</li>
+    <li><a href='./goto_documenttype_tab.html'>Go to document type tab</a>.</li>
+    <li><a href='./goto_namespace.html'>Go to another namespace</a>.</li>
    </ul>       
   </subsection>
 

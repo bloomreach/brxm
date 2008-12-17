@@ -22,11 +22,11 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto Content Browse Tab</title>
+    <title>Go to content browse tab</title>
   </properties>
 
   <body>
-    <section name="Goto Content Browse Tab">
+    <section name="Go to content browse tab">
       <span class="shortdesc">How to get to the content browse tab.</span>
 
    <div class='screenshot'>
@@ -41,7 +41,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttypes_tab.html'>Goto documenttypes tab</a>.</li>
+    <li><a href='./goto_documenttypes_tab.html'>Go to document types tab</a>.</li>
    </ul>       
   </subsection>
 

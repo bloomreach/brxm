@@ -25,7 +25,7 @@
     <title>CMS Information Architects Concepts</title>
   </properties>
   <body>
-    <section name="CMS Information Architects Concepts"><span class="shortdesc">A collection of concepts a CMS information architect may want to know.</span><table><tr><td><a href="./boolean.html">Boolean</a></td><td>What is a boolean.</td></tr><tr><td><a href="./documenttype.html">Documenttype</a></td><td>What is a documenttype.</td></tr><tr><td><a href="./mandatory_or_optional.html">Mandatory or optional field</a></td><td>Wat is a mandatory or optional field in a documenttype.</td></tr><tr><td><a href="./namespace.html">namespace</a></td><td>What is a namespace.</td></tr><tr><td><a href="./string.html">string</a></td><td>What is a string.</td></tr><tr><td><a href="./URL.html">URL</a></td><td>URL.</td></tr></table>  
+    <section name="CMS Information Architects Concepts"><span class="shortdesc">A collection of concepts a CMS information architect may want to know.</span><table><tr><td><a href="./boolean.html">Boolean</a></td><td>What is a boolean.</td></tr><tr><td><a href="./documenttype.html">Document type</a></td><td>What is a document type.</td></tr><tr><td><a href="./mandatory_or_optional.html">Mandatory or optional field</a></td><td>What is a mandatory or optional field in a documenttype.</td></tr><tr><td><a href="./namespace.html">Namespace</a></td><td>What is a namespace.</td></tr><tr><td><a href="./string.html">String</a></td><td>What is a string.</td></tr><tr><td><a href="./URL.html">URL</a></td><td>URL.</td></tr></table>  
   <subsection xmlns="" name="Alternative">
      <p>
       If you do not know where to start, take the <a href="../tour.html">Tour</a>.

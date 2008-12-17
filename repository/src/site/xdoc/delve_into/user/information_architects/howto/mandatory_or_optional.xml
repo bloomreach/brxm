@@ -22,7 +22,7 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Mandatory or optional Field</title>
+    <title>Mandatory or optional field</title>
   </properties>
 
   <body>
@@ -32,12 +32,12 @@ ________________________________________________________________________________
    <div class='screenshot'>
      <img src="../../../../images/inars/mandatory_or_optional.png" alt='Mandatory or optional screenshot'/> 
      <p>
-      In a documenttype, a mandatory field (which is a date field).
+      In a document type, a mandatory field (which is a date field).
      </p>
    </div>
 
    <p>
-    While adding a field to a documenttype, e.g. 
+    While adding a field to a document type, e.g. 
     a <a href='./add_date_to_documenttype.html'>date field</a>,
     one should decide if the field 
     should be <a href='../concepts/mandatory_or_optional.html'>mandatory or optional</a>.
@@ -47,12 +47,12 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a documenttype</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a documenttype</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
    </ul>       
   </subsection>
 

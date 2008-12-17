@@ -22,27 +22,27 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Add markuped text field to Documenttype</title>
+    <title>Add marked-up text field to document type</title>
   </properties>
 
   <body>
-    <section name="Add markuped text field to Documentttype">
-      <span class="shortdesc">How to add a markuped text field to a documenttype.</span>
+    <section name="Add marked-up text field to document type">
+      <span class="shortdesc">How to add a marked-up text field to a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/add_markuped_text_to_documenttype.png" alt='Add markuped text to documenttype screenshot'/> 
+     <img src="../../../../images/inars/add_markuped_text_to_documenttype.png" alt='Add markuped text to document type screenshot'/> 
      <p>
-      Adding optional markuped text field sar:description with caption 'Description' 
-      to documenttype `upcoming'.      
+      Adding optional marked-up text field sar:description with caption 'Description' 
+      to document type `upcoming'.      
      </p>
    </div>
 
    <p>
-    Open the <a href='./goto_documenttype_tab.html'>documenttype</a> for editing. 
+    Open the <a href='./goto_documenttype_tab.html'>document type</a> for editing. 
     In the list of possible fields, 
     click on 'Html' (far right, almost at the top, 
     Below 'String' and Above 'Text'). 
-    A markup text field appears as part of the documenttype.
+    A markup text field appears as part of the document type.
    </p>
    <ul>
     <li>
@@ -56,18 +56,18 @@ ________________________________________________________________________________
     </li>
     <li>
      Decide the <a href='./fieldsize.html'>number of characters wide and the number of lines heigh</a> 
-     the markuped text may maximally be.
+     the marked-up text may maximally be.
     </li>
    </ul>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a documenttype</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a documenttype</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for marked-up text to a document type</a>.</li>
    </ul>       
   </subsection>
 
