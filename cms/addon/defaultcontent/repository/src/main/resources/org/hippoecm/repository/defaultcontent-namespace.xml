@@ -1041,6 +1041,9 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Introduction</sv:value>
           </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>90%</sv:value>
+          </sv:property>
         </sv:node>
 
         <sv:node sv:name="body">
@@ -1069,6 +1072,9 @@
             <sv:value>Body</sv:value>
           </sv:property>
         </sv:node>
+        <sv:property sv:name="template.width" sv:type="String">
+          <sv:value>90%</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>

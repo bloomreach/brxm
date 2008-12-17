@@ -95,7 +95,7 @@
         <sv:value>center</sv:value>
       </sv:property>
       <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=editor-perspective-top,height=41</sv:value>
+        <sv:value>id=editor-perspective-top,height=46</sv:value>
       </sv:property>
       <sv:property sv:name="center" sv:type="String">
         <sv:value>id=editor-perspective-center,body=editor-perspective-center-body,scroll=true</sv:value>
