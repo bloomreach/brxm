@@ -176,6 +176,11 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     @Override
     public void dispose() {
         facetedEngine.unprepare(facetedContext);
+        virtualNodeNames.clear();
+        virtualPropertyNames.clear();
+        virtualStates.clear();
+        virtualNodes.clear();
+        super.dispose();
     }
 
     @Override
