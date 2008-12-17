@@ -27,7 +27,7 @@ ________________________________________________________________________________
 
   <body>
     <section name="Mandatory or optional field">
-      <span class="shortdesc">Wat is a mandatory or optional field in a documenttype?</span>
+      <span class="shortdesc">What is a mandatory or optional field in a documenttype?</span>
 
       <p>A field that is mandatory in a documenttype must have a value in any document 
          of that documenttype. A field that is optional may have a value, but may be left

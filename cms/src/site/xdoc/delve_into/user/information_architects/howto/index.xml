@@ -32,81 +32,81 @@ ________________________________________________________________________________
 <table>
   <tr>
     <td>
-      <a href="./add_boolean_to_documenttype.html">Add boolean to Documentttype</a>
+      <a href="./add_boolean_to_documenttype.html">Add boolean to document type</a>
     </td>
-    <td>How to add a boolean to a documenttype.</td>
+    <td>How to add a boolean to a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./add_date_to_documenttype.html">Add date to Documentttype</a>
+      <a href="./add_date_to_documenttype.html">Add date to document type</a>
     </td>
-    <td>How to add a datefield to a documenttype.</td>
+    <td>How to add a date field to a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./add_markuped_text_to_documenttype.html">Add markuped text field to Documentttype</a>
+      <a href="./add_markuped_text_to_documenttype.html">Add marked-up text field to document type</a>
     </td>
-    <td>How to add a markuped text field to a documenttype.</td>
+    <td>How to add a marked-up text field to a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./add_string_to_documenttype.html">Add string to Documentttype</a>
+      <a href="./add_string_to_documenttype.html">Add string to document type</a>
     </td>
-    <td>How to add a string field to a documenttype.</td>
+    <td>How to add a string field to a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./change_field_in_documenttype.html">Change field in documenttype</a>
+      <a href="./change_field_in_documenttype.html">Change field in document type</a>
     </td>
-    <td>How to change a field in a documenttype.</td>
+    <td>How to change a field in a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./create_documenttype.html">Create Documentttype</a>
+      <a href="./create_documenttype.html">Create document type</a>
     </td>
-    <td>How to create a documenttype, to define the structure of a class of similar documents.</td>
+    <td>How to create a document type, to define the structure of a class of similar documents.</td>
   </tr>
   <tr>
     <td>
-      <a href="./create_namespace.html">Create Namespace</a>
+      <a href="./create_namespace.html">Create namespace</a>
     </td>
-    <td>How to create a namespace to gather documenttypes in.</td>
+    <td>How to create a namespace to gather document types in.</td>
   </tr>
   <tr>
     <td>
-      <a href="./fieldcaption.html">Fieldcaption</a>
+      <a href="./fieldcaption.html">Field caption</a>
     </td>
-    <td>How to define a caption for a field in a documenttype.</td>
+    <td>How to define a caption for a field in a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./fieldsize.html">Fieldsize</a>
+      <a href="./fieldsize.html">Field size</a>
     </td>
-    <td>How to define the size for a field in a documenttype.</td>
+    <td>How to define the size for a field in a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./goto_content_browse_tab.html">Goto Content Browse Tab</a>
+      <a href="./goto_content_browse_tab.html">Go to content browse tab</a>
     </td>
     <td>How to get to the content browse tab.</td>
   </tr>
   <tr>
     <td>
-      <a href="./goto_documenttypes_tab.html">Goto Documenttypes Tab</a>
+      <a href="./goto_documenttypes_tab.html">Go to document types tab</a>
     </td>
-    <td>How to get to the documenttypes tab, to add and change documenttypes.</td>
+    <td>How to get to the document types tab, to add and change document types.</td>
   </tr>
   <tr>
     <td>
-      <a href="./goto_documenttype_tab.html">Goto a Documententtype</a>
+      <a href="./goto_documenttype_tab.html">Go to a documentent type</a>
     </td>
-    <td>How to get to a screen to manipulate a particular documenttype.</td>
+    <td>How to get to a screen to manipulate a particular document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./goto_namespace.html">Goto a Namespace</a>
+      <a href="./goto_namespace.html">Goto a namespace</a>
     </td>
-    <td>How to get to a namespace, to view the documenttypes in it.</td>
+    <td>How to get to a namespace, to view the document types in it.</td>
   </tr>
   <tr>
     <td>
@@ -134,15 +134,15 @@ ________________________________________________________________________________
   </tr>
   <tr>
     <td>
-      <a href="./remove_field_from_documenttype.html">Remove field from documenttype</a>
+      <a href="./remove_field_from_documenttype.html">Remove field from document type</a>
     </td>
-    <td>How to remove a field from a documenttype.</td>
+    <td>How to remove a field from a document type.</td>
   </tr>
   <tr>
     <td>
-      <a href="./save_documenttype.html">Save Documentttype</a>
+      <a href="./save_documenttype.html">Save document type</a>
     </td>
-    <td>How to save a documenttype.</td>
+    <td>How to save a document type.</td>
   </tr>
   <tr>
     <td>

@@ -22,17 +22,17 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Save Documenttype</title>
+    <title>Save document type</title>
   </properties>
 
   <body>
-    <section name="Save Documentttype">
-      <span class="shortdesc">How to save a documenttype.</span>
+    <section name="Save document type">
+      <span class="shortdesc">How to save a document type.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/save_documenttype.png" alt='save documenttype screenshot'/> 
+     <img src="../../../../images/inars/save_documenttype.png" alt='save document type screenshot'/> 
      <p>
-       Click on 'save and close' to save the changes to a documenttype and 'Close without saving'
+       Click on 'save and close' to save the changes to a document type and 'Close without saving'
        to discard the changes.
      </p>
    </div>
@@ -42,10 +42,10 @@ ________________________________________________________________________________
     <a href='./add_markuped_text_to_documenttype.html'>adding</a>,
     <a href='./change_field_in_documenttype.html'>changing</a> or
     <a href='./remove_field_from_documenttype.html'>removing</a>
-    fields from a documenttype, save the documenttype by clicking on the
-    'save and close' button at the top of the documenttype tab.
+    fields from a documenttype, save the document type by clicking on the
+    'save and close' button at the top of the document type tab.
     The changes can be discarded by clicking on the 'Close without saving'
-    button. To make the documenttype available for authors,
+    button. To make the document type available for authors,
     also <a href='./update_content.html'>update all content</a>.
    </p>
 
@@ -53,9 +53,9 @@ ________________________________________________________________________________
    <ul>
     <li><a href='./update_content.html'>Update all content</a>.</li>
     <li><a href='./logout.html'>Logout</a>.</li>
-    <li><a href='./create_documenttype.html'>Create a documenttype</a>.</li>
-    <li><a href='./goto_documenttype_tab.html'>Goto documenttype tab</a>.</li>
-    <li><a href='./goto_namespace.html'>Goto namespace</a>.</li>
+    <li><a href='./create_documenttype.html'>Create a document type</a>.</li>
+    <li><a href='./goto_documenttype_tab.html'>Go to document type tab</a>.</li>
+    <li><a href='./goto_namespace.html'>Go to namespace</a>.</li>
    </ul>       
   </subsection>
 

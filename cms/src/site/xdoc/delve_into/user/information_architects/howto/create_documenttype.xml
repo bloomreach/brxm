@@ -22,24 +22,24 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Create Documenttype</title>
+    <title>Create document type</title>
   </properties>
 
   <body>
-    <section name="Create Documentttype">
-      <span class="shortdesc">How to create a documenttype, to define the structure 
+    <section name="Create document type">
+      <span class="shortdesc">How to create a document type, to define the structure 
          of a class of similar documents.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/create_documenttype.png" alt='Create documenttype screenshot'/> 
+     <img src="../../../../images/inars/create_documenttype.png" alt='Create document type screenshot'/> 
      <p>
-      Creation of <a href='../concepts/documenttype.html'>documenttype</a> with name `upcoming',
-      in namespace 'sar'. The namespace 'sar' already contains the documenttype 'myhobby'.      
+      Creation of <a href='../concepts/documenttype.html'>document type</a> with name `upcoming',
+      in namespace 'sar'. The namespace 'sar' already contains the document type 'myhobby'.      
      </p>
    </div>
 
    <p>
-    <a href='./goto_namespace.html'>Select the namespace</a> to create a documenttype in,
+    <a href='./goto_namespace.html'>Select the namespace</a> to create a document type in,
     then click on the selection menu at the top of the middle-right lane and select `create new type'
     by clicking on it. A dialog window appears.
    </p>
@@ -49,8 +49,8 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_documenttype_tab.html'>Select documenttype</a>.</li>
-    <li><a href='./create_documenttype.html'>Create another documenttype</a>.</li>
+    <li><a href='./goto_documenttype_tab.html'>Select document type</a>.</li>
+    <li><a href='./create_documenttype.html'>Create another document type</a>.</li>
    </ul>       
   </subsection>
 

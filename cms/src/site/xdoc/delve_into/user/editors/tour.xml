@@ -23,10 +23,10 @@
  </properties>
  <body>
   <section name="Hippo CMS Editor Tour">
-    <span class='shortdesc'>To get introduced in the role of CMS Editor, take the following tour.</span> 
+    <span class='shortdesc'>To get introduced to the role of CMS Editor, take the following tour.</span> 
 
-     <p>To get introduced in the role of CMS editor, you will look over the shoulder of
-        Janine, who works at the imaginary organization Saraswatia,
+     <p>To get introduced to the role of CMS editor, you will look over the shoulder of
+        Janine, who works for the imaginary organization Saraswatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
         answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
     </p>
@@ -58,7 +58,7 @@
       </td>
       <td> 
          <a href="./howto/login.html">Login to Hippo CMS</a> in the CMS account given to you by your 
-          CMS administrator. Marc logs in with his name. His password is only known to him, so you do
+          CMS administrator. Janine logs in with her name. Her password is only known to her, so you do
           not get to see it.
       </td>
      </tr>

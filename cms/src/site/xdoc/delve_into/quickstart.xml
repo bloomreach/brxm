@@ -42,8 +42,8 @@
    </td>
    <td>
     Download the
-    <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.zip">zipped quickstart package that includes the Jetty application container</a>
-    (if you prefer the <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.00.13536/hippo-ecm-quickstart-bin-2.01.00.13536.tar.gz">tar.gz</a>, take that).
+    <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.zip">zipped quickstart package that includes the Jetty application container</a>
+    (if you prefer the <a href="http://repository.hippocms.org/maven2/org/hippoecm/hippo-ecm-quickstart-bin/2.01.04/hippo-ecm-quickstart-bin-2.01.04.tar.gz">tar.gz</a>, take that).
    </td>
   </tr>
   <tr>
@@ -71,7 +71,7 @@
     <span class='commandline-48 icon-48'/> 
    </td>
    <td>
-     Open a commandline interface and start the script hippo-ecm/startup.bat (on MS systems) 
+     Open a command line interface and start the script hippo-ecm/startup.bat (on MS systems) 
      or hippo-ecm/startup.sh (on Unices). 
      The text 
      
@@ -100,7 +100,7 @@
      <span class='user-48 icon-48'/> 
    </td>
    <td>
-     Try out the Hippo CMS.
+     Try out Hippo CMS!
      Use the <a href="user/index.html">CMS User Guide</a> for help.  
    </td>
   </tr>
@@ -110,7 +110,7 @@
     <span class='logout-48 icon-48'/> 
    </td>
    <td>
-     Quit the Hippo CMS by Ctrl-C in the commandline interface where the startup script is still running.
+     Quit Hippo CMS by Ctrl-C in the command line interface where the startup script is still running.
      The text 
        <samp>INFO: Shutdown hook executing</samp> indicates Hippo CMS is shutting down.
    </td>
@@ -121,9 +121,9 @@
  </subsection>
 
  <subsection name='Alternatives' title='What can you do instead of the above?'>
-
-   If you already have an Java application container and want to deploy Hippo CMS
-   in it, go <a href='quickstart_in_existing_container.html'>here</a>.
+  
+  You can also <a href='quickstart_in_existing_container.html'>deploy Hippo CMS in your already installed
+  Java application container</a>.
  </subsection>
 
  <subsection name='Next' title='What can you do after you did the above?'>

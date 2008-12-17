@@ -22,19 +22,19 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto Documenttypes Tab</title>
+    <title>Go to Document Types Tab</title>
   </properties>
 
   <body>
-    <section name="Goto Documenttypes Tab">
-      <span class="shortdesc">How to get to the documenttypes tab, to add and change documenttypes.</span>
+    <section name="Go to Document Types Tab">
+      <span class="shortdesc">How to get to the document types tab, to add and change document types.</span>
 
    <div class='screenshot'>
-     <img src="../../../../images/inars/documenttypes_tab.png" alt='Goto documenttypes tab screenshot'/> 
+     <img src="../../../../images/inars/documenttypes_tab.png" alt='Go to document types tab screenshot'/> 
      <p>
-      Opened <a href='../concepts/documenttype.html'>documenttypes</a> folder shown. 
+      Opened <a href='../concepts/documenttype.html'>document types</a> folder shown. 
       It is a subfolder of the configuration folder. 
-      The subfolders of the documenttypes folder are <a href='../concepts/namespace.html'>namespaces</a>.
+      The subfolders of the document types folder are <a href='../concepts/namespace.html'>namespaces</a>.
       There is one namespace in this example, called 'defaultcontent'. 
       It is the namespace for default content.
      </p>
@@ -45,7 +45,7 @@ ________________________________________________________________________________
     (in the <a href='./goto_content_browse_tab.html'>content browse tab</a>, at middle-left), 
     click on the configuration folder and find the documenttypes subfolder. If not already open,
     click on that to see its subfolders, which are <a href='../concepts/namespace.html'>namespaces</a>. 
-    The list of namespaces appears below the documenttypes folder and in a list at middle-right. 
+    The list of namespaces appears below the document types folder and in a list at middle-right. 
    </p>
 
   <subsection name='Next'>

@@ -22,17 +22,17 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Documenttype</title>
+    <title>Document type</title>
   </properties>
 
   <body>
-    <section name="Documenttype">
-      <span class="shortdesc">What is a documenttype</span>
+    <section name="Document type">
+      <span class="shortdesc">What is a document type</span>
 
-    <p>A documenttype is a defintion of the structure of similar documents.
+    <p>A document type is a defintion of the structure of similar documents.
        The documents are similar because they all have the structure defined in 
-       the documenttype. These documents together are the class of documents 
-       that have the structure defined in the documenttype.
+       the document type. These documents together are the class of documents 
+       that have the structure defined in the document type.
    </p>
     </section>
   </body>

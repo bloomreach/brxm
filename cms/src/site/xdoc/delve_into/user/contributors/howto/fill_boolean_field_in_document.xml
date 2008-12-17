@@ -37,7 +37,7 @@ ________________________________________________________________________________
        They stand for yes/no questions. The first is if the upcoming happening is indoors. The multicultural bazaar 2008
        which this article is about is not indoors, therefor
        the checkbox is not checked. The second yes/no question is if the upcoming happening is a recurring happening,
-       i.e. if such a happening was been organized before. This is true, the same organizors organized multicultural 
+       i.e. if such a happening was been organized before. This is true, the same organizers organized multicultural 
        bazaars in the same place with the same intensions before, so that checkbox is checked.
      </p>
    </div>
@@ -50,7 +50,7 @@ ________________________________________________________________________________
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./fill_markuped_text_in_document.html'>Write markuped text in a document</a>.</li>
+    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
     <li><a href='./fill_string_field_in_document.html'>Fill a string field in a document</a>.</li>
     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>

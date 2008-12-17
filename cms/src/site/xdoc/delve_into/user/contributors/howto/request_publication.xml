@@ -38,7 +38,7 @@ ________________________________________________________________________________
    </div>
 
    <p>
-    In a document tab <a href='./goto_document_tab.html'>document tab</a>, e.g. after
+    In a <a href='./goto_document_tab.html'>document's tab</a>, e.g. after
     <a href='./save_document.html'>saving that document</a>, 
     click the 'publish (request)' button at the top to request that the document be published.
     The editor will be notified and accept or reject your request.

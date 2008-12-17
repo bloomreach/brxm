@@ -22,19 +22,19 @@ ________________________________________________________________________________
 -->
 <document>
   <properties>
-    <title>Goto a Documenttype</title>
+    <title>Go to a Document Type</title>
   </properties>
 
   <body>
-    <section name="Goto a Documenttype">
-      <span class="shortdesc">How to get to a screen to manipulate a particular documenttype.</span>
+    <section name="Go to a Document type">
+      <span class="shortdesc">How to get to a screen to manipulate a particular document type.</span>
 
    <div class='screenshot'>
      <img src="../../../../images/inars/documenttype_tab.png" alt='documenttype tab screenshot'/> 
      <p>
-      Opened the tab for the documenttype 'upcoming', which is a documenttype in the namespace
-      'sar'. For the documenttype, there are subtabs 'Edit' and 'Copy'. 
-      The 'upcoming' documenttype is already filled by a structure definition containing the fields:
+      Opened the tab for the document type 'upcoming', which is a document type in the namespace
+      'sar'. For the document type, there are subtabs 'Edit' and 'Copy'. 
+      The 'upcoming' document type is already filled by a structure definition containing the fields:
       Date of happening, Title, Indoors?, Recurring? and Description. Except for Description, they
       all are mandatory (this is shown by the * signs).
      </p>
@@ -42,17 +42,17 @@ ________________________________________________________________________________
 
    <p>
     While a <a href='./goto_namespace.html'>namespace is selected</a>,
-    click on a documenttype name in the list at middle right.
+    click on a document type name in the list at middle right.
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./change_field_in_documenttype.html'>Change a field in a documenttype</a>.</li>
-    <li><a href='./remove_field_from_documenttype.html'>Remove field of a documenttype</a>.</li>
-    <li><a href='./add_date_to_documenttype.html'>Add a date field to a documenttype</a>.</li>
-    <li><a href='./add_string_to_documenttype.html'>Add a string field to a documenttype</a>.</li>
-    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a documenttype</a>.</li>
-    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a documenttype</a>.</li>
+    <li><a href='./change_field_in_documenttype.html'>Change a field in a document type</a>.</li>
+    <li><a href='./remove_field_from_documenttype.html'>Remove field of a document type</a>.</li>
+    <li><a href='./add_date_to_documenttype.html'>Add a date field to a document type</a>.</li>
+    <li><a href='./add_string_to_documenttype.html'>Add a string field to a document type</a>.</li>
+    <li><a href='./add_boolean_to_documenttype.html'>Add a boolean field to a document type</a>.</li>
+    <li><a href='./add_markuped_text_to_documenttype.html'>Add field for markedup text to a document type</a>.</li>
    </ul>       
   </subsection>
 

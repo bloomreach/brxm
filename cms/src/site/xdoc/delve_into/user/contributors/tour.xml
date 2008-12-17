@@ -23,9 +23,9 @@
  </properties>
  <body>
   <section name="Hippo CMS Contributor Tour">
-    <span class='shortdesc'>To get introduced in the role of CMS Contributor, take the following tour.</span> 
+    <span class='shortdesc'>To get introduced to the role of CMS Contributor, take the following tour.</span> 
 
-     <p>To get introduced in the role of CMS contributor, you will look over the shoulder of
+     <p>To get introduced to the role of CMS contributor, you will look over the shoulder of
         Marc, who is a member of the imaginary organization Saraswatia,
         an organization of people very interested in music, art and knowledge. We did not imagine an
         answer to the question whether Saraswatia is a commercial organization, a hobby organization, or both. 
@@ -33,7 +33,7 @@
     <p>Saraswatia decided to publish an online newspaper about music, art and knowledge. The name will be Sar, which
         is just an abbreviation of `Saraswatia Articles'. 
     </p>
-    <p>Marc will add an article about an upcoming multicultural Bazar.
+    <p>Marc will add an article about an upcoming multicultural Bazaar.
     </p>
 
    <blockquote>
@@ -83,7 +83,7 @@
       <td> 
          <a href="./howto/create_document.html">Create a document</a> to write in.
          For the article about the upcoming multicultural bazaar, Marc creates a
-         document named 'multibazar2008'. He selects for it the documenttype 'upcoming',
+         document named 'multibazar2008'. He selects for it the document type 'upcoming',
          because that is the type for upcoming happenings, like the bazaar.
       </td>
      </tr>
@@ -145,7 +145,7 @@
        <span class='user-48 icon-48'/> 
       </td>
       <td> 
-         <a href="./howto/fill_markuped_text_in_document.html">Fill markuped text</a>.
+         <a href="./howto/fill_markuped_text_in_document.html">Fill marked-up text</a>.
          Marc sees that he can also write a description of the happening and he
          writes an informative text about the upcoming multicultural bazaar.
          He includes the place where the bazaar will be in this description,
@@ -160,7 +160,7 @@
       </td>
       <td> 
          <a href="./howto/save_document.html">Save document</a>.
-         Marc finished with his article about the upcoming multicultural bazaar, so
+         Marc finished his article about the upcoming multicultural bazaar, so
          he saves the document.
       </td>
      </tr>

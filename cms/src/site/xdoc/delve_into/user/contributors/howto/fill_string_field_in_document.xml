@@ -38,7 +38,7 @@ ________________________________________________________________________________
 
    <p>
     Open the <a href='./goto_document_tab.html'>document</a> for editing. 
-    Click in the single line typingbox below a caption to type the value for that caption, which
+    Click in the single line text box below a caption to type the value for that caption, which
     may not consist of more than one line. In fact, there is some limit to how many characters you
     can type. 
    </p>
@@ -46,7 +46,7 @@ ________________________________________________________________________________
   <subsection name='Next'>
    <ul>
     <li><a href='./fill_boolean_field_in_document.html'>Fill a boolean field in a document</a>.</li>
-    <li><a href='./fill_markuped_text_in_document.html'>Write markuped text in a document</a>.</li>
+    <li><a href='./fill_markuped_text_in_document.html'>Write marked-up text in a document</a>.</li>
     <li><a href='./fill_date_field_in_document.html'>Fill a date field in a document</a>.</li>
     <li><a href='./save_document.html'>Save the changes to the document</a>.</li>
     </ul>       

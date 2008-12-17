@@ -34,7 +34,7 @@ ________________________________________________________________________________
      <p>
       Creation of <a href='../concepts/document.html'>document</a> with name `multibazar2008', 
       the name of an newspaper article about an upcoming multicultural Bazar.
-      This document has documenttype 'upcoming', which is the documenttype used by
+      This document has document type 'upcoming', which is the document type used by
       the organization Saraswatia for all newspaper articles about upcoming happenings.
      </p>
    </div>
@@ -48,14 +48,14 @@ ________________________________________________________________________________
     Type a descriptive name for the document. 
    </p>
    <p>
-    Select from the list of documenttypes, available in your organization, which type your 
+    Select from the list of document types, available in your organization, which type your 
     document will have, in other words, to what class of similar documents your document
     will belong. 
    </p>
 
   <subsection name='Next'>
    <ul>
-    <li><a href='./goto_document_tab.html'>Goto document tab</a>.</li> 
+    <li><a href='./goto_document_tab.html'>Go to document tab</a>.</li> 
     <li><a href='./create_document.html'>Create another document</a>.</li>
    </ul>       
   </subsection>
