@@ -170,11 +170,6 @@ public class SecurityManager {
 
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
 
-            // internal provider doesn't need to sync
-            if (INTERNAL_PROVIDER.equals(providerId)) {
-                return true;
-            }
-
             UserManager userMgr = providers.get(providerId).getUserManger();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
@@ -182,6 +177,11 @@ public class SecurityManager {
             if (!userMgr.isActive(userId)) {
                 log.debug("User not active: {}, provider: {}", userId, providerId);
                 return false;
+            }
+            
+            // internal provider doesn't need to sync
+            if (INTERNAL_PROVIDER.equals(providerId)) {
+                return true;
             }
 
             // sync user info and create user node if needed
@@ -193,7 +193,7 @@ public class SecurityManager {
             groupMgr.syncMemberships(userMgr.getUser(userId));
             groupMgr.saveGroups();
 
-            // TODO: move to separate thread so it can run in background
+            // TODO: move to cron?
             providers.get(providerId).sync();
 
             return true;
