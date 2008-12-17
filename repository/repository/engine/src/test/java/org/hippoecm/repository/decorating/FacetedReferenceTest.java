@@ -94,6 +94,11 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         "hippo:docbase", "/test/documents",
         "hippo:facets",  "language",
         "hippo:values",  "dutch",
+        "hippo:modes",   "prefer-single",
+        "/test/preferonce_onhandle",                                                   "hippo:facetselect",
+        "hippo:docbase", "/test/documents/articles/nineteeneightyfour",
+        "hippo:facets",  "language",
+        "hippo:values",  "dutch",
         "hippo:modes",   "prefer-single"
     };
 
@@ -108,6 +113,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
+    
     @Test
     public void testFacetedReference() throws Exception {
         assertNotNull(traverse(session,"/test/documents/articles/war-of-the-worlds/war-of-the-worlds"));
@@ -119,6 +125,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[language='dutch']"));
         assertNull(traverse(session,"/test/dutch/war-of-the-worlds[language='english']"));
     }
+    
     @Test
     public void testPreferenceOrder() throws Exception {
         Node node = traverse(session, "/test/prefer/articles/war-of-the-worlds");
@@ -141,6 +148,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertEquals("english", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
     }
+    
     @Test
     public void testPreferenceOnceOrder() throws Exception {
         Node node = traverse(session, "/test/preferonce/articles/war-of-the-worlds");
@@ -160,6 +168,12 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         assertFalse(iter.hasNext());
     }
 
+    @Test
+    public void testPreferSingleDirectOnHandle() throws Exception {
+        HippoNode n = (HippoNode)session.getItem("/test/preferonce_onhandle");
+        assertEquals( n.getNode("nineteeneightyfour").getProperty("language").getString(), "dutch" );
+    }
+    
     @Test
     public void testSimpleMirrorAfterPreferSingle() throws Exception {
         /**
