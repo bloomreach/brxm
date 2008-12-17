@@ -474,7 +474,6 @@ body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; paddi
 .hippo-tree .wicket-tree{border: none;}
 .hippo-tree .wicket-tree div.row-selected a span {font-weight: normal; color: black;}
 
-
 .hippo-tree .wicket-tree span.junction, 
 .hippo-tree .wicket-tree span.junction-last, 
 .hippo-tree .wicket-tree span.plus, 
@@ -485,13 +484,6 @@ body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; paddi
 /* disabled in current design */
 .hippo-tree .wicket-tree span.icon {width:14px; display: none;}
 
-
-.hippo-tree .wicket-tree span.plus{background: url("images/tree-icons.png") no-repeat scroll 0px center} 
-.hippo-tree .wicket-tree span.minus{background: url("images/tree-icons.png") no-repeat scroll -18px center} 
-.hippo-tree .wicket-tree span.corner{background: url("images/tree-icons.png") no-repeat scroll -54px center}
-.hippo-tree .wicket-tree span.junction{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
-.hippo-tree .wicket-tree span.junction-last{background: url("images/tree-icons.png") no-repeat scroll -36px center} 
-.hippo-tree .wicket-tree span.indent-line {background: url("images/tree-icons.png") no-repeat scroll -36px center}
 
 .hippo-tree .icon-16{padding: 0px; width: 16px; height: 16px; display: block; float: left; margin-right: 5px; margin-left: 3px;}
 
@@ -625,7 +617,8 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 .hippo-editor .hippo-editor-field .add-16:hover{border: 1px solid #EDF5FF; background-color: white}
 .hippo-editor .hippo-editor-field-subfield-controls{}
 .hippo-editor .hippo-editor-field-subfield-controls .delete-16{padding: 0px; width: 16px; height: 16px; display: block; float: right; margin-top: 4px; margin-right: 4px;}
-.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background: white url("images/hippo-shade.png") no-repeat; border: 1px solid #B2B2B2; margin-bottom: 4px;}
+.hippo-editor .hippo-editor-field .hippo-editor-field-subfield {background: white; border: 1px solid #B2B2B2; margin-bottom: 4px;}
+
 
 /* sub sub fields */
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield{background-color: white; border: none; width: 100%; margin-bottom: 4px; position: relative}
