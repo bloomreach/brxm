@@ -76,18 +76,15 @@ public class PluginFactory implements IClusterable {
                     plugin = new LayoutPlugin(context, config, stream);
                 } else {
                     message = e.getClass().getName() + ": " + e.getMessage();
-                    log.error(message);
-                    log.debug(message,e);
+                    log.error(message, e);
                 }
 
             } catch (InvocationTargetException e) {
                 message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
-                log.error(message);
-                log.debug(message,e);
+                log.error(message, e);
             } catch (Exception e) {
                 message = e.getClass().getName() + ": " + e.getMessage();
-                log.error(message);
-                log.debug(message,e);
+                log.error(message, e);
             }
         }
         if (plugin == null && message != null) {
