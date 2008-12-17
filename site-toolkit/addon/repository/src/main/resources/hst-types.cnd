@@ -48,7 +48,6 @@
 + * (hst:sitemaplayout) = hst:sitemaplayout
 
 [hst:sitemap] > hippo:document orderable
-- hst:entrypointid (string)
 + * (hst:sitemapitem) = hst:sitemapitem
 
 
