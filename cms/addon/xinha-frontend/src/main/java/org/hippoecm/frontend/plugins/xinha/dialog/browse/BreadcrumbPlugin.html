@@ -14,20 +14,15 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <div>
-    <div class="hippo-picker">
-      <div class="hippo-picker-tree" wicket:id="extension.shortcuts">[ Doclisting ]</div>
-      <div class="hippo-picker-breadcrumbs" wicket:id="extension.breadcrumb">[ Breadcrumb ]</div>
-      <div class="hippo-list-details hippo-picker-list-details" wicket:id="dialog.list">[ Doclisting ]</div>
-    </div>
-    <wicket:child/>
+  <div style="float:left; width:40px;">
+    <input wicket:id="up" type="button" style="height:20px;"/>
   </div>
-  <div class="hippo-window-buttons">
-    <form wicket:id="form">
-      <span wicket:id="dialog.feedback">[ Feedback panel ]</span>
-      <input type="button" wicket:id="ok" value = "OK"/>
-      <input type="button" wicket:id="close" value="Close" />
-    </form>
-  </div>  
+  <div style="float: left;padding-top:3px;">
+    <ul>
+      <li wicket:id="crumbs">
+        <a wicket:id="link"><span wicket:id="name">[ Link name ]</span></a>
+      </li>
+    </ul>
+  </div>
 </wicket:panel>
 
