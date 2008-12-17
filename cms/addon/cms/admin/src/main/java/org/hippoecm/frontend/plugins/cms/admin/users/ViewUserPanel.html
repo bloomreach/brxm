@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * Copyright 2008 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+  <div class="admin-user-panel">
+    <span class="admin-user-title" wicket:id="title"/>
+
+    <br/><br/>
+
+    <table class="admin-user-details">
+      <tr>
+        <td><wicket:message key="user-username"/>: </td>
+        <td><label wicket:id="username"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="user-firstname"/>: </td>
+        <td><label wicket:id="firstName"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="user-lastname"/>: </td>
+        <td><label wicket:id="lastName"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="user-email"/>: </td>
+        <td><label wicket:id="email"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="user-active"/>: </td>
+        <td><label wicket:id="active"/> </td>
+      </tr>
+      <tr>
+        <td><wicket:message key="user-provider"/>: </td>
+        <td><label wicket:id="provider"/> </td>
+      </tr>
+    </table>
+
+    <br/>
+
+    <label wicket:id="local-memberships-label"/>
+    <ul class="admin-user-memberships">
+      <li wicket:id="local-memberships">
+        <label wicket:id="local-membership"/>
+      </li>
+    </ul>
+
+    <br/>
+
+    <label wicket:id="external-memberships-label"/>
+    <ul class="admin-user-memberships">
+      <li wicket:id="external-memberships">
+        <label wicket:id="external-membership"/>
+      </li>
+    </ul>
+
+    <br/>
+
+    <label wicket:id="properties-label"/>
+    <table class="admin-user-properties">
+      <tr wicket:id="properties">
+        <td><label wicket:id="key"/>: </td>
+        <td><label wicket:id="value"/></td>
+      </tr>
+    </table>
+    
+    <br/>
+    
+    <div class="admin-user-action-container">
+      <ul>
+        <li class="admin-user-action" wicket:id="edit-user"/>
+        <li class="admin-user-action" wicket:id="set-user-password"/>
+        <li class="admin-user-action" wicket:id="delete-user"/>
+      </ul>
+    </div>
+
+    
+  </div>
+  </wicket:panel>
+</html>

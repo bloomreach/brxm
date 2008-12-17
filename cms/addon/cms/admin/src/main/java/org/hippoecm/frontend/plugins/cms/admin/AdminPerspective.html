@@ -1,0 +1,89 @@
+<!--
+  * Copyright 2008 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <style>
+    
+div.admin-panel {
+    margin-top: 10px;
+    margin-left: 10px;
+    border: 1px;
+    }
+    
+table.admin-user-details {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #0079d6;
+    }
+table.admin-user-details tr { padding-top: 2px; padding-bottom: 2px; }
+    
+table.dataview {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #0079d6;
+    width: 800px;
+    }
+    
+table.dataview caption { text-align: left; }
+table.dataview tr { padding-top: 2px; padding-bottom: 2px; }
+table.dataview tr.even { background-color: #E1EAFF; }
+table.dataview tr.odd { background-color: #FFFFFF; }
+table.dataview tr td { padding-left: 8px; padding-right: 30px; }
+table.dataview tr th { color: black; padding-top: 3px; padding-bottom: 3px; padding-left: 8px; padding-right: 30px; background-color: #c1e4ff; border-bottom: 1px solid #0079d6; border-top: 1px solid #0079d6; text-align: left; white-space: nowrap; vertical-align: middle;}
+
+table.dataview tr th { background-position: right; background-repeat:no-repeat; }
+table.dataview tr th.wicket_orderDown {
+    background-color: #87cbff; background-image: url(displaytag/img/arrow_down.png); }
+table.dataview tr th.wicket_orderUp {
+    background-color: #87cbff; background-image: url(displaytag/img/arrow_up.png); }
+table.dataview tr th.wicket_orderNone {
+    background-image: url(displaytag/img/arrow_off.png);
+}
+table.dataview tr th a { font-weight: normal; }
+table.dataview #message { padding-left: 3px; }
+table.dataview caption { padding-bottom: 2px; }
+    </style>
+  
+    <div wicket:id="content" class="admin-panel"/>
+  </wicket:panel>
+  
+  <wicket:fragment wicket:id="admin-panel">
+     <h1><wicket:message key="admin-perspective-title"></wicket:message></h1>
+     <div><h2><a wicket:id="users">&gt; users</a></h2></div>
+     <div><h2><a wicket:id="groups">&gt; groups</a></h2></div>
+     <div><h2><a wicket:id="permissions">&gt; permissions</a></h2></div>
+     <div><h2><a wicket:id="system-info">&gt; system info</a></h2></div>
+     <div><h2><a wicket:id="properties">&gt; system properties</a></h2></div>
+  </wicket:fragment>
+  
+  <wicket:fragment wicket:id="users-fragment">
+     <wicket:fragment wicket:id="user-panel"/>
+  </wicket:fragment>
+  
+  <wicket:fragment wicket:id="groups-fragment">
+     <div><h2><a wicket:id="groups-close">&lt;&lt; back &lt;&lt;</a></h2></div>
+  </wicket:fragment>
+  
+  <wicket:fragment wicket:id="permissions-fragment">
+     <wicket:fragment wicket:id="permissions-panel"/>
+  </wicket:fragment>
+  
+  <wicket:fragment wicket:id="system-info-fragment">
+     <span wicket:id="system-info-panel"/>
+  </wicket:fragment>
+  
+  <wicket:fragment wicket:id="properties-fragment">
+     <span wicket:id="properties-panel"/>
+  </wicket:fragment>
+</html>
