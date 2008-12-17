@@ -303,6 +303,9 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
           </sv:property>
+          <sv:property sv:name="wicket.css" sv:type="String">
+            <sv:value>hippo-template-default-title</sv:value>
+          </sv:property>
         </sv:node>
 
         <sv:node sv:name="introduction">
@@ -362,6 +365,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>100%</sv:value>
           </sv:property>
         </sv:node>
 
@@ -628,6 +634,9 @@
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
           </sv:property>
+          <sv:property sv:name="wicket.css" sv:type="String">
+            <sv:value>hippo-template-default-title</sv:value>
+          </sv:property>
         </sv:node>
 
         <sv:node sv:name="date">
@@ -708,6 +717,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Body</sv:value>
+          </sv:property>
+          <sv:property sv:name="template.width" sv:type="String">
+            <sv:value>90%</sv:value>
           </sv:property>
         </sv:node>
 
@@ -971,6 +983,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Title</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.css" sv:type="String">
+            <sv:value>hippo-template-default-title</sv:value>
           </sv:property>
         </sv:node>
 
@@ -1318,6 +1333,9 @@
           </sv:property>
           <sv:property sv:name="caption" sv:type="String">
             <sv:value>Query</sv:value>
+          </sv:property>
+          <sv:property sv:name="wicket.css" sv:type="String">
+            <sv:value>hippo-template-default-title</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

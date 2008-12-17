@@ -613,6 +613,10 @@ background-image:url("images/icons/workflow-16.png"); background-repeat: no-repe
 /* meta data */
 .hippo-editor .hippo-editor-metadata{width: 300px; background: #f2f2f2; padding: 4px; padding-top: 0px;}
 
+/* Default Template Style */
+/* ================================================ */
+.hippo-editor .hippo-template-default-title input{font-size: 18px}
+
 /* Management Perspective */
 /* ================================================ */
 .hippo-perspective-management{padding-top: 25px;}
