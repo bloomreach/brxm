@@ -49,7 +49,7 @@ public class CopyDialog extends LookupDialog {
     private Label targetLabel;
 
     public CopyDialog(MenuPlugin plugin) {
-        super(new JcrTreeNode(new JcrNodeModel("/")));
+        super(new JcrTreeNode(new JcrNodeModel("/"), null));
 
         this.plugin = plugin;
         JcrNodeModel model = (JcrNodeModel) plugin.getModel();

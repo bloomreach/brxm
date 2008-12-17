@@ -33,18 +33,17 @@ public class LabelTreeNode extends AbstractTreeNode {
 
     private static final long serialVersionUID = 1L;
 
-    private JcrNodeModel parentModel;
+    private JcrTreeNode parentNode;
     private long moreCount;
 
-    public LabelTreeNode(JcrNodeModel parentModel, JcrTreeModel treeModel, long moreCount) {
+    public LabelTreeNode(JcrNodeModel parentModel, JcrTreeNode parentNode, long moreCount) {
         super(parentModel);
-        this.parentModel = parentModel;
+        this.parentNode = parentNode;
         this.moreCount = moreCount;
-        setTreeModel(treeModel);
     }
 
     public TreeNode getParent() {
-        return getTreeModel().lookup(parentModel);
+        return parentNode;
     }
 
     @Override

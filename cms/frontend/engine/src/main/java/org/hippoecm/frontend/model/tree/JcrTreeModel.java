@@ -15,62 +15,54 @@
  */
 package org.hippoecm.frontend.model.tree;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import javax.jcr.RepositoryException;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcrTreeModel extends DefaultTreeModel implements IDetachable {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
-    private Map registry;
+    
+    final static Logger log = LoggerFactory.getLogger(JcrTreeModel.class);
+    
+    AbstractTreeNode root;
 
     public JcrTreeModel(AbstractTreeNode rootModel) {
         super(rootModel);
-        rootModel.setTreeModel(this);
 
-        registry = new HashMap();
-        register(rootModel);
+        root = rootModel;
     }
-
-    public void register(AbstractTreeNode treeNodeModel) {
-        String key = treeNodeModel.getNodeModel().getItemModel().getPath();
-        registry.put(key, treeNodeModel);
-    }
-
-    //TODO: Currently treeNodes are never unregistered.
-    //
-    //Although an unregister method is easy to implement it
-    //is not clear when to call it. Maybe a WeakReference HashMap
-    //should be used to keep the registry clean.
-    //
-    //With the current use cases never unregistering doesn't
-    //seem to cause much trouble though.
 
     public AbstractTreeNode lookup(JcrNodeModel nodeModel) {
-        String key = nodeModel.getItemModel().getPath();
-        if((AbstractTreeNode) registry.get(key) == null) {
-            if(nodeModel.getParentModel() != null) {
-                AbstractTreeNode parentNode = lookup(nodeModel.getParentModel());
-                if(parentNode!=null) {
-                    // load children which get registered
-                    parentNode.children();
+        String basePath = root.getNodeModel().getItemModel().getPath();
+        String path = nodeModel.getItemModel().getPath();
+        AbstractTreeNode node = root;
+        if (path.startsWith(basePath)) {
+            String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
+            try {
+                for (String element : elements) {
+                    AbstractTreeNode child = node.getChild(element);
+                    if (child != null) {
+                        node = child;
+                    } else {
+                        break;
+                    }
                 }
+            } catch (RepositoryException ex) {
+                log.error("Unable to find node in tree", ex.getMessage());
             }
-        }
-
-        return (AbstractTreeNode) registry.get(key);
+        }        
+        return node;
     }
 
     public void detach() {
-        for(Map.Entry<String, AbstractTreeNode> entry : ((Map<String, AbstractTreeNode>) registry).entrySet()) {
-            entry.getValue().detach();
-        }
+        root.detach();
     }
 }

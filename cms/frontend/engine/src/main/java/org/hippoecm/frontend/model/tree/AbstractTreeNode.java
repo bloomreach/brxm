@@ -18,12 +18,15 @@ package org.hippoecm.frontend.model.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.slf4j.Logger;
@@ -37,7 +40,6 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
 
     static final Logger log = LoggerFactory.getLogger(AbstractTreeNode.class);
 
-    private JcrTreeModel treeModel;
     private List<AbstractTreeNode> children = new ArrayList<AbstractTreeNode>();
 
     private boolean reloadChildren = true;
@@ -48,29 +50,22 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
         super(nodeModel);
     }
 
-    // The TreeModel that contains this AbstractTreeNode
-
-    public void setTreeModel(JcrTreeModel treeModel) {
-        this.treeModel = treeModel;
-    }
-
-    public JcrTreeModel getTreeModel() {
-        return treeModel;
-    }
-
-    public void markReload() {
-        Iterator it = children.iterator();
-        while (it.hasNext()) {
-            AbstractTreeNode child = (AbstractTreeNode) it.next();
-            child.markReload();
-        }
-        this.reloadChildren = true;
-        this.reloadChildcount = true;
-    }
-
     public Enumeration children() {
         ensureChildrenLoaded();
         return Collections.enumeration(children);
+    }
+
+    public AbstractTreeNode getChild(String name) throws RepositoryException {
+        if (getNodeModel().getNode().hasNode(name)) {
+            JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getNode().getNode(name));
+            ensureChildrenLoaded();
+            for (AbstractTreeNode child : children) {
+                if (child.getNodeModel().equals(childModel)) {
+                    return child;
+                }
+            }
+        }
+        return null;
     }
 
     public TreeNode getChildAt(int i) {
@@ -97,6 +92,14 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
         return true;
     }
 
+    @Override
+    public void detach() {
+        reloadChildren = true;
+        reloadChildcount = true;
+        children = null;
+        super.detach();
+    }
+
     protected abstract int loadChildcount() throws RepositoryException;
 
     protected abstract List<AbstractTreeNode> loadChildren() throws RepositoryException;
@@ -118,12 +121,11 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
         }
     }
 
-
     private void ensureChildrenLoaded() {
         if (nodeModel.getNode() == null) {
             reloadChildren = false;
             reloadChildcount = false;
-            children.clear();
+            children = new ArrayList();
         } else if (reloadChildren) {
             try {
                 children = loadChildren();
@@ -134,6 +136,29 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
             reloadChildren = false;
             reloadChildcount = false;
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof AbstractTreeNode == false) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        AbstractTreeNode treeNode = (AbstractTreeNode) object;
+        return new EqualsBuilder().append(nodeModel, treeNode.nodeModel).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(467, 17).append(nodeModel).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
+                .toString();
     }
 
 }

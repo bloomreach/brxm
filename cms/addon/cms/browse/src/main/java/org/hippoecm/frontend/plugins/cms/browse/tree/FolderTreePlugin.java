@@ -15,12 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import java.util.Collection;
-
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.tree.Tree;
+import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -32,6 +30,7 @@ import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.wicket1985.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +41,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
     protected Tree tree;
+    protected JcrTreeModel treeModel;
     protected AbstractTreeNode rootNode;
     private String startingPath = "/";
 
@@ -54,7 +54,7 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
         this.rootNode = new FolderTreeNode(new JcrNodeModel(startingPath), folderTreeConfig);
 
-        JcrTreeModel treeModel = new JcrTreeModel(rootNode);
+        treeModel = new JcrTreeModel(rootNode);
         tree = new CmsJcrTree("tree", treeModel) {
             private static final long serialVersionUID = 1L;
 
@@ -62,6 +62,16 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
                 AbstractTreeNode treeNodeModel = (AbstractTreeNode) clickedNode;
                 FolderTreePlugin.this.setModel(treeNodeModel.getNodeModel());
+                ITreeState state = getTreeState();
+                if (state.isNodeExpanded(clickedNode)) {
+                    // super has already switched selection.
+                    if (!state.isNodeSelected(clickedNode)) {
+                        state.collapseNode(clickedNode);
+                    }
+                } else {
+                    state.expandNode(clickedNode);
+                }
+                redraw();
             }
         };
         add(tree);
@@ -72,20 +82,26 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
     }
 
     @Override
+    public void onBeforeRender() {
+        tree.detach();
+        super.onBeforeRender();
+    }
+    
+    @Override
     public void focus(IRenderService child) {
         super.focus(child);
         setModel(new JcrNodeModel(startingPath));
     }
 
     public void onFlush(JcrNodeModel nodeModel) {
-        AbstractTreeNode node = rootNode.getTreeModel().lookup(nodeModel);
+        AbstractTreeNode node = treeModel.lookup(nodeModel);
         if (node != null) {
-            node.markReload();
-            node.getTreeModel().nodeStructureChanged(node);
+            node.detach();
+            treeModel.nodeStructureChanged(node);
             redraw();
         } else {
-            rootNode.markReload();
-            rootNode.getTreeModel().nodeStructureChanged(rootNode);
+            rootNode.detach();
+            treeModel.nodeStructureChanged(rootNode);
             redraw();
         }
     }
@@ -96,32 +112,21 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
 
         JcrNodeModel model = (JcrNodeModel) getModel();
         AbstractTreeNode node = null;
-
-        while (model != null) {
-            node = rootNode.getTreeModel().lookup(model);
-            if (node == null) {
-                Collection<TreeNode> selected = tree.getTreeState().getSelectedNodes();
-                for (TreeNode selectedNode : selected) {
-                    tree.getTreeState().selectNode(selectedNode, false);
-                }
-                redraw();
-                break;
-            }
-            if (node != null) {
-                TreeNode parentNode = node.getParent();
-                while (parentNode != null && !tree.getTreeState().isNodeExpanded(parentNode)) {
+        node = treeModel.lookup(model);
+        if (node != null) {
+            TreeNode parentNode = node.getParent();
+            while (parentNode != null) {
+                if (!tree.getTreeState().isNodeExpanded(parentNode)) {
                     tree.getTreeState().expandNode(parentNode);
-                    parentNode = parentNode.getParent();
                 }
-                tree.getTreeState().selectNode(node, true);
-                redraw();
-                break;
+                parentNode = parentNode.getParent();
             }
-            model = model.getParentModel();
+            ITreeState state = tree.getTreeState();
+            if (!state.isNodeSelected(node)) {
+                tree.getTreeState().selectNode(node, true);
+            }
+            redraw();
         }
-
-        //if(!nodesSelected) {
-        //    tree.getTreeState().collapseAll();
-        //}
     }
+
 }

@@ -24,8 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
@@ -53,8 +51,6 @@ public class FolderTreeNode extends AbstractTreeNode {
         super(model);
         this.parent = parent;
         this.config = parent.config;
-        setTreeModel(parent.getTreeModel());
-        getTreeModel().register(this);
     }
 
     @Override
@@ -121,12 +117,6 @@ public class FolderTreeNode extends AbstractTreeNode {
             }
         }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("nodeModel", nodeModel.toString())
-                .toString();
     }
 
     private List<Node> subNodes(Node node) throws RepositoryException {

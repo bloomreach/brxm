@@ -49,7 +49,7 @@ public class MoveDialog extends LookupDialog {
     private Label targetLabel;
 
     public MoveDialog(MenuPlugin plugin) {
-        super(new JcrTreeNode(new JcrNodeModel("/")));
+        super(new JcrTreeNode(new JcrNodeModel("/"), null));
 
         this.plugin = plugin;
 
