@@ -382,6 +382,17 @@ background-image:url(images/box-blue2.png);}
 .hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
 .hippo-picker-breadcrumbs{background: url("images/silver4.png") repeat-x; height: 24px; width: 597px; border-bottom: 1px solid #afafaf; margin-left: 194px;}
 
+.hippo-picker-breadcrumbs ul {
+list-style: none;
+margin: 0;
+padding: 0;
+}
+
+.hippo-picker-breadcrumbs ul li {
+display: inline;
+}
+
+
 /* Image Picker */
 .hippo-picker-tree .hippo-accordion-unit h2 a{width: auto}
 .hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 16px;}
