@@ -63,6 +63,7 @@
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
+        <sv:value>extension.breadcrumb</sv:value>
         <sv:value>dialog.list</sv:value>
       </sv:property>
       <sv:property sv:name="dialog.list" sv:type="String">
@@ -71,12 +72,8 @@
       <sv:property sv:name="extension.shortcuts" sv:type="String">
         <sv:value>service.dialog.shortcuts</sv:value>
       </sv:property>
-      
-      <sv:property sv:name="dialog.width" sv:type="String">
-        <sv:value>100</sv:value>
-      </sv:property>
-      <sv:property sv:name="dialog.resizable" sv:type="Boolean">
-        <sv:value>false</sv:value>
+      <sv:property sv:name="extension.breadcrumb" sv:type="String">
+        <sv:value>service.dialog.breadcrumb</sv:value>
       </sv:property>
     </sv:node>
     
@@ -104,6 +101,30 @@
       </sv:property>
       <sv:property sv:name="extension.images" sv:type="String">
         <sv:value>service.dialog.tree.images</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="dialogBreadcrumbPlugin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BreadcrumbPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="model.folder" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.dialog.breadcrumb</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>service.translator.config</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.paths" sv:type="String">
+        <sv:value>/content/gallery</sv:value>
       </sv:property>
     </sv:node>
     
@@ -331,12 +352,16 @@
       <sv:property sv:name="wicket.extensions" sv:type="String">
         <sv:value>extension.shortcuts</sv:value>
         <sv:value>dialog.list</sv:value>
+        <sv:value>extension.breadcrumb</sv:value>
       </sv:property>
       <sv:property sv:name="dialog.list" sv:type="String">
         <sv:value>dialog.browse.list</sv:value>
       </sv:property>
       <sv:property sv:name="extension.shortcuts" sv:type="String">
         <sv:value>service.dialog.shortcuts</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.breadcrumb" sv:type="String">
+        <sv:value>service.dialog.breadcrumb</sv:value>
       </sv:property>
     </sv:node>
     
@@ -374,6 +399,30 @@
       </sv:property>
       <sv:property sv:name="extension.files" sv:type="String">
         <sv:value>service.dialog.tree.files</sv:value>
+      </sv:property>
+    </sv:node>
+    
+    <sv:node sv:name="dialogBreadcrumbPlugin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.browse.BreadcrumbPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.dialog.breadcrumb</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="model.folder" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>service.translator.config</sv:value>
+      </sv:property>
+      <sv:property sv:name="root.paths" sv:type="String">
+        <sv:value>/content</sv:value>
       </sv:property>
     </sv:node>
 
