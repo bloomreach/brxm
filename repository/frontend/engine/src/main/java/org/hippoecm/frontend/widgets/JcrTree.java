@@ -19,11 +19,11 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.extensions.markup.html.tree.Tree;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.wicket1985.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -40,22 +40,16 @@ public class JcrTreeNode extends AbstractTreeNode {
 
     private final static int MAXCOUNT = 250;
 
-    public JcrTreeNode(JcrNodeModel nodeModel) {
-        super(nodeModel);
-    }
+    private JcrTreeNode parent;
 
-    public JcrTreeNode(JcrNodeModel nodeModel, JcrTreeModel treeModel) {
+    public JcrTreeNode(JcrNodeModel nodeModel, JcrTreeNode parent) {
         super(nodeModel);
-        setTreeModel(treeModel);
-        treeModel.register(this);
+
+        this.parent = parent;
     }
 
     public TreeNode getParent() {
-        JcrNodeModel parentModel = nodeModel.getParentModel();
-        if (parentModel != null) {
-            return getTreeModel().lookup(parentModel);
-        }
-        return null;
+        return parent;
     }
 
     /**
@@ -86,9 +80,8 @@ public class JcrTreeNode extends AbstractTreeNode {
     protected int loadChildcount() throws RepositoryException {
         int result;
         HippoNode node = nodeModel.getNode();
-        if (node.isNodeType(HippoNodeType.NT_FACETRESULT)
-            || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
-            || node.getCanonicalNode() == null) {
+        if (node.isNodeType(HippoNodeType.NT_FACETRESULT) || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
+                || node.getCanonicalNode() == null) {
             result = 1;
         } else {
             result = (int) node.getNodes().getSize();
@@ -107,14 +100,14 @@ public class JcrTreeNode extends AbstractTreeNode {
             if (jcrChild != null) {
                 ++count;
                 JcrNodeModel childModel = new JcrNodeModel(jcrChild);
-                JcrTreeNode treeNodeModel = new JcrTreeNode(childModel, getTreeModel());
+                JcrTreeNode treeNodeModel = new JcrTreeNode(childModel, this);
                 newChildren.add(treeNodeModel);
             }
         }
-        if(jcrChildren.hasNext()) {
-          LabelTreeNode treeNodeModel = new LabelTreeNode(nodeModel, getTreeModel(),
-                                                          jcrChildren.getSize() - jcrChildren.getPosition());
-          newChildren.add(treeNodeModel);
+        if (jcrChildren.hasNext()) {
+            LabelTreeNode treeNodeModel = new LabelTreeNode(nodeModel, this, jcrChildren.getSize()
+                    - jcrChildren.getPosition());
+            newChildren.add(treeNodeModel);
         }
         return newChildren;
     }
@@ -134,7 +127,6 @@ public class JcrTreeNode extends AbstractTreeNode {
         }
         return result;
     }
-
 
     @Override
     public String toString() {

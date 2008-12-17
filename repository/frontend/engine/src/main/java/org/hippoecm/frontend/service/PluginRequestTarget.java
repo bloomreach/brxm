@@ -89,14 +89,16 @@ public class PluginRequestTarget extends AjaxRequestTarget implements AjaxReques
         Iterator<Component> components = updates.iterator();
         while (components.hasNext()) {
             Component component = components.next();
+            if (!component.isVisibleInHierarchy()) {
+                continue;
+            }
+
             MarkupContainer parent = component.getParent();
             while (parent != null) {
                 if (parent instanceof Page) {
                     super.addComponent(component);
                     break;
                 } else if (updates.contains(parent)) {
-                    // give component chance to clean up
-                    component.detach();
                     break;
                 }
                 parent = parent.getParent();
