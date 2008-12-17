@@ -323,8 +323,14 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
-    public boolean isActive(String userId) throws RepositoryException {
-        return true;
+    public boolean isActive(String rawUserId) throws RepositoryException {
+        Node user = getUser(rawUserId);
+        if (user.hasProperty(HippoNodeType.HIPPO_ACTIVE)) {
+            return user.getProperty(HippoNodeType.HIPPO_ACTIVE).getBoolean();
+        } else {
+            // default to true
+            return true;
+        }
     }
 
     public final void saveUsers() throws RepositoryException {
