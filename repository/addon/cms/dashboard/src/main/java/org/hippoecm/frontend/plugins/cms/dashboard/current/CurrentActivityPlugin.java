@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.TimeZone;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -33,6 +33,8 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,7 +43,6 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
 import org.hippoecm.frontend.service.IJcrService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +64,10 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
             throw new IllegalArgumentException("CurrentActivityPlugin needs an IDataProvider as Plugin model.");
         }
 
-        //FIXME: detect client timezone
-        TimeZone tz = TimeZone.getTimeZone("Europe/Amsterdam");
+        //FIXME: detect client timezone (use StyleDateConverter?)
+        //TimeZone tz = TimeZone.getTimeZone("Europe/Amsterdam");
         df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-        df.setTimeZone(tz);
+        //df.setTimeZone(tz);
 
         add(new CurrentActivityView("view", getModel()));
     }
@@ -106,10 +107,9 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                     }
                 }));
 
-                String timestamp = df.format(new Date(Long.parseLong(node.getName())));
-                item.add(new Label("timestamp", timestamp));
-                item.add(new Label("user", node.getProperty("hippo:eventUser").getString()));
-                item.add(new Label("method", node.getProperty("hippo:eventMethod").getString()));
+                Calendar nodeCal = Calendar.getInstance();
+                nodeCal.setTime(new Date(Long.parseLong(node.getName())));
+                String timestamp = relativeTime(nodeCal);
 
                 // Best effort algoritm to create a 'browse' link to a document.
 
@@ -155,42 +155,101 @@ public class CurrentActivityPlugin extends RenderPlugin implements IJcrNodeModel
                 } else if (sourceVariantExists) {
                     path = sourceVariant;
                 }
-                if (path != null) {
-                    item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "docpath", path));
-                    return;
-                }
 
-                //Maybe both variants have been deleted, try to create a link to the handle
-                if (sourceVariant != null) {
-                    String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
-                    if (session.itemExists(handle)) {
-                        item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "docpath", handle));
-                        return;
-                    } else {
-                        item.add(new Label("docpath", sourceVariant));
-                        return;
+                if (path != null) {
+                	 // We have a path to a document variant, so we can link to it!
+                    String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(path)).getNodeName().getObject()  }).getString();
+                    BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", path, label);
+                 	item.add(link);
+                	return;
+                }
+                else
+                {
+                    //Maybe both variants have been deleted, try to create a link to the handle
+                    if (sourceVariant != null) {
+                        String handle = StringUtils.substringBeforeLast(sourceVariant, "/");
+                        if (session.itemExists(handle)) {
+                            
+                            String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString(), new NodeTranslator(new JcrNodeModel(handle)).getNodeName().getObject()  }).getString();
+                            BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", handle, label);
+                            item.add( link );
+                            return;
+                        } else {
+                        	// No path, so we're just rendering a label without a link
+                            String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
+                            item.add(new Label("entry", label));
+                            return;
+                        }
                     }
                 }
 
                 //Apparently the log item wasn't created by a Workflow step
                 //on a document.
-                item.add(new Label("docpath", ""));
+                String label = new StringResourceModel(timestamp, this, null).getString() + new StringResourceModel(node.getProperty("hippo:eventMethod").getString(), this, null, new Object[] {node.getProperty("hippo:eventUser").getString() }).getString();
+                Label entryLabel = new Label("entry", label );
+                entryLabel.setEscapeModelStrings(false);
+                item.add(entryLabel);
+
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
                 if (item.get("timestamp") == null) {
                     item.add(new Label("timestamp", ""));
                 }
-                if (item.get("user") == null) {
-                    item.add(new Label("user", ""));
-                }
+//                if (item.get("user") == null) {
+//                    item.add(new Label("user", ""));
+//                }
                 if (item.get("method") == null) {
                     item.add(new Label("method", ""));
                 }
-                if (item.get("docpath") == null) {
-                    item.add(new Label("docpath", e.getClass().getSimpleName() + ": " + e.getMessage()));
-                }
             }
         }
+
+		private String relativeTime(Calendar nodeCal) {
+
+			Calendar currentCal = Calendar.getInstance();
+
+            Calendar yesterdayCal = Calendar.getInstance();
+            yesterdayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            yesterdayCal.add(Calendar.DAY_OF_MONTH, -1);
+
+            Calendar todayCal = Calendar.getInstance();
+            todayCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+
+            Calendar thisEveningCal = Calendar.getInstance();
+            thisEveningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+
+            Calendar thisAfternoonCal = Calendar.getInstance();
+            thisAfternoonCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 18, 0, 0);
+
+            Calendar thisMorningCal = Calendar.getInstance();
+            thisMorningCal.set(currentCal.get(Calendar.YEAR), currentCal.get(Calendar.MONTH), currentCal.get(Calendar.DAY_OF_MONTH), 12, 0, 0);
+
+            Calendar hourAgoCal = Calendar.getInstance();
+            hourAgoCal.add(Calendar.HOUR, -1);
+
+            Calendar halfHourAgoCal = Calendar.getInstance();
+            halfHourAgoCal.add(Calendar.MINUTE, -30);
+
+            Calendar tenMinutesAgoCal = Calendar.getInstance();
+            tenMinutesAgoCal.add(Calendar.MINUTE, -10);
+
+            Calendar fiveMinutesAgoCal = Calendar.getInstance();
+            fiveMinutesAgoCal.add(Calendar.MINUTE, -5);
+
+            Calendar oneMinuteAgoCal = Calendar.getInstance();
+            oneMinuteAgoCal.add(Calendar.MINUTE, -1);
+
+            if(nodeCal.after(oneMinuteAgoCal)) { return new String("one-minute"); }
+            if(nodeCal.after(fiveMinutesAgoCal)) { return new String("five-minutes"); }
+            if(nodeCal.after(tenMinutesAgoCal)) { return new String("ten-minutes"); }
+            if(nodeCal.after(halfHourAgoCal)) { return new String("half-hour"); }
+            if(nodeCal.after(hourAgoCal)) { return new String("hour"); }
+            if(nodeCal.before(thisMorningCal) && nodeCal.after(todayCal)) { return new String("morning"); }
+            if(nodeCal.before(thisAfternoonCal) && nodeCal.after(todayCal)) { return new String("afternoon"); }
+            if(nodeCal.before(thisEveningCal) && nodeCal.after(todayCal)) { return new String("evening"); }
+            if(nodeCal.after(yesterdayCal)) { return new String("yesterday"); }
+            return df.format(nodeCal);
+		}
     }
 
     String uuid2Path(String uuid) {

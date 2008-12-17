@@ -43,46 +43,63 @@ public class BrowseLink extends Panel {
 
     static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
 
+    private String label = null;
+    
     public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
         super(id, new Model(docPath));
-
-        final JcrNodeModel nodeModel = new JcrNodeModel(docPath);
-        AjaxLink link = new AjaxLink("link", nodeModel) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                String browserId = config.getString("browser.id");
-                IBrowseService browseService = context.getService(browserId, IBrowseService.class);
-                if (browseService != null) {
-                    browseService.browse(nodeModel);
-                } else {
-                    log.warn("no browser service found");
-                }
-            }
-        };
-        add(link);
-
-        try {
-            Node node = nodeModel.getNode();
-            while (!node.isNodeType(HippoNodeType.NT_HANDLE) &&
-                   !node.isNodeType("hippostd:folder") &&
-                   !node.getPath().equals("/")) {
-                node = node.getParent();
-            }
-            String[] elements = StringUtils.split(node.getPath(), '/');
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = NodeNameCodec.decode(elements[i]);
-            }
-            String path = StringUtils.join(elements, '/');
-            String nodeName = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
-            link.add(new Label("label", nodeName));
-            link.add(new SimpleAttributeModifier("title", path));
-
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-            link.add(new Label("label", e.getMessage()));
-        }
+        this.label = null;
+        addLink(context, config, id, docPath);        
     }
 
+    public BrowseLink(final IPluginContext context, final IPluginConfig config, String id, String docPath, String label) {
+        super(id, new Model(docPath));
+        this.label = label;
+        addLink(context, config, id, docPath);        
+    }
+
+    private void addLink(final IPluginContext context, final IPluginConfig config, String id, String docPath) {
+	    final JcrNodeModel nodeModel = new JcrNodeModel(docPath);
+	    AjaxLink link = new AjaxLink("link", nodeModel) {
+	        private static final long serialVersionUID = 1L;
+	
+	        @Override
+	        public void onClick(AjaxRequestTarget target) {
+	            String browserId = config.getString("browser.id");
+	            IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+	            if (browseService != null) {
+	                browseService.browse(nodeModel);
+	            } else {
+	                log.warn("no browser service found");
+	            }
+	        }
+	    };
+	    add(link);
+	
+	    try {
+	        Node node = nodeModel.getNode();
+	        while (!node.isNodeType(HippoNodeType.NT_HANDLE) &&
+	               !node.isNodeType("hippostd:folder") &&
+	               !node.getPath().equals("/")) {
+	            node = node.getParent();
+	        }
+	        String[] elements = StringUtils.split(node.getPath(), '/');
+	        for (int i = 0; i < elements.length; i++) {
+	            elements[i] = NodeNameCodec.decode(elements[i]);
+	        }
+	        String path = StringUtils.join(elements, '/');
+	
+	        if (label == null) {
+	        	label = (String) new NodeTranslator(new JcrNodeModel(node)).getNodeName().getObject();
+	        }
+	        
+	        Label linkLabel = new Label("label", label);
+	        linkLabel.setEscapeModelStrings(false);
+	        link.add(linkLabel);
+	        link.add(new SimpleAttributeModifier("title", path));
+	
+	    } catch (RepositoryException e) {
+	        log.error(e.getMessage(), e);
+	        link.add(new Label("label", e.getMessage()));
+	    }
+    }
 }
