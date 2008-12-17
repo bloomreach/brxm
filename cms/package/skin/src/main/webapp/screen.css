@@ -155,6 +155,7 @@ padding-top: 8px;
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 span{background-image: url(images/icons/home-32.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab1 span{background-image: url(images/icons/emblem-documents-32.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab2 span{background-image: url(images/icons/groups-32.png);}
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab3 span{background-image: url(images/icons/groups-32.png);}
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.tab0 .close{background-image: none}
 
 /* TabsPlugin Document switcher */
