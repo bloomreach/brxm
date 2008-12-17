@@ -84,6 +84,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         Document doc = super.createDoc();
         // plus index our facet specifics
 
+        // TODO : only index facets for hippo:document + subtypes
         Set props = node.getPropertyNames();
         for (Iterator it = props.iterator(); it.hasNext();) {
             Name propName = (Name) it.next();
@@ -160,7 +161,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexFacet(Document doc, String fieldName, String value) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET,fieldName,Field.Store.NO,Field.Index.NO_NORMS));
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET,fieldName,Field.Store.NO,Field.Index.NO_NORMS, Field.TermVector.NO));
         int idx = fieldName.indexOf(':');
         fieldName = fieldName.substring(0, idx + 1)
                 + ServicingFieldNames.HIPPO_FACET + fieldName.substring(idx + 1);
@@ -176,7 +177,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             Name qualiName = (Name) internalValue;
             String normValue = mappings.getPrefix(qualiName.getNamespaceURI())
                     + ":" + qualiName.getLocalName();
-            doc.add(new Field(fieldName,normValue,Field.Store.NO,Field.Index.NO_NORMS));
+            doc.add(new Field(fieldName,normValue,Field.Store.NO,Field.Index.NO_NORMS, Field.TermVector.NO));
         } catch (NamespaceException e) {
             // will never happen
         }
