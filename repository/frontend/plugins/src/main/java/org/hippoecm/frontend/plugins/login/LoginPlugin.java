@@ -57,6 +57,7 @@ public class LoginPlugin extends RenderPlugin {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
+    private ValueMap credentials = new ValueMap();
 
     public LoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -117,29 +118,47 @@ public class LoginPlugin extends RenderPlugin {
 
     private final class SignInForm extends Form {
         private static final long serialVersionUID = 1L;
-
-        private ValueMap credentials = new ValueMap();
+        
         private DropDownChoice locale;
         private List<String> locales = Arrays.asList(new String[] { "nl", "en" });
         public String selectedLocale;
-
+        private RequiredTextField usernameTextField;
+        private PasswordTextField passwordTextField; 
+        
         public SignInForm(final String id) {
             super(id);
-
+            
             // by default, use the user's browser settings for the locale
             selectedLocale = getSession().getLocale().getLanguage();
 
-            add(new RequiredTextField("username", new StringPropertyModel(credentials, "username")));
-            add(new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
+            add(usernameTextField = new RequiredTextField("username",  new StringPropertyModel(credentials, "username")));
+            add(passwordTextField = new PasswordTextField("password", new StringPropertyModel(credentials, "password")));
             add(locale = new DropDownChoice("locale", new PropertyModel(this, "selectedLocale"), locales));
 
+            passwordTextField.setResetPassword(false);
+            
             locale.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
                     //immediately set the locale when the user changes it
-                    getSession().setLocale(new Locale(selectedLocale));
-                    setResponsePage(new Home());
+                	getSession().setLocale(new Locale(selectedLocale));
+                	setResponsePage(this.getFormComponent().getPage());
+                }
+            });
+
+            usernameTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                private static final long serialVersionUID = 1L;
+                protected void onUpdate(AjaxRequestTarget target) {
+                	credentials.put("username", this.getComponent().getModelObjectAsString());
+                }
+            });
+
+            passwordTextField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                private static final long serialVersionUID = 1L;
+                protected void onUpdate(AjaxRequestTarget target) {
+                	credentials.put("password", this.getComponent().getModelObjectAsString());
+                	System.out.println(credentials.getString("password"));
                 }
             });
 
