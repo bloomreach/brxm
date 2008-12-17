@@ -130,7 +130,6 @@ padding-top: 8px;
 .hippo-login-feedback ul li{list-style-type: disc}
 
 
-
 /* Wicket Ajaxloader */
 /* ================================================ */
 .hippo-root .wicket-ajax-indicator{position: absolute; top: 0px; left:0px; display: block; visiblity: visible; background:url("images/ajaxback.png") repeat-x; width: 25px; padding: 4px;}
@@ -251,11 +250,11 @@ padding-right: 9px;
 
 /* Default Table lists */
 /* ================================================ */
-.hippo-list-details {border-collapse: collapse; background: #ffffff; width: 100%; }
+.hippo-list-details {border-collapse: collapse; width: 100%; }
 .hippo-list-details tr td.icon-16 {height: 16px; width: 16px; padding: 0px;}
 .hippo-list-details tr td.icon-16 span{display:block; height: 16px; width: 16px; margin-left: 2px;}
 .hippo-list-details tr td.icon-16 span{background-repeat: no-repeat; background-position: center center;}
-.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
+.hippo-list-details tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border-left: 1px solid #afafaf;}
 .hippo-list-details tr th span{padding-left: 3px; padding-right: 3px;}
 .hippo-list-details tr td{border-bottom: 1px solid #f4f4f4; padding: 4px 2px 5px 4px; border-right: none;}
 .hippo-list-details tr td:hover{cursor: pointer}
@@ -441,15 +440,14 @@ body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; paddi
 .hippo-browser-documents-small{background: transparent}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders h3{background: transparent url(images/filelistHeaderback.png) repeat-x; font-weight: normal; padding: 2px; padding-left: 6px; padding-bottom: 5px;}
  
-.hippo-browser-documents-small .hippo-list-details{border-left: 1px solid #afafaf; background: white;}
+.hippo-browser-documents-small .hippo-browser-documents-small-files{border-left: 1px solid #afafaf; border-right: 1px solid #afafaf; background: white;}
 .hippo-browser-documents-small .hippo-browser-documents-small-folders{background: #f4f4f4; border-left: 1px solid #afafaf; border-bottom: 0px; border-top: 0px }
+/* this is nasty and temporary, YUI wireframe needs an update */
+.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details{margin-top: 25px;}
 
-/* fix for shifting up and down */
-.hippo-browser-documents-small .hippo-tree table tr td{}
-.hippo-browser-documents-small .hippo-list-details table tr td {}
-.hippo-browser-documents-small .hippo-list-details {background: #ffffff url('images/silverBack3.png') repeat-x;}
+.hippo-browser-documents-small .hippo-browser-documents-small-files {background: #ffffff url('images/document-list-back.png') repeat-x;}
 /* toolbar requires some tweaks here */
-.hippo-browser-documents-small .hippo-browser-documents-workflow select{float: right; width: 180px; padding: 1px; margin: 2px; background: transparent; border: 1px solid white; color: white}
+.hippo-browser-documents-small .hippo-browser-documents-workflow select{width: 180px; padding: 1px; margin: 2px; background: transparent; border: 1px solid white; color: white;}
 .hippo-browser-documents-small .hippo-browser-documents-workflow select option{color: #666666; background: white; padding: 1px;}
 
 /* Tree Plugin */
@@ -512,6 +510,8 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
 
+/* Navigator Workflow Actions */
+/* .hippo-browser-documents-workflow{background: url("images/silverBack2.png") repeat-x left bottom; height: 24px; padding-top: 25px;} */
 
 /* Document Preview Plugin */
 /* ================================================ */
@@ -522,11 +522,12 @@ font-weight: bold;
 
 /* Editor Plugin */
 /* ================================================ */
-.hippo-editor{padding:0px; background: white; border: 1px solid #afafaf; border-top: none;}
-.hippo-editor-top{background: url("images/editor-back.png") repeat-x}
+.hippo-editor{padding:0px; background: white; border: 1px solid #afafaf; border-top: none; border-left: none;}
+.hippo-editor-top{background: #f0feff url("images/editor-back.png") repeat-x}
 .hippo-editor-top .hippo-toolbar{padding-left: 4px}
-.hippo-editor .odd .hippo-editor-field{background-color: #f0feff}
-.hippo-editor .even .hippo-editor-field{background-color: #d2ebf1}
+.hippo-editor .even .hippo-editor-field{background: #f0feff url("images/hippo-editor-field-back-even.png") repeat-y}
+.hippo-editor .odd .hippo-editor-field{background: #d2ebf1 url("images/hippo-editor-field-back-odd.png") repeat-y}
+.hippo-editor .hippo-editor-body{background: white url("images/hippo-editor-body-back.png") repeat-y}
 /* field styling */
 .hippo-editor-field{padding: 8px; margin-bottom: 0px; position: static;}
 .hippo-editor-field-title{font-size: 11px; font-weight: bold; color: #666666; margin-bottom: 8px;}
