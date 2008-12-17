@@ -313,7 +313,7 @@
     <repository>
       <id>openqa</id>
       <name>OpenQA Repository</name>
-      <url>http://maven.openqa.org</url>
+      <url>http://nexus.openqa.org/content/repositories/releases</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>
