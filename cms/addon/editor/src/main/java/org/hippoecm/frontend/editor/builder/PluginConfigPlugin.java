@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -40,7 +39,6 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -161,7 +159,7 @@ public class PluginConfigPlugin extends RenderPlugin {
                     caption.setType("String");
                     result.put("caption", caption);
 
-                    JavaFieldDescriptor css = new JavaFieldDescriptor("css");
+                    JavaFieldDescriptor css = new JavaFieldDescriptor("wicket.css");
                     css.setMultiple(true);
                     css.setType("String");
                     result.put("css", css);
