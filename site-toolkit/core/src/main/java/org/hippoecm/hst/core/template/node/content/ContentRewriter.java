@@ -13,11 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.template.node.el;
+package org.hippoecm.hst.core.template.node.content;
 
-import java.util.Map;
+import javax.jcr.Node;
 
-public interface ContentELNode extends ELNode{
-    public Map getResourceUrl();
-    public Map getHasResourceUrl();
+public interface ContentRewriter {
+
+    /**
+     * Search content for hrefs/src's and replace them with a translated value
+     */
+    public String replace(Node node, String content);
 }

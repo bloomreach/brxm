@@ -22,14 +22,17 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.navigation.RepositoryBasedNavigationModule;
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated 
 public class UrlBasedBreadcrumbModule extends RepositoryBasedNavigationModule {
 
 	private static final Logger log = LoggerFactory.getLogger(UrlBasedBreadcrumbModule.class);
 
-	public void render(PageContext pageContext) {
+	@Override
+	public void render(PageContext pageContext, HstRequestContext hstRequestContext) {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
         String urlPrefix = (String) request.getAttribute(HSTHttpAttributes.URI_PREFIX_REQ_ATTRIBUTE);

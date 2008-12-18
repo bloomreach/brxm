@@ -33,10 +33,8 @@ import javax.jcr.query.RowIterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.repository.api.HippoNode;
 
@@ -294,7 +292,7 @@ public class SearchModule extends ModuleBase implements Search {
      * this render is a final, since it is delegate code, and is not meant for extending
      */
     @Override
-    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+    public void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
 
         prepareSearch(pageContext);
         prepareStatement(pageContext);
@@ -319,7 +317,8 @@ public class SearchModule extends ModuleBase implements Search {
         }
 
         try {
-            Session jcrSession = ctxBase.getSession();
+            Session jcrSession = hstRequestContext.getJcrSession();
+
             QueryManager queryMngr = jcrSession.getWorkspace().getQueryManager();
 
             Query q = queryMngr.createQuery(statement, language);
@@ -374,7 +373,7 @@ public class SearchModule extends ModuleBase implements Search {
                 try {
                     Node node = (Node) jcrSession.getItem(row.getValue("jcr:path").getString());
                     double score = row.getValue("jcr:score").getDouble();
-                    SearchHit searchHit = new SearchHit(node, urlMapping, (counter + pagingOffset), score);
+                    SearchHit searchHit = new SearchHit(node, hstRequestContext, (counter + pagingOffset), score);
                     if (isExcerptNeeded()) {
                         searchHit.setExcerpt(row.getValue("rep:excerpt(.)").getString());
                     }

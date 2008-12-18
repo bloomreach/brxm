@@ -16,13 +16,14 @@
 package org.hippoecm.hst.core.filters.base;
 
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.mapping.URLMappingManager;
-import org.hippoecm.hst.core.mapping.URLMappingManagerImpl;
 import org.hippoecm.hst.core.template.node.PageNode;
+import org.hippoecm.hst.core.template.node.content.ContentRewriter;
 
 public class HstRequestContext {
 
@@ -31,10 +32,13 @@ public class HstRequestContext {
     private ContextBase hstConfigurationContextBase;
     private URLMapping absoluteUrlMapping;
     private URLMapping relativeUrlMapping;
+    private ContentRewriter contentRewriter;
     private PageNode pageNode;
     private RepositoryMapping repositoryMapping;
     private URLMappingManager urlMappingManager;
-  
+    private HttpServletRequest request;
+    private String hstRequestUri;
+
     public HstRequestContext() {
     }
     
@@ -75,7 +79,18 @@ public class HstRequestContext {
         return hstConfigurationContextBase;
     }
 
-
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+    
+    public String getHstRequestUri() {
+        return hstRequestUri;
+    }
+    
+    public ContentRewriter getContentRewriter() {
+        return contentRewriter;
+    }
+  
     public void setRepositoryMapping(RepositoryMapping repositoryMapping) {
         this.repositoryMapping = repositoryMapping;
     }
@@ -106,6 +121,18 @@ public class HstRequestContext {
 
     public void setURLMappingManager(URLMappingManager urlMappingManager) {
         this.urlMappingManager = urlMappingManager;
+    }
+
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    public void setHstRequestUri(String hstRequestUri) {
+        this.hstRequestUri = hstRequestUri;
+    }
+
+    public void setContentRewriter(ContentRewriter contentRewriter) {
+        this.contentRewriter = contentRewriter;
     }
 
 

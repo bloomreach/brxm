@@ -17,13 +17,12 @@ package org.hippoecm.hst.core.template.tag;
 
 import java.io.IOException;
 
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.RelativeURLMappingImpl;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.el.ELNode;
@@ -49,19 +48,21 @@ public class LinkTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         PageContext pageContext = (PageContext) getJspContext();
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+        
+        HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
+        URLMapping urlMapping = hstRequestContext.getUrlMapping();
         String href = null;
-        if(urlMapping == null) {
+        if( urlMapping == null) {
             log.debug("urlMapping not set as attribute on request. Cannot rewrite a link. Try to make it relative only for staticattr");
             if(staticattr != null ) {
-                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, request.getRequestURI());
+                href =  RelativeURLMappingImpl.computeRelativeUrl(staticattr, hstRequestContext.getHstRequestUri());
             }
         } else {
             if(item!= null) {
-                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap);
+                href = urlMapping.rewriteLocation(item.getJcrNode(), sitemap, hstRequestContext);
             } else if(location != null ) {
             	// location must be a sitemapNodeName
-                href = urlMapping.rewriteLocation(location, (Session)request.getAttribute(HSTHttpAttributes.JCRSESSION_MAPPING_ATTR));
+                href = urlMapping.rewriteLocation(location, hstRequestContext);
             } else if(staticattr != null ) {
                 href = urlMapping.getLocation(staticattr);
             }

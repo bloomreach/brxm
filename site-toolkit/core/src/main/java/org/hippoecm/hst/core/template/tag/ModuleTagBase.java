@@ -24,8 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.module.Module;
 import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
@@ -69,12 +68,11 @@ public abstract class ModuleTagBase extends BodyTagSupport {
             module.setVar(var);
             module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
             module.setModuleParameters(parameters);
-            URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-            ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
+            HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
             
             log.debug("Executing module '" + className + "' now");
             
-            this.executionResult = module.execute(pageContext,urlMapping, ctxBase);
+            this.executionResult = module.execute(pageContext,hstRequestContext);
             
         } catch (Exception e) {
              log.warn("Error in doExecute : " + e.getMessage());
@@ -87,9 +85,8 @@ public abstract class ModuleTagBase extends BodyTagSupport {
                module.setVar(var);
                module.setPageModuleNode(getPageModuleNode(request, pcm.getName()));
                module.setModuleParameters(parameters);
-               URLMapping urlMapping = (URLMapping)request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
-               ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-               module.render(pageContext,urlMapping, ctxBase, this.executionResult);
+               HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
+               module.render(pageContext,hstRequestContext, this.executionResult);
             } catch (Exception e) {
                 throw new JspException(e);
             }

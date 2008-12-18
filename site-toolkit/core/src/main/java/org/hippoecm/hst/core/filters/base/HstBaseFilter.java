@@ -58,8 +58,8 @@ public abstract class HstBaseFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
-        Object ignoreRequest = request.getAttribute(IgnorableRequest.class.getName());
-        if(ignoreRequest != null && ((Boolean)ignoreRequest).booleanValue()){
+        // if there is no HstRequestContext obj on the request the request can be ignored
+        if(request.getAttribute(HstRequestContext.class.getName()) == null ){
             chain.doFilter(request, response);
         }  else {
             HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());

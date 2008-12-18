@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +34,11 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
     /*
      * log all rewriting to the SourceRewriter interface
      */
-    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
-    private URLMapping mapping;
+    private Logger log = LoggerFactory.getLogger(ContentRewriter.class);
+    HstRequestContext hstRequestContext;
     
-    public PathToSrcTranslatorImpl(URLMapping mapping) {
-       this.mapping = mapping; 
+    public PathToSrcTranslatorImpl(HstRequestContext hstRequestContext) {
+       this.hstRequestContext = hstRequestContext; 
     }
 
     
@@ -74,7 +74,7 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                 // pathEls[0] refers to facetselect
                 postfix = documentPath.substring(pathEls[0].length());
             }
-            if(mapping == null) {
+            if(hstRequestContext.getUrlMapping() == null) {
                 log.warn("UrlMapping is null, returning original path");
                 return documentPath;
             }
@@ -89,9 +89,9 @@ public class PathToSrcTranslatorImpl implements PathToSrcTranslator {
                         if(postfix.startsWith("/")) {
                             postfix = postfix.substring(1);
                         }
-                        return mapping.rewriteLocation(deref.getNode(postfix));
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(postfix), hstRequestContext);
                     } else {
-                        return mapping.rewriteLocation(deref.getNode(deref.getName()));
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref.getNode(deref.getName()), hstRequestContext);
                     }
 
                 } else {

@@ -210,15 +210,15 @@ public class URLMappingImpl implements URLMapping {
 
     }
 
-    public String rewriteLocation(Node node) {
-        return rewriteLocation(node, null, false, false);
+    public String rewriteLocation(Node node, HstRequestContext hstRequestContext) {
+        return rewriteLocation(node, null, false, false, hstRequestContext);
     }
     
-    public String rewriteLocation(Node node, String sitemap) {
-        return rewriteLocation(node, sitemap, false, false);
+    public String rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext) {
+        return rewriteLocation(node, sitemap, false, false, hstRequestContext);
     }
 
-    private String rewriteLocation(Node node, String sitemap,boolean externalize, boolean secondTry) {
+    private String rewriteLocation(Node node, String sitemap,boolean externalize, boolean secondTry, HstRequestContext hstRequestContext) {
         long start = System.currentTimeMillis();
         String rewritePath = null;
         String path = "";
@@ -288,7 +288,7 @@ public class URLMappingImpl implements URLMapping {
                         }
                         
                         // set second try to true to avoid recusive possible loop
-                        return newUrlMapping.rewriteLocation(node, sitemap,isExternalLink, true);
+                        return newUrlMapping.rewriteLocation(node, sitemap,isExternalLink, true, hstRequestContext);
                     } catch (URLMappingException e) {
                         log.warn("Exception while getting url mapping for '{}' : {}", matchingRepositoryMapping.getHstConfigPath(), e.getMessage());
                     }
@@ -375,6 +375,8 @@ public class URLMappingImpl implements URLMapping {
             DomainMapping domainMapping = this.repositoryMapping.getDomainMapping();
             StringBuffer externalLink = new StringBuffer(domainMapping.getScheme()).append("://");
             // if the link is 'externalize' the domain can not contain wildcards
+            
+            // TODO should get the serverName from the HstRequestContext
             externalLink.append(repositoryMapping.getDomain().getPattern());
             if(domainMapping.isPortInUrl()) {
                 externalLink.append(":").append(domainMapping.getPort());
@@ -389,7 +391,7 @@ public class URLMappingImpl implements URLMapping {
         return rewrite;
     }
 
-    public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
+    public String rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext) {
         long start = System.currentTimeMillis();
         String cacheKey = computeCacheKey(sitemapNodeName, false, false, null);
         String rewritten = this.rewriteLRUCache.get(cacheKey);
@@ -397,9 +399,9 @@ public class URLMappingImpl implements URLMapping {
             return rewritten;
         }
         Node siteMapRootNode = null;
-        if (jcrSession != null) {
+        if (hstRequestContext.getJcrSession() != null) {
             try {
-                siteMapRootNode = (Node) jcrSession.getItem(siteMapRootNodePath);
+                siteMapRootNode = (Node) hstRequestContext.getJcrSession().getItem(siteMapRootNodePath);
             } catch (PathNotFoundException e) {
                 log.warn("siteMapRootNodePath '" + siteMapRootNodePath + "' not found. Cannot rewrite link");
             } catch (RepositoryException e) {

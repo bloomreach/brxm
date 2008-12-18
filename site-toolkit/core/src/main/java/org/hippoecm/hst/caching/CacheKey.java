@@ -18,11 +18,11 @@ package org.hippoecm.hst.caching;
 import java.io.Serializable;
 
 public class CacheKey implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private final String key;
-    
+
     public CacheKey(String key, Class clazz) {
         this.key = clazz.getName() + "_" + key;
     }

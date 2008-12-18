@@ -43,7 +43,7 @@ public class HstStartRequestFilter implements Filter{
         HttpServletRequest request = (HttpServletRequest)req;
         String servletCtxStrippedRequestUri = request.getRequestURI().replaceFirst(request.getContextPath(), "");
         if (ignoreRequest(request, servletCtxStrippedRequestUri)) {
-            request.setAttribute(IgnorableRequest.class.getName(), new Boolean(true));
+            // if there is not HstRequestContext object on the request, it will be ignored by other filters
         } else {
             req.setAttribute(HstRequestContext.class.getName(), new HstRequestContext());
         }

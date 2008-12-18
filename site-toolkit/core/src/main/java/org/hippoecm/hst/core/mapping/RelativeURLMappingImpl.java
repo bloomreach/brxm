@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.mapping;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
@@ -47,19 +46,19 @@ public class RelativeURLMappingImpl implements URLMapping{
         return delegatee.getMatchingPageNode(requestURI, hstRequestContext);
     }
 
-    public String rewriteLocation(Node node) {
-        String absoluteLocation = delegatee.rewriteLocation(node);
+    public String rewriteLocation(Node node, HstRequestContext hstRequestContext) {
+        String absoluteLocation = delegatee.rewriteLocation(node, hstRequestContext);
         return computeRelativeUrl(absoluteLocation, requestUriToWrap);
     }
     
-    public String rewriteLocation(Node node, String sitemap) {
-        String absoluteLocation = delegatee.rewriteLocation(node, sitemap);
+    public String rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext) {
+        String absoluteLocation = delegatee.rewriteLocation(node, sitemap, hstRequestContext);
         return computeRelativeUrl(absoluteLocation, requestUriToWrap);
     }
 
 
-    public String rewriteLocation(String sitemapNodeName, Session jcrSession) {
-        String absoluteLocation = delegatee.rewriteLocation(sitemapNodeName, jcrSession);
+    public String rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext) {
+        String absoluteLocation = delegatee.rewriteLocation(sitemapNodeName, hstRequestContext);
         return computeRelativeUrl(absoluteLocation, requestUriToWrap);
     }
     

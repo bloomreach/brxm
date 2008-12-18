@@ -25,6 +25,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
@@ -41,8 +42,7 @@ public class RepositoryBasedNavigationModule extends ModuleBase {
      * @see    PageContext
      */    
     @Override
-    public void render(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase) throws TemplateException {
+    public void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
        
         String path = null;
         try {
@@ -57,7 +57,7 @@ public class RepositoryBasedNavigationModule extends ModuleBase {
         }
         List<NavigationItem> wrappedNodes = new ArrayList<NavigationItem>();
         try {
-            Node n = ctxBase.getRelativeNode(path);
+            Node n = hstRequestContext.getContentContextBase().getRelativeNode(path);
             NodeIterator subNodes = n.getNodes();
             while (subNodes.hasNext()) {
                 Node subNode = subNodes.nextNode();

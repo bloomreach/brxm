@@ -24,7 +24,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +34,11 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
     /*
      * log all rewriting to the SourceRewriter interface
      */
-    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
-    private URLMapping mapping;
+    private Logger log = LoggerFactory.getLogger(ContentRewriter.class);
+    private HstRequestContext hstRequestContext;
     
-    public PathToHrefTranslatorImpl(URLMapping mapping) {
-       this.mapping = mapping; 
+    public PathToHrefTranslatorImpl(HstRequestContext hstRequestContext) {
+       this.hstRequestContext = hstRequestContext; 
     }
 
     public String documentPathToHref(Node node, String documentPath) {
@@ -49,7 +49,7 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
             }
         }
         
-        if(mapping == null || node == null) {
+        if(hstRequestContext.getUrlMapping() == null || node == null) {
             log.warn("UrlMapping is null, returning original path");
             return documentPath;
         } else {
@@ -72,8 +72,8 @@ public class PathToHrefTranslatorImpl implements PathToHrefTranslator{
                         uuid = facetSelectNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                         Session session = node.getSession();
                         Node deref = session.getNodeByUUID(uuid);
-                        log.debug("rewrite '{}' --> '{}'", deref.getPath(), mapping.rewriteLocation(deref));
-                        return mapping.rewriteLocation(deref);
+                        log.debug("rewrite '{}' --> '{}'", deref.getPath(), hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext));
+                        return hstRequestContext.getUrlMapping().rewriteLocation(deref, hstRequestContext);
                     } else {
                         log.warn("relative node as link, but the node is not a facetselect. Unable to rewrite this to a URL");
                     }

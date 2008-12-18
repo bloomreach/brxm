@@ -18,20 +18,18 @@ package org.hippoecm.hst.components.modules.rss.impl;
 import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.components.modules.rss.RssFeed;
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 
 public class RssModule extends ModuleBase{
 
 	@Override
-	public void render(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase) throws TemplateException {
+	public void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
 		
 		RssFeed feed = null;
 		
-		String url = getUrl( pageContext,  urlMapping, ctxBase);
+		String url = getUrl();
 		
 		if(url!=null) {
 			SimpleRssReader reader = new SimpleRssReader();
@@ -43,8 +41,7 @@ public class RssModule extends ModuleBase{
 		
 	}
 
-	public String getUrl(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase){
+	public String getUrl(){
 		String url = null;
 		if(this.moduleParameters == null || this.moduleParameters.containsKey("url")) {
 			url = moduleParameters.get("url");

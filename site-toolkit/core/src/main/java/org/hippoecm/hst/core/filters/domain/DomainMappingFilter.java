@@ -32,6 +32,7 @@ import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.ContextBaseException;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
+import org.hippoecm.hst.core.mapping.UrlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,16 +142,46 @@ public class DomainMappingFilter extends HstBaseFilter implements Filter {
                     return;
                 }
                 
-                HttpServletRequest request = new DomainMappingRequestWrapper((HttpServletRequest)req, repositoryMapping);
-                if(request.getRequestURI().startsWith("/binaries")) {
+                // set original request on the HstRequestContext and the request uri that matters for the hst
+                String hstRequestUri = getHstRequestUri(req.getRequestURI(), repositoryMapping, req.getContextPath());
+                hstRequestContext.setHstRequestUri(hstRequestUri);
+                hstRequestContext.setRequest(req);
+                
+                if(hstRequestUri.startsWith("/binaries")) {
+                    HttpServletRequest request = new BinariesRequestWrapper(req, repositoryMapping);
                     log.debug("Forwarding orginal request to binaries servlet: '{}' --> '{}'", req.getRequestURI(),request.getRequestURI());
                     RequestDispatcher dispatcher = request.getRequestDispatcher(request.getRequestURI());
                     dispatcher.forward(request, response);
                     return;
                 }
-                chain.doFilter(request, response);
+                chain.doFilter(req, response);
             }
         }
+        
+    }
+    
+    public String getHstRequestUri(String origRequestUri, RepositoryMapping repositoryMapping, String contextPath){
+        
+            if(repositoryMapping == null ) {
+                log.warn("No repository mapping found for request uri '{}'. Try to process request without mapping", origRequestUri);
+                return origRequestUri;
+            } else {
+                
+                String uri = origRequestUri;
+                uri = uri.substring(contextPath.length());
+                // replace the prefix with the repository path in the mapping
+                if(repositoryMapping.getPrefix() != null ) {
+                    uri = uri.substring(repositoryMapping.getPrefix().length());
+                }
+                /*
+                 * we forward the url without the context path and without the repository prefix.
+                 * On the hstRequestContext we have the RepositoryMapping object available
+                 */  
+                uri = UrlUtilities.decodeUrl(uri);
+                log.debug("wrapped request uri to internal uri '{}' --> '{}'", origRequestUri, uri);
+                return uri;   
+            }
+            
         
     }
 

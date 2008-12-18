@@ -20,9 +20,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -34,8 +33,7 @@ public class ContentModule extends ModuleBase {
 	private static final Logger log = LoggerFactory.getLogger(ContentModule.class);
 	
 	@Override
-	public void render(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase) throws TemplateException {
+	public void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
 	
 		String path = null;
 		String uuid = null;
@@ -63,11 +61,11 @@ public class ContentModule extends ModuleBase {
 		ContentModuleNode contentModuleNode = null;
 		Node node=null;
 		if(path!=null && !path.equals("")){
-			node = ctxBase.getRelativeNode(path);	
+			node = hstRequestContext.getContentContextBase().getRelativeNode(path);	
 		}
 		else if(uuid!=null && !uuid.equals("")) {
 			try {
-				node = ctxBase.getSession().getNodeByUUID(uuid);
+				node = hstRequestContext.getJcrSession().getNodeByUUID(uuid);
 				if(node.isNodeType(HippoNodeType.NT_HANDLE)){
 					node = node.getNode(node.getName());
 				}				 
@@ -77,7 +75,7 @@ public class ContentModule extends ModuleBase {
 				log.error("Cannot get Node by uuid ("+uuid+") : + "+ e.getCause());
 			}
 		}		
-		contentModuleNode = new ContentModuleNode(ctxBase, node, urlMapping);
+		contentModuleNode = new ContentModuleNode(node, hstRequestContext);
 		pageContext.setAttribute(getVar(), contentModuleNode);
 	}
 }

@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
 import org.hippoecm.hst.core.filters.base.HstBaseFilter;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.node.ModuleNode;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -40,9 +41,10 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryBasedBreadcrumbModule.class);
 
-    public void render(PageContext pageContext) {
+    @Override
+    public void render(PageContext pageContext, HstRequestContext hstRequestContext) {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        PageNode pn = (PageNode) pageContext.getRequest().getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
+        PageNode pn = hstRequestContext.getPageNode();
 
         String path = null;
         try {
@@ -55,8 +57,7 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
             pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());
             return;
         }
-        ContextBase ctxBase = (ContextBase) request.getAttribute(HSTHttpAttributes.CURRENT_CONTENT_CONTEXTBASE_REQ_ATTRIBUTE);
-
+       
         List<NavigationItem> wrappedNodes = new ArrayList<NavigationItem>();
         try {
 
@@ -73,7 +74,7 @@ public class RepositoryBasedBreadcrumbModule extends RepositoryBasedNavigationMo
                     selectedItemsList.add(selectedItems[i]);
                 }
             }
-            Node n = ctxBase.getRelativeNode(path);
+            Node n = hstRequestContext.getContentContextBase().getRelativeNode(path);
             if(n == null ){
                 log.warn("repository path '" + path + "' not found");
                 pageContext.setAttribute(getVar(), new ArrayList<NavigationItem>());

@@ -17,7 +17,7 @@ package org.hippoecm.hst.core.template.module.query;
 
 import javax.jcr.Node;
 
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
 
 public class SearchHit extends ContentELNodeImpl {
@@ -25,8 +25,8 @@ public class SearchHit extends ContentELNodeImpl {
     private int hitPosition;
     private double score;
     
-    public SearchHit(Node node, URLMapping urlMapping, int hitPosition, double score) {
-        super(node, urlMapping);
+    public SearchHit(Node node, HstRequestContext hstRequestContext, int hitPosition, double score) {
+        super(node, hstRequestContext);
         this.hitPosition = hitPosition;
         this.score = score;
     }

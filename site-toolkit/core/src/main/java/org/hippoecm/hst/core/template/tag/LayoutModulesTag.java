@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.hippoecm.hst.core.HSTHttpAttributes;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.node.NodeList;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 import org.hippoecm.hst.core.template.node.PageContainerNode;
@@ -43,8 +44,9 @@ public class LayoutModulesTag  extends BodyTagSupport {
 	@Override
 	public int doStartTag() throws JspException {  
 		
-		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	    	
-        PageNode pageNode = (PageNode) request.getAttribute(HSTHttpAttributes.CURRENT_PAGE_NODE_REQ_ATTRIBUTE);
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();    	  
+        HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
+        PageNode pageNode = hstRequestContext.getPageNode();
         PageContainerNode pcNode = pageNode.getContainerNode(getName());
         
         boolean debugView = false;

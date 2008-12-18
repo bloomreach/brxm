@@ -27,6 +27,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -40,11 +41,10 @@ public class DocumentTypesListModule extends ModuleBase{
     private List<NodeType> items;
     private String namespace;
     
-	
-	public void render(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase) throws TemplateException {
+	@Override
+	public void render(PageContext pageContext,HstRequestContext hstRequestContext) throws TemplateException {
         
-		final Session jcrSession = ctxBase.getSession();
+		final Session jcrSession = hstRequestContext.getJcrSession();
 
         boolean params = false;
         if (moduleParameters != null) {

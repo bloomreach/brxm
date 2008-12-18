@@ -24,45 +24,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheManagerImpl {
-    
-    private static final Logger log = LoggerFactory.getLogger(CacheManagerImpl.class);
-    private static final Map<String,Cache> caches = new HashMap<String, Cache>();
-    private static boolean newCacheIsEnabled = true;
-    
 
-    public static Map<String,Cache> getCaches(){
+    private static final Logger log = LoggerFactory.getLogger(CacheManagerImpl.class);
+    private static final Map<String, Cache> caches = new HashMap<String, Cache>();
+    private static boolean newCacheIsEnabled = true;
+
+    public static Map<String, Cache> getCaches() {
         return caches;
     }
 
     public static boolean isNewCacheIsEnabled() {
         return newCacheIsEnabled;
     }
+
     public static void setNewCacheIsEnabled(boolean newCacheIsEnabled) {
         CacheManagerImpl.newCacheIsEnabled = newCacheIsEnabled;
     }
-    
-    public static Cache getCache(String cacheName){
-        return getCache(cacheName,null);
+
+    public static Cache getCache(String cacheName) {
+        return getCache(cacheName, null);
     }
-    
+
     public static Cache getCache(String cacheName, String clazz) {
-        if(cacheName == null) {
+        if (cacheName == null) {
             cacheName = "anonymous";
         }
-        
-        if(clazz == null) {
+
+        if (clazz == null) {
             clazz = LRUMemoryCacheImpl.class.getName();
         }
-        
-        cacheName = clazz+"_"+cacheName;
-        
-        synchronized(caches){
+
+        cacheName = clazz + "_" + cacheName;
+
+        synchronized (caches) {
             Cache cache = caches.get(cacheName);
-            if( cache != null) {
+            if (cache != null) {
                 return cache;
             } else {
                 cache = createCache(1000, clazz);
-                if(cache==null) {
+                if (cache == null) {
                     log.warn("Cache instantiation failed for '" + clazz + "'");
                     return null;
                 }
@@ -71,20 +71,20 @@ public class CacheManagerImpl {
                 return cache;
             }
         }
-        
+
     }
-    
+
     private static Cache createCache(int size, String clazz) {
         Object o = null;
         try {
             Class c = Class.forName(clazz);
-            Constructor con = c.getConstructor(new Class[] {int.class});
-            o = con.newInstance(new Object[] {size} );
+            Constructor con = c.getConstructor(new Class[] { int.class });
+            o = con.newInstance(new Object[] { size });
             if (!Cache.class.isInstance(o)) {
-                log.error(clazz + " does not implement the interface " + Cache.class.getName()+ ". Return null" );
+                log.error(clazz + " does not implement the interface " + Cache.class.getName() + ". Return null");
                 return null;
             }
-            return (Cache)o;
+            return (Cache) o;
         } catch (InstantiationException e) {
             log.error("InstantiationException : Cannot instantiate cache for '" + clazz + "' :" + e.getMessage());
         } catch (IllegalAccessException e) {
@@ -99,6 +99,4 @@ public class CacheManagerImpl {
         return null;
     }
 
-    
-   
 }

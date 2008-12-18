@@ -15,27 +15,19 @@
  */
 package org.hippoecm.hst.core.template.node.el;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.hippoecm.hst.core.context.ContextBase;
-import org.hippoecm.hst.core.filters.domain.RepositoryMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
-import org.hippoecm.hst.core.template.node.content.SourceRewriter;
-import org.hippoecm.hst.core.template.node.content.SourceRewriterImpl;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -45,40 +37,25 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
 
     private final Logger log = LoggerFactory.getLogger(ContentELNodeImpl.class);
 
-    private final SourceRewriter sourceRewriter;
-    
-    private boolean rewriteSources = true;
+    private boolean rewriteContents = true;
 
+    private HstRequestContext hstRequestContext;
     /*
      * If you want a custom source rewriter, use this constructor
      */
-
-    public ContentELNodeImpl(ContentELNode contentELNode){
-        super(contentELNode.getJcrNode());
-        this.sourceRewriter = contentELNode.getSourceRewriter();
-    }
     
-    public ContentELNodeImpl(Node node, SourceRewriter sourceRewriter) {
+    public ContentELNodeImpl(Node node, HstRequestContext hstRequestContext) {
         super(node);
-        this.sourceRewriter = sourceRewriter;
+        this.hstRequestContext = hstRequestContext;
     }
 
-    public ContentELNodeImpl(Node node, URLMapping urlMapping) {
-        super(node);
-        this.sourceRewriter = new SourceRewriterImpl(urlMapping);
-    }
-
-    public ContentELNodeImpl(ContextBase contextBase, String relativePath, URLMapping urlMapping)
-            throws RepositoryException {
-        super(contextBase, relativePath);
-        this.sourceRewriter = new SourceRewriterImpl(urlMapping);
-    }
 
     public ELNode newInstance(Node jcrNode, ELNode elNode){
         if(elNode instanceof ContentELNodeImpl) {
-            return new ContentELNodeImpl(jcrNode, ((ContentELNodeImpl)elNode).sourceRewriter );
+            return new ContentELNodeImpl(jcrNode, ((ContentELNodeImpl)elNode).hstRequestContext );
         } else {
-            return new ContentELNodeImpl(jcrNode, (SourceRewriter)null);
+            log.warn("Cannot create instance that is not of type ContentELNodeImpl");
+            return null;
         }
     }
     
@@ -147,14 +124,14 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                  * Default String values are parsed for src and href attributes because these need
                  * translation
                  */
-                if (sourceRewriter == null) {
+                if (hstRequestContext.getContentRewriter() == null) {
                     log.warn("sourceRewriter is null. No linkrewriting or srcrewriting will be done");
                     return val.getString();
                 } else {
                     log.debug("parsing string property for source rewriting for property: {}", prop);
                     // only rewrite sources if isRewriteSources(). Default true
                     if(isRewriteSources()) {
-                        return sourceRewriter.replace(node, val.getString());
+                        return hstRequestContext.getContentRewriter().replace(node, val.getString());
                     } else {
                         return val.getString();
                     }
@@ -214,7 +191,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
                             } else {
                                 canonical = hippoNode.getCanonicalNode();
                             }
-                            return sourceRewriter.getUrlMapping().rewriteLocation(canonical);
+                            return hstRequestContext.getUrlMapping().rewriteLocation(canonical, hstRequestContext);
                         }
                     } else {
                         log.warn(resourceName + "not of type hippo:resource. Returning null");
@@ -310,7 +287,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
     
     @Override
     public String getRelpath() {
-        if(sourceRewriter == null || sourceRewriter.getUrlMapping() == null) {
+        if(hstRequestContext.getContentRewriter() == null || hstRequestContext.getUrlMapping() == null) {
             log.warn("cannot get relpath because no urlMapping");
             return null;
         }
@@ -318,7 +295,7 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
         	log.warn("cannot get relpath because wrapped jcrNode is null");
             return null;
         }
-        URLMapping urlMapping = sourceRewriter.getUrlMapping();
+        URLMapping urlMapping = hstRequestContext.getUrlMapping();
         
         String repositoryPath   = urlMapping.getRepositoryMapping().getContentPath();
         
@@ -344,12 +321,9 @@ public class ContentELNodeImpl extends AbstractELNode implements ContentELNode {
             return null;
         }
     }
-    public SourceRewriter getSourceRewriter() {
-        return this.sourceRewriter;
-    }
 
     public boolean isRewriteSources() {
-        return rewriteSources;
+        return rewriteContents;
     }
 
 }

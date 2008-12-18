@@ -71,14 +71,14 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
             chain.doFilter(request, response);
             return;
         }
-        log.debug("process " + request.getRequestURI());
+        log.debug("process " + hstRequestContext.getHstRequestUri());
         try {
             URLMapping urlMapping = hstRequestContext.getUrlMapping();
             if(urlMapping == null) {
                 log.warn("URLMapping is null, cannot get a matching page node");
                 chain.doFilter(request, response);
             } 
-            PageNode matchPageNode = urlMapping.getMatchingPageNode(request.getRequestURI(), hstRequestContext);
+            PageNode matchPageNode = urlMapping.getMatchingPageNode(hstRequestContext.getHstRequestUri(), hstRequestContext);
             if (matchPageNode != null) {
                 String urlPrefix = getUrlPrefix(request);
                 RequestDispatcher dispatcher = request.getRequestDispatcher(urlPrefix + matchPageNode.getLayoutNode().getTemplatePage());
@@ -90,7 +90,7 @@ public class URLMappingTemplateContextFilter extends HstBaseFilter implements Fi
                 
                 dispatcher.forward(request, response);
             } else {
-                log.warn("no matching template found for url '" + request.getRequestURI() + "'");
+                log.warn("no matching template found for url '{}'", hstRequestContext.getHstRequestUri());
                 //what to do? no matching pattern found... lets continue the filter chain...
                 chain.doFilter(request, response);
             }

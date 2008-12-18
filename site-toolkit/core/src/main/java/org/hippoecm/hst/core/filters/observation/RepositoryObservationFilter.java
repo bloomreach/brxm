@@ -17,10 +17,8 @@ package org.hippoecm.hst.core.filters.observation;
 
 import java.io.IOException;
 
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
@@ -33,11 +31,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.hippoecm.hst.caching.observation.EventListenerImpl;
-import org.hippoecm.hst.core.HSTConfiguration;
-import org.hippoecm.hst.jcr.JcrConnectionException;
 import org.hippoecm.hst.jcr.JcrSessionFactory;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

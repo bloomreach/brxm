@@ -24,10 +24,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.filters.base.HstRequestContext;
-import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.node.PageNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNode;
 import org.hippoecm.hst.core.template.node.el.ContentELNodeImpl;
@@ -66,7 +64,6 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
     
 	 PageNode pageNode = hstRequestContext.getPageNode();
 	 ContextBase contentContextBase = hstRequestContext.getContentContextBase();
-	 URLMapping urlMapping = hstRequestContext.getUrlMapping();
 	 
 	 if (pageNode != null && contentContextBase != null) {
 		 String relPath = null;
@@ -81,7 +78,7 @@ private ContentELNodeImpl getContentNode(HttpServletRequest request) throws Repo
 	     if(currentJcrNode == null) {
 	         log.warn("jcr node not found at '{}'", contentContextBase.getContextRootNode().getPath() +"/"+relPath);
 	     }
-		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, urlMapping);
+		 return (currentJcrNode == null) ? null : new ContentELNodeImpl(currentJcrNode, hstRequestContext);
 	 }
 	 return null;
 }

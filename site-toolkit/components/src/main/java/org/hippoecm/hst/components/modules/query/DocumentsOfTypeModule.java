@@ -29,6 +29,7 @@ import javax.servlet.jsp.PageContext;
 
 import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.mapping.URLMapping;
 import org.hippoecm.hst.core.template.module.ModuleBase;
 import org.hippoecm.hst.core.template.module.query.ContextWhereClause;
@@ -44,8 +45,8 @@ public class DocumentsOfTypeModule extends ModuleBase {
 	public static final String DOCUMENT_TYPE = "documentType";
 	private String docType="";
 	
-	public void render(PageContext pageContext, URLMapping urlMapping,
-			ContextBase ctxBase) throws TemplateException {
+	@Override
+	public void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
 		
         List<ELNode> wrappedNodes = new ArrayList<ELNode>();
         
@@ -60,8 +61,7 @@ public class DocumentsOfTypeModule extends ModuleBase {
             }
         }
         
-        Session jcrSession = ctxBase.getSession();
-        wrappedNodes = getDocuments(jcrSession,urlMapping,ctxBase.getContextRootNode());
+        wrappedNodes = getDocuments(hstRequestContext);
         pageContext.setAttribute(getVar(), wrappedNodes);
 	
 	}
@@ -70,20 +70,20 @@ public class DocumentsOfTypeModule extends ModuleBase {
       this.docType=type;	
     }
 	
-	private List<ELNode> getDocuments(Session jcrSession, URLMapping urlMapping, HippoNode contextNode){
+	private List<ELNode> getDocuments(HstRequestContext hstRequestContext){
 		List<ELNode> wrappedNodes = new ArrayList<ELNode>();
 		if(docType!=null || !docType.equals("")) {
 	        try {
-	            ContextWhereClause ctxWhereClause = new ContextWhereClause(contextNode, "content");
+	            ContextWhereClause ctxWhereClause = new ContextWhereClause(hstRequestContext.getContentContextBase().getContextRootNode(), "content");
 	            String contextWhereClauses = ctxWhereClause.getWhereClause();
 	            String xpath = "//*["+contextWhereClauses+ " and @jcr:primaryType='"+docType+"']";
 	            
-	            QueryManager qMgr = jcrSession.getWorkspace().getQueryManager();
+	            QueryManager qMgr = hstRequestContext.getJcrSession().getWorkspace().getQueryManager();
 	            QueryResult result = qMgr.createQuery(xpath,Query.XPATH).execute();
 	            NodeIterator iter = result.getNodes();
 	            while (iter.hasNext()) {
 	                Node node = iter.nextNode();
-                	wrappedNodes.add(new ContentELNodeImpl(node,urlMapping));
+                	wrappedNodes.add(new ContentELNodeImpl(node,hstRequestContext));
 	            }
 	            
 	        } catch (RepositoryException ex) {

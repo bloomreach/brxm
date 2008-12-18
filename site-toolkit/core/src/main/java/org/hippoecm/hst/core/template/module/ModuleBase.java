@@ -20,9 +20,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
-import org.hippoecm.hst.core.context.ContextBase;
 import org.hippoecm.hst.core.exception.TemplateException;
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.module.execution.ExecutionResult;
 import org.hippoecm.hst.core.template.node.PageContainerModuleNode;
 
@@ -54,17 +53,16 @@ public abstract class ModuleBase implements Module {
 		moduleParameters = parameters;
 	}
 
-    
-	public ExecutionResult execute(PageContext pageContext,URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+	public ExecutionResult execute(PageContext pageContext,HstRequestContext hstRequestContext) throws TemplateException {
 		return null;
 	}
 
 	// Concrete module implementations can decide to need the executionResult by overriding this method and implementing there own execution result
-    public void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase, ExecutionResult executionResult) throws TemplateException{
-    	this.render(pageContext, urlMapping, ctxBase);
+    public void render(PageContext pageContext, HstRequestContext hstRequestContext, ExecutionResult executionResult) throws TemplateException{
+    	this.render(pageContext, hstRequestContext);
     }
 	
-	public  void render(PageContext pageContext, URLMapping urlMapping, ContextBase ctxBase) throws TemplateException {
+	public  void render(PageContext pageContext, HstRequestContext hstRequestContext) throws TemplateException {
 	// to be implemented by subclasses
 	}
 

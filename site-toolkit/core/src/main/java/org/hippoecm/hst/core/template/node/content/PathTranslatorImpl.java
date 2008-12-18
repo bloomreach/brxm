@@ -25,7 +25,7 @@ public class PathTranslatorImpl implements PathTranslator {
     /*
      * log all rewriting to the SourceRewriter interface
      */
-    private Logger log = LoggerFactory.getLogger(SourceRewriter.class);
+    private Logger log = LoggerFactory.getLogger(ContentRewriter.class);
     
     private PathToHrefTranslator pathToHrefTranslator;
     private PathToSrcTranslator pathToSrcTranslator;

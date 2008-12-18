@@ -25,8 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.hippoecm.hst.core.HSTHttpAttributes;
-import org.hippoecm.hst.core.mapping.URLMapping;
+import org.hippoecm.hst.core.filters.base.HstRequestContext;
 import org.hippoecm.hst.core.template.node.el.ELNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +47,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
         PageContext pageContext = (PageContext) getJspContext();
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-
-        URLMapping urlMapping = (URLMapping) request.getAttribute(HSTHttpAttributes.URL_MAPPING_ATTR);
+        HstRequestContext hstRequestContext = (HstRequestContext)request.getAttribute(HstRequestContext.class.getName());
         String src = null;
         if (item != null) {
             try {
@@ -73,7 +71,7 @@ public class GalleryImageLinkTag extends SimpleTagSupport {
                                     } else {
                                         gpn = childFacetNode.getNode("hippogallery:picture");
                                     }
-                                    src = urlMapping.rewriteLocation(gpn);
+                                    src = hstRequestContext.getUrlMapping().rewriteLocation(gpn, hstRequestContext);
                                 }
                             }
                             pageContext.setAttribute(getVar(), src);
