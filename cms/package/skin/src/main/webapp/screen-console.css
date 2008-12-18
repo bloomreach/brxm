@@ -14,10 +14,27 @@ body{padding: 15px;}
 .hippo-console-tree-sorter li{float: right}
 .hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 576px; margin-top: 10px; height: 21px;}
 
-.hippo-console-editor{overflow: auto; height: 900px; padding: 15px;}
-.hippo-console-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px;}
-.hippo-console-tree .wicket-tree{border: 0px; width: 1000px; padding: 0px; margin: 0px; margin-left: -12px; padding-top: 5px;}
-.hippo-console-tree div.wicket-tree div.row, .hippo-console-tree div.wicket-tree div.row-selected{}
+.hippo-console-editor{overflow: auto; height: 900px;}
+
+.hippo-console-tree .hippo-tree{overflow: auto; height: 900px; padding-bottom: 30px; font-size: 13px; width: 465px; padding-top: 4px;}
+.hippo-console-tree .wicket-tree a{color: #666666}
+.hippo-console-tree .wicket-tree a:hover{color: #32629b}
+.hippo-console .wicket-tree *{font-family: monospace}
+.hippo-console .wicket-tree div.row-selected span {font-weight: normal}
+
+.hippo-console-tree .hippo-tree .wicket-tree span.plus, 
+.hippo-console-tree .hippo-tree .wicket-tree span.minus,
+.hippo-console-tree .hippo-tree .wicket-tree span.junction, 
+.hippo-console-tree .hippo-tree .wicket-tree span.junction-last, 
+.hippo-console-tree .hippo-tree .wicket-tree span.corner, 
+.hippo-console-tree .hippo-tree .wicket-tree span.indent-line
+{background-image: url("images/tree-console-icons.png"); width: 18px} 
+.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
+.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{display: none}
+.hippo-console-tree .hippo-tree .wicket-tree span.indent-blank span.indent-blank {display: block}
+
+.hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0px; padding-bottom: 0px}
+
 .hippo-console-menu-advanced {padding: 10px;}
 .hippo-console-menu-advanced li{float: left; margin-left: 10px; font-size: 11px;}
 .hippo-console-menu-advanced li a:hover{text-decoration: underline}
@@ -36,7 +53,7 @@ body{padding: 15px;}
 .hippo-console-tree-add-delete a:hover{background: red;}
 
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px; background: #abd5ff}
-.hippo-console div.wicket-tree div.row-selected {background:#abd5ff}
+
 
 
 .hippo-console-menu{}
@@ -52,12 +69,6 @@ body{padding: 15px;}
 .hippo-console-breadcrumbs strong span{font-weight: normal; color: white; font-size: 15px; font-family: arial, helvetica, sans-serif; line-height: 20px;}
 .hippo-console-rightpanel{}
 
-
-.hippo-console-tree .wicket-tree a{color: #666666}
-.hippo-console-tree .wicket-tree a:hover{color: #32629b}
-.hippo-tree .wicket-tree div.a_{margin-left: 0px; padding-left: 0px;}
-.hippo-console .wicket-tree *{font-family: monospace}
-.hippo-console .wicket-tree div.row-selected span {font-weight: normal}
 .hippo-console-warning{background: #ee3a42; color: white; padding: 10px; border: 4px solid #b3001b;  margin-bottom: 15px; height: 24px; margin-top: 15px; margin-bottom: 15px; }
 .hippo-console-warning p a{font-weight: bold; color: #b3001b}
 .hippo-console-warning p {float: left;}
