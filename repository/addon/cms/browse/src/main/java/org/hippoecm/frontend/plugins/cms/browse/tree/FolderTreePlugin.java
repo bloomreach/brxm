@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.hippoecm.frontend.model.IJcrNodeModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelService;
 import org.hippoecm.frontend.model.tree.AbstractTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,7 +29,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.DocumentListFilter;
 import org.hippoecm.frontend.plugins.standards.FolderTreeNode;
 import org.hippoecm.frontend.service.IJcrService;
-import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.wicket1985.Tree;
 import org.slf4j.Logger;
@@ -43,16 +43,21 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
     protected Tree tree;
     protected JcrTreeModel treeModel;
     protected AbstractTreeNode rootNode;
-    private String startingPath = "/";
+    private JcrNodeModel rootModel;
 
     public FolderTreePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         context.registerService(this, IJcrService.class.getName());
 
-        startingPath = config.getString("path", startingPath);
+        String startingPath = config.getString("path", "/");
+        rootModel = new JcrNodeModel(startingPath);
+
+        ModelService modelService = new ModelService(context.getReference(this).getServiceId(), rootModel);
+        modelService.init(context);
+
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
-        this.rootNode = new FolderTreeNode(new JcrNodeModel(startingPath), folderTreeConfig);
+        this.rootNode = new FolderTreeNode(rootModel, folderTreeConfig);
 
         treeModel = new JcrTreeModel(rootNode);
         tree = new CmsJcrTree("tree", treeModel) {
@@ -85,12 +90,6 @@ public class FolderTreePlugin extends RenderPlugin implements IJcrNodeModelListe
     public void onBeforeRender() {
         tree.detach();
         super.onBeforeRender();
-    }
-    
-    @Override
-    public void focus(IRenderService child) {
-        super.focus(child);
-        setModel(new JcrNodeModel(startingPath));
     }
 
     public void onFlush(JcrNodeModel nodeModel) {

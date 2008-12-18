@@ -50,7 +50,7 @@ public abstract class AbstractTreeNode extends NodeModelWrapper implements TreeN
         super(nodeModel);
     }
 
-    public Enumeration children() {
+    public Enumeration<AbstractTreeNode> children() {
         ensureChildrenLoaded();
         return Collections.enumeration(children);
     }

@@ -17,23 +17,17 @@
 package org.hippoecm.frontend.plugins.xinha.dialog.browse;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
-import org.hippoecm.frontend.plugins.xinha.dialog.DialogBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.IDialog;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BrowserPlugin extends RenderPlugin {
+public abstract class BrowserPlugin extends AbstractBrowserPlugin {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
@@ -41,19 +35,24 @@ public abstract class BrowserPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
     
-    final protected BrowseView browseView;
-
-    final private Form form;
-    final protected AjaxButton ok;
-    final protected AjaxButton cancel;
-    final protected FeedbackPanel feedback;
-    
+    protected final BrowseView browseView;
     protected final JcrNodeModel initialModel;
     
     public BrowserPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        browseView = new BrowseView(context, config) {
+        JsBean bean = getBean();
+        if (bean == null) {
+            initialModel = null;
+        } else {
+            initialModel = bean.getNodeModel();
+        }
+        JcrNodeModel selectedNode = initialModel;
+        if (initialModel == null) {
+            String path = config.getString("model.folder.root", "/");
+            selectedNode = new JcrNodeModel(path);
+        }
+        browseView = new BrowseView(context, config, selectedNode) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -63,47 +62,6 @@ public abstract class BrowserPlugin extends RenderPlugin {
 
         };
         
-        JsBean bean = getBean();
-        if(bean == null) {
-            initialModel = null;
-        } else {
-            initialModel = bean.getNodeModel();
-            if (initialModel != null) {
-                browseView.browse(initialModel);
-            }
-        }
-        
-        add(form = new Form("form"));
-
-        form.add(ok = new AjaxButton("ok", form) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
-                getDialog().ok(target);
-            }
-
-        });
-        ok.setEnabled(false);
-
-        form.add(cancel = new AjaxButton("close", form) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onSubmit(AjaxRequestTarget target, Form form) {
-                getDialog().cancel(target);
-            }
-        });
-
-        //TODO: feedback is written in the page feedbackpanel, not this one in the modalwindow
-        form.add(feedback = new FeedbackPanel("dialog.feedback"));
-        feedback.setOutputMarkupId(true);
-        
-    }
-
-    private IDialog getDialog() {
-        String id = getPluginConfig().getString(DialogBehavior.DIALOG_SERVICE_ID);
-        return getPluginContext().getService(id, IDialog.class);
     }
     
     protected void onDocumentChanged(IModel model) {
@@ -133,6 +91,7 @@ public abstract class BrowserPlugin extends RenderPlugin {
         return (JsBean) getModelObject();
     }
     
+    @Override
     protected void enableOk(boolean state) {
         AjaxRequestTarget.get().addComponent(ok.setEnabled(state));
     }
@@ -142,8 +101,8 @@ public abstract class BrowserPlugin extends RenderPlugin {
     abstract public class BrowseView extends AbstractBrowseView {
         private static final long serialVersionUID = 1L;
 
-        protected BrowseView(IPluginContext context, IPluginConfig config) {
-            super(context, config);
+        protected BrowseView(IPluginContext context, IPluginConfig config, JcrNodeModel document) {
+            super(context, config, document);
 
             context.registerService(new IModelListener() {
 

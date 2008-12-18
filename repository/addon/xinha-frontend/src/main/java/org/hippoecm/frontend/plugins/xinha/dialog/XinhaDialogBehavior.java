@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
@@ -16,13 +17,14 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
 
     public XinhaDialogBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
+        
+        dialog.getModal().setResizable(false);
+        //dialog.getModal().setCookieName("XinhaDialog-" + getId());
     }
 
     @Override
     protected String createTitle() {
-        Request request = RequestCycle.get().getRequest();
-        String pluginName = request.getParameter("pluginName");
-        return "XinhaDialog[" + pluginName + "]";
+        return new StringResourceModel(getId() + "-dialog-title", getComponent(), null).getString();
     }
 
     @Override
@@ -45,7 +47,15 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
         return bean.toJsString();
     }
 
-    abstract protected JsBean newDialogModelObject(HashMap<String, String> p);
+    @Override
+    protected String getServiceId() {
+        return "cms-pickers/" + getId();
+    }
+    
+    protected abstract JsBean newDialogModelObject(HashMap<String, String> p);
 
-    abstract protected void onOk(JsBean bean);
+    protected abstract void onOk(JsBean bean);
+
+    protected abstract String getId();
+
 }

@@ -13,56 +13,41 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.dialog.images;
+
+package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import java.util.HashMap;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.XinhaImageService;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 
-public class ImagePickerBehavior extends XinhaDialogBehavior {
+public class ExternalLinkBehavior extends XinhaDialogBehavior {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
-    private static final long serialVersionUID = 1L;
-
-    public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
+    public ExternalLinkBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
         
-        dialog.getModal().setUseInitialHeight(true);
-        dialog.getModal().setMinimalWidth(805);
-        dialog.getModal().setMinimalHeight(420);
-        dialog.getModal().setResizable(true);
-        /*
         dialog.getModal().setInitialWidth(805);
-        dialog.getModal().setInitialHeight(420);
-        */
+        dialog.getModal().setInitialHeight(250);
     }
-    
+
     @Override
     protected JsBean newDialogModelObject(HashMap<String, String> p) {
-        return getImageService().createXinhaImage(p);
+        return new XinhaLink(p);
     }
 
     @Override
     protected void onOk(JsBean bean) {
-        XinhaImage xi = (XinhaImage) bean;
-        String url = getImageService().attach(xi);
-        if (url != null) {
-            xi.setUrl(url);
-        }
-    }
-
-    private XinhaImageService getImageService() {
-        return context.getService(clusterServiceId + ".images", XinhaImageService.class);
     }
 
     @Override
     protected String getId() {
-        return "imagepicker";
+        return "externallinks";
     }
 
 }

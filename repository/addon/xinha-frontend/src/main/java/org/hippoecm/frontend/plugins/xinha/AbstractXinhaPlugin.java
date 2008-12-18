@@ -51,7 +51,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialog;
 import org.hippoecm.frontend.plugins.xinha.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.links.LinkPickerBehavior;
+import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
+import org.hippoecm.frontend.plugins.xinha.dialog.links.InternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.dragdrop.XinhaDropBehavior;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -86,7 +87,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
     private AbstractDefaultAjaxBehavior postBehavior;
 
     private XinhaDialog dialog;
-    private LinkPickerBehavior linkPickerBehavior;
+    private InternalLinkBehavior linkPickerBehavior;
+    private ExternalLinkBehavior externalLinkBehavior;
     private ImagePickerBehavior imagePickerBehavior;
     private XinhaImageService imageService;
     private XinhaLinkService linkService;
@@ -121,8 +123,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
             context.registerService(linkService, serviceId + ".links");
 
             fragment.add(imagePickerBehavior = new ImagePickerBehavior(context, config, serviceId));
-            fragment.add(linkPickerBehavior = new LinkPickerBehavior(context, config, serviceId));
-
+            fragment.add(linkPickerBehavior = new InternalLinkBehavior(context, config, serviceId));
+            fragment.add(externalLinkBehavior = new ExternalLinkBehavior(context, config, serviceId));
+            
             add(new XinhaDropBehavior(context, config) {
                 private static final long serialVersionUID = 1L;
 
@@ -224,6 +227,11 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                         linkPickerBehavior.getCallbackUrl().toString());
             }
 
+            if (configuration.getPluginConfiguration("CreateExternalLink") != null) {
+                configuration.getPluginConfiguration("CreateExternalLink").addProperty("callbackUrl",
+                        externalLinkBehavior.getCallbackUrl().toString());
+            }
+
             JcrPropertyValueModel propertyValueModel = getValueModel();
             String nodePath = propertyValueModel.getJcrPropertymodel().getItemModel().getParentModel().getPath();
             configuration.addProperty("prefix", XinhaUtil.encode(BINARIES_PREFIX + nodePath));
@@ -254,6 +262,9 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
                 if (linkPickerBehavior != null) {
                     linkPickerBehavior.render(target);
+                }
+                if (externalLinkBehavior != null) {
+                    externalLinkBehavior.render(target);
                 }
             }
         }

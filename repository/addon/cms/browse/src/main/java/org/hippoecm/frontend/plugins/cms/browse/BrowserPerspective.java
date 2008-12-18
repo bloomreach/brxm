@@ -15,8 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.browse.AbstractBrowseView;
@@ -37,7 +36,8 @@ public class BrowserPerspective extends Perspective {
     public BrowserPerspective(IPluginContext context, final IPluginConfig config) {
         super(context, config);
         
-        browserView = new AbstractBrowseView(context, config) {
+        String path = config.getString("model.folder.root", "/");
+        browserView = new AbstractBrowseView(context, config, new JcrNodeModel(path)) {
             private static final long serialVersionUID = 1L;
 
             @Override

@@ -24,7 +24,7 @@
     <sv:value>frontend:clusterfolder</sv:value>
   </sv:property>
   
-  <sv:node sv:name="image">
+  <sv:node sv:name="imagepicker">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
@@ -33,7 +33,7 @@
       <sv:value>service.dialog.id</sv:value>
     </sv:property>
     
-     <sv:node sv:name="imagePicker">
+     <sv:node sv:name="imageBrowser">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
       </sv:property>
@@ -75,6 +75,14 @@
       <sv:property sv:name="extension.breadcrumb" sv:type="String">
         <sv:value>service.dialog.breadcrumb</sv:value>
       </sv:property>
+      <sv:node sv:name="browser.options">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugin</sv:value>
+        </sv:property>
+        <sv:property sv:name="list.page.size" sv:type="String">
+          <sv:value>5</sv:value>
+        </sv:property>
+      </sv:node>
     </sv:node>
     
     <sv:node sv:name="modalBrowserPlugin">
@@ -95,9 +103,6 @@
       </sv:property>
       <sv:property sv:name="headers" sv:type="String">
         <sv:value>section-images</sv:value>
-      </sv:property>
-      <sv:property sv:name="behaviours" sv:type="String">
-        <sv:value>toggle</sv:value>
       </sv:property>
       <sv:property sv:name="extension.images" sv:type="String">
         <sv:value>service.dialog.tree.images</sv:value>
@@ -309,10 +314,39 @@
         </sv:node>
       </sv:node>
     </sv:node>
-  </sv:node> 
+  </sv:node>
+
+  <!-- External Linkpicker configuration -->
+    <sv:node sv:name="externallinks">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugincluster</sv:value>
+    </sv:property>
   
-    <!-- Internal Linkpicker configuration -->  
-   <sv:node sv:name="links-internal">
+    <sv:property sv:name="frontend.overrides" sv:type="String">
+      <sv:value>service.dialog.id</sv:value>
+    </sv:property>
+    
+     <sv:node sv:name="externalLinkPicker">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.modal.content</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>${model.id}</sv:value>
+      </sv:property>
+      <sv:property sv:name="service.dialog.id" sv:type="String">
+        <sv:value>${service.dialog.id}</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+  <!-- Internal Linkpicker configuration -->  
+  <sv:node sv:name="internallinks">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
@@ -375,6 +409,9 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.dialog.shortcuts</sv:value>
       </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>${cluster.id}.model.folder</sv:value>
+      </sv:property>
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.config</sv:value>
       </sv:property>
@@ -387,9 +424,6 @@
         <sv:value>section-documents</sv:value>
         <sv:value>section-images</sv:value>
         <sv:value>section-files</sv:value>
-      </sv:property>
-      <sv:property sv:name="behaviours" sv:type="String">
-        <sv:value>toggle</sv:value>
       </sv:property>
       <sv:property sv:name="extension.content" sv:type="String">
         <sv:value>service.dialog.tree.content</sv:value>
