@@ -1162,7 +1162,7 @@
             <sv:value>introduction</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:type" sv:type="String">
-            <sv:value>hippostd:html</sv:value>
+            <sv:value>Html</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:path" sv:type="String">
             <sv:value>defaultcontent:introduction</sv:value>
