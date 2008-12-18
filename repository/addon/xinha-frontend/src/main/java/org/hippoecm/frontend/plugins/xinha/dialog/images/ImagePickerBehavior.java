@@ -31,15 +31,6 @@ public class ImagePickerBehavior extends XinhaDialogBehavior {
 
     public ImagePickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
-        
-        dialog.getModal().setUseInitialHeight(true);
-        dialog.getModal().setMinimalWidth(805);
-        dialog.getModal().setMinimalHeight(420);
-        dialog.getModal().setResizable(true);
-        /*
-        dialog.getModal().setInitialWidth(805);
-        dialog.getModal().setInitialHeight(420);
-        */
     }
     
     @Override

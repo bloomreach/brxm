@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin.Configuration;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.XinhaLink;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ public class XinhaLinkService implements IClusterable {
 
         Node node = nodeModel.getNode();
         String uuid = item.getUuid();
-        String linkName = item.getDisplayName();
+        String linkName = item.getNodeName();
 
         /* test whether link is already present as facetselect. If true then:
          * 1) if uuid also same, use this link
@@ -144,7 +145,8 @@ public class XinhaLinkService implements IClusterable {
         private String uuid;
         private String displayName;
         private boolean isHandle;
-
+        private String nodeName;
+        
         public NodeItem(Node listNode) throws RepositoryException {
             this(listNode, null);
         }
@@ -162,6 +164,11 @@ public class XinhaLinkService implements IClusterable {
             if (listNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 isHandle = true;
             }
+            this.nodeName = NodeNameCodec.encode(listNode.getName());
+        }
+
+        public String getNodeName() {
+            return nodeName;
         }
 
         public String getUuid() {

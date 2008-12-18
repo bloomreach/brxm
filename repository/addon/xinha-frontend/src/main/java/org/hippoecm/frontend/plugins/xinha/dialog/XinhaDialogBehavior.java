@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -17,9 +18,12 @@ public abstract class XinhaDialogBehavior extends DialogBehavior {
 
     public XinhaDialogBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
-        
-        dialog.getModal().setResizable(false);
-        //dialog.getModal().setCookieName("XinhaDialog-" + getId());
+    }
+    
+    @Override
+    protected void configureModal(final ModalWindow modal) {
+        modal.setResizable(false);
+        modal.setCookieName("XinhaDialog" + getId());
     }
 
     @Override
