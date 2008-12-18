@@ -18,6 +18,11 @@
   limitations under the License.
 -->
 <document>
+
+ <!--
+   Do not edit! This xml.vm file is and should continue to be a copy of 
+   the file https://svn.hippocms.org/repos/hippo/hippo-ecm/trunk/src/site/xdoc/support/community.xml.vm
+ -->
   <properties>
     <title>Community support</title>
   </properties>
