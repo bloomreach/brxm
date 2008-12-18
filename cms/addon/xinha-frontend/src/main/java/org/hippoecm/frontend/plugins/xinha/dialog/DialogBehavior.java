@@ -20,6 +20,7 @@ import java.io.Serializable;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.ModelService;
@@ -48,7 +49,7 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
     protected ModelService<IModel> modelService;
     protected IRenderService dialogRenderer;
 
-    protected IDialog dialog;
+    private IDialog dialog;
 
     protected String clusterServiceId;
 
@@ -70,7 +71,11 @@ public abstract class DialogBehavior extends AbstractDefaultAjaxBehavior impleme
         dialog.getModal().setTitle(createTitle());
         String contentId = dialog.getModal().getContentId();
         dialog.getModal().setContent(createContentPanel(contentId, newDialogModel()));
+        configureModal(dialog.getModal());
         dialog.show(target);
+    }
+
+    protected void configureModal(final ModalWindow modal) {
     }
 
     protected Component createContentPanel(String contentId, IModel model) {

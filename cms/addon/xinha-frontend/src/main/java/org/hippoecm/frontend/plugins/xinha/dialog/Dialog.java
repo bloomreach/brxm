@@ -32,8 +32,8 @@ public abstract class Dialog implements IDialog {
     private IDialogListener listener;
     private ModalWindow modal;
     
-    private int defaultWidth = 450;
-    private int defaultHeight = 300;
+    private int defaultWidth = 809;
+    private int defaultHeight = 375;
     private boolean defaultResizable = true;
 
     public Dialog(String id) {
@@ -48,11 +48,11 @@ public abstract class Dialog implements IDialog {
             
         });
         
-        modal.setInitialWidth(defaultWidth);
-        modal.setInitialHeight(defaultHeight);
         modal.setResizable(defaultResizable);
+        modal.setMinimalWidth(defaultWidth);
+        modal.setMinimalHeight(defaultHeight);
         
-        modal.setCookieName("Dialog" + id); //TODO: test of +id is ok
+        modal.setCookieName(null); //TODO: test of +id is ok
         modal.setTitle("Dialog[" + id + "]");
         modal.setContent(new Panel(modal.getContentId()));
 

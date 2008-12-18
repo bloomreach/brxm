@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import java.util.HashMap;
 
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.XinhaLinkService;
@@ -32,6 +33,15 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
     
     public InternalLinkBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
+    }
+
+    @Override
+    protected void configureModal(final ModalWindow modal) {
+        super.configureModal(modal);
+        
+        modal.setInitialHeight(500);
+        modal.setInitialWidth(850);
+        modal.setResizable(true);
     }
 
     @Override

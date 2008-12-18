@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import java.util.HashMap;
 
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
@@ -31,11 +32,16 @@ public class ExternalLinkBehavior extends XinhaDialogBehavior {
 
     public ExternalLinkBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
-        
-        dialog.getModal().setInitialWidth(805);
-        dialog.getModal().setInitialHeight(250);
     }
-
+    
+    @Override
+    protected void configureModal(final ModalWindow modal) {
+        super.configureModal(modal);
+        modal.setInitialHeight(200);
+        modal.setInitialWidth(400);
+        modal.setResizable(false);
+    }
+    
     @Override
     protected JsBean newDialogModelObject(HashMap<String, String> p) {
         return new XinhaLink(p);
