@@ -16,8 +16,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <span class="admin-user-action" wicket:id="create-user"/>
+    <span class="admin-user-action">
+      <a href="#" wicket:id="create-user"><wicket:message key="user-create"/></a>
+    </span>
+    
+    
     <br/><br/>
+    
     <table class="dataview" cellspacing="0" wicket:id="table">[table]</table>
   </wicket:panel>
 </html>

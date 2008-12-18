@@ -16,36 +16,13 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <h1>
-    <a wicket:id="menu-main"><wicket:message key="admin-perspective-title"/></a>
-    &gt; 
-    <a wicket:id="menu-users"><wicket:message key="admin-users-title"/></a>
-    </h1>
-    <br/>
     
-    <div wicket:id="feedback" class="feedback">[[ feedback ]]</div>
+    <div wicket:id="feedback" class="feedback"/>
     
-    <span wicket:id="panel"></span>
+    <span wicket:id="fragment-panel"></span>
   </wicket:panel>
-    
-  <wicket:fragment wicket:id="list-users-fragment">
-    <span wicket:id="list-users-panel">[[ list users ]]</span>
-  </wicket:fragment>
-  
-  
-  <wicket:fragment wicket:id="view-user-fragment">
-    <span wicket:id="view-user-panel">[[ view user ]]</span>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="add-user-fragment">
-    <span wicket:id="add-user-panel">[[ add user form ]]</span>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="edit-user-fragment">
-    <span wicket:id="edit-user-panel">[[ edit user form ]]</span>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="set-password-fragment">
-    <span wicket:id="set-password-panel">[[ set password form ]]</span>
+
+  <wicket:fragment wicket:id="details-fragment">
+    <span wicket:id="details-panel"/>
   </wicket:fragment>
 </html>

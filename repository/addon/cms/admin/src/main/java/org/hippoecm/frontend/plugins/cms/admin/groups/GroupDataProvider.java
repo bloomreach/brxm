@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,14 +31,17 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GroupDataProvider extends SortableDataProvider {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
     private static final long serialVersionUID = 1L;
-    
+
+    private static final Logger log = LoggerFactory.getLogger(GroupDataProvider.class);
+
     private static final String QUERY_GROUP_LIST = "SELECT * FROM hippo:group";
 
     private static int totalCount = -1;
@@ -71,14 +73,12 @@ public class GroupDataProvider extends SortableDataProvider {
                     try {
                         groups.add(new Group(node));
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        log.warn("Unable to instantiate new group.", e);
                     }
                 }
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error while trying to query group nodes.", e);
         }
         return groups.iterator();
     }
@@ -98,8 +98,7 @@ public class GroupDataProvider extends SortableDataProvider {
             totalCount = (int) countQuery.execute().getNodes().getSize();
             return totalCount;
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Unable to count the total number of groups, returning 0", e);
             return 0;
         }
     }

@@ -49,7 +49,7 @@ public class User implements IClusterable {
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
     private static final String NT_FRONTEND_USER = "frontend:user";
-    
+
     public static final String PROP_FIRSTNAME = "frontend:firstname";
     public static final String PROP_LASTNAME = "frontend:lastname";
     public static final String PROP_EMAIL = "frontend:email";
@@ -57,7 +57,7 @@ public class User implements IClusterable {
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
 
     private final static String QUERY_USER_EXISTS = "SELECT * FROM hippo:user WHERE fn:name()='{}'";
-    
+
     private final static String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hippo:group WHERE jcr:primaryType='hippo:group' AND hippo:members='{}'";
     private final static String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hippo:externalgroup WHERE hippo:members='{}'";
 
@@ -76,7 +76,6 @@ public class User implements IClusterable {
 
     private transient Node node;
 
-    
     //-------------- static helpers -------------------//
     public static QueryManager getQueryManager() throws RepositoryException {
         return ((UserSession) Session.get()).getQueryManager();
@@ -111,7 +110,7 @@ public class User implements IClusterable {
             throw new RepositoryException("Unable to hash password", e);
         }
     }
-    
+
     //--------------- getters and setters -----------//
     public String getProvider() {
         return provider;
@@ -124,11 +123,11 @@ public class User implements IClusterable {
     public boolean isActive() {
         return active;
     }
-    
+
     public void setActive(boolean active) {
         this.active = active;
     }
-    
+
     public String getUsername() {
         return username;
     }
@@ -191,8 +190,6 @@ public class User implements IClusterable {
     public void setEmail(String email) {
         this.email = email;
     }
-    
-    
 
     //----------------------- constructors ---------//
     public User() {
@@ -233,11 +230,8 @@ public class User implements IClusterable {
 
     //--------------- group membership helpers ------------------//
     public List<DetachableGroup> getLocalMemberships() {
-        if (localMemberships != null) {
-            return localMemberships;
-        }
         String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", username);
-        localMemberships= new ArrayList<DetachableGroup>();
+        localMemberships = new ArrayList<DetachableGroup>();
         NodeIterator iter;
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
@@ -248,7 +242,7 @@ public class User implements IClusterable {
                     try {
                         localMemberships.add(new DetachableGroup(node.getPath()));
                     } catch (RepositoryException e) {
-                        log.warn("Unable to add group to local memberships for user '{}'", username,  e);
+                        log.warn("Unable to add group to local memberships for user '{}'", username, e);
                     }
                 }
             }
@@ -257,7 +251,6 @@ public class User implements IClusterable {
         }
         return localMemberships;
     }
-    
 
     public List<DetachableGroup> getExternalMemberships() {
         if (externalMemberships != null) {
@@ -285,7 +278,6 @@ public class User implements IClusterable {
         return externalMemberships;
     }
 
-
     //-------------------- persistence helpers ----------//
     /**
      * Create a new user
@@ -295,15 +287,15 @@ public class User implements IClusterable {
         if (userExists(getUsername())) {
             throw new RepositoryException("User already exists");
         }
-            
+
         // FIXME: should be delegated to a usermanager
         StringBuilder relPath = new StringBuilder();
         relPath.append(HippoNodeType.CONFIGURATION_PATH);
         relPath.append("/");
         relPath.append(HippoNodeType.USERS_PATH);
         relPath.append("/");
-        relPath.append(NodeNameCodec.encode(getUsername(),true));
-        
+        relPath.append(NodeNameCodec.encode(getUsername(), true));
+
         node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_FRONTEND_USER);
         node.setProperty(PROP_EMAIL, getEmail());
         node.setProperty(PROP_FIRSTNAME, getFirstName());
@@ -327,7 +319,7 @@ public class User implements IClusterable {
             throw new RepositoryException("Only frontend:users can be edited.");
         }
     }
-    
+
     /**
      * Delete the current user
      * @throws RepositoryException
@@ -343,12 +335,11 @@ public class User implements IClusterable {
      * @param password
      * @throws RepositoryException
      */
-    public void savePassword(String password)  throws RepositoryException {
+    public void savePassword(String password) throws RepositoryException {
         node.setProperty(HippoNodeType.HIPPO_PASSWORD, createPasswordHash(password));
         node.save();
     }
-    
-    
+
     //--------------------- default object -------------------//
     /**
      * @see java.lang.Object#equals(java.lang.Object)

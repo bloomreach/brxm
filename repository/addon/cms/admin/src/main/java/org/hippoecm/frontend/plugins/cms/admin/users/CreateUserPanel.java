@@ -15,11 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -27,18 +33,18 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateUserPanel extends Panel {
+public class CreateUserPanel extends BreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -48,9 +54,10 @@ public class CreateUserPanel extends Panel {
 
     private DetachableUser userModel = new DetachableUser();
 
-    public CreateUserPanel(final String id, final UsersPanel panel) {
-        super(id);
+    public CreateUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
+
 
         // title
         add(new Label("title", new StringResourceModel("user-create-title", userModel)));
@@ -105,17 +112,13 @@ public class CreateUserPanel extends Panel {
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
                     UserDataProvider.countPlusOne();
                     Session.get().info(getString("user-created", userModel));
-                    panel.showView(target, userModel);
+                    // one up
+                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                    breadCrumbModel.setActive(l.get(l.size() -2));
                 } catch (RepositoryException e) {
                     Session.get().warn(getString("user-create-failed", userModel));
                     log.error("Unable to create user '" + username + "' : ", e);
-                    panel.refresh();
                 }
-            }
-
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                panel.refresh();
             }
         });
 
@@ -125,7 +128,9 @@ public class CreateUserPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                panel.showList();
+                // one up
+                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                breadCrumbModel.setActive(l.get(l.size() -2));
             }
         }.setDefaultFormProcessing(false));
     }
@@ -145,6 +150,11 @@ public class CreateUserPanel extends Panel {
         protected String resourceKey() {
             return "UsernameValidator.exists";
         }
+    }
+
+    public String getTitle() {
+        //return getString("user-create");
+        return "user-create";
     }
 
 }

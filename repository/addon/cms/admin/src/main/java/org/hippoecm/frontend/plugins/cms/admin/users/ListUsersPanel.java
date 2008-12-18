@@ -19,17 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This panel displays a pageable list of users.
  */
-public class ListUsersPanel extends Panel {
+public class ListUsersPanel extends BreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -46,22 +49,35 @@ public class ListUsersPanel extends Panel {
     private final UserDataProvider userDataProvider = new UserDataProvider();
     private final AdminDataTable table;
 
-    public ListUsersPanel(final String id, final UsersPanel panel) {
-        super(id);
+
+    public ListUsersPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
+
+        add(new AjaxBreadCrumbPanelLink("create-user", context, this, CreateUserPanel.class));
+        
         List<IColumn> columns = new ArrayList<IColumn>();
 
         columns.add(new AbstractColumn(new Model("User"), "username") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item item, final String componentId, final IModel model) {
+                
                 AjaxLinkLabel action = new AjaxLinkLabel(componentId, new PropertyModel(model, "username")) {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        panel.showView(target, model);
+                        //panel.showView(target, model);
+                        activate(new IBreadCrumbPanelFactory()
+                        {
+                            public BreadCrumbPanel create(String componentId,
+                                    IBreadCrumbModel breadCrumbModel)
+                            {
+                                return new ViewUserPanel(componentId, context, breadCrumbModel, model);
+                            }
+                        });
                     }
                 };
                 item.add(action);
@@ -86,14 +102,11 @@ public class ListUsersPanel extends Panel {
         table = new AdminDataTable("table", columns, userDataProvider, 40);
         table.setOutputMarkupId(true);
         add(table);
+    }
 
-        add(new AjaxLinkLabel("create-user", new ResourceModel("user-create")) {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                panel.showAddForm();
-            }
-        });
+    public String getTitle() {
+        //return getString("admin-users-title");
+        return "admin-users-title";
     }
 }

@@ -16,16 +16,26 @@
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Group implements IClusterable {
 
@@ -33,17 +43,46 @@ public class Group implements IClusterable {
     private final static String SVN_ID = "$Id$";
     
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(Group.class);
 
     private final static String PROP_DESCRIPTION = "hippo:description";
+    private final static String QUERY_ALL_LOCAL = "select * from hippo:group where hippo:securityprovider='internal'";
     
-    private final String path;
-    private final String groupname;
+    private String path;
+    private String groupname;
     
     private final Set<String> members = new TreeSet<String>();
     
     private String description;
     private boolean external = false;
+
+    private transient Node node;
     
+    public static QueryManager getQueryManager() throws RepositoryException {
+        return ((UserSession) Session.get()).getQueryManager();
+    }
+    
+    public static List<Group> getLocalGroups() {
+        List<Group> groups = new ArrayList<Group>();
+        NodeIterator iter;
+        try {
+            Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
+            iter = query.execute().getNodes();
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                if (node != null) {
+                    try {
+                        groups.add(new Group(node));
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to add group to list", e);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while querying for a list of local groups", e);
+        }
+        return groups;
+    }
     
     public boolean isExternal() {
         return external;
@@ -69,10 +108,16 @@ public class Group implements IClusterable {
         this.description = description;
     }
 
+
+    //----------------------- constructors ---------//
+    public Group() {
+    }
+    
     public Group(final Node node) throws RepositoryException {
         this.path = node.getPath().substring(1);
         this.groupname = NodeNameCodec.decode(node.getName());
-
+        this.node = node;
+        
         if (node.isNodeType(HippoNodeType.NT_EXTERNALGROUP)) {
             setExternal(true);
         }
@@ -96,7 +141,23 @@ public class Group implements IClusterable {
         return members;
     }
     
+
+    //-------------------- persistence helpers ----------//
     
+    public void removeMembership(User user) throws RepositoryException {
+        members.remove(user.getUsername());
+        node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
+        node.save();
+    }
+
+    public void addMembership(User user) throws RepositoryException {
+        members.add(user.getUsername());
+        node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
+        node.save();
+    }
+    
+
+    //--------------------- default object -------------------//
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */

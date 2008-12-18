@@ -45,12 +45,12 @@ public class UserDataProvider extends SortableDataProvider {
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DetachableUser.class);
-    
+
     private static final String QUERY_USER_LIST = "SELECT * FROM hippo:user WHERE jcr:primaryType<>'hippo:user'";
 
     private static int totalCount = -1;
     private static String sessionId = "none";
-    
+
     public UserDataProvider() {
         setSort("frontend:lastname", true);
     }
@@ -78,7 +78,7 @@ public class UserDataProvider extends SortableDataProvider {
                 }
             }
         } catch (RepositoryException e) {
-            log.error("Error while trying to quere user nodes.", e);
+            log.error("Error while trying to query user nodes.", e);
         }
         return users.iterator();
     }
@@ -107,7 +107,7 @@ public class UserDataProvider extends SortableDataProvider {
     public static void countMinusOne() {
         totalCount--;
     }
-    
+
     public static void countPlusOne() {
         totalCount++;
     }
