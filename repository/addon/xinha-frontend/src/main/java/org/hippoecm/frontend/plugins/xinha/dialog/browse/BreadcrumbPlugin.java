@@ -111,7 +111,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
     }
 
     private ListView getListView(JcrNodeModel model) {
-        List<NodeItem> list = new LinkedList<NodeItem>();
+        final List<NodeItem> list = new LinkedList<NodeItem>();
         //add current folder as disabled
         list.add(new NodeItem(model, false));
         if (!roots.contains(model.getItemModel().getPath())) {
@@ -146,6 +146,12 @@ public class BreadcrumbPlugin extends RenderPlugin {
                 item.add(link);
                 String state = nodeItem.enabled ? "enabled" : "disabled";
                 item.add(new AttributeAppender("class", new Model(state), " "));
+                
+                if (item.getIndex() == 0) {
+                    item.add(new AttributeAppender("class", new Model("first"), " "));
+                } else if (item.getIndex() == (list.size() - 1)) {
+                    item.add(new AttributeAppender("class", new Model("last"), " "));
+                }
             }
         };
         return listview;
