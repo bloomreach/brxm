@@ -60,6 +60,12 @@ CreateLink.prototype.prepareDialog = function()
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {
+        //Xinha handles the f_target value as an object instead of a string; if it is set in the Dialog
+        //convert the string value to an object
+        if (self.dialog._values.f_target != undefined && self.dialog._values.f_target != null) {
+            var v = { value: self.dialog._values.f_target};
+            self.dialog._values.f_target = v;
+        }
         self.apply();
         self.editor.plugins.AutoSave.instance.saveSynchronous();
     };
