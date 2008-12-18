@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.cms.admin.permissions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
@@ -28,12 +28,14 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 
-public class PermissionsPanel extends BreadCrumbPanel {
+public class PermissionsPanel extends AdminBreadCrumbPanel {
     
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -120,8 +122,8 @@ public class PermissionsPanel extends BreadCrumbPanel {
         add(table);
     }
 
-    public String getTitle() {
-        return getString("admin-permissions-title");
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("admin-permissions-title", component, null);
     }
 
 }

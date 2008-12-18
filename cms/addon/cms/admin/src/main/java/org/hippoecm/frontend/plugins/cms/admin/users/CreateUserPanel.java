@@ -19,13 +19,12 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -34,17 +33,19 @@ import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateUserPanel extends BreadCrumbPanel {
+public class CreateUserPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ public class CreateUserPanel extends BreadCrumbPanel {
 
 
         // title
-        add(new Label("title", new StringResourceModel("user-create-title", userModel)));
+//        add(new Label("title", new StringResourceModel("user-create-title", userModel)));
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(userModel));
@@ -152,9 +153,8 @@ public class CreateUserPanel extends BreadCrumbPanel {
         }
     }
 
-    public String getTitle() {
-        //return getString("user-create");
-        return "user-create";
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("user-create", component, null);
     }
 
 }

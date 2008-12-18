@@ -15,19 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.system;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.PropertyPopulator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 
-public class SystemInfoPanel extends BreadCrumbPanel {
+public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
@@ -60,8 +62,8 @@ public class SystemInfoPanel extends BreadCrumbPanel {
         });
     }
 
-    public String getTitle() {
-        return getString("admin-system-info-title");
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("admin-system-info-title", component, null);
     }
 
 }

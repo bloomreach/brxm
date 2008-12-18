@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.admin.users;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
@@ -30,7 +31,9 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
@@ -40,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This panel displays a pageable list of users.
  */
-public class ListUsersPanel extends BreadCrumbPanel {
+public class ListUsersPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -104,9 +107,7 @@ public class ListUsersPanel extends BreadCrumbPanel {
         add(table);
     }
 
-
-    public String getTitle() {
-        //return getString("admin-users-title");
-        return "admin-users-title";
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("admin-users-title", component, null);
     }
 }
