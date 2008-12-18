@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -58,6 +59,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
     private IModel caption = new StringResourceModel("unknown", this, null);
     private String stateSummary = "UNKNOWN";
     private boolean isLocked = false;
+    private boolean pendingRequest = false;
     private Component locked;
 
     public BasicReviewedActionsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
@@ -74,9 +76,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         addWorkflowAction("edit-dialog", new StringResourceModel("edit", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
-
             public boolean isVisible() {
-                return !isLocked;
+                return !isLocked && !pendingRequest;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -103,9 +104,8 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
 
         addWorkflowAction("requestPublication-dialog", new StringResourceModel("request-publication", this, null), new Visibility() {
             private static final long serialVersionUID = 1L;
-
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -126,7 +126,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+                return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -147,7 +147,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
             }
         }, new WorkflowAction() {
             private static final long serialVersionUID = 1L;
@@ -171,7 +171,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("live"));
+                return !(stateSummary.equals("review") || stateSummary.equals("live")) && !pendingRequest;
 
             }}, new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
@@ -197,7 +197,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             private static final long serialVersionUID = 1L;
 
             public boolean isVisible() {
-                return !(stateSummary.equals("review") || stateSummary.equals("new"));
+                return !(stateSummary.equals("review") || stateSummary.equals("new")) && !pendingRequest;
 
             }}, new IDialogFactory() {
                     private static final long serialVersionUID = 1L;
@@ -230,11 +230,20 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             Node node = nodeModel.getNode();
             Node child = null;
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                pendingRequest = false;
+                for (NodeIterator iter = node.getNodes("hippo:request"); iter.hasNext(); ) {
+                    Node request = iter.nextNode();
+                        if(request.isNodeType(HippoNodeType.NT_REQUEST)) {
+                            if(!request.hasProperty("type") || !request.getProperty("type").getString().equals("rejected")) {
+                                pendingRequest = true;
+                            }
+                        }
+                }
                 for (NodeIterator iter = node.getNodes(node.getName()); iter.hasNext(); ) {
                     child = iter.nextNode();
-                    if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                         node = child;
-                        if(child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
+                        if (child.hasProperty("hippostd:state") && child.getProperty("hippostd:state").getString().equals("draft")) {
                             break;
                         }
                     } else {
@@ -255,7 +264,7 @@ public class BasicReviewedActionsWorkflowPlugin extends AbstractWorkflowPlugin {
             }
         } catch (RepositoryException ex) {
             // status unknown, maybe there are legit reasons for this, so don't emit a warning
-            log.info(ex.getClass().getName()+": "+ex.getMessage());
+            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
 }
