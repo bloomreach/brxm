@@ -376,9 +376,10 @@ background-image:url(images/box-blue2.png);}
 .hippo-root div.wicket-mask-dark{opacity: 0.5; background-image:url("images/transparent-back.png"); filter:alpha(opacity=0.5)}
 
 /* Picker General Styling */
-.hippo-picker{height: 300px; background: url("images/picker-back.png") repeat-y; width: 400px}
-/* .hippo-picker-tree{width: 193px; height: 300px; float: left;} */
-.hippo-picker-list-details{height: 300px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: 597px}
+.hippo-picker{background: url("images/picker-back.png") repeat-y;}
+.hippo-picker-tree{width: 193px; float: left;} 
+.hippo-picker-tree .hippo-tree{height: auto}
+.hippo-picker-list-details{height: 296px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto}
 .hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
 .hippo-picker-breadcrumbs{background: url("images/silver4.png") repeat-x; height: 24px; width: 597px; border-bottom: 1px solid #afafaf; margin-left: 194px;}
 
@@ -392,11 +393,9 @@ padding: 0;
 display: inline;
 }
 
-
 /* Image Picker */
-.hippo-picker-tree .hippo-accordion-unit h2 a{width: auto}
 .hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 16px;}
-body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat;}
+body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; line-height: 16px; background: url("images/hippo-window-input-back.png") no-repeat; width: 660px}
 .hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 2px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}
 
 
@@ -431,12 +430,12 @@ body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; paddi
 
 /* Image Gallery */
 /* ================================================ */
-.hippo-gallery-images {margin-top: 25px;}
 .hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details td.icon-48 {background: url("images/hippo-gallery-folder.png") no-repeat 4px center;}
 .hippo-gallery-images .icon-48 span.folder-48 {background: transparent}
 .hippo-gallery-images .icon-48 span.folder-48 span{background: transparent}
 .hippo-gallery-images .icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
 .hippo-gallery-images .icon-48 span span img{height: 60px; width: auto}
+
 /* Paging */
 /* ================================================ */
 .hippo-list-paging{}
