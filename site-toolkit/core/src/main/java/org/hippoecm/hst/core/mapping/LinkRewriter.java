@@ -42,17 +42,25 @@ public class LinkRewriter {
         this.nodeTypeName = nodeTypeName;
         this.repositoryMapping = repositoryMapping;
         this.isPrefix = isPrefix;
-        if (!path.startsWith("/")) {
-            log.warn("hst:nodepath should be absolute so should start with a '/'. Prepending '/' now");
-            path = "/" + path;
-        }
-        if (path.endsWith("/*")) {
+        
+        if (path.endsWith("*")) {
             this.path = path.substring(0, path.length() - 1);
-            depth = path.split("/").length;
         } else {
             this.isExactMatch = true;
             this.path = path;
         }
+        
+        if (path.startsWith("/")) {
+            log.debug("hst:nodepath starts with a '/' the configured hst:nodepath will be treated compared to the jcr root");
+        } else {
+            log.debug("hst:nodepath is relative because it does not start with a '/'. path will be taken relative to the canonical path of the contentContextBase");
+            if("".equals(this.path)) {
+                this.path = repositoryMapping.getCanonicalContentPath();
+            } else {
+                this.path = repositoryMapping.getCanonicalContentPath()+"/" + this.path;
+            }
+        }
+        depth = this.path.split("/").length;
     }
 
     public String getLocation(Node node) throws RepositoryException{
