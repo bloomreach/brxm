@@ -260,14 +260,19 @@ padding-right: 9px;
 .hippo-list-details tr td:hover{cursor: pointer}
 .hippo-list-details th a {color: #666666;}
 
-.hippo-list-details tr.even td{background: none}
 .hippo-list-details tr.even.hippo-list-selected td{background: #fff6e0}
-.hippo-list-details tr.odd td{background: none}
 .hippo-list-details tr.odd.hippo-list-selected td{background: #fff6e0}
 
 .hippo-list-details .hippo-list-order-ascending{background: url('images/icons/arrow-sort-down-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-descending {background: url('images/icons/arrow-sort-up-16.png') center right no-repeat; padding-right: 20px;}
 .hippo-list-details .hippo-list-order-none{}
+
+/* images */
+.hippo-list-details td.icon-48 {background: url("images/hippo-gallery-folder.png") no-repeat 4px center;}
+.hippo-list-details td.icon-48 span.folder-48 {background: transparent}
+.hippo-list-details td.icon-48 span.folder-48 span{background: transparent}
+.hippo-list-details td.icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
+.hippo-list-details td.icon-48 span span img{height: 60px; width: auto}
 
 .hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
 .hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
@@ -378,20 +383,34 @@ background-image:url(images/box-blue2.png);}
 /* Picker General Styling */
 .hippo-picker{background: url("images/picker-back.png") repeat-y;}
 .hippo-picker-tree{width: 193px; float: left;} 
-.hippo-picker-tree .hippo-tree{height: auto}
-.hippo-picker-list-details{height: 296px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto}
+.hippo-picker-tree .hippo-tree{height: 255px; width: 193px}
+.hippo-picker-list-details{height: 255px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: auto; position: relative; overflow: auto}
 .hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
-.hippo-picker-breadcrumbs{background: url("images/silver4.png") repeat-x; height: 24px; width: 597px; border-bottom: 1px solid #afafaf; margin-left: 194px;}
 
-.hippo-picker-breadcrumbs ul {
-list-style: none;
-margin: 0;
-padding: 0;
-}
+.hippo-picker-list-details .hippo-list-paging{}
 
-.hippo-picker-breadcrumbs ul li {
-display: inline;
-}
+/*
+.hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
+.hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
+.hippo-list-paging td div{margin-top: 20px; margin-bottom: 2px; width: 100%;}
+.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
+.hippo-list-paging td span{padding: 3px;}
+.hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
+.hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
+*/
+
+.hippo-picker-navigation{background: url("images/silver4.png") repeat-x; height: 20px; width: 598px; border-bottom: 1px solid #afafaf; border-right: 1px solid #afafaf; margin-left: 194px; padding-top: 2px; padding-bottom: 2px; padding-left: 2px;}
+
+.hippo-picker-navigation-buttons{background: url("images/hippo-picker-navigation-back.png") repeat-x;}
+.hippo-picker-navigation .end{background: url("images/hippo-picker-navigation-end.png") no-repeat; }
+
+.hippo-picker-navigation-breadcrumbs .breadcrumb{background: url("images/hippo-picker-navigation-breadcrumb.png") repeat-x; }
+.hippo-picker-navigation-breadcrumbs {background: url("images/hippo-picker-navigation-start.png") no-repeat; padding-left: 6px;} 
+.hippo-picker-navigation-buttons input{float: left; padding: 0px; height: 22px; width: 24px; font-size: 11px; background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat; border: none; margin: 0px; text-indent: -9999px;}
+.hippo-picker-navigation-breadcrumbs {float: left; margin-left: 2px;}
+.hippo-picker-navigation-breadcrumbs li {display: block; float: left;}
+/* background: url("images/hippo-picker-navigation-back.png") repeat-x; */
+.hippo-picker-navigation-breadcrumbs li em, .hippo-picker-navigation-breadcrumbs li a{display: block; float: left; height: 22px; background: url("images/hippo-picker-navigation-breadcrumb.png") no-repeat top right; line-height: 18px; padding-right: 35px;}
 
 /* Image Picker */
 .hippo-picker-properties label{float: left; margin-right: 5px; padding: 2px; line-height: 16px;}
@@ -428,20 +447,6 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-reorder table tr th{padding: 2px; padding-left: 4px; padding-bottom: 6px;}
 .hippo-reorder table tr td{padding: 2px; padding-left: 4px; padding-bottom: 4px;}
 
-/* Image Gallery */
-/* ================================================ */
-.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details td.icon-48 {background: url("images/hippo-gallery-folder.png") no-repeat 4px center;}
-.hippo-gallery-images .icon-48 span.folder-48 {background: transparent}
-.hippo-gallery-images .icon-48 span.folder-48 span{background: transparent}
-.hippo-gallery-images .icon-48 span span{display: block; height: 55px; width: 55px; background: white; margin-left: 2px; overflow: hidden}
-.hippo-gallery-images .icon-48 span span img{height: 60px; width: auto}
-
-/* Paging */
-/* ================================================ */
-.hippo-list-paging{}
-.hippo-list-paging a.hippo-list-paging-previous{background: url("images/icons/go-previous-16.png") no-repeat center left; padding: 8px; padding-left: 20px;}
-.hippo-list-paging a.hippo-list-paging-next{background: url("images/icons/go-next-16.png") no-repeat center right; padding: 8px; padding-right: 20px}
-
 /* Navigator */
 /* ================================================ */
 .hippo-browser-documents-small .hippo-perspective-title{color: white; padding: 2px; padding-left: 4px; float: left; padding-top: 5px;}
@@ -461,8 +466,7 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 /* Tree Plugin */
 
 /* overriding standard wicket tree styling */
-
-/* Complicated stuff... remove the margin and set the hippo-tree wrapping div up as a scrollbar  */
+/* remove the margin and set the hippo-tree wrapping div up as a scrollpane */
 .hippo-tree {overflow: auto; width: 200px; height: 350px;}
 /* remove margins */
 .hippo-tree div.wicket-tree{margin: 0px; border: none;}
@@ -491,7 +495,6 @@ body .hippo-picker-properties input{border: 1px solid #afafaf; padding: 4px; lin
 .hippo-tree .wicket-tree span.corner, 
 .hippo-tree .wicket-tree span.indent-line,
 .hippo-tree .wicket-tree span.indent-blank {background-image: none; width: 14px;} 
-
 
 .hippo-tree .icon-16{padding: 0px; width: 16px; height: 16px; display: block; float: left; margin-right: 5px; margin-left: 3px;}
 
@@ -524,11 +527,6 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus{background-position: 0px -24px}
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
-
-
-
-/* Navigator Workflow Actions */
-/* .hippo-browser-documents-workflow{background: url("images/silverBack2.png") repeat-x left bottom; height: 24px; padding-top: 25px;} */
 
 /* Document Preview Plugin */
 /* ================================================ */
