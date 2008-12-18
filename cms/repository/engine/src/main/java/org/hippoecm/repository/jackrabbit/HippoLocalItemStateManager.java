@@ -89,7 +89,7 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
     private Set<ItemState> virtualStates = new HashSet<ItemState>();
     private Map<NodeId,ItemState> virtualNodes = new HashMap<NodeId,ItemState>();
 
-    private boolean virtualLayerEnabled = true;
+    private boolean virtualLayerEnabled = false;
 
     public HippoLocalItemStateManager(SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory,
                                       ItemStateCacheFactory cacheFactory, NodeTypeRegistry ntReg, boolean enabled) {
@@ -168,7 +168,7 @@ class HippoLocalItemStateManager extends XAItemStateManager implements DataProvi
             try {
                 provider.initialize(this);
             } catch(RepositoryException ex) {
-                log.error("cannot initialize virtual provider "+provider.getClass().getName()+": "+ex);
+                log.error("cannot initialize virtual provider "+provider.getClass().getName()+": "+ex.getMessage(), ex);
             }
         }
     }
