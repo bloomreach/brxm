@@ -87,7 +87,7 @@ public final class DetachableUser extends LoadableDetachableModel {
         if (path == null) {
             return new User();
         }
-        // loads contact from jcr
+        // loads user from jcr
         try {
             return new User(getRootNode().getNode(path));
         } catch (RepositoryException e) {

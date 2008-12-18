@@ -17,9 +17,6 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
   <div class="admin-user-panel">
-    <span class="admin-user-title" wicket:id="title"/>
-
-    <br/><br/>
 
     <table class="admin-user-details">
       <tr>
@@ -80,8 +77,9 @@
     
     <div class="admin-user-action-container">
       <ul>
-        <li class="admin-user-action" wicket:id="edit-user"/>
-        <li class="admin-user-action" wicket:id="set-user-password"/>
+        <li class="admin-user-action" wicket:id="edit-user"><wicket:message key="user-edit"/></li>
+        <li class="admin-user-action" wicket:id="set-user-password"><wicket:message key="user-set-password"/></li>
+        <li class="admin-user-action" wicket:id="set-user-memberships"><wicket:message key="user-set-memberships"/></li>
         <li class="admin-user-action" wicket:id="delete-user"/>
       </ul>
     </div>

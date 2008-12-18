@@ -18,23 +18,22 @@ package org.hippoecm.frontend.plugins.cms.admin.permissions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.plugins.cms.admin.AdminPerspective;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 
-public class PermissionsPanel extends Panel {
+public class PermissionsPanel extends BreadCrumbPanel {
     
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
@@ -46,8 +45,8 @@ public class PermissionsPanel extends Panel {
     /** Visibility toggle so that either the link or the form is visible. */
     private boolean formVisible = false;
 
-    public PermissionsPanel(final String id, final AdminPerspective parent) {
-        super(id);
+    public PermissionsPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
         // add feedback panel to show errors
@@ -119,17 +118,10 @@ public class PermissionsPanel extends Panel {
             }
         };
         add(table);
+    }
 
-        add(new AjaxFallbackLink("close") {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                parent.showConfigPanel();
-            }
-        });
-        
-//        form = new AddDomainForm("form");
-//        add(form);
+    public String getTitle() {
+        return getString("admin-permissions-title");
     }
 
 }

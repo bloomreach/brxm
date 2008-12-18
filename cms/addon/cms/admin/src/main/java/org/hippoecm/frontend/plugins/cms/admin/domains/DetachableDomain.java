@@ -20,37 +20,36 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
 import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DetachableDomain extends LoadableDetachableModel {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-    
+    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
+    private static final Logger log = LoggerFactory.getLogger(DetachableUser.class);
+
     private final String path;
 
-    protected Node getRootNode() throws RepositoryException
-    {
+    protected Node getRootNode() throws RepositoryException {
         return ((UserSession) Session.get()).getJcrSession().getRootNode();
     }
 
     /**
      * @param c
      */
-    public DetachableDomain(final Domain domain)
-    {
+    public DetachableDomain(final Domain domain) {
         this(domain.getPath());
     }
 
     /**
      * @param id
      */
-    public DetachableDomain(final String path)
-    {
-        if (path == null || path.length() == 0)
-        {
+    public DetachableDomain(final String path) {
+        if (path == null || path.length() == 0) {
             throw new IllegalArgumentException();
         }
         this.path = path.startsWith("/") ? path.substring(1) : path;
@@ -60,8 +59,7 @@ public final class DetachableDomain extends LoadableDetachableModel {
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return path.hashCode();
     }
 
@@ -72,19 +70,13 @@ public final class DetachableDomain extends LoadableDetachableModel {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(final Object obj) {
+        if (obj == this) {
             return true;
-        }
-        else if (obj == null)
-        {
+        } else if (obj == null) {
             return false;
-        }
-        else if (obj instanceof DetachableDomain)
-        {
-            DetachableDomain other = (DetachableDomain)obj;
+        } else if (obj instanceof DetachableDomain) {
+            DetachableDomain other = (DetachableDomain) obj;
             return path.equals(other.path);
         }
         return false;
@@ -94,14 +86,12 @@ public final class DetachableDomain extends LoadableDetachableModel {
      * @see org.apache.wicket.model.LoadableDetachableModel#load()
      */
     @Override
-    protected Domain load() 
-    {
+    protected Domain load() {
         // loads contact from jcr
         try {
             return new Domain(getRootNode().getNode(path));
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Unable to load domain, returning null", e);
             return null;
         }
     }

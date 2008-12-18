@@ -15,43 +15,41 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DetachableGroup extends LoadableDetachableModel {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
-    
-    private static final long serialVersionUID = 1L;
-    
-    private final String path;
 
-    protected Node getRootNode() throws RepositoryException
-    {
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(DetachableGroup.class);
+
+    private String path;
+
+    protected Node getRootNode() throws RepositoryException {
         return ((UserSession) Session.get()).getJcrSession().getRootNode();
     }
 
-    /**
-     * @param c
-     */
-    public DetachableGroup(final Group group)
-    {
+    public DetachableGroup() {
+    }
+
+    public DetachableGroup(final Group group) {
         this(group.getPath());
     }
 
     /**
      * @param id
      */
-    public DetachableGroup(final String path)
-    {
-        if (path == null || path.length() == 0)
-        {
+    public DetachableGroup(final String path) {
+        if (path == null || path.length() == 0) {
             throw new IllegalArgumentException();
         }
         this.path = path.startsWith("/") ? path.substring(1) : path;
@@ -61,8 +59,7 @@ public final class DetachableGroup extends LoadableDetachableModel {
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return path.hashCode();
     }
 
@@ -73,19 +70,13 @@ public final class DetachableGroup extends LoadableDetachableModel {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(final Object obj)
-    {
-        if (obj == this)
-        {
+    public boolean equals(final Object obj) {
+        if (obj == this) {
             return true;
-        }
-        else if (obj == null)
-        {
+        } else if (obj == null) {
             return false;
-        }
-        else if (obj instanceof DetachableGroup)
-        {
-            DetachableGroup other = (DetachableGroup)obj;
+        } else if (obj instanceof DetachableGroup) {
+            DetachableGroup other = (DetachableGroup) obj;
             return path.equals(other.path);
         }
         return false;
@@ -95,18 +86,20 @@ public final class DetachableGroup extends LoadableDetachableModel {
      * @see org.apache.wicket.model.LoadableDetachableModel#load()
      */
     @Override
-    protected Group load() 
-    {
-        // loads contact from jcr
+    protected Group load() {
+        if (path == null) {
+            return null;
+            //return new Group();
+        }
+        // loads group from jcr
         try {
             return new Group(getRootNode().getNode(path));
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Unable to re-attach user with path '{}'", path, e);
             return null;
         }
     }
-    
+
     /**
      * Remove after upgrade to wicket 1.4, which has generics.
      * This is just an alias for (Group) getObject().
@@ -115,4 +108,9 @@ public final class DetachableGroup extends LoadableDetachableModel {
     public Group getGroup() {
         return (Group) getObject();
     }
+    
+//    public void setPath(final String path) {
+//        this.path = path.startsWith("/") ? path.substring(1) : path;;
+//    }
+    
 }

@@ -31,14 +31,17 @@ import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvid
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DomainDataProvider extends SortableDataProvider {
 
     @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final String SVN_ID = "$Id$";
+    private static final Logger log = LoggerFactory.getLogger(DomainDataProvider.class);
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hippo:domain";
 
     private static int totalCount = -1;
@@ -70,14 +73,12 @@ public class DomainDataProvider extends SortableDataProvider {
                     try {
                         domains.add(new Domain(node));
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        log.warn("Unable to instantiate new group.", e);
                     }
                 }
             }
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Error while trying to query domain nodes.", e);
         }
         return domains.iterator();
     }
@@ -97,8 +98,7 @@ public class DomainDataProvider extends SortableDataProvider {
             totalCount = (int) countQuery.execute().getNodes().getSize();
             return totalCount;
         } catch (RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Unable to count the total number of domains, returning 0", e);
             return 0;
         }
     }
@@ -111,13 +111,13 @@ public class DomainDataProvider extends SortableDataProvider {
         sortParam.getProperty();
         StringBuilder sb = new StringBuilder();
         sb.append(QUERY_DOMAIN_LIST).append(" ");
-//        sb.append("ORDER BY ");
-//        sb.append(sortParam.getProperty()).append(" ");
-//        if (sortParam.isAscending()) {
-//            sb.append("ASC");
-//        } else {
-//            sb.append("DESC");
-//        }
+        //        sb.append("ORDER BY ");
+        //        sb.append(sortParam.getProperty()).append(" ");
+        //        if (sortParam.isAscending()) {
+        //            sb.append("ASC");
+        //        } else {
+        //            sb.append("DESC");
+        //        }
         return sb.toString();
     }
 

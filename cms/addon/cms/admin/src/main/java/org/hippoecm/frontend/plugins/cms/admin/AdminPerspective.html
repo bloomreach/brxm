@@ -15,36 +15,16 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
+  
+    <div class="admin-breadcrumbbar" style="margin: 10px; padding: 10px; font-size: 16px;">
+      <span wicket:id="breadCrumbBar">bar</span>
+    </div>
 
-    <div wicket:id="content" class="admin-panel"/>
+    <div wicket:id="feedback" class="admin-feedback" style="border: thin solid black; margin: 10px; padding: 10px;"/>
+    
+    <div class="admin-panel" style="border: thin solid black; margin: 10px; padding: 10px;">
+      <span wicket:id="panel">bar</span>
+    </div>
+
   </wicket:panel>
-  
-  <wicket:fragment wicket:id="admin-panel">
-     <h1><wicket:message key="admin-perspective-title"></wicket:message></h1>
-     <div><h2><a wicket:id="users">&gt; users</a></h2></div>
-     <div><h2><a wicket:id="groups">&gt; groups</a></h2></div>
-     <div><h2><a wicket:id="permissions">&gt; permissions</a></h2></div>
-     <div><h2><a wicket:id="system-info">&gt; system info</a></h2></div>
-     <div><h2><a wicket:id="properties">&gt; system properties</a></h2></div>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="users-fragment">
-     <wicket:fragment wicket:id="user-panel"/>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="groups-fragment">
-     <div><h2><a wicket:id="groups-close">&lt;&lt; back &lt;&lt;</a></h2></div>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="permissions-fragment">
-     <wicket:fragment wicket:id="permissions-panel"/>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="system-info-fragment">
-     <span wicket:id="system-info-panel"/>
-  </wicket:fragment>
-  
-  <wicket:fragment wicket:id="properties-fragment">
-     <span wicket:id="properties-panel"/>
-  </wicket:fragment>
 </html>

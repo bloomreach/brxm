@@ -15,38 +15,42 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
+import java.util.List;
+
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.validation.EqualPasswordInputValidator;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SetPasswordPanel extends Panel {
+public class SetPasswordPanel extends BreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SetPasswordPanel.class);
 
     private final Form form;
+    private final IModel model;
 
-    public SetPasswordPanel(final String id, final IModel userModel, final UsersPanel panel) {
-        super(id);
+    public SetPasswordPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel model) {
+        super(id, breadCrumbModel);
         setOutputMarkupId(true);
-
-        // title
-        add(new Label("title", new StringResourceModel("user-set-password-title", userModel)));
+        this.model = model;
+        final User user = (User) model.getObject();
 
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form");
@@ -72,24 +76,20 @@ public class SetPasswordPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                User user = (User) userModel.getObject();
                 String username = user.getUsername();
                 try {
                     user.savePassword(password.getModelObjectAsString());
                     log.info("User '" + username + "' password set by "
                             + ((UserSession) Session.get()).getCredentials().getStringValue("username"));
-                    Session.get().info(getString("user-password-set", userModel));
-                    panel.showView(target, userModel);
+                    Session.get().info(getString("user-password-set", model));
+                    // one up
+                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                    breadCrumbModel.setActive(l.get(l.size() -2));
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("user-save-failed", userModel));
+                    Session.get().warn(getString("user-save-failed", model));
                     log.error("Unable to set password for user '" + username + "' : ", e);
-                    panel.refresh();
+                    //panel.refresh();
                 }
-            }
-
-            @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
-                panel.refresh();
             }
         });
 
@@ -99,8 +99,14 @@ public class SetPasswordPanel extends Panel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                panel.showView(target, userModel);
+                // one up
+                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                breadCrumbModel.setActive(l.get(l.size() -2));
             }
         }.setDefaultFormProcessing(false));
+    }
+
+    public String getTitle() {
+        return getString("user-set-password-title", model);
     }
 }

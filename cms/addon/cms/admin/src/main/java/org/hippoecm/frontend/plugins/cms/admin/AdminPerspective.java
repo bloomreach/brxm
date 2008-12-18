@@ -15,20 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
-import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.groups.GroupsPanel;
-import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPanel;
-import org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPanel;
-import org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPanel;
-import org.hippoecm.frontend.plugins.cms.admin.users.UsersPanel;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.frontend.service.PluginRequestTarget;
 
 public class AdminPerspective extends Perspective {
     @SuppressWarnings("unused")
@@ -36,73 +29,33 @@ public class AdminPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(AdminPerspective.class);
-
-    private Fragment adminFragment;
-    private Fragment usersFragment;
-    private Fragment groupsFragment;
-    private Fragment permissionsFragment;
-    private Fragment propertiesFragment;
-    private Fragment systemInfoFragment;
-    
-    
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         setOutputMarkupId(true);
-        
-        // the admin menu
-        adminFragment = new Fragment("content", "admin-panel", this);
 
+        // add feedback panel to show errors
+        FeedbackPanel feedback = new FeedbackPanel("feedback");
+        feedback.setOutputMarkupId(true);
+        add(feedback);
 
-        // add admin components
-        usersFragment = new Fragment("content", "users-fragment", this);
-        usersFragment.add(new UsersPanel("user-panel", this));
+        BreadCrumbBar breadCrumbBar = new BreadCrumbBar("breadCrumbBar");
+        add(breadCrumbBar);
 
-        groupsFragment = new Fragment("content", "groups-fragment", this);
-        groupsFragment.add(new GroupsPanel("groups-close", this));
+        AdminPanel adminPanel = new AdminPanel("panel", context, breadCrumbBar);
+        add(adminPanel);
 
-        permissionsFragment = new Fragment("content", "permissions-fragment", this);
-        permissionsFragment.add(new PermissionsPanel("permissions-panel", this));
-
-        propertiesFragment = new Fragment("content", "properties-fragment", this);
-        propertiesFragment.add(new SystemPropertiesPanel("properties-panel", this));
-
-        systemInfoFragment = new Fragment("content", "system-info-fragment", this);
-        systemInfoFragment.add(new SystemInfoPanel("system-info-panel", this));
-
-        // add menu links
-        addFragmentLink("users", usersFragment);
-        addFragmentLink("groups", groupsFragment);
-        addFragmentLink("permissions", permissionsFragment);
-        addFragmentLink("properties", propertiesFragment);
-        addFragmentLink("system-info", systemInfoFragment);
-        
-        add(adminFragment);
-    }
-    
-    public void showConfigPanel() {
-        AdminPerspective.this.replace(adminFragment);
-        AdminPerspective.this.redraw();
-    }
-    
-    public void refresh() {
-        AdminPerspective.this.redraw();
+        breadCrumbBar.setActive(adminPanel);
     }
 
-    private void addFragmentLink(final String id, final Fragment fragment) {
-        adminFragment.add(new AjaxFallbackLink(id) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                AdminPerspective.this.replace(fragment);
-                AdminPerspective.this.redraw();
-            }
-        });
-        
+    // override to do unconditional redraw
+    @Override
+    public void render(PluginRequestTarget target) {
+        target.addComponent(this);
+        super.render(target);
     }
     
     public void showDialog(IDialogService.Dialog dialog) {
         getPluginContext().getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
     }
+
 }
