@@ -155,7 +155,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage());
         QueryResult rs = query.execute();
         Node result = null;
-        Node target = userSession.getRootNode();
+        Node target = rootSession.getRootNode();
         if(!subject.getPath().substring(1).equals(""))
             target = target.getNode(subject.getPath().substring(1));
         Map<String, String[]> renames = new TreeMap<String, String[]>();
@@ -203,7 +203,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
             }
         }
         if(result != null) {
-            userSession.save();
             rootSession.save();
             return result.getPath();
         } else {
@@ -215,14 +214,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         if(name.startsWith("/"))
             name  = name.substring(1);
         String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
             if (subject.getPath().equals(ATTIC_PATH)) {
                 offspring.remove();
                 folder.save();
             } else {
-                userSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
+                rootSession.getWorkspace().move(folder.getPath() + "/" + offspring.getName(),
                                                 ATTIC_PATH + "/" + offspring.getName());
             }
         }
@@ -231,7 +230,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
        List<String> list = new ArrayList<String>(newOrder);
        Collections.reverse(list);
-       Node folder = userSession.getNodeByUUID(subject.getUUID());
+       Node folder = rootSession.getNodeByUUID(subject.getUUID());
        for (String item : list) {
            Node head = folder.getNodes().nextNode();
            if (!head.isSame(folder.getNode(item))) {
@@ -245,7 +244,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         if(name.startsWith("/"))
             name  = name.substring(1);
         String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
             offspring.remove();
@@ -255,8 +254,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
-        Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
-        Node documentNode = userSession.getNodeByUUID(document.getIdentity());
+        Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
             documentNode.remove();
             folderNode.save();
@@ -282,7 +281,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
         if(name.startsWith("/"))
             name  = name.substring(1);
         String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
+        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             if (folder.hasNode(newName)) {
                 throw new WorkflowException("Cannot move document to same name");
@@ -300,8 +299,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, InternalWorkflow {
 
     public void rename(Document document, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
-        Node folderNode = (path.equals("") ? userSession.getRootNode() : userSession.getRootNode().getNode(path));
-        Node documentNode = userSession.getNodeByUUID(document.getIdentity());
+        Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
         if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
             documentNode = documentNode.getParent();
         }
