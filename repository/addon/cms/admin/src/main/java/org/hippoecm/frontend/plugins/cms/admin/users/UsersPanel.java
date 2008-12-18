@@ -15,18 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugins.cms.admin.AdminPerspective;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 
-public class UsersPanel extends BreadCrumbPanel {
+public class UsersPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
@@ -47,8 +44,8 @@ public class UsersPanel extends BreadCrumbPanel {
         //add(detailsFragment);
     }
 
-    public String getTitle() {
-        return getString("admin-users-title");
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("admin-users-title", component, null);
     }
     
 //    void refresh() {

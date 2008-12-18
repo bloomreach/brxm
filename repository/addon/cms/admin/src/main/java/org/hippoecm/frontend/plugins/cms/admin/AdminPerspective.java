@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbBar;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.PluginRequestTarget;
 
@@ -28,7 +29,7 @@ public class AdminPerspective extends Perspective {
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
-
+ 
     public AdminPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         setOutputMarkupId(true);
@@ -38,7 +39,7 @@ public class AdminPerspective extends Perspective {
         feedback.setOutputMarkupId(true);
         add(feedback);
 
-        BreadCrumbBar breadCrumbBar = new BreadCrumbBar("breadCrumbBar");
+        BreadCrumbBar breadCrumbBar = new AdminBreadCrumbBar("breadCrumbBar");
         add(breadCrumbBar);
 
         AdminPanel adminPanel = new AdminPanel("panel", context, breadCrumbBar);

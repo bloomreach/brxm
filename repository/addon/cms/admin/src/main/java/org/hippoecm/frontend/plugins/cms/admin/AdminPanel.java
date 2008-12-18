@@ -15,9 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.crumbs.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.groups.GroupsPanel;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPanel;
 import org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPanel;
@@ -25,11 +28,10 @@ import org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPanel;
 import org.hippoecm.frontend.plugins.cms.admin.users.ListUsersPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxBreadCrumbPanelLink;
 
-public class AdminPanel extends BreadCrumbPanel {
+public class AdminPanel extends AdminBreadCrumbPanel {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
-    
     
     public AdminPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
@@ -41,8 +43,7 @@ public class AdminPanel extends BreadCrumbPanel {
         add(new AjaxBreadCrumbPanelLink("system-properties", context, this, SystemPropertiesPanel.class));
     }
 
-    public String getTitle() {
-        //return getString("admin-title");
-        return "admin-title";
+    public IModel getTitle(Component component) {
+        return new StringResourceModel("admin-title", component, null);
     }
 }
