@@ -18,6 +18,7 @@ cd ..\..\..\..\..\addon\xinha\src\main\webapp\xinha\plugins
 junction AutoSave ..\..\..\..\..\webResources\xinha\plugins\AutoSave
 junction AutoResize ..\..\..\..\..\webResources\xinha\plugins\AutoResize
 junction CreateLink ..\..\..\..\..\webResources\xinha\plugins\CreateLink
+junction CreateExternalLink ..\..\..\..\..\webResources\xinha\plugins\CreateExternalLink
 junction InsertImage ..\..\..\..\..\webResources\xinha\plugins\InsertImage
 junction FullscreenCompatible ..\..\..\..\..\webResources\xinha\plugins\FullscreenCompatible
 
