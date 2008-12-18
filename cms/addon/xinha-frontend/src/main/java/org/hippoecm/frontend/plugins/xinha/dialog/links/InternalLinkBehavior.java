@@ -17,35 +17,21 @@ package org.hippoecm.frontend.plugins.xinha.dialog.links;
 
 import java.util.HashMap;
 
-import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.xinha.XinhaLinkService;
 import org.hippoecm.frontend.plugins.xinha.dialog.JsBean;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 
-public class LinkPickerBehavior extends XinhaDialogBehavior {
+public class InternalLinkBehavior extends XinhaDialogBehavior {
 
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     
-    private String linkServiceId;
-    
-    public LinkPickerBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
+    public InternalLinkBehavior(IPluginContext context, IPluginConfig config, String serviceId) {
         super(context, config, serviceId);
-        linkServiceId = serviceId + ".links";
-    }
-
-    @Override
-    protected String createTitle() {
-        return new StringResourceModel("linkpicker-dialog-title", getComponent(), null).getString();
-    }
-
-    @Override
-    protected String getServiceId() {
-        return "cms-pickers/links-internal";
     }
 
     @Override
@@ -63,6 +49,11 @@ public class LinkPickerBehavior extends XinhaDialogBehavior {
     }
 
     private XinhaLinkService getLinkService() {
-        return context.getService(linkServiceId, XinhaLinkService.class);
+        return context.getService(clusterServiceId + ".links", XinhaLinkService.class);
+    }
+
+    @Override
+    protected String getId() {
+        return "internallinks";
     }
 }

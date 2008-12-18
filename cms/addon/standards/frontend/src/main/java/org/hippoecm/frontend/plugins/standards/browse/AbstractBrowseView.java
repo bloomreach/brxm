@@ -33,11 +33,11 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
     private IPluginConfig config;
     private BrowseService browseService;
 
-    protected AbstractBrowseView(IPluginContext context, IPluginConfig config) {
+    protected AbstractBrowseView(IPluginContext context, IPluginConfig config, JcrNodeModel document) {
         this.config = config;
         this.context = context;
 
-        browseService = new BrowseService(context, config);
+        browseService = new BrowseService(context, config, document);
         context.registerService(new IModelListener() {
 
             public void updateModel(IModel model) {
@@ -64,12 +64,18 @@ public abstract class AbstractBrowseView implements IBrowseService, IDetachable 
                         viewerName = null;
                     }
 
+                    IPluginConfig parameters = config.getPluginConfig("browser.options");
                     IPluginConfigService pluginConfig = context.getService(IPluginConfigService.class.getName(),
                             IPluginConfigService.class);
                     IClusterConfig cluster = pluginConfig.getCluster(config.getString(VIEWERS) + "/" + type);
                     cluster.put("wicket.id", getExtensionPoint());
                     cluster.put("model.folder", config.getString("model.folder"));
                     cluster.put("model.document", config.getString("model.document"));
+                    for (String override : cluster.getOverrides()) {
+                        if (parameters.containsKey(override)) {
+                            cluster.put(override, parameters.get(override));
+                        }
+                    }
                     viewer = context.start(cluster);
                     viewerName = type;
 

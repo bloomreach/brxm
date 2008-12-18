@@ -41,24 +41,26 @@ public class JcrTreeModel extends DefaultTreeModel implements IDetachable {
     }
 
     public AbstractTreeNode lookup(JcrNodeModel nodeModel) {
-        String basePath = root.getNodeModel().getItemModel().getPath();
-        String path = nodeModel.getItemModel().getPath();
         AbstractTreeNode node = root;
-        if (path.startsWith(basePath)) {
-            String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
-            try {
-                for (String element : elements) {
-                    AbstractTreeNode child = node.getChild(element);
-                    if (child != null) {
-                        node = child;
-                    } else {
-                        break;
+        if (nodeModel != null) {
+            String basePath = root.getNodeModel().getItemModel().getPath();
+            String path = nodeModel.getItemModel().getPath();
+            if (path.startsWith(basePath)) {
+                String[] elements = StringUtils.split(path.substring(basePath.length()), '/');
+                try {
+                    for (String element : elements) {
+                        AbstractTreeNode child = node.getChild(element);
+                        if (child != null) {
+                            node = child;
+                        } else {
+                            break;
+                        }
                     }
+                } catch (RepositoryException ex) {
+                    log.error("Unable to find node in tree", ex.getMessage());
                 }
-            } catch (RepositoryException ex) {
-                log.error("Unable to find node in tree", ex.getMessage());
             }
-        }        
+        }
         return node;
     }
 

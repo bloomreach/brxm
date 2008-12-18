@@ -790,6 +790,9 @@
     <sv:property sv:name="model.document" sv:type="String">
       <sv:value>model.browse.document</sv:value>
     </sv:property>
+    <sv:property sv:name="model.folder.root" sv:type="String">
+      <sv:value>/content</sv:value>
+    </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>browse-perspective-title</sv:value>
     </sv:property>
@@ -923,6 +926,9 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.browse.tree</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>model.browse.folder</sv:value>
+    </sv:property>
     <sv:property sv:name="translator.id" sv:type="String">
       <sv:value>service.translator.config</sv:value>
     </sv:property>
@@ -937,9 +943,6 @@
       <sv:value>section-images</sv:value>
       <sv:value>section-files</sv:value>
       <sv:value>section-configuration</sv:value>
-    </sv:property>
-    <sv:property sv:name="behaviours" sv:type="String">
-      <sv:value>toggle</sv:value>
     </sv:property>
     <sv:property sv:name="extension.content" sv:type="String">
       <sv:value>service.browse.tree.content</sv:value>
