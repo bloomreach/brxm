@@ -283,9 +283,6 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             if (upgradeEnabled) {
                 ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
                 UpdaterEngine.migrate(jcrRootSession);
-                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
-            } else {
-                ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
             }
 
             try {
@@ -321,6 +318,8 @@ class LocalHippoRepository extends HippoRepositoryImpl {
             } catch (AccessDeniedException ex) {
                 throw new RepositoryException("Could not initialize repository with hippo node types", ex);
             }
+
+            ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
 
             // After initializing namespaces and nodetypes switch to the decorated session.
             rootSession = (HippoSession) hippoRepositoryFactory.getSessionDecorator(repository, syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
