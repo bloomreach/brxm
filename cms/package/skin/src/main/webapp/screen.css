@@ -377,7 +377,7 @@ background-image:url(images/box-blue2.png);}
 
 /* Picker General Styling */
 .hippo-picker{height: 300px; background: url("images/picker-back.png") repeat-y; width: 400px}
-.hippo-picker-tree{width: 193px; height: 300px; float: left;}
+/* .hippo-picker-tree{width: 193px; height: 300px; float: left;} */
 .hippo-picker-list-details{height: 300px; margin-left: 194px; background: #ffffff url('images/silverBack3.png') repeat-x; width: 597px}
 .hippo-picker-properties{clear:both; height: 35px; padding: 10px; border-top: 1px solid #afafaf}
 .hippo-picker-breadcrumbs{background: url("images/silver4.png") repeat-x; height: 24px; width: 597px; border-bottom: 1px solid #afafaf; margin-left: 194px;}
@@ -460,36 +460,49 @@ body .hippo-picker-properties input{width: 85%; border: 1px solid #afafaf; paddi
 .hippo-browser-documents-small .hippo-browser-documents-workflow select option{color: #666666; background: white; padding: 1px;}
 
 /* Tree Plugin */
-.hippo-tree {margin:0px; border: none; background: #ffffff;}
-.hippo-tree *{white-space: nowrap;}
-.hippo-tree .wicket-tree{margin: 0px; overflow: hidden; width: auto;}
 
-.hippo-tree .wicket-tree div.a_{width: 100%; display:block; margin-left: 0px; padding-left: 0px;}
+/* overriding standard wicket tree styling */
 
-.hippo-tree .wicket-tree .row, .hippo-tree .wicket-tree .row-selected{width: 1000px; overflow: hidden; padding: 2px; padding-top: 3px; padding-bottom: 3px; margin-bottom: 0px; background: none;}
-.hippo-tree .wicket-tree .row-selected a, .hippo-tree .wicket-tree .row a {color: #333333; display: block; width: 100%;}
-.hippo-tree .wicket-tree .row a:hover {}
+/* Complicated stuff... remove the margin and set the hippo-tree wrapping div up as a scrollbar  */
+.hippo-tree {overflow: auto; width: 200px; height: 350px;}
+/* remove margins */
+.hippo-tree div.wicket-tree{margin: 0px; border: none;}
+/* make sure the first folder level in the tree doens't have a left padding */
+.hippo-tree div.wicket-tree div.a_{padding-left: 0px}
+.hippo-tree div.wicket-tree div.a_ div.a_{padding-left: 1em}
+/* make the rows expand so it will activate the scrolling of the .hippotree div */
+.hippo-tree div.wicket-tree,
+.hippo-tree div.wicket-tree div.row, 
+.hippo-tree div.wicket-tree div.row-selected{overflow: visible; width: auto; white-space: nowrap}
+
+/* set row height to a little higher for better clickability */
+.hippo-tree div.wicket-tree div.row, 
+.hippo-tree div.wicket-tree div.row-selected{padding-top: 2px; padding-bottom: 2px;}
+
+/* set the hippo color styling */
 .hippo-tree div.wicket-tree div.row-selected {background-color: #fedc89}
+.hippo-tree div.wicket-tree div.row a,
+.hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
-.hippo-tree .wicket-tree{border: none;}
-.hippo-tree .wicket-tree div.row-selected a span {font-weight: normal; color: black;}
+.hippo-tree .wicket-tree span.plus, 
+.hippo-tree .wicket-tree span.minus {background-image: url("images/tree-icons.png"); width: 14px;}
 
 .hippo-tree .wicket-tree span.junction, 
 .hippo-tree .wicket-tree span.junction-last, 
-.hippo-tree .wicket-tree span.plus, 
-.hippo-tree .wicket-tree span.minus, 
 .hippo-tree .wicket-tree span.corner, 
 .hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank, 
-/* disabled in current design */
-.hippo-tree .wicket-tree span.icon {width:14px; display: none;}
+.hippo-tree .wicket-tree span.indent-blank {background-image: none; width: 14px;} 
 
 
 .hippo-tree .icon-16{padding: 0px; width: 16px; height: 16px; display: block; float: left; margin-right: 5px; margin-left: 3px;}
 
 /* Accordion */
-.hippo-accordion-unit .wicket-tree{padding: 4px; border-bottom: 1px solid #afafaf; min-height: 100px; margin-bottom: 0px; padding-left: 0px; padding-top: 0px;}
-.hippo-accordion-unit{background: #f4f4f4}
+.hippo-accordion-unit{background: #f4f4f4;}
+/* change the tree if he's inside an accordion */
+.hippo-accordion-unit .hippo-tree .wicket-tree{min-height: 100px; margin-bottom: 0px; padding-left: 0px; padding-top: 0px;}
+
+.hippo-accordion-unit h2{background-image: url("images/accordion-unit-back2png"); background-repeat: repeat-x}
+
 .hippo-accordion-unit h2 a{
 background-image: url("images/accordion-unit-back.png"); 
 background-repeat: no-repeat; 
@@ -498,10 +511,12 @@ display: block;
 height: 14px;
 width: 100%;
 padding: 5px;
-padding-left: 15px;
+padding-left: 0px; 
+padding-right: 0px;
 border-bottom: 1px solid #afafaf; 
 font-weight: bold;
 }
+.hippo-accordion-unit h2 a span{padding-left: 20px;}
 
 .hippo-accordion-unit h2 a{background-position: 0px 0px}
 .hippo-accordion-unit h2 a:hover{background-position: 0px -96px}
@@ -510,6 +525,8 @@ font-weight: bold;
 .hippo-accordion-unit h2 a.focus{background-position: 0px -24px}
 .hippo-accordion-unit h2 a.focus:hover{background-position: 0px -48px}
 .hippo-accordion-unit h2 a.focus:active{background-position: 0px -72px}
+
+
 
 /* Navigator Workflow Actions */
 /* .hippo-browser-documents-workflow{background: url("images/silverBack2.png") repeat-x left bottom; height: 24px; padding-top: 25px;} */
