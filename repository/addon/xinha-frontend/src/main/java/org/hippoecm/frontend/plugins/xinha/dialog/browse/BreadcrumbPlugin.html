@@ -14,15 +14,13 @@
   * limitations under the License.
 -->
 <wicket:panel>
-  <div style="float:left; width:40px;">
-    <input wicket:id="up" type="button" style="height:20px;"/>
-  </div>
-  <div style="float: left;padding-top:3px;">
-    <ul>
-      <li wicket:id="crumbs">
+    <div class="hippo-picker-navigation-buttons">
+      <input wicket:id="up" type="image"/>
+    </div>
+    <ul class="hippo-picker-navigation-breadcrumbs">
+      <li class="hippo-picker-navigation-breadcrumb" wicket:id="crumbs">
         <a wicket:id="link"><span wicket:id="name">[ Link name ]</span></a>
       </li>
     </ul>
-  </div>
 </wicket:panel>
 
