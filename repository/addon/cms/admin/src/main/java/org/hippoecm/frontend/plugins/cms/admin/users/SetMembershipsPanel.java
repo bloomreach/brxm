@@ -111,7 +111,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         private User user;
 
         public MembershipsListEditView(final String id, final String labelId, final User user) {
-            super(id, user.getLocalMemberships());
+            super(id, new PropertyModel(user, "localMemberships"));
             this.labelId = labelId;
             this.user = user;
             setReuseItems(false);
@@ -147,7 +147,7 @@ public class SetMembershipsPanel extends AdminBreadCrumbPanel {
         private String labelId;
 
         public MembershipsListView(final String id, final String labelId, final User user) {
-            super(id, user.getLocalMemberships());
+            super(id, new PropertyModel(user, "localMemberships"));
             this.labelId = labelId;
             setReuseItems(true);
         }

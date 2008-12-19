@@ -71,7 +71,6 @@ public class User implements IClusterable {
     private String provider;
 
     private Map<String, String> properties = new TreeMap<String, String>();
-    private List<DetachableGroup> localMemberships;
     private List<DetachableGroup> externalMemberships;
 
     private transient Node node;
@@ -231,7 +230,7 @@ public class User implements IClusterable {
     //--------------- group membership helpers ------------------//
     public List<DetachableGroup> getLocalMemberships() {
         String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", username);
-        localMemberships = new ArrayList<DetachableGroup>();
+        List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
         NodeIterator iter;
         try {
             Query query = getQueryManager().createQuery(queryString, Query.SQL);
