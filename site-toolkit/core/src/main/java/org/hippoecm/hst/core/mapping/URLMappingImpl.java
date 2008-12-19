@@ -226,7 +226,7 @@ public class URLMappingImpl implements URLMapping {
         String cacheKey = null;
         try {
             rewritePath = node.getPath();
-            cacheKey = computeCacheKey(rewritePath, external, secondTry, sitemap);
+            cacheKey = computeCacheKey(rewritePath, external, secondTry, sitemap, hstRequestContext);
             Link rewritten = this.rewriteLRUCache.get(cacheKey);
             if (rewritten != null) {
                 return rewritten;
@@ -372,25 +372,7 @@ public class URLMappingImpl implements URLMapping {
         rewrite = UrlUtilities.encodeUrl(rewrite);
         
         if(external) {
-            DomainMapping domainMapping = this.repositoryMapping.getDomainMapping();
-            
-            StringBuffer externalLink = new StringBuffer(domainMapping.getScheme()).append("://");
-            
-            if(newRepositoryMapping != null) {
-                // we have to link to a different domain, hence we cannot get the serverName from the request
-                log.debug("External link to different domain for node '{}'", path);
-                log.debug("Rewriting link from domain '{}' --> domain '{}'", hstRequestContext.getRequest().getServerName(), newRepositoryMapping.getDomain().getPattern());
-                externalLink.append(repositoryMapping.getDomain().getPattern());
-            } else {
-                log.debug("Rewrite link to an external (including hostname) link");
-                externalLink.append(hstRequestContext.getRequest().getServerName());
-            }
-            
-            if(domainMapping.isPortInUrl()) {
-                externalLink.append(":").append(domainMapping.getPort());
-                externalLink.append(rewrite);
-            }
-            rewrite = externalLink.toString();
+            rewrite = externalize(rewrite, this.repositoryMapping.getDomainMapping(),path, hstRequestContext, newRepositoryMapping);  
         }
         
         Link link = new LinkImpl(rewrite, external, true);
@@ -402,8 +384,9 @@ public class URLMappingImpl implements URLMapping {
 
     public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external) {
         long start = System.currentTimeMillis();
-        String cacheKey = computeCacheKey(sitemapNodeName, false, false, null);
+        String cacheKey = computeCacheKey(sitemapNodeName, false, false, null, hstRequestContext);
         Link rewritten = this.rewriteLRUCache.get(cacheKey);
+        String path = "" ;
         if (rewritten != null) {
             return rewritten;
         }
@@ -433,6 +416,7 @@ public class URLMappingImpl implements URLMapping {
             try {
                 if (siteMapRootNode.hasNode(sitemapNodeName)) {
                     Node sitemapNode = siteMapRootNode.getNode(sitemapNodeName);
+                    path = sitemapNode.getPath();
                     String newLink = null;
                     if (sitemapNode.hasProperty("hst:prefixlinkrewrite")
                             || sitemapNode.hasProperty("hst:linkrewriteprefix")) {
@@ -495,6 +479,11 @@ public class URLMappingImpl implements URLMapping {
 
         String rewriteString = rewrite.toString();
         rewriteString = UrlUtilities.encodeUrl(rewriteString);
+        
+        if(external) {
+            rewriteString = externalize(rewriteString, this.repositoryMapping.getDomainMapping(),path, hstRequestContext, null);  
+        }
+        
         Link link = new LinkImpl(rewriteString, false, true);
         if (cacheKey != null) {
             this.rewriteLRUCache.put(cacheKey, link);
@@ -502,24 +491,7 @@ public class URLMappingImpl implements URLMapping {
         return link;
     }
 
-    /*
-     * we need to account for the current repository mapping in the cachekey, because one and the same repository node can be 
-     * translated into different links. For now we consider the pattern from the matching domain to be enough to add to the cachekey
-     */
-
-    private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence) {
-        StringBuffer key = new StringBuffer();
-        key.append(this.repositoryMapping.getDomain().getPattern());
-        key.append("_");
-        key.append(name);
-        key.append("_").append(externalize);
-        key.append("_").append(secondTry);
-        key.append("_").append(precedence);
-        log.debug("Cachekey = {}", key.toString());
-        return key.toString();
-    }
-
-    public Link getLocation(String path, boolean external) {
+    public Link getLocation(String path, HstRequestContext hstRequestContext, boolean external) {
         if (repositoryMapping.getDomainMapping().isServletContextPathInUrl()) {
             String contextPath = repositoryMapping.getDomainMapping().getServletContextPath();
             if (contextPath != null && !contextPath.equals("")) {
@@ -539,10 +511,48 @@ public class URLMappingImpl implements URLMapping {
                 }
             }
         }
+        if(external) {
+            path = externalize(path, this.repositoryMapping.getDomainMapping(),path, hstRequestContext, null);  
+        }
         Link link = new LinkImpl(path, false, true);
         return link;
     }
 
+    private String externalize(String rewrite, DomainMapping domainMapping, String path, HstRequestContext hstRequestContext, RepositoryMapping newRepositoryMapping) {
+        StringBuffer externalLink = new StringBuffer(domainMapping.getScheme()).append("://");
+        if(newRepositoryMapping != null) {
+            // we have to link to a different domain, hence we cannot get the serverName from the request
+            log.debug("External link to different domain for node '{}'", path);
+            log.debug("Rewriting link from domain '{}' --> domain '{}'", hstRequestContext.getRequest().getServerName(), newRepositoryMapping.getDomain().getPattern());
+            externalLink.append(repositoryMapping.getDomain().getPattern());
+        } else {
+            log.debug("Rewrite link to an external (including hostname) link");
+            externalLink.append(hstRequestContext.getRequest().getServerName());
+        }
+        
+        if(domainMapping.isPortInUrl()) {
+            externalLink.append(":").append(domainMapping.getPort());
+            externalLink.append(rewrite);
+        }
+        return externalLink.toString();
+    }
+    
+    /*
+     * we need to account for the current repository mapping in the cachekey, because one and the same repository node can be 
+     * translated into different links. Therefor we include the servername & repository mapping domain to the cachekey
+     */
+
+    private String computeCacheKey(String name, boolean externalize, boolean secondTry, String precedence, HstRequestContext hstRequestContext) {
+        StringBuffer key = new StringBuffer();
+        key.append(this.repositoryMapping.getDomain().getPattern().hashCode() + hstRequestContext.getRequest().getServerName().hashCode());
+        key.append("_");
+        key.append(name);
+        key.append("_").append(externalize);
+        key.append("_").append(secondTry);
+        key.append("_").append(precedence);
+        log.debug("Cachekey = {}", key.toString());
+        return key.toString();
+    }
     private class RewriteLRUCache {
 
         private final Map cache;

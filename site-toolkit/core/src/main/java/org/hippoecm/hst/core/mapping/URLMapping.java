@@ -28,7 +28,7 @@ public interface URLMapping {
     public Link rewriteLocation(Node node, HstRequestContext hstRequestContext, boolean external);
     public Link rewriteLocation(Node node, String sitemap, HstRequestContext hstRequestContext, boolean external);
     public Link rewriteLocation(String sitemapNodeName, HstRequestContext hstRequestContext, boolean external);
-    public Link getLocation(String path, boolean external);
+    public Link getLocation(String path, HstRequestContext hstRequestContext, boolean external);
     public List<String> getCanonicalPathsConfiguration();
     public RepositoryMapping getRepositoryMapping();
     public PageNode getMatchingPageNode(String requestURI, HstRequestContext hstRequestContext);

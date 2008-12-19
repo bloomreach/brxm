@@ -67,7 +67,7 @@ public class LinkTag extends SimpleTagSupport {
             	// location must be a sitemapNodeName
                 href = urlMapping.rewriteLocation(location, hstRequestContext, externalize).getUri();
             } else if(staticattr != null ) {
-                href = urlMapping.getLocation(staticattr, externalize).getUri();
+                href = urlMapping.getLocation(staticattr, hstRequestContext, externalize).getUri();
             }
         }
         if(href != null) {

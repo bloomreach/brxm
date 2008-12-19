@@ -77,8 +77,8 @@ public class RelativeURLMappingImpl implements URLMapping{
         return relLink;
     }
     
-    public Link getLocation(String path, boolean external) {
-        Link link = delegatee.getLocation(path, external);
+    public Link getLocation(String path, HstRequestContext hstRequestContext, boolean external) {
+        Link link = delegatee.getLocation(path,hstRequestContext, external);
         if(link.isExternal()) {
             return link;
         }
