@@ -27,21 +27,18 @@
 
         <span class='review'>Whole folder, and rewrite if necessary.</span>
 
-        <p>
-          Hippo ECM configuration can be broken down into two parts: the base configuration
-          for the repository through a number of XML files, and the configuration
-          of the ECM functionality through configuration nodes in the JCR tree inside the
-          repository.
-        </p>
-
         <ul>
           <li>
+            <a href="performance_tuning">Performance tuning</a>
+            - How to improve performance of Hippo CMS by site specific tuning.
+          </li>
+          <li>
             <a href="repository/index.html">Repository configuration</a>
-            - The base repository configuration
+            - The base repository configuration through a number of XML files.
           </li>
           <li>
             <a href="nodes/index.html">Configuration nodes</a>
-            - Configuration nodes inside the repository
+            - Configuration nodes in the JCR tree inside the repository
           </li>
           <li>
             <a href="console.html">Console application</a>
