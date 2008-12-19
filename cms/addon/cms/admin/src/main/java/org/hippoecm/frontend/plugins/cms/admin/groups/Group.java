@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -47,7 +48,9 @@ public class Group implements IClusterable {
 
     private final static String PROP_DESCRIPTION = "hippo:description";
     private final static String QUERY_ALL_LOCAL = "select * from hippo:group where hippo:securityprovider='internal'";
-    
+    private final static String QUERY_ALL = "select * from hippo:group";
+    private final static String QUERY_ALL_ROLES = "select * from hippo:role";
+        
     private String path;
     private String groupname;
     
@@ -82,6 +85,57 @@ public class Group implements IClusterable {
             log.error("Error while querying for a list of local groups", e);
         }
         return groups;
+    }
+    
+
+    public static List<Group> getAllGroups() {
+        List<Group> groups = new ArrayList<Group>();
+        NodeIterator iter;
+        try {
+            Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
+            iter = query.execute().getNodes();
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                if (node != null) {
+                    try {
+                        groups.add(new Group(node));
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to add group to list", e);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while querying for a list of local groups", e);
+        }
+        return groups;
+    }
+    
+
+    /**
+     * FIXME: should move to roles class or something the like
+     * when the admin perspective gets support for it
+     */
+    public static List<String> getAllRoles() {
+        List<String> roles = new ArrayList<String>();
+        NodeIterator iter;
+        try {
+            Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
+            iter = query.execute().getNodes();
+            while (iter.hasNext()) {
+                Node node = iter.nextNode();
+                if (node != null) {
+                    try {
+                        roles.add(node.getName());
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to add group to list", e);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while querying for a list of local groups", e);
+        }
+        Collections.sort(roles);
+        return roles;
     }
     
     public boolean isExternal() {
