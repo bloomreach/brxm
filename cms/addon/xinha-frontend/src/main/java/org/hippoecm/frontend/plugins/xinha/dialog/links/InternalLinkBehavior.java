@@ -38,10 +38,10 @@ public class InternalLinkBehavior extends XinhaDialogBehavior {
     @Override
     protected void configureModal(final ModalWindow modal) {
         super.configureModal(modal);
-        
-        modal.setInitialHeight(500);
+        modal.setCookieName(null);
+        modal.setInitialHeight(455);
         modal.setInitialWidth(850);
-        modal.setResizable(true);
+        modal.setResizable(false);
     }
 
     @Override

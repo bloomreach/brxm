@@ -1,6 +1,6 @@
 /*
  * Menu: Prepare Hippo ECM projects
- * Script-Path: /hippo-ecm/tools/eclipse/monkey/prepareProjects.gm
+ * Script-Path: /hippo-ecm-tools-eclipse/monkey/prepareProjects.gm
  * Kudos: Wander Grevink (onehippo.com)
  * License: Apache 2.0
  * Job: WorkspaceJob
