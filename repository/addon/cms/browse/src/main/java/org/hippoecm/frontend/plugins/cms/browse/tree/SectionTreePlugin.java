@@ -126,6 +126,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                             if (modelService != null) {
                                 IModel sectionModel = modelService.getModel();
                                 SectionTreePlugin.this.setModel(sectionModel);
+                            } else {
+                                focusSection(section, true);
                             }
                             SectionTreePlugin.this.redraw();
                         }
