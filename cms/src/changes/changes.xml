@@ -54,9 +54,57 @@
     * Jira issues fixed by the action: optionally, an action may contain a list of Jira issue numbers, 
       of issues that are fixed by the action:
 
-     <fixes issue='HREPTWO-1951'/>
-     <fixes issue='HREPTWO-1967'/>
-     <fixes issue='HREPTWO-1989'/>
+<fixes issue='HREPTWO-427'>Time-based event scheduling / Embargo</fixes>
+<fixes issue='HREPTWO-1227'>Wrapper around quartz to execute jobs stored in JCR</fixes>
+<fixes issue='HREPTWO-1228'>Interface to obtain scheduler in abstract manner from workflows</fixes>
+<fixes issue='HREPTWO-1229'>Allow plugins to intercept invocations to chained workflows</fixes>
+<fixes issue='HREPTWO-1707'>Add possibility to add i18n keys to document types</fixes>
+<fixes issue='HREPTWO-1869'>Login window resets when choosing new language</fixes>
+<fixes issue='HREPTWO-1909'>Resolve slow performance of facetselect</fixes>
+<fixes issue='HREPTWO-1913'>Upgradability improvements regarding issues surfaced on customer data</fixes>
+<fixes issue='HREPTWO-1918'>Prototypes containing facetselect give error in the CMS when new document is created</fixes>
+<fixes issue='HREPTWO-1919'>Layoutmanager miscalculates available dimensions in browser window</fixes>
+<fixes issue='HREPTWO-1920'>Refactor YuiBehaviors</fixes>
+<fixes issue='HREPTWO-1921'>YuiHeaderContributor falsely assumes registered YuiContext's are rendered in order registered</fixes>
+<fixes issue='HREPTWO-1923'>TabbedPanel should output markupId</fixes>
+<fixes issue='HREPTWO-1924'>Remove YUI 2.5.2 sources from YUI subprojects</fixes>
+<fixes issue='HREPTWO-1926'>Add node name encode / decode</fixes>
+<fixes issue='HREPTWO-1927'>YuiJavascript Setting class should provide custom equals method</fixes>
+<fixes issue='HREPTWO-1928'>Improved access check on deleted nodes</fixes>
+<fixes issue='HREPTWO-1930'>Initialization in LocalHippoRepository falsely ignores nodes with only contentdelete</fixes>
+<fixes issue='HREPTWO-1933'>Fix support for user and group names with spaces</fixes>
+<fixes issue='HREPTWO-1934'>Make ldap usernames case insensitive</fixes>
+<fixes issue='HREPTWO-1936'>Mirrors are not inherited correctly for preview / live documents</fixes>
+<fixes issue='HREPTWO-1938'>Encode/decode node name in CMS using NodeNameCodec to encode characters only when needed</fixes>
+<fixes issue='HREPTWO-1941'>Properly use ldap connection pooling</fixes>
+<fixes issue='HREPTWO-1942'>Performance of checked decorating layer repository has significant performance impact</fixes>
+<fixes issue='HREPTWO-1944'>Publish all function as current solution</fixes>
+<fixes issue='HREPTWO-1949'>Default Xinha plugins should load buttons into Xinha toolbar according to Xinha.plugins property</fixes>
+<fixes issue='HREPTWO-1950'>Reduce CPU usage serialization wicket</fixes>
+<fixes issue='HREPTWO-1953'>Prevent NPE in LdapUtils and lower default save interval to prevent hickups</fixes>
+<fixes issue='HREPTWO-1955'>Disabled virtual layer during startup as prevention measure and to suppress warnings</fixes>
+<fixes issue='HREPTWO-1965'>Make security backends case aware and case configurable</fixes>
+<fixes issue='HREPTWO-1967'>Fix JackRabbit version to 1.4 to overcome wrong maven release of 1.5</fixes>
+<fixes issue='HREPTWO-1969'>When user/groupname length relative small then user/group created in the wrong place</fixes>
+<fixes issue='HREPTWO-1970'>Editor role should have write permissions by default</fixes>
+<fixes issue='HREPTWO-1971'>Image picker does not handle names with hash sign in them</fixes>
+<fixes issue='HREPTWO-1972'>Don't remove folders in overwrite mode with content-import</fixes>
+<fixes issue='HREPTWO-1974'>Encoding for images broken</fixes>
+<fixes issue='HREPTWO-1977'>Search should be limited by 10 by default</fixes>
+<fixes issue='HREPTWO-1981'>Clicking on my todo items causes internal error</fixes>
+<fixes issue='HREPTWO-1982'>All groupIds and userIds must be normalized before they are stored</fixes>
+<fixes issue='HREPTWO-1983'>Add support for dn attribute lookup for members of ldap groups</fixes>
+<fixes issue='HREPTWO-1990'>Many undetached model warnings</fixes>
+<fixes issue='HREPTWO-1995'>Creating a new document causes NPE</fixes>
+<fixes issue='HREPTWO-1996'>Allow inspection of interfaces (common projects) implemented by workflow without accessing the workflow</fixes>
+<fixes issue='HREPTWO-2002'>UserManager doesn't honor hippo:active setting</fixes>
+<fixes issue='HREPTWO-2003'>Property hippo:securityprovider should always be set on hippo:user and hippo:group</fixes>
+<fixes issue='HREPTWO-2004'>Use relative times and translated messages for dashboard history list</fixes>
+<fixes issue='HREPTWO-2005'>Tree doesn't allow closing of folders</fixes>
+<fixes issue='HREPTWO-2006'>Template builder doesn't set css classes</fixes>
+<fixes issue='HREPTWO-2019'>Defaultcontent overview gives error in template editor</fixes>
+<fixes issue='HREPTWO-2021'>Remove publish from toolbar, always use scheduled publication visually</fixes>
+<fixes issue='HREPTWO-2025'>Fix translations for titles</fixes>
 
    </action>
   </release>
