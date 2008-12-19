@@ -212,8 +212,16 @@
    fullname='support/community.xml.vm'
    relpath='support'
   >community</file>
+   <file ext='xml.vm~' mimetype='text/xml'
+   fullname='support/community.xml.vm~'
+   relpath='support'
+  >community</file>
    <file ext='xml.vm' mimetype='text/xml' valid='yes'
    fullname='support/contributing.xml.vm'
+   relpath='support'
+  >contributing</file>
+   <file ext='xml.vm~' mimetype='text/xml'
+   fullname='support/contributing.xml.vm~'
    relpath='support'
   >contributing</file>
   </folder>
