@@ -108,6 +108,7 @@ public class BreadcrumbPlugin extends RenderPlugin {
         } else {
             up.setEnabled(true);
         }
+        AjaxRequestTarget.get().addComponent(this);
     }
 
     private ListView getListView(JcrNodeModel model) {
